@@ -1,7 +1,12 @@
 package apptentive.com.android.network
 
 import apptentive.com.android.async.Promise
+import apptentive.com.android.core.TimeInterval
 
-interface HttpClient {
-    fun send(request: HttpRequest): Promise<HttpResponse>
+data class HttpClientConfiguration(val timeout: TimeInterval) {
+    var retryPolicy: HttpRetryPolicy = HttpRetryPolicyDefault()
+}
+
+abstract class HttpClient(val configuration: HttpClientConfiguration) {
+    abstract fun send(request: HttpRequest): Promise<HttpResponse>
 }
