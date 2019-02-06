@@ -1,8 +1,5 @@
 package apptentive.com.android.network
 
-interface HttpRequest {
-    val url: String // TODO: should we use more specific type?
-    val method: HttpMethod
-    val body: ByteArray
-    val headers: HttpHeaders
+class HttpRequest(val url: String, val method: HttpMethod = HttpMethod.GET) {
+    private val headers: HttpHeaders = HttpHeaders()
 }
