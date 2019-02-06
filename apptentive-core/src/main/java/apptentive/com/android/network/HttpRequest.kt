@@ -1,12 +1,20 @@
 package apptentive.com.android.network
 
+import apptentive.com.android.util.StreamUtils
+import apptentive.com.android.util.StreamUtils.readBytes
+import apptentive.com.android.util.StreamUtils.writeBytes
+import java.io.InputStream
 import java.io.OutputStream
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.zip.GZIPInputStream
 
 class HttpRequest(val url: String, val method: HttpMethod = HttpMethod.GET) {
     private val requestHeaders: MutableHttpHeaders = MutableHttpHeaders()
     private val responseHeaders: MutableHttpHeaders = MutableHttpHeaders()
+
+    protected var responseData: ByteArray = ByteArray(0)
+        private set
 
     internal fun sendRequestSync() {
         val connection = openConnection(URL(url))
@@ -20,7 +28,7 @@ class HttpRequest(val url: String, val method: HttpMethod = HttpMethod.GET) {
             // request body
             val requestBody = createRequestBody()
             if (requestBody != null && requestBody.isNotEmpty()) {
-                setupRequestBody(connection, requestBody)
+                writeRequestBody(connection, requestBody)
             }
 
             // response code
@@ -32,11 +40,10 @@ class HttpRequest(val url: String, val method: HttpMethod = HttpMethod.GET) {
             // response data
             val gzipCompressed = isGzipCompressed(responseHeaders)
             if (isValidResponseCode(responseCode)) {
-
+                responseData = readResponseBody(connection.inputStream, gzipCompressed)
             } else {
-
+                responseData = readResponseBody(connection.errorStream, gzipCompressed)
             }
-
 
         } finally {
             connection.disconnect()
@@ -62,26 +69,20 @@ class HttpRequest(val url: String, val method: HttpMethod = HttpMethod.GET) {
         connection.requestMethod = method.toString()
     }
 
-    private fun setupRequestBody(connection: HttpURLConnection, requestBody: ByteArray) {
+    private fun writeRequestBody(connection: HttpURLConnection, requestBody: ByteArray) {
         connection.doOutput = true // this is required for each request with non-empty body
-        connection.setChunkedStreamingMode(0) // we know the content length before hand
-
-        var outputStream: OutputStream? = null
-        try {
-            outputStream = connection.outputStream
-            outputStream.write(requestBody)
-        } finally {
-            outputStream?.close()
-        }
+        connection.setChunkedStreamingMode(0) // we know the content length beforehand
+        writeBytes(connection.outputStream, requestBody)
     }
 
     private fun setupResponseHeaders(connection: HttpURLConnection, headers: MutableHttpHeaders) {
-        val headerFields = connection.headerFields
-        for (entry in headerFields) {
-            val name = entry.key
-            val value = entry.value.toString()
-            headers[name] = value
+        for (header in connection.headerFields) {
+            headers[header.key] = header.value.toString()
         }
+    }
+
+    private fun readResponseBody(inputStream: InputStream, gzipCompressed: Boolean): ByteArray {
+        return readBytes(if (gzipCompressed) GZIPInputStream(inputStream) else inputStream)
     }
 
     //endregion
