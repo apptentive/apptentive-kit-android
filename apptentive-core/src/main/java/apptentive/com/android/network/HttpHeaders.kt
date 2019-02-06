@@ -1,6 +1,9 @@
 package apptentive.com.android.network
 
-class HttpHeaders: LinkedHashMap<String, String>() {
+abstract class HttpHeaders : Iterable<Map.Entry<String, String>> {
+    abstract val size: Int
+    abstract operator fun get(name: String): String?
+
     companion object {
         const val acceptHeader = "accept"
         const val acceptCharsetHeader = "accept-charset"
@@ -49,5 +52,29 @@ class HttpHeaders: LinkedHashMap<String, String>() {
         const val viaHeader = "via"
         const val warningHeader = "warning"
         const val wwwAuthenticateHeader = "www-authenticate"
+    }
+}
+
+internal class MutableHttpHeaders : HttpHeaders() {
+    private val headers = mutableMapOf<String, String>()
+
+    override val size: Int get() = headers.size
+
+    override fun get(name: String): String? = headers[name]
+
+    fun set(name: String, value: Int) {
+        set(name, value.toString())
+    }
+
+    fun set(name: String, value: Boolean) {
+        set(name, value.toString())
+    }
+
+    operator fun set(name: String, value: String) {
+        headers[name] = value
+    }
+
+    override fun iterator(): Iterator<Map.Entry<String, String>> {
+        return headers.iterator()
     }
 }

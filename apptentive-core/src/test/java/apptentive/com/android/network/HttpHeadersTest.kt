@@ -9,10 +9,10 @@ import org.junit.Assert.*
 class HttpHeadersTest {
     @Test
     fun setSetValues() {
-        val headers = HttpHeaders()
+        val headers = MutableHttpHeaders()
         headers[acceptEncodingHeader] = "application/json"
         headers[contentLengthHeader] = "1000"
-        for (entry in headers.entries) {
+        for (entry in headers) {
             when (entry.key) {
                 acceptEncodingHeader -> assertEquals(entry.value, "application/json")
                 contentLengthHeader -> assertEquals(entry.value, "1000")

@@ -5,7 +5,8 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 class HttpRequest(val url: String, val method: HttpMethod = HttpMethod.GET) {
-    private val requestHeaders: HttpHeaders = HttpHeaders()
+    private val requestHeaders: MutableHttpHeaders = MutableHttpHeaders()
+    private val responseHeaders: MutableHttpHeaders = MutableHttpHeaders()
 
     internal fun sendRequestSync() {
         val connection = openConnection(URL(url))
@@ -22,8 +23,14 @@ class HttpRequest(val url: String, val method: HttpMethod = HttpMethod.GET) {
                 setupRequestBody(connection, requestBody)
             }
 
-            // response
+            // response code
             val responseCode = connection.responseCode
+
+            // response headers
+            setupResponseHeaders(connection, responseHeaders)
+
+            // response data
+            val gzipCompressed = isGzipCompressed(responseHeaders)
             if (isValidResponseCode(responseCode)) {
 
             } else {
@@ -46,7 +53,7 @@ class HttpRequest(val url: String, val method: HttpMethod = HttpMethod.GET) {
     }
 
     private fun setupRequestHeaders(connection: HttpURLConnection, headers: HttpHeaders) {
-        for (header in headers.entries) {
+        for (header in headers) {
             connection.setRequestProperty(header.key, header.value)
         }
     }
@@ -68,8 +75,14 @@ class HttpRequest(val url: String, val method: HttpMethod = HttpMethod.GET) {
         }
     }
 
-    private fun isValidResponseCode(responseCode: Int): Boolean =
-        responseCode >= HttpURLConnection.HTTP_OK && responseCode < HttpURLConnection.HTTP_MULT_CHOICE
+    private fun setupResponseHeaders(connection: HttpURLConnection, headers: MutableHttpHeaders) {
+        val headerFields = connection.headerFields
+        for (entry in headerFields) {
+            val name = entry.key
+            val value = entry.value.toString()
+            headers[name] = value
+        }
+    }
 
     //endregion
 
@@ -77,6 +90,20 @@ class HttpRequest(val url: String, val method: HttpMethod = HttpMethod.GET) {
 
     protected fun createRequestBody(): ByteArray? {
         return null
+    }
+
+    //endregion
+
+    //region Helpers
+
+    companion object {
+        private fun isGzipCompressed(headers: HttpHeaders): Boolean {
+            val contentEncoding = headers["Content-Encoding"]
+            return contentEncoding != null && contentEncoding.equals("[gzip]", ignoreCase = true)
+        }
+
+        private fun isValidResponseCode(responseCode: Int): Boolean =
+            responseCode >= HttpURLConnection.HTTP_OK && responseCode < HttpURLConnection.HTTP_MULT_CHOICE
     }
 
     //endregion
