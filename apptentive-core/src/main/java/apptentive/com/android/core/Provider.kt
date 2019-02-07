@@ -1,8 +1,6 @@
 package apptentive.com.android.core
 
 import android.app.Application
-import apptentive.com.android.util.Log
-import apptentive.com.android.util.LogTags.injection
 
 interface Providable
 
@@ -11,13 +9,12 @@ object Provider {
 
     fun register(application: Application) {
         // FIXME: this should be configured outside of this class
-        register<MainQueueChecker>(MainQueueCheckerImpl())
         register<PlatformLogger>(PlatformLoggerImpl("Apptentive"))
+        register<MainQueueChecker>(MainQueueCheckerImpl())
     }
 
     inline fun <reified T : Providable> register(providable: T) {
         lookup[T::class.java] = providable
-        Log.w(injection, "Register providable: ${T::class.java} (${providable.javaClass})")
     }
 
     fun clear() {
