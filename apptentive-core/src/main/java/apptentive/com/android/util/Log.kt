@@ -21,7 +21,7 @@ object Log {
     fun i(tag: LogTag, message: String) = log(LogLevel.Info, tag, message)
     fun w(tag: LogTag, message: String) = log(LogLevel.Warning, tag, message)
     fun e(tag: LogTag, message: String) = log(LogLevel.Error, tag, message)
-    fun e(tag: LogTag, e: Throwable, message: String) = log(LogLevel.Error, tag, message)
+    fun e(tag: LogTag, e: Throwable, message: String) = log(LogLevel.Error, tag, message, e)
 
     private fun log(level: LogLevel, tag: LogTag, message: String, throwable: Throwable? = null) {
         val buffer = StringBuilder()
