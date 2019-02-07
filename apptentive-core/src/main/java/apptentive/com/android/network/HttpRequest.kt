@@ -1,111 +1,40 @@
 package apptentive.com.android.network
 
-import apptentive.com.android.util.StreamUtils
-import apptentive.com.android.util.StreamUtils.readBytes
-import apptentive.com.android.util.StreamUtils.writeBytes
-import java.io.InputStream
-import java.io.OutputStream
 import java.net.HttpURLConnection
-import java.net.URL
-import java.util.zip.GZIPInputStream
 
-class HttpRequest(val url: String, val method: HttpMethod = HttpMethod.GET) {
-    private val requestHeaders: MutableHttpHeaders = MutableHttpHeaders()
-    private val responseHeaders: MutableHttpHeaders = MutableHttpHeaders()
+abstract class HttpRequest(val url: String, val method: HttpMethod = HttpMethod.GET) {
+    var responseCode = -1
+        internal set
+    var responseMessage: String = ""
+        internal set
 
-    protected var responseData: ByteArray = ByteArray(0)
-        private set
+    var errorMessage: String? = null
+        internal set
 
-    internal fun sendRequestSync() {
-        val connection = openConnection(URL(url))
-        try {
-            // request headers
-            setupRequestHeaders(connection, requestHeaders)
+    val requestHeaders: MutableHttpHeaders = MutableHttpHeaders()
+    val responseHeaders: MutableHttpHeaders = MutableHttpHeaders()
 
-            // request method
-            setupRequestMethod(connection, method)
+    /**
+     * Returns true if request returned with a valid status code.
+     */
+    val isSuccessful: Boolean get() = responseCode >= HttpURLConnection.HTTP_OK && responseCode < HttpURLConnection.HTTP_MULT_CHOICE
 
-            // request body
-            val requestBody = createRequestBody()
-            if (requestBody != null && requestBody.isNotEmpty()) {
-                writeRequestBody(connection, requestBody)
-            }
+    /**
+     * Returns true if request failed due to the connection error or there was an exception while processing request.
+     */
+    val isFailed: Boolean get() = !isSuccessful || !errorMessage.isNullOrEmpty()
 
-            // response code
-            val responseCode = connection.responseCode
+    //region Inheritance
 
-            // response headers
-            setupResponseHeaders(connection, responseHeaders)
-
-            // response data
-            val gzipCompressed = isGzipCompressed(responseHeaders)
-            if (isValidResponseCode(responseCode)) {
-                responseData = readResponseBody(connection.inputStream, gzipCompressed)
-            } else {
-                responseData = readResponseBody(connection.errorStream, gzipCompressed)
-            }
-
-        } finally {
-            connection.disconnect()
-        }
-    }
-
-    //region Connection
-
-    private fun openConnection(url: URL): HttpURLConnection {
-        val connection = url.openConnection() as HttpURLConnection
-        connection.connectTimeout = 45000 // FIXME: make it configurable
-        connection.connectTimeout = 45000 // FIXME: make it configurable
-        return connection
-    }
-
-    private fun setupRequestHeaders(connection: HttpURLConnection, headers: HttpHeaders) {
-        for (header in headers) {
-            connection.setRequestProperty(header.key, header.value)
-        }
-    }
-
-    private fun setupRequestMethod(connection: HttpURLConnection, method: HttpMethod) {
-        connection.requestMethod = method.toString()
-    }
-
-    private fun writeRequestBody(connection: HttpURLConnection, requestBody: ByteArray) {
-        connection.doOutput = true // this is required for each request with non-empty body
-        connection.setChunkedStreamingMode(0) // we know the content length beforehand
-        writeBytes(connection.outputStream, requestBody)
-    }
-
-    private fun setupResponseHeaders(connection: HttpURLConnection, headers: MutableHttpHeaders) {
-        for (header in connection.headerFields) {
-            headers[header.key] = header.value.toString()
-        }
-    }
-
-    private fun readResponseBody(inputStream: InputStream, gzipCompressed: Boolean): ByteArray {
-        return readBytes(if (gzipCompressed) GZIPInputStream(inputStream) else inputStream)
-    }
+    protected abstract fun serializeRequest(): ByteArray?
+    protected abstract fun deserializeResponse(bytes: ByteArray)
 
     //endregion
 
-    //region Request Body
+    //region Request/Response
 
-    protected fun createRequestBody(): ByteArray? {
-        return null
-    }
-
-    //endregion
-
-    //region Helpers
-
-    companion object {
-        private fun isGzipCompressed(headers: HttpHeaders): Boolean {
-            val contentEncoding = headers["Content-Encoding"]
-            return contentEncoding != null && contentEncoding.equals("[gzip]", ignoreCase = true)
-        }
-
-        private fun isValidResponseCode(responseCode: Int): Boolean =
-            responseCode >= HttpURLConnection.HTTP_OK && responseCode < HttpURLConnection.HTTP_MULT_CHOICE
-    }
+    internal fun createRequestBody(): ByteArray? = serializeRequest()
+    internal fun processResponseBody(response: ByteArray) = deserializeResponse(response)
 
     //endregion
 }

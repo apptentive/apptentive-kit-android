@@ -55,7 +55,7 @@ abstract class HttpHeaders : Iterable<Map.Entry<String, String>> {
     }
 }
 
-internal class MutableHttpHeaders : HttpHeaders() {
+class MutableHttpHeaders : HttpHeaders() {
     private val headers = mutableMapOf<String, String>()
 
     override val size: Int get() = headers.size

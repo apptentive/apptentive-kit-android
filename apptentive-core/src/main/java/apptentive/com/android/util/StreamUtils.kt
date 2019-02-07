@@ -3,24 +3,25 @@ package apptentive.com.android.util
 import java.io.InputStream
 import java.io.OutputStream
 
+/**
+ * Helper singleton class to hide/simplify some of the higher order functions (code becomes more readable)
+ * */
 object StreamUtils {
-    fun readBytes(stream: InputStream, closeOnFinish : Boolean = true) : ByteArray {
-        try {
-            return stream.readBytes()
-        } finally {
-            if (closeOnFinish) {
-                stream.close()
-            }
+    /**
+     * Reads bytes from the [stream] and then closes it down correctly whether an exception is thrown or not.
+     */
+    fun readAndClose(stream: InputStream): ByteArray {
+        stream.use { s ->
+            return s.readBytes()
         }
     }
 
-    fun writeBytes(stream: OutputStream, bytes: ByteArray, closeOnFinish : Boolean = true) {
-        try {
-            stream.write(bytes)
-        } finally {
-            if (closeOnFinish) {
-                stream.close()
-            }
+    /**
+     * Writes bytes to the [stream] and then closes it down correctly whether an exception is thrown or not.
+     */
+    fun writeAndClose(stream: OutputStream, bytes: ByteArray) {
+        stream.use { s ->
+            s.write(bytes)
         }
     }
 }
