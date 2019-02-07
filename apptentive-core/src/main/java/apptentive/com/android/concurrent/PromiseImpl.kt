@@ -1,15 +1,23 @@
 package apptentive.com.android.concurrent
 
-class PromiseImpl<T> : Promise<T> {
+class PromiseImpl<T>(private val dispatchQueue: ExecutionQueue) : Promise<T> {
     private var valueCallback: (value: T) -> Unit = {}
     private var errorCallback: (e: Exception) -> Unit = {}
 
     fun onValue(value: T) {
-        valueCallback(value)
+        dispatchQueue.dispatch {
+            try {
+                valueCallback(value)
+            } catch (e: Exception) {
+                errorCallback(e)
+            }
+        }
     }
 
     fun onError(e: Exception) {
-        errorCallback(e)
+        dispatchQueue.dispatch {
+            errorCallback(e)
+        }
     }
 
     override fun then(onValue: (value: T) -> Unit): Promise<T> {
