@@ -1,5 +1,7 @@
 package apptentive.com.android.concurrent
 
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.core
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicInteger
@@ -29,7 +31,13 @@ internal class ConcurrentExecutionQueue : ExecutionQueue {
         get() = Thread.currentThread().threadGroup == threadGroup
 
     override fun dispatch(task: () -> Unit) {
-        executor.execute(task)
+        executor.execute {
+            try {
+                task()
+            } catch (e: Exception) {
+                Log.e(core, e, "Exception while dispatching task")
+            }
+        }
     }
 
     override fun stop() {
