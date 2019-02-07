@@ -9,8 +9,8 @@ object Provider {
 
     fun register(application: Application) {
         // FIXME: this should be configured outside of this class
-        register<PlatformLogger>(PlatformLoggerImpl("Apptentive"))
-        register<MainQueueChecker>(MainQueueCheckerImpl())
+        register(createPlatformLogger())
+        register(createExecutionQueueFactory())
     }
 
     inline fun <reified T : Providable> register(providable: T) {

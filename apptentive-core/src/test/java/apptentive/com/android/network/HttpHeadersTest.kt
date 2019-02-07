@@ -2,9 +2,8 @@ package apptentive.com.android.network
 
 import apptentive.com.android.network.HttpHeaders.Companion.acceptEncodingHeader
 import apptentive.com.android.network.HttpHeaders.Companion.contentLengthHeader
+import org.junit.Assert.assertEquals
 import org.junit.Test
-
-import org.junit.Assert.*
 
 class HttpHeadersTest {
     @Test

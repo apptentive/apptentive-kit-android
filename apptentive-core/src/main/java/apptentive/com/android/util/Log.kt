@@ -1,6 +1,6 @@
 package apptentive.com.android.util
 
-import apptentive.com.android.core.MainQueueChecker
+import apptentive.com.android.concurrent.ExecutionQueue
 import apptentive.com.android.core.PlatformLogger
 import apptentive.com.android.core.Provider
 
@@ -13,7 +13,6 @@ enum class LogLevel {
 }
 
 object Log {
-    private val mainQueueChecker = Provider.of<MainQueueChecker>()
     private val logger = Provider.of<PlatformLogger>()
 
     fun v(tag: LogTag, message: String) = log(LogLevel.Verbose, tag, message)
@@ -27,7 +26,7 @@ object Log {
         val buffer = StringBuilder()
 
         // thread name
-        if (!mainQueueChecker.isMainQueue()) {
+        if (!ExecutionQueue.isMainQueue) {
             buffer.append('[')
             buffer.append(Thread.currentThread().name)
             buffer.append(']')

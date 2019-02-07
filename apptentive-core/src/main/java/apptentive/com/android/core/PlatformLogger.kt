@@ -9,7 +9,9 @@ interface PlatformLogger : Providable {
     fun log(logLevel: LogLevel, throwable: Throwable)
 }
 
-internal class PlatformLoggerImpl(val tag: String) : PlatformLogger {
+fun createPlatformLogger() : PlatformLogger = PlatformLoggerImpl("Apptentive")
+
+private class PlatformLoggerImpl(val tag: String) : PlatformLogger {
     override fun log(logLevel: LogLevel, message: String) {
         android.util.Log.println(logLevel.ordinal, tag, message)
     }

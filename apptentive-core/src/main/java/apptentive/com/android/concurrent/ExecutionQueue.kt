@@ -1,6 +1,8 @@
 package apptentive.com.android.concurrent
 
-import android.os.Looper
+import apptentive.com.android.core.ExecutionQueueFactory
+import apptentive.com.android.core.Provider
+import apptentive.com.android.core.UNDEFINED
 
 abstract class ExecutionQueue(val name: String) {
     abstract val isCurrent: Boolean
@@ -9,15 +11,12 @@ abstract class ExecutionQueue(val name: String) {
     abstract fun stop()
 
     companion object {
-        val mainQueue: ExecutionQueue = createMainQueue()
-        val stateQueue: ExecutionQueue = createStateQueue()
+        val queueFactory get() = Provider.of<ExecutionQueueFactory>()
+        val mainQueue: ExecutionQueue = queueFactory.createMainQueue()
+        val stateQueue: ExecutionQueue = queueFactory.createSerialQueue("apptentive")
+        val isMainQueue = queueFactory.isMainQueue()
 
-        private fun createMainQueue(): ExecutionQueue {
-            return SerialExecutionQueue(Looper.getMainLooper(), "main")
-        }
-
-        private fun createStateQueue(): ExecutionQueue {
-            return SerialExecutionQueue("apptentive")
-        }
+        fun createSerialQueue(name: String) = queueFactory.createSerialQueue(name)
+        fun createConcurrentQueue(name: String, maxConcurrentTasks: Int = UNDEFINED) = queueFactory.createConcurrentQueue(name, maxConcurrentTasks)
     }
 }
