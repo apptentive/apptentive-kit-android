@@ -1,5 +1,6 @@
 package apptentive.com.android.core
 
+import android.app.Application
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.injection
 
@@ -8,7 +9,7 @@ interface Providable
 object Provider {
     val lookup = mutableMapOf<Class<*>, Providable>()
 
-    init {
+    fun register(application: Application) {
         // FIXME: this should be configured outside of this class
         register<MainQueueChecker>(MainQueueCheckerImpl())
         register<PlatformLogger>(PlatformLoggerImpl("Apptentive"))
