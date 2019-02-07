@@ -35,7 +35,7 @@ internal class ConcurrentExecutionQueue : ExecutionQueue {
             try {
                 task()
             } catch (e: Exception) {
-                Log.e(core, e, "Exception while dispatching task")
+                Log.e(core, "Exception while dispatching task", e)
             }
         }
     }
