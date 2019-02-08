@@ -1,66 +1,73 @@
 package apptentive.com.android.network
 
-abstract class HttpHeaders : Iterable<Map.Entry<String, String>> {
+data class HttpHeader(val name: String, val value: String) {
+    override fun toString(): String {
+        return "$name: \"$value\""
+    }
+}
+
+
+abstract class HttpHeaders : Iterable<HttpHeader> {
     abstract val size: Int
-    abstract operator fun get(name: String): String?
+    abstract operator fun get(name: String): HttpHeader?
 
     companion object {
-        const val acceptHeader = "accept"
-        const val acceptCharsetHeader = "accept-charset"
-        const val acceptEncodingHeader = "accept-encoding"
-        const val acceptLanguageHeader = "accept-language"
-        const val acceptRangesHeader = "accept-ranges"
-        const val ageHeader = "age"
-        const val allowHeader = "allow"
-        const val authorizationHeader = "authorization"
-        const val cacheControlHeader = "cache-control"
-        const val connectionHeader = "connection"
-        const val contentEncodingHeader = "content-encoding"
-        const val contentLanguageHeader = "content-language"
-        const val contentLengthHeader = "content-length"
-        const val contentLocationHeader = "content-location"
-        const val contentMD5Header = "content-md5"
-        const val contentRangeHeader = "content-range"
-        const val contentTypeHeader = "content-type"
-        const val dateHeader = "date"
-        const val etagHeader = "etag"
-        const val expectHeader = "expect"
-        const val expiresHeader = "expires"
-        const val fromHeader = "from"
-        const val hostHeader = "host"
-        const val ifMatchHeader = "if-match"
-        const val ifModifiedSinceHeader = "if-modified-since"
-        const val ifNoneMatchHeader = "if-none-match"
-        const val ifRangeHeader = "if-range"
-        const val ifUnmodifiedSinceHeader = "if-unmodified-since"
-        const val lastModifiedHeader = "last-modified"
-        const val locationHeader = "location"
-        const val maxForwardsHeader = "max-forwards"
-        const val pragmaHeader = "pragma"
-        const val proxyAuthenticateHeader = "proxy-authenticate"
-        const val proxyAuthorizationHeader = "proxy-authorization"
-        const val rangeHeader = "range"
-        const val refererHeader = "referer"
-        const val retryAfterHeader = "retry-after"
-        const val serverHeader = "server"
-        const val teHeader = "te"
-        const val trailerHeader = "trailer"
-        const val transferEncodingHeader = "transfer-encoding"
-        const val upgradeHeader = "upgrade"
-        const val userAgentHeader = "user-agent"
-        const val varyHeader = "vary"
-        const val viaHeader = "via"
-        const val warningHeader = "warning"
-        const val wwwAuthenticateHeader = "www-authenticate"
+        const val ACCEPT = "accept"
+        const val ACCEPT_CHARSET = "accept-charset"
+        const val ACCEPT_ENCODING = "accept-encoding"
+        const val ACCEPT_LANGUAGE = "accept-language"
+        const val ACCEPT_RANGES = "accept-ranges"
+        const val AGE = "age"
+        const val ALLOW = "allow"
+        const val AUTHORIZATION = "authorization"
+        const val CACHE_CONTROL = "cache-control"
+        const val CONNECTION = "connection"
+        const val CONTENT_ENCODING = "content-encoding"
+        const val CONTENT_LANGUAGE = "content-language"
+        const val CONTENT_LENGTH = "content-length"
+        const val CONTENT_LOCATION = "content-location"
+        const val CONTENT_MD5 = "content-md5"
+        const val CONTENT_RANGE = "content-range"
+        const val CONTENT_TYPE = "content-type"
+        const val DATE = "date"
+        const val ETAG = "etag"
+        const val EXPECT = "expect"
+        const val EXPIRES = "expires"
+        const val FROM = "from"
+        const val HOST = "host"
+        const val IF_MATCH = "if-match"
+        const val IF_MODIFIED_SINCE = "if-modified-since"
+        const val IF_NONE_MATCH = "if-none-match"
+        const val IF_RANGE = "if-range"
+        const val IF_UNMODIFIED_SINCE = "if-unmodified-since"
+        const val LAST_MODIFIED = "last-modified"
+        const val LOCATION = "location"
+        const val MAX_FORWARDS = "max-forwards"
+        const val PRAGMA = "pragma"
+        const val PROXY_AUTHENTICATE = "proxy-authenticate"
+        const val PROXY_AUTHORIZATION = "proxy-authorization"
+        const val RANGE = "range"
+        const val REFERER = "referer"
+        const val RETRY_AFTER = "retry-after"
+        const val SERVER = "server"
+        const val TE = "te"
+        const val TRAILER = "trailer"
+        const val TRANSFER_ENCODING = "transfer-encoding"
+        const val UPGRADE = "upgrade"
+        const val USER_AGENT = "user-agent"
+        const val VARY = "vary"
+        const val VIA = "via"
+        const val WARNING = "warning"
+        const val WWW_AUTHENTICATE = "www-authenticate"
     }
 }
 
 class MutableHttpHeaders : HttpHeaders() {
-    private val headers = mutableMapOf<String, String>()
+    private val headers = mutableMapOf<String, HttpHeader>()
 
     override val size: Int get() = headers.size
 
-    override fun get(name: String): String? = headers[name]
+    override fun get(name: String): HttpHeader? = headers[name]
 
     fun set(name: String, value: Int) {
         set(name, value.toString())
@@ -71,10 +78,10 @@ class MutableHttpHeaders : HttpHeaders() {
     }
 
     operator fun set(name: String, value: String) {
-        headers[name] = value
+        headers[name] = HttpHeader(name, value)
     }
 
-    override fun iterator(): Iterator<Map.Entry<String, String>> {
-        return headers.iterator()
+    override fun iterator(): Iterator<HttpHeader> {
+        return headers.values.iterator()
     }
 }
