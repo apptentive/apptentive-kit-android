@@ -3,5 +3,7 @@ package apptentive.com.android.network
 import apptentive.com.android.core.TimeInterval
 
 object Constants {
-    const val DEFAULT_REQUEST_TIMEOUT : TimeInterval = 45.0
+    const val DEFAULT_REQUEST_TIMEOUT: TimeInterval = 45.0
+    const val DEFAULT_RETRY_DELAY: TimeInterval = 5.0
+    const val DEFAULT_RETRY_MAX_COUNT = 5
 }
