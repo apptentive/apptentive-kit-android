@@ -60,6 +60,16 @@ abstract class HttpRequest(val method: HttpMethod, val url: String) {
      */
     internal var numRetries: Int = 0
 
+    /**
+     * Resets request parameters before retrying
+     */
+    internal fun reset() {
+        statusCode = null
+        statusMessage = null
+        errorMessage = null
+        responseHeaders = null
+    }
+
     //region Inheritance
 
     /**

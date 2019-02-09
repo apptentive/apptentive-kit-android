@@ -1,11 +1,13 @@
 package apptentive.com.android.network
 
+import android.content.Context
 import apptentive.com.android.core.toMilliseconds
 import apptentive.com.android.core.toSeconds
-import apptentive.com.android.util.StreamUtils
+import apptentive.com.android.util.NetworkUtils
 import java.io.IOException
 import java.io.InputStream
 import java.lang.IllegalStateException
+import java.lang.ref.WeakReference
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.zip.GZIPInputStream
@@ -14,12 +16,19 @@ interface HttpNetwork {
     fun performRequest(request: HttpRequest): HttpResponse
 }
 
-private class HttpNetworkImpl : HttpNetwork {
+private class HttpNetworkImpl(context: Context) : HttpNetwork {
+    private val contextRef = WeakReference(context.applicationContext)
+
     override fun performRequest(request: HttpRequest): HttpResponse {
         val startTime = System.currentTimeMillis()
 
         val connection = openConnection(request)
         try {
+            // check network connection
+            if (!isNetworkConnected) {
+                throw NetworkUnavailableException("Network is not available")
+            }
+
             // request headers
             setRequestHeaders(connection, request.requestHeaders)
 
@@ -143,6 +152,16 @@ private class HttpNetworkImpl : HttpNetwork {
     }
 
     //endregion
+
+    //region Helpers
+
+    private val isNetworkConnected get() = NetworkUtils.isNetworkConnected(context)
+
+    private val context get() = contextRef.get()!! // application context should live as long as application lives
+
+    //endregion
 }
+
+class NetworkUnavailableException(message: String) : IOException(message)
 
 
