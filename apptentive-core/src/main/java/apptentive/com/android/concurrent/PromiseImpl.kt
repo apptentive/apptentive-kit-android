@@ -1,5 +1,8 @@
 package apptentive.com.android.concurrent
 
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags
+
 /**
  * Concrete implementation of the [Promise] interface
  *
@@ -43,11 +46,15 @@ class PromiseImpl<T>(private val completionQueue: ExecutionQueue? = null) : Prom
         try {
             valueCallback(value)
         } catch (e: Exception) {
-            errorCallback(e)
+            onErrorSync(e)
         }
     }
 
     private fun onErrorSync(e: Exception) {
-        errorCallback(e)
+        try {
+            errorCallback(e)
+        } catch (e: Exception) {
+            Log.e(LogTags.core,"Exception in Promise.catch callback", e)
+        }
     }
 }

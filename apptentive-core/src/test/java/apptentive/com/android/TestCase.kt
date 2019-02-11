@@ -9,8 +9,11 @@ import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 
-open class TestCase {
-    val results = mutableListOf<Any>()
+open class TestCase(
+    private val logMessages: Boolean = false,
+    private val logStackTraces: Boolean = false
+) {
+    private val results = mutableListOf<Any>()
 
     // Before/After
 
@@ -28,10 +31,10 @@ open class TestCase {
 
     //endregion
 
-    //region Inheritance
+    //region Factory
 
-    protected fun createExecutionQueueFactory(): ExecutionQueueFactory = MockExecutionQueueFactory(false)
-    protected fun createPlatformLogger(): PlatformLogger = MockPlatformLogger()
+    private fun createExecutionQueueFactory(): ExecutionQueueFactory = MockExecutionQueueFactory(false)
+    private fun createPlatformLogger(): PlatformLogger = MockPlatformLogger(logMessages, logStackTraces)
 
     //endregion
 
@@ -42,7 +45,7 @@ open class TestCase {
     }
 
     protected fun assertResults(vararg expected: Any, clearResults: Boolean = true) {
-        assertEquals(expected, results)
+        assertEquals(expected.toList(), results)
         if (clearResults) {
             results.clear()
         }
@@ -58,12 +61,19 @@ private class MockExecutionQueueFactory(val poseAsMainQueue: Boolean) : Executio
     override fun isMainQueue() = poseAsMainQueue
 }
 
-private class MockPlatformLogger : PlatformLogger {
+private class MockPlatformLogger(
+    private val logMessages: Boolean,
+    private val logStackTraces: Boolean
+) : PlatformLogger {
     override fun log(logLevel: LogLevel, message: String) {
-        print(message)
+        if (logMessages) {
+            print(message)
+        }
     }
 
     override fun log(logLevel: LogLevel, throwable: Throwable) {
-        throwable.printStackTrace()
+        if (logStackTraces) {
+            throwable.printStackTrace()
+        }
     }
 }
