@@ -6,15 +6,19 @@ import apptentive.com.android.core.PlatformLogger
 import apptentive.com.android.core.Provider
 import apptentive.com.android.util.LogLevel
 import org.junit.After
+import org.junit.Assert.*
 import org.junit.Before
 
 open class TestCase {
+    val results = mutableListOf<Any>()
+
     // Before/After
 
     @Before
     fun setUp() {
         Provider.register(createPlatformLogger())
         Provider.register(createExecutionQueueFactory())
+        results.clear()
     }
 
     @After
@@ -28,6 +32,21 @@ open class TestCase {
 
     protected fun createExecutionQueueFactory(): ExecutionQueueFactory = MockExecutionQueueFactory(false)
     protected fun createPlatformLogger(): PlatformLogger = MockPlatformLogger()
+
+    //endregion
+
+    //region Results
+
+    protected fun addResult(result: Any) {
+        results.add(result)
+    }
+
+    protected fun assertResults(vararg expected: Any, clearResults: Boolean = true) {
+        assertEquals(expected, results)
+        if (clearResults) {
+            results.clear()
+        }
+    }
 
     //endregion
 }
