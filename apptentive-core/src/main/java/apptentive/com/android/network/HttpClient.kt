@@ -59,6 +59,8 @@ class HttpClient(
                         request.reset()
                         sendSync(request, promise)
                     }
+                } else {
+                    TODO("Fail request")
                 }
             }
         } catch (e: Exception) {

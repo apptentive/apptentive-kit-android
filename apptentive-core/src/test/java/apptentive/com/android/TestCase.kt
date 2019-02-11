@@ -14,7 +14,7 @@ open class TestCase {
     @Before
     fun setUp() {
         Provider.register(createPlatformLogger())
-        Provider.register(createMainQueueChecker())
+        Provider.register(createExecutionQueueFactory())
     }
 
     @After
@@ -26,7 +26,7 @@ open class TestCase {
 
     //region Inheritance
 
-    protected fun createMainQueueChecker(): ExecutionQueueFactory = MockExecutionQueueFactory(false)
+    protected fun createExecutionQueueFactory(): ExecutionQueueFactory = MockExecutionQueueFactory(false)
     protected fun createPlatformLogger(): PlatformLogger = MockPlatformLogger()
 
     //endregion
