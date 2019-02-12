@@ -8,15 +8,38 @@ import java.util.concurrent.atomic.AtomicBoolean
 /**
  * Executes tasks synchronously on the same thread as dispatched.
  */
-class ImmediateExecutionQueue(name: String) : ExecutionQueue(name) {
+class ImmediateExecutionQueue(
+    name: String,
+    private val dispatchManually: Boolean = false
+) : ExecutionQueue(name) {
     private var currentThread: Thread? = null
+    private val tasks = mutableListOf<() -> Unit>()
 
     override val isCurrent get() = Thread.currentThread() == currentThread
 
     override fun dispatch(delay: TimeInterval, task: () -> Unit) {
+        if (dispatchManually) {
+            tasks.add(task)
+        } else {
+            dispatchTask(task)
+        }
+    }
+
+    fun dispatchAll() {
+        val temp = tasks.toList()
+        tasks.clear()
+        for (task in temp) {
+            dispatchTask(task)
+        }
+    }
+
+    private fun dispatchTask(task: () -> Unit) {
         currentThread = Thread.currentThread()
-        task()
-        currentThread = null
+        try {
+            task()
+        } finally {
+            currentThread = null
+        }
     }
 
     override fun stop() {
