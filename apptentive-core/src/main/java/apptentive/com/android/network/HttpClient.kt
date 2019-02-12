@@ -6,24 +6,31 @@ import apptentive.com.android.concurrent.PromiseImpl
 import java.nio.charset.Charset
 
 /**
+ * Represents HTTP-request dispatcher
+ */
+interface HttpClient {
+    fun <T : HttpRequest> send(request: T): Promise<T>
+}
+
+/**
  * Class responsible for async HTTP-request dispatching.
  *
  * @param [network] underlying HTTP-network implementation.
  * @param [networkQueue] execution queue used for sync request dispatching.
  * @param [retryPolicy] default retry policy for HTTP-request with no custom policy.
  */
-class HttpClient(
+class HttpClientImpl(
     private val network: HttpNetwork,
     private val networkQueue: ExecutionQueue,
     private val retryPolicy: HttpRequestRetryPolicy
-) {
+) : HttpClient {
     /**
      * Sends HTTP-request asynchronously.
      *
      * @param request request to be dispatched.
      * @return promise which represents an async result for the request.
      */
-    fun <T : HttpRequest> send(request: T): Promise<T> {
+    override fun <T : HttpRequest> send(request: T): Promise<T> {
         val promise = PromiseImpl<T>(request.callbackQueue)
         send(request, promise)
         return promise
@@ -75,6 +82,11 @@ class HttpClient(
      * @return flag indicating if request has completed successfully.
      */
     private fun sendSync(request: HttpRequest): Boolean {
+        // check network connection
+        if (!network.isNetworkConnected) {
+            throw NetworkUnavailableException("Network is not available")
+        }
+
         val response = network.performRequest(request)
 
         // setup request parameters

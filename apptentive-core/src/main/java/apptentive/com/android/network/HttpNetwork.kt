@@ -12,23 +12,24 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.zip.GZIPInputStream
 
+/**
+ * Represents a basic network operation and network state query.
+ */
 interface HttpNetwork {
+    val isNetworkConnected: Boolean
     fun performRequest(request: HttpRequest): HttpResponse
 }
 
 private class HttpNetworkImpl(context: Context) : HttpNetwork {
     private val contextRef = WeakReference(context.applicationContext)
 
+    override val isNetworkConnected get() = NetworkUtils.isNetworkConnected(context)
+
     override fun performRequest(request: HttpRequest): HttpResponse {
         val startTime = System.currentTimeMillis()
 
         val connection = openConnection(request)
         try {
-            // check network connection
-            if (!isNetworkConnected) {
-                throw NetworkUnavailableException("Network is not available")
-            }
-
             // request headers
             setRequestHeaders(connection, request.requestHeaders)
 
@@ -154,8 +155,6 @@ private class HttpNetworkImpl(context: Context) : HttpNetwork {
     //endregion
 
     //region Helpers
-
-    private val isNetworkConnected get() = NetworkUtils.isNetworkConnected(context)
 
     private val context get() = contextRef.get()!! // application context should live as long as application lives
 
