@@ -68,7 +68,7 @@ class HttpClientTest : TestCase() {
     }
 
     @Test
-    fun testUnexpectedReponseCode() {
+    fun testUnexpectedResponseCode() {
         val client = createHttpClient()
         sendRequest(client, createMockHttpRequest("request", statusCode = 500))
         dispatchRequests()
