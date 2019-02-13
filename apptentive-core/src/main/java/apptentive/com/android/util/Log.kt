@@ -2,7 +2,7 @@ package apptentive.com.android.util
 
 import apptentive.com.android.concurrent.ExecutionQueue
 import apptentive.com.android.core.PlatformLogger
-import apptentive.com.android.core.Provider
+import apptentive.com.android.core.DependencyProvider
 
 enum class LogLevel {
     Verbose,
@@ -13,7 +13,7 @@ enum class LogLevel {
 }
 
 object Log {
-    private val logger = Provider.of<PlatformLogger>()
+    private val logger = DependencyProvider.of<PlatformLogger>()
 
     fun v(tag: LogTag, message: String) = log(LogLevel.Verbose, tag, message)
     fun d(tag: LogTag, message: String) = log(LogLevel.Debug, tag, message)

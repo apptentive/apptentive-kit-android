@@ -1,10 +1,10 @@
 package apptentive.com.android
 
 import android.app.Application
-import apptentive.com.android.core.Provider
+import apptentive.com.android.core.DependencyProvider
 
 object Apptentive {
     fun register(application: Application) {
-        Provider.register(application)
+        DependencyProvider.register(application)
     }
 }

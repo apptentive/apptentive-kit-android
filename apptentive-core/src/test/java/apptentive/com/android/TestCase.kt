@@ -3,7 +3,7 @@ package apptentive.com.android
 import apptentive.com.android.concurrent.ImmediateExecutionQueue
 import apptentive.com.android.core.ExecutionQueueFactory
 import apptentive.com.android.core.PlatformLogger
-import apptentive.com.android.core.Provider
+import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.util.LogLevel
 import org.junit.After
 import org.junit.Assert.*
@@ -19,14 +19,14 @@ open class TestCase(
 
     @Before
     open fun setUp() {
-        Provider.register(createPlatformLogger())
-        Provider.register(createExecutionQueueFactory())
+        DependencyProvider.register(createPlatformLogger())
+        DependencyProvider.register(createExecutionQueueFactory())
         results.clear()
     }
 
     @After
     open fun tearDown() {
-        Provider.clear()
+        DependencyProvider.clear()
     }
 
     //endregion
