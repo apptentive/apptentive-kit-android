@@ -43,8 +43,7 @@ class JsonConverterTest {
                 stringField = "child value"
             )
         )
-        val jsonConverter = JsonConverterImpl()
-        val expected = jsonConverter.fromJson<MyClass>(json)
+        val expected = JsonConverter.fromJson<MyClass>(json)
         assertEquals(expected, actual)
     }
 }
