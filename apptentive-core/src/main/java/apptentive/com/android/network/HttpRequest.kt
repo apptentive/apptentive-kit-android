@@ -4,20 +4,8 @@ import apptentive.com.android.concurrent.ExecutionQueue
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.UNDEFINED
 import apptentive.com.android.network.Constants.DEFAULT_REQUEST_TIMEOUT
-import apptentive.com.android.util.Log
-import apptentive.com.android.util.LogTags.network
 import kotlin.math.min
 import kotlin.random.Random
-
-/**
- * Successful request completion callback.
- */
-typealias HttpRequestSuccessCallback<T> = (request: HttpRequest<T>, response: HttpResponse<T>) -> Unit
-
-/**
- * Failed request completion callback.
- */
-typealias HttpRequestErrorCallback<T> = (request: HttpRequest<T>, exception: Exception) -> Unit
 
 /**
  * Base class for HTTP requests.
@@ -49,16 +37,6 @@ abstract class HttpRequest<T>(val method: HttpMethod, val url: String, val tag: 
      */
     internal var numRetries: Int = 0
 
-    /**
-     * Successful request completion callback.
-     */
-    private var successCallback: HttpRequestSuccessCallback<T>? = null
-
-    /**
-     * Failed request completion callback.
-     */
-    private var errorCallback: HttpRequestErrorCallback<T>? = null
-
     //region Inheritance
 
     /**
@@ -85,58 +63,6 @@ abstract class HttpRequest<T>(val method: HttpMethod, val url: String, val tag: 
      * Same as [parseResponseObject] but with a limited visibility for the caller.
      */
     internal fun readResponseObject(data: ByteArray): T = parseResponseObject(data)
-
-    //endregion
-
-    //region Listener notifications
-
-    fun onSuccess(callback: HttpRequestSuccessCallback<T>): HttpRequest<T> {
-        successCallback = callback
-        return this
-    }
-
-    fun onError(callback: HttpRequestErrorCallback<T>): HttpRequest<T> {
-        errorCallback = callback
-        return this
-    }
-
-    internal fun notifySuccess(response: HttpResponse<T>) {
-        val callbackQueue = this.callbackQueue
-        if (callbackQueue != null) {
-            callbackQueue.dispatch {
-                notifySuccessGuarded(response)
-            }
-        } else {
-            notifySuccessGuarded(response)
-        }
-    }
-
-    internal fun notifyError(e: Exception) {
-        val callbackQueue = this.callbackQueue
-        if (callbackQueue != null) {
-            callbackQueue.dispatch {
-                notifyErrorGuarded(e)
-            }
-        } else {
-            notifyErrorGuarded(e)
-        }
-    }
-
-    private fun notifySuccessGuarded(response: HttpResponse<T>) {
-        try {
-            successCallback?.invoke(this, response)
-        } catch (e: Exception) {
-            notifyErrorGuarded(e)
-        }
-    }
-
-    private fun notifyErrorGuarded(e: Exception) {
-        try {
-            errorCallback?.invoke(this, e)
-        } catch (e: Exception) {
-            Log.e(network, "Exception while notifying request listener", e)
-        }
-    }
 
     //endregion
 }

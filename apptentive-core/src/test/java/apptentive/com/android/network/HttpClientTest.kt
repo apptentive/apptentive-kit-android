@@ -42,14 +42,13 @@ class HttpClientImplTest : TestCase() {
         val finished = AtomicBoolean(false)
 
         val expected = "Some test data with Unicode chars 文字"
-        val request = MockHttpRequest(content = expected.toByteArray())
-        request.onSuccess { _, res ->
-            assertEquals(expected, res.content)
-            finished.set(true)
-        }
-        client.send(request)
-        dispatchRequests()
+        client.send(MockHttpRequest(content = expected.toByteArray()))
+            .then { response ->
+                assertEquals(expected, response.content)
+                finished.set(true)
+            }
 
+        dispatchRequests()
         assertTrue(finished.get())
     }
 
@@ -60,15 +59,14 @@ class HttpClientImplTest : TestCase() {
         request: HttpRequest<*>,
         retryPolicy: HttpRequestRetryPolicy? = null
     ) {
-        request
-            .onSuccess { _, res ->
-                addResult("finished: ${res.statusCode}")
-            }
-            .onError { _, exception ->
-                addResult("failed: ${exception.message}")
-            }
         request.retryPolicy = retryPolicy
         httpClient.send(request)
+            .then { res ->
+                addResult("finished: ${res.statusCode}")
+            }
+            .catch { exception ->
+                addResult("failed: ${exception.message}")
+            }
     }
 
     private fun createHttpClient(retryPolicy: HttpRequestRetryPolicy? = null): HttpClient {
