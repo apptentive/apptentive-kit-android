@@ -7,10 +7,4 @@ class JsonDeserializer<T>(private val type: Class<T>) : Deserializer<T> {
         @Suppress("UNCHECKED_CAST")
         return JsonConverter.fromJson(json, type) as T
     }
-
-    companion object {
-        inline fun <reified T> of(): Deserializer<T> {
-            return JsonDeserializer(T::class.java)
-        }
-    }
 }
