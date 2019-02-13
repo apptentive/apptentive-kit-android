@@ -9,10 +9,14 @@ import apptentive.com.android.util.LogTags.network
 import kotlin.math.min
 import kotlin.random.Random
 
-// TODO: doc-comments
+/**
+ * Successful request completion callback.
+ */
 typealias HttpRequestSuccessCallback<T> = (request: HttpRequest<T>, response: HttpResponse<T>) -> Unit
 
-// TODO: doc-comments
+/**
+ * Failed request completion callback.
+ */
 typealias HttpRequestErrorCallback<T> = (request: HttpRequest<T>, exception: Exception) -> Unit
 
 /**
@@ -45,16 +49,20 @@ abstract class HttpRequest<T>(val method: HttpMethod, val url: String, val tag: 
      */
     internal var numRetries: Int = 0
 
-    // TODO: doc-comments
+    /**
+     * Successful request completion callback.
+     */
     private var successCallback: HttpRequestSuccessCallback<T>? = null
 
-    // TODO: doc-comments
+    /**
+     * Failed request completion callback.
+     */
     private var errorCallback: HttpRequestErrorCallback<T>? = null
 
     //region Inheritance
 
     /**
-     * Returns the raw POST or PUT body to be sent.
+     * Returns a raw POST or PUT body to be sent.
      */
     protected abstract fun createRequestBody(): ByteArray?
 

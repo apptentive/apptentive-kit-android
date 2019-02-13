@@ -1,7 +1,6 @@
 package apptentive.com.android.network
 
 import java.io.IOException
-import java.nio.charset.Charset
 
 /**
  * Mock HTTP-request implementation for unit testing.

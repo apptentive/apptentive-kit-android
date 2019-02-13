@@ -1,7 +1,6 @@
 package apptentive.com.android.network
 
 import apptentive.com.android.concurrent.ExecutionQueue
-import java.nio.charset.Charset
 
 /**
  * Represents HTTP-request dispatcher
