@@ -2,7 +2,7 @@ package apptentive.com.android.network
 
 import apptentive.com.android.concurrent.ExecutionQueue
 import apptentive.com.android.concurrent.Promise
-import apptentive.com.android.concurrent.PromiseImpl
+import apptentive.com.android.concurrent.AsyncPromise
 
 /**
  * Represents async HTTP-request dispatcher.
@@ -37,7 +37,7 @@ class HttpClientImpl(
      */
     override fun <T> send(request: HttpRequest<T>): Promise<HttpResponse<T>> {
         /* promise will be fulfilled on the request's callback queue (or then network queue if missing) */
-        val promise = PromiseImpl<HttpResponse<T>>(request.callbackQueue)
+        val promise = AsyncPromise<HttpResponse<T>>(request.callbackQueue)
         networkQueue.dispatch {
             try {
                 send(request, promise)
@@ -55,7 +55,7 @@ class HttpClientImpl(
      */
     private fun <T> send(
         request: HttpRequest<T>,
-        promise: PromiseImpl<HttpResponse<T>>
+        promise: AsyncPromise<HttpResponse<T>>
     ) {
         // check network connection first
         if (!network.isNetworkConnected) {

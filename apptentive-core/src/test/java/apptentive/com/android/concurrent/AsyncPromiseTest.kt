@@ -4,10 +4,10 @@ import apptentive.com.android.TestCase
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-class PromiseImplTest : TestCase() {
+class AsyncPromiseTest : TestCase() {
     @Test
     fun testCallbacks() {
-        val promise = PromiseImpl<String>()
+        val promise = AsyncPromise<String>()
 
         // use this queue to dispatch value and error
         val dispatchQueue = BlockingExecutionQueue("dispatch")
@@ -41,7 +41,7 @@ class PromiseImplTest : TestCase() {
         val completionQueue = BlockingExecutionQueue("completion")
 
         // subscribe to callbacks
-        val promise = PromiseImpl<String>(completionQueue)
+        val promise = AsyncPromise<String>(completionQueue)
         promise.then { value ->
             // should be executed on a "completion" queue
             assertTrue(completionQueue.isCurrent)
@@ -68,7 +68,7 @@ class PromiseImplTest : TestCase() {
 
     @Test
     fun testCallbacksThenException() {
-        val promise = PromiseImpl<String>()
+        val promise = AsyncPromise<String>()
         promise.then {
             throw Exception("exception")
         }
@@ -88,7 +88,7 @@ class PromiseImplTest : TestCase() {
     fun testCallbacksThenExceptionCustomQueue() {
         val completionQueue = BlockingExecutionQueue("completion")
 
-        val promise = PromiseImpl<String>(completionQueue)
+        val promise = AsyncPromise<String>(completionQueue)
         promise.then {
             throw Exception("exception")
         }
@@ -106,7 +106,7 @@ class PromiseImplTest : TestCase() {
 
     @Test
     fun testCallbacksCatchException() {
-        val promise = PromiseImpl<String>()
+        val promise = AsyncPromise<String>()
         promise.then {
             throw Exception("exception")
         }
@@ -126,7 +126,7 @@ class PromiseImplTest : TestCase() {
     fun testCallbacksCatchExceptionCustomQueue() {
         val completionQueue = BlockingExecutionQueue("completion")
 
-        val promise = PromiseImpl<String>(completionQueue)
+        val promise = AsyncPromise<String>(completionQueue)
         promise.then {
             throw Exception("exception")
         }

@@ -4,11 +4,11 @@ import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags
 
 /**
- * Concrete implementation of the [Promise] interface
+ * Async implementation of the [Promise] interface
  *
  * @param [completionQueue] optional execution queue to invoke async fulfilment/rejection callbacks.
  */
-class PromiseImpl<T>(private val completionQueue: ExecutionQueue? = null) : Promise<T> {
+class AsyncPromise<T>(private val completionQueue: ExecutionQueue? = null) : Promise<T> {
     private var valueCallback: (value: T) -> Unit = {}
     private var errorCallback: (e: Exception) -> Unit = {}
 
