@@ -98,7 +98,7 @@ class HttpNetworkImpl(context: Context) : HttpNetwork {
     }
 
     private fun setRequestBody(connection: HttpURLConnection, request: HttpRequest<*>) {
-        val requestBody = request.getRequestBody()
+        val requestBody = request.createRequestBody()
         if (requestBody != null && requestBody.isNotEmpty()) {
             val method = request.method
             if (method == HttpMethod.POST || method == HttpMethod.PUT || method == HttpMethod.PATCH) {

@@ -70,7 +70,7 @@ class HttpClientImpl(
             val response = HttpResponse(
                 rawResponse.statusCode,
                 rawResponse.statusMessage,
-                request.readResponseObject(rawResponse.content),
+                request.createResponseObject(rawResponse.content),
                 rawResponse.headers,
                 rawResponse.duration
             )

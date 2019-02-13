@@ -99,10 +99,8 @@ class HttpClientTest : TestCase() {
 
     private fun sendRequest(
         httpClient: HttpClient,
-        request: HttpRequest<*>,
-        retryPolicy: HttpRequestRetryPolicy? = null
+        request: HttpRequest<*>
     ) {
-        request.retryPolicy = retryPolicy
         httpClient.send(request)
             .then { res ->
                 addResult("${request.tag} finished: ${res.statusCode}")

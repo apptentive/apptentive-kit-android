@@ -15,7 +15,8 @@ internal fun createMockHttpRequest(
     response: String? = null,
     responseHeaders: HttpHeaders? = null,
     exceptionOnSend: Boolean = false,
-    exceptionOnReceive: Boolean = false
+    exceptionOnReceive: Boolean = false,
+    retryPolicy: HttpRequestRetryPolicy? = null
 ): HttpRequest<String> {
     val content = response?.toByteArray() ?: ByteArray(0)
 
@@ -49,7 +50,8 @@ internal fun createMockHttpRequest(
         content = content,
         statusCode = statusCode,
         requestSerializer = requestSerializer,
-        responseHeaders = responseHeaders
+        responseHeaders = responseHeaders,
+        retryPolicy = retryPolicy
     )
 }
 
@@ -64,25 +66,24 @@ internal fun <T> createMockHttpRequest(
     statusCode: Int = 200,
     content: ByteArray? = null,
     requestSerializer: Serializer? = null,
-    responseHeaders: HttpHeaders? = null
+    responseHeaders: HttpHeaders? = null,
+    retryPolicy: HttpRequestRetryPolicy? = null
 ): HttpRequest<T> {
-    val request = HttpRequest(
+    return HttpRequest(
         tag = tag,
         method = method,
         url = url ?: "https://example.com",
         requestSerializer = requestSerializer,
-        responseDeserializer = responseDeserializer
+        responseDeserializer = responseDeserializer,
+        retryPolicy = retryPolicy,
+        userData = HttpNetworkResponse(
+            statusCode = statusCode,
+            statusMessage = getStatusMessage(statusCode),
+            content = content ?: ByteArray(0),
+            headers = responseHeaders ?: MutableHttpHeaders(),
+            duration = 0.0
+        )
     )
-
-    request.userData = HttpNetworkResponse(
-        statusCode = statusCode,
-        statusMessage = getStatusMessage(statusCode),
-        content = content ?: ByteArray(0),
-        headers = responseHeaders ?: MutableHttpHeaders(),
-        duration = 0.0
-    )
-
-    return request
 }
 
 private fun getStatusMessage(statusCode: Int): String {
