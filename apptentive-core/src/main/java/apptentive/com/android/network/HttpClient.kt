@@ -1,15 +1,13 @@
 package apptentive.com.android.network
 
 import apptentive.com.android.concurrent.ExecutionQueue
-import apptentive.com.android.concurrent.Promise
-import apptentive.com.android.concurrent.PromiseImpl
 import java.nio.charset.Charset
 
 /**
  * Represents HTTP-request dispatcher
  */
 interface HttpClient {
-    fun <T : HttpRequest> send(request: T): Promise<T>
+    fun <T> send(request: HttpRequest<T>)
 }
 
 /**
@@ -27,51 +25,48 @@ class HttpClientImpl(
     /**
      * Sends HTTP-request asynchronously.
      *
-     * @param request request to be dispatched.
-     * @return promise which represents an async result for the request.
+     * @param request request to be sent.
      */
-    override fun <T : HttpRequest> send(request: T): Promise<T> {
-        val promise = PromiseImpl<T>(request.callbackQueue)
-        send(request, promise)
-        return promise
-    }
-
-    /**
-     * Sends HTTP-request asynchronously.
-     *
-     * @param request request to be dispatched.
-     * @param promise which represents an async result for the request.
-     */
-    private fun <T : HttpRequest> send(request: T, promise: PromiseImpl<T>) {
+    override fun <T> send(request: HttpRequest<T>) {
         networkQueue.dispatch {
-            sendSync(request, promise)
-        }
-    }
-
-    /**
-     * Sends HTTP-request synchronously.
-     *
-     * @param request request to be dispatched.
-     * @param promise which represents an async result for the request.
-     */
-    private fun <T : HttpRequest> sendSync(request: T, promise: PromiseImpl<T>) {
-        try {
-            if (sendSync(request)) {
-                promise.onValue(request)
-            } else {
-                val retryPolicy = retryPolicyForRequest(request)
-                if (retryPolicy.shouldRetry(request)) {
-                    networkQueue.dispatch(retryPolicy.getRetryDelay(request)) {
-                        request.numRetries++
-                        request.reset()
-                        sendSync(request, promise)
-                    }
-                } else {
-                    TODO("Fail request")
-                }
+            try {
+                sendSyncGuarded(request)
+            } catch (e: Exception) {
+                request.notifyError(e)
             }
-        } catch (e: Exception) {
-            promise.onError(e)
+        }
+    }
+
+    /**
+     * Sends HTTP-request synchronously.
+     * @param request request to be dispatched.
+     */
+    private fun <T> sendSyncGuarded(request: HttpRequest<T>) {
+        val networkResponse = performRequest(request)
+
+        // response ok?
+        if (networkResponse.statusCode in 200..299) {
+            val response = HttpResponse(
+                networkResponse.statusCode,
+                networkResponse.statusMessage,
+                request.readResponseObject(networkResponse.content),
+                networkResponse.headers,
+                networkResponse.duration
+            )
+            request.notifySuccess(response)
+            return
+        }
+
+        // attempt to retry
+        val retryPolicy = retryPolicyForRequest(request)
+        if (retryPolicy.shouldRetry(networkResponse.statusCode, request.numRetries)) {
+            networkQueue.dispatch(retryPolicy.getRetryDelay(request.numRetries)) {
+                request.numRetries++
+                send(request)
+            }
+        } else {
+            val errorMessage = networkResponse.content.toString(Charsets.UTF_8)
+            throw UnexpectedResponseException(networkResponse.statusCode, networkResponse.statusMessage, errorMessage)
         }
     }
 
@@ -79,34 +74,19 @@ class HttpClientImpl(
      * Sends HTTP-request synchronously.
      *
      * @param request request to be dispatched.
-     * @return flag indicating if request has completed successfully.
+     * @return raw HTTP-response.
      */
-    private fun sendSync(request: HttpRequest): Boolean {
+    private fun performRequest(request: HttpRequest<*>): HttpNetworkResponse {
         // check network connection
         if (!network.isNetworkConnected) {
             throw NetworkUnavailableException("Network is not available")
         }
 
-        val response = network.performRequest(request)
-
-        // setup request parameters
-        request.statusCode = response.statusCode
-        request.statusMessage = response.statusMessage
-        request.responseHeaders = response.headers
-
-        // request ok?
-        if (response.statusCode in 200..299) {
-            request.handleResponseBody(response.content)
-            return true
-        }
-
-        // error message
-        request.errorMessage = response.content.toString(Charset.forName("UTF-8"))
-        return false
+        return network.performRequest(request)
     }
 
     /**
      * @return retry policy for the [request]
      */
-    private fun <T : HttpRequest> retryPolicyForRequest(request: T) = request.retryPolicy ?: this.retryPolicy
+    private fun retryPolicyForRequest(request: HttpRequest<*>) = request.retryPolicy ?: this.retryPolicy
 }

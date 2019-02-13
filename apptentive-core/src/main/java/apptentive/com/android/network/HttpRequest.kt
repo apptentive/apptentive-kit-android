@@ -4,40 +4,25 @@ import apptentive.com.android.concurrent.ExecutionQueue
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.UNDEFINED
 import apptentive.com.android.network.Constants.DEFAULT_REQUEST_TIMEOUT
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.network
 import kotlin.math.min
 import kotlin.random.Random
+
+// TODO: doc-comments
+typealias HttpRequestSuccessCallback<T> = (request: HttpRequest<T>, response: HttpResponse<T>) -> Unit
+
+// TODO: doc-comments
+typealias HttpRequestErrorCallback<T> = (request: HttpRequest<T>, exception: Exception) -> Unit
 
 /**
  * Base class for HTTP requests.
  */
-abstract class HttpRequest(val method: HttpMethod, val url: String) {
-    /**
-     * HTTP status code for the request. Null-value means request was not sent or failed due to an exception.
-     */
-    var statusCode: Int? = null
-        internal set
-
-    /**
-     * HTTP status message for the request.
-     */
-    var statusMessage: String? = null
-        internal set
-
-    /**
-     * HTTP error message.
-     */
-    var errorMessage: String? = null
-        internal set
-
+abstract class HttpRequest<T>(val method: HttpMethod, val url: String, val tag: String? = null) {
     /**
      * HTTP request headers.
      */
-    val requestHeaders = MutableHttpHeaders()
-
-    /**
-     * HTTP response headers. Null-value means request was not sent or failed due to an exception.
-     */
-    var responseHeaders: HttpHeaders? = null
+    val headers = MutableHttpHeaders()
 
     /**
      * Request timeout in seconds.
@@ -60,15 +45,11 @@ abstract class HttpRequest(val method: HttpMethod, val url: String) {
      */
     internal var numRetries: Int = 0
 
-    /**
-     * Resets request parameters before retrying
-     */
-    internal fun reset() {
-        statusCode = null
-        statusMessage = null
-        errorMessage = null
-        responseHeaders = null
-    }
+    // TODO: doc-comments
+    private var successCallback: HttpRequestSuccessCallback<T>? = null
+
+    // TODO: doc-comments
+    private var errorCallback: HttpRequestErrorCallback<T>? = null
 
     //region Inheritance
 
@@ -81,7 +62,7 @@ abstract class HttpRequest(val method: HttpMethod, val url: String) {
      * Must be implemented to parse the raw network response.
      * This method will be called from a background thread.
      */
-    protected abstract fun parseResponseBody(bytes: ByteArray)
+    protected abstract fun parseResponseObject(bytes: ByteArray): T
 
     //endregion
 
@@ -93,9 +74,61 @@ abstract class HttpRequest(val method: HttpMethod, val url: String) {
     internal fun getRequestBody(): ByteArray? = createRequestBody()
 
     /**
-     * Same as [parseResponseBody] but with a limited visibility for the caller.
+     * Same as [parseResponseObject] but with a limited visibility for the caller.
      */
-    internal fun handleResponseBody(response: ByteArray) = parseResponseBody(response)
+    internal fun readResponseObject(data: ByteArray): T = parseResponseObject(data)
+
+    //endregion
+
+    //region Listener notifications
+
+    fun onSuccess(callback: HttpRequestSuccessCallback<T>): HttpRequest<T> {
+        successCallback = callback
+        return this
+    }
+
+    fun onError(callback: HttpRequestErrorCallback<T>): HttpRequest<T> {
+        errorCallback = callback
+        return this
+    }
+
+    internal fun notifySuccess(response: HttpResponse<T>) {
+        val callbackQueue = this.callbackQueue
+        if (callbackQueue != null) {
+            callbackQueue.dispatch {
+                notifySuccessGuarded(response)
+            }
+        } else {
+            notifySuccessGuarded(response)
+        }
+    }
+
+    internal fun notifyError(e: Exception) {
+        val callbackQueue = this.callbackQueue
+        if (callbackQueue != null) {
+            callbackQueue.dispatch {
+                notifyErrorGuarded(e)
+            }
+        } else {
+            notifyErrorGuarded(e)
+        }
+    }
+
+    private fun notifySuccessGuarded(response: HttpResponse<T>) {
+        try {
+            successCallback?.invoke(this, response)
+        } catch (e: Exception) {
+            notifyErrorGuarded(e)
+        }
+    }
+
+    private fun notifyErrorGuarded(e: Exception) {
+        try {
+            errorCallback?.invoke(this, e)
+        } catch (e: Exception) {
+            Log.e(network, "Exception while notifying request listener", e)
+        }
+    }
 
     //endregion
 }
@@ -105,14 +138,17 @@ abstract class HttpRequest(val method: HttpMethod, val url: String) {
  */
 interface HttpRequestRetryPolicy {
     /**
-     * Determines if [request] should be retried.
+     * Determines if request should be retried.
+     * @param statusCode HTTP-status code of the request.
+     * @param numRetries number of times the request was already retried.
      */
-    fun shouldRetry(request: HttpRequest): Boolean
+    fun shouldRetry(statusCode: Int, numRetries: Int): Boolean
 
     /**
-     * Returns a delay for the [request]'s next retry attempt.
+     * Returns a delay for the next retry.
+     * @param numRetries number of times the request was already retried.
      */
-    fun getRetryDelay(request: HttpRequest): TimeInterval
+    fun getRetryDelay(numRetries: Int): TimeInterval
 }
 
 /**
@@ -122,8 +158,8 @@ class HttpRequestRetryPolicyDefault(
     private val maxNumRetries: Int = Constants.DEFAULT_RETRY_MAX_COUNT,
     private val retryDelay: TimeInterval = Constants.DEFAULT_RETRY_DELAY
 ) : HttpRequestRetryPolicy {
-    override fun shouldRetry(request: HttpRequest): Boolean {
-        if (request.statusCode in 400..499) {
+    override fun shouldRetry(statusCode: Int, numRetries: Int): Boolean {
+        if (statusCode in 400..499) {
             return false // don't retry if request was unauthorized or rejected
         }
 
@@ -131,12 +167,12 @@ class HttpRequestRetryPolicyDefault(
             return true // retry indefinitely
         }
 
-        return request.numRetries <= maxNumRetries
+        return numRetries <= maxNumRetries
     }
 
-    override fun getRetryDelay(request: HttpRequest): TimeInterval {
+    override fun getRetryDelay(numRetries: Int): TimeInterval {
         // exponential back-off
-        val temp = min(MAX_RETRY_CAP, retryDelay * Math.pow(2.0, (request.numRetries - 1).toDouble()))
+        val temp = min(MAX_RETRY_CAP, retryDelay * Math.pow(2.0, (numRetries - 1).toDouble()))
         return temp / 2 * (1.0 + Random.nextDouble())
     }
 

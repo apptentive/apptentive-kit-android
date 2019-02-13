@@ -17,21 +17,21 @@ import java.util.zip.GZIPInputStream
  */
 interface HttpNetwork {
     val isNetworkConnected: Boolean
-    fun performRequest(request: HttpRequest): HttpResponse
+    fun performRequest(request: HttpRequest<*>): HttpNetworkResponse
 }
 
-private class HttpNetworkImpl(context: Context) : HttpNetwork {
+class HttpNetworkImpl(context: Context) : HttpNetwork {
     private val contextRef = WeakReference(context.applicationContext)
 
     override val isNetworkConnected get() = NetworkUtils.isNetworkConnected(context)
 
-    override fun performRequest(request: HttpRequest): HttpResponse {
+    override fun performRequest(request: HttpRequest<*>): HttpNetworkResponse {
         val startTime = System.currentTimeMillis()
 
         val connection = openConnection(request)
         try {
             // request headers
-            setRequestHeaders(connection, request.requestHeaders)
+            setRequestHeaders(connection, request.headers)
 
             // request method
             setRequestMethod(connection, request.method)
@@ -56,7 +56,7 @@ private class HttpNetworkImpl(context: Context) : HttpNetwork {
 
             // duration
             val duration = toSeconds(System.currentTimeMillis() - startTime)
-            return HttpResponse(responseCode, responseMessage, responseBody, responseHeaders, duration)
+            return HttpNetworkResponse(responseCode, responseMessage, responseBody, responseHeaders, duration)
         } finally {
             connection.disconnect()
         }
@@ -67,7 +67,7 @@ private class HttpNetworkImpl(context: Context) : HttpNetwork {
     /**
      * Opens [HttpURLConnection] for a given [request]
      */
-    private fun openConnection(request: HttpRequest): HttpURLConnection {
+    private fun openConnection(request: HttpRequest<*>): HttpURLConnection {
         val timeout = toMilliseconds(request.timeout)
         val connection = createConnection(URL(request.url))
         connection.connectTimeout = timeout
@@ -97,7 +97,7 @@ private class HttpNetworkImpl(context: Context) : HttpNetwork {
         connection.requestMethod = method.toString()
     }
 
-    private fun setRequestBody(connection: HttpURLConnection, request: HttpRequest) {
+    private fun setRequestBody(connection: HttpURLConnection, request: HttpRequest<*>) {
         val requestBody = request.getRequestBody()
         if (requestBody != null && requestBody.isNotEmpty()) {
             val method = request.method
@@ -160,7 +160,5 @@ private class HttpNetworkImpl(context: Context) : HttpNetwork {
 
     //endregion
 }
-
-class NetworkUnavailableException(message: String) : IOException(message)
 
 

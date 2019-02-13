@@ -18,14 +18,14 @@ open class TestCase(
     // Before/After
 
     @Before
-    fun setUp() {
+    open fun setUp() {
         Provider.register(createPlatformLogger())
         Provider.register(createExecutionQueueFactory())
         results.clear()
     }
 
     @After
-    fun tearDown() {
+    open fun tearDown() {
         Provider.clear()
     }
 
