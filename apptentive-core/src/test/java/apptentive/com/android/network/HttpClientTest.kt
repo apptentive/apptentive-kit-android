@@ -2,6 +2,8 @@ package apptentive.com.android.network
 
 import apptentive.com.android.TestCase
 import apptentive.com.android.concurrent.ImmediateExecutionQueue
+import apptentive.com.android.convert.Deserializer
+import apptentive.com.android.convert.Serializer
 import org.junit.Assert.*
 import org.junit.Test
 import java.util.concurrent.atomic.AtomicBoolean
@@ -16,22 +18,63 @@ class HttpClientTest : TestCase() {
         networkQueue = ImmediateExecutionQueue("network", dispatchManually = true)
     }
 
+    @Test(expected = IllegalArgumentException::class)
+    fun testGetRequestWithBody() {
+        HttpRequest(
+            method = HttpMethod.GET,
+            url = "https://example.com",
+            responseDeserializer = FailureDeserializer,
+            requestSerializer = FailureSerializer
+        )
+        fail("Should not get this far")
+    }
+
     @Test
-    fun testStatusCodes() {
+    fun testPostRequestWithoutBody() {
+        HttpRequest(
+            method = HttpMethod.POST,
+            url = "https://example.com",
+            responseDeserializer = FailureDeserializer
+        )
+        // all good
+    }
+
+    @Test
+    fun testSendingRequests() {
         val client = createHttpClient()
-        sendRequest(client, MockHttpRequest("1"))
-        sendRequest(client, MockHttpRequest("2", statusCode = 204))
-        sendRequest(client, MockHttpRequest("3", statusCode = 500))
-        sendRequest(client, MockHttpRequest("4", exceptionOnSend = true))
-        sendRequest(client, MockHttpRequest("5", exceptionOnReceive = true))
+        sendRequest(client, createMockHttpRequest("1"))
+        sendRequest(client, createMockHttpRequest("2", statusCode = 204))
+        sendRequest(client, createMockHttpRequest("3", statusCode = 500))
+        sendRequest(client, createMockHttpRequest("4", exceptionOnSend = true, method = HttpMethod.POST))
+        sendRequest(client, createMockHttpRequest("5", exceptionOnReceive = true))
         dispatchRequests()
 
         assertResults(
-            "finished: 200",
-            "finished: 204",
-            "failed: Unexpected response 500 (Internal Server Error)",
-            "failed: Exception while sending",
-            "failed: Exception while receiving"
+            "1 finished: 200",
+            "2 finished: 204",
+            "3 failed: 500 (Internal Server Error)",
+            "4 exception: failed to send",
+            "5 exception: failed to receive"
+        )
+    }
+
+    @Test
+    fun testSendingRequestNoNetwork() {
+        val client = createHttpClient(networkConnected = false)
+        sendRequest(client, createMockHttpRequest("request"))
+        dispatchRequests()
+
+        assertResults("request failed: no network")
+    }
+
+    @Test
+    fun testUnexpectedReponseCode() {
+        val client = createHttpClient()
+        sendRequest(client, createMockHttpRequest("request", statusCode = 500))
+        dispatchRequests()
+
+        assertResults(
+            "request failed: 500 (Internal Server Error)"
         )
     }
 
@@ -42,7 +85,7 @@ class HttpClientTest : TestCase() {
         val finished = AtomicBoolean(false)
 
         val expected = "Some test data with Unicode chars 文字"
-        client.send(MockHttpRequest(content = expected.toByteArray()))
+        client.send(createMockHttpRequest(response = expected))
             .then { response ->
                 assertEquals(expected, response.content)
                 finished.set(true)
@@ -62,14 +105,24 @@ class HttpClientTest : TestCase() {
         request.retryPolicy = retryPolicy
         httpClient.send(request)
             .then { res ->
-                addResult("finished: ${res.statusCode}")
+                addResult("${request.tag} finished: ${res.statusCode}")
             }
             .catch { exception ->
-                addResult("failed: ${exception.message}")
+                val message =
+                    when (exception) {
+                        is NetworkUnavailableException -> "failed: no network"
+                        is UnexpectedResponseException -> "failed: ${exception.statusCode} (${exception.statusMessage})"
+                        else -> "exception: ${exception.message}"
+                    }
+                addResult("${request.tag} $message")
             }
     }
 
-    private fun createHttpClient(retryPolicy: HttpRequestRetryPolicy? = null): HttpClient {
+    private fun createHttpClient(
+        networkConnected: Boolean = true,
+        retryPolicy: HttpRequestRetryPolicy? = null
+    ): HttpClient {
+        network.networkConnected = networkConnected
         return HttpClientImpl(
             network,
             networkQueue,
@@ -82,6 +135,17 @@ class HttpClientTest : TestCase() {
     }
 
     //endregion
+}
+
+private object FailureSerializer : Serializer {
+    override fun serialize(): ByteArray {
+        throw AssertionError("Failed to deserialize")
+    }
+}
+
+private object FailureDeserializer : Deserializer<String> {
+    override fun deserialize(bytes: ByteArray): String =
+        throw AssertionError("Failed to serialize")
 }
 
 private object HttpRequestNoRetryPolicy : HttpRequestRetryPolicy {

@@ -1,12 +1,20 @@
 package apptentive.com.android.network
 
 import apptentive.com.android.concurrent.ExecutionQueue
+import apptentive.com.android.convert.Deserializer
+import apptentive.com.android.convert.Serializer
 import apptentive.com.android.network.Constants.DEFAULT_REQUEST_TIMEOUT
 
 /**
  * Base class for HTTP requests.
  */
-abstract class HttpRequest<T>(val method: HttpMethod, val url: String, val tag: String? = null) {
+class HttpRequest<T>(
+    val method: HttpMethod,
+    val url: String,
+    private val responseDeserializer: Deserializer<T>,
+    private val requestSerializer: Serializer? = null,
+    val tag: String? = null
+) {
     /**
      * HTTP request headers.
      */
@@ -33,32 +41,38 @@ abstract class HttpRequest<T>(val method: HttpMethod, val url: String, val tag: 
      */
     internal var numRetries: Int = 0
 
-    //region Inheritance
-
     /**
-     * Returns a raw POST or PUT body to be sent.
+     * An optional user data associated with this request
      */
-    protected abstract fun createRequestBody(): ByteArray?
+    var userData: Any? = null
 
-    /**
-     * Must be implemented to parse the raw network response.
-     * This method will be called from a background thread.
-     */
-    protected abstract fun parseResponseObject(bytes: ByteArray): T
+    //region Initialization
+
+    init {
+        if (requestSerializer != null && method != HttpMethod.POST && method != HttpMethod.PUT) {
+            throw IllegalArgumentException("Request body cannot be used with $method method: only POST or PUT are allowed")
+        }
+    }
 
     //endregion
 
     //region Request/Response
 
     /**
-     * Same as [createRequestBody] but with a limited visibility for the caller.
+     * Returns a raw POST or PUT body to be sent.
+     * This method will be called from a background thread.
      */
-    internal fun getRequestBody(): ByteArray? = createRequestBody()
+    internal fun getRequestBody(): ByteArray? {
+        return requestSerializer?.serialize()
+    }
 
     /**
-     * Same as [parseResponseObject] but with a limited visibility for the caller.
+     * Creates an instance of the response content from an array of bytes.
+     * This method will be called from a background thread.
      */
-    internal fun readResponseObject(data: ByteArray): T = parseResponseObject(data)
+    internal fun readResponseObject(data: ByteArray): T {
+        return responseDeserializer.deserialize(data)
+    }
 
     //endregion
 }
