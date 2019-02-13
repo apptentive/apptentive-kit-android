@@ -6,7 +6,7 @@ import org.junit.Assert.*
 import org.junit.Test
 import java.util.concurrent.atomic.AtomicBoolean
 
-class HttpClientImplTest : TestCase() {
+class HttpClientTest : TestCase() {
     private lateinit var network: MockHttpNetwork
     private lateinit var networkQueue: ImmediateExecutionQueue
 
