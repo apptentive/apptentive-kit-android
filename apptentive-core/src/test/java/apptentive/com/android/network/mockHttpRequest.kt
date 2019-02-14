@@ -2,6 +2,7 @@ package apptentive.com.android.network
 
 import apptentive.com.android.convert.Deserializer
 import apptentive.com.android.convert.Serializer
+import apptentive.com.android.core.TimeInterval
 import java.io.IOException
 
 /**
@@ -70,6 +71,31 @@ internal fun <T> createMockHttpRequest(
     responseHeaders: HttpHeaders? = null,
     retryPolicy: HttpRequestRetryPolicy? = null
 ): HttpRequest<T> {
+    val response = createNetworkResponse(
+        statusCode = statusCode,
+        content = content,
+        responseHeaders = responseHeaders
+    )
+    return createMockHttpRequest(
+        responses = arrayOf(response),
+        responseDeserializer = responseDeserializer,
+        requestSerializer = requestSerializer,
+        url = url,
+        method = method,
+        retryPolicy = retryPolicy,
+        tag = tag
+    )
+}
+
+internal fun <T> createMockHttpRequest(
+    responses: Array<HttpNetworkResponse>,
+    responseDeserializer: Deserializer<T>,
+    tag: String? = null,
+    method: HttpMethod = HttpMethod.GET,
+    url: String? = null,
+    requestSerializer: Serializer? = null,
+    retryPolicy: HttpRequestRetryPolicy? = null
+): HttpRequest<T> {
     return HttpRequest(
         tag = tag,
         method = method,
@@ -77,13 +103,22 @@ internal fun <T> createMockHttpRequest(
         requestSerializer = requestSerializer,
         responseDeserializer = responseDeserializer,
         retryPolicy = retryPolicy,
-        userData = HttpNetworkResponse(
-            statusCode = statusCode,
-            statusMessage = getStatusMessage(statusCode),
-            content = content ?: ByteArray(0),
-            headers = responseHeaders ?: MutableHttpHeaders(),
-            duration = 0.0
-        )
+        userData = HttpNetworkResponses(responses)
+    )
+}
+
+internal fun createNetworkResponse(
+    statusCode: Int = 200,
+    content: ByteArray? = null,
+    responseHeaders: HttpHeaders? = null,
+    duration: TimeInterval = 0.0
+): HttpNetworkResponse {
+    return HttpNetworkResponse(
+        statusCode = statusCode,
+        statusMessage = getStatusMessage(statusCode),
+        content = content ?: ByteArray(0),
+        headers = responseHeaders ?: MutableHttpHeaders(),
+        duration = duration
     )
 }
 
