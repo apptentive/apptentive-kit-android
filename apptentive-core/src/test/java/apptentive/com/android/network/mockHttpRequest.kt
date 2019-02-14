@@ -18,9 +18,10 @@ internal fun createMockHttpRequest(
     exceptionOnReceive: Boolean = false,
     retryPolicy: HttpRequestRetryPolicy? = null
 ): HttpRequest<String> {
+    val overrideMethod = if (exceptionOnSend) HttpMethod.POST else method
     val content = response?.toByteArray() ?: ByteArray(0)
+    val includesBody = overrideMethod == HttpMethod.POST || overrideMethod == HttpMethod.PUT
 
-    val includesBody = method == HttpMethod.POST || method == HttpMethod.PUT
     val requestSerializer = if (includesBody) object : Serializer {
         override fun serialize(): ByteArray {
             if (exceptionOnSend) {
@@ -45,7 +46,7 @@ internal fun createMockHttpRequest(
     return createMockHttpRequest(
         responseDeserializer = responseDeserializer,
         tag = tag,
-        method = method,
+        method = overrideMethod,
         url = url,
         content = content,
         statusCode = statusCode,
@@ -90,7 +91,7 @@ private fun getStatusMessage(statusCode: Int): String {
     return when (statusCode) {
         200 -> "OK"
         204 -> "No Content"
-        400 -> "Bad Request"
+        401 -> "Unauthorized"
         500 -> "Internal Server Error"
         else -> "Unknown"
     }

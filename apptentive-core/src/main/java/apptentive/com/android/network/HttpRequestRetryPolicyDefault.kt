@@ -21,7 +21,7 @@ class HttpRequestRetryPolicyDefault(
             return true // retry indefinitely
         }
 
-        return numRetries <= maxNumRetries
+        return numRetries < maxNumRetries
     }
 
     override fun getRetryDelay(numRetries: Int): TimeInterval {

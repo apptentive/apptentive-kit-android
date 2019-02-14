@@ -45,7 +45,7 @@ class HttpClientTest : TestCase() {
         sendRequest(client, createMockHttpRequest("1"))
         sendRequest(client, createMockHttpRequest("2", statusCode = 204))
         sendRequest(client, createMockHttpRequest("3", statusCode = 500))
-        sendRequest(client, createMockHttpRequest("4", exceptionOnSend = true, method = HttpMethod.POST))
+        sendRequest(client, createMockHttpRequest("4", exceptionOnSend = true))
         sendRequest(client, createMockHttpRequest("5", exceptionOnReceive = true))
         dispatchRequests()
 
@@ -73,9 +73,7 @@ class HttpClientTest : TestCase() {
         sendRequest(client, createMockHttpRequest("request", statusCode = 500))
         dispatchRequests()
 
-        assertResults(
-            "request failed: 500 (Internal Server Error)"
-        )
+        assertResults("request failed: 500 (Internal Server Error)")
     }
 
     @Test
@@ -93,6 +91,104 @@ class HttpClientTest : TestCase() {
 
         dispatchRequests()
         assertTrue(finished.get())
+    }
+
+    @Test
+    fun testRetryRequest() {
+        val client = createHttpClient(
+            retryPolicy = HttpRequestRetryPolicyDefault(maxNumRetries = 2),
+            listener = object : HttpClientListener {
+                override fun onRequestStart(client: HttpClient, request: HttpRequest<*>) {
+                    addResult("${request.tag} start")
+                }
+
+                override fun onRequestRetry(client: HttpClient, request: HttpRequest<*>) {
+                    addResult("${request.tag} retry: ${request.numRetries}")
+                }
+
+                override fun onRequestComplete(client: HttpClient, request: HttpRequest<*>) {
+                    addResult("${request.tag} complete")
+                }
+            }
+        )
+
+        // 1. server error
+        sendRequest(client, createMockHttpRequest("1", statusCode = 500))
+
+        dispatchRequests()
+        assertResults("1 start")
+
+        dispatchRequests()
+        assertResults("1 retry: 1")
+
+        dispatchRequests()
+        assertResults(
+            "1 retry: 2",
+            "1 complete",
+            "1 failed: 500 (Internal Server Error)"
+        )
+
+        dispatchRequests()
+        assertResults()
+
+        // 2. unauthorized
+        sendRequest(client, createMockHttpRequest("2", statusCode = 401))
+
+        dispatchRequests()
+        assertResults(
+            "2 start",
+            "2 complete",
+            "2 failed: 401 (Unauthorized)"
+        )
+
+        dispatchRequests()
+        assertResults()
+
+        // 3. exception on send
+        sendRequest(client, createMockHttpRequest("3", exceptionOnSend = true))
+
+        dispatchRequests()
+        assertResults(
+            "3 start",
+            "3 complete",
+            "3 exception: failed to send"
+        )
+
+        dispatchRequests()
+        assertResults()
+
+        // 4. exception on receive
+        sendRequest(client, createMockHttpRequest("4", exceptionOnReceive = true))
+
+        dispatchRequests()
+        assertResults(
+            "4 start",
+            "4 complete",
+            "4 exception: failed to receive"
+        )
+
+        dispatchRequests()
+        assertResults()
+
+        // 5. no network
+        network.networkConnected = false
+        sendRequest(client, createMockHttpRequest("5"))
+
+        dispatchRequests()
+        assertResults("5 start")
+
+        dispatchRequests()
+        assertResults("5 retry: 1")
+
+        dispatchRequests()
+        assertResults(
+            "5 retry: 2",
+            "5 complete",
+            "5 failed: no network"
+        )
+
+        dispatchRequests()
+        assertResults()
     }
 
     //region Helpers
@@ -118,13 +214,15 @@ class HttpClientTest : TestCase() {
 
     private fun createHttpClient(
         networkConnected: Boolean = true,
-        retryPolicy: HttpRequestRetryPolicy? = null
+        retryPolicy: HttpRequestRetryPolicy? = null,
+        listener: HttpClientListener? = null
     ): HttpClient {
         network.networkConnected = networkConnected
         return HttpClientImpl(
-            network,
-            networkQueue,
-            retryPolicy ?: HttpRequestNoRetryPolicy
+            network = network,
+            networkQueue = networkQueue,
+            retryPolicy = retryPolicy ?: HttpRequestNoRetryPolicy,
+            listener = listener
         )
     }
 
