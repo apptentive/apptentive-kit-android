@@ -18,6 +18,9 @@ class HttpClientTest : TestCase() {
         networkQueue = ImmediateExecutionQueue("network", dispatchManually = true)
     }
 
+    //region Initialization tests
+
+    /* Only POST and PUT requests can have bodies */
     @Test(expected = IllegalArgumentException::class)
     fun testGetRequestWithBody() {
         HttpRequest(
@@ -29,6 +32,7 @@ class HttpClientTest : TestCase() {
         fail("Should not get this far")
     }
 
+    /* POST and PUT requests can have empty bodies (allowed but bad practice) */
     @Test
     fun testPostRequestWithoutBody() {
         HttpRequest(
@@ -39,6 +43,11 @@ class HttpClientTest : TestCase() {
         // all good
     }
 
+    //endregion
+
+    //region Sending tests
+
+    /* Different behaviour based on status code */
     @Test
     fun testSendingRequests() {
         val client = createHttpClient()
@@ -58,6 +67,7 @@ class HttpClientTest : TestCase() {
         )
     }
 
+    /* Fails gracefully if network is missing */
     @Test
     fun testSendingRequestNoNetwork() {
         val client = createHttpClient(networkConnected = false)
@@ -67,6 +77,7 @@ class HttpClientTest : TestCase() {
         assertResults("request failed: no network")
     }
 
+    /* Fails with [UnexpectedResponseException] if request was not successful */
     @Test
     fun testUnexpectedResponseCode() {
         val client = createHttpClient()
@@ -76,6 +87,11 @@ class HttpClientTest : TestCase() {
         assertResults("request failed: 500 (Internal Server Error)")
     }
 
+    //endregion
+
+    //region Response data tests
+
+    /* Callbacks must be properly executed */
     @Test
     fun testResponseData() {
         val client = createHttpClient()
@@ -93,106 +109,120 @@ class HttpClientTest : TestCase() {
         assertTrue(finished.get())
     }
 
+    //endregion
+
+    //region Retry logic tests
+
+    /* Should retry on 5xx */
     @Test
-    fun testRetryRequest() {
-        val client = createHttpClient(
-            retryPolicy = HttpRequestRetryPolicyDefault(maxNumRetries = 2),
-            listener = object : HttpClientListener {
-                override fun onRequestStart(client: HttpClient, request: HttpRequest<*>) {
-                    addResult("${request.tag} start")
-                }
+    fun testRetryServerError() {
+        val client = createHttpClientForRetry()
 
-                override fun onRequestRetry(client: HttpClient, request: HttpRequest<*>) {
-                    addResult("${request.tag} retry: ${request.numRetries}")
-                }
-
-                override fun onRequestComplete(client: HttpClient, request: HttpRequest<*>) {
-                    addResult("${request.tag} complete")
-                }
-            }
-        )
-
-        // 1. server error
-        sendRequest(client, createMockHttpRequest("1", statusCode = 500))
+        sendRequest(client, createMockHttpRequest("request", statusCode = 500))
 
         dispatchRequests()
-        assertResults("1 start")
+        assertResults("request start")
 
         dispatchRequests()
-        assertResults("1 retry: 1")
+        assertResults("request retry: 1")
 
         dispatchRequests()
         assertResults(
-            "1 retry: 2",
-            "1 complete",
-            "1 failed: 500 (Internal Server Error)"
-        )
-
-        dispatchRequests()
-        assertResults()
-
-        // 2. unauthorized
-        sendRequest(client, createMockHttpRequest("2", statusCode = 401))
-
-        dispatchRequests()
-        assertResults(
-            "2 start",
-            "2 complete",
-            "2 failed: 401 (Unauthorized)"
-        )
-
-        dispatchRequests()
-        assertResults()
-
-        // 3. exception on send
-        sendRequest(client, createMockHttpRequest("3", exceptionOnSend = true))
-
-        dispatchRequests()
-        assertResults(
-            "3 start",
-            "3 complete",
-            "3 exception: failed to send"
-        )
-
-        dispatchRequests()
-        assertResults()
-
-        // 4. exception on receive
-        sendRequest(client, createMockHttpRequest("4", exceptionOnReceive = true))
-
-        dispatchRequests()
-        assertResults(
-            "4 start",
-            "4 complete",
-            "4 exception: failed to receive"
-        )
-
-        dispatchRequests()
-        assertResults()
-
-        // 5. no network
-        network.networkConnected = false
-        sendRequest(client, createMockHttpRequest("5"))
-
-        dispatchRequests()
-        assertResults("5 start")
-
-        dispatchRequests()
-        assertResults("5 retry: 1")
-
-        dispatchRequests()
-        assertResults(
-            "5 retry: 2",
-            "5 complete",
-            "5 failed: no network"
+            "request retry: 2",
+            "request complete",
+            "request failed: 500 (Internal Server Error)"
         )
 
         dispatchRequests()
         assertResults()
     }
 
+    /* Should not retry on 4xx */
+    @Test
+    fun testRetryAuthError() {
+        val client = createHttpClientForRetry()
+
+        sendRequest(client, createMockHttpRequest("request", statusCode = 401))
+
+        dispatchRequests()
+        assertResults(
+            "request start",
+            "request complete",
+            "request failed: 401 (Unauthorized)"
+        )
+
+        dispatchRequests()
+        assertResults()
+    }
+
+    /* Should not retry on send exception */
+    @Test
+    fun testRetryOnSendException() {
+        val client = createHttpClientForRetry()
+
+        sendRequest(client, createMockHttpRequest("request", exceptionOnSend = true))
+
+        dispatchRequests()
+        assertResults(
+            "request start",
+            "request complete",
+            "request exception: failed to send"
+        )
+
+        dispatchRequests()
+        assertResults()
+    }
+
+    /* Should not retry on receive exception */
+    @Test
+    fun testRetryOnReceiveException() {
+        val client = createHttpClientForRetry()
+
+        sendRequest(client, createMockHttpRequest("request", exceptionOnReceive = true))
+
+        dispatchRequests()
+        assertResults(
+            "request start",
+            "request complete",
+            "request exception: failed to receive"
+        )
+
+        dispatchRequests()
+        assertResults()
+    }
+
+    /* Should retry on a disconnected network */
+    @Test
+    fun testRetryOnDisconnectedNetwork() {
+        val client = createHttpClientForRetry()
+
+        network.networkConnected = false
+        sendRequest(client, createMockHttpRequest("request"))
+
+        dispatchRequests()
+        assertResults("request start")
+
+        dispatchRequests()
+        assertResults("request retry: 1")
+
+        dispatchRequests()
+        assertResults(
+            "request retry: 2",
+            "request complete",
+            "request failed: no network"
+        )
+
+        dispatchRequests()
+        assertResults()
+    }
+
+    //endregion
+
     //region Helpers
 
+    /**
+     * Sends request and captures the result for checking.
+     */
     private fun sendRequest(
         httpClient: HttpClient,
         request: HttpRequest<*>
@@ -212,6 +242,19 @@ class HttpClientTest : TestCase() {
             }
     }
 
+    /**
+     * Creates HttpClient for testing retry logic.
+     */
+    private fun createHttpClientForRetry(): HttpClient {
+        return createHttpClient(
+            retryPolicy = HttpRequestRetryPolicyDefault(maxNumRetries = 2),
+            listener = mockClientListener
+        )
+    }
+
+    /**
+     * Creates HttpClient with mock network.
+     */
     private fun createHttpClient(
         networkConnected: Boolean = true,
         retryPolicy: HttpRequestRetryPolicy? = null,
@@ -226,24 +269,57 @@ class HttpClientTest : TestCase() {
         )
     }
 
+    /**
+     * Dispatches queued requests.
+     */
     private fun dispatchRequests() {
         networkQueue.dispatchAll()
     }
 
     //endregion
+
+    //region Objects
+
+    /**
+     * Mock HttpClient listener for capturing request states.
+     */
+    private val mockClientListener = object : HttpClientListener {
+        override fun onRequestStart(client: HttpClient, request: HttpRequest<*>) {
+            addResult("${request.tag} start")
+        }
+
+        override fun onRequestRetry(client: HttpClient, request: HttpRequest<*>) {
+            addResult("${request.tag} retry: ${request.numRetries}")
+        }
+
+        override fun onRequestComplete(client: HttpClient, request: HttpRequest<*>) {
+            addResult("${request.tag} complete")
+        }
+    }
+
+    //endregion
 }
 
+/**
+ * Always fails serialization.
+ */
 private object FailureSerializer : Serializer {
     override fun serialize(): ByteArray {
         throw AssertionError("Failed to deserialize")
     }
 }
 
+/**
+ * Always fails deserialization.
+ */
 private object FailureDeserializer : Deserializer<String> {
     override fun deserialize(bytes: ByteArray): String =
         throw AssertionError("Failed to serialize")
 }
 
+/**
+ * Retry policy for immediate failure.
+ */
 private object HttpRequestNoRetryPolicy : HttpRequestRetryPolicy {
     override fun shouldRetry(statusCode: Int, numRetries: Int) = false
     override fun getRetryDelay(numRetries: Int) = 0.0
