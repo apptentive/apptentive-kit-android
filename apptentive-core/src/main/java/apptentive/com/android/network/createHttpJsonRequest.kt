@@ -5,20 +5,22 @@ import apptentive.com.android.convert.JsonSerializer
 
 /**
  * Helper function for creating JSON HTTP-requests.
- * @param content optional object which would be converted to JSON POST-body.
+ * @param requestObject optional object which would be converted to JSON POST-body.
  */
-inline fun <reified T> HttpJsonRequest(
+inline fun <reified T> createHttpJsonRequest(
     method: HttpMethod,
     url: String,
-    content: Any? = null,
-    tag: String? = null
+    requestObject: Any? = null,
+    tag: String? = null,
+    userData: Any? = null
 ): HttpRequest<T> {
     return HttpRequest(
         method = method,
-        requestSerializer = if (content != null) JsonSerializer(content) else null,
+        requestSerializer = if (requestObject != null) JsonSerializer(requestObject) else null,
         responseDeserializer = JsonDeserializer(T::class.java),
         url = url,
-        tag = tag
+        tag = tag,
+        userData = userData
     )
 }
 
