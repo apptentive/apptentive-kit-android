@@ -8,7 +8,7 @@ import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags
 
 /**
- * Represents async HTTP-request dispatcher.
+ * Represents an abstract async HTTP-request dispatcher.
  */
 interface HttpClient {
     /**
@@ -21,12 +21,12 @@ interface HttpClient {
 }
 
 /**
- * Class responsible for async HTTP-request dispatching.
+ * Concrete implementation of the async HTTP-request dispatcher.
  *
  * @param [network] underlying HTTP-network implementation.
  * @param [networkQueue] execution queue used for sync request dispatching.
  * @param [retryPolicy] default retry policy for HTTP-request with no custom policy.
- * @param [listener] optional [HttpClientListener]
+ * @param [listener] optional [HttpClientListener] for tracking status of the requests.
  */
 class HttpClientImpl(
     private val network: HttpNetwork,
@@ -34,11 +34,13 @@ class HttpClientImpl(
     private val retryPolicy: HttpRequestRetryPolicy,
     private val listener: HttpClientListener? = null
 ) : HttpClient {
+    //region Request sending
+
     /**
      * Sends HTTP-request asynchronously.
      *
      * @param request request to be sent.
-     * @return promise to be fulfilled when request is completed
+     * @return promise for the [HttpResponse] to fulfill or reject when completed.
      */
     override fun <T> send(request: HttpRequest<T>): Promise<HttpResponse<T>> {
         /* promise will be fulfilled on the request's callback queue (or then network queue if missing) */
@@ -53,17 +55,24 @@ class HttpClientImpl(
         return promise
     }
 
+    /**
+     * Sends HTTP-request synchronously.
+     *
+     * @param request request to be sent.
+     * @param promise for the [HttpResponse] to fulfill or reject when completed.
+     */
     private fun <T> sendSync(
         request: HttpRequest<T>,
         promise: AsyncPromise<HttpResponse<T>>
     ) {
         try {
-            // send sync request
-            val response = getResponse(request, promise)
-
-            // fulfill promise
+            val response = getResponseSync(request)
             if (response != null) {
+                // fulfill promise
                 promise.onValue(response)
+            } else {
+                // attempt another retry
+                scheduleRetry(request, promise)
             }
         } catch (e: Exception) {
             // notify listener
@@ -75,18 +84,16 @@ class HttpClientImpl(
     }
 
     /**
-     * Sends HTTP-request synchronously.
-     * @param request request to be dispatched.
-     * @return [HttpResponse] if request completed successfully or null if failed or retrying
+     * Receives [HttpResponse] synchronously.
+     *
+     * @param request request to send.
+     * @return [HttpResponse] object if request completed successfully or null if retrying
      */
-    private fun <T> getResponse(
-        request: HttpRequest<T>,
-        promise: AsyncPromise<HttpResponse<T>>
-    ): HttpResponse<T>? {
-        // check network connection first
+    private fun <T> getResponseSync(request: HttpRequest<T>): HttpResponse<T>? {
+        // check network status
         if (!network.isNetworkConnected) {
-            // attempt to retry
-            if (retry(request, UNDEFINED, promise)) {
+            // should we retry?
+            if (shouldRetry(request)) {
                 return null
             }
 
@@ -111,39 +118,57 @@ class HttpClientImpl(
             )
         }
 
-        // attempt to retry
-        if (!retry(request, statusCode, promise)) {
-            val errorMessage = rawResponse.content.toString(Charsets.UTF_8)
-            throw UnexpectedResponseException(statusCode, statusMessage, errorMessage)
+        // should we retry?
+        if (shouldRetry(request, statusCode)) {
+            return null
         }
 
-        return null
+        // give up
+        val errorMessage = rawResponse.content.toString(Charsets.UTF_8)
+        throw UnexpectedResponseException(statusCode, statusMessage, errorMessage)
     }
 
-    private fun <T >retry(
-        request: HttpRequest<T>,
-        statusCode: Int,
-        promise: AsyncPromise<HttpResponse<T>>
-    ): Boolean {
+    //endregion
+
+    //region Retry
+
+    /**
+     * @param statusCode HTTP-status code of the response or null for an exception.
+     * @return true if [request] should be retried again
+     */
+    private fun <T> shouldRetry(request: HttpRequest<T>, statusCode: Int? = null): Boolean {
         val retryPolicy = retryPolicyForRequest(request)
-        if (retryPolicy.shouldRetry(statusCode, request.numRetries)) {
-            val delay = retryPolicy.getRetryDelay(request.numRetries)
-            networkQueue.dispatch(delay) {
-                request.numRetries++
-
-                // notify listener
-                notifyOnRetry(request)
-
-                // send request
-                sendSync(request, promise)
-            }
-            return true
-        }
-        return false
+        return retryPolicy.shouldRetry(statusCode ?: UNDEFINED, request.numRetries)
     }
+
+    /**
+     * Schedules retry on the network queue according to retry policy.
+     *
+     * @param request request to be sent.
+     * @param promise for the [HttpResponse] to fulfill or reject when completed.
+     */
+    private fun <T> scheduleRetry(
+        request: HttpRequest<T>,
+        promise: AsyncPromise<HttpResponse<T>>
+    ) {
+        val retryPolicy = retryPolicyForRequest(request)
+        val delay = retryPolicy.getRetryDelay(request.numRetries)
+        networkQueue.dispatch(delay) {
+            request.numRetries++
+
+            // notify listener
+            notifyOnRetry(request)
+
+            // send request
+            sendSync(request, promise)
+        }
+    }
+
+    //endregion
 
     //region Listener notifications
 
+    /** Notify onStart listener */
     private fun <T> notifyOnStart(request: HttpRequest<T>) {
         try {
             listener?.onRequestStart(this, request)
@@ -152,6 +177,7 @@ class HttpClientImpl(
         }
     }
 
+    /** Notify onRetry listener */
     private fun <T> notifyOnRetry(request: HttpRequest<T>) {
         try {
             listener?.onRequestRetry(this, request)
@@ -160,6 +186,7 @@ class HttpClientImpl(
         }
     }
 
+    /** Notify onComplete listener */
     private fun <T> notifyOnComplete(request: HttpRequest<T>) {
         try {
             listener?.onRequestComplete(this, request)
@@ -180,6 +207,7 @@ class HttpClientImpl(
     //endregion
 }
 
+// TODO: doc-comments
 interface HttpClientListener {
     fun onRequestStart(client: HttpClient, request: HttpRequest<*>)
     fun onRequestRetry(client: HttpClient, request: HttpRequest<*>)
