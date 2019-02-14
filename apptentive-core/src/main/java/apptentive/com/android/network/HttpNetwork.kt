@@ -113,7 +113,9 @@ class HttpNetworkImpl(context: Context) : HttpNetwork {
     private fun getResponseHeaders(connection: HttpURLConnection): HttpHeaders {
         val headers = MutableHttpHeaders()
         for (header in connection.headerFields) {
-            headers[header.key] = header.value.joinToString(separator = ",")
+            val name = header.key ?: continue // HttpUrlConnection includes the status line as a header with a null key
+            val values = header.value
+            headers[name] = values.joinToString(separator = ",")
         }
         return headers
     }
