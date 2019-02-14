@@ -1,6 +1,7 @@
 package apptentive.com.android.network
 
 import apptentive.com.android.convert.Deserializer
+import apptentive.com.android.convert.JsonSerializer
 import apptentive.com.android.convert.Serializer
 import apptentive.com.android.core.TimeInterval
 import java.io.IOException
@@ -111,6 +112,9 @@ internal fun <T> createMockHttpRequest(
     )
 }
 
+/**
+ * Creates a generic mock HTTP-request with a sequence of responses.
+ */
 internal fun <T> createMockHttpRequest(
     responses: Array<HttpNetworkResponse>,
     responseDeserializer: Deserializer<T>,
@@ -131,6 +135,53 @@ internal fun <T> createMockHttpRequest(
     )
 }
 
+internal inline fun <reified T : Any> createMockJsonRequest(
+    responseObject: T,
+    requestObject: Any? = null,
+    tag: String? = null,
+    method: HttpMethod = HttpMethod.GET,
+    url: String? = null
+): HttpRequest<T> {
+    val userData = createNetworkResponses(
+        content = JsonSerializer(responseObject).serialize()
+    )
+    val overrideMethod = if (requestObject != null) HttpMethod.POST else method
+    return createHttpJsonRequest(
+        method = overrideMethod,
+        url = url ?: "https://example.com",
+        requestObject = requestObject,
+        tag = tag,
+        userData = userData
+    )
+}
+
+
+internal fun createNetworkResponses(vararg responses: HttpNetworkResponse): HttpNetworkResponses {
+    return HttpNetworkResponses(responses)
+}
+
+/**
+ * Helper function for creating mock network responses.
+ */
+internal fun createNetworkResponses(
+    statusCode: Int = 200,
+    content: ByteArray? = null,
+    responseHeaders: HttpHeaders? = null,
+    duration: TimeInterval = 0.0
+): HttpNetworkResponses {
+    return createNetworkResponses(
+        createNetworkResponse(
+            statusCode = statusCode,
+            content = content,
+            responseHeaders = responseHeaders,
+            duration = duration
+        )
+    )
+}
+
+/**
+ * Helper function for creating mock network responses.
+ */
 internal fun createNetworkResponse(
     statusCode: Int = 200,
     content: ByteArray? = null,

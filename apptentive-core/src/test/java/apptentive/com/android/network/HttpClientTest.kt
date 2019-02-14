@@ -96,20 +96,40 @@ class HttpClientTest : TestCase() {
     fun testResponseData() {
         val client = createHttpClient()
 
-        val finished = AtomicBoolean(false)
-
         val expected = "Some test data with Unicode chars 文字"
-        client.send(createMockHttpRequest(response = expected))
-            .then { response ->
-                assertEquals(expected, response.content)
-                finished.set(true)
-            }
+        var actual: String? = null
 
+        client.send(createMockHttpRequest(response = expected))
+            .then { res -> actual = res.content }
         dispatchRequests()
-        assertTrue(finished.get())
+
+        assertEquals(expected, actual)
     }
 
     //endregion
+
+    /**
+     * Json-requests tests
+     */
+    /* Should properly decode json responses */
+    @Test
+    fun testJsonResponse() {
+        val expected = MyResponse()
+        expected.value = "value"
+
+        val client = createHttpClient()
+        val request = createMockJsonRequest(
+            responseObject = expected
+        )
+
+        var actual: MyResponse? = null
+        client.send(request).then { res ->
+            actual = res.content
+        }
+        dispatchRequests()
+
+        assertEquals(expected, actual)
+    }
 
     //region Retry logic tests
 
@@ -254,7 +274,8 @@ class HttpClientTest : TestCase() {
             createNetworkResponse(statusCode = 200)  // woo-hoo!
         )
 
-        sendRequest(client, createMockHttpRequest(
+        sendRequest(
+            client, createMockHttpRequest(
                 tag = "request",
                 responses = responses
             )
@@ -384,4 +405,19 @@ private object FailureDeserializer : Deserializer<String> {
 private object HttpRequestNoRetryPolicy : HttpRequestRetryPolicy {
     override fun shouldRetry(statusCode: Int, numRetries: Int) = false
     override fun getRetryDelay(numRetries: Int) = 0.0
+}
+
+/* For json request testing */
+private class MyResponse {
+    var value: String? = null
+
+    override fun toString() = """{"value": ${if (value != null) "\"$value\"" else "null"}}"""
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        other as MyResponse
+        if (value != other.value) return false
+        return true
+    }
 }

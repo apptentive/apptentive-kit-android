@@ -2,7 +2,7 @@ package apptentive.com.android.network
 
 import kotlin.math.min
 
-internal class HttpNetworkResponses(private val responses: Array<HttpNetworkResponse>) {
+internal class HttpNetworkResponses(private val responses: Array<out HttpNetworkResponse>) {
     private var nextResponse = 0
 
     fun next(): HttpNetworkResponse {
