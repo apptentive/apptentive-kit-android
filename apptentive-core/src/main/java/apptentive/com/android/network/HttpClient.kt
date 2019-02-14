@@ -68,6 +68,9 @@ class HttpClientImpl(
         try {
             val response = getResponseSync(request)
             if (response != null) {
+                // notify listener
+                notifyOnComplete(request)
+
                 // fulfill promise
                 promise.onValue(response)
             } else {

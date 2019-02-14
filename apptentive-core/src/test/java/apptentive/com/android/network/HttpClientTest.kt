@@ -216,6 +216,67 @@ class HttpClientTest : TestCase() {
         assertResults()
     }
 
+    /* Should succeed when network is back */
+    @Test
+    fun testRetryRestoredNetwork() {
+        val client = createHttpClientForRetry()
+
+        network.networkConnected = false
+        sendRequest(client, createMockHttpRequest("request"))
+
+        dispatchRequests()
+        assertResults("request start")
+
+        dispatchRequests()
+        assertResults("request retry: 1")
+
+        network.networkConnected = true
+
+        dispatchRequests()
+        assertResults(
+            "request retry: 2",
+            "request complete",
+            "request finished: 200"
+        )
+
+        dispatchRequests()
+        assertResults()
+    }
+
+    /* Should retry on a disconnected network */
+    @Test
+    fun testRetrySuccess() {
+        val client = createHttpClientForRetry()
+
+        val responses = arrayOf(
+            createNetworkResponse(statusCode = 500), // d'oh!
+            createNetworkResponse(statusCode = 500), // d'oh!
+            createNetworkResponse(statusCode = 200)  // woo-hoo!
+        )
+
+        sendRequest(client, createMockHttpRequest(
+                tag = "request",
+                responses = responses
+            )
+        )
+
+        dispatchRequests()
+        assertResults("request start")
+
+        dispatchRequests()
+        assertResults("request retry: 1")
+
+        dispatchRequests()
+        assertResults(
+            "request retry: 2",
+            "request complete",
+            "request finished: 200"
+        )
+
+        dispatchRequests()
+        assertResults()
+    }
+
     //endregion
 
     //region Helpers

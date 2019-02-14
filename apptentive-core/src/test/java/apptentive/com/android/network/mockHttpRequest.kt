@@ -43,7 +43,6 @@ internal fun createMockHttpRequest(
         }
     }
 
-
     return createMockHttpRequest(
         responseDeserializer = responseDeserializer,
         tag = tag,
@@ -53,6 +52,31 @@ internal fun createMockHttpRequest(
         statusCode = statusCode,
         requestSerializer = requestSerializer,
         responseHeaders = responseHeaders,
+        retryPolicy = retryPolicy
+    )
+}
+
+internal fun createMockHttpRequest(
+    responses: Array<HttpNetworkResponse>,
+    tag: String? = null,
+    method: HttpMethod = HttpMethod.GET,
+    url: String? = null,
+    requestSerializer: Serializer? = null,
+    retryPolicy: HttpRequestRetryPolicy? = null
+): HttpRequest<String> {
+    val deserializer = object : Deserializer<String> {
+        override fun deserialize(bytes: ByteArray): String {
+            return String(bytes)
+        }
+    }
+
+    return createMockHttpRequest(
+        responses = responses,
+        responseDeserializer = deserializer,
+        tag = tag,
+        method = method,
+        url = url,
+        requestSerializer = requestSerializer,
         retryPolicy = retryPolicy
     )
 }
