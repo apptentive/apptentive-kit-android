@@ -3,6 +3,8 @@ package apptentive.com.android.concurrent
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
+import apptentive.com.android.core.TimeInterval
+import apptentive.com.android.core.toMilliseconds
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.core
 
@@ -25,12 +27,13 @@ class SerialExecutionQueue : ExecutionQueue {
         handlerThread = null
     }
 
-    override fun dispatch(task: () -> Unit) {
-        handler.post {
-            try {
-                task()
-            } catch (e: Exception) {
-                Log.e(core, "Exception while dispatching task", e)
+    override fun dispatch(delay: TimeInterval, task: () -> Unit) {
+        if (delay > 0) {
+            val delayMillis = toMilliseconds(delay).toLong()
+            handler.postDelayed({ dispatchSync(task) }, delayMillis)
+        } else {
+            handler.post {
+                dispatchSync(task)
             }
         }
     }
@@ -42,4 +45,16 @@ class SerialExecutionQueue : ExecutionQueue {
             handlerThread.quit()
         }
     }
+
+    //region Helpers
+
+    private fun dispatchSync(task: () -> Unit) {
+        try {
+            task()
+        } catch (e: Exception) {
+            Log.e(core, "Exception while dispatching task", e)
+        }
+    }
+
+    //endregion
 }

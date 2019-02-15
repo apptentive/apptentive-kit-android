@@ -4,7 +4,7 @@ import android.app.Application
 
 interface Providable
 
-object Provider {
+object DependencyProvider {
     val lookup = mutableMapOf<Class<*>, Providable>()
 
     fun register(application: Application) {

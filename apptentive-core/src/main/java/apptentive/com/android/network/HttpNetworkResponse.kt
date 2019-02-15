@@ -3,12 +3,13 @@ package apptentive.com.android.network
 import apptentive.com.android.core.TimeInterval
 
 /**
- * A container which holds a typed response from a HTTP-request.
+ * A container to hold a generic (bytes only) response from [HttpNetwork]
  */
-data class HttpResponse<T>(
+@Suppress("ArrayInDataClass")
+data class HttpNetworkResponse(
     val statusCode: Int,
     val statusMessage: String,
-    val content: T, // TODO: find a better name
+    val content: ByteArray,
     val headers: HttpHeaders,
     val duration: TimeInterval
 )
