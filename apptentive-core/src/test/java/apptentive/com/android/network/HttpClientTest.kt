@@ -108,6 +108,8 @@ class HttpClientTest : TestCase() {
 
     //endregion
 
+    //region Json request tests
+
     /**
      * Json-requests tests
      */
@@ -130,6 +132,8 @@ class HttpClientTest : TestCase() {
 
         assertEquals(expected, actual)
     }
+
+    //endregion
 
     //region Retry logic tests
 
@@ -263,7 +267,7 @@ class HttpClientTest : TestCase() {
         assertResults()
     }
 
-    /* Should retry on a disconnected network */
+    /* Should be successful at the end */
     @Test
     fun testRetrySuccess() {
         val client = createHttpClientForRetry()
