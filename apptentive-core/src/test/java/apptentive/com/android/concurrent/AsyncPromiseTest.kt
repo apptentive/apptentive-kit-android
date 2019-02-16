@@ -26,12 +26,12 @@ class AsyncPromiseTest : TestCase() {
 
         // notify on a separate queue
         dispatchQueue.dispatch {
-            promise.onValue("test")
+            promise.resolve("test")
         }
         assertResults("value: test")
 
         dispatchQueue.dispatch {
-            promise.onError(Exception("exception"))
+            promise.reject(Exception("exception"))
         }
         assertResults("error: exception")
     }
@@ -56,12 +56,12 @@ class AsyncPromiseTest : TestCase() {
         // notify on a separate queue
         val dispatchQueue = BlockingExecutionQueue("dispatch")
         dispatchQueue.dispatch {
-            promise.onValue("test")
+            promise.resolve("test")
         }
         assertResults("value: test")
 
         dispatchQueue.dispatch {
-            promise.onError(Exception("exception"))
+            promise.reject(Exception("exception"))
         }
         assertResults("error: exception")
     }
@@ -79,7 +79,7 @@ class AsyncPromiseTest : TestCase() {
         // notify on a separate queue
         val dispatchQueue = BlockingExecutionQueue("dispatch")
         dispatchQueue.dispatch {
-            promise.onValue("test")
+            promise.resolve("test")
         }
         assertResults("error: exception")
     }
@@ -99,7 +99,7 @@ class AsyncPromiseTest : TestCase() {
         // notify on a separate queue
         val dispatchQueue = BlockingExecutionQueue("dispatch")
         dispatchQueue.dispatch {
-            promise.onValue("test")
+            promise.resolve("test")
         }
         assertResults("error: exception")
     }
@@ -117,7 +117,7 @@ class AsyncPromiseTest : TestCase() {
         // notify on a separate queue
         val dispatchQueue = BlockingExecutionQueue("dispatch")
         dispatchQueue.dispatch {
-            promise.onValue("test")
+            promise.resolve("test")
         }
         assertResults() // there will be no results but also no uncaught exceptions
     }
@@ -137,7 +137,7 @@ class AsyncPromiseTest : TestCase() {
         // notify on a separate queue
         val dispatchQueue = BlockingExecutionQueue("dispatch")
         dispatchQueue.dispatch {
-            promise.onValue("test")
+            promise.resolve("test")
         }
         assertResults() // there will be no results but also no uncaught exceptions
     }

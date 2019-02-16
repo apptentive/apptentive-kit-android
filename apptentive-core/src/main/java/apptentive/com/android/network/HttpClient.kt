@@ -72,7 +72,7 @@ class HttpClientImpl(
                 notifyOnComplete(request)
 
                 // fulfill promise
-                promise.onValue(response)
+                promise.resolve(response)
             } else {
                 // attempt another retry
                 scheduleRetry(request, promise)
@@ -82,7 +82,7 @@ class HttpClientImpl(
             notifyOnComplete(request)
 
             // reject promise
-            promise.onError(e)
+            promise.reject(e)
         }
     }
 
