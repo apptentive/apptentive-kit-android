@@ -24,7 +24,7 @@ inline fun <reified T> createHttpJsonRequest(
         .build()
 }
 
-class HttpJsonRequestBody(private val obj: Any) : HttpRequestBody() {
+class HttpJsonRequestBody(private val obj: Any) : HttpRequestBody {
     override fun write(stream: OutputStream) {
         val json = JsonConverter.toJson(obj)
         stream.write(json.toByteArray(Charsets.UTF_8))

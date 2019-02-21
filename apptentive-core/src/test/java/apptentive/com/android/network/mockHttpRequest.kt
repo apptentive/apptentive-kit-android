@@ -24,7 +24,7 @@ internal fun createMockHttpRequest(
     val content = response?.toByteArray() ?: ByteArray(0)
     val includesBody = overrideMethod == HttpMethod.POST || overrideMethod == HttpMethod.PUT
 
-    val requestBody = if (includesBody) object : HttpRequestBody() {
+    val requestBody = if (includesBody) object : HttpRequestBody {
         override fun write(stream: OutputStream) {
             if (exceptionOnSend) {
                 throw IOException("failed to send")

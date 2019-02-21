@@ -387,7 +387,7 @@ class HttpClientTest : TestCase() {
 /**
  * Always fails serialization.
  */
-private object FailureBody : HttpRequestBody() {
+private object FailureBody : HttpRequestBody {
     override fun write(stream: OutputStream) {
         throw AssertionError("Failed to deserialize")
     }
