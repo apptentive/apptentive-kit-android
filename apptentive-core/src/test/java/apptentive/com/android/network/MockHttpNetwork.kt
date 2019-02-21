@@ -1,5 +1,7 @@
 package apptentive.com.android.network
 
+import java.io.OutputStream
+
 /**
  * Custom [HttpNetwork] implementation for sync unit testing.
  */
@@ -9,7 +11,12 @@ class MockHttpNetwork : HttpNetwork {
     override val isNetworkConnected: Boolean get() = networkConnected
 
     override fun performRequest(request: HttpRequest<*>): HttpResponseBody {
-        request.createRequestBody() // we need this so we can test exceptions which occur prior to sending a request
+        request.requestBody?.write(NullOutputStream) // we need this to trigger "before send" errors
         return (request.userData as HttpResponseBodyQueue).next()
+    }
+}
+
+private object NullOutputStream : OutputStream() {
+    override fun write(b: Int) {
     }
 }

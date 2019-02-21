@@ -3,9 +3,9 @@ package apptentive.com.android.network
 import apptentive.com.android.TestCase
 import apptentive.com.android.concurrent.ImmediateExecutionQueue
 import apptentive.com.android.convert.Deserializer
-import apptentive.com.android.convert.Serializer
 import org.junit.Assert.*
 import org.junit.Test
+import java.io.OutputStream
 
 class HttpClientTest : TestCase() {
     private lateinit var network: MockHttpNetwork
@@ -22,23 +22,22 @@ class HttpClientTest : TestCase() {
     /* Only POST and PUT requests can have bodies */
     @Test(expected = IllegalArgumentException::class)
     fun testGetRequestWithBody() {
-        HttpRequest(
-            method = HttpMethod.GET,
-            url = "https://example.com",
-            responseDeserializer = FailureDeserializer,
-            requestSerializer = FailureSerializer
-        )
+        HttpRequest.Builder<String>()
+            .url("https://example.com")
+            .method(HttpMethod.GET, FailureBody)
+            .deserializeWith(FailureDeserializer())
+            .build()
         fail("Should not get this far")
     }
 
     /* POST and PUT requests can have empty bodies (allowed but bad practice) */
     @Test
     fun testPostRequestWithoutBody() {
-        HttpRequest(
-            method = HttpMethod.POST,
-            url = "https://example.com",
-            responseDeserializer = FailureDeserializer
-        )
+        HttpRequest.Builder<String>()
+            .url("https://example.com")
+            .method(HttpMethod.GET)
+            .deserializeWith(FailureDeserializer())
+            .build()
         // all good
     }
 
@@ -388,8 +387,8 @@ class HttpClientTest : TestCase() {
 /**
  * Always fails serialization.
  */
-private object FailureSerializer : Serializer {
-    override fun serialize(): ByteArray {
+private object FailureBody : HttpRequestBody() {
+    override fun write(stream: OutputStream) {
         throw AssertionError("Failed to deserialize")
     }
 }
@@ -397,8 +396,8 @@ private object FailureSerializer : Serializer {
 /**
  * Always fails deserialization.
  */
-private object FailureDeserializer : Deserializer<String> {
-    override fun deserialize(bytes: ByteArray): String =
+private class FailureDeserializer<T> : Deserializer<T> {
+    override fun deserialize(bytes: ByteArray): T =
         throw AssertionError("Failed to serialize")
 }
 

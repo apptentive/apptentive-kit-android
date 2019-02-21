@@ -69,7 +69,7 @@ class HttpNetworkImpl(context: Context) : HttpNetwork {
      */
     private fun openConnection(request: HttpRequest<*>): HttpURLConnection {
         val timeout = toMilliseconds(request.timeout)
-        val connection = createConnection(URL(request.url))
+        val connection = createConnection(request.url)
         connection.connectTimeout = timeout
         connection.readTimeout = timeout
         connection.useCaches = false
@@ -98,15 +98,10 @@ class HttpNetworkImpl(context: Context) : HttpNetwork {
     }
 
     private fun setRequestBody(connection: HttpURLConnection, request: HttpRequest<*>) {
-        val requestBody = request.createRequestBody()
-        if (requestBody != null && requestBody.isNotEmpty()) {
-            val method = request.method
-            if (method == HttpMethod.POST || method == HttpMethod.PUT || method == HttpMethod.PATCH) {
-                connection.doOutput = true
-                connection.outputStream.write(requestBody)
-            } else {
-                throw IllegalStateException("Request with HTTP-method $method should not contain body")
-            }
+        val requestBody = request.requestBody
+        if (requestBody != null) {
+            connection.doOutput = true
+            requestBody.write(connection.outputStream)
         }
     }
 

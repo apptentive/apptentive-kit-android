@@ -1,7 +1,8 @@
 package apptentive.com.android.network
 
+import apptentive.com.android.convert.JsonConverter
 import apptentive.com.android.convert.JsonDeserializer
-import apptentive.com.android.convert.JsonSerializer
+import java.io.OutputStream
 
 /**
  * Helper function for creating JSON HTTP-requests.
@@ -14,13 +15,19 @@ inline fun <reified T> createHttpJsonRequest(
     tag: String? = null,
     userData: Any? = null
 ): HttpRequest<T> {
-    return HttpRequest(
-        method = method,
-        requestSerializer = if (requestObject != null) JsonSerializer(requestObject) else null,
-        responseDeserializer = JsonDeserializer(T::class.java),
-        url = url,
-        tag = tag,
-        userData = userData
-    )
+    return HttpRequest.Builder<T>()
+        .url(url)
+        .method(method, if (requestObject != null) HttpJsonRequestBody(requestObject) else null)
+        .deserializeWith(JsonDeserializer(T::class.java))
+        .tag(tag)
+        .userData(userData)
+        .build()
+}
+
+class HttpJsonRequestBody(private val obj: Any) : HttpRequestBody() {
+    override fun write(stream: OutputStream) {
+        val json = JsonConverter.toJson(obj)
+        stream.write(json.toByteArray(Charsets.UTF_8))
+    }
 }
 

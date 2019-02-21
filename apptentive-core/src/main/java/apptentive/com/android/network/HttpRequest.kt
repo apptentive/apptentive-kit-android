@@ -2,9 +2,9 @@ package apptentive.com.android.network
 
 import apptentive.com.android.concurrent.ExecutionQueue
 import apptentive.com.android.convert.Deserializer
-import apptentive.com.android.convert.Serializer
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.network.Constants.DEFAULT_REQUEST_TIMEOUT
+import java.io.OutputStream
 import java.lang.IllegalStateException
 import java.net.URL
 
@@ -13,54 +13,32 @@ import java.net.URL
  * @param method HTTP-request method.
  * @param url URL
  * @param responseDeserializer deserializer responsible for converting raw response to a typed response object.
- * @param requestSerializer optional serializer for converting request object to raw POST body.
+ * @param requestBody optional request body.
+ * @param headers HTTP-request headers
  * @param timeout request timeout.
  * @param tag optional tag for request identification.
  * @param callbackQueue optional execution queue for invoking callbacks.
  * @param retryPolicy optional retry policy for the request.
  * @param userData optional user data associated with the request.
  */
-class HttpRequest<T>(
+class HttpRequest<T> private constructor(
     val method: HttpMethod,
-    val url: String,
+    val url: URL,
     private val responseDeserializer: Deserializer<T>,
-    private val requestSerializer: Serializer? = null,
-    val timeout: TimeInterval = DEFAULT_REQUEST_TIMEOUT,
-    val tag: String? = null,
-    val callbackQueue: ExecutionQueue? = null,
-    val retryPolicy: HttpRequestRetryPolicy? = null,
-    val userData: Any? = null
+    internal val requestBody: HttpRequestBody?,
+    internal val headers: HttpHeaders,
+    val timeout: TimeInterval,
+    val tag: String?,
+    internal val callbackQueue: ExecutionQueue?,
+    internal val retryPolicy: HttpRequestRetryPolicy?,
+    val userData: Any?
 ) {
-    /**
-     * HTTP request headers.
-     */
-    val headers = MutableHttpHeaders()
-
     /**
      * Number of retries for this request.
      */
     internal var numRetries: Int = 0
 
-    //region Initialization
-
-    init {
-        // only POST and PUT requests are allowed to have bodies
-        if (requestSerializer != null && method != HttpMethod.POST && method != HttpMethod.PUT) {
-            throw IllegalArgumentException("Request body cannot be used with $method method: only POST or PUT are allowed")
-        }
-    }
-
-    //endregion
-
     //region Request/Response
-
-    /**
-     * Returns a raw POST or PUT body to be sent.
-     * This method will be called from a background thread.
-     */
-    internal fun createRequestBody(): ByteArray? {
-        return requestSerializer?.serialize()
-    }
 
     /**
      * Creates an instance of the response content from an array of bytes.
@@ -76,10 +54,16 @@ class HttpRequest<T>(
 
     //FIXME: doc-comments
     class Builder<T> {
+        private val headers = MutableHttpHeaders()
         private lateinit var requestUrl: URL
+        private lateinit var responseDeserializer: Deserializer<T>
         private var method = HttpMethod.GET
         private var requestBody: HttpRequestBody? = null
-        private val headers = MutableHttpHeaders()
+        private var callbackQueue: ExecutionQueue? = null
+        private var retryPolicy: HttpRequestRetryPolicy? = null
+        private var tag: String? = null
+        private var userData: Any? = null
+        private var timeout = DEFAULT_REQUEST_TIMEOUT
 
         //region URL
 
@@ -106,7 +90,8 @@ class HttpRequest<T>(
                 method != HttpMethod.POST &&
                 method != HttpMethod.PUT &&
                 method != HttpMethod.PATCH &&
-                method != HttpMethod.DELETE) {
+                method != HttpMethod.DELETE
+            ) {
                 throw IllegalArgumentException("Request requestBody cannot be used with $method method")
             }
 
@@ -142,14 +127,73 @@ class HttpRequest<T>(
 
         //endregion
 
+        //region Response
+
+        fun deserializeWith(deserializer: Deserializer<T>): Builder<T> {
+            this.responseDeserializer = deserializer
+            return this
+        }
+
+        //endregion
+
+        //region Execution Queue
+
+        fun dispatchOn(queue: ExecutionQueue): Builder<T> {
+            callbackQueue = queue
+            return this
+        }
+
+        //endregion
+
+        //region Retry Policy
+
+        fun retryWith(policy: HttpRequestRetryPolicy?): Builder<T> {
+            this.retryPolicy = policy
+            return this
+        }
+
+        //endregion
+
+        //region Tag
+
+        fun tag(tag: String?): Builder<T> {
+            this.tag = tag
+            return this
+        }
+
+        //endregion
+
+        //region User Data
+
+        fun userData(userData: Any?): Builder<T> {
+            this.userData = userData
+            return this
+        }
+
+        //endregion
+
         //region Build
 
         fun build(): HttpRequest<T> {
             if (!this::requestUrl.isInitialized) {
                 throw IllegalStateException("Builder is missing a url")
             }
+            if (!this::responseDeserializer.isInitialized) {
+                throw IllegalStateException("Builder is missing a url")
+            }
 
-            TODO()
+            return HttpRequest(
+                method = method,
+                url = requestUrl,
+                responseDeserializer = responseDeserializer,
+                requestBody = requestBody,
+                headers = headers,
+                timeout = timeout,
+                tag = tag,
+                callbackQueue = callbackQueue,
+                retryPolicy = retryPolicy,
+                userData = userData
+            )
         }
 
         //endregion
