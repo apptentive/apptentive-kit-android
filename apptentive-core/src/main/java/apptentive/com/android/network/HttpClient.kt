@@ -15,9 +15,15 @@ interface HttpClient {
      * Sends HTTP-request asynchronously.
      *
      * @param request request to be sent.
+     * @param onValue promise fulfilment handler
+     * @param onError promise rejection handler
      * @return promise to be fulfilled when request is completed
      */
-    fun <T> send(request: HttpRequest<T>): Promise<HttpResponse<T>>
+    fun <T> send(
+        request: HttpRequest<T>,
+        onValue: ((value: HttpResponse<T>) -> Unit)? = null,
+        onError: ((e: Exception) -> Unit)? = null
+    ): Promise<HttpResponse<T>>
 }
 
 /**
@@ -42,9 +48,19 @@ class HttpClientImpl(
      * @param request request to be sent.
      * @return promise for the [HttpResponse] to fulfill or reject when completed.
      */
-    override fun <T> send(request: HttpRequest<T>): Promise<HttpResponse<T>> {
+    override fun <T> send(
+        request: HttpRequest<T>,
+        onValue: ((value: HttpResponse<T>) -> Unit)?,
+        onError: ((e: Exception) -> Unit)?
+    ): Promise<HttpResponse<T>> {
         /* promise will be fulfilled on the request's callback queue (or then network queue if missing) */
         val promise = AsyncPromise<HttpResponse<T>>(request.callbackQueue)
+        if (onValue != null) {
+            promise.then(onValue)
+        }
+        if (onError != null) {
+            promise.catch(onError)
+        }
         networkQueue.dispatch {
             // notify listener
             notifyOnStart(request)

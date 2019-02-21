@@ -6,7 +6,6 @@ import apptentive.com.android.convert.Deserializer
 import apptentive.com.android.convert.Serializer
 import org.junit.Assert.*
 import org.junit.Test
-import java.util.concurrent.atomic.AtomicBoolean
 
 class HttpClientTest : TestCase() {
     private lateinit var network: MockHttpNetwork
@@ -313,11 +312,11 @@ class HttpClientTest : TestCase() {
         httpClient: HttpClient,
         request: HttpRequest<*>
     ) {
-        httpClient.send(request)
-            .then { res ->
+        httpClient.send(request,
+            onValue = { res ->
                 addResult("${request.tag} finished: ${res.statusCode}")
-            }
-            .catch { exception ->
+            },
+            onError = { exception ->
                 val message =
                     when (exception) {
                         is NetworkUnavailableException -> "failed: no network"
@@ -325,7 +324,7 @@ class HttpClientTest : TestCase() {
                         else -> "exception: ${exception.message}"
                     }
                 addResult("${request.tag} $message")
-            }
+            })
     }
 
     /**
