@@ -5,6 +5,8 @@ import apptentive.com.android.convert.Deserializer
 import apptentive.com.android.convert.Serializer
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.network.Constants.DEFAULT_REQUEST_TIMEOUT
+import java.lang.IllegalStateException
+import java.net.URL
 
 /**
  * Base class for HTTP-requests.
@@ -68,5 +70,89 @@ class HttpRequest<T>(
         return responseDeserializer.deserialize(data)
     }
 
+    //endregion
+
+    //region Builder
+
+    //FIXME: doc-comments
+    class Builder<T> {
+        private lateinit var requestUrl: URL
+        private var method = HttpMethod.GET
+        private var requestBody: HttpRequestBody? = null
+        private val headers = MutableHttpHeaders()
+
+        //region URL
+
+        fun url(url: String) = url(URL(url))
+
+        fun url(url: URL): Builder<T> {
+            this.requestUrl = url
+            return this
+        }
+
+        //endregion
+
+        //region Method
+
+        fun get() = method(HttpMethod.GET)
+        fun head() = method(HttpMethod.HEAD)
+        fun post(body: HttpRequestBody) = method(HttpMethod.POST, body)
+        fun put(body: HttpRequestBody) = method(HttpMethod.PUT, body)
+        fun delete(body: HttpRequestBody? = null) = method(HttpMethod.DELETE, body)
+        fun patch(body: HttpRequestBody) = method(HttpMethod.PATCH, body)
+
+        fun method(method: HttpMethod, requestBody: HttpRequestBody? = null): Builder<T> {
+            if (requestBody != null &&
+                method != HttpMethod.POST &&
+                method != HttpMethod.PUT &&
+                method != HttpMethod.PATCH &&
+                method != HttpMethod.DELETE) {
+                throw IllegalArgumentException("Request requestBody cannot be used with $method method")
+            }
+
+            this.method = method
+            this.requestBody = requestBody
+            return this
+        }
+
+        //endregion
+
+        //region Headers
+
+        fun header(name: String, value: String): Builder<T> {
+            headers[name] = value
+            return this
+        }
+
+        fun header(name: String, value: Int): Builder<T> {
+            headers[name] = value
+            return this
+        }
+
+        fun header(name: String, value: Boolean): Builder<T> {
+            headers[name] = value
+            return this
+        }
+
+        fun headers(headers: HttpHeaders): Builder<T> {
+            this.headers.clear()
+            this.headers.addAll(headers)
+            return this
+        }
+
+        //endregion
+
+        //region Build
+
+        fun build(): HttpRequest<T> {
+            if (!this::requestUrl.isInitialized) {
+                throw IllegalStateException("Builder is missing a url")
+            }
+
+            TODO()
+        }
+
+        //endregion
+    }
     //endregion
 }

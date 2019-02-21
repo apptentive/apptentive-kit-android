@@ -69,11 +69,11 @@ class MutableHttpHeaders : HttpHeaders() {
 
     override fun get(name: String): HttpHeader? = headers[name]
 
-    fun set(name: String, value: Int) {
+    operator fun set(name: String, value: Int) {
         set(name, value.toString())
     }
 
-    fun set(name: String, value: Boolean) {
+    operator fun set(name: String, value: Boolean) {
         set(name, value.toString())
     }
 
@@ -83,5 +83,15 @@ class MutableHttpHeaders : HttpHeaders() {
 
     override fun iterator(): Iterator<HttpHeader> {
         return headers.values.iterator()
+    }
+
+    fun addAll(headers: HttpHeaders) {
+        for (header in headers) {
+            this[header.name] = header.value
+        }
+    }
+
+    fun clear() {
+        headers.clear()
     }
 }
