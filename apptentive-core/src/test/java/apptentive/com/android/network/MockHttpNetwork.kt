@@ -10,9 +10,9 @@ class MockHttpNetwork : HttpNetwork {
 
     override val isNetworkConnected: Boolean get() = networkConnected
 
-    override fun performRequest(request: HttpRequest<*>): HttpResponseBody {
+    override fun performRequest(request: HttpRequest<*>): HttpNetworkResponse {
         request.requestBody?.write(NullOutputStream) // we need this to trigger "before send" errors
-        return (request.userData as HttpResponseBodyQueue).next()
+        return (request.userData as HttpNetworkResponseQueue).next()
     }
 }
 

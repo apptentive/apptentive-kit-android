@@ -6,7 +6,6 @@ import apptentive.com.android.core.toSeconds
 import apptentive.com.android.util.NetworkUtils
 import java.io.IOException
 import java.io.InputStream
-import java.lang.IllegalStateException
 import java.lang.ref.WeakReference
 import java.net.HttpURLConnection
 import java.net.URL
@@ -17,7 +16,7 @@ import java.util.zip.GZIPInputStream
  */
 interface HttpNetwork {
     val isNetworkConnected: Boolean
-    fun performRequest(request: HttpRequest<*>): HttpResponseBody
+    fun performRequest(request: HttpRequest<*>): HttpNetworkResponse
 }
 
 class HttpNetworkImpl(context: Context) : HttpNetwork {
@@ -25,7 +24,7 @@ class HttpNetworkImpl(context: Context) : HttpNetwork {
 
     override val isNetworkConnected get() = NetworkUtils.isNetworkConnected(context)
 
-    override fun performRequest(request: HttpRequest<*>): HttpResponseBody {
+    override fun performRequest(request: HttpRequest<*>): HttpNetworkResponse {
         val startTime = System.currentTimeMillis()
 
         val connection = openConnection(request)
@@ -56,7 +55,7 @@ class HttpNetworkImpl(context: Context) : HttpNetwork {
 
             // duration
             val duration = toSeconds(System.currentTimeMillis() - startTime)
-            return HttpResponseBody(responseCode, responseMessage, responseBody, responseHeaders, duration)
+            return HttpNetworkResponse(responseCode, responseMessage, responseBody, responseHeaders, duration)
         } finally {
             connection.disconnect()
         }

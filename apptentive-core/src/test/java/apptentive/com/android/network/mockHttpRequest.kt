@@ -58,7 +58,7 @@ internal fun createMockHttpRequest(
 }
 
 internal fun createMockHttpRequest(
-    responses: Array<HttpResponseBody>,
+    responses: Array<HttpNetworkResponse>,
     tag: String? = null,
     method: HttpMethod = HttpMethod.GET,
     url: String? = null,
@@ -116,7 +116,7 @@ internal fun <T> createMockHttpRequest(
  * Creates a generic mock HTTP-request with a sequence of responses.
  */
 internal fun <T> createMockHttpRequest(
-    responses: Array<HttpResponseBody>,
+    responses: Array<HttpNetworkResponse>,
     responseDeserializer: Deserializer<T>,
     tag: String? = null,
     method: HttpMethod = HttpMethod.GET,
@@ -130,7 +130,7 @@ internal fun <T> createMockHttpRequest(
         .deserializeWith(responseDeserializer)
         .tag(tag)
         .retryWith(retryPolicy)
-        .userData(HttpResponseBodyQueue(responses))
+        .userData(HttpNetworkResponseQueue(responses))
         .build()
 }
 
@@ -155,8 +155,8 @@ internal inline fun <reified T : Any> createMockJsonRequest(
 }
 
 
-internal fun createNetworkResponses(vararg responses: HttpResponseBody): HttpResponseBodyQueue {
-    return HttpResponseBodyQueue(responses)
+internal fun createNetworkResponses(vararg responses: HttpNetworkResponse): HttpNetworkResponseQueue {
+    return HttpNetworkResponseQueue(responses)
 }
 
 /**
@@ -167,7 +167,7 @@ internal fun createNetworkResponses(
     content: ByteArray? = null,
     responseHeaders: HttpHeaders? = null,
     duration: TimeInterval = 0.0
-): HttpResponseBodyQueue {
+): HttpNetworkResponseQueue {
     return createNetworkResponses(
         createNetworkResponse(
             statusCode = statusCode,
@@ -186,8 +186,8 @@ internal fun createNetworkResponse(
     content: ByteArray? = null,
     responseHeaders: HttpHeaders? = null,
     duration: TimeInterval = 0.0
-): HttpResponseBody {
-    return HttpResponseBody(
+): HttpNetworkResponse {
+    return HttpNetworkResponse(
         statusCode = statusCode,
         statusMessage = getStatusMessage(statusCode),
         payload = content ?: ByteArray(0),
