@@ -131,7 +131,7 @@ internal fun <T> createMockHttpRequest(
         requestSerializer = requestSerializer,
         responseDeserializer = responseDeserializer,
         retryPolicy = retryPolicy,
-        userData = HttpNetworkResponses(responses)
+        userData = HttpResponseBodyQueue(responses)
     )
 }
 
@@ -156,8 +156,8 @@ internal inline fun <reified T : Any> createMockJsonRequest(
 }
 
 
-internal fun createNetworkResponses(vararg responses: HttpResponseBody): HttpNetworkResponses {
-    return HttpNetworkResponses(responses)
+internal fun createNetworkResponses(vararg responses: HttpResponseBody): HttpResponseBodyQueue {
+    return HttpResponseBodyQueue(responses)
 }
 
 /**
@@ -168,7 +168,7 @@ internal fun createNetworkResponses(
     content: ByteArray? = null,
     responseHeaders: HttpHeaders? = null,
     duration: TimeInterval = 0.0
-): HttpNetworkResponses {
+): HttpResponseBodyQueue {
     return createNetworkResponses(
         createNetworkResponse(
             statusCode = statusCode,

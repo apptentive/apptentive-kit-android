@@ -10,6 +10,6 @@ class MockHttpNetwork : HttpNetwork {
 
     override fun performRequest(request: HttpRequest<*>): HttpResponseBody {
         request.createRequestBody() // we need this so we can test exceptions which occur prior to sending a request
-        return (request.userData as HttpNetworkResponses).next()
+        return (request.userData as HttpResponseBodyQueue).next()
     }
 }
