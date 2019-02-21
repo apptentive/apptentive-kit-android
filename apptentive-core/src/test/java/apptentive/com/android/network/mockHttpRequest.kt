@@ -58,7 +58,7 @@ internal fun createMockHttpRequest(
 }
 
 internal fun createMockHttpRequest(
-    responses: Array<HttpNetworkResponse>,
+    responses: Array<HttpResponseBody>,
     tag: String? = null,
     method: HttpMethod = HttpMethod.GET,
     url: String? = null,
@@ -116,7 +116,7 @@ internal fun <T> createMockHttpRequest(
  * Creates a generic mock HTTP-request with a sequence of responses.
  */
 internal fun <T> createMockHttpRequest(
-    responses: Array<HttpNetworkResponse>,
+    responses: Array<HttpResponseBody>,
     responseDeserializer: Deserializer<T>,
     tag: String? = null,
     method: HttpMethod = HttpMethod.GET,
@@ -156,7 +156,7 @@ internal inline fun <reified T : Any> createMockJsonRequest(
 }
 
 
-internal fun createNetworkResponses(vararg responses: HttpNetworkResponse): HttpNetworkResponses {
+internal fun createNetworkResponses(vararg responses: HttpResponseBody): HttpNetworkResponses {
     return HttpNetworkResponses(responses)
 }
 
@@ -187,8 +187,8 @@ internal fun createNetworkResponse(
     content: ByteArray? = null,
     responseHeaders: HttpHeaders? = null,
     duration: TimeInterval = 0.0
-): HttpNetworkResponse {
-    return HttpNetworkResponse(
+): HttpResponseBody {
+    return HttpResponseBody(
         statusCode = statusCode,
         statusMessage = getStatusMessage(statusCode),
         content = content ?: ByteArray(0),

@@ -17,7 +17,7 @@ import java.util.zip.GZIPInputStream
  */
 interface HttpNetwork {
     val isNetworkConnected: Boolean
-    fun performRequest(request: HttpRequest<*>): HttpNetworkResponse
+    fun performRequest(request: HttpRequest<*>): HttpResponseBody
 }
 
 class HttpNetworkImpl(context: Context) : HttpNetwork {
@@ -25,7 +25,7 @@ class HttpNetworkImpl(context: Context) : HttpNetwork {
 
     override val isNetworkConnected get() = NetworkUtils.isNetworkConnected(context)
 
-    override fun performRequest(request: HttpRequest<*>): HttpNetworkResponse {
+    override fun performRequest(request: HttpRequest<*>): HttpResponseBody {
         val startTime = System.currentTimeMillis()
 
         val connection = openConnection(request)
@@ -56,7 +56,7 @@ class HttpNetworkImpl(context: Context) : HttpNetwork {
 
             // duration
             val duration = toSeconds(System.currentTimeMillis() - startTime)
-            return HttpNetworkResponse(responseCode, responseMessage, responseBody, responseHeaders, duration)
+            return HttpResponseBody(responseCode, responseMessage, responseBody, responseHeaders, duration)
         } finally {
             connection.disconnect()
         }
