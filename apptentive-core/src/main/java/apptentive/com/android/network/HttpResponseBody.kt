@@ -9,7 +9,7 @@ import apptentive.com.android.core.TimeInterval
 data class HttpResponseBody(
     val statusCode: Int,
     val statusMessage: String,
-    val content: ByteArray,
+    val payload: ByteArray,
     val headers: HttpHeaders,
     val duration: TimeInterval
 )

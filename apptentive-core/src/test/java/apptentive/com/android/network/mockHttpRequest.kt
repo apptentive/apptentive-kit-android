@@ -191,7 +191,7 @@ internal fun createNetworkResponse(
     return HttpResponseBody(
         statusCode = statusCode,
         statusMessage = getStatusMessage(statusCode),
-        content = content ?: ByteArray(0),
+        payload = content ?: ByteArray(0),
         headers = responseHeaders ?: MutableHttpHeaders(),
         duration = duration
     )
