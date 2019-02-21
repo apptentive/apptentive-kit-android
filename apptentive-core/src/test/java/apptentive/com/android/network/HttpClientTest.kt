@@ -99,7 +99,7 @@ class HttpClientTest : TestCase() {
         var actual: String? = null
 
         client.send(createMockHttpRequest(response = expected))
-            .then { res -> actual = res.content }
+            .then { res -> actual = res.payload }
         dispatchRequests()
 
         assertEquals(expected, actual)
@@ -125,7 +125,7 @@ class HttpClientTest : TestCase() {
 
         var actual: MyResponse? = null
         client.send(request).then { res ->
-            actual = res.content
+            actual = res.payload
         }
         dispatchRequests()
 

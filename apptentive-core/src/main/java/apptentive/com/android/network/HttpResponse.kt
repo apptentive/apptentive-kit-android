@@ -8,7 +8,7 @@ import apptentive.com.android.core.TimeInterval
 data class HttpResponse<T>(
     val statusCode: Int,
     val statusMessage: String,
-    val content: T, // TODO: find a better name
+    val payload: T,
     val headers: HttpHeaders,
     val duration: TimeInterval
 )
