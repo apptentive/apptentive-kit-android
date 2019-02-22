@@ -106,6 +106,7 @@ class HttpNetworkImpl(context: Context) : HttpNetwork {
         val requestBody = request.requestBody
         if (requestBody != null) {
             connection.doOutput = true
+            connection.setRequestProperty(HttpHeaders.CONTENT_TYPE, requestBody.contentType)
             requestBody.write(connection.outputStream)
         }
     }
