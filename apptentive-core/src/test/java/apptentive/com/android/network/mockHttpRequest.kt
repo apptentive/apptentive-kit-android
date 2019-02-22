@@ -1,7 +1,6 @@
 package apptentive.com.android.network
 
 import apptentive.com.android.convert.json.JsonConverter
-import apptentive.com.android.convert.json.JsonSerializer
 import apptentive.com.android.core.TimeInterval
 import java.io.ByteArrayInputStream
 import java.io.IOException
