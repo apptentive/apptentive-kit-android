@@ -119,32 +119,33 @@ class HttpClientImpl(
             throw NetworkUnavailableException("Network is not available")
         }
 
-        // raw response
-        val rawResponse = network.performRequest(request)
+        // response body
+        val networkResponse = network.performRequest(request)
+        networkResponse.use { response ->
+            // status
+            val statusCode = response.statusCode
+            val statusMessage = response.statusMessage
 
-        // status
-        val statusCode = rawResponse.statusCode
-        val statusMessage = rawResponse.statusMessage
+            // successful?
+            if (statusCode in 200..299) {
+                return HttpResponse(
+                    statusCode,
+                    statusMessage,
+                    request.readResponseObject(response.stream),
+                    response.headers,
+                    response.duration
+                )
+            }
 
-        // successful?
-        if (statusCode in 200..299) {
-            return HttpResponse(
-                statusCode,
-                statusMessage,
-                request.createResponseObject(rawResponse.content),
-                rawResponse.headers,
-                rawResponse.duration
-            )
+            // should we retry?
+            if (shouldRetry(request, statusCode)) {
+                return null
+            }
+
+            // give up
+            val errorMessage = response.stream.readBytes().toString(Charsets.UTF_8)
+            throw UnexpectedResponseException(statusCode, statusMessage, errorMessage)
         }
-
-        // should we retry?
-        if (shouldRetry(request, statusCode)) {
-            return null
-        }
-
-        // give up
-        val errorMessage = rawResponse.content.toString(Charsets.UTF_8)
-        throw UnexpectedResponseException(statusCode, statusMessage, errorMessage)
     }
 
     //endregion

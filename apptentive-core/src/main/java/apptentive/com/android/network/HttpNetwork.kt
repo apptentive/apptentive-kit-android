@@ -6,7 +6,6 @@ import apptentive.com.android.core.toSeconds
 import apptentive.com.android.util.NetworkUtils
 import java.io.IOException
 import java.io.InputStream
-import java.lang.IllegalStateException
 import java.lang.ref.WeakReference
 import java.net.HttpURLConnection
 import java.net.URL
@@ -29,6 +28,7 @@ class HttpNetworkImpl(context: Context) : HttpNetwork {
         val startTime = System.currentTimeMillis()
 
         val connection = openConnection(request)
+        var closeConnection = true
         try {
             // request headers
             setRequestHeaders(connection, request.headers)
@@ -52,13 +52,18 @@ class HttpNetworkImpl(context: Context) : HttpNetwork {
             val responseHeaders = getResponseHeaders(connection)
 
             // response
-            val responseBody = getResponseBody(connection)
+            val stream = getResponseStream(connection)
+
+            // we would need to keep this connection open in order to read from its input stream
+            closeConnection = false
 
             // duration
             val duration = toSeconds(System.currentTimeMillis() - startTime)
-            return HttpNetworkResponse(responseCode, responseMessage, responseBody, responseHeaders, duration)
+            return HttpNetworkResponse(responseCode, responseMessage, stream, responseHeaders, duration)
         } finally {
-            connection.disconnect()
+            if (closeConnection) {
+                connection.disconnect()
+            }
         }
     }
 
@@ -69,7 +74,7 @@ class HttpNetworkImpl(context: Context) : HttpNetwork {
      */
     private fun openConnection(request: HttpRequest<*>): HttpURLConnection {
         val timeout = toMilliseconds(request.timeout)
-        val connection = createConnection(URL(request.url))
+        val connection = createConnection(request.url)
         connection.connectTimeout = timeout
         connection.readTimeout = timeout
         connection.useCaches = false
@@ -98,15 +103,11 @@ class HttpNetworkImpl(context: Context) : HttpNetwork {
     }
 
     private fun setRequestBody(connection: HttpURLConnection, request: HttpRequest<*>) {
-        val requestBody = request.createRequestBody()
-        if (requestBody != null && requestBody.isNotEmpty()) {
-            val method = request.method
-            if (method == HttpMethod.POST || method == HttpMethod.PUT || method == HttpMethod.PATCH) {
-                connection.doOutput = true
-                connection.outputStream.write(requestBody)
-            } else {
-                throw IllegalStateException("Request with HTTP-method $method should not contain body")
-            }
+        val requestBody = request.requestBody
+        if (requestBody != null) {
+            connection.doOutput = true
+            connection.setRequestProperty(HttpHeaders.CONTENT_TYPE, requestBody.contentType)
+            requestBody.write(connection.outputStream)
         }
     }
 
@@ -123,8 +124,8 @@ class HttpNetworkImpl(context: Context) : HttpNetwork {
     /**
      * Reads connection response fully as an array of bytes.
      */
-    private fun getResponseBody(connection: HttpURLConnection): ByteArray {
-        return inputStreamForConnection(connection).readBytes()
+    private fun getResponseStream(connection: HttpURLConnection): InputStream {
+        return inputStreamForConnection(connection)
     }
 
     /**

@@ -2,10 +2,10 @@ package apptentive.com.android.network
 
 import apptentive.com.android.TestCase
 import apptentive.com.android.concurrent.ImmediateExecutionQueue
-import apptentive.com.android.convert.Deserializer
-import apptentive.com.android.convert.Serializer
 import org.junit.Assert.*
 import org.junit.Test
+import java.io.InputStream
+import java.io.OutputStream
 
 class HttpClientTest : TestCase() {
     private lateinit var network: MockHttpNetwork
@@ -22,23 +22,22 @@ class HttpClientTest : TestCase() {
     /* Only POST and PUT requests can have bodies */
     @Test(expected = IllegalArgumentException::class)
     fun testGetRequestWithBody() {
-        HttpRequest(
-            method = HttpMethod.GET,
-            url = "https://example.com",
-            responseDeserializer = FailureDeserializer,
-            requestSerializer = FailureSerializer
-        )
+        HttpRequest.Builder<String>()
+            .url("https://example.com")
+            .method(HttpMethod.GET, FailureRequestBody)
+            .responseReader(FailureResponseReader())
+            .build()
         fail("Should not get this far")
     }
 
     /* POST and PUT requests can have empty bodies (allowed but bad practice) */
     @Test
     fun testPostRequestWithoutBody() {
-        HttpRequest(
-            method = HttpMethod.POST,
-            url = "https://example.com",
-            responseDeserializer = FailureDeserializer
-        )
+        HttpRequest.Builder<String>()
+            .url("https://example.com")
+            .method(HttpMethod.GET)
+            .responseReader(FailureResponseReader())
+            .build()
         // all good
     }
 
@@ -99,7 +98,7 @@ class HttpClientTest : TestCase() {
         var actual: String? = null
 
         client.send(createMockHttpRequest(response = expected))
-            .then { res -> actual = res.content }
+            .then { res -> actual = res.payload }
         dispatchRequests()
 
         assertEquals(expected, actual)
@@ -125,7 +124,7 @@ class HttpClientTest : TestCase() {
 
         var actual: MyResponse? = null
         client.send(request).then { res ->
-            actual = res.content
+            actual = res.payload
         }
         dispatchRequests()
 
@@ -388,8 +387,11 @@ class HttpClientTest : TestCase() {
 /**
  * Always fails serialization.
  */
-private object FailureSerializer : Serializer {
-    override fun serialize(): ByteArray {
+private object FailureRequestBody : HttpRequestBody {
+    override val contentType: String
+        get() = "text/plain"
+
+    override fun write(stream: OutputStream) {
         throw AssertionError("Failed to deserialize")
     }
 }
@@ -397,9 +399,8 @@ private object FailureSerializer : Serializer {
 /**
  * Always fails deserialization.
  */
-private object FailureDeserializer : Deserializer<String> {
-    override fun deserialize(bytes: ByteArray): String =
-        throw AssertionError("Failed to serialize")
+private class FailureResponseReader<T> : HttpResponseReader<T> {
+    override fun read(stream: InputStream): T = throw AssertionError("Failed to serialize")
 }
 
 /**
