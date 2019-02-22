@@ -1,6 +1,6 @@
 package apptentive.com.android.util
 
-import apptentive.com.android.concurrent.ExecutionQueue
+import apptentive.com.android.concurrent.ExecutorQueue
 import apptentive.com.android.core.PlatformLogger
 import apptentive.com.android.core.DependencyProvider
 
@@ -26,7 +26,7 @@ object Log {
         val buffer = StringBuilder()
 
         // thread name
-        if (!ExecutionQueue.isMainQueue) {
+        if (!ExecutorQueue.isMainQueue) {
             buffer.append('[')
             buffer.append(Thread.currentThread().name)
             buffer.append(']')

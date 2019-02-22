@@ -1,7 +1,7 @@
 package apptentive.com.android.network
 
 import apptentive.com.android.TestCase
-import apptentive.com.android.concurrent.ImmediateExecutionQueue
+import apptentive.com.android.concurrent.ImmediateExecutorQueue
 import org.junit.Assert.*
 import org.junit.Test
 import java.io.InputStream
@@ -9,12 +9,12 @@ import java.io.OutputStream
 
 class HttpClientTest : TestCase() {
     private lateinit var network: MockHttpNetwork
-    private lateinit var networkQueue: ImmediateExecutionQueue
+    private lateinit var networkQueue: ImmediateExecutorQueue
 
     override fun setUp() {
         super.setUp()
         network = MockHttpNetwork()
-        networkQueue = ImmediateExecutionQueue("network", dispatchManually = true)
+        networkQueue = ImmediateExecutorQueue("network", dispatchManually = true)
     }
 
     //region Initialization tests

@@ -1,6 +1,6 @@
 package apptentive.com.android.network
 
-import apptentive.com.android.concurrent.ExecutionQueue
+import apptentive.com.android.concurrent.ExecutorQueue
 import apptentive.com.android.concurrent.Promise
 import apptentive.com.android.concurrent.AsyncPromise
 import apptentive.com.android.core.UNDEFINED
@@ -36,7 +36,7 @@ interface HttpClient {
  */
 class HttpClientImpl(
     private val network: HttpNetwork,
-    private val networkQueue: ExecutionQueue,
+    private val networkQueue: ExecutorQueue,
     private val retryPolicy: HttpRequestRetryPolicy,
     private val listener: HttpClientListener? = null
 ) : HttpClient {
@@ -61,7 +61,7 @@ class HttpClientImpl(
         if (onError != null) {
             promise.catch(onError)
         }
-        networkQueue.dispatch {
+        networkQueue.execute {
             // notify listener
             notifyOnStart(request)
 
@@ -173,7 +173,7 @@ class HttpClientImpl(
     ) {
         val retryPolicy = retryPolicyForRequest(request)
         val delay = retryPolicy.getRetryDelay(request.numRetries)
-        networkQueue.dispatch(delay) {
+        networkQueue.execute(delay) {
             request.numRetries++
 
             // notify listener

@@ -8,7 +8,7 @@ import apptentive.com.android.core.toMilliseconds
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.core
 
-class SerialExecutionQueue : ExecutionQueue {
+class SerialExecutorQueue : ExecutorQueue {
     private val handler: Handler
     private val handlerThread: HandlerThread?
 
@@ -27,7 +27,7 @@ class SerialExecutionQueue : ExecutionQueue {
         handlerThread = null
     }
 
-    override fun dispatch(delay: TimeInterval, task: () -> Unit) {
+    override fun execute(delay: TimeInterval, task: () -> Unit) {
         if (delay > 0) {
             val delayMillis = toMilliseconds(delay).toLong()
             handler.postDelayed({ dispatchSync(task) }, delayMillis)

@@ -9,7 +9,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 
-internal class ConcurrentExecutionQueue : ExecutionQueue {
+internal class ConcurrentExecutorQueue : ExecutorQueue {
     private val executor: ScheduledExecutorService
     private val nextWorkerThreadId = AtomicInteger(0)
     private val threadGroup: ThreadGroup
@@ -33,7 +33,7 @@ internal class ConcurrentExecutionQueue : ExecutionQueue {
     override val isCurrent: Boolean
         get() = Thread.currentThread().threadGroup == threadGroup
 
-    override fun dispatch(delay: TimeInterval, task: () -> Unit) {
+    override fun execute(delay: TimeInterval, task: () -> Unit) {
         if (delay > 0) {
             val delayMillis = toMilliseconds(delay).toLong()
             executor.schedule({ dispatchSync(task) }, delayMillis, TimeUnit.MILLISECONDS)

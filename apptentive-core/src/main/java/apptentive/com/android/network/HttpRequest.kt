@@ -1,6 +1,6 @@
 package apptentive.com.android.network
 
-import apptentive.com.android.concurrent.ExecutionQueue
+import apptentive.com.android.concurrent.ExecutorQueue
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.network.Constants.DEFAULT_REQUEST_TIMEOUT
 import java.io.InputStream
@@ -29,7 +29,7 @@ class HttpRequest<T> private constructor(
     internal val headers: HttpHeaders,
     val timeout: TimeInterval,
     val tag: String?,
-    internal val callbackQueue: ExecutionQueue?,
+    internal val callbackQueue: ExecutorQueue?,
     internal val retryPolicy: HttpRequestRetryPolicy?,
     val userData: Any?
 ) {
@@ -61,7 +61,7 @@ class HttpRequest<T> private constructor(
         private lateinit var reader: HttpResponseReader<T>
         private var method = HttpMethod.GET
         private var requestBody: HttpRequestBody? = null
-        private var callbackQueue: ExecutionQueue? = null
+        private var callbackQueue: ExecutorQueue? = null
         private var retryPolicy: HttpRequestRetryPolicy? = null
         private var tag: String? = null
         private var userData: Any? = null
@@ -158,7 +158,7 @@ class HttpRequest<T> private constructor(
 
         /** Sets dispatch queue for callbacks */
         // FIXME: unit tests
-        fun callbackOn(queue: ExecutionQueue): Builder<T> {
+        fun callbackOn(queue: ExecutorQueue): Builder<T> {
             callbackQueue = queue
             return this
         }
