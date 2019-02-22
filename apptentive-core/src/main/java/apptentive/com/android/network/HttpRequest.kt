@@ -9,9 +9,10 @@ import java.net.URL
 
 /**
  * Base class for HTTP-requests.
+ *
  * @param method HTTP-request method.
  * @param url URL
- * @param responseReader deserializer responsible for converting raw response to a typed response object.
+ * @param responseReader deserializer responsible for converting raw response stream to a typed response object.
  * @param requestBody optional request body.
  * @param headers HTTP-request headers
  * @param timeout request timeout.
@@ -40,7 +41,7 @@ class HttpRequest<T> private constructor(
     //region Request/Response
 
     /**
-     * Creates an instance of the response content from an array of bytes.
+     * Creates an instance of the response content from an input stream of bytes.
      * This method will be called from a background thread.
      */
     internal fun readResponseObject(stream: InputStream): T {
@@ -51,7 +52,9 @@ class HttpRequest<T> private constructor(
 
     //region Builder
 
-    //FIXME: doc-comments
+    /**
+     * Builder class for creating [HttpRequest] instances.
+     */
     class Builder<T> {
         private val headers = MutableHttpHeaders()
         private lateinit var requestUrl: URL
@@ -66,8 +69,10 @@ class HttpRequest<T> private constructor(
 
         //region URL
 
+        /** Sets request URL */
         fun url(url: String) = url(URL(url))
 
+        /** Sets request URL */
         fun url(url: URL): Builder<T> {
             this.requestUrl = url
             return this
@@ -77,12 +82,22 @@ class HttpRequest<T> private constructor(
 
         //region Method
 
+        /** Sets GET method */
         fun get() = method(HttpMethod.GET)
+
+        /** Sets POST method with optional request body */
         fun post(body: HttpRequestBody? = null) = method(HttpMethod.POST, body)
+
+        /** Sets PUT method with optional request body */
         fun put(body: HttpRequestBody? = null) = method(HttpMethod.PUT, body)
+
+        /** Sets DELETE method with optional request body */
         fun delete(body: HttpRequestBody? = null) = method(HttpMethod.DELETE, body)
+
+        /** Sets PATCH method with optional request body */
         fun patch(body: HttpRequestBody? = null) = method(HttpMethod.PATCH, body)
 
+        /** Generic method for setting HTTP-method with optional request body */
         fun method(method: HttpMethod, requestBody: HttpRequestBody? = null): Builder<T> {
             if (requestBody != null &&
                 method != HttpMethod.POST &&
@@ -102,21 +117,25 @@ class HttpRequest<T> private constructor(
 
         //region Headers
 
+        /** Sets request header */
         fun header(name: String, value: String): Builder<T> {
             headers[name] = value
             return this
         }
 
+        /** Sets request header */
         fun header(name: String, value: Int): Builder<T> {
             headers[name] = value
             return this
         }
 
+        /** Sets request header */
         fun header(name: String, value: Boolean): Builder<T> {
             headers[name] = value
             return this
         }
 
+        /** Overwrite request headers */
         fun headers(headers: HttpHeaders): Builder<T> {
             this.headers.clear()
             this.headers.addAll(headers)
@@ -127,6 +146,7 @@ class HttpRequest<T> private constructor(
 
         //region Response
 
+        /** Sets HTTP-response reader */
         fun responseReader(responseReader: HttpResponseReader<T>): Builder<T> {
             this.reader = responseReader
             return this
@@ -136,7 +156,9 @@ class HttpRequest<T> private constructor(
 
         //region Execution Queue
 
-        fun dispatchOn(queue: ExecutionQueue): Builder<T> {
+        /** Sets dispatch queue for callbacks */
+        // FIXME: unit tests
+        fun callbackOn(queue: ExecutionQueue): Builder<T> {
             callbackQueue = queue
             return this
         }
@@ -145,6 +167,7 @@ class HttpRequest<T> private constructor(
 
         //region Retry Policy
 
+        /** Sets an optional retry policy */
         fun retryWith(policy: HttpRequestRetryPolicy?): Builder<T> {
             this.retryPolicy = policy
             return this
@@ -154,6 +177,7 @@ class HttpRequest<T> private constructor(
 
         //region Tag
 
+        /** Sets an optional request tag */
         fun tag(tag: String?): Builder<T> {
             this.tag = tag
             return this
@@ -163,6 +187,7 @@ class HttpRequest<T> private constructor(
 
         //region User Data
 
+        /** Sets an optional request user data */
         fun userData(userData: Any?): Builder<T> {
             this.userData = userData
             return this
@@ -172,6 +197,7 @@ class HttpRequest<T> private constructor(
 
         //region Build
 
+        /** Creates an HTTP-request instance */
         fun build(): HttpRequest<T> {
             if (!this::requestUrl.isInitialized) {
                 throw IllegalStateException("Builder is missing a url")
