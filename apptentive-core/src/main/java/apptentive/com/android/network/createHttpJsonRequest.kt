@@ -26,6 +26,11 @@ inline fun <reified T> createHttpJsonRequest(
         .build()
 }
 
+/**
+ * Class which represents a JSON HTTP-request body
+ *
+ * @param obj typed request object
+ */
 class HttpJsonRequestBody(private val obj: Any) : HttpRequestBody {
     override val contentType: String
         get() = "application/json"
@@ -36,10 +41,16 @@ class HttpJsonRequestBody(private val obj: Any) : HttpRequestBody {
     }
 }
 
+/** Helper function for creating JSON HTTP-response reader */
 inline fun <reified T> createHttpJsonResponseReader(): HttpResponseReader<T> {
     return HttpJsonResponseReader(T::class.java)
 }
 
+/**
+ * Class which represents a JSON HTTP-response reader.
+ *
+ * @param type the type of the response object
+ */
 class HttpJsonResponseReader<T>(private val type: Class<T>) : HttpResponseReader<T> {
     override fun read(stream: InputStream): T {
         val bytes = stream.readBytes()
