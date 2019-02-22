@@ -1,5 +1,7 @@
 package apptentive.com.android.convert
 
+import java.io.OutputStream
+
 interface Serializer {
-    fun serialize(): ByteArray
+    fun write(stream: OutputStream, target: Any)
 }

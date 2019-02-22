@@ -1,7 +1,11 @@
 package apptentive.com.android.convert
 
-class JsonSerializer(private val obj: Any) : Serializer {
-    override fun serialize(): ByteArray {
-        return JsonConverter.toJson(obj).toByteArray(Charsets.UTF_8)
+import java.io.OutputStream
+
+class JsonSerializer : Serializer {
+    override fun write(stream: OutputStream, target: Any) {
+        val json = JsonConverter.toJson(target)
+        val bytes = json.toByteArray(Charsets.UTF_8)
+        stream.write(bytes)
     }
 }

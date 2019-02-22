@@ -1,5 +1,7 @@
 package apptentive.com.android.convert
 
-interface Deserializer<T> {
-    fun deserialize(bytes: ByteArray): T
+import java.io.InputStream
+
+interface Deserializer {
+    fun read(stream: InputStream): Any
 }
