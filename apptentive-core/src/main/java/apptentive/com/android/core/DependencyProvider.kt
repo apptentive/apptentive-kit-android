@@ -7,7 +7,7 @@ interface Providable
 object DependencyProvider {
     val lookup = mutableMapOf<Class<*>, Providable>()
 
-    fun register(application: Application) {
+    fun register(@Suppress("UNUSED_PARAMETER") application: Application) {
         // FIXME: this should be configured outside of this class
         register(createPlatformLogger())
         register(createExecutionQueueFactory())
