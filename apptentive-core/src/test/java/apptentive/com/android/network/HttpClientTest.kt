@@ -2,9 +2,9 @@ package apptentive.com.android.network
 
 import apptentive.com.android.TestCase
 import apptentive.com.android.concurrent.ImmediateExecutionQueue
-import apptentive.com.android.convert.Deserializer
 import org.junit.Assert.*
 import org.junit.Test
+import java.io.InputStream
 import java.io.OutputStream
 
 class HttpClientTest : TestCase() {
@@ -24,8 +24,8 @@ class HttpClientTest : TestCase() {
     fun testGetRequestWithBody() {
         HttpRequest.Builder<String>()
             .url("https://example.com")
-            .method(HttpMethod.GET, FailureBody)
-            .deserializeWith(FailureDeserializer())
+            .method(HttpMethod.GET, FailureRequestBody)
+            .responseReader(FailureResponseReader())
             .build()
         fail("Should not get this far")
     }
@@ -36,7 +36,7 @@ class HttpClientTest : TestCase() {
         HttpRequest.Builder<String>()
             .url("https://example.com")
             .method(HttpMethod.GET)
-            .deserializeWith(FailureDeserializer())
+            .responseReader(FailureResponseReader())
             .build()
         // all good
     }
@@ -387,7 +387,10 @@ class HttpClientTest : TestCase() {
 /**
  * Always fails serialization.
  */
-private object FailureBody : HttpRequestBody {
+private object FailureRequestBody : HttpRequestBody {
+    override val contentType: String
+        get() = "text/plain"
+
     override fun write(stream: OutputStream) {
         throw AssertionError("Failed to deserialize")
     }
@@ -396,9 +399,8 @@ private object FailureBody : HttpRequestBody {
 /**
  * Always fails deserialization.
  */
-private class FailureDeserializer<T> : Deserializer<T> {
-    override fun deserialize(bytes: ByteArray): T =
-        throw AssertionError("Failed to serialize")
+private class FailureResponseReader<T> : HttpResponseReader<T> {
+    override fun read(stream: InputStream): T = throw AssertionError("Failed to serialize")
 }
 
 /**

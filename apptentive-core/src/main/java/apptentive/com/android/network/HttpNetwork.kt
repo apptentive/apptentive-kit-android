@@ -28,6 +28,7 @@ class HttpNetworkImpl(context: Context) : HttpNetwork {
         val startTime = System.currentTimeMillis()
 
         val connection = openConnection(request)
+        var closeConnection = true
         try {
             // request headers
             setRequestHeaders(connection, request.headers)
@@ -51,13 +52,18 @@ class HttpNetworkImpl(context: Context) : HttpNetwork {
             val responseHeaders = getResponseHeaders(connection)
 
             // response
-            val responseBody = getResponseBody(connection)
+            val stream = getResponseStream(connection)
+
+            // we would need to keep this connection open in order to read from its input stream
+            closeConnection = false
 
             // duration
             val duration = toSeconds(System.currentTimeMillis() - startTime)
-            return HttpNetworkResponse(responseCode, responseMessage, responseBody, responseHeaders, duration)
+            return HttpNetworkResponse(responseCode, responseMessage, stream, responseHeaders, duration)
         } finally {
-            connection.disconnect()
+            if (closeConnection) {
+                connection.disconnect()
+            }
         }
     }
 
@@ -117,8 +123,8 @@ class HttpNetworkImpl(context: Context) : HttpNetwork {
     /**
      * Reads connection response fully as an array of bytes.
      */
-    private fun getResponseBody(connection: HttpURLConnection): ByteArray {
-        return inputStreamForConnection(connection).readBytes()
+    private fun getResponseStream(connection: HttpURLConnection): InputStream {
+        return inputStreamForConnection(connection)
     }
 
     /**

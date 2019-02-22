@@ -120,31 +120,32 @@ class HttpClientImpl(
         }
 
         // response body
-        val responseBody = network.performRequest(request)
+        val networkResponse = network.performRequest(request)
+        networkResponse.use { response ->
+            // status
+            val statusCode = response.statusCode
+            val statusMessage = response.statusMessage
 
-        // status
-        val statusCode = responseBody.statusCode
-        val statusMessage = responseBody.statusMessage
+            // successful?
+            if (statusCode in 200..299) {
+                return HttpResponse(
+                    statusCode,
+                    statusMessage,
+                    request.readResponseObject(response.stream),
+                    response.headers,
+                    response.duration
+                )
+            }
 
-        // successful?
-        if (statusCode in 200..299) {
-            return HttpResponse(
-                statusCode,
-                statusMessage,
-                request.createResponseObject(responseBody.payload),
-                responseBody.headers,
-                responseBody.duration
-            )
+            // should we retry?
+            if (shouldRetry(request, statusCode)) {
+                return null
+            }
+
+            // give up
+            val errorMessage = response.stream.readBytes().toString(Charsets.UTF_8)
+            throw UnexpectedResponseException(statusCode, statusMessage, errorMessage)
         }
-
-        // should we retry?
-        if (shouldRetry(request, statusCode)) {
-            return null
-        }
-
-        // give up
-        val errorMessage = responseBody.payload.toString(Charsets.UTF_8)
-        throw UnexpectedResponseException(statusCode, statusMessage, errorMessage)
     }
 
     //endregion

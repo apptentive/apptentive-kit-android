@@ -3,7 +3,9 @@ package apptentive.com.android.network
 import apptentive.com.android.convert.Deserializer
 import apptentive.com.android.convert.JsonSerializer
 import apptentive.com.android.core.TimeInterval
+import java.io.ByteArrayInputStream
 import java.io.IOException
+import java.io.InputStream
 import java.io.OutputStream
 
 /**
@@ -25,6 +27,9 @@ internal fun createMockHttpRequest(
     val includesBody = overrideMethod == HttpMethod.POST || overrideMethod == HttpMethod.PUT
 
     val requestBody = if (includesBody) object : HttpRequestBody {
+        override val contentType: String
+            get() = "text/plain"
+
         override fun write(stream: OutputStream) {
             if (exceptionOnSend) {
                 throw IOException("failed to send")
@@ -34,18 +39,18 @@ internal fun createMockHttpRequest(
         }
     } else null
 
-    val responseDeserializer = object : Deserializer<String> {
-        override fun deserialize(bytes: ByteArray): String {
+    val responseReader = object : HttpResponseReader<String> {
+        override fun read(stream: InputStream): String {
             if (exceptionOnReceive) {
                 throw IOException("failed to receive")
             }
 
-            return String(bytes)
+            return String(stream.readBytes())
         }
     }
 
     return createMockHttpRequest(
-        responseDeserializer = responseDeserializer,
+        responseReader = responseReader,
         tag = tag,
         method = overrideMethod,
         url = url,
@@ -65,15 +70,15 @@ internal fun createMockHttpRequest(
     requestBody: HttpRequestBody? = null,
     retryPolicy: HttpRequestRetryPolicy? = null
 ): HttpRequest<String> {
-    val deserializer = object : Deserializer<String> {
-        override fun deserialize(bytes: ByteArray): String {
-            return String(bytes)
+    val responseReader = object : HttpResponseReader<String> {
+        override fun read(stream: InputStream): String {
+            return String(stream.readBytes())
         }
     }
 
     return createMockHttpRequest(
         responses = responses,
-        responseDeserializer = deserializer,
+        responseReader = responseReader,
         tag = tag,
         method = method,
         url = url,
@@ -86,7 +91,7 @@ internal fun createMockHttpRequest(
  * Creates a generic mock HTTP-request.
  */
 internal fun <T> createMockHttpRequest(
-    responseDeserializer: Deserializer<T>,
+    responseReader: HttpResponseReader<T>,
     tag: String? = null,
     method: HttpMethod = HttpMethod.GET,
     url: String? = null,
@@ -103,7 +108,7 @@ internal fun <T> createMockHttpRequest(
     )
     return createMockHttpRequest(
         responses = arrayOf(response),
-        responseDeserializer = responseDeserializer,
+        responseReader = responseReader,
         requestBody = requestBody,
         url = url,
         method = method,
@@ -117,7 +122,7 @@ internal fun <T> createMockHttpRequest(
  */
 internal fun <T> createMockHttpRequest(
     responses: Array<HttpNetworkResponse>,
-    responseDeserializer: Deserializer<T>,
+    responseReader: HttpResponseReader<T>,
     tag: String? = null,
     method: HttpMethod = HttpMethod.GET,
     url: String? = null,
@@ -127,7 +132,7 @@ internal fun <T> createMockHttpRequest(
     return HttpRequest.Builder<T>()
         .method(method, requestBody)
         .url(url ?: "https://example.com")
-        .deserializeWith(responseDeserializer)
+        .responseReader(responseReader)
         .tag(tag)
         .retryWith(retryPolicy)
         .userData(HttpNetworkResponseQueue(responses))
@@ -190,7 +195,7 @@ internal fun createNetworkResponse(
     return HttpNetworkResponse(
         statusCode = statusCode,
         statusMessage = getStatusMessage(statusCode),
-        payload = content ?: ByteArray(0),
+        stream = ByteArrayInputStream(content ?: ByteArray(0)),
         headers = responseHeaders ?: MutableHttpHeaders(),
         duration = duration
     )

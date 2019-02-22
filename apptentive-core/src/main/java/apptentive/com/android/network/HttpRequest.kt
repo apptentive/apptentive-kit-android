@@ -1,10 +1,9 @@
 package apptentive.com.android.network
 
 import apptentive.com.android.concurrent.ExecutionQueue
-import apptentive.com.android.convert.Deserializer
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.network.Constants.DEFAULT_REQUEST_TIMEOUT
-import java.io.OutputStream
+import java.io.InputStream
 import java.lang.IllegalStateException
 import java.net.URL
 
@@ -12,7 +11,7 @@ import java.net.URL
  * Base class for HTTP-requests.
  * @param method HTTP-request method.
  * @param url URL
- * @param responseDeserializer deserializer responsible for converting raw response to a typed response object.
+ * @param responseReader deserializer responsible for converting raw response to a typed response object.
  * @param requestBody optional request body.
  * @param headers HTTP-request headers
  * @param timeout request timeout.
@@ -24,7 +23,7 @@ import java.net.URL
 class HttpRequest<T> private constructor(
     val method: HttpMethod,
     val url: URL,
-    private val responseDeserializer: Deserializer<T>,
+    private val responseReader: HttpResponseReader<T>,
     internal val requestBody: HttpRequestBody?,
     internal val headers: HttpHeaders,
     val timeout: TimeInterval,
@@ -44,8 +43,8 @@ class HttpRequest<T> private constructor(
      * Creates an instance of the response content from an array of bytes.
      * This method will be called from a background thread.
      */
-    internal fun createResponseObject(data: ByteArray): T {
-        return responseDeserializer.deserialize(data)
+    internal fun readResponseObject(stream: InputStream): T {
+        return responseReader.read(stream)
     }
 
     //endregion
@@ -56,7 +55,7 @@ class HttpRequest<T> private constructor(
     class Builder<T> {
         private val headers = MutableHttpHeaders()
         private lateinit var requestUrl: URL
-        private lateinit var responseDeserializer: Deserializer<T>
+        private lateinit var reader: HttpResponseReader<T>
         private var method = HttpMethod.GET
         private var requestBody: HttpRequestBody? = null
         private var callbackQueue: ExecutionQueue? = null
@@ -79,11 +78,10 @@ class HttpRequest<T> private constructor(
         //region Method
 
         fun get() = method(HttpMethod.GET)
-        fun head() = method(HttpMethod.HEAD)
-        fun post(body: HttpRequestBody) = method(HttpMethod.POST, body)
-        fun put(body: HttpRequestBody) = method(HttpMethod.PUT, body)
+        fun post(body: HttpRequestBody? = null) = method(HttpMethod.POST, body)
+        fun put(body: HttpRequestBody? = null) = method(HttpMethod.PUT, body)
         fun delete(body: HttpRequestBody? = null) = method(HttpMethod.DELETE, body)
-        fun patch(body: HttpRequestBody) = method(HttpMethod.PATCH, body)
+        fun patch(body: HttpRequestBody? = null) = method(HttpMethod.PATCH, body)
 
         fun method(method: HttpMethod, requestBody: HttpRequestBody? = null): Builder<T> {
             if (requestBody != null &&
@@ -129,8 +127,8 @@ class HttpRequest<T> private constructor(
 
         //region Response
 
-        fun deserializeWith(deserializer: Deserializer<T>): Builder<T> {
-            this.responseDeserializer = deserializer
+        fun responseReader(responseReader: HttpResponseReader<T>): Builder<T> {
+            this.reader = responseReader
             return this
         }
 
@@ -178,14 +176,14 @@ class HttpRequest<T> private constructor(
             if (!this::requestUrl.isInitialized) {
                 throw IllegalStateException("Builder is missing a url")
             }
-            if (!this::responseDeserializer.isInitialized) {
-                throw IllegalStateException("Builder is missing a url")
+            if (!this::reader.isInitialized) {
+                throw IllegalStateException("Builder is missing a response reader")
             }
 
             return HttpRequest(
                 method = method,
                 url = requestUrl,
-                responseDeserializer = responseDeserializer,
+                responseReader = reader,
                 requestBody = requestBody,
                 headers = headers,
                 timeout = timeout,
