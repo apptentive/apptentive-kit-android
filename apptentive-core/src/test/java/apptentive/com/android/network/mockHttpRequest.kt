@@ -1,7 +1,7 @@
 package apptentive.com.android.network
 
-import apptentive.com.android.convert.Deserializer
-import apptentive.com.android.convert.JsonSerializer
+import apptentive.com.android.convert.json.JsonConverter
+import apptentive.com.android.convert.json.JsonSerializer
 import apptentive.com.android.core.TimeInterval
 import java.io.ByteArrayInputStream
 import java.io.IOException
@@ -147,7 +147,7 @@ internal inline fun <reified T : Any> createMockJsonRequest(
     url: String? = null
 ): HttpRequest<T> {
     val userData = createNetworkResponses(
-        content = JsonSerializer(responseObject).serialize()
+        content = JsonConverter.toJson(responseObject).toByteArray(Charsets.UTF_8)
     )
     val overrideMethod = if (requestObject != null) HttpMethod.POST else method
     return createHttpJsonRequest(

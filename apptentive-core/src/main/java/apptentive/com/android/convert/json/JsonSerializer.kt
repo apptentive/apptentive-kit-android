@@ -1,5 +1,6 @@
-package apptentive.com.android.convert
+package apptentive.com.android.convert.json
 
+import apptentive.com.android.convert.Serializer
 import java.io.OutputStream
 
 class JsonSerializer : Serializer {

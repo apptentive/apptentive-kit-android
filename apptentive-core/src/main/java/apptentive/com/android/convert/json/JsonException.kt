@@ -1,4 +1,4 @@
-package apptentive.com.android.convert
+package apptentive.com.android.convert.json
 
 import java.lang.Exception
 

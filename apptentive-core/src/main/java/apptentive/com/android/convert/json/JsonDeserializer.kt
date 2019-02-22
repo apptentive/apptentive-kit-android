@@ -1,8 +1,10 @@
-package apptentive.com.android.convert
+package apptentive.com.android.convert.json
 
+import apptentive.com.android.convert.Deserializer
 import java.io.InputStream
 
-inline fun <reified T : Any> createJsonDeserializer(): JsonDeserializer<T> = JsonDeserializer(T::class.java)
+inline fun <reified T : Any> createJsonDeserializer(): JsonDeserializer<T> =
+    JsonDeserializer(T::class.java)
 
 class JsonDeserializer<T : Any>(private val type: Class<T>) : Deserializer {
     override fun read(stream: InputStream): T {
