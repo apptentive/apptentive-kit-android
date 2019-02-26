@@ -35,6 +35,9 @@ class JsonStreamDeserializer(
     }
 }
 
+/**
+ * Helper function for reading JSON-string from an input stream.
+ */
 private fun readJsonString(stream: InputStream): String {
     val bytes = stream.readBytes()
     if (bytes.isEmpty()) {

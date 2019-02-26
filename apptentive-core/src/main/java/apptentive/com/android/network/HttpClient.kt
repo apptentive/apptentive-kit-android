@@ -227,9 +227,22 @@ class HttpClientImpl(
     //endregion
 }
 
-// TODO: doc-comments
+/**
+ * A callback interface for request lifecycle events.
+ */
 interface HttpClientListener {
+    /**
+     * Invoked after request was enqueued.
+     */
     fun onRequestStart(client: HttpClient, request: HttpRequest<*>)
+
+    /**
+     * Invoked after request was retried.
+     */
     fun onRequestRetry(client: HttpClient, request: HttpRequest<*>)
+
+    /**
+     * Invoked after request was completed (succeed or failed).
+     */
     fun onRequestComplete(client: HttpClient, request: HttpRequest<*>)
 }
