@@ -10,7 +10,7 @@ class AsyncPromiseTest : TestCase() {
         val promise = AsyncPromise<String>()
 
         // use this queue to dispatch value and error
-        val dispatchQueue = BlockingExecutionQueue("dispatch")
+        val dispatchQueue = BlockingExecutorQueue("execute")
 
         // subscribe to callbacks
         promise.then { value ->
@@ -25,12 +25,12 @@ class AsyncPromiseTest : TestCase() {
         }
 
         // notify on a separate queue
-        dispatchQueue.dispatch {
+        dispatchQueue.execute {
             promise.resolve("test")
         }
         assertResults("value: test")
 
-        dispatchQueue.dispatch {
+        dispatchQueue.execute {
             promise.reject(Exception("exception"))
         }
         assertResults("error: exception")
@@ -38,7 +38,7 @@ class AsyncPromiseTest : TestCase() {
 
     @Test
     fun testCallbacksCustomQueue() {
-        val completionQueue = BlockingExecutionQueue("completion")
+        val completionQueue = BlockingExecutorQueue("completion")
 
         // subscribe to callbacks
         val promise = AsyncPromise<String>(completionQueue)
@@ -54,13 +54,13 @@ class AsyncPromiseTest : TestCase() {
         }
 
         // notify on a separate queue
-        val dispatchQueue = BlockingExecutionQueue("dispatch")
-        dispatchQueue.dispatch {
+        val dispatchQueue = BlockingExecutorQueue("execute")
+        dispatchQueue.execute {
             promise.resolve("test")
         }
         assertResults("value: test")
 
-        dispatchQueue.dispatch {
+        dispatchQueue.execute {
             promise.reject(Exception("exception"))
         }
         assertResults("error: exception")
@@ -77,8 +77,8 @@ class AsyncPromiseTest : TestCase() {
         }
 
         // notify on a separate queue
-        val dispatchQueue = BlockingExecutionQueue("dispatch")
-        dispatchQueue.dispatch {
+        val dispatchQueue = BlockingExecutorQueue("execute")
+        dispatchQueue.execute {
             promise.resolve("test")
         }
         assertResults("error: exception")
@@ -86,7 +86,7 @@ class AsyncPromiseTest : TestCase() {
 
     @Test
     fun testCallbacksThenExceptionCustomQueue() {
-        val completionQueue = BlockingExecutionQueue("completion")
+        val completionQueue = BlockingExecutorQueue("completion")
 
         val promise = AsyncPromise<String>(completionQueue)
         promise.then {
@@ -97,8 +97,8 @@ class AsyncPromiseTest : TestCase() {
         }
 
         // notify on a separate queue
-        val dispatchQueue = BlockingExecutionQueue("dispatch")
-        dispatchQueue.dispatch {
+        val dispatchQueue = BlockingExecutorQueue("execute")
+        dispatchQueue.execute {
             promise.resolve("test")
         }
         assertResults("error: exception")
@@ -115,8 +115,8 @@ class AsyncPromiseTest : TestCase() {
         }
 
         // notify on a separate queue
-        val dispatchQueue = BlockingExecutionQueue("dispatch")
-        dispatchQueue.dispatch {
+        val dispatchQueue = BlockingExecutorQueue("execute")
+        dispatchQueue.execute {
             promise.resolve("test")
         }
         assertResults() // there will be no results but also no uncaught exceptions
@@ -124,7 +124,7 @@ class AsyncPromiseTest : TestCase() {
 
     @Test
     fun testCallbacksCatchExceptionCustomQueue() {
-        val completionQueue = BlockingExecutionQueue("completion")
+        val completionQueue = BlockingExecutorQueue("completion")
 
         val promise = AsyncPromise<String>(completionQueue)
         promise.then {
@@ -135,8 +135,8 @@ class AsyncPromiseTest : TestCase() {
         }
 
         // notify on a separate queue
-        val dispatchQueue = BlockingExecutionQueue("dispatch")
-        dispatchQueue.dispatch {
+        val dispatchQueue = BlockingExecutorQueue("execute")
+        dispatchQueue.execute {
             promise.resolve("test")
         }
         assertResults() // there will be no results but also no uncaught exceptions

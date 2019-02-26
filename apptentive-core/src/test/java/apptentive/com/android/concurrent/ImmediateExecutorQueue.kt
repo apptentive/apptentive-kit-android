@@ -8,16 +8,16 @@ import java.util.concurrent.atomic.AtomicBoolean
 /**
  * Executes tasks synchronously on the same thread as dispatched.
  */
-class ImmediateExecutionQueue(
+class ImmediateExecutorQueue(
     name: String,
     private val dispatchManually: Boolean = false
-) : ExecutionQueue(name) {
+) : ExecutorQueue(name) {
     private var currentThread: Thread? = null
     private val tasks = mutableListOf<() -> Unit>()
 
     override val isCurrent get() = Thread.currentThread() == currentThread
 
-    override fun dispatch(delay: TimeInterval, task: () -> Unit) {
+    override fun execute(delay: TimeInterval, task: () -> Unit) {
         if (dispatchManually) {
             tasks.add(task)
         } else {
@@ -49,7 +49,7 @@ class ImmediateExecutionQueue(
 /**
  * Executes tasks asynchronously on the background thread but would block the caller until tasks are done.
  */
-class BlockingExecutionQueue(name: String) : ExecutionQueue(name) {
+class BlockingExecutorQueue(name: String) : ExecutorQueue(name) {
     private val threadGroup: ThreadGroup = ThreadGroup(name)
     private val executor: ExecutorService
 
@@ -61,7 +61,7 @@ class BlockingExecutionQueue(name: String) : ExecutionQueue(name) {
 
     override val isCurrent: Boolean get() = Thread.currentThread().threadGroup == threadGroup
 
-    override fun dispatch(delay: TimeInterval, task: () -> Unit) {
+    override fun execute(delay: TimeInterval, task: () -> Unit) {
         // there must be a better way
         val mutex = Object()
         val waiting = AtomicBoolean(true)

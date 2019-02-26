@@ -1,23 +1,24 @@
 package apptentive.com.android.concurrent
 
-import apptentive.com.android.core.ExecutionQueueFactory
+import apptentive.com.android.core.ExecutorQueueFactory
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.UNDEFINED
 
-abstract class ExecutionQueue(val name: String) {
+abstract class ExecutorQueue(val name: String) : Executor {
     abstract val isCurrent: Boolean
 
-    fun dispatch(task: () -> Unit) {
-        dispatch(0.0, task)
+    override fun execute(task: () -> Unit) {
+        execute(0.0, task)
     }
-    abstract fun dispatch(delay: TimeInterval, task: () -> Unit)
+
+    abstract fun execute(delay: TimeInterval, task: () -> Unit)
     abstract fun stop()
 
     companion object {
-        private val queueFactory get() = DependencyProvider.of<ExecutionQueueFactory>()
-        val mainQueue: ExecutionQueue = queueFactory.createMainQueue()
-        val stateQueue: ExecutionQueue = queueFactory.createSerialQueue("apptentive")
+        private val queueFactory get() = DependencyProvider.of<ExecutorQueueFactory>()
+        val mainQueue: ExecutorQueue = queueFactory.createMainQueue()
+        val stateQueue: ExecutorQueue = queueFactory.createSerialQueue("apptentive")
         val isMainQueue = queueFactory.isMainQueue()
 
         fun createSerialQueue(name: String) = queueFactory.createSerialQueue(name)

@@ -6,9 +6,9 @@ import apptentive.com.android.util.LogTags
 /**
  * Async implementation of the [Promise] interface
  *
- * @param [completionQueue] optional execution queue to invoke async fulfilment/rejection callbacks.
+ * @param [callbackExecutor] optional executor to invoke async fulfilment/rejection callbacks.
  */
-class AsyncPromise<T>(private val completionQueue: ExecutionQueue? = null) : Promise<T> {
+class AsyncPromise<T>(private val callbackExecutor: Executor? = null) : Promise<T> {
     private var resolveCallback: (value: T) -> Unit = {}
     private var rejectCallback: (e: Exception) -> Unit = {}
 
@@ -23,8 +23,8 @@ class AsyncPromise<T>(private val completionQueue: ExecutionQueue? = null) : Pro
     }
 
     fun resolve(value: T) {
-        if (completionQueue != null) {
-            completionQueue.dispatch {
+        if (callbackExecutor != null) {
+            callbackExecutor.execute {
                 resolveSync(value)
             }
         } else {
@@ -33,8 +33,8 @@ class AsyncPromise<T>(private val completionQueue: ExecutionQueue? = null) : Pro
     }
 
     fun reject(e: Exception) {
-        if (completionQueue != null) {
-            completionQueue.dispatch {
+        if (callbackExecutor != null) {
+            callbackExecutor.execute {
                 rejectSync(e)
             }
         } else {

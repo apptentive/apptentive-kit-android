@@ -1,4 +1,4 @@
-package apptentive.com.android.convert
+package apptentive.com.android.convert.json
 
 import com.google.gson.Gson
 
@@ -14,7 +14,7 @@ internal object JsonConverter {
      */
     @Throws(JsonException::class)
     inline fun <reified T> fromJson(json: String): T {
-        return JsonConverter.fromJson(json, T::class.java) as T
+        return fromJson(json, T::class.java) as T
     }
 
     /**

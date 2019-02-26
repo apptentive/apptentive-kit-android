@@ -1,6 +1,6 @@
 package apptentive.com.android.network
 
-import apptentive.com.android.convert.JsonConverter
+import apptentive.com.android.convert.json.JsonConverter
 import java.io.InputStream
 import java.io.OutputStream
 

@@ -1,5 +1,13 @@
 package apptentive.com.android.convert
 
+/**
+ * Represents an abstract object serializer while hiding
+ * all the underlying implementation details.
+ */
 interface Serializer {
-    fun serialize(): ByteArray
+    /**
+     * Performs object serialization.
+     * @param obj an object to be serialized.
+     */
+    fun serialize(obj: Any)
 }
