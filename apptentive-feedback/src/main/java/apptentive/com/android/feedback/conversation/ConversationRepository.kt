@@ -23,12 +23,22 @@ internal class ConversationRepositoryImpl(
 
 internal class DiskConversationRepository(private val deserializer: Deserializer) : ConversationRepository {
     override fun getConversation(): Observable<Conversation> {
-        return Observable.fromCallable { deserializer.deserialize() as Conversation }
+        // errors are suppressed and observer completes as empty
+        return Observable.create { emitter ->
+            try {
+                val conversation = deserializer.deserialize() as Conversation
+                emitter.onNext(conversation)
+            } catch (e: Exception) {
+                // TODO: log error
+            }
+            emitter.onComplete()
+        }
     }
 }
 
-internal class NetworkConversationRepository(private val service: ConversationService) : ConversationRepository {
+internal class NetworkConversationRepository(private val service: ConversationFetchService) :
+    ConversationRepository {
     override fun getConversation(): Observable<Conversation> {
-        return service.getConversation()
+        return service.fetchConversation()
     }
 }
