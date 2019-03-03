@@ -1,30 +1,18 @@
 package apptentive.com.android.feedback.conversation
 
-import apptentive.com.android.convert.Deserializer
+import apptentive.com.android.network.HttpClient
 import io.reactivex.Observable
 
 internal interface ConversationService {
     fun getConversation(): Observable<Conversation>
 }
 
-internal class ConversationServiceImpl(
-    private val cacheRepository: ConversationService,
-    private val networkRepository: ConversationService
-) : ConversationService {
-    override fun getConversation(): Observable<Conversation> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
+internal fun createConversationService(httpClient: HttpClient): ConversationService {
+    return ConversationServiceImpl(httpClient)
 }
 
-private class LocalConversationService(private val deserializer: Deserializer) : ConversationService {
+private class ConversationServiceImpl(private val httpClient: HttpClient) : ConversationService {
     override fun getConversation(): Observable<Conversation> {
-        return Observable.fromCallable { deserializer.deserialize() as Conversation }
-    }
-}
-
-private class NetworkConversationService() : ConversationService {
-    override fun getConversation(): Observable<Conversation> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented")
     }
 }
