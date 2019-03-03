@@ -22,12 +22,20 @@ class ConversationRepositoryTest {
         assertSame(expected, actual)
     }
 
-    private fun createFailConversationRepository(): ConversationRepository {
-        return FailConversationRepository
-    }
+    @Test
+    fun testLoadConversationFromDisk() {
+        val expected = Conversation()
 
-    private fun createExceptionConversationRepository(): ConversationRepository {
-        return ExceptionConversationRepository
+        val diskRepository = MockConversationRepository(expected)
+        val networkRepository = FailConversationRepository
+        val repository = ConversationRepositoryImpl(diskRepository, networkRepository)
+
+        lateinit var actual: Conversation
+        repository.getConversation().subscribe { conversation ->
+            actual = conversation
+        }
+
+        assertSame(expected, actual)
     }
 }
 
