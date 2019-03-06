@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.conversation
 
+import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.network.HttpClient
 import io.reactivex.Observable
 

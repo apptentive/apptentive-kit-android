@@ -1,6 +1,8 @@
 package apptentive.com.android.feedback.conversation
 
 import apptentive.com.android.convert.Deserializer
+import apptentive.com.android.feedback.model.Conversation
+import apptentive.com.android.feedback.utils.randomUUID
 import io.reactivex.Observable
 import org.junit.Assert.assertSame
 import org.junit.Test
@@ -8,7 +10,7 @@ import org.junit.Test
 class ConversationRepositoryTest {
     @Test
     fun testLoadConversationFromNetwork() {
-        val expected = Conversation()
+        val expected = Conversation(randomUUID())
 
         val diskRepository = createDiskRepository(null)
         val networkRepository = createNetworkRepository(expected)
@@ -24,7 +26,7 @@ class ConversationRepositoryTest {
 
     @Test
     fun testLoadConversationFromDisk() {
-        val expected = Conversation()
+        val expected = Conversation(randomUUID())
 
         val diskRepository = createDiskRepository(expected)
         val networkRepository = FailConversationRepository
