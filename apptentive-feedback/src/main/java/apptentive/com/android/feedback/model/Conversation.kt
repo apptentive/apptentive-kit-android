@@ -6,6 +6,7 @@ data class Conversation(
     val localIdentifier: String,
     val identifier: String = "",
     val token: String = "",
+    val person: Person,
     val state: State = State.UNDEFINED
 ) : StateType {
     enum class State {
