@@ -2,11 +2,11 @@ package apptentive.com.android.feedback.redux
 
 import apptentive.com.android.debug.Assert.assertEqual
 import apptentive.com.android.feedback.model.Conversation
-import apptentive.com.android.feedback.model.AppState
+import apptentive.com.android.feedback.model.ApptentiveState
 import org.rekotlin.Action
 
-internal fun appReducer(action: Action, state: AppState?): AppState {
-    val state = state ?: AppState.initialState()
+internal fun rootReducer(action: Action, state: ApptentiveState?): ApptentiveState {
+    val state = state ?: ApptentiveState.initialState()
     return state.copy(
         activeConversation = conversationReducer(action, state.activeConversation)
     )
