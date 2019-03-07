@@ -1,7 +1,6 @@
 package apptentive.com.android.feedback.conversation
 
 import apptentive.com.android.convert.Deserializer
-import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.model.Conversation
 import io.reactivex.Observable
 

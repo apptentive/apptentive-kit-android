@@ -1,9 +1,8 @@
 package apptentive.com.android.feedback.backend
 
-import apptentive.com.android.feedback.model.Conversation
-import io.reactivex.Observable
+import apptentive.com.android.concurrent.Promise
 
-interface BackendService : ConversationService {
+interface BackendService : ConversationFetchService {
 }
 
 fun createBackendService(
@@ -17,10 +16,11 @@ private class DefaultBackendService(
     private val apptentiveKey: String,
     private val apptentiveSignature: String
 ) : BackendService {
-    //region ConversationService
 
-    override fun fetchConversation(): Observable<Conversation> {
-        TODO("not implemented")
+    //region ConversationFetchService
+
+    override fun fetchConversation(): Promise<ConversationCredentials> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     //endregion
