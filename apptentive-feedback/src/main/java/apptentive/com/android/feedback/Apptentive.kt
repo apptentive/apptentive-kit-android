@@ -5,8 +5,10 @@ import android.content.Context
 import apptentive.com.android.concurrent.ExecutorQueue
 
 object Apptentive {
-    private var client: ApptentiveClient = ApptentiveNullClient
+    private var client: ApptentiveClient = ApptentiveClient.NULL
     private lateinit var stateQueue: ExecutorQueue
+
+    val registered get() = client != ApptentiveClient.NULL
 
     fun register(application: Application, configuration: ApptentiveConfiguration) {
         // FIXME: do not allow multiple instances
