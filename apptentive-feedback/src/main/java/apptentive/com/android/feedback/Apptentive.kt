@@ -2,27 +2,25 @@ package apptentive.com.android.feedback
 
 import android.app.Application
 import android.content.Context
-import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.concurrent.ExecutorQueue
 
 object Apptentive {
-    private var feedback: ApptentiveFeedback = ApptentiveNullFeedback
-    private lateinit var executor: Executor
+    private var client: ApptentiveClient = ApptentiveNullClient
+    private lateinit var stateQueue: ExecutorQueue
 
     fun register(application: Application, configuration: ApptentiveConfiguration) {
-        // TODO: do not allow multiple instances
+        // FIXME: do not allow multiple instances
 
-        executor = ExecutorQueue.createSerialQueue("feedback")
-        feedback = ApptentiveDefaultFeedback(
+        stateQueue = ExecutorQueue.createSerialQueue("apptentive")
+        client = ApptentiveDefaultClient(
             configuration.apptentiveKey,
-            configuration.apptentiveSignature,
-            executor
+            configuration.apptentiveSignature
         ).apply {
-            executor.execute(::start)
+            stateQueue.execute(::start)
         }
     }
 
     fun engage(context: Context, event: String) {
-        feedback.engage(context, event)
+        client.engage(context, event)
     }
 }

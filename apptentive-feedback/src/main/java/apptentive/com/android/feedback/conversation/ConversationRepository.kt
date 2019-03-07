@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.conversation
 
 import apptentive.com.android.convert.Deserializer
+import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.model.Conversation
 import io.reactivex.Observable
 
@@ -37,7 +38,7 @@ internal class DiskConversationRepository(private val deserializer: Deserializer
     }
 }
 
-internal class NetworkConversationRepository(private val service: ConversationFetchService) :
+internal class NetworkConversationRepository(private val service: ConversationService) :
     ConversationRepository {
     override fun getConversation(): Observable<Conversation> {
         return service.fetchConversation()

@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.conversation
 
 import apptentive.com.android.convert.Deserializer
+import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.utils.randomUUID
 import io.reactivex.Observable
@@ -50,7 +51,7 @@ class ConversationRepositoryTest {
     }
 
     private fun createNetworkRepository(conversation: Conversation?): ConversationRepository {
-        val service = object : ConversationFetchService {
+        val service = object : ConversationService {
             override fun fetchConversation(): Observable<Conversation> {
                 return if (conversation != null) {
                     Observable.just(conversation)
