@@ -1,4 +1,6 @@
 package apptentive.com.android.feedback.model
 
-class SDK {
+import org.rekotlin.StateType
+
+class SDK : StateType {
 }

@@ -8,6 +8,11 @@ data class ApptentiveState(
     val activeConversation: Conversation
 ) : StateType {
     companion object {
-        internal fun initialState(): ApptentiveState = ApptentiveState(Conversation(randomUUID()))
+        internal fun initialState(): ApptentiveState = ApptentiveState(
+            Conversation(
+                localIdentifier = randomUUID(),
+                person = Person(randomUUID())
+            )
+        )
     }
 }

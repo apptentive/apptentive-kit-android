@@ -1,9 +1,10 @@
 package apptentive.com.android.feedback.redux
 
+import apptentive.com.android.feedback.model.Person
 import org.rekotlin.Action
 
 /*
- * User data
+ * Person data
  * - ConversationSetUserData(key, value)
  * - ConversationRemoveUserData(key)
  * - ConversationSetUserCustomData(key, value)
@@ -14,7 +15,7 @@ import org.rekotlin.Action
  * - ConversationRemoveDeviceCustomData(key, value)
  */
 
-//region Conversation Fetch
+//region Conversation Actions
 
 internal abstract class ConversationAction(val localConversationIdentifier: String) : Action
 
@@ -40,5 +41,18 @@ internal class ConversationSaveFailedAction(
     localConversationIdentifier: String,
     val error: Exception
 ) : ConversationAction(localConversationIdentifier)
+
+//endregion
+
+//region Person Actions
+
+internal abstract class PersonAction(localConversationIdentifier: String) :
+    ConversationMutatingAction(localConversationIdentifier)
+
+internal abstract class PersonSetDataAction(
+    localConversationIdentifier: String,
+    val key: String,
+    val value: String
+) : PersonAction(localConversationIdentifier)
 
 //endregion

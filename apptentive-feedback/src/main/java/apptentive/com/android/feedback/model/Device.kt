@@ -1,4 +1,6 @@
 package apptentive.com.android.feedback.model
 
-class Device {
+import org.rekotlin.StateType
+
+class Device : StateType {
 }

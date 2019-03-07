@@ -3,6 +3,7 @@ package apptentive.com.android.feedback.redux
 import apptentive.com.android.debug.Assert.assertEqual
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.ApptentiveState
+import apptentive.com.android.feedback.model.Person
 import org.rekotlin.Action
 
 internal fun rootReducer(action: Action, state: ApptentiveState?): ApptentiveState {
@@ -66,5 +67,15 @@ private fun conversationReducer(
         )
     }
 
+    if (action is PersonAction) {
+        return conversation.copy(
+            person = personReducer(conversation.person, action)
+        )
+    }
+
     return conversation
+}
+
+private fun personReducer(person: Person, action: PersonAction): Person {
+    return person
 }
