@@ -34,7 +34,7 @@ interface HttpClient {
  * @param [retryPolicy] default retry policy for HTTP-request with no custom policy.
  * @param [listener] optional [HttpClientListener] for tracking status of the requests.
  */
-class HttpClientImpl(
+class DefaultHttpClient(
     private val network: HttpNetwork,
     private val networkQueue: ExecutorQueue,
     private val retryPolicy: HttpRequestRetryPolicy,

@@ -345,7 +345,7 @@ class HttpClientTest : TestCase() {
         listener: HttpClientListener? = null
     ): HttpClient {
         network.networkConnected = networkConnected
-        return HttpClientImpl(
+        return DefaultHttpClient(
             network = network,
             networkQueue = networkQueue,
             retryPolicy = retryPolicy ?: HttpRequestNoRetryPolicy,
