@@ -1,1 +1,1 @@
-include ':app', ':apptentive-core'
+include ':app', ':apptentive-core', ':apptentive-feedback'
