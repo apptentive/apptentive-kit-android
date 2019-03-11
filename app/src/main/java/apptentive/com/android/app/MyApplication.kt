@@ -11,6 +11,6 @@ class MyApplication: Application() {
         val apptentiveKey = "ANDROID-ANDROID-DEV-c9c0b324114f"
         val apptentiveSignature = "98f5539e9310dc290394c68b76664e98"
         val configuration = ApptentiveConfiguration(apptentiveKey, apptentiveSignature)
-        Apptentive.register(this, configuration)
+        // Apptentive.register(this, configuration)
     }
 }
