@@ -1,7 +1,9 @@
 package apptentive.com.android.love
 
 object ApptentiveLove {
+    private var client: ApptentiveLoveClient = ApptentiveLoveClient.NULL
+
     fun send(entity: LoveEntity) {
-        TODO("Implement")
+        client.send(entity)
     }
 }
