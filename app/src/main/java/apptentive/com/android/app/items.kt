@@ -2,6 +2,7 @@ package apptentive.com.android.app
 
 import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 
@@ -37,9 +38,28 @@ class FeedbackItem(private val title: String) : Item(ItemType.FEEDBACK.ordinal) 
 class RatingItem(private val title: String) : Item(ItemType.RATING.ordinal) {
     class ViewHolder(view: View) : RecyclerViewAdapter.ViewHolder<RatingItem>(view) {
         private val titleView: TextView = view.findViewById(R.id.title)
+        private val buttons = arrayOf<ImageButton>(
+            view.findViewById(R.id.button_star_1),
+            view.findViewById(R.id.button_star_2),
+            view.findViewById(R.id.button_star_3),
+            view.findViewById(R.id.button_star_4),
+            view.findViewById(R.id.button_star_5)
+        )
+        init {
+            for (i in 0 until buttons.size) {
+                buttons[i].setOnClickListener { setRating(i + 1) }
+            }
+        }
 
         override fun bindView(item: RatingItem, position: Int) {
             titleView.text = item.title
+        }
+
+        private fun setRating(rating: Int) {
+            for (i in 0 until buttons.size) {
+                val selected = i < rating
+                buttons[i].setImageResource(if (selected) R.drawable.ic_star_black else R.drawable.ic_star_border)
+            }
         }
     }
 }

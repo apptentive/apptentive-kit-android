@@ -37,31 +37,31 @@
                 <ImageButton
                         android:id="@+id/button_star_1"
                         android:src="@drawable/ic_star_border"
-                        android:background="?android:selectableItemBackground"
+                        android:background="@null"
                         android:layout_width="44dp"
                         android:layout_height="44dp"/>
                 <ImageButton
                         android:id="@+id/button_star_2"
                         android:src="@drawable/ic_star_border"
-                        android:background="?android:selectableItemBackground"
+                        android:background="@null"
                         android:layout_width="44dp"
                         android:layout_height="44dp"/>
                 <ImageButton
                         android:id="@+id/button_star_3"
                         android:src="@drawable/ic_star_border"
-                        android:background="?android:selectableItemBackground"
+                        android:background="@null"
                         android:layout_width="44dp"
                         android:layout_height="44dp"/>
                 <ImageButton
                         android:id="@+id/button_star_4"
                         android:src="@drawable/ic_star_border"
-                        android:background="?android:selectableItemBackground"
+                        android:background="@null"
                         android:layout_width="44dp"
                         android:layout_height="44dp"/>
                 <ImageButton
                         android:id="@+id/button_star_5"
                         android:src="@drawable/ic_star_border"
-                        android:background="?android:selectableItemBackground"
+                        android:background="@null"
                         android:layout_width="44dp"
                         android:layout_height="44dp"/>
 
