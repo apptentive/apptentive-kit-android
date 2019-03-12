@@ -45,6 +45,7 @@ class ItemFragment : Fragment() {
                     BeverageItem("6402270", R.drawable.ic_coffee_05, "Nitro Cold Brew"),
                     BeverageItem("6810919", R.drawable.ic_coffee_06, "Matcha Green Tea Crème Frappuccino®"),
                     BeverageItem("5951855", R.drawable.ic_coffee_07, "Starbucks® Blonde Flat White"),
+                    SurveyItem("What's your favourite beverage?", arrayOf("COFFEE", "TEA", "LEMONADE")),
                     BeverageItem("2225867", R.drawable.ic_coffee_08, "Mango Dragonfruit Starbucks Refreshers® Beverage"),
                     BeverageItem("1598848", R.drawable.ic_coffee_09, "Iced Passion Tango™ Tea Lemonade"),
                     RatingItem("How would your rate the app?")
@@ -64,6 +65,11 @@ class ItemFragment : Fragment() {
                     register(ItemType.RATING, object: RecyclerViewAdapter.LayoutIdFactory<RatingItem>(R.layout.rating_item) {
                         override fun createViewHolder(convertView: View): RecyclerViewAdapter.ViewHolder<RatingItem> {
                             return RatingItem.ViewHolder(convertView)
+                        }
+                    })
+                    register(ItemType.SURVEY, object: RecyclerViewAdapter.LayoutIdFactory<SurveyItem>(R.layout.survey_item) {
+                        override fun createViewHolder(convertView: View): RecyclerViewAdapter.ViewHolder<SurveyItem> {
+                            return SurveyItem.ViewHolder(convertView)
                         }
                     })
                 }
