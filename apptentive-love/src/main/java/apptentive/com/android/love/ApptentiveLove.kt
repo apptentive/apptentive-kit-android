@@ -1,7 +1,7 @@
 package apptentive.com.android.love
 
 object ApptentiveLove {
-    fun send(sentiment: Sentiment) {
+    fun send(entity: LoveEntity) {
         TODO("Implement")
     }
 }
