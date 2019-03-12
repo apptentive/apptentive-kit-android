@@ -6,6 +6,6 @@ enum class SentimentType {
     NEUTRAL
 }
 
-data class Sentiment(val identifier: String, val type: SentimentType)
+class Sentiment(identifier: String, val type: SentimentType) : LoveEntity(identifier)
 
 
