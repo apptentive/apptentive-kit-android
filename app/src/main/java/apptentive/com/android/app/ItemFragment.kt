@@ -1,5 +1,6 @@
 package apptentive.com.android.app
 
+import android.media.Rating
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
@@ -45,7 +46,8 @@ class ItemFragment : Fragment() {
                     BeverageItem("6810919", R.drawable.ic_coffee_06, "Matcha Green Tea Crème Frappuccino®"),
                     BeverageItem("5951855", R.drawable.ic_coffee_07, "Starbucks® Blonde Flat White"),
                     BeverageItem("2225867", R.drawable.ic_coffee_08, "Mango Dragonfruit Starbucks Refreshers® Beverage"),
-                    BeverageItem("1598848", R.drawable.ic_coffee_09, "Iced Passion Tango™ Tea Lemonade")
+                    BeverageItem("1598848", R.drawable.ic_coffee_09, "Iced Passion Tango™ Tea Lemonade"),
+                    RatingItem("How would your rate the app?")
                 )
 
                 adapter = RecyclerViewAdapter(items).apply {
@@ -57,6 +59,11 @@ class ItemFragment : Fragment() {
                     register(ItemType.FEEDBACK, object: RecyclerViewAdapter.LayoutIdFactory<FeedbackItem>(R.layout.feedback_item) {
                         override fun createViewHolder(convertView: View): RecyclerViewAdapter.ViewHolder<FeedbackItem> {
                             return FeedbackItem.ViewHolder(convertView)
+                        }
+                    })
+                    register(ItemType.RATING, object: RecyclerViewAdapter.LayoutIdFactory<RatingItem>(R.layout.rating_item) {
+                        override fun createViewHolder(convertView: View): RecyclerViewAdapter.ViewHolder<RatingItem> {
+                            return RatingItem.ViewHolder(convertView)
                         }
                     })
                 }

@@ -6,7 +6,8 @@ import android.widget.TextView
 
 enum class ItemType {
     BEVERAGE,
-    FEEDBACK
+    FEEDBACK,
+    RATING
 }
 
 class BeverageItem(val id: String, val imageId: Int, val title: String) : Item(ItemType.BEVERAGE.ordinal) {
@@ -28,7 +29,15 @@ class FeedbackItem(private val title: String) : Item(ItemType.FEEDBACK.ordinal) 
         override fun bindView(item: FeedbackItem, position: Int) {
             titleView.text = item.title
         }
-
     }
+}
 
+class RatingItem(private val title: String) : Item(ItemType.RATING.ordinal) {
+    class ViewHolder(view: View) : RecyclerViewAdapter.ViewHolder<RatingItem>(view) {
+        private val titleView: TextView = view.findViewById(R.id.title)
+
+        override fun bindView(item: RatingItem, position: Int) {
+            titleView.text = item.title
+        }
+    }
 }
