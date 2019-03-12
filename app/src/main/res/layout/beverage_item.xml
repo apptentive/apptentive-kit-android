@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:card_view="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="horizontal"
+              android:gravity="center_vertical">
+
+    <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="480dp"
+            android:layout_margin="8dp"
+            card_view:cardUseCompatPadding="true"
+            card_view:cardElevation="2dp"
+            card_view:cardCornerRadius="8dp">
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+            <ImageView
+                    android:id="@+id/item_icon"
+                    android:src="@mipmap/ic_launcher"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    app:srcCompat="@drawable/ic_coffee_01"
+                    android:scaleType="centerCrop"/>
+
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_margin="@dimen/text_margin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                <TextView
+                        android:id="@+id/item_title"
+                        android:text="Title"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/text_margin"
+                        android:textAppearance="?attr/textAppearanceListItem"/>
+
+                <ImageButton
+                        android:id="@+id/item_thumb_up"
+                        android:src="@drawable/ic_thumb_up"
+                        android:background="?android:selectableItemBackground"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"/>
+
+                <ImageButton
+                        android:id="@+id/item_thumb_down"
+                        android:src="@drawable/ic_thumb_down"
+                        android:background="?android:selectableItemBackground"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"/>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</LinearLayout>

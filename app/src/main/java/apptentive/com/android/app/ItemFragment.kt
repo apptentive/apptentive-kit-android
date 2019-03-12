@@ -1,6 +1,5 @@
 package apptentive.com.android.app
 
-import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
@@ -10,20 +9,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 
-import apptentive.com.android.app.dummy.DummyContent
-import apptentive.com.android.app.dummy.DummyContent.Beverage
-
-/**
- * A fragment representing a list of Items.
- * Activities containing this fragment MUST implement the
- * [ItemFragment.OnListFragmentInteractionListener] interface.
- */
 class ItemFragment : Fragment() {
 
     // TODO: Customize parameters
     private var columnCount = 1
-
-    private var listener: OnListFragmentInteractionListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,40 +35,34 @@ class ItemFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = BeverageRecyclerViewAdapter(DummyContent.BEVERAGES, listener)
+                val items = listOf(
+                    BeverageItem("1739787", R.drawable.ic_coffee_01, "Iced Caramel Cloud Macchiato"),
+                    BeverageItem("4686989", R.drawable.ic_coffee_02, "Iced Cinnamon Cloud Macchiato"),
+                    BeverageItem("7501926", R.drawable.ic_coffee_03, "Iced Matcha Green Tea Latte"),
+                    BeverageItem("2724579", R.drawable.ic_coffee_04, "Cold Brew with Cascara Cold Foam"),
+                    FeedbackItem("How was your last store experience?"),
+                    BeverageItem("6402270", R.drawable.ic_coffee_05, "Nitro Cold Brew"),
+                    BeverageItem("6810919", R.drawable.ic_coffee_06, "Matcha Green Tea Crème Frappuccino®"),
+                    BeverageItem("5951855", R.drawable.ic_coffee_07, "Starbucks® Blonde Flat White"),
+                    BeverageItem("2225867", R.drawable.ic_coffee_08, "Mango Dragonfruit Starbucks Refreshers® Beverage"),
+                    BeverageItem("1598848", R.drawable.ic_coffee_09, "Iced Passion Tango™ Tea Lemonade")
+                )
+
+                adapter = RecyclerViewAdapter(items).apply {
+                    register(ItemType.BEVERAGE, object: RecyclerViewAdapter.LayoutIdFactory<BeverageItem>(R.layout.beverage_item) {
+                        override fun createViewHolder(convertView: View): RecyclerViewAdapter.ViewHolder<BeverageItem> {
+                            return BeverageItem.ViewHolder(convertView)
+                        }
+                    })
+                    register(ItemType.FEEDBACK, object: RecyclerViewAdapter.LayoutIdFactory<FeedbackItem>(R.layout.feedback_item) {
+                        override fun createViewHolder(convertView: View): RecyclerViewAdapter.ViewHolder<FeedbackItem> {
+                            return FeedbackItem.ViewHolder(convertView)
+                        }
+                    })
+                }
             }
         }
         return view
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is OnListFragmentInteractionListener) {
-            listener = context
-        } else {
-            throw RuntimeException(context.toString() + " must implement OnListFragmentInteractionListener")
-        }
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson
-     * [Communicating with Other Fragments](http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
-    interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        fun onListFragmentInteraction(item: Beverage?)
     }
 
     companion object {

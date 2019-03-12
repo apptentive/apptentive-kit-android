@@ -9,55 +9,52 @@
 
     <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="480dp"
+            android:layout_height="wrap_content"
             android:layout_margin="8dp"
             card_view:cardUseCompatPadding="true"
             card_view:cardElevation="2dp"
             card_view:cardCornerRadius="8dp">
         <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_margin="@dimen/text_margin"
+                android:gravity="center"
+                android:layout_gravity="center">
 
-            <ImageView
-                    android:id="@+id/item_icon"
-                    android:src="@mipmap/ic_launcher"
+            <TextView
+                    android:id="@+id/title"
+                    android:text="How was your experience?"
+                    android:textAlignment="center"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    app:srcCompat="@drawable/ic_coffee_01"
-                    android:scaleType="centerCrop"/>
+                    android:layout_height="wrap_content"/>
 
             <LinearLayout
                     android:orientation="horizontal"
-                    android:layout_margin="@dimen/text_margin"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
 
-                <TextView
-                        android:id="@+id/item_title"
-                        android:text="Title"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/text_margin"
-                        android:textAppearance="?attr/textAppearanceListItem"/>
-
                 <ImageButton
-                        android:id="@+id/item_thumb_up"
-                        android:src="@drawable/ic_thumb_up"
+                        android:id="@+id/button_satisfied"
+                        android:src="@drawable/ic_sentiment_satisfied"
                         android:background="?android:selectableItemBackground"
                         android:layout_width="44dp"
                         android:layout_height="44dp"/>
 
                 <ImageButton
-                        android:id="@+id/item_thumb_down"
-                        android:src="@drawable/ic_thumb_down"
+                        android:id="@+id/button_neutral"
+                        android:src="@drawable/ic_sentiment_neutral"
+                        android:background="?android:selectableItemBackground"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"/>
+
+                <ImageButton
+                        android:id="@+id/button_dissatisfied"
+                        android:src="@drawable/ic_sentiment_dissatisfied"
                         android:background="?android:selectableItemBackground"
                         android:layout_width="44dp"
                         android:layout_height="44dp"/>
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
-
 </LinearLayout>
