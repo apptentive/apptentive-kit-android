@@ -31,6 +31,7 @@
             <LinearLayout
                     android:orientation="horizontal"
                     android:layout_margin="@dimen/text_margin"
+                    android:gravity="center_vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
@@ -43,19 +44,13 @@
                         android:layout_margin="@dimen/text_margin"
                         android:textAppearance="?attr/textAppearanceListItem"/>
 
-                <ImageButton
-                        android:id="@+id/item_thumb_up"
-                        android:src="@drawable/ic_thumb_up"
-                        android:background="?android:selectableItemBackground"
+                <com.like.LikeButton
+                        app:icon_type="heart"
+                        app:icon_size="8dp"
+                        android:id="@+id/star_button"
                         android:layout_width="44dp"
                         android:layout_height="44dp"/>
 
-                <ImageButton
-                        android:id="@+id/item_thumb_down"
-                        android:src="@drawable/ic_thumb_down"
-                        android:background="?android:selectableItemBackground"
-                        android:layout_width="44dp"
-                        android:layout_height="44dp"/>
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
