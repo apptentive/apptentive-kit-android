@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
 
 private class AssetImageLoader : ImageLoader {
     override fun loadImage(path: String, imageView: ImageView) {
-        val imageFile = "file:///android_asset/images$path"
+        val imageFile = "file:///android_asset/$path"
         Picasso.get().load(imageFile).into(imageView)
     }
 }
