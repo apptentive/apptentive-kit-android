@@ -8,6 +8,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
+import apptentive.com.android.movies.util.Item
 import apptentive.com.android.movies.util.RecyclerViewAdapter
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
@@ -19,7 +20,6 @@ class MainActivity : AppCompatActivity() {
 
         val adapter = createAdapter()
         val layoutManager = GridLayoutManager(this, 2)
-
         recyclerView.layoutManager = layoutManager
         recyclerView.itemAnimator = DefaultItemAnimator()
         recyclerView.isNestedScrollingEnabled = false
@@ -27,7 +27,17 @@ class MainActivity : AppCompatActivity() {
 
         val viewModel = ViewModelProviders.of(this).get(MovieViewModel::class.java)
         viewModel.movies.observe(this, Observer { movies ->
-            adapter.setItems(movies.map { MovieItem(it) })
+            val items: MutableList<Item> = movies.map { MovieItem(it) }.toMutableList()
+            items.add(RatingItem("How would your rate the app?"))
+            items.add(16, FeedbackItem("How was your last renting experience?"))
+            items.add(8, SurveyItem("Local or Foreign?", arrayOf("Local", "Foreign")))
+            items.add(4, SurveyItem("What's your favourite genre?", arrayOf("Comedy", "Horror", "Drama")))
+            adapter.setItems(items)
+            layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int {
+                    return if (items[position] is MovieItem) 1 else 2
+                }
+            }
         })
     }
 
@@ -39,6 +49,27 @@ class MainActivity : AppCompatActivity() {
                 return MovieItem.ViewHolder(convertView, imageLoader)
             }
         })
+        adapter.register(
+            ItemType.FEEDBACK,
+            object : RecyclerViewAdapter.LayoutIdFactory<FeedbackItem>(R.layout.feedback_item) {
+                override fun createViewHolder(convertView: View): RecyclerViewAdapter.ViewHolder<FeedbackItem> {
+                    return FeedbackItem.ViewHolder(convertView)
+                }
+            })
+        adapter.register(
+            ItemType.RATING,
+            object : RecyclerViewAdapter.LayoutIdFactory<RatingItem>(R.layout.rating_item) {
+                override fun createViewHolder(convertView: View): RecyclerViewAdapter.ViewHolder<RatingItem> {
+                    return RatingItem.ViewHolder(convertView)
+                }
+            })
+        adapter.register(
+            ItemType.SURVEY,
+            object : RecyclerViewAdapter.LayoutIdFactory<SurveyItem>(R.layout.survey_item) {
+                override fun createViewHolder(convertView: View): RecyclerViewAdapter.ViewHolder<SurveyItem> {
+                    return SurveyItem.ViewHolder(convertView)
+                }
+            })
 
         return adapter
     }
