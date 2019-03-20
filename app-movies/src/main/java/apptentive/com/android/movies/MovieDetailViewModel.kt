@@ -2,11 +2,9 @@ package apptentive.com.android.movies
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
 
-class MovieViewModel(
+class MovieDetailViewModel(
     application: Application,
-    repository: MovieRepository
+    private val repository: MovieRepository
 ) : AndroidViewModel(application) {
-    val movies: LiveData<Array<Movie>> = repository.movies
 }

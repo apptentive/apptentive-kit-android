@@ -1,14 +1,24 @@
 package apptentive.com.android.movies
 
 import android.content.Context
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 
-class MovieRepository(context: Context) {
-    val movies: MutableLiveData<Array<Movie>> = MutableLiveData()
+interface MovieRepository {
+    val movies: LiveData<Array<Movie>>
+    fun findMovie(id: String): Movie?
+}
+
+class MockMovieRepository(context: Context) : MovieRepository {
+    override val movies: MutableLiveData<Array<Movie>> = MutableLiveData()
 
     init {
         movies.value = fetchMovies(context)
+    }
+
+    override fun findMovie(id: String): Movie? {
+        return movies.value?.find { id == it.id }
     }
 
     private fun fetchMovies(context: Context): Array<Movie> {

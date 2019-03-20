@@ -1,10 +1,7 @@
 package apptentive.com.android.movies
 
 import android.view.View
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import apptentive.com.android.movies.util.Item
 import apptentive.com.android.movies.util.RecyclerViewAdapter
 
@@ -20,12 +17,23 @@ internal interface ImageLoader {
 }
 
 internal data class MovieItem(val movie: Movie) : Item(ItemType.MOVIE.ordinal) {
-    class ViewHolder(convertView: View, private val imageLoader: ImageLoader) : RecyclerViewAdapter.ViewHolder<MovieItem>(convertView) {
-        private val imageView: ImageView = convertView.findViewById(R.id.imageView)
+    class ViewHolder(
+        convertView: View,
+        private val imageLoader: ImageLoader,
+        private val clickListener: MovieItemClickListener
+    ) : RecyclerViewAdapter.ViewHolder<MovieItem>(convertView) {
+        private val movieButton: ImageButton = convertView.findViewById(R.id.movieButton)
 
         override fun bindView(item: MovieItem, position: Int) {
-            imageLoader.loadImage(item.movie.posterPath, imageView)
+            imageLoader.loadImage(item.movie.posterPath, movieButton)
+            movieButton.setOnClickListener {
+                clickListener.onMovieItemClicked(item)
+            }
         }
+    }
+
+    interface MovieItemClickListener {
+        fun onMovieItemClicked(movieItem: MovieItem)
     }
 }
 
@@ -40,7 +48,8 @@ class FeedbackItem(private val title: String) : Item(ItemType.FEEDBACK.ordinal) 
         private val colors = intArrayOf(
             R.color.colorSatisfied,
             R.color.colorNeutral,
-            R.color.colorDissatisfied)
+            R.color.colorDissatisfied
+        )
 
         init {
             val colorFilter = buttons[0].colorFilter

@@ -1,5 +1,6 @@
 package apptentive.com.android.movies
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
@@ -44,9 +45,15 @@ class MainActivity : AppCompatActivity() {
     private fun createAdapter(): RecyclerViewAdapter {
         val imageLoader = AssetImageLoader()
         val adapter = RecyclerViewAdapter()
+        val movieClickListener = object : MovieItem.MovieItemClickListener {
+            override fun onMovieItemClicked(movieItem: MovieItem) {
+                openMovieDetails(movieItem.movie)
+            }
+        }
+
         adapter.register(ItemType.MOVIE, object : RecyclerViewAdapter.LayoutIdFactory<MovieItem>(R.layout.movie_item) {
             override fun createViewHolder(convertView: View): RecyclerViewAdapter.ViewHolder<MovieItem> {
-                return MovieItem.ViewHolder(convertView, imageLoader)
+                return MovieItem.ViewHolder(convertView, imageLoader, movieClickListener)
             }
         })
         adapter.register(
@@ -72,6 +79,10 @@ class MainActivity : AppCompatActivity() {
             })
 
         return adapter
+    }
+
+    private fun openMovieDetails(movie: Movie) {
+        
     }
 }
 
