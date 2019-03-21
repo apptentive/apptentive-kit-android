@@ -1,6 +1,8 @@
 package apptentive.com.android.movies
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +14,7 @@ import apptentive.com.android.movies.util.Item
 import apptentive.com.android.movies.util.RecyclerViewAdapter
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
+import android.view.Menu
 
 
 class MainActivity : AppCompatActivity() {
@@ -30,10 +33,29 @@ class MainActivity : AppCompatActivity() {
         val viewModel = getViewModel()
         viewModel.movies.observe(this, Observer { movies ->
             val items: MutableList<Item> = movies.map { MovieItem(it) }.toMutableList()
-            items.add(RatingItem("How would your rate the app?"))
-            items.add(16, FeedbackItem("How was your last renting experience?"))
-            items.add(8, SurveyItem("Local or Foreign?", arrayOf("Local", "Foreign")))
-            items.add(4, SurveyItem("What's your favourite genre?", arrayOf("Comedy", "Horror", "Drama")))
+            items.add(RatingItem("rating_app", "How would your rate the app?"))
+            items.add(16, FeedbackItem("feedback_renting_experience", "How was your last renting experience?"))
+            items.add(
+                8, SurveyItem(
+                    "survey_origin", "Local or Foreign?",
+                    arrayOf(
+                        SurveyAnswer("survey_origin_local", "Local"),
+                        SurveyAnswer("survey_origin_foreigns", "Foreign")
+                    )
+                )
+            )
+            items.add(
+                4,
+                SurveyItem(
+                    "survey_genre",
+                    "What's your favourite genre?",
+                    arrayOf(
+                        SurveyAnswer("survey_genre_comedy", "Comedy"),
+                        SurveyAnswer("survey_genre_horror", "Horror"),
+                        SurveyAnswer("survey_genre_drama", "Drama")
+                    )
+                )
+            )
             adapter.setItems(items)
             layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
@@ -43,8 +65,23 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.action_show_statistics) {
+            showStatistics()
+            return true
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
     private fun getViewModel(): MovieViewModel {
-        val factory = MovieViewModelFactory.getInstance(this) // FIXME: replace with DI
+        val factory = ViewModelFactory.getInstance(this) // FIXME: replace with DI
         return ViewModelProviders.of(this, factory).get(MovieViewModel::class.java)
     }
 
@@ -87,9 +124,18 @@ class MainActivity : AppCompatActivity() {
         return adapter
     }
 
+    //region Actions
+
     private fun openMovieDetails(movie: Movie) {
 
     }
+
+    private fun showStatistics() {
+        val intent = Intent(this, StatisticsActivity::class.java)
+        startActivity(intent)
+    }
+
+    //endregion
 }
 
 private class AssetImageLoader : ImageLoader {

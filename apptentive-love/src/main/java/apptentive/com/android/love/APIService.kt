@@ -39,4 +39,8 @@ internal class FakeAPIService(
 data class LoveEntitySnapshot(
     private val loveEntity: LoveEntity,
     private val timestamp: Date
-)
+) {
+    fun description(): String {
+        return "LoveEntity:\n\t$loveEntity\n\t$timestamp"
+    }
+}

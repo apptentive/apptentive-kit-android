@@ -2,6 +2,8 @@ package apptentive.com.android.love
 
 import android.content.Context
 import apptentive.com.android.concurrent.ExecutorQueue
+import apptentive.com.android.concurrent.Promise
+import apptentive.com.android.util.Resource
 
 internal class LoveDefaultClient(
     context: Context,
@@ -15,6 +17,10 @@ internal class LoveDefaultClient(
         repository.send(entity)
             .then { callback(true) }
             .catch { callback(false) }
+    }
+
+    override fun getEntities(): Promise<Resource<List<LoveEntitySnapshot>>> {
+        return repository.getEntities()
     }
 
     private fun createLoveRepository(

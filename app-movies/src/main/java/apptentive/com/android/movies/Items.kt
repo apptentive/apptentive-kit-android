@@ -2,6 +2,7 @@ package apptentive.com.android.movies
 
 import android.view.View
 import android.widget.*
+import apptentive.com.android.love.*
 import apptentive.com.android.movies.util.Item
 import apptentive.com.android.movies.util.RecyclerViewAdapter
 
@@ -37,7 +38,9 @@ internal data class MovieItem(val movie: Movie) : Item(ItemType.MOVIE.ordinal) {
     }
 }
 
-class FeedbackItem(private val title: String) : Item(ItemType.FEEDBACK.ordinal) {
+abstract class AbstractLoveItem(itemType: Int, val identifier: String) : Item(itemType)
+
+class FeedbackItem(identifier: String, private val title: String) : AbstractLoveItem(ItemType.FEEDBACK.ordinal, identifier) {
     class ViewHolder(view: View) : RecyclerViewAdapter.ViewHolder<FeedbackItem>(view) {
         private val titleView: TextView = view.findViewById(R.id.title)
         private val buttons = arrayOf<ImageButton>(
@@ -50,6 +53,13 @@ class FeedbackItem(private val title: String) : Item(ItemType.FEEDBACK.ordinal) 
             R.color.colorNeutral,
             R.color.colorDissatisfied
         )
+        private val sentiments = arrayOf(
+            SentimentType.POSITIVE,
+            SentimentType.NEUTRAL,
+            SentimentType.NEGATIVE
+        )
+
+        private lateinit var identifier: String
 
         init {
             val colorFilter = buttons[0].colorFilter
@@ -58,6 +68,7 @@ class FeedbackItem(private val title: String) : Item(ItemType.FEEDBACK.ordinal) 
                     for (j in 0 until buttons.size) {
                         if (i == j) {
                             buttons[j].setColorFilter(buttons[j].context.getColor(colors[j]))
+                            ApptentiveLove.send(Sentiment(identifier, sentiments[j]))
                         } else {
                             buttons[j].colorFilter = colorFilter
                         }
@@ -67,12 +78,13 @@ class FeedbackItem(private val title: String) : Item(ItemType.FEEDBACK.ordinal) 
         }
 
         override fun bindView(item: FeedbackItem, position: Int) {
+            identifier = item.identifier
             titleView.text = item.title
         }
     }
 }
 
-class RatingItem(private val title: String) : Item(ItemType.RATING.ordinal) {
+class RatingItem(identifier: String, private val title: String) : AbstractLoveItem(ItemType.RATING.ordinal, identifier) {
     class ViewHolder(view: View) : RecyclerViewAdapter.ViewHolder<RatingItem>(view) {
         private val titleView: TextView = view.findViewById(R.id.title)
         private val buttons = arrayOf<ImageButton>(
@@ -82,6 +94,7 @@ class RatingItem(private val title: String) : Item(ItemType.RATING.ordinal) {
             view.findViewById(R.id.button_star_4),
             view.findViewById(R.id.button_star_5)
         )
+        private lateinit var identifier: String
 
         init {
             for (i in 0 until buttons.size) {
@@ -91,6 +104,7 @@ class RatingItem(private val title: String) : Item(ItemType.RATING.ordinal) {
 
         override fun bindView(item: RatingItem, position: Int) {
             titleView.text = item.title
+            identifier = item.identifier
         }
 
         private fun setRating(rating: Int) {
@@ -98,11 +112,14 @@ class RatingItem(private val title: String) : Item(ItemType.RATING.ordinal) {
                 val selected = i < rating
                 buttons[i].setImageResource(if (selected) R.drawable.ic_star_black else R.drawable.ic_star_border)
             }
+            ApptentiveLove.send(Rating(identifier, rating))
         }
     }
 }
 
-class SurveyItem(private val question: String, private val answers: Array<String>) : Item(ItemType.SURVEY.ordinal) {
+data class SurveyAnswer(val identifier: String, val title: String)
+
+class SurveyItem(identifier: String, private val question: String, private val answers: Array<SurveyAnswer>) : AbstractLoveItem(ItemType.SURVEY.ordinal, identifier) {
     class ViewHolder(view: View) : RecyclerViewAdapter.ViewHolder<SurveyItem>(view) {
         private val titleView: TextView = view.findViewById(R.id.question)
         private val buttons = arrayOf<Button>(
@@ -110,6 +127,7 @@ class SurveyItem(private val question: String, private val answers: Array<String
             view.findViewById(R.id.button_answer_2),
             view.findViewById(R.id.button_answer_3)
         )
+        private lateinit var answers: List<String>
 
         init {
             val colors = buttons[0].textColors
@@ -118,6 +136,7 @@ class SurveyItem(private val question: String, private val answers: Array<String
                     for (j in 0 until buttons.size) {
                         if (i == j) {
                             buttons[j].setTextColor(buttons[j].context.getColor(R.color.colorAccent))
+                            ApptentiveLove.send(SurveyResponse(answers[j]))
                         } else {
                             buttons[j].setTextColor(colors)
                         }
@@ -127,9 +146,11 @@ class SurveyItem(private val question: String, private val answers: Array<String
         }
 
         override fun bindView(item: SurveyItem, position: Int) {
+            answers = item.answers.map { it.identifier }
+
             titleView.text = item.question
             for (i in 0 until item.answers.size) {
-                buttons[i].text = item.answers[i]
+                buttons[i].text = item.answers[i].title
                 buttons[i].visibility = View.VISIBLE
             }
             for (i in item.answers.size until buttons.size) {
