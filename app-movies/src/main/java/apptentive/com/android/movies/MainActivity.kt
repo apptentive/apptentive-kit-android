@@ -1,6 +1,5 @@
 package apptentive.com.android.movies
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
@@ -14,10 +13,12 @@ import apptentive.com.android.movies.util.RecyclerViewAdapter
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
 
+
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setSupportActionBar(findViewById(R.id.mainToolbar))
 
         val adapter = createAdapter()
         val layoutManager = GridLayoutManager(this, 2)
@@ -26,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         recyclerView.isNestedScrollingEnabled = false
         recyclerView.adapter = adapter
 
-        val viewModel = ViewModelProviders.of(this).get(MovieViewModel::class.java)
+        val viewModel = getViewModel()
         viewModel.movies.observe(this, Observer { movies ->
             val items: MutableList<Item> = movies.map { MovieItem(it) }.toMutableList()
             items.add(RatingItem("How would your rate the app?"))
@@ -40,6 +41,11 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    private fun getViewModel(): MovieViewModel {
+        val factory = MovieViewModelFactory.getInstance(this) // FIXME: replace with DI
+        return ViewModelProviders.of(this, factory).get(MovieViewModel::class.java)
     }
 
     private fun createAdapter(): RecyclerViewAdapter {
@@ -82,7 +88,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openMovieDetails(movie: Movie) {
-        
+
     }
 }
 
