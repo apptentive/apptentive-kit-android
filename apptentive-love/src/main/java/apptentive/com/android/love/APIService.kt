@@ -22,7 +22,13 @@ internal class FakeAPIService(
 
     override fun send(entity: LoveEntity): Promise<Unit> {
         val promise = AsyncPromise<Unit>()
-        entities.add(LoveEntitySnapshot(entity, Date()))
+        val existingIndex = entities.indexOfFirst { it.loveEntity.identifier == entity.identifier }
+        val snapshot = LoveEntitySnapshot(entity, Date())
+        if (existingIndex != -1) {
+            entities[existingIndex] = snapshot
+        } else {
+            entities.add(snapshot)
+        }
         executorQueue.execute(callbackDelay) { promise.resolve(Unit) }
         return promise
     }
@@ -37,8 +43,8 @@ internal class FakeAPIService(
 }
 
 data class LoveEntitySnapshot(
-    private val loveEntity: LoveEntity,
-    private val timestamp: Date
+    val loveEntity: LoveEntity,
+    val timestamp: Date
 ) {
     fun description(): String {
         return "LoveEntity:\n\t$loveEntity\n\t$timestamp"
