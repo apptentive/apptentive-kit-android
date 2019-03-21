@@ -23,7 +23,7 @@
                 android:src="@drawable/ic_favorite_empty"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
-                android:id="@+id/loveButton"/>
+                android:id="@+id/favouriteButton"/>
     </RelativeLayout>
 
 </LinearLayout>

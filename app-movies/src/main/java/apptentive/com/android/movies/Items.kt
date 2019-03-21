@@ -24,12 +24,25 @@ internal data class MovieItem(val movie: Movie) : Item(ItemType.MOVIE.ordinal) {
         private val clickListener: MovieItemClickListener
     ) : RecyclerViewAdapter.ViewHolder<MovieItem>(convertView) {
         private val movieButton: ImageButton = convertView.findViewById(R.id.movieButton)
+        private val favouriteButton: ImageButton = convertView.findViewById(R.id.favouriteButton)
 
         override fun bindView(item: MovieItem, position: Int) {
             imageLoader.loadImage(item.movie.posterPath, movieButton)
             movieButton.setOnClickListener {
                 clickListener.onMovieItemClicked(item)
             }
+            favouriteButton.setOnClickListener {
+                if (!item.movie.favourite) {
+                    item.movie.favourite = true
+                    setFavourite(item.movie.favourite)
+                    ApptentiveLove.send(Sentiment("movie_${item.movie.id}", SentimentType.POSITIVE))
+                }
+            }
+            setFavourite(item.movie.favourite)
+        }
+
+        private fun setFavourite(favourite: Boolean) {
+            favouriteButton.setImageResource(if (favourite) R.drawable.ic_favorite else R.drawable.ic_favorite_empty)
         }
     }
 
@@ -40,7 +53,8 @@ internal data class MovieItem(val movie: Movie) : Item(ItemType.MOVIE.ordinal) {
 
 abstract class AbstractLoveItem(itemType: Int, val identifier: String) : Item(itemType)
 
-class FeedbackItem(identifier: String, private val title: String) : AbstractLoveItem(ItemType.FEEDBACK.ordinal, identifier) {
+class FeedbackItem(identifier: String, private val title: String) :
+    AbstractLoveItem(ItemType.FEEDBACK.ordinal, identifier) {
     class ViewHolder(view: View) : RecyclerViewAdapter.ViewHolder<FeedbackItem>(view) {
         private val titleView: TextView = view.findViewById(R.id.title)
         private val buttons = arrayOf<ImageButton>(
@@ -84,7 +98,8 @@ class FeedbackItem(identifier: String, private val title: String) : AbstractLove
     }
 }
 
-class RatingItem(identifier: String, private val title: String) : AbstractLoveItem(ItemType.RATING.ordinal, identifier) {
+class RatingItem(identifier: String, private val title: String) :
+    AbstractLoveItem(ItemType.RATING.ordinal, identifier) {
     class ViewHolder(view: View) : RecyclerViewAdapter.ViewHolder<RatingItem>(view) {
         private val titleView: TextView = view.findViewById(R.id.title)
         private val buttons = arrayOf<ImageButton>(
@@ -119,7 +134,8 @@ class RatingItem(identifier: String, private val title: String) : AbstractLoveIt
 
 data class SurveyAnswer(val identifier: String, val title: String)
 
-class SurveyItem(identifier: String, private val question: String, private val answers: Array<SurveyAnswer>) : AbstractLoveItem(ItemType.SURVEY.ordinal, identifier) {
+class SurveyItem(identifier: String, private val question: String, private val answers: Array<SurveyAnswer>) :
+    AbstractLoveItem(ItemType.SURVEY.ordinal, identifier) {
     class ViewHolder(view: View) : RecyclerViewAdapter.ViewHolder<SurveyItem>(view) {
         private val titleView: TextView = view.findViewById(R.id.question)
         private val buttons = arrayOf<Button>(

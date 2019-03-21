@@ -17,4 +17,5 @@ data class Movie(
     val title get() = _title ?: throw IllegalStateException("Title should not be null")
     val posterPath get() = _posterPath ?: throw IllegalStateException("Poster path should not be null")
     val backdropPath get() = _backdropPath ?: throw IllegalStateException("Backdrop path should not be null")
+    var favourite: Boolean = false
 }
