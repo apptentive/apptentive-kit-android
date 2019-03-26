@@ -1,1 +1,1 @@
-include ':app', ':apptentive-core', ':apptentive-feedback'
+include ':app', ':apptentive-core', ':apptentive-feedback', ':apptentive-love', ':app-movies'

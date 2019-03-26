@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:card_view="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="horizontal"
+              android:gravity="center_vertical">
+
+    <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            card_view:cardUseCompatPadding="true"
+            card_view:cardElevation="2dp"
+            card_view:cardCornerRadius="8dp">
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_margin="@dimen/text_margin"
+                android:gravity="center"
+                android:layout_gravity="center">
+
+            <TextView
+                    android:id="@+id/title"
+                    android:text="How would you rate the app?"
+                    android:textAlignment="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                <ImageButton
+                        android:id="@+id/button_star_1"
+                        android:src="@drawable/ic_star_border"
+                        android:background="@null"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"/>
+                <ImageButton
+                        android:id="@+id/button_star_2"
+                        android:src="@drawable/ic_star_border"
+                        android:background="@null"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"/>
+                <ImageButton
+                        android:id="@+id/button_star_3"
+                        android:src="@drawable/ic_star_border"
+                        android:background="@null"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"/>
+                <ImageButton
+                        android:id="@+id/button_star_4"
+                        android:src="@drawable/ic_star_border"
+                        android:background="@null"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"/>
+                <ImageButton
+                        android:id="@+id/button_star_5"
+                        android:src="@drawable/ic_star_border"
+                        android:background="@null"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"/>
+
+
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</LinearLayout>

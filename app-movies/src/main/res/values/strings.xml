@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Rent-a-Movie</string>
+    <string name="menu_show_statistics">Show Statistics</string>
+</resources>
