@@ -1,9 +1,7 @@
 package apptentive.com.android
 
 import apptentive.com.android.concurrent.ImmediateExecutorQueue
-import apptentive.com.android.core.DependencyProvider
-import apptentive.com.android.core.ExecutorQueueFactory
-import apptentive.com.android.core.PlatformLogger
+import apptentive.com.android.core.*
 import apptentive.com.android.util.LogLevel
 import org.junit.After
 import org.junit.Assert.*
@@ -19,8 +17,8 @@ open class TestCase(
 
     @Before
     open fun setUp() {
-        DependencyProvider.register(createPlatformLogger())
-        DependencyProvider.register(createExecutionQueueFactory())
+        DependencyProvider.register(createPlatformLoggerProvider())
+        DependencyProvider.register(createExecutionQueueFactoryProvider())
         results.clear()
     }
 
@@ -33,8 +31,17 @@ open class TestCase(
 
     //region Factory
 
-    private fun createExecutionQueueFactory(): ExecutorQueueFactory = MockExecutorQueueFactory(false)
-    private fun createPlatformLogger(): PlatformLogger = MockPlatformLogger(logMessages, logStackTraces)
+    private fun createExecutionQueueFactoryProvider(): Provider<ExecutorQueueFactory> = object : Provider<ExecutorQueueFactory> {
+        override fun get(): ExecutorQueueFactory {
+            return MockExecutorQueueFactory(false)
+        }
+
+    }
+    private fun createPlatformLoggerProvider(): Provider<PlatformLogger> = object : Provider<PlatformLogger> {
+        override fun get(): PlatformLogger {
+            return MockPlatformLogger(logMessages, logStackTraces)
+        }
+    }
 
     //endregion
 
