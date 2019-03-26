@@ -8,4 +8,8 @@ class Rating(identifier: String, val score: Int) : LoveEntity(identifier) {
             throw IllegalArgumentException("Rating score must be within range [1..5]: $score")
         }
     }
+
+    override fun toString(): String {
+        return "${super.toString()}: $score"
+    }
 }

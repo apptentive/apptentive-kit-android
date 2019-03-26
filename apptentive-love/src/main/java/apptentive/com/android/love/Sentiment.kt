@@ -6,6 +6,10 @@ enum class SentimentType {
     NEUTRAL
 }
 
-class Sentiment(identifier: String, val type: SentimentType) : LoveEntity(identifier)
+class Sentiment(identifier: String, val type: SentimentType) : LoveEntity(identifier) {
+    override fun toString(): String {
+        return "${super.toString()}: $type"
+    }
+}
 
 
