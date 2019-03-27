@@ -15,6 +15,12 @@ object DependencyProvider {
         lookup[T::class.java] = provider
     }
 
+    inline fun <reified T> register(target: T) {
+        lookup[T::class.java] = object : Provider<T> {
+            override fun get(): T = target
+        }
+    }
+
     fun clear() {
         lookup.clear()
     }

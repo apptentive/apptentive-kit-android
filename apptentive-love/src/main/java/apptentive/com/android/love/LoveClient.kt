@@ -2,11 +2,11 @@ package apptentive.com.android.love
 
 import apptentive.com.android.concurrent.AsyncPromise
 import apptentive.com.android.concurrent.Promise
+import apptentive.com.android.core.NotInitializedException
 import apptentive.com.android.util.Resource
 import java.lang.IllegalStateException
 
-internal interface LoveClient {
-    fun send(entity: LoveEntity, callback: (Boolean) -> Unit)
+internal interface LoveClient : LoveSender {
     fun getEntities(): Promise<Resource<List<LoveEntitySnapshot>>>
 
     companion object {
@@ -21,7 +21,7 @@ private class LoveClientNull : LoveClient {
         return promise
     }
 
-    override fun send(entity: LoveEntity, callback: (Boolean) -> Unit) {
-        callback(false)
+    override fun send(entity: LoveEntity, callback: LoveSender.SendCallback?) {
+        callback?.onSendFail(entity, NotInitializedException("Can't send entity"))
     }
 }

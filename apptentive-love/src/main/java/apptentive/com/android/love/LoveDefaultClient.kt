@@ -13,10 +13,10 @@ internal class LoveDefaultClient(
     private val applicationContext: Context = context.applicationContext
     private val repository: LoveRepository = createLoveRepository(apptentiveKey, apptentiveSignature)
 
-    override fun send(entity: LoveEntity, callback: (Boolean) -> Unit) {
+    override fun send(entity: LoveEntity, callback: LoveSender.SendCallback?) {
         repository.send(entity)
-            .then { callback(true) }
-            .catch { callback(false) }
+            .then { callback?.onSendFinished(entity) }
+            .catch { error -> callback?.onSendFail(entity, error) }
     }
 
     override fun getEntities(): Promise<Resource<List<LoveEntitySnapshot>>> {
