@@ -3,7 +3,6 @@ package apptentive.com.android.love.ui
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import apptentive.com.android.core.DependencyProvider
@@ -11,7 +10,6 @@ import apptentive.com.android.love.LoveSender
 import apptentive.com.android.love.Sentiment
 import apptentive.com.android.love.SentimentType
 import kotlinx.android.synthetic.main.feedback_view.view.*
-import java.lang.IllegalStateException
 
 class FeedbackView @JvmOverloads constructor(
     context: Context,
