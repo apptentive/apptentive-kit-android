@@ -20,7 +20,11 @@ object ApptentiveLove {
         return client.getEntities()
     }
 
-    fun send(entity: LoveEntity, callback: LoveSender.SendCallback? = null) {
-        client.send(entity, callback)
+    fun send(
+        entity: LoveEntity,
+        onSend: ((entity: LoveEntity) -> Unit)? = null,
+        onError: ((entity: LoveEntity, error: Exception) -> Unit)? = null
+    ) {
+        client.send(entity, onSend, onError)
     }
 }

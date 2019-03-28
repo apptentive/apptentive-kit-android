@@ -21,7 +21,13 @@ private class LoveClientNull : LoveClient {
         return promise
     }
 
-    override fun send(entity: LoveEntity, callback: LoveSender.SendCallback?) {
-        callback?.onSendFail(entity, NotInitializedException("Can't send entity"))
+    override fun send(
+        entity: LoveEntity,
+        onSend: ((entity: LoveEntity) -> Unit)?,
+        onError: ((entity: LoveEntity, error: Exception) -> Unit)?
+    ) {
+        if (onError != null) {
+            onError(entity, NotInitializedException("Can't send entity"))
+        }
     }
 }
