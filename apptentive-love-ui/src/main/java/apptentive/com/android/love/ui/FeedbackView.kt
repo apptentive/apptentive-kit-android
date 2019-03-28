@@ -14,6 +14,14 @@ class FeedbackView @JvmOverloads constructor(
 ) : AbstractLoveView(context, attrs) {
     private val buttons: List<ImageButton>
 
+    var title: String
+        get() {
+            return title_view.text.toString()
+        }
+        set(value) {
+            title_view.text = value
+        }
+
     init {
         View.inflate(context, R.layout.feedback_view, this)
 
