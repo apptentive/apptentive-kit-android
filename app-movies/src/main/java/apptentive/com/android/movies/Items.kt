@@ -3,6 +3,7 @@ package apptentive.com.android.movies
 import android.view.View
 import android.widget.*
 import apptentive.com.android.love.*
+import apptentive.com.android.love.ui.RatingView
 import apptentive.com.android.movies.util.Item
 import apptentive.com.android.movies.util.RecyclerViewAdapter
 
@@ -101,33 +102,11 @@ class FeedbackItem(identifier: String, private val title: String) :
 class RatingItem(identifier: String, private val title: String) :
     AbstractLoveItem(ItemType.RATING.ordinal, identifier) {
     class ViewHolder(view: View) : RecyclerViewAdapter.ViewHolder<RatingItem>(view) {
-        private val titleView: TextView = view.findViewById(R.id.title)
-        private val buttons = arrayOf<ImageButton>(
-            view.findViewById(R.id.button_star_1),
-            view.findViewById(R.id.button_star_2),
-            view.findViewById(R.id.button_star_3),
-            view.findViewById(R.id.button_star_4),
-            view.findViewById(R.id.button_star_5)
-        )
-        private lateinit var identifier: String
-
-        init {
-            for (i in 0 until buttons.size) {
-                buttons[i].setOnClickListener { setRating(i + 1) }
-            }
-        }
+        private val ratingView: RatingView = view.findViewById(R.id.rating_view)
 
         override fun bindView(item: RatingItem, position: Int) {
-            titleView.text = item.title
-            identifier = item.identifier
-        }
-
-        private fun setRating(rating: Int) {
-            for (i in 0 until buttons.size) {
-                val selected = i < rating
-                buttons[i].setImageResource(if (selected) R.drawable.ic_star_black else R.drawable.ic_star_border)
-            }
-            ApptentiveLove.send(Rating(identifier, rating))
+            ratingView.title = item.title
+            ratingView.loveIdentifier = item.identifier
         }
     }
 }
