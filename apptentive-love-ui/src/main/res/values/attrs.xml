@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <declare-styleable name="AbstractLoveView">
+        <attr name="sentiment" format="string" />
+    </declare-styleable>
     <declare-styleable name="FeedbackView">
         <attr name="title" format="string" localization="suggested" />
-        <attr name="sentiment" format="string" />
     </declare-styleable>
 </resources>
