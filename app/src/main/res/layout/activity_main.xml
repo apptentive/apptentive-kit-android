@@ -7,12 +7,12 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
-    <apptentive.com.android.love.ui.FeedbackView
-            android:id="@+id/feedback_view"
+    <apptentive.com.android.love.ui.RatingView
+            android:id="@+id/rating_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:title="How was your experience?"
-            app:sentiment="12345"
+            app:title="How would you rate the app?"
+            app:love_identifier="12345"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"

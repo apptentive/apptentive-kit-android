@@ -28,8 +28,8 @@ class FeedbackView @JvmOverloads constructor(
         buttons = listOf(button_positive, button_neutral, button_negative)
 
         attrs?.let {
-            val typedArray = context.obtainStyledAttributes(it, R.styleable.FeedbackView)
-            val title = typedArray.getString(R.styleable.FeedbackView_title)
+            val typedArray = context.obtainStyledAttributes(it, R.styleable.AbstractLoveView)
+            val title = typedArray.getString(R.styleable.AbstractLoveView_title)
             if (title != null) {
                 title_view.text = title
             }
@@ -49,7 +49,7 @@ class FeedbackView @JvmOverloads constructor(
     }
 
     private fun sendSentiment(sentimentType: SentimentType) {
-        val sentiment = Sentiment(sentimentIdentifier!!, sentimentType)
+        val sentiment = Sentiment(loveIdentifier!!, sentimentType)
         sendLoveEntity(sentiment)
     }
 }

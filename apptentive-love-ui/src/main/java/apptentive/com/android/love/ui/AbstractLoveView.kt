@@ -11,18 +11,16 @@ abstract class AbstractLoveView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null
 ) : LinearLayout(context, attrs) {
-    var sentimentIdentifier: String? = null
+    var loveIdentifier: String? = null
 
     init {
         attrs?.let {
             val typedArray = context.obtainStyledAttributes(it, R.styleable.AbstractLoveView)
-            val sentimentIdentifier = typedArray.getString(R.styleable.AbstractLoveView_sentiment)
-            if (sentimentIdentifier == null || sentimentIdentifier.isEmpty()) {
+            val identifier = typedArray.getString(R.styleable.AbstractLoveView_love_identifier)
+            if (identifier == null || identifier.isEmpty()) {
                 throw IllegalStateException("Missing sentiment identifier")
             }
-
-            this.sentimentIdentifier = sentimentIdentifier
-
+            this.loveIdentifier = identifier
             typedArray.recycle()
         }
     }
