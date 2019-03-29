@@ -2,11 +2,18 @@ package apptentive.com.android.movies
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProviders
+import apptentive.com.android.love.ApptentiveLove
+import apptentive.com.android.love.Sentiment
+import apptentive.com.android.love.SentimentType
 import kotlinx.android.synthetic.main.activity_movie_detail.*
 
 class MovieDetailActivity : AppCompatActivity() {
+    private lateinit var movie: Movie
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_detail)
@@ -15,7 +22,7 @@ class MovieDetailActivity : AppCompatActivity() {
 
         val factory = ViewModelFactory.getInstance(this)
         val viewModel = ViewModelProviders.of(this, factory).get(MovieDetailViewModel::class.java)
-        val movie = viewModel.findMovie(movieId)!!
+        movie = viewModel.findMovie(movieId)!!
 
         // action bar
         setSupportActionBar(toolbar)
@@ -44,6 +51,27 @@ class MovieDetailActivity : AppCompatActivity() {
                 }
             })
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_movie_details, menu)
+        val favouriteItem = menu.findItem(R.id.buttonFavourite)
+        favouriteItem.setIcon(if (movie.favourite) R.drawable.ic_favorite else R.drawable.ic_favorite_empty)
+
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.buttonFavourite) {
+            if (!movie.favourite) {
+                movie.favourite = true
+                item.setIcon(R.drawable.ic_favorite)
+
+                ApptentiveLove.send(Sentiment("movie_${movie.id}", SentimentType.POSITIVE))
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 
     private fun createProgressDialog(message: String): AlertDialog {
