@@ -16,8 +16,21 @@ class MovieDetailActivity : AppCompatActivity() {
         val viewModel = ViewModelProviders.of(this, factory).get(MovieDetailViewModel::class.java)
         val movie = viewModel.findMovie(movieId)!!
 
+        // action bar
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+
+        // backdrop
         val imageLoader = AssetImageLoader()
         imageLoader.loadImage(movie.backdropPath, backdropImageView)
+
+        // title
+        movieTitle.text = movie.title
+
+        // overview
+        movieOverview.text = movie.overview
+
     }
 
     companion object {
