@@ -39,7 +39,7 @@ class MovieDetailActivity : AppCompatActivity() {
             viewModel.rentMovie(movie, object : MovieDetailViewModel.MovieRentCallback {
                 override fun onRentComplete(movie: Movie) {
                     dialog.dismiss()
-                    viewModel.showRentConfirmation(movie)
+                    viewModel.showRentConfirmation(this@MovieDetailActivity, movie)
                     finish()
                 }
             })

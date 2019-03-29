@@ -17,6 +17,10 @@ class ViewModelFactory private constructor(
             return MovieDetailViewModel(repository, ExecutorQueue.mainQueue) as T
         }
 
+        if (modelClass.isAssignableFrom(ConfirmationViewModel::class.java)) {
+            return ConfirmationViewModel(repository) as T
+        }
+
         throw IllegalArgumentException("Unknown model class: $modelClass")
     }
 
