@@ -2,6 +2,7 @@ package apptentive.com.android.movies
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_movie_detail.*
 
@@ -31,6 +32,25 @@ class MovieDetailActivity : AppCompatActivity() {
         // overview
         movieOverview.text = movie.overview
 
+        // rent button
+        movieRentButton.setOnClickListener {
+            val dialog = createProgressDialog("Processing...")
+            dialog.show()
+            viewModel.rentMovie(movie, object : MovieDetailViewModel.MovieRentCallback {
+                override fun onRentComplete(movie: Movie) {
+                    dialog.dismiss()
+                    viewModel.showRentConfirmation(movie)
+                    finish()
+                }
+            })
+        }
+    }
+
+    private fun createProgressDialog(message: String): AlertDialog {
+        return AlertDialog.Builder(this)
+            .setMessage(message)
+            .setCancelable(true)
+            .create()
     }
 
     companion object {
