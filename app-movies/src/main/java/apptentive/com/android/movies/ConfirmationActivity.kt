@@ -20,6 +20,8 @@ class ConfirmationActivity : AppCompatActivity() {
         val imageLoader = AssetImageLoader()
         imageLoader.loadImage(movie.posterPath, posterImageView)
 
+        ratingBar.loveIdentifier = "movie_rent_$movieId"
+
         buttonClose.setOnClickListener {
             finish()
         }

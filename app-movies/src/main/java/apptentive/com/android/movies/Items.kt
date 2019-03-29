@@ -21,25 +21,12 @@ internal data class MovieItem(val movie: Movie) : Item(ItemType.MOVIE.ordinal) {
         private val clickListener: MovieItemClickListener
     ) : RecyclerViewAdapter.ViewHolder<MovieItem>(convertView) {
         private val movieButton: ImageButton = convertView.findViewById(R.id.movieButton)
-        private val favouriteButton: ImageButton = convertView.findViewById(R.id.favouriteButton)
 
         override fun bindView(item: MovieItem, position: Int) {
             imageLoader.loadImage(item.movie.posterPath, movieButton)
             movieButton.setOnClickListener {
                 clickListener.onMovieItemClicked(item)
             }
-            favouriteButton.setOnClickListener {
-                if (!item.movie.favourite) {
-                    item.movie.favourite = true
-                    setFavourite(item.movie.favourite)
-                    ApptentiveLove.send(Sentiment("movie_${item.movie.id}", SentimentType.POSITIVE))
-                }
-            }
-            setFavourite(item.movie.favourite)
-        }
-
-        private fun setFavourite(favourite: Boolean) {
-            favouriteButton.setImageResource(if (favourite) R.drawable.ic_favorite else R.drawable.ic_favorite_empty)
         }
     }
 
