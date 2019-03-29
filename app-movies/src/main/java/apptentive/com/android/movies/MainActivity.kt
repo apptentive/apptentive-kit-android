@@ -127,7 +127,9 @@ class MainActivity : AppCompatActivity() {
     //region Actions
 
     private fun openMovieDetails(movie: Movie) {
-
+        val intent = Intent(this, MovieDetailActivity::class.java)
+        intent.putExtra(MovieDetailActivity.EXTRA_MOVIE_ID, movie.id)
+        startActivity(intent)
     }
 
     private fun showStatistics() {
@@ -136,11 +138,4 @@ class MainActivity : AppCompatActivity() {
     }
 
     //endregion
-}
-
-private class AssetImageLoader : ImageLoader {
-    override fun loadImage(path: String, imageView: ImageView) {
-        val imageFile = "file:///android_asset/$path"
-        Picasso.get().load(imageFile).into(imageView)
-    }
 }

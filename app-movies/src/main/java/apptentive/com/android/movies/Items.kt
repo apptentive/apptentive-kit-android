@@ -14,10 +14,6 @@ enum class ItemType {
     SURVEY
 }
 
-internal interface ImageLoader {
-    fun loadImage(path: String, imageView: ImageView)
-}
-
 internal data class MovieItem(val movie: Movie) : Item(ItemType.MOVIE.ordinal) {
     class ViewHolder(
         convertView: View,
