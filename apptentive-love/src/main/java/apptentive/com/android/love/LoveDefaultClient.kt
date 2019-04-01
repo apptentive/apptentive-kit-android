@@ -10,6 +10,8 @@ internal class LoveDefaultClient(
     apptentiveKey: String,
     apptentiveSignature: String
 ) : LoveClient {
+    override var person: Person = Person()
+
     private val applicationContext: Context = context.applicationContext
     private val repository: LoveRepository = createLoveRepository(apptentiveKey, apptentiveSignature)
 

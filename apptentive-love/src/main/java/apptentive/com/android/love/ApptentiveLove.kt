@@ -9,6 +9,12 @@ import apptentive.com.android.util.Resource
 object ApptentiveLove {
     private var client: LoveClient = LoveClient.NULL
 
+    var person: Person
+        get() = client.person
+        set(value) {
+            client.person = value
+        }
+
     fun register(application: Application, apptentiveKey: String, apptentiveSignature: String) {
         DependencyProvider.register(application)
 

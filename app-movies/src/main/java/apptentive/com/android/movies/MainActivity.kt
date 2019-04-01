@@ -152,6 +152,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showProfile() {
+        val intent = Intent(this, ProfileActivity::class.java)
+        startActivity(intent)
     }
 
     //endregion

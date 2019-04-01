@@ -7,6 +7,8 @@ import apptentive.com.android.util.Resource
 import java.lang.IllegalStateException
 
 internal interface LoveClient : LoveSender {
+    var person: Person
+
     fun getEntities(): Promise<Resource<List<LoveEntitySnapshot>>>
 
     companion object {
@@ -15,6 +17,8 @@ internal interface LoveClient : LoveSender {
 }
 
 private class LoveClientNull : LoveClient {
+    override var person: Person = Person()
+
     override fun getEntities(): Promise<Resource<List<LoveEntitySnapshot>>> {
         val promise = AsyncPromise<Resource<List<LoveEntitySnapshot>>>()
         promise.reject(IllegalStateException("SDK is not properly initialized"))
