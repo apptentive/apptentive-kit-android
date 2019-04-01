@@ -4,24 +4,44 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import apptentive.com.android.movies.util.Item
 import apptentive.com.android.movies.util.RecyclerViewAdapter
-import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
-import android.view.Menu
 
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setSupportActionBar(findViewById(R.id.mainToolbar))
+
+        // Toolbar
+        setSupportActionBar(mainToolbar)
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setHomeAsUpIndicator(R.drawable.ic_menu)
+        }
+
+        // Navigation
+        navigationView.setNavigationItemSelectedListener { item ->
+            drawer.closeDrawers()
+
+            if (item.itemId == R.id.nav_profile) {
+                showProfile()
+                true
+            }
+            if (item.itemId == R.id.nav_statistics) {
+                showStatistics()
+                true
+            }
+
+            false
+        }
 
         val adapter = createAdapter()
         val layoutManager = GridLayoutManager(this, 2)
@@ -65,15 +85,9 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.action_show_statistics) {
-            showStatistics()
+        if (item.itemId == android.R.id.home) {
+            drawer.openDrawer(GravityCompat.START)
             return true
         }
 
@@ -135,6 +149,9 @@ class MainActivity : AppCompatActivity() {
     private fun showStatistics() {
         val intent = Intent(this, StatisticsActivity::class.java)
         startActivity(intent)
+    }
+
+    private fun showProfile() {
     }
 
     //endregion

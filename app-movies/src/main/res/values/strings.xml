@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Rent-a-Movie</string>
     <string name="menu_show_statistics">Show Statistics</string>
+    <string name="menu_item_profile">Profile</string>
+    <string name="user_anonymous">Anonymous</string>
+    <string name="menu_item_statistics">Statistics</string>
 </resources>
