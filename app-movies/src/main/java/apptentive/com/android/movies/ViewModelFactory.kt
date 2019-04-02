@@ -26,6 +26,10 @@ class ViewModelFactory private constructor(
             return ProfileViewModel(ApptentiveLove.person) as T
         }
 
+        if (modelClass.isAssignableFrom(StatisticsViewModel::class.java)) {
+            return StatisticsViewModel(ApptentiveLove.person) as T
+        }
+
         throw IllegalArgumentException("Unknown model class: $modelClass")
     }
 

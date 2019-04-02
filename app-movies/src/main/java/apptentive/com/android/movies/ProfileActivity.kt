@@ -25,6 +25,7 @@ class ProfileActivity : AppCompatActivity() {
         val factory = ViewModelFactory.getInstance(this)
         viewModel = ViewModelProviders.of(this, factory).get(ProfileViewModel::class.java)
 
+        userIdTextView.setText(viewModel.person.identifier)
         usernameEditText.setText(viewModel.person.name ?: "")
         emailEditText.setText(viewModel.person.email ?: "")
 

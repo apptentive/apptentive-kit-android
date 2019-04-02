@@ -3,6 +3,7 @@ package apptentive.com.android.movies
 import android.view.View
 import android.widget.*
 import apptentive.com.android.love.*
+import apptentive.com.android.love.ui.FeedbackView
 import apptentive.com.android.love.ui.RatingView
 import apptentive.com.android.movies.util.Item
 import apptentive.com.android.movies.util.RecyclerViewAdapter
@@ -40,44 +41,11 @@ abstract class AbstractLoveItem(itemType: Int, val identifier: String) : Item(it
 class FeedbackItem(identifier: String, private val title: String) :
     AbstractLoveItem(ItemType.FEEDBACK.ordinal, identifier) {
     class ViewHolder(view: View) : RecyclerViewAdapter.ViewHolder<FeedbackItem>(view) {
-        private val titleView: TextView = view.findViewById(R.id.title)
-        private val buttons = arrayOf<ImageButton>(
-            view.findViewById(R.id.button_satisfied),
-            view.findViewById(R.id.button_neutral),
-            view.findViewById(R.id.button_dissatisfied)
-        )
-        private val colors = intArrayOf(
-            R.color.colorSatisfied,
-            R.color.colorNeutral,
-            R.color.colorDissatisfied
-        )
-        private val sentiments = arrayOf(
-            SentimentType.POSITIVE,
-            SentimentType.NEUTRAL,
-            SentimentType.NEGATIVE
-        )
-
-        private lateinit var identifier: String
-
-        init {
-            val colorFilter = buttons[0].colorFilter
-            for (i in 0 until buttons.size) {
-                buttons[i].setOnClickListener {
-                    for (j in 0 until buttons.size) {
-                        if (i == j) {
-                            buttons[j].setColorFilter(buttons[j].context.getColor(colors[j]))
-                            ApptentiveLove.send(Sentiment(identifier, sentiments[j]))
-                        } else {
-                            buttons[j].colorFilter = colorFilter
-                        }
-                    }
-                }
-            }
-        }
+        private val feedbackView: FeedbackView = view.findViewById(R.id.feedbackView)
 
         override fun bindView(item: FeedbackItem, position: Int) {
-            identifier = item.identifier
-            titleView.text = item.title
+            feedbackView.loveIdentifier = item.identifier
+            feedbackView.title = item.title
         }
     }
 }
