@@ -4,12 +4,16 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
+import apptentive.com.android.love.ApptentiveLove
 import apptentive.com.android.movies.util.Item
 import apptentive.com.android.movies.util.RecyclerViewAdapter
 import kotlinx.android.synthetic.main.activity_main.*
@@ -83,6 +87,32 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        val header = navigationView.getHeaderView(0)
+
+        val username = ApptentiveLove.person.name
+        val usernameView: TextView = header.findViewById(R.id.username)
+        usernameView.text = if (username.isNullOrEmpty()) getString(R.string.user_anonymous) else username
+
+        val email = ApptentiveLove.person.email
+        val emailView: TextView = header.findViewById(R.id.email)
+        if (!email.isNullOrEmpty()) {
+            emailView.visibility = View.VISIBLE
+            emailView.text = email
+        } else {
+            emailView.visibility = View.GONE
+        }
+
+        val profileView: ImageView = header.findViewById(R.id.profileImage)
+        if (email == "melody@apptentive.com") {
+            profileView.setImageDrawable(getDrawable(R.drawable.mel))
+        } else {
+            profileView.setImageDrawable(getDrawable(R.drawable.ic_face_black_48dp))
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
