@@ -15,7 +15,7 @@
             android:elevation="4dp"/>
 
     <AutoCompleteTextView
-            android:id="@+id/username"
+            android:id="@+id/usernameEditText"
             android:drawableStart="@drawable/ic_person_black_24dp"
             android:drawablePadding="8dp"
             android:singleLine="true"
@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"/>
 
     <AutoCompleteTextView
-            android:id="@+id/email"
+            android:id="@+id/emailEditText"
             android:drawableStart="@drawable/ic_email_black_24dp"
             android:drawablePadding="8dp"
             android:singleLine="true"

@@ -13,7 +13,7 @@
             android:id="@+id/profileImage"/>
 
     <TextView
-            android:id="@+id/username"
+            android:id="@+id/usernameEditText"
             android:text="@string/user_anonymous"
             android:layout_marginTop="8dp"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"/>
 
     <TextView
-            android:id="@+id/email"
+            android:id="@+id/emailEditText"
             tools:text="user@company.com"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
             android:layout_width="match_parent"
