@@ -6,21 +6,26 @@ import org.junit.Test
 
 class DependencyProviderTest : TestCase() {
 
+    private val dependency1 = Dependency1()
+    private val dependency2 = Dependency2()
+
     @Test
-    fun testRegisterProvidables() {
-        val providable1 = MockProvidable1Impl()
-        val providable2 = MockProvidable2Impl()
+    fun testRegisterProviders() {
+        DependencyProvider.register(Provider1())
+        DependencyProvider.register(Provider2())
 
-        DependencyProvider.register<MockProvidable1>(providable1)
-        DependencyProvider.register<MockProvidable2>(providable2)
-
-        assertSame(providable1, DependencyProvider.of<MockProvidable1>())
-        assertSame(providable2, DependencyProvider.of<MockProvidable2>())
+        assertSame(dependency1, DependencyProvider.of<Dependency1>())
+        assertSame(dependency2, DependencyProvider.of<Dependency2>())
     }
 
-    private interface MockProvidable1 : Providable
-    private interface MockProvidable2 : Providable
+    private class Dependency1
+    private class Dependency2
 
-    private class MockProvidable1Impl : MockProvidable1
-    private class MockProvidable2Impl : MockProvidable2
+    private inner class Provider1 : Provider<Dependency1> {
+        override fun get(): Dependency1 = dependency1
+    }
+
+    private inner class Provider2 : Provider<Dependency2> {
+        override fun get(): Dependency2 = dependency2
+    }
 }

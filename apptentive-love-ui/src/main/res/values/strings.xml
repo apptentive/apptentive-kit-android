@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Apptentive Love UI</string>
+    <string name="feedback_view_default_title">How was your experience?</string>
+    <string name="rating_view_default_title">How would you rate us?</string>
 </resources>

@@ -4,14 +4,18 @@ import apptentive.com.android.util.LogLevel
 import java.io.PrintWriter
 import java.io.StringWriter
 
-interface PlatformLogger : Providable {
+interface PlatformLogger {
     fun log(logLevel: LogLevel, message: String)
     fun log(logLevel: LogLevel, throwable: Throwable)
 }
 
-fun createPlatformLogger() : PlatformLogger = PlatformLoggerImpl("Apptentive")
+class PlatformLoggerProvider(tag: String) : Provider<PlatformLogger> {
+    private val logger = DefaultPlatformLogger(tag)
 
-private class PlatformLoggerImpl(val tag: String) : PlatformLogger {
+    override fun get(): PlatformLogger = logger
+}
+
+private class DefaultPlatformLogger(val tag: String) : PlatformLogger {
     override fun log(logLevel: LogLevel, message: String) {
         android.util.Log.println(logLevel.ordinal, tag, message)
     }

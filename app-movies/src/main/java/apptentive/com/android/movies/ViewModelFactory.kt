@@ -3,6 +3,8 @@ package apptentive.com.android.movies
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import apptentive.com.android.concurrent.ExecutorQueue
+import apptentive.com.android.love.ApptentiveLove
 
 class ViewModelFactory private constructor(
     private val repository: MovieRepository
@@ -13,7 +15,19 @@ class ViewModelFactory private constructor(
         }
 
         if (modelClass.isAssignableFrom(MovieDetailViewModel::class.java)) {
-            return MovieDetailViewModel(repository) as T
+            return MovieDetailViewModel(repository, ExecutorQueue.mainQueue) as T
+        }
+
+        if (modelClass.isAssignableFrom(ConfirmationViewModel::class.java)) {
+            return ConfirmationViewModel(repository) as T
+        }
+
+        if (modelClass.isAssignableFrom(ProfileViewModel::class.java)) {
+            return ProfileViewModel(ApptentiveLove.person) as T
+        }
+
+        if (modelClass.isAssignableFrom(StatisticsViewModel::class.java)) {
+            return StatisticsViewModel(ApptentiveLove.person) as T
         }
 
         throw IllegalArgumentException("Unknown model class: $modelClass")

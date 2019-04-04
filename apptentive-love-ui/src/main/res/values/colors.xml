@@ -3,7 +3,8 @@
     <color name="colorPrimary">#DC2635</color>
     <color name="colorPrimaryDark">#A71E29</color>
     <color name="colorAccent">#A71E29</color>
-    <color name="colorSatisfied">#6aa760</color>
+    <color name="colorDeselected">#353535</color>
+    <color name="colorPositive">#6aa760</color>
     <color name="colorNeutral">#ffa500</color>
-    <color name="colorDissatisfied">#9f5b59</color>
+    <color name="colorNegative">#9f5b59</color>
 </resources>

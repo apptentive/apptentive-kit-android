@@ -5,8 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import apptentive.com.android.love.ApptentiveLove
 import apptentive.com.android.love.LoveEntitySnapshot
+import apptentive.com.android.love.Person
 
-class StatisticsViewModel() : ViewModel() {
+class StatisticsViewModel(val person: Person) : ViewModel() {
     val entries: LiveData<Array<LoveEntitySnapshot>> get() {
         val liveData = MutableLiveData<Array<LoveEntitySnapshot>>()
         ApptentiveLove.getEntities().then {
@@ -14,4 +15,6 @@ class StatisticsViewModel() : ViewModel() {
         }
         return liveData
     }
+
+    val personIdentifier = person.identifier
 }

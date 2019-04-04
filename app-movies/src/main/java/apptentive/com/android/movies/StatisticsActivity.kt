@@ -11,6 +11,7 @@ import apptentive.com.android.love.LoveEntitySnapshot
 import apptentive.com.android.movies.util.Item
 import apptentive.com.android.movies.util.RecyclerViewAdapter
 import kotlinx.android.synthetic.main.activity_statistics.*
+import org.intellij.lang.annotations.Identifier
 
 class StatisticsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,12 +25,13 @@ class StatisticsActivity : AppCompatActivity() {
 
         val viewModel = getViewModel()
         viewModel.entries.observe(this, Observer {
-            adapter.setItems(it.map { entity -> LoveEntityItem(entity) })
+            adapter.setItems(it.map { entity -> LoveEntityItem(viewModel.personIdentifier, entity) })
         })
     }
 
     private fun getViewModel(): StatisticsViewModel {
-        return ViewModelProviders.of(this).get(StatisticsViewModel::class.java)
+        val factory = ViewModelFactory.getInstance(this)
+        return ViewModelProviders.of(this, factory).get(StatisticsViewModel::class.java)
     }
 
     private fun createAdapter(): RecyclerViewAdapter {
@@ -49,13 +51,13 @@ class StatisticsActivity : AppCompatActivity() {
         LOVE_ENTITY
     }
 
-    private class LoveEntityItem(private val loveEntitySnapshot: LoveEntitySnapshot) :
+    private class LoveEntityItem(private val userIdentifier: String, private val loveEntitySnapshot: LoveEntitySnapshot) :
         Item(ItemType.LOVE_ENTITY.ordinal) {
         class ViewHolder(view: View) : RecyclerViewAdapter.ViewHolder<LoveEntityItem>(view) {
             private val textView: TextView = view.findViewById(R.id.textView)
 
             override fun bindView(item: LoveEntityItem, position: Int) {
-                textView.text = item.loveEntitySnapshot.description()
+                textView.text = "${item.loveEntitySnapshot.description()}\n\tuserId:${item.userIdentifier}"
             }
         }
     }

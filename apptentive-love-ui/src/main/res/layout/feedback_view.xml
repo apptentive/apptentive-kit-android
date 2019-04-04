@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
+              android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:orientation="vertical"
               android:gravity="center_horizontal">
     <TextView
-            android:id="@+id/title"
-            android:text="How was your experience?"
+            android:id="@+id/title_view"
+            android:text="@string/feedback_view_default_title"
             android:textAlignment="center"
             android:layout_margin="@dimen/text_margin"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
     <LinearLayout
@@ -18,22 +18,22 @@
             android:layout_height="wrap_content">
 
         <ImageButton
-                android:id="@+id/button_satisfied"
-                android:src="@drawable/ic_sentiment_satisfied"
+                android:id="@+id/button_positive"
+                android:src="@drawable/sentiment_positive"
                 android:background="?android:selectableItemBackground"
                 android:layout_width="44dp"
                 android:layout_height="44dp"/>
 
         <ImageButton
                 android:id="@+id/button_neutral"
-                android:src="@drawable/ic_sentiment_neutral"
+                android:src="@drawable/sentiment_neutral"
                 android:background="?android:selectableItemBackground"
                 android:layout_width="44dp"
                 android:layout_height="44dp"/>
 
         <ImageButton
-                android:id="@+id/button_dissatisfied"
-                android:src="@drawable/ic_sentiment_dissatisfied"
+                android:id="@+id/button_negative"
+                android:src="@drawable/sentiment_negative"
                 android:background="?android:selectableItemBackground"
                 android:layout_width="44dp"
                 android:layout_height="44dp"/>

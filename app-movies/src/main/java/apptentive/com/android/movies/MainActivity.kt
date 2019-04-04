@@ -5,23 +5,47 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
+import apptentive.com.android.love.ApptentiveLove
 import apptentive.com.android.movies.util.Item
 import apptentive.com.android.movies.util.RecyclerViewAdapter
-import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
-import android.view.Menu
 
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setSupportActionBar(findViewById(R.id.mainToolbar))
+
+        // Toolbar
+        setSupportActionBar(mainToolbar)
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setHomeAsUpIndicator(R.drawable.ic_menu)
+        }
+
+        // Navigation
+        navigationView.setNavigationItemSelectedListener { item ->
+            drawer.closeDrawers()
+
+            if (item.itemId == R.id.nav_profile) {
+                showProfile()
+                true
+            }
+            if (item.itemId == R.id.nav_statistics) {
+                showStatistics()
+                true
+            }
+
+            false
+        }
 
         val adapter = createAdapter()
         val layoutManager = GridLayoutManager(this, 2)
@@ -65,15 +89,35 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
+    override fun onResume() {
+        super.onResume()
+
+        val header = navigationView.getHeaderView(0)
+
+        val username = ApptentiveLove.person.name
+        val usernameView: TextView = header.findViewById(R.id.username)
+        usernameView.text = if (username.isNullOrEmpty()) getString(R.string.user_anonymous) else username
+
+        val email = ApptentiveLove.person.email
+        val emailView: TextView = header.findViewById(R.id.email)
+        if (!email.isNullOrEmpty()) {
+            emailView.visibility = View.VISIBLE
+            emailView.text = email
+        } else {
+            emailView.visibility = View.GONE
+        }
+
+        val profileView: ImageView = header.findViewById(R.id.profileImage)
+        if (email == "melody@apptentive.com") {
+            profileView.setImageDrawable(getDrawable(R.drawable.mel))
+        } else {
+            profileView.setImageDrawable(getDrawable(R.drawable.ic_face_black_48dp))
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.action_show_statistics) {
-            showStatistics()
+        if (item.itemId == android.R.id.home) {
+            drawer.openDrawer(GravityCompat.START)
             return true
         }
 
@@ -127,7 +171,9 @@ class MainActivity : AppCompatActivity() {
     //region Actions
 
     private fun openMovieDetails(movie: Movie) {
-
+        val intent = Intent(this, MovieDetailActivity::class.java)
+        intent.putExtra(MovieDetailActivity.EXTRA_MOVIE_ID, movie.id)
+        startActivity(intent)
     }
 
     private fun showStatistics() {
@@ -135,12 +181,10 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    //endregion
-}
-
-private class AssetImageLoader : ImageLoader {
-    override fun loadImage(path: String, imageView: ImageView) {
-        val imageFile = "file:///android_asset/$path"
-        Picasso.get().load(imageFile).into(imageView)
+    private fun showProfile() {
+        val intent = Intent(this, ProfileActivity::class.java)
+        startActivity(intent)
     }
+
+    //endregion
 }

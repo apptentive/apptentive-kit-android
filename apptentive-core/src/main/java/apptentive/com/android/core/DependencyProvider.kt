@@ -2,27 +2,31 @@ package apptentive.com.android.core
 
 import android.app.Application
 
-interface Providable
-
 object DependencyProvider {
-    val lookup = mutableMapOf<Class<*>, Providable>()
+    val lookup = mutableMapOf<Class<*>, Provider<*>>()
 
     fun register(@Suppress("UNUSED_PARAMETER") application: Application) {
         // FIXME: this should be configured outside of this class
-        register(createPlatformLogger())
-        register(createExecutionQueueFactory())
+        register(PlatformLoggerProvider("Apptentive"))
+        register(ExecutorQueueFactoryProvider())
     }
 
-    inline fun <reified T : Providable> register(providable: T) {
-        lookup[T::class.java] = providable
+    inline fun <reified T> register(provider: Provider<T>) {
+        lookup[T::class.java] = provider
+    }
+
+    inline fun <reified T> register(target: T) {
+        lookup[T::class.java] = object : Provider<T> {
+            override fun get(): T = target
+        }
     }
 
     fun clear() {
         lookup.clear()
     }
 
-    inline fun <reified T : Providable> of(): T {
-        val providable = lookup[T::class.java] ?: throw IllegalArgumentException("Providable is not registered: ${T::class.java}")
-        return providable as T
+    inline fun <reified T> of(): T {
+        val provider = lookup[T::class.java] ?: throw IllegalArgumentException("Provider is not registered: ${T::class.java}")
+        return provider.get() as T
     }
 }

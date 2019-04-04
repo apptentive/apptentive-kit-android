@@ -1,42 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:orientation="vertical"
               android:gravity="center_horizontal">
-    <TextView
-            android:id="@+id/title"
-            android:text="How was your experience?"
-            android:textAlignment="center"
-            android:layout_margin="@dimen/text_margin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
 
-    <LinearLayout
-            android:orientation="horizontal"
+    <apptentive.com.android.love.ui.FeedbackView
+            android:id="@+id/feedbackView"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-        <ImageButton
-                android:id="@+id/button_satisfied"
-                android:src="@drawable/ic_sentiment_satisfied"
-                android:background="?android:selectableItemBackground"
-                android:layout_width="44dp"
-                android:layout_height="44dp"/>
-
-        <ImageButton
-                android:id="@+id/button_neutral"
-                android:src="@drawable/ic_sentiment_neutral"
-                android:background="?android:selectableItemBackground"
-                android:layout_width="44dp"
-                android:layout_height="44dp"/>
-
-        <ImageButton
-                android:id="@+id/button_dissatisfied"
-                android:src="@drawable/ic_sentiment_dissatisfied"
-                android:background="?android:selectableItemBackground"
-                android:layout_width="44dp"
-                android:layout_height="44dp"/>
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            app:love_identifier="placeholder"
+            app:title="How was your experience?"/>
 
 </LinearLayout>
