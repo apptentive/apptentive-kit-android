@@ -1,0 +1,8 @@
+# This image allows us to use aws cli in an image / compose context
+FROM mesosphere/aws-cli
+
+LABEL maintainer="Brett McGinnis <brett.mcginnis@apptentive.com>"
+
+ENV AWS_DEFAULT_REGION='us-east-1'
+ENV AWS_ACCESS_KEY_ID='PLEASE SET'
+ENV AWS_SECRET_ACCESS_KEY='PLEASE SET'
