@@ -19,8 +19,6 @@ pipeline {
         stage('build'){
           steps {
             script {
-              proj = load "./_cri/proj.groovy"
-
               gitCommit = apptentiveGetReleaseCommit()
               imageName = apptentiveDockerBuild('build', gitCommit)
             }
