@@ -9,36 +9,20 @@ pipeline {
   }
 
   stages {
-    stage('PR') {
+    stage('Dev PR') {
       when {
         changeRequest target: 'dev'
         expression { env.ENVIRONMENT == 'dev' }
       }
 
       stages {
-        stage('awsLogin') {
+        stage('build'){
           steps {
             script {
-              dockerRepository = "089941056973.dkr.ecr.us-east-1.amazonaws.com/apptentive-javascript"
               proj = load "./_cri/proj.groovy"
 
-              container('docker') {
-                ecrLogin = apptentiveGetEcrLogin()
-                sh ecrLogin
-              }
-            }
-          }
-        }
-      
-
-        stage('image') {
-          steps {
-            script {
-              container('docker') {
-                proj.build(dockerRepository)
-                // push before verification so reviewers can pull down in progress work
-                proj.push(dockerRepository)
-              }
+              gitCommit = apptentiveGetReleaseCommit()
+              imageName = apptentiveDockerBuild('build', gitCommit)
             }
           }
         }
@@ -49,7 +33,7 @@ pipeline {
               steps {
                 script {
                   container('docker') {
-                    proj.test(dockerRepository)
+                    sh "docker run ${imageName} ./gradlew test"
                   }
                 }
               }
@@ -59,7 +43,7 @@ pipeline {
               steps {
                 script {
                   container('docker') {
-                    proj.lint(dockerRepository)
+                    sh "docker run ${imageName} ./gradlew lint"
                   }
                 }
               }
