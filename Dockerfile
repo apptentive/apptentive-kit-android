@@ -1,4 +1,4 @@
-FROM gradle:5.5 AS deps
+FROM gradle:5.5 AS build
 
 LABEL maintainer="Brett McGinnis <brett.mcginnis@apptentive.com>"
 
