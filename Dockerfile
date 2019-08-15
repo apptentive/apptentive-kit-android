@@ -2,11 +2,12 @@ FROM gradle:5.5 AS build
 
 LABEL maintainer="Brett McGinnis <brett.mcginnis@apptentive.com>"
 
+# Install Android SDK
 ARG SDK_URL="https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip"
 ARG ANDROID_HOME="/usr/local/android-sdk"
 
-# Install Android SDK
-RUN mkdir "$ANDROID_HOME" .android
+RUN mkdir -p "$ANDROID_HOME" /root/.android \
+  && touch /root/.android/repositories.cfg
 
 WORKDIR $ANDROID_HOME
 
@@ -28,6 +29,8 @@ RUN apt-get update \
     && apt-get install -y build-essential file apt-utils \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+ENV ANDROID_HOME=${ANDROID_HOME}
 
 # Project Specific
 WORKDIR /app
