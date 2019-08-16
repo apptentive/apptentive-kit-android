@@ -8,6 +8,10 @@ pipeline {
     }
   }
 
+  options {
+    timeout(time: 20, unit: 'MINUTES')
+  }
+
   stages {
     stage('Dev PR') {
       when {
