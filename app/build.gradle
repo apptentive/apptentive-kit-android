@@ -14,7 +14,7 @@ android {
         enabled = true
     }
     defaultConfig {
-        applicationId "apptentive.com.android.app"
+        applicationId "apptentive.com.exercise"
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion
         versionCode 1

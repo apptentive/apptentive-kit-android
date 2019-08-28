@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/menu_toggle_favorite"
+          android:title="@string/menu_show_favorites_only"
+          android:checkable="true">
+    </item>
+    <item android:id="@+id/menu_order_by"
+          android:title="@string/menu_order_by">
+        <menu>
+            <group android:id="@+id/group_order" android:checkableBehavior="single">
+                <item android:id="@+id/menu_order_default"
+                      android:title="@string/menu_order_default"/>
+                <item android:id="@+id/menu_order_name"
+                      android:title="@string/menu_order_name"/>
+                <item android:id="@+id/menu_order_release_date"
+                      android:title="@string/menu_order_release_date"/>
+            </group>
+        </menu>
+    </item>
+
+</menu>

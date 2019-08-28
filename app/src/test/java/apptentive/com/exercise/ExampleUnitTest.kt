@@ -1,4 +1,4 @@
-package apptentive.com.android.app
+package apptentive.com.exercise
 
 import org.junit.Test
 
