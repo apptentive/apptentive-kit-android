@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 
 
 /**
@@ -13,6 +14,10 @@ import android.view.ViewGroup
  *
  */
 class MainFragment : Fragment() {
+
+    private val viewModel: MainFragmentViewModel by viewModels {
+        InjectorUtils.provideMainFragmentViewModelFactory(requireContext())
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
