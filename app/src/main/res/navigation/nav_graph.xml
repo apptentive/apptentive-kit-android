@@ -6,7 +6,7 @@
             app:startDestination="@id/languageListFragment">
 
     <fragment android:id="@+id/languageListFragment"
-              android:name="apptentive.com.exercise.ui.LanguageListFragment"
+              android:name="apptentive.com.app.ui.LanguageListFragment"
               android:label="@string/fragment_language_list_title"
               tools:layout="@layout/fragment_language_list">
         <action android:id="@+id/action_language_details"
@@ -18,7 +18,7 @@
     </fragment>
 
     <fragment android:id="@+id/languageDetailFragment"
-              android:name="apptentive.com.exercise.ui.LanguageDetailFragment"
+              android:name="apptentive.com.app.ui.LanguageDetailFragment"
               android:label="@string/fragment_language_detail_title"
               tools:layout="@layout/fragment_language_detail">
         <argument android:name="languageName"
@@ -26,7 +26,7 @@
                   app:nullable="false"/>
     </fragment>
     <fragment android:id="@+id/addLanguageFragment"
-              android:name="apptentive.com.exercise.ui.AddLanguageFragment"
+              android:name="apptentive.com.app.ui.AddLanguageFragment"
               android:label="@string/fragment_add_language_title"
               tools:layout="@layout/fragment_add_language"/>
 </navigation>

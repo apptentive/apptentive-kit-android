@@ -1,7 +1,7 @@
-package apptentive.com.exercise.viewmodels
+package apptentive.com.app.viewmodels
 
 import androidx.lifecycle.*
-import apptentive.com.exercise.data.LanguageRepository
+import apptentive.com.app.data.LanguageRepository
 
 class LanguageDetailViewModel internal constructor(
     private val repository: LanguageRepository,

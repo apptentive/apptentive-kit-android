@@ -1,4 +1,4 @@
-package apptentive.com.exercise.data
+package apptentive.com.app.data
 
 import androidx.lifecycle.LiveData
 import androidx.room.*

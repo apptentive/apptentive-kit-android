@@ -1,10 +1,9 @@
-package apptentive.com.exercise.viewmodels
+package apptentive.com.app.viewmodels
 
 import androidx.lifecycle.*
-import apptentive.com.exercise.data.Language
-import apptentive.com.exercise.data.LanguageRepository
-import apptentive.com.exercise.data.SortMode
-import apptentive.com.exercise.util.LiveEvent
+import apptentive.com.app.data.Language
+import apptentive.com.app.data.LanguageRepository
+import apptentive.com.app.data.SortMode
 
 class LanguageListViewModel internal constructor(repository: LanguageRepository) : ViewModel() {
     val itemList: LiveData<List<Language>> = repository.getLanguages(SortMode.DEFAULT, favoritesOnly = false)

@@ -1,12 +1,12 @@
-package apptentive.com.exercise.util
+package apptentive.com.app.util
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
-import apptentive.com.exercise.data.LanguageDatabase
-import apptentive.com.exercise.data.LanguageRepository
-import apptentive.com.exercise.viewmodels.AddLanguageViewModelFactory
-import apptentive.com.exercise.viewmodels.LanguageDetailViewModelFactory
-import apptentive.com.exercise.viewmodels.LanguageListViewModelFactory
+import apptentive.com.app.data.LanguageDatabase
+import apptentive.com.app.data.LanguageRepository
+import apptentive.com.app.viewmodels.AddLanguageViewModelFactory
+import apptentive.com.app.viewmodels.LanguageDetailViewModelFactory
+import apptentive.com.app.viewmodels.LanguageListViewModelFactory
 
 object InjectorUtils {
     private fun getRepository(context: Context, executors: AppExecutors?): LanguageRepository {

@@ -1,4 +1,4 @@
-package apptentive.com.exercise.util
+package apptentive.com.app.util
 
 import android.os.Handler
 import android.os.Looper

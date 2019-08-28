@@ -1,8 +1,8 @@
-package apptentive.com.exercise.util
+package apptentive.com.app.util
 
 import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteQuery
-import apptentive.com.exercise.data.SortMode
+import apptentive.com.app.data.SortMode
 
 object QueryUtil {
     fun createLanguageQuery(sortMode: SortMode, favoritesOnly: Boolean): SupportSQLiteQuery {

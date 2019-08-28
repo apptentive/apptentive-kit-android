@@ -1,4 +1,4 @@
-package apptentive.com.exercise.util;
+package apptentive.com.app.util;
 
 import androidx.annotation.NonNull;
 

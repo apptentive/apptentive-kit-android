@@ -1,4 +1,4 @@
-package apptentive.com.exercise.data
+package apptentive.com.app.data
 
 import android.content.Context
 import androidx.room.Database

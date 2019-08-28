@@ -1,4 +1,4 @@
-package apptentive.com.exercise
+package apptentive.com.app
 
 import android.os.Bundle
 import android.view.MenuItem

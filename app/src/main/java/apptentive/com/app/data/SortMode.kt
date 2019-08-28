@@ -1,4 +1,4 @@
-package apptentive.com.exercise.data
+package apptentive.com.app.data
 
 enum class SortMode {
     DEFAULT,

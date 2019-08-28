@@ -1,4 +1,4 @@
-package apptentive.com.exercise.ui
+package apptentive.com.app.ui
 
 
 import android.os.Bundle
@@ -7,13 +7,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import apptentive.com.exercise.R
-import apptentive.com.exercise.adapters.LanguageListAdapter
-import apptentive.com.exercise.data.Language
-import apptentive.com.exercise.data.SortMode
-import apptentive.com.exercise.databinding.FragmentLanguageListBinding
-import apptentive.com.exercise.util.InjectorUtils
-import apptentive.com.exercise.viewmodels.LanguageListViewModel
+import apptentive.com.app.R
+import apptentive.com.app.adapters.LanguageListAdapter
+import apptentive.com.app.data.Language
+import apptentive.com.app.data.SortMode
+import apptentive.com.app.databinding.FragmentLanguageListBinding
+import apptentive.com.app.util.InjectorUtils
+import apptentive.com.app.viewmodels.LanguageListViewModel
 
 class LanguageListFragment : Fragment() {
     private val viewModel: LanguageListViewModel by viewModels {

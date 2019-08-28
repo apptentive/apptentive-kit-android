@@ -1,8 +1,8 @@
-package apptentive.com.exercise.data
+package apptentive.com.app.data
 
 import androidx.lifecycle.LiveData
-import apptentive.com.exercise.util.AppExecutors
-import apptentive.com.exercise.util.QueryUtil
+import apptentive.com.app.util.AppExecutors
+import apptentive.com.app.util.QueryUtil
 
 class LanguageRepository(private val dao: LanguageDao, private val executors: AppExecutors) {
     fun getLanguages(sortMode: SortMode, favoritesOnly: Boolean): LiveData<List<Language>> {

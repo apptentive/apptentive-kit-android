@@ -4,13 +4,13 @@
         xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="apptentive.com.exercise.util.DateUtil"/>
+        <import type="apptentive.com.app.util.DateUtil"/>
         <variable
                 name="clickListener"
                 type="android.view.View.OnClickListener"/>
         <variable
                 name="language"
-                type="apptentive.com.exercise.data.Language"/>
+                type="apptentive.com.app.data.Language"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

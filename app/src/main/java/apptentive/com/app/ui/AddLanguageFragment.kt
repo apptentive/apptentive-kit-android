@@ -1,4 +1,4 @@
-package apptentive.com.exercise.ui
+package apptentive.com.app.ui
 
 
 import android.app.DatePickerDialog
@@ -8,10 +8,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import apptentive.com.exercise.R
-import apptentive.com.exercise.util.DateUtil
-import apptentive.com.exercise.util.InjectorUtils
-import apptentive.com.exercise.viewmodels.AddLanguageViewModel
+import apptentive.com.app.R
+import apptentive.com.app.util.DateUtil
+import apptentive.com.app.util.InjectorUtils
+import apptentive.com.app.viewmodels.AddLanguageViewModel
 import kotlinx.android.synthetic.main.fragment_add_language.*
 import java.util.*
 

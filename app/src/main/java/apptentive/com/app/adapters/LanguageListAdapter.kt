@@ -1,4 +1,4 @@
-package apptentive.com.exercise.adapters
+package apptentive.com.app.adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import apptentive.com.exercise.data.Language
-import apptentive.com.exercise.databinding.LanguageListItemBinding
+import apptentive.com.app.data.Language
+import apptentive.com.app.databinding.LanguageListItemBinding
 
 class LanguageListAdapter : ListAdapter<Language, LanguageListAdapter.ViewHolder>(LanguageDiffCallback()) {
     var languageClickListener: LanguageClickListener? = null
