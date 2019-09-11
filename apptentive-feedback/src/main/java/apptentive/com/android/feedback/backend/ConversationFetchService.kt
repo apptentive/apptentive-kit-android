@@ -1,9 +1,21 @@
 package apptentive.com.android.feedback.backend
 
-import apptentive.com.android.concurrent.Promise
-
-data class ConversationCredentials(val identifier: String, val token: String)
+import apptentive.com.android.feedback.model.AppRelease
+import apptentive.com.android.feedback.model.Device
+import apptentive.com.android.feedback.model.SDK
 
 interface ConversationFetchService {
-    fun fetchConversation(): Promise<ConversationCredentials>
+    suspend fun fetchConversationToken(request: ConversationTokenFetchRequest): ConversationTokenFetchResponse
 }
+
+data class ConversationTokenFetchRequest(
+    val device: Device,
+    val sdk: SDK,
+    val appRelease: AppRelease
+)
+
+data class ConversationTokenFetchResponse(
+    val device: Device,
+    val sdk: SDK,
+    val appRelease: AppRelease
+)

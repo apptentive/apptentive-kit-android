@@ -8,27 +8,37 @@ buildscript {
         minSdkVersion = 24
         targetSdkVersion = 28
 
+
+
+        // Kotlin
+        coroutinesVersion = "1.3.1"
+
         // App dependencies
-        constraintLayoutVersion = '2.0.0-beta1'
+        supportLibraryVersion = "1.1.0"
+        constraintLayoutVersion = '2.0.0-beta2'
+        ktxVersion = '1.1.0'
+        fragmentVersion = '1.2.0-alpha03'
+        lifecycleVersion = '2.2.0-alpha04'
+
         coreTestingVersion = '2.0.0'
-        coroutinesVersion = "1.1.1"
+
         espressoVersion = '3.1.1'
-        fragmentVersion = '1.1.0-alpha09'
+
         glideVersion = '4.9.0'
-        gradleVersion = '3.4.1'
+        gradleVersion = '3.6.0-alpha04'
         gsonVersion = '2.8.2'
         junitVersion = '4.12'
         kotlinVersion = '1.3.31'
         ktlintVersion = '0.30.0'
-        ktxVersion = '1.0.2'
+
         pagingVersion = '2.1.0'
-        lifecycleVersion = '2.2.0-alpha01'
+
         materialVersion = '1.0.0'
         navigationVersion = '2.0.0'
         recyclerViewVersion = '1.1.0-alpha05'
         roomVersion = '2.1.0-rc01'
         runnerVersion = '1.0.1'
-        supportLibraryVersion = '1.1.0-alpha05'
+        
         testExtJunit = '1.1.0'
         uiAutomatorVersion = '2.2.0'
         workVersion = '2.1.0-alpha02'
