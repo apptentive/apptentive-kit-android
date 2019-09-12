@@ -1,7 +1,5 @@
 package apptentive.com.android.feedback.model
 
-import org.rekotlin.StateType
-
 data class Person(
     val localIdentifier: String,
     val identifier: String? = null,
@@ -16,6 +14,4 @@ data class Person(
     val country: String? = null,
     val birthday: String? = null
 
-) : StateType {
-    // private val customData: CustomData? = null
-}
+)
