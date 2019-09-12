@@ -13,23 +13,50 @@ import java.io.DataOutputStream
 
 class ConversationDataTest {
     @Test
-    fun serialization() {
-        val data = ConversationData(
-            "localIdentifier",
-            "conversationToken",
-            "conversationId"
+    fun binarySerialization() {
+        val actual = ConversationData(
+            localIdentifier = "localIdentifier",
+            conversationToken = "conversationToken",
+            conversationId = "conversationId",
+            device = Device(
+                osName = "osName",
+                osVersion = "osVersion",
+                osBuild = "osBuild",
+                osApiLevel = 10,
+                manufacturer = "manufacturer",
+                model = "model",
+                board = "board",
+                product = "product",
+                brand = "brand",
+                cpu = "cpu",
+                device = "device",
+                uuid = "uuid",
+                buildType = "buildType",
+                buildId = "buildId"
+            ).apply {
+                carrier = "carrier"
+                currentCarrier = "currentCarrier"
+                networkType = "networkType"
+                bootloaderVersion = "bootloaderVersion"
+                radioVersion = "radioVersion"
+                localeCountryCode = "localeCountryCode"
+                localeLanguageCode = "localeLanguageCode"
+                localeRaw = "localeRaw"
+                utcOffset = "utcOffset"
+                advertiserId = "advertiserId"
+            }
         )
 
         val serializer = ConversationData.serializer()
 
         val baos = ByteArrayOutputStream()
         val out = DataBinaryNullableOutput(DataOutputStream(baos))
-        out.encode(serializer, data)
+        out.encode(serializer, actual)
 
         val bais = ByteArrayInputStream(baos.toByteArray())
         val input = DataBinaryNullableInput(DataInputStream(bais))
-        val data1 = input.decode(serializer)
+        val expected = input.decode(serializer)
 
-        assertEqual(data, data1)
+        assertEqual(actual, expected)
     }
 }

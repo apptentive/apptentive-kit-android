@@ -6,27 +6,32 @@ import kotlinx.serialization.internal.StringDescriptor
 @Serializable
 data class ConversationData(
     val localIdentifier: String,
-    val conversationToken: String? = null,
-    val conversationId: String? = null
+    val conversationToken: String?,
+    val conversationId: String?,
+    val device: Device
 ) {
 
     //region kotlinx custom serialization
 
+    @UseExperimental(ImplicitReflectionSerializer::class)
     @Serializer(forClass = ConversationData::class)
     companion object : KSerializer<ConversationData> {
         override val descriptor: SerialDescriptor = StringDescriptor.withName("ConversationData")
 
         override fun deserialize(input: Decoder): ConversationData {
-            val localIdentifier = input.decodeString()
-            val conversationToken = input.decodeNullableString()
-            val conversationId = input.decodeNullableString()
-            return ConversationData(localIdentifier, conversationToken, conversationId)
+            return ConversationData(
+                localIdentifier = input.decodeString(),
+                conversationToken = input.decodeNullableString(),
+                conversationId = input.decodeNullableString(),
+                device = input.decode()
+            )
         }
 
         override fun serialize(output: Encoder, obj: ConversationData) {
             output.encodeString(obj.localIdentifier)
             output.encodeNullableString(obj.conversationToken)
             output.encodeNullableString(obj.conversationId)
+            output.encode(obj.device)
         }
     }
 
