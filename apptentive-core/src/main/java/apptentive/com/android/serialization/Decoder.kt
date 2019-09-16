@@ -11,5 +11,3 @@ interface Decoder {
     fun decodeChar(): Char
     fun decodeString(): String
 }
-
-fun Decoder.decodeNullableString(): String? = if (decodeBoolean()) decodeString() else null

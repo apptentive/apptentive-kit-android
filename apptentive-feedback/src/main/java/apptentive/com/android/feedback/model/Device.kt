@@ -34,7 +34,7 @@ data class Device(
     val integrationConfig: IntegrationConfig = IntegrationConfig()
 )
 
-internal fun Encoder.encode(obj: Device) {
+internal fun Encoder.encodeDevice(obj: Device) {
     encodeString(obj.osName)
     encodeString(obj.osVersion)
     encodeString(obj.osBuild)
@@ -59,8 +59,8 @@ internal fun Encoder.encode(obj: Device) {
     encodeNullableString(obj.localeRaw)
     encodeNullableString(obj.utcOffset)
     encodeNullableString(obj.advertiserId)
-    encode(obj.customData)
-    encode(obj.integrationConfig)
+    encodeCustomData(obj.customData)
+    encodeIntegrationConfigItem(obj.integrationConfig)
 }
 
 internal fun Decoder.decodeDevice() : Device {

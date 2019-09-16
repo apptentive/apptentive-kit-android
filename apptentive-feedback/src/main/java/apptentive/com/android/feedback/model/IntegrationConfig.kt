@@ -10,17 +10,17 @@ data class IntegrationConfig(
     val parse: IntegrationConfigItem? = null
 )
 
-internal fun Encoder.encode(obj: IntegrationConfig) {
-    encodeNullable(obj.apptentive)
-    encodeNullable(obj.amazonAwsSns)
-    encodeNullable(obj.urbanAirship)
-    encodeNullable(obj.parse)
+internal fun Encoder.encodeIntegrationConfigItem(obj: IntegrationConfig) {
+    encodeNullableIntegrationConfigItem(obj.apptentive)
+    encodeNullableIntegrationConfigItem(obj.amazonAwsSns)
+    encodeNullableIntegrationConfigItem(obj.urbanAirship)
+    encodeNullableIntegrationConfigItem(obj.parse)
 }
 internal fun Decoder.decodeIntegrationConfig() : IntegrationConfig {
     return IntegrationConfig(
-        apptentive = decodeIntegrationConfigItem(),
-        amazonAwsSns = decodeIntegrationConfigItem(),
-        urbanAirship = decodeIntegrationConfigItem(),
-        parse = decodeIntegrationConfigItem()
+        apptentive = decodeNullableIntegrationConfigItem(),
+        amazonAwsSns = decodeNullableIntegrationConfigItem(),
+        urbanAirship = decodeNullableIntegrationConfigItem(),
+        parse = decodeNullableIntegrationConfigItem()
     )
 }

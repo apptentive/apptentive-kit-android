@@ -11,10 +11,3 @@ interface Encoder {
     fun encodeChar(value: Char)
     fun encodeString(value: String)
 }
-
-fun Encoder.encodeNullableString(value: String?) {
-    encodeBoolean(value != null)
-    if (value != null) {
-        encodeString(value)
-    }
-}

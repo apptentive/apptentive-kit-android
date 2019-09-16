@@ -15,12 +15,12 @@ data class Person(
     val city: String? = null,
     val zip: String? = null,
     val country: String? = null,
-    val birthday: String? = null,
+    val birthday: String? = null, // FIXME: make it Date
     val mParticleId: String? = null,
     val customData: CustomData = CustomData()
 )
 
-internal fun Encoder.encode(obj: Person) {
+internal fun Encoder.encodePerson(obj: Person) {
     encodeNullableString(obj.id)
     encodeNullableString(obj.email)
     encodeNullableString(obj.name)
@@ -32,7 +32,7 @@ internal fun Encoder.encode(obj: Person) {
     encodeNullableString(obj.country)
     encodeNullableString(obj.birthday)
     encodeNullableString(obj.mParticleId)
-    encode(obj.customData)
+    encodeCustomData(obj.customData)
 }
 
 internal fun Decoder.decodePerson(): Person {

@@ -1,18 +1,14 @@
 package apptentive.com.android.feedback.model
 
 import apptentive.com.android.debug.Assert
-import apptentive.com.android.serialization.BinaryDecoder
-import apptentive.com.android.serialization.BinaryEncoder
+import apptentive.com.android.util.decodeFromByteArray
+import apptentive.com.android.util.encodeToByteArray
 import org.junit.Test
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.DataInputStream
-import java.io.DataOutputStream
 
 class ConversationDataTest {
     @Test
     fun binarySerialization() {
-        val actual = ConversationData(
+        val expected = ConversationData(
             localIdentifier = "localIdentifier",
             conversationToken = "conversationToken",
             conversationId = "conversationId",
@@ -49,17 +45,60 @@ class ConversationDataTest {
                     parse = IntegrationConfigItem(mapOf(Pair("key4", "value4")))
                 )
             ),
+            person = Person(
+                id = "id",
+                email = "email",
+                name = "name",
+                facebookId = "facebookId",
+                phoneNumber = "phoneNumber",
+                street = "street",
+                city = "city",
+                zip = "zip",
+                country = "country",
+                birthday = "birthday",
+                mParticleId = "mParticleId",
+                customData = CustomData(mapOf(Pair("key5", "value5")))
+            )
+        )
+
+        val bytes = encodeToByteArray { out ->
+            out.encodeIntegrationConfigItem(expected)
+        }
+        val actual =
+            decodeFromByteArray(bytes) { input -> input.decodeConversationData() }
+
+        Assert.assertEqual(expected, actual)
+    }
+
+    @Test
+    fun binarySerializationMissingData() {
+        val expected = ConversationData(
+            localIdentifier = "localIdentifier",
+            device = Device(
+                osName = "osName",
+                osVersion = "osVersion",
+                osBuild = "osBuild",
+                osApiLevel = 10,
+                manufacturer = "manufacturer",
+                model = "model",
+                board = "board",
+                product = "product",
+                brand = "brand",
+                cpu = "cpu",
+                device = "device",
+                uuid = "uuid",
+                buildType = "buildType",
+                buildId = "buildId"
+            ),
             person = Person()
         )
 
-        val baos = ByteArrayOutputStream()
-        val out = BinaryEncoder(DataOutputStream(baos))
-        out.encode(actual)
+        val bytes = encodeToByteArray { out ->
+            out.encodeIntegrationConfigItem(expected)
+        }
+        val actual =
+            decodeFromByteArray(bytes) { input -> input.decodeConversationData() }
 
-        val bais = ByteArrayInputStream(baos.toByteArray())
-        val input = BinaryDecoder(DataInputStream(bais))
-        val expected = input.decodeConversationData()
-
-        Assert.assertEqual(actual, expected)
+        Assert.assertEqual(expected, actual)
     }
 }

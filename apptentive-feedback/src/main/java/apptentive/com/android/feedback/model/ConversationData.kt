@@ -7,18 +7,18 @@ import apptentive.com.android.serialization.encodeNullableString
 
 data class ConversationData(
     val localIdentifier: String,
-    val conversationToken: String?,
-    val conversationId: String?,
+    val conversationToken: String? = null,
+    val conversationId: String? = null,
     val device: Device,
     val person: Person
 )
 
-internal fun Encoder.encode(obj: ConversationData) {
+internal fun Encoder.encodeIntegrationConfigItem(obj: ConversationData) {
     encodeString(obj.localIdentifier)
     encodeNullableString(obj.conversationToken)
     encodeNullableString(obj.conversationId)
-    encode(obj.device)
-    encode(obj.person)
+    encodeDevice(obj.device)
+    encodePerson(obj.person)
 }
 
 internal fun Decoder.decodeConversationData(): ConversationData {
