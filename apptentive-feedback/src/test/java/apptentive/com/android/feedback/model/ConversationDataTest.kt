@@ -1,10 +1,8 @@
 package apptentive.com.android.feedback.model
 
-import apptentive.com.android.debug.Assert.assertEqual
-import apptentive.com.android.feedback.utils.DataBinaryNullableInput
-import apptentive.com.android.feedback.utils.DataBinaryNullableOutput
-import kotlinx.serialization.decode
-import kotlinx.serialization.encode
+import apptentive.com.android.debug.Assert
+import apptentive.com.android.serialization.BinaryDecoder
+import apptentive.com.android.serialization.BinaryEncoder
 import org.junit.Test
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -32,31 +30,36 @@ class ConversationDataTest {
                 device = "device",
                 uuid = "uuid",
                 buildType = "buildType",
-                buildId = "buildId"
-            ).apply {
-                carrier = "carrier"
-                currentCarrier = "currentCarrier"
-                networkType = "networkType"
-                bootloaderVersion = "bootloaderVersion"
-                radioVersion = "radioVersion"
-                localeCountryCode = "localeCountryCode"
-                localeLanguageCode = "localeLanguageCode"
-                localeRaw = "localeRaw"
-                utcOffset = "utcOffset"
-                advertiserId = "advertiserId"
-            }
+                buildId = "buildId",
+                carrier = "carrier",
+                currentCarrier = "currentCarrier",
+                networkType = "networkType",
+                bootloaderVersion = "bootloaderVersion",
+                radioVersion = "radioVersion",
+                localeCountryCode = "localeCountryCode",
+                localeLanguageCode = "localeLanguageCode",
+                localeRaw = "localeRaw",
+                utcOffset = "utcOffset",
+                advertiserId = "advertiserId",
+                customData = CustomData(mapOf(Pair("key", "value"))),
+                integrationConfig = IntegrationConfig(
+                    apptentive = IntegrationConfigItem(mapOf(Pair("key1", "value1"))),
+                    amazonAwsSns = IntegrationConfigItem(mapOf(Pair("key2", "value2"))),
+                    urbanAirship = IntegrationConfigItem(mapOf(Pair("key3", "value3"))),
+                    parse = IntegrationConfigItem(mapOf(Pair("key4", "value4")))
+                )
+            ),
+            person = Person()
         )
 
-        val serializer = ConversationData.serializer()
-
         val baos = ByteArrayOutputStream()
-        val out = DataBinaryNullableOutput(DataOutputStream(baos))
-        out.encode(serializer, actual)
+        val out = BinaryEncoder(DataOutputStream(baos))
+        out.encode(actual)
 
         val bais = ByteArrayInputStream(baos.toByteArray())
-        val input = DataBinaryNullableInput(DataInputStream(bais))
-        val expected = input.decode(serializer)
+        val input = BinaryDecoder(DataInputStream(bais))
+        val expected = input.decodeConversationData()
 
-        assertEqual(actual, expected)
+        Assert.assertEqual(actual, expected)
     }
 }

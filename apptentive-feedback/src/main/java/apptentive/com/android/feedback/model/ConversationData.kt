@@ -1,39 +1,32 @@
 package apptentive.com.android.feedback.model
 
-import kotlinx.serialization.*
-import kotlinx.serialization.internal.StringDescriptor
+import apptentive.com.android.serialization.Decoder
+import apptentive.com.android.serialization.Encoder
+import apptentive.com.android.serialization.decodeNullableString
+import apptentive.com.android.serialization.encodeNullableString
 
-@Serializable
 data class ConversationData(
     val localIdentifier: String,
     val conversationToken: String?,
     val conversationId: String?,
-    val device: Device
-) {
+    val device: Device,
+    val person: Person
+)
 
-    //region kotlinx custom serialization
+internal fun Encoder.encode(obj: ConversationData) {
+    encodeString(obj.localIdentifier)
+    encodeNullableString(obj.conversationToken)
+    encodeNullableString(obj.conversationId)
+    encode(obj.device)
+    encode(obj.person)
+}
 
-    @UseExperimental(ImplicitReflectionSerializer::class)
-    @Serializer(forClass = ConversationData::class)
-    companion object : KSerializer<ConversationData> {
-        override val descriptor: SerialDescriptor = StringDescriptor.withName("ConversationData")
-
-        override fun deserialize(input: Decoder): ConversationData {
-            return ConversationData(
-                localIdentifier = input.decodeString(),
-                conversationToken = input.decodeNullableString(),
-                conversationId = input.decodeNullableString(),
-                device = input.decode()
-            )
-        }
-
-        override fun serialize(output: Encoder, obj: ConversationData) {
-            output.encodeString(obj.localIdentifier)
-            output.encodeNullableString(obj.conversationToken)
-            output.encodeNullableString(obj.conversationId)
-            output.encode(obj.device)
-        }
-    }
-
-    //endregion
+internal fun Decoder.decodeConversationData(): ConversationData {
+    return ConversationData(
+        localIdentifier = decodeString(),
+        conversationToken = decodeNullableString(),
+        conversationId = decodeNullableString(),
+        device = decodeDevice(),
+        person = decodePerson()
+    )
 }

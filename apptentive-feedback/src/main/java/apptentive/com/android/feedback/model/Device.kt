@@ -1,9 +1,10 @@
 package apptentive.com.android.feedback.model
 
-import kotlinx.serialization.*
-import kotlinx.serialization.internal.StringDescriptor
+import apptentive.com.android.serialization.Decoder
+import apptentive.com.android.serialization.Encoder
+import apptentive.com.android.serialization.decodeNullableString
+import apptentive.com.android.serialization.encodeNullableString
 
-@Serializable
 data class Device(
     val osName: String,
     val osVersion: String,
@@ -18,98 +19,77 @@ data class Device(
     val device: String,
     val uuid: String,
     val buildType: String,
-    val buildId: String
-) {
-    var carrier: String? = null
-        internal set
-    var currentCarrier: String? = null
-        internal set
-    var networkType: String? = null
-        internal set
-    var bootloaderVersion: String? = null
-        internal set
-    var radioVersion: String? = null
-        internal set
-    var localeCountryCode: String? = null
-        internal set
-    var localeLanguageCode: String? = null
-        internal set
-    var localeRaw: String? = null
-        internal set
-    var utcOffset: String? = null
-        internal set
-    var advertiserId: String? = null
-        internal set
+    val buildId: String,
+    val carrier: String? = null,
+    val currentCarrier: String? = null,
+    val networkType: String? = null,
+    val bootloaderVersion: String? = null,
+    val radioVersion: String? = null,
+    val localeCountryCode: String? = null,
+    val localeLanguageCode: String? = null,
+    val localeRaw: String? = null,
+    val utcOffset: String? = null,
+    val advertiserId: String? = null,
+    val customData: CustomData = CustomData(),
+    val integrationConfig: IntegrationConfig = IntegrationConfig()
+)
 
-    val customData = CustomData()
-    val integrationConfig = IntegrationConfig()
+internal fun Encoder.encode(obj: Device) {
+    encodeString(obj.osName)
+    encodeString(obj.osVersion)
+    encodeString(obj.osBuild)
+    encodeInt(obj.osApiLevel)
+    encodeString(obj.manufacturer)
+    encodeString(obj.model)
+    encodeString(obj.board)
+    encodeString(obj.product)
+    encodeString(obj.brand)
+    encodeString(obj.cpu)
+    encodeString(obj.device)
+    encodeString(obj.uuid)
+    encodeString(obj.buildType)
+    encodeString(obj.buildId)
+    encodeNullableString(obj.carrier)
+    encodeNullableString(obj.currentCarrier)
+    encodeNullableString(obj.networkType)
+    encodeNullableString(obj.bootloaderVersion)
+    encodeNullableString(obj.radioVersion)
+    encodeNullableString(obj.localeCountryCode)
+    encodeNullableString(obj.localeLanguageCode)
+    encodeNullableString(obj.localeRaw)
+    encodeNullableString(obj.utcOffset)
+    encodeNullableString(obj.advertiserId)
+    encode(obj.customData)
+    encode(obj.integrationConfig)
+}
 
-    //region kotlinx custom serialization
-
-    @Serializer(forClass = Device::class)
-    companion object : KSerializer<Device> {
-        override val descriptor: SerialDescriptor = StringDescriptor.withName("Device")
-
-        override fun deserialize(input: Decoder): Device {
-            val device = Device(
-                osName = input.decodeString(),
-                osVersion = input.decodeString(),
-                osBuild = input.decodeString(),
-                osApiLevel = input.decodeInt(),
-                manufacturer = input.decodeString(),
-                model = input.decodeString(),
-                board = input.decodeString(),
-                product = input.decodeString(),
-                brand = input.decodeString(),
-                cpu = input.decodeString(),
-                device = input.decodeString(),
-                uuid = input.decodeString(),
-                buildType = input.decodeString(),
-                buildId = input.decodeString()
-            )
-
-            device.carrier = input.decodeNullableString()
-            device.currentCarrier = input.decodeNullableString()
-            device.networkType = input.decodeNullableString()
-            device.bootloaderVersion = input.decodeNullableString()
-            device.radioVersion = input.decodeNullableString()
-            device.localeCountryCode = input.decodeNullableString()
-            device.localeLanguageCode = input.decodeNullableString()
-            device.localeRaw = input.decodeNullableString()
-            device.utcOffset = input.decodeNullableString()
-            device.advertiserId = input.decodeNullableString()
-
-            return device
-        }
-
-        override fun serialize(output: Encoder, obj: Device) {
-            output.encodeString(obj.osName)
-            output.encodeString(obj.osVersion)
-            output.encodeString(obj.osBuild)
-            output.encodeInt(obj.osApiLevel)
-            output.encodeString(obj.manufacturer)
-            output.encodeString(obj.model)
-            output.encodeString(obj.board)
-            output.encodeString(obj.product)
-            output.encodeString(obj.brand)
-            output.encodeString(obj.cpu)
-            output.encodeString(obj.device)
-            output.encodeString(obj.uuid)
-            output.encodeString(obj.buildType)
-            output.encodeString(obj.buildId)
-
-            output.encodeNullableString(obj.carrier)
-            output.encodeNullableString(obj.currentCarrier)
-            output.encodeNullableString(obj.networkType)
-            output.encodeNullableString(obj.bootloaderVersion)
-            output.encodeNullableString(obj.radioVersion)
-            output.encodeNullableString(obj.localeCountryCode)
-            output.encodeNullableString(obj.localeLanguageCode)
-            output.encodeNullableString(obj.localeRaw)
-            output.encodeNullableString(obj.utcOffset)
-            output.encodeNullableString(obj.advertiserId)
-        }
-    }
-
-    //endregion
+internal fun Decoder.decodeDevice() : Device {
+    return Device(
+        osName = decodeString(),
+        osVersion = decodeString(),
+        osBuild = decodeString(),
+        osApiLevel = decodeInt(),
+        manufacturer = decodeString(),
+        model = decodeString(),
+        board = decodeString(),
+        product = decodeString(),
+        brand = decodeString(),
+        cpu = decodeString(),
+        device = decodeString(),
+        uuid = decodeString(),
+        buildType = decodeString(),
+        buildId = decodeString(),
+        carrier = decodeNullableString(),
+        currentCarrier = decodeNullableString(),
+        networkType = decodeNullableString(),
+        bootloaderVersion = decodeNullableString(),
+        radioVersion = decodeNullableString(),
+        localeCountryCode = decodeNullableString(),
+        localeLanguageCode = decodeNullableString(),
+        localeRaw = decodeNullableString(),
+        utcOffset = decodeNullableString(),
+        advertiserId = decodeNullableString(),
+        customData = decodeCustomData(),
+        integrationConfig = decodeIntegrationConfig()
+    )
 }
