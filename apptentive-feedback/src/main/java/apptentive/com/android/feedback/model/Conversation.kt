@@ -1,6 +1,6 @@
 package apptentive.com.android.feedback.model
 
-import java.io.File
+import apptentive.com.android.serialization.*
 
 enum class ConversationState {
     /** Conversation state is not known */
@@ -17,7 +17,29 @@ enum class ConversationState {
 
 data class Conversation(
     val localIdentifier: String,
-    val dataFile: File,
-    val messagesFile: File,
-    val state: ConversationState = ConversationState.UNDEFINED
+    val conversationToken: String? = null,
+    val conversationId: String? = null,
+    val state: ConversationState = ConversationState.UNDEFINED,
+    val device: Device,
+    val person: Person
 )
+
+internal fun Encoder.encodeConversation(obj: Conversation) {
+    encodeString(obj.localIdentifier)
+    encodeNullableString(obj.conversationToken)
+    encodeNullableString(obj.conversationId)
+    encodeEnum(obj.state)
+    encodeDevice(obj.device)
+    encodePerson(obj.person)
+}
+
+internal fun Decoder.decodeConversation(): Conversation {
+    return Conversation(
+        localIdentifier = decodeString(),
+        conversationToken = decodeNullableString(),
+        conversationId = decodeNullableString(),
+        state = decodeEnum(),
+        device = decodeDevice(),
+        person = decodePerson()
+    )
+}

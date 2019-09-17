@@ -1,14 +1,19 @@
 package apptentive.com.android.feedback.model
 
-import apptentive.com.android.debug.Assert
-import apptentive.com.android.util.decodeFromByteArray
-import apptentive.com.android.util.encodeToByteArray
+import apptentive.com.android.feedback.conversation.SingleFileConversationSerializer
+import com.google.common.truth.Truth.assertThat
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+import java.io.File
 
-class ConversationDataTest {
+class ConversationTest {
+    @get:Rule
+    val tempFolder = TemporaryFolder()
+
     @Test
-    fun binarySerialization() {
-        val expected = ConversationData(
+    fun binaryFileSerialization() {
+        val expected = Conversation(
             localIdentifier = "localIdentifier",
             conversationToken = "conversationToken",
             conversationId = "conversationId",
@@ -61,18 +66,23 @@ class ConversationDataTest {
             )
         )
 
-        val bytes = encodeToByteArray { out ->
-            out.encodeIntegrationConfigItem(expected)
-        }
-        val actual =
-            decodeFromByteArray(bytes) { input -> input.decodeConversationData() }
+        val file = tempFolder.tempFile()
 
-        Assert.assertEqual(expected, actual)
+        val serializer = SingleFileConversationSerializer(file)
+
+        // should return no conversation before anything was saved
+        assertThat(serializer.loadConversation()).isNull()
+
+        // save conversation
+        serializer.saveConversation(expected)
+
+        val actual = serializer.loadConversation()
+        assertThat(expected).isEqualTo(actual)
     }
 
     @Test
     fun binarySerializationMissingData() {
-        val expected = ConversationData(
+        val expected = Conversation(
             localIdentifier = "localIdentifier",
             device = Device(
                 osName = "osName",
@@ -93,12 +103,20 @@ class ConversationDataTest {
             person = Person()
         )
 
-        val bytes = encodeToByteArray { out ->
-            out.encodeIntegrationConfigItem(expected)
-        }
-        val actual =
-            decodeFromByteArray(bytes) { input -> input.decodeConversationData() }
+        val file = tempFolder.tempFile()
 
-        Assert.assertEqual(expected, actual)
+        val serializer = SingleFileConversationSerializer(file)
+
+        // save conversation
+        serializer.saveConversation(expected)
+
+        val actual = serializer.loadConversation()
+        assertThat(expected).isEqualTo(actual)
     }
+}
+
+fun TemporaryFolder.tempFile(): File {
+    val file = createTempFile()
+    file.delete()
+    return file
 }

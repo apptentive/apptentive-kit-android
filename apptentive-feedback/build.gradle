@@ -37,6 +37,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$rootProject.kotlinSerializationVersion"
 
     testImplementation 'junit:junit:4.12'
+    testImplementation "com.google.truth:truth:$rootProject.truthVersion"
     androidTestImplementation 'androidx.test:runner:1.1.2-alpha02'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0-alpha02'
 }

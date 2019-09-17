@@ -19,6 +19,10 @@ enum class LogTag {
     SECURITY
 }
 
-fun logi(tag: LogTag, message: String) {
+fun ilog(tag: LogTag, message: String) {
+    println(message)
+}
+
+fun dlog(tag: LogTag, message: String) {
     println(message)
 }

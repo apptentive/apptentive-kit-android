@@ -1,128 +1,69 @@
 package apptentive.com.android.feedback.conversation
 
 import androidx.annotation.WorkerThread
-import apptentive.com.android.feedback.model.Conversation
-import apptentive.com.android.feedback.model.ConversationMetadata
-import apptentive.com.android.feedback.model.ConversationMetadataItem
-import apptentive.com.android.feedback.model.ConversationState
-import apptentive.com.android.feedback.model.ConversationState.*
-import apptentive.com.android.feedback.utils.CoroutineLauncher
+import apptentive.com.android.feedback.model.*
+import apptentive.com.android.feedback.model.ConversationState.ANONYMOUS_PENDING
 import apptentive.com.android.feedback.utils.LogTag.CONVERSATION
-import apptentive.com.android.feedback.utils.logi
+import apptentive.com.android.feedback.utils.ilog
+import apptentive.com.android.serialization.BinaryDecoder
+import apptentive.com.android.serialization.BinaryEncoder
+import apptentive.com.android.util.Factory
+import apptentive.com.android.util.generateUUID
+import java.io.DataInputStream
+import java.io.DataOutputStream
 import java.io.File
-import java.util.*
 
 class ConversationManager(
-    private val conversationDir: File,
-    private val launcher: CoroutineLauncher
+    private val conversationSerializer: ConversationSerializer,
+    private val personFactory: Factory<Person>,
+    private val deviceFactory: Factory<Device>
 ) {
-    @Throws(ConversationLoadingException::class)
-    private suspend fun loadActiveConversation(): Conversation? {
-        val metadata = loadMetadata(conversationDir)
-
-        val existingConversation = loadConversation(metadata)
+    @Throws(ConversationSerializationException::class)
+    @WorkerThread
+    private fun loadActiveConversation(): Conversation? {
+        val existingConversation = conversationSerializer.loadConversation()
         if (existingConversation != null) {
             return existingConversation
         }
 
         // no active conversations: create a new one
-        logi(CONVERSATION, "Creating 'anonymous' conversation...")
-        val dataFile = generateConversationDataFilename(conversationDir)
-        val messagesFile = generateMessagesFilename(conversationDir)
+        ilog(CONVERSATION, "Creating 'anonymous' conversation...")
         return Conversation(
             localIdentifier = generateConversationIdentifier(),
-            dataFile = dataFile,
-            messagesFile = messagesFile,
-            state = ConversationState.ANONYMOUS_PENDING
+            state = ANONYMOUS_PENDING,
+            person = personFactory.create(),
+            device = deviceFactory.create()
         )
     }
-
-    //region Metadata
-
-    @WorkerThread
-    private fun loadMetadata(conversationDir: File): ConversationMetadata {
-        val metadataFile = File(conversationDir, CONVERSATION_METADATA_FILE)
-        if (metadataFile.exists()) {
-            TODO("Implement me")
-        }
-
-        return ConversationMetadata()
-    }
-
-    //endregion
-
-    //region Conversation
-
-    private fun loadConversation(metadata: ConversationMetadata): Conversation? {
-        // we're going to scan metadata in attempt to find existing conversations
-        // if the user was logged in previously - we should have an active conversation
-        var item = metadata.findItem(LOGGED_IN)
-        if (item != null) {
-            logi(CONVERSATION, "Loading 'logged-in' conversation...")
-            return loadConversation(item)
-        }
-
-        // if no users were logged in previously - we might have an anonymous conversation
-        item = metadata.findItem(ANONYMOUS)
-        if (item != null) {
-            logi(CONVERSATION, "Loading 'anonymous' conversation...")
-            return loadConversation(item)
-        }
-
-        // check if we have a 'pending' anonymous conversation
-        item = metadata.findItem(ANONYMOUS_PENDING)
-        if (item != null) {
-            logi(CONVERSATION, "Loading 'anonymous pending' conversation...")
-            return loadConversation(item)
-        }
-
-        // check if we have a 'legacy pending' conversation
-//        item = metadata.findItem(LEGACY_PENDING)
-//        if (item != null) {
-//            logi(CONVERSATION, "Loading 'legacy pending' conversation...")
-//            val conversation = loadConversation(item!!)
-//            fetchLegacyConversation(conversation)
-//            return conversation
-//        }
-
-        // we only have LOGGED_OUT conversations
-        logi(
-            CONVERSATION,
-            "No active conversations to load: only 'logged-out' conversations available"
-        )
-        return null
-    }
-
-    private fun loadConversation(item: ConversationMetadataItem): Conversation {
-        TODO()
-    }
-
-    //endregion
 
     companion object {
-        private const val CONVERSATION_METADATA_FILE = "conversation-v2.meta"
-
-        private fun generateMessagesFilename(conversationDir: File): File {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
-
-        private fun generateConversationDataFilename(conversationDir: File): File {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
-
-        private fun generateConversationIdentifier() = UUID.randomUUID().toString()
+        private fun generateConversationIdentifier() = generateUUID()
     }
 }
 
-internal interface ConversationLoader {
-    @Throws(ConversationLoadingException::class)
-    suspend fun loadConversation(): Conversation?
+interface ConversationSerializer {
+    @Throws(ConversationSerializationException::class)
+    fun loadConversation(): Conversation?
+
+    @Throws(ConversationSerializationException::class)
+    fun saveConversation(conversation: Conversation)
 }
 
-private class MetadataConversationLoader(
-    private val metadataFile: File
-) : ConversationLoader {
-    override suspend fun loadConversation(): Conversation? {
-        TODO()
+internal class SingleFileConversationSerializer(
+    private val file: File
+) : ConversationSerializer {
+    override fun saveConversation(conversation: Conversation) {
+        file.outputStream().use { stream ->
+            val encoder = BinaryEncoder(DataOutputStream(stream))
+            encoder.encodeConversation(conversation)
+        }
+    }
+
+    override fun loadConversation(): Conversation? {
+        return if (!file.exists()) null else
+            file.inputStream().use { stream ->
+                val encoder = BinaryDecoder(DataInputStream(stream))
+                return@loadConversation encoder.decodeConversation()
+            }
     }
 }
