@@ -1,13 +1,13 @@
 package apptentive.com.android.feedback.conversation
 
 import androidx.annotation.WorkerThread
+import apptentive.com.android.feedback.CONVERSATION
 import apptentive.com.android.feedback.model.*
 import apptentive.com.android.feedback.model.ConversationState.ANONYMOUS_PENDING
-import apptentive.com.android.feedback.utils.LogTag.CONVERSATION
-import apptentive.com.android.feedback.utils.ilog
 import apptentive.com.android.serialization.BinaryDecoder
 import apptentive.com.android.serialization.BinaryEncoder
 import apptentive.com.android.util.Factory
+import apptentive.com.android.util.Log
 import apptentive.com.android.util.generateUUID
 import java.io.DataInputStream
 import java.io.DataOutputStream
@@ -27,7 +27,7 @@ class ConversationManager(
         }
 
         // no active conversations: create a new one
-        ilog(CONVERSATION, "Creating 'anonymous' conversation...")
+        Log.i(CONVERSATION, "Creating 'anonymous' conversation...")
         return Conversation(
             localIdentifier = generateConversationIdentifier(),
             state = ANONYMOUS_PENDING,

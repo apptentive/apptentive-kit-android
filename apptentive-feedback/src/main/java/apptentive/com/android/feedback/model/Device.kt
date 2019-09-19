@@ -25,10 +25,10 @@ data class Device(
     val networkType: String? = null,
     val bootloaderVersion: String? = null,
     val radioVersion: String? = null,
-    val localeCountryCode: String? = null,
-    val localeLanguageCode: String? = null,
-    val localeRaw: String? = null,
-    val utcOffset: String? = null,
+    val localeCountryCode: String,
+    val localeLanguageCode: String,
+    val localeRaw: String,
+    val utcOffset: Int,
     val advertiserId: String? = null,
     val customData: CustomData = CustomData(),
     val integrationConfig: IntegrationConfig = IntegrationConfig()
@@ -54,16 +54,16 @@ internal fun Encoder.encodeDevice(obj: Device) {
     encodeNullableString(obj.networkType)
     encodeNullableString(obj.bootloaderVersion)
     encodeNullableString(obj.radioVersion)
-    encodeNullableString(obj.localeCountryCode)
-    encodeNullableString(obj.localeLanguageCode)
-    encodeNullableString(obj.localeRaw)
-    encodeNullableString(obj.utcOffset)
+    encodeString(obj.localeCountryCode)
+    encodeString(obj.localeLanguageCode)
+    encodeString(obj.localeRaw)
+    encodeInt(obj.utcOffset)
     encodeNullableString(obj.advertiserId)
     encodeCustomData(obj.customData)
     encodeIntegrationConfigItem(obj.integrationConfig)
 }
 
-internal fun Decoder.decodeDevice() : Device {
+internal fun Decoder.decodeDevice(): Device {
     return Device(
         osName = decodeString(),
         osVersion = decodeString(),
@@ -84,10 +84,10 @@ internal fun Decoder.decodeDevice() : Device {
         networkType = decodeNullableString(),
         bootloaderVersion = decodeNullableString(),
         radioVersion = decodeNullableString(),
-        localeCountryCode = decodeNullableString(),
-        localeLanguageCode = decodeNullableString(),
-        localeRaw = decodeNullableString(),
-        utcOffset = decodeNullableString(),
+        localeCountryCode = decodeString(),
+        localeLanguageCode = decodeString(),
+        localeRaw = decodeString(),
+        utcOffset = decodeInt(),
         advertiserId = decodeNullableString(),
         customData = decodeCustomData(),
         integrationConfig = decodeIntegrationConfig()

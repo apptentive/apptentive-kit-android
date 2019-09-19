@@ -40,7 +40,7 @@ class ConversationTest {
                 localeCountryCode = "localeCountryCode",
                 localeLanguageCode = "localeLanguageCode",
                 localeRaw = "localeRaw",
-                utcOffset = "utcOffset",
+                utcOffset = -8,
                 advertiserId = "advertiserId",
                 customData = CustomData(mapOf(Pair("key", "value"))),
                 integrationConfig = IntegrationConfig(
@@ -98,7 +98,11 @@ class ConversationTest {
                 device = "device",
                 uuid = "uuid",
                 buildType = "buildType",
-                buildId = "buildId"
+                buildId = "buildId",
+                localeCountryCode = "EN",
+                localeLanguageCode = "en_us",
+                localeRaw = "localeRaw",
+                utcOffset = -8
             ),
             person = Person()
         )

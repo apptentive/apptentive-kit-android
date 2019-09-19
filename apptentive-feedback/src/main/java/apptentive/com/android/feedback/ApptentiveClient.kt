@@ -17,6 +17,6 @@ private class ApptentiveNullClient : ApptentiveClient {
     }
 
     private fun printError(action: String) {
-        Log.e(feedback, "Unable to $action: Apptentive SDK is not properly initialized.")
+        Log.e(FEEDBACK, "Unable to $action: Apptentive SDK is not properly initialized.")
     }
 }

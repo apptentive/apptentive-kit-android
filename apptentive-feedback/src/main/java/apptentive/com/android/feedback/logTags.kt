@@ -2,4 +2,6 @@ package apptentive.com.android.feedback
 
 import apptentive.com.android.util.LogTag
 
-val feedback = LogTag("feedback")
+val CONVERSATION = LogTag("CONVERSATION")
+val FEEDBACK = LogTag("FEEDBACK")
+val SYSTEM = LogTag("SYSTEM")
