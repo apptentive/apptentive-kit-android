@@ -1,10 +1,9 @@
 package apptentive.com.android.network
 
-import apptentive.com.android.concurrent.ExecutorQueue
+import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.network.Constants.DEFAULT_REQUEST_TIMEOUT
 import java.io.InputStream
-import java.lang.IllegalStateException
 import java.net.URL
 
 /**
@@ -17,7 +16,7 @@ import java.net.URL
  * @param headers HTTP-request headers
  * @param timeout request timeout.
  * @param tag optional tag for request identification.
- * @param callbackQueue optional execution queue for invoking callbacks.
+ * @param callbackExecutor optional execution queue for invoking callbacks.
  * @param retryPolicy optional retry policy for the request.
  * @param userData optional user data associated with the request.
  */
@@ -29,7 +28,7 @@ class HttpRequest<T> private constructor(
     internal val headers: HttpHeaders,
     val timeout: TimeInterval,
     val tag: String?,
-    internal val callbackQueue: ExecutorQueue?,
+    internal val callbackExecutor: Executor?,
     internal val retryPolicy: HttpRequestRetryPolicy?,
     val userData: Any?
 ) {
@@ -61,7 +60,7 @@ class HttpRequest<T> private constructor(
         private lateinit var reader: HttpResponseReader<T>
         private var method = HttpMethod.GET
         private var requestBody: HttpRequestBody? = null
-        private var callbackQueue: ExecutorQueue? = null
+        private var callbackExecutor: Executor? = null
         private var retryPolicy: HttpRequestRetryPolicy? = null
         private var tag: String? = null
         private var userData: Any? = null
@@ -96,6 +95,13 @@ class HttpRequest<T> private constructor(
 
         /** Sets PATCH method with optional request body */
         fun patch(body: HttpRequestBody? = null) = method(HttpMethod.PATCH, body)
+
+        fun method(method: HttpMethod, body: Any? = null): Builder<T> {
+            return method(
+                method = method,
+                requestBody = if (body != null) HttpJsonRequestBody(body) else null
+            )
+        }
 
         /** Generic method for setting HTTP-method with optional request body */
         fun method(method: HttpMethod, requestBody: HttpRequestBody? = null): Builder<T> {
@@ -158,8 +164,8 @@ class HttpRequest<T> private constructor(
 
         /** Sets dispatch queue for callbacks */
         // FIXME: unit tests
-        fun callbackOn(queue: ExecutorQueue): Builder<T> {
-            callbackQueue = queue
+        fun callbackOn(executor: Executor): Builder<T> {
+            callbackExecutor = executor
             return this
         }
 
@@ -214,7 +220,7 @@ class HttpRequest<T> private constructor(
                 headers = headers,
                 timeout = timeout,
                 tag = tag,
-                callbackQueue = callbackQueue,
+                callbackExecutor = callbackExecutor,
                 retryPolicy = retryPolicy,
                 userData = userData
             )

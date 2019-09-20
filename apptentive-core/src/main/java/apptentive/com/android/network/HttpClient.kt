@@ -54,7 +54,7 @@ class DefaultHttpClient(
         onError: ((e: Exception) -> Unit)?
     ): Promise<HttpResponse<T>> {
         /* promise will be fulfilled on the request's callback queue (or then network queue if missing) */
-        val promise = AsyncPromise<HttpResponse<T>>(request.callbackQueue)
+        val promise = AsyncPromise<HttpResponse<T>>(request.callbackExecutor)
         if (onValue != null) {
             promise.then(onValue)
         }
