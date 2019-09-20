@@ -1,18 +1,3 @@
 <resources>
-    <string name="app_name">Languages</string>
-
-    <string name="language_release_date">Released on %s</string>
-    <string name="language_release_date_change">Change</string>
-    <string name="language_name_hint">Name</string>
-    <string name="language_description_hint">Description</string>
-
-    <string name="error_language_name_required">Required</string>
-    <string name="menu_show_favorites_only">Favorites Only</string>
-    <string name="menu_order_default">Default</string>
-    <string name="menu_order_name">Name</string>
-    <string name="menu_order_release_date">Release Date</string>
-    <string name="menu_order_by">Order by</string>
-    <string name="fragment_language_list_title">Programming Languages</string>
-    <string name="fragment_language_detail_title">Details</string>
-    <string name="fragment_add_language_title">Add Language</string>
+    <string name="app_name">My Application</string>
 </resources>

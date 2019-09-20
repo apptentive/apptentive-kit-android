@@ -28,10 +28,10 @@ dependencies {
 
     implementation project(':apptentive-core')
 
-    implementation "androidx.appcompat:appcompat:$rootProject.supportLibraryVersion"
+    implementation "androidx.appcompat:appcompat:$rootProject.support_library_version"
 
     // Kotlin
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$rootProject.kotlinVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$rootProject.kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$rootProject.coroutinesVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$rootProject.coroutinesVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$rootProject.kotlinSerializationVersion"

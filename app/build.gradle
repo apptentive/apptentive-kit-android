@@ -1,72 +1,37 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
 
-apply plugin: 'kotlin-kapt'
-
-apply plugin: 'androidx.navigation.safeargs'
-
 android {
-    compileSdkVersion rootProject.compileSdkVersion
-    dataBinding {
-        enabled = true
-    }
+    compileSdkVersion 29
+    buildToolsVersion "29.0.1"
+
     defaultConfig {
         applicationId "apptentive.com.app"
-        minSdkVersion rootProject.minSdkVersion
-        targetSdkVersion rootProject.targetSdkVersion
+        minSdkVersion 14
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
-        vectorDrawables.useSupportLibrary true
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = ["room.schemaLocation":
-                                     "$projectDir/schemas".toString()]
-            }
-        }
     }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    kapt "androidx.room:room-compiler:$rootProject.roomVersion"
-    implementation "androidx.appcompat:appcompat:$rootProject.supportLibraryVersion"
-    implementation "androidx.constraintlayout:constraintlayout:$rootProject.constraintLayoutVersion"
-    implementation "androidx.core:core-ktx:$rootProject.ktxVersion"
-    implementation "androidx.fragment:fragment-ktx:$rootProject.fragmentVersion"
-    implementation "androidx.lifecycle:lifecycle-extensions:$rootProject.lifecycleVersion"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$rootProject.lifecycleVersion"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$rootProject.lifecycleVersion"
-    implementation "androidx.paging:paging-runtime-ktx:$rootProject.pagingVersion"
-    implementation "androidx.navigation:navigation-fragment-ktx:$rootProject.navigationVersion"
-    implementation "androidx.navigation:navigation-ui-ktx:$rootProject.navigationVersion"
-    implementation "androidx.recyclerview:recyclerview:$rootProject.recyclerViewVersion"
-    implementation "androidx.room:room-runtime:$rootProject.roomVersion"
-    implementation "androidx.room:room-ktx:$rootProject.roomVersion"
-    implementation "androidx.work:work-runtime-ktx:$rootProject.workVersion"
-    implementation "com.google.android.material:material:$rootProject.materialVersion"
-    implementation "com.google.code.gson:gson:$rootProject.gsonVersion"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$rootProject.kotlinVersion"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$rootProject.coroutinesVersion"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$rootProject.coroutinesVersion"
-
-    // Testing dependencies
-    androidTestImplementation "androidx.arch.core:core-testing:$rootProject.coreTestingVersion"
-    androidTestImplementation "androidx.test.espresso:espresso-contrib:$rootProject.espressoVersion"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.espressoVersion"
-    androidTestImplementation "androidx.test.espresso:espresso-intents:$rootProject.espressoVersion"
-    androidTestImplementation "androidx.test.ext:junit:$rootProject.testExtJunit"
-    androidTestImplementation "androidx.test.uiautomator:uiautomator:$rootProject.uiAutomatorVersion"
-    androidTestImplementation "androidx.work:work-testing:$rootProject.workVersion"
-    testImplementation "junit:junit:$rootProject.junitVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "androidx.appcompat:appcompat:$support_library_version"
+    implementation "androidx.core:core-ktx:$ktx_version"
+    implementation "androidx.constraintlayout:constraintlayout:$constraint_layout_version"
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }
