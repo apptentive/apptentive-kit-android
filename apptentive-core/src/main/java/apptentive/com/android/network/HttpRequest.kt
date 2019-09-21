@@ -82,7 +82,7 @@ class HttpRequest<T> private constructor(
         //region Method
 
         /** Sets GET method */
-        fun get() = method(HttpMethod.GET)
+        fun get() = method(HttpMethod.GET, null)
 
         /** Sets POST method with optional request body */
         fun post(body: HttpRequestBody? = null) = method(HttpMethod.POST, body)

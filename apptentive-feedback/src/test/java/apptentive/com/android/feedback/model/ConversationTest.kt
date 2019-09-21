@@ -63,6 +63,26 @@ class ConversationTest {
                 birthday = "birthday",
                 mParticleId = "mParticleId",
                 customData = CustomData(mapOf(Pair("key5", "value5")))
+            ),
+            sdk = SDK(
+                version = "version",
+                platform = "platform",
+                distribution = "distribution",
+                distributionVersion = "distributionVersion",
+                programmingLanguage = "programmingLanguage",
+                authorName = "authorName",
+                authorEmail = "authorEmail"
+            ),
+            appRelease = AppRelease(
+                type = "type",
+                identifier = "identifier",
+                versionCode = 1,
+                versionName = "versionName",
+                targetSdkVersion = "targetSdkVersion",
+                debug = true,
+                inheritStyle = false,
+                overrideStyle = true,
+                appStore = "appStore"
             )
         )
 
@@ -104,7 +124,20 @@ class ConversationTest {
                 localeRaw = "localeRaw",
                 utcOffset = -8
             ),
-            person = Person()
+            person = Person(),
+            sdk = SDK(
+                version = "version",
+                platform = "platform",
+                distribution = "distribution",
+                distributionVersion = "distributionVersion"
+            ),
+            appRelease = AppRelease(
+                type = "type",
+                identifier = "identifier",
+                versionCode = 1,
+                versionName = "versionName",
+                targetSdkVersion = "targetSdkVersion"
+            )
         )
 
         val file = tempFolder.tempFile()

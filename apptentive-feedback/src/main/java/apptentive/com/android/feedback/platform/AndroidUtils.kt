@@ -10,7 +10,7 @@ import apptentive.com.android.feedback.SYSTEM
 import apptentive.com.android.util.Log
 import java.util.*
 
-internal object AndroidDeviceUtils {
+internal object AndroidUtils {
     @SuppressLint("HardwareIds")
     fun getAndroidID(context: Context): String = getString(context.contentResolver, ANDROID_ID)
 

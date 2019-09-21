@@ -21,7 +21,9 @@ data class Conversation(
     val conversationId: String? = null,
     val state: ConversationState = ConversationState.UNDEFINED,
     val device: Device,
-    val person: Person
+    val person: Person,
+    val sdk: SDK,
+    val appRelease: AppRelease
 )
 
 internal fun Encoder.encodeConversation(obj: Conversation) {
@@ -31,6 +33,8 @@ internal fun Encoder.encodeConversation(obj: Conversation) {
     encodeEnum(obj.state)
     encodeDevice(obj.device)
     encodePerson(obj.person)
+    encodeSDK(obj.sdk)
+    encodeAppRelease(obj.appRelease)
 }
 
 internal fun Decoder.decodeConversation(): Conversation {
@@ -40,6 +44,8 @@ internal fun Decoder.decodeConversation(): Conversation {
         conversationId = decodeNullableString(),
         state = decodeEnum(),
         device = decodeDevice(),
-        person = decodePerson()
+        person = decodePerson(),
+        sdk = decodeSDK(),
+        appRelease = decodeAppRelease()
     )
 }

@@ -5,7 +5,7 @@ import android.os.Build
 import apptentive.com.android.feedback.model.Device
 import apptentive.com.android.util.Factory
 
-abstract class AndroidDeviceFactory(
+class DefaultDeviceFactory(
     private val context: Context
 ) : Factory<Device> {
     override fun create(): Device {
@@ -21,19 +21,19 @@ abstract class AndroidDeviceFactory(
             brand = Build.BRAND,
             cpu = Build.CPU_ABI,
             device = Build.DEVICE,
-            uuid = AndroidDeviceUtils.getAndroidID(context),
+            uuid = AndroidUtils.getAndroidID(context),
             buildType = Build.TYPE,
             buildId = Build.ID,
             advertiserId = null, // FIXME: collect advertiser id
-            carrier = AndroidDeviceUtils.getSimOperatorName(context),
-            currentCarrier = AndroidDeviceUtils.getNetworkOperatorName(context),
-            networkType = AndroidDeviceUtils.getNetworkType(context),
-            bootloaderVersion = AndroidDeviceUtils.getBootloaderVersion(),
-            radioVersion = AndroidDeviceUtils.getRadioVersion(),
-            localeCountryCode = AndroidDeviceUtils.getLocaleCountryCode(),
-            localeLanguageCode = AndroidDeviceUtils.getLocaleLanguageCode(),
-            localeRaw = AndroidDeviceUtils.getLocaleRaw(),
-            utcOffset = AndroidDeviceUtils.getUtcOffset()
+            carrier = AndroidUtils.getSimOperatorName(context),
+            currentCarrier = AndroidUtils.getNetworkOperatorName(context),
+            networkType = AndroidUtils.getNetworkType(context),
+            bootloaderVersion = AndroidUtils.getBootloaderVersion(),
+            radioVersion = AndroidUtils.getRadioVersion(),
+            localeCountryCode = AndroidUtils.getLocaleCountryCode(),
+            localeLanguageCode = AndroidUtils.getLocaleLanguageCode(),
+            localeRaw = AndroidUtils.getLocaleRaw(),
+            utcOffset = AndroidUtils.getUtcOffset()
         )
     }
 }
