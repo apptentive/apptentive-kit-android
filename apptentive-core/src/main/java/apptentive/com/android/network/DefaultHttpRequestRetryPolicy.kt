@@ -8,7 +8,7 @@ import kotlin.random.Random
 /**
  * Default retry policy for HTTP-request (will be used unless overwritten).
  */
-class HttpRequestRetryPolicyDefault(
+class DefaultHttpRequestRetryPolicy(
     private val maxNumRetries: Int = Constants.DEFAULT_RETRY_MAX_COUNT,
     private val retryDelay: TimeInterval = Constants.DEFAULT_RETRY_DELAY
 ) : HttpRequestRetryPolicy {

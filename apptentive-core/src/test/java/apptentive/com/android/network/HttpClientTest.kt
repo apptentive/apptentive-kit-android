@@ -331,7 +331,7 @@ class HttpClientTest : TestCase() {
      */
     private fun createHttpClientForRetry(): HttpClient {
         return createHttpClient(
-            retryPolicy = HttpRequestRetryPolicyDefault(maxNumRetries = 2),
+            retryPolicy = DefaultHttpRequestRetryPolicy(maxNumRetries = 2),
             listener = mockClientListener
         )
     }

@@ -19,7 +19,7 @@ interface HttpNetwork {
     fun performRequest(request: HttpRequest<*>): HttpNetworkResponse
 }
 
-class HttpNetworkImpl(context: Context) : HttpNetwork {
+class DefaultHttpNetwork(context: Context) : HttpNetwork {
     private val contextRef = WeakReference(context.applicationContext)
 
     override val isNetworkConnected get() = NetworkUtils.isNetworkConnected(context)
