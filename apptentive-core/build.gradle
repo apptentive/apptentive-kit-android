@@ -25,9 +25,11 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "com.google.code.gson:gson:$gson_version"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlin_serialization_version"
+    implementation "androidx.annotation:annotation:$annotations_version"
+
+    implementation "com.google.code.gson:gson:$gson_version"
 
     testImplementation "junit:junit:$junit_version"
     testImplementation "com.google.truth:truth:$truth_version"

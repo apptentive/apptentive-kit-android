@@ -23,7 +23,9 @@ object Apptentive {
             stateQueue = stateQueue,
             network = DefaultHttpNetwork(application.applicationContext)
         ).apply {
-            stateQueue.execute(::start)
+            stateQueue.execute {
+                start(application.applicationContext)
+            }
         }
     }
 

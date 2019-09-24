@@ -3,16 +3,15 @@ package apptentive.com.app
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import apptentive.com.android.concurrent.ExecutorQueue
-import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.backend.ConversationTokenFetchBody
 import apptentive.com.android.feedback.backend.ConversationTokenFetchResponse
-import apptentive.com.android.feedback.conversation.ConversationService
+import apptentive.com.android.feedback.backend.DefaultConversationService
 import apptentive.com.android.feedback.platform.DefaultAppReleaseFactory
 import apptentive.com.android.feedback.platform.DefaultDeviceFactory
 import apptentive.com.android.feedback.platform.DefaultSDKFactory
 import apptentive.com.android.network.DefaultHttpClient
-import apptentive.com.android.network.HttpNetworkImpl
-import apptentive.com.android.network.HttpRequestRetryPolicyDefault
+import apptentive.com.android.network.DefaultHttpNetwork
+import apptentive.com.android.network.DefaultHttpRequestRetryPolicy
 import apptentive.com.android.util.Callback
 
 class MainActivity : AppCompatActivity() {
@@ -25,14 +24,14 @@ class MainActivity : AppCompatActivity() {
         val APPTENTIVE_SIGNATURE_DEV = "98f5539e9310dc290394c68b76664e98"
         val CONFIG_DEFAULT_SERVER_URL = "https://api.apptentive.com"
 
-        val network = HttpNetworkImpl(this)
+        val network = DefaultHttpNetwork(this)
         val queue = ExecutorQueue.createConcurrentQueue(name = "network");
         val client = DefaultHttpClient(
             network = network,
             networkQueue = queue,
-            retryPolicy = HttpRequestRetryPolicyDefault()
+            retryPolicy = DefaultHttpRequestRetryPolicy()
         )
-        val service = ConversationService(
+        val service = DefaultConversationService(
             httpClient = client,
             apptentiveKey = APPTENTIVE_KEY_DEV,
             apptentiveSignature = APPTENTIVE_SIGNATURE_DEV,

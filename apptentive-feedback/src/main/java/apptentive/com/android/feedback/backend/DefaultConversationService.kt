@@ -4,7 +4,7 @@ import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.network.*
 import apptentive.com.android.util.Callback
 
-class BackendService(
+class DefaultConversationService(
     private val httpClient: HttpClient,
     apptentiveKey: String,
     apptentiveSignature: String,

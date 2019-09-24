@@ -1,5 +1,5 @@
 package apptentive.com.android.util
 
-interface Factory<T> {
+interface Factory<out T> {
     fun create(): T
 }

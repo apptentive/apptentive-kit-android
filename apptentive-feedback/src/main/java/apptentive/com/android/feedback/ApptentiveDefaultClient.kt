@@ -3,13 +3,19 @@ package apptentive.com.android.feedback
 import android.content.Context
 import androidx.annotation.WorkerThread
 import apptentive.com.android.concurrent.ExecutorQueue
-import apptentive.com.android.feedback.backend.BackendService
 import apptentive.com.android.feedback.backend.ConversationService
+import apptentive.com.android.feedback.backend.DefaultConversationService
 import apptentive.com.android.feedback.conversation.ConversationManager
+import apptentive.com.android.feedback.conversation.SingleFileConversationSerializer
+import apptentive.com.android.feedback.platform.DefaultAppReleaseFactory
+import apptentive.com.android.feedback.platform.DefaultDeviceFactory
+import apptentive.com.android.feedback.platform.DefaultPersonFactory
+import apptentive.com.android.feedback.platform.DefaultSDKFactory
 import apptentive.com.android.network.DefaultHttpClient
-import apptentive.com.android.network.DefaultHttpNetwork
 import apptentive.com.android.network.DefaultHttpRequestRetryPolicy
 import apptentive.com.android.network.HttpNetwork
+import apptentive.com.android.util.FileUtil
+import java.io.File
 
 internal class ApptentiveDefaultClient(
     private val apptentiveKey: String,
@@ -21,13 +27,13 @@ internal class ApptentiveDefaultClient(
     private lateinit var conversationManager: ConversationManager
 
     @WorkerThread
-    internal fun start() {
+    internal fun start(context: Context) {
         val httpClient = DefaultHttpClient(
             network = network,
             networkQueue = ExecutorQueue.createConcurrentQueue("Network"),
             retryPolicy = DefaultHttpRequestRetryPolicy()
         )
-        conversationService = BackendService(
+        conversationService = DefaultConversationService(
             httpClient = httpClient,
             apptentiveKey = apptentiveKey,
             apptentiveSignature = apptentiveSignature,
@@ -36,9 +42,35 @@ internal class ApptentiveDefaultClient(
             baseURL = Constants.SERVER_URL,
             callbackExecutor = stateQueue
         )
+
+        val conversationFile = getConversationFile(context)
+        val conversationSerializer = SingleFileConversationSerializer(conversationFile)
+        conversationManager = ConversationManager(
+            conversationSerializer = conversationSerializer,
+            appReleaseFactory = DefaultAppReleaseFactory(context),
+            personFactory = DefaultPersonFactory(),
+            deviceFactory = DefaultDeviceFactory(context),
+            sdkFactory = DefaultSDKFactory(
+                version = Constants.SDK_VERSION,
+                distribution = "Default",
+                distributionVersion = Constants.SDK_VERSION
+            ),
+            conversationFetchService = conversationService
+        )
     }
 
     override fun engage(context: Context, event: String) {
         TODO("Implement me")
+    }
+
+    companion object {
+        fun getConversationFile(context: Context): File {
+            val conversationsDir = FileUtil.getInternalDir(
+                context = context,
+                path = "conversations",
+                createIfNecessary = true
+            )
+            return File(conversationsDir, "single.conversation")
+        }
     }
 }
