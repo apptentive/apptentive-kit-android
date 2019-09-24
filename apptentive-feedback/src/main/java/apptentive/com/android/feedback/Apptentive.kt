@@ -7,14 +7,20 @@ import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.ExecutorQueueFactoryProvider
 import apptentive.com.android.core.PlatformLoggerProvider
 import apptentive.com.android.network.DefaultHttpNetwork
+import apptentive.com.android.util.Log
 
 object Apptentive {
     private var client: ApptentiveClient = ApptentiveClient.NULL
     private lateinit var stateQueue: ExecutorQueue
 
-    val registered get() = client != ApptentiveClient.NULL
+    val registered @Synchronized get() = client != ApptentiveClient.NULL
 
+    @Synchronized
     fun register(application: Application, configuration: ApptentiveConfiguration) {
+        if (registered) {
+            Log.w(SYSTEM, "Apptentive SDK already registered")
+            return
+        }
 
         // register dependency providers
         DependencyProvider.register(PlatformLoggerProvider("Apptentive"))
