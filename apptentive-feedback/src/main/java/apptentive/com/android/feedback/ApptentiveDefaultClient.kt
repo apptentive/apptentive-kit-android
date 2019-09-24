@@ -13,6 +13,7 @@ import apptentive.com.android.feedback.platform.DefaultPersonFactory
 import apptentive.com.android.feedback.platform.DefaultSDKFactory
 import apptentive.com.android.network.DefaultHttpClient
 import apptentive.com.android.network.DefaultHttpRequestRetryPolicy
+import apptentive.com.android.network.HttpClient
 import apptentive.com.android.network.HttpNetwork
 import apptentive.com.android.util.FileUtil
 import java.io.File
@@ -57,6 +58,8 @@ internal class ApptentiveDefaultClient(
             ),
             conversationFetchService = conversationService
         )
+
+        conversationManager.loadConversation()
     }
 
     override fun engage(context: Context, event: String) {

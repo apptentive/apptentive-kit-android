@@ -4,10 +4,13 @@ import androidx.annotation.WorkerThread
 import apptentive.com.android.feedback.CONVERSATION
 import apptentive.com.android.feedback.backend.ConversationFetchService
 import apptentive.com.android.feedback.backend.ConversationTokenFetchBody
+import apptentive.com.android.feedback.backend.ConversationTokenFetchResponse
 import apptentive.com.android.feedback.model.*
+import apptentive.com.android.feedback.model.ConversationState.ANONYMOUS
 import apptentive.com.android.feedback.model.ConversationState.ANONYMOUS_PENDING
 import apptentive.com.android.serialization.BinaryDecoder
 import apptentive.com.android.serialization.BinaryEncoder
+import apptentive.com.android.util.Callback
 import apptentive.com.android.util.Factory
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.generateUUID
@@ -23,15 +26,30 @@ class ConversationManager(
     private val sdkFactory: Factory<SDK>,
     private val conversationFetchService: ConversationFetchService
 ) {
-    private val conversation: Conversation? = null
+    private var _activeConversation: Conversation? = null // TODO: should it really be nullable?
+
+    private var activeConversation: Conversation?
+        get() = _activeConversation
+        set(conversation) {
+            _activeConversation = conversation
+            if (conversation != null) {
+                try {
+                    conversationSerializer.saveConversation(conversation)
+                } catch (e: Exception) {
+                    Log.e(CONVERSATION, "Exception while saving conversation")
+                }
+            }
+        }
 
     @Throws(ConversationSerializationException::class)
     @WorkerThread
-    private fun loadConversation() {
+    fun loadConversation() {
         try {
-            val conversation = loadActiveConversation()
-            if (conversation?.state == ANONYMOUS_PENDING) {
-                fetchConversationToken(conversation)
+            activeConversation = loadActiveConversation()
+            activeConversation?.let { conversation ->
+                if (conversation.state == ANONYMOUS_PENDING) {
+                    fetchConversationToken(conversation)
+                }
             }
         } catch (e: Exception) {
             TODO()
@@ -44,7 +62,49 @@ class ConversationManager(
             sdk = conversation.sdk,
             appRelease = conversation.appRelease
         )
-        TODO("Fetch conversation token")
+        conversationFetchService.fetchConversationToken(
+            request,
+            object : Callback<ConversationTokenFetchResponse> {
+                override fun onComplete(response: ConversationTokenFetchResponse) {
+                    val currentConversation = activeConversation
+
+                    // TODO: extract a helper function which would check request consistency
+                    if (currentConversation == null) {
+                        Log.d(
+                            CONVERSATION,
+                            "Active conversation became inactive while fetch conversation token request was fetching."
+                        )
+                        return
+                    }
+
+                    if (currentConversation.localIdentifier != conversation.localIdentifier) {
+                        Log.d(
+                            CONVERSATION,
+                            "Conversation fetch token request was created for a conversation with local ID '${conversation.localIdentifier}' but active conversation has local ID '${currentConversation.localIdentifier}'"
+                        )
+                        return
+                    }
+                    if (currentConversation.state != ANONYMOUS_PENDING) {
+                        Log.d(
+                            CONVERSATION,
+                            "Conversation fetch token request should only affect conversations with state ${ConversationState.ANONYMOUS_PENDING} but active conversation has state ${currentConversation.state}"
+                        )
+                        return
+                    }
+
+                    activeConversation = currentConversation.copy(
+                        state = ANONYMOUS,
+                        conversationToken = response.token,
+                        conversationId = response.id,
+                        person = currentConversation.person.copy(
+                            id = response.person_id
+                        )
+                    )
+                }
+
+                override fun onFailure(t: Throwable) {
+                }
+            })
     }
 
     @Throws(ConversationSerializationException::class)
