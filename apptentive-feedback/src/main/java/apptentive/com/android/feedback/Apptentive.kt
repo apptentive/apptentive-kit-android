@@ -4,6 +4,8 @@ import android.app.Application
 import android.content.Context
 import apptentive.com.android.concurrent.ExecutorQueue
 import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.core.ExecutorQueueFactoryProvider
+import apptentive.com.android.core.PlatformLoggerProvider
 import apptentive.com.android.network.DefaultHttpNetwork
 
 object Apptentive {
@@ -13,8 +15,10 @@ object Apptentive {
     val registered get() = client != ApptentiveClient.NULL
 
     fun register(application: Application, configuration: ApptentiveConfiguration) {
-        // FIXME: do not allow multiple instances
-        DependencyProvider.register(application)
+
+        // register dependency providers
+        DependencyProvider.register(PlatformLoggerProvider("Apptentive"))
+        DependencyProvider.register(ExecutorQueueFactoryProvider())
 
         stateQueue = ExecutorQueue.createSerialQueue("Apptentive")
         client = ApptentiveDefaultClient(

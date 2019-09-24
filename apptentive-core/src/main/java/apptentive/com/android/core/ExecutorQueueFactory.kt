@@ -5,8 +5,6 @@ import apptentive.com.android.concurrent.ConcurrentExecutorQueue
 import apptentive.com.android.concurrent.ExecutorQueue
 import apptentive.com.android.concurrent.SerialExecutorQueue
 
-/**
- */
 interface ExecutorQueueFactory {
     fun createMainQueue(): ExecutorQueue
     fun createSerialQueue(name: String): ExecutorQueue
