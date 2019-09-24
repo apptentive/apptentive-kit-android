@@ -35,7 +35,7 @@ class HttpClientTest : TestCase() {
     fun testPostRequestWithoutBody() {
         HttpRequest.Builder<String>()
             .url("https://example.com")
-            .method(HttpMethod.GET)
+            .get()
             .responseReader(FailureResponseReader())
             .build()
         // all good
