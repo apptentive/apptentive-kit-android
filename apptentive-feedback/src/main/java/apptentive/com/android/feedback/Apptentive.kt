@@ -27,6 +27,8 @@ object Apptentive {
         DependencyProvider.register(ExecutorQueueFactoryProvider())
 
         stateQueue = ExecutorQueue.createSerialQueue("Apptentive")
+
+        // TODO: replace with a builder class and lift all the dependencies up
         client = ApptentiveDefaultClient(
             apptentiveKey = configuration.apptentiveKey,
             apptentiveSignature = configuration.apptentiveSignature,
