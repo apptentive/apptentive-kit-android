@@ -103,6 +103,7 @@ class ConversationManager(
                 }
 
                 override fun onFailure(t: Throwable) {
+                    Log.e(CONVERSATION, "Unable to fetch conversation")
                 }
             })
     }
