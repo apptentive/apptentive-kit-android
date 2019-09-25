@@ -21,7 +21,7 @@ import java.io.File
 internal class ApptentiveDefaultClient(
     private val apptentiveKey: String,
     private val apptentiveSignature: String,
-    private val network: HttpNetwork,
+    private val httpClient: HttpClient,
     private val stateQueue: ExecutorQueue
 ) : ApptentiveClient {
     private lateinit var conversationService: ConversationService
@@ -29,11 +29,6 @@ internal class ApptentiveDefaultClient(
 
     @WorkerThread
     internal fun start(context: Context) {
-        val httpClient = DefaultHttpClient(
-            network = network,
-            networkQueue = ExecutorQueue.createConcurrentQueue("Network"),
-            retryPolicy = DefaultHttpRequestRetryPolicy()
-        )
         conversationService = DefaultConversationService(
             httpClient = httpClient,
             apptentiveKey = apptentiveKey,

@@ -6,7 +6,9 @@ import apptentive.com.android.concurrent.ExecutorQueue
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.ExecutorQueueFactoryProvider
 import apptentive.com.android.core.PlatformLoggerProvider
+import apptentive.com.android.network.DefaultHttpClient
 import apptentive.com.android.network.DefaultHttpNetwork
+import apptentive.com.android.network.DefaultHttpRequestRetryPolicy
 import apptentive.com.android.util.Log
 
 object Apptentive {
@@ -28,12 +30,18 @@ object Apptentive {
 
         stateQueue = ExecutorQueue.createSerialQueue("Apptentive")
 
+        val httpClient = DefaultHttpClient(
+            network = DefaultHttpNetwork(application.applicationContext),
+            networkQueue = ExecutorQueue.createConcurrentQueue("Network"),
+            retryPolicy = DefaultHttpRequestRetryPolicy()
+        )
+
         // TODO: replace with a builder class and lift all the dependencies up
         client = ApptentiveDefaultClient(
             apptentiveKey = configuration.apptentiveKey,
             apptentiveSignature = configuration.apptentiveSignature,
             stateQueue = stateQueue,
-            network = DefaultHttpNetwork(application.applicationContext)
+            httpClient = httpClient
         ).apply {
             stateQueue.execute {
                 start(application.applicationContext)
