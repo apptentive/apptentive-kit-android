@@ -18,7 +18,7 @@ class MovieDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_detail)
 
-        val movieId = intent.extras[EXTRA_MOVIE_ID] as String
+        val movieId = intent.extras?.get(EXTRA_MOVIE_ID) as String
 
         val factory = ViewModelFactory.getInstance(this)
         val viewModel = ViewModelProviders.of(this, factory).get(MovieDetailViewModel::class.java)

@@ -11,7 +11,7 @@ class ConfirmationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_confirmation)
 
-        val movieId = intent.extras[EXTRA_MOVIE_ID] as String
+        val movieId = intent.extras?.get(EXTRA_MOVIE_ID) as String
 
         val factory = ViewModelFactory.getInstance(this)
         val viewModel = ViewModelProviders.of(this, factory).get(ConfirmationViewModel::class.java)
