@@ -25,3 +25,5 @@ before_install:
 install: true
 script:
   - ./gradlew apptentive-core:test -i
+  - ./gradlew apptentive-feedback:test -i
+  - ./gradlew apptentive-love:test -i
