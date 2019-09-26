@@ -1,7 +1,7 @@
 package apptentive.com.android.concurrent
 
-import apptentive.com.android.core.ExecutorQueueFactory
 import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.core.ExecutorQueueFactory
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.UNDEFINED
 
@@ -18,7 +18,6 @@ abstract class ExecutorQueue(val name: String) : Executor {
     companion object {
         private val queueFactory get() = DependencyProvider.of<ExecutorQueueFactory>()
         val mainQueue: ExecutorQueue = queueFactory.createMainQueue()
-        val stateQueue: ExecutorQueue = queueFactory.createSerialQueue("apptentive")
         val isMainQueue = queueFactory.isMainQueue()
 
         fun createSerialQueue(name: String) = queueFactory.createSerialQueue(name)
