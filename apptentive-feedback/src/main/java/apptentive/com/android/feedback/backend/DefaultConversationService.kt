@@ -1,6 +1,5 @@
 package apptentive.com.android.feedback.backend
 
-import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.network.*
 import apptentive.com.android.util.Result
 
@@ -10,8 +9,7 @@ class DefaultConversationService(
     apptentiveSignature: String,
     apiVersion: Int,
     sdkVersion: String,
-    private val baseURL: String,
-    private val callbackExecutor: Executor
+    private val baseURL: String
 ) : ConversationService {
     private val defaultHeaders = MutableHttpHeaders().apply {
         this["User-Agent"] = "Apptentive/$sdkVersion (Android)"
@@ -61,7 +59,6 @@ class DefaultConversationService(
             .method(method, body)
             .headers(allHeaders)
             .responseReader(HttpJsonResponseReader(T::class.java))
-            .callbackOn(callbackExecutor)
             .build()
     }
 

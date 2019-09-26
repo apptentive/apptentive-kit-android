@@ -1,6 +1,7 @@
 package apptentive.com.android.network
 
 import apptentive.com.android.TestCase
+import apptentive.com.android.concurrent.ImmediateExecutor
 import apptentive.com.android.concurrent.ImmediateExecutorQueue
 import apptentive.com.android.util.Result
 import org.junit.Assert.assertEquals
@@ -356,7 +357,8 @@ class HttpClientTest : TestCase() {
             network = network,
             networkQueue = networkQueue,
             retryPolicy = retryPolicy ?: HttpRequestNoRetryPolicy,
-            listener = listener
+            listener = listener,
+            callbackExecutor = ImmediateExecutor
         )
     }
 

@@ -1,11 +1,11 @@
 package apptentive.com.android.network
 
+import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.concurrent.ExecutorQueue
 import apptentive.com.android.core.UNDEFINED
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags
 import apptentive.com.android.util.Result
-import apptentive.com.android.concurrent.execute
 
 /**
  * Represents an abstract async HTTP-request dispatcher.
@@ -34,6 +34,7 @@ interface HttpClient {
 class DefaultHttpClient(
     private val network: HttpNetwork,
     private val networkQueue: ExecutorQueue,
+    private val callbackExecutor: Executor,
     private val retryPolicy: HttpRequestRetryPolicy,
     private val listener: HttpClientListener? = null
 ) : HttpClient {
@@ -74,7 +75,7 @@ class DefaultHttpClient(
                 notifyOnComplete(request)
 
                 // invoke callback
-                request.callbackExecutor.execute {
+                callbackExecutor.execute {
                     callback(Result.Success(response))
                 }
             } else {
@@ -86,7 +87,7 @@ class DefaultHttpClient(
             notifyOnComplete(request)
 
             // invoke callback
-            request.callbackExecutor.execute {
+            callbackExecutor.execute {
                 callback(Result.Error(e))
             }
         }

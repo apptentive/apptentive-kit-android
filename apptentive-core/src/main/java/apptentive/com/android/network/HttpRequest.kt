@@ -1,6 +1,5 @@
 package apptentive.com.android.network
 
-import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.network.Constants.DEFAULT_REQUEST_TIMEOUT
 import java.io.InputStream
@@ -16,7 +15,6 @@ import java.net.URL
  * @param headers HTTP-request headers
  * @param timeout request timeout.
  * @param tag optional tag for request identification.
- * @param callbackExecutor optional execution queue for invoking callbacks.
  * @param retryPolicy optional retry policy for the request.
  * @param userData optional user data associated with the request.
  */
@@ -28,7 +26,6 @@ class HttpRequest<T> private constructor(
     internal val headers: HttpHeaders,
     val timeout: TimeInterval,
     val tag: String?,
-    internal val callbackExecutor: Executor?,
     internal val retryPolicy: HttpRequestRetryPolicy?,
     val userData: Any?
 ) {
@@ -60,7 +57,6 @@ class HttpRequest<T> private constructor(
         private lateinit var reader: HttpResponseReader<T>
         private var method = HttpMethod.GET
         private var requestBody: HttpRequestBody? = null
-        private var callbackExecutor: Executor? = null
         private var retryPolicy: HttpRequestRetryPolicy? = null
         private var tag: String? = null
         private var userData: Any? = null
@@ -160,17 +156,6 @@ class HttpRequest<T> private constructor(
 
         //endregion
 
-        //region Execution Queue
-
-        /** Sets dispatch queue for callbacks */
-        // FIXME: unit tests
-        fun callbackOn(executor: Executor): Builder<T> {
-            callbackExecutor = executor
-            return this
-        }
-
-        //endregion
-
         //region Retry Policy
 
         /** Sets an optional retry policy */
@@ -220,7 +205,6 @@ class HttpRequest<T> private constructor(
                 headers = headers,
                 timeout = timeout,
                 tag = tag,
-                callbackExecutor = callbackExecutor,
                 retryPolicy = retryPolicy,
                 userData = userData
             )
