@@ -15,13 +15,13 @@ android:
     - tools
     - platform-tools
     - tools # not a mistakenly duplicated line: used above api 25.x
-    - build-tools-28.0.3
-    - android-28
+    - build-tools-29.0.1
+    - android-29
     - extra-google-google_play_services
     - extra-google-m2repository
     - extra-android-m2repository
 before_install:
-- yes | sdkmanager "platforms;android-28"
+- yes | sdkmanager "platforms;android-29"
 install: true
 script:
   - ./gradlew apptentive-core:test -i
