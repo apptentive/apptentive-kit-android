@@ -52,8 +52,6 @@ internal class ApptentiveDefaultClient(
             ),
             conversationFetchService = conversationService
         )
-
-        conversationManager.loadConversation()
     }
 
     override fun engage(context: Context, event: String) {
