@@ -1,5 +1,8 @@
 package apptentive.com.android.feedback.backend
 
+import apptentive.com.android.feedback.model.AppRelease
+import apptentive.com.android.feedback.model.Device
+import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.network.*
 import apptentive.com.android.util.Result
 
@@ -22,13 +25,15 @@ class DefaultConversationService(
     }
 
     override fun fetchConversationToken(
-        payload: ConversationTokenFetchBody,
+        device: Device,
+        sdk: SDK,
+        appRelease: AppRelease,
         callback: (Result<ConversationTokenFetchResponse>) -> Unit
     ) {
         val request = createJsonRequest<ConversationTokenFetchResponse>(
             method = HttpMethod.POST,
             path = "/conversation",
-            body = payload
+            body = ConversationTokenFetchBody.from(device, sdk, appRelease)
         )
         sendRequest(request, callback)
     }

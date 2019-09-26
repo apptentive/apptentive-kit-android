@@ -3,7 +3,6 @@ package apptentive.com.android.feedback.conversation
 import androidx.annotation.WorkerThread
 import apptentive.com.android.feedback.CONVERSATION
 import apptentive.com.android.feedback.backend.ConversationFetchService
-import apptentive.com.android.feedback.backend.ConversationTokenFetchBody
 import apptentive.com.android.feedback.model.*
 import apptentive.com.android.feedback.model.ConversationState.ANONYMOUS
 import apptentive.com.android.feedback.model.ConversationState.ANONYMOUS_PENDING
@@ -56,12 +55,11 @@ class ConversationManager(
     }
 
     private fun fetchConversationToken(conversation: Conversation) {
-        val request = ConversationTokenFetchBody.from(
+        conversationFetchService.fetchConversationToken(
             device = conversation.device,
             sdk = conversation.sdk,
             appRelease = conversation.appRelease
-        )
-        conversationFetchService.fetchConversationToken(request) {
+        ) {
             when (it) {
                 is Result.Error -> Log.e(CONVERSATION, "Unable to fetch conversation")
                 is Result.Success -> {
