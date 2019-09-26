@@ -2,21 +2,19 @@ package apptentive.com.android.core
 
 import androidx.annotation.WorkerThread
 
-typealias Observer<T> = (T) -> Unit
-
 sealed class Observable<T>(private var _value: T) {
-    private val observers = mutableListOf<Observer<T>>()
+    private val observers = mutableListOf<(T) -> Unit>()
 
     open var value: T
-        get() = _value
-        protected set(value) {
+        @WorkerThread get() = _value
+        @WorkerThread protected set(value) {
             _value = value
             notifyObservers(value)
         }
 
 
     @WorkerThread
-    fun observe(observer: Observer<T>): Subscription {
+    fun observe(observer: (T) -> Unit): Subscription {
         observers.add(observer)
         notifyObserver(observer, value)
 
@@ -28,7 +26,7 @@ sealed class Observable<T>(private var _value: T) {
     }
 
     @WorkerThread
-    fun removeObserver(observer: Observer<T>) {
+    fun removeObserver(observer: (T) -> Unit) {
         observers.remove(observer)
     }
 
@@ -40,7 +38,7 @@ sealed class Observable<T>(private var _value: T) {
         }
     }
 
-    private fun notifyObserver(observer: Observer<T>, value: T) {
+    private fun notifyObserver(observer: (T) -> Unit, value: T) {
         observer(value)
     }
 }
