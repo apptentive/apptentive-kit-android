@@ -6,8 +6,6 @@ import apptentive.com.android.core.Observable
 import apptentive.com.android.feedback.CONVERSATION
 import apptentive.com.android.feedback.backend.ConversationFetchService
 import apptentive.com.android.feedback.model.*
-import apptentive.com.android.feedback.model.ConversationState.ANONYMOUS
-import apptentive.com.android.feedback.model.ConversationState.ANONYMOUS_PENDING
 import apptentive.com.android.serialization.BinaryDecoder
 import apptentive.com.android.serialization.BinaryEncoder
 import apptentive.com.android.util.Factory
@@ -33,6 +31,11 @@ class ConversationManager(
         val conversation = loadActiveConversation()
         _activeConversation = MutableObservable(conversation)
         _activeConversation.observe(::saveConversation)
+
+        // fetch conversation token if necessary
+        if (!conversation.hasConversationToken) {
+            fetchConversationToken(conversation)
+        }
     }
 
     private fun fetchConversationToken(conversation: Conversation) {
@@ -51,14 +54,13 @@ class ConversationManager(
                             CONVERSATION,
                             "Conversation fetch token request was created for a conversation with local ID '${conversation.localIdentifier}' but active conversation has local ID '${currentConversation.localIdentifier}'"
                         )
-                    } else if (currentConversation.state != ANONYMOUS_PENDING) {
+                    } else if (currentConversation.hasConversationToken) {
                         Log.d(
                             CONVERSATION,
-                            "Conversation fetch token request should only affect conversations with state $ANONYMOUS_PENDING but active conversation has state ${currentConversation.state}"
+                            "Conversation fetch token request should only affect conversations without token but active conversation has token ${currentConversation.conversationToken}"
                         )
                     } else {
                         _activeConversation.value = currentConversation.copy(
-                            state = ANONYMOUS,
                             conversationToken = it.data.token,
                             conversationId = it.data.id,
                             person = currentConversation.person.copy(
@@ -83,7 +85,6 @@ class ConversationManager(
         Log.i(CONVERSATION, "Creating 'anonymous' conversation...")
         return Conversation(
             localIdentifier = generateConversationIdentifier(),
-            state = ANONYMOUS_PENDING,
             person = personFactory.create(),
             device = deviceFactory.create(),
             appRelease = appReleaseFactory.create(),
