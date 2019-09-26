@@ -2,7 +2,7 @@ package apptentive.com.android.feedback.backend
 
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.network.*
-import apptentive.com.android.util.Callback
+import apptentive.com.android.util.Result
 
 class DefaultConversationService(
     private val httpClient: HttpClient,
@@ -25,7 +25,7 @@ class DefaultConversationService(
 
     override fun fetchConversationToken(
         payload: ConversationTokenFetchBody,
-        callback: Callback<ConversationTokenFetchResponse>
+        callback: (Result<ConversationTokenFetchResponse>) -> Unit
     ) {
         val request = createJsonRequest<ConversationTokenFetchResponse>(
             method = HttpMethod.POST,
@@ -35,16 +35,13 @@ class DefaultConversationService(
         sendRequest(request, callback)
     }
 
-    private fun <T> sendRequest(request: HttpRequest<T>, callback: Callback<T>) {
-        httpClient.send(
-            request = request,
-            onValue = {
-                val payload = it.payload
-                callback.onComplete(payload)
-            },
-            onError = {
-                callback.onFailure(it)
-            })
+    private fun <T : Any> sendRequest(request: HttpRequest<T>, callback: (Result<T>) -> Unit) {
+        httpClient.send(request) {
+            when (it) {
+                is Result.Success -> callback(Result.Success(it.data.payload))
+                is Result.Error -> callback(it)
+            }
+        }
     }
 
     private inline fun <reified T> createJsonRequest(

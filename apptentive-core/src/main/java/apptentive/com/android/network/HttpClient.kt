@@ -1,11 +1,11 @@
 package apptentive.com.android.network
 
 import apptentive.com.android.concurrent.ExecutorQueue
-import apptentive.com.android.concurrent.Promise
-import apptentive.com.android.concurrent.AsyncPromise
 import apptentive.com.android.core.UNDEFINED
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags
+import apptentive.com.android.util.Result
+import apptentive.com.android.concurrent.execute
 
 /**
  * Represents an abstract async HTTP-request dispatcher.
@@ -15,15 +15,12 @@ interface HttpClient {
      * Sends HTTP-request asynchronously.
      *
      * @param request request to be sent.
-     * @param onValue promise fulfilment handler
-     * @param onError promise rejection handler
-     * @return promise to be fulfilled when request is completed
+     * @param callback callback with a [Result] type to be invoked upon completion
      */
-    fun <T> send(
+    fun <T : Any> send(
         request: HttpRequest<T>,
-        onValue: ((value: HttpResponse<T>) -> Unit)? = null,
-        onError: ((e: Exception) -> Unit)? = null
-    ): Promise<HttpResponse<T>>
+        callback: (Result<HttpResponse<T>>) -> Unit
+    )
 }
 
 /**
@@ -46,40 +43,29 @@ class DefaultHttpClient(
      * Sends HTTP-request asynchronously.
      *
      * @param request request to be sent.
-     * @return promise for the [HttpResponse] to fulfill or reject when completed.
      */
-    override fun <T> send(
+    override fun <T : Any> send(
         request: HttpRequest<T>,
-        onValue: ((value: HttpResponse<T>) -> Unit)?,
-        onError: ((e: Exception) -> Unit)?
-    ): Promise<HttpResponse<T>> {
-        /* promise will be fulfilled on the request's callback queue (or then network queue if missing) */
-        val promise = AsyncPromise<HttpResponse<T>>(request.callbackExecutor)
-        if (onValue != null) {
-            promise.then(onValue)
-        }
-        if (onError != null) {
-            promise.catch(onError)
-        }
+        callback: (Result<HttpResponse<T>>) -> Unit
+    ) {
         networkQueue.execute {
             // notify listener
             notifyOnStart(request)
 
             // send sync
-            sendSync(request, promise)
+            sendSync(request, callback)
         }
-        return promise
     }
 
     /**
      * Sends HTTP-request synchronously.
      *
      * @param request request to be sent.
-     * @param promise for the [HttpResponse] to fulfill or reject when completed.
+     * @param callback callback with a [Result] type to be invoked upon completion
      */
     private fun <T> sendSync(
         request: HttpRequest<T>,
-        promise: AsyncPromise<HttpResponse<T>>
+        callback: (Result<HttpResponse<T>>) -> Unit
     ) {
         try {
             val response = getResponseSync(request)
@@ -87,18 +73,22 @@ class DefaultHttpClient(
                 // notify listener
                 notifyOnComplete(request)
 
-                // fulfill promise
-                promise.resolve(response)
+                // invoke callback
+                request.callbackExecutor.execute {
+                    callback(Result.Success(response))
+                }
             } else {
                 // attempt another retry
-                scheduleRetry(request, promise)
+                scheduleRetry(request, callback)
             }
         } catch (e: Exception) {
             // notify listener
             notifyOnComplete(request)
 
-            // reject promise
-            promise.reject(e)
+            // invoke callback
+            request.callbackExecutor.execute {
+                callback(Result.Error(e))
+            }
         }
     }
 
@@ -165,11 +155,11 @@ class DefaultHttpClient(
      * Schedules retry on the network queue according to retry policy.
      *
      * @param request request to be sent.
-     * @param promise for the [HttpResponse] to fulfill or reject when completed.
+     * @param callback callback with a [Result] type to be invoked upon completion
      */
     private fun <T> scheduleRetry(
         request: HttpRequest<T>,
-        promise: AsyncPromise<HttpResponse<T>>
+        callback: (Result<HttpResponse<T>>) -> Unit
     ) {
         val retryPolicy = retryPolicyForRequest(request)
         val delay = retryPolicy.getRetryDelay(request.numRetries)
@@ -180,7 +170,7 @@ class DefaultHttpClient(
             notifyOnRetry(request)
 
             // send request
-            sendSync(request, promise)
+            sendSync(request, callback)
         }
     }
 

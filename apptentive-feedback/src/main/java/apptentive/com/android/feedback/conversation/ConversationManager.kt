@@ -4,15 +4,14 @@ import androidx.annotation.WorkerThread
 import apptentive.com.android.feedback.CONVERSATION
 import apptentive.com.android.feedback.backend.ConversationFetchService
 import apptentive.com.android.feedback.backend.ConversationTokenFetchBody
-import apptentive.com.android.feedback.backend.ConversationTokenFetchResponse
 import apptentive.com.android.feedback.model.*
 import apptentive.com.android.feedback.model.ConversationState.ANONYMOUS
 import apptentive.com.android.feedback.model.ConversationState.ANONYMOUS_PENDING
 import apptentive.com.android.serialization.BinaryDecoder
 import apptentive.com.android.serialization.BinaryEncoder
-import apptentive.com.android.util.Callback
 import apptentive.com.android.util.Factory
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.Result
 import apptentive.com.android.util.generateUUID
 import java.io.DataInputStream
 import java.io.DataOutputStream
@@ -62,50 +61,42 @@ class ConversationManager(
             sdk = conversation.sdk,
             appRelease = conversation.appRelease
         )
-        conversationFetchService.fetchConversationToken(
-            request,
-            object : Callback<ConversationTokenFetchResponse> {
-                override fun onComplete(response: ConversationTokenFetchResponse) {
+        conversationFetchService.fetchConversationToken(request) {
+            when (it) {
+                is Result.Error -> Log.e(CONVERSATION, "Unable to fetch conversation")
+                is Result.Success -> {
                     val currentConversation = activeConversation
 
                     // TODO: extract a helper function which would check request consistency
+                    @Suppress("CascadeIf")
                     if (currentConversation == null) {
                         Log.d(
                             CONVERSATION,
                             "Active conversation became inactive while fetch conversation token request was fetching."
                         )
-                        return
-                    }
-
-                    if (currentConversation.localIdentifier != conversation.localIdentifier) {
+                    } else if (currentConversation.localIdentifier != conversation.localIdentifier) {
                         Log.d(
                             CONVERSATION,
                             "Conversation fetch token request was created for a conversation with local ID '${conversation.localIdentifier}' but active conversation has local ID '${currentConversation.localIdentifier}'"
                         )
-                        return
-                    }
-                    if (currentConversation.state != ANONYMOUS_PENDING) {
+                    } else if (currentConversation.state != ANONYMOUS_PENDING) {
                         Log.d(
                             CONVERSATION,
-                            "Conversation fetch token request should only affect conversations with state ${ConversationState.ANONYMOUS_PENDING} but active conversation has state ${currentConversation.state}"
+                            "Conversation fetch token request should only affect conversations with state $ANONYMOUS_PENDING but active conversation has state ${currentConversation.state}"
                         )
-                        return
+                    } else {
+                        activeConversation = currentConversation.copy(
+                            state = ANONYMOUS,
+                            conversationToken = it.data.token,
+                            conversationId = it.data.id,
+                            person = currentConversation.person.copy(
+                                id = it.data.person_id
+                            )
+                        )
                     }
-
-                    activeConversation = currentConversation.copy(
-                        state = ANONYMOUS,
-                        conversationToken = response.token,
-                        conversationId = response.id,
-                        person = currentConversation.person.copy(
-                            id = response.person_id
-                        )
-                    )
                 }
-
-                override fun onFailure(t: Throwable) {
-                    Log.e(CONVERSATION, "Unable to fetch conversation")
-                }
-            })
+            }
+        }
     }
 
     @Throws(ConversationSerializationException::class)
