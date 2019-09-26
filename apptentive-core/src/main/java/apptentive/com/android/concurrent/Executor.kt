@@ -9,3 +9,12 @@ package apptentive.com.android.concurrent
 interface Executor {
     fun execute(task: () -> Unit)
 }
+
+fun Executor?.execute(task: () -> Unit) {
+    val executor = this
+    if (executor != null) {
+        executor.execute(task)
+    } else {
+        task()
+    }
+}
