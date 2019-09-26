@@ -35,11 +35,10 @@ internal class ApptentiveDefaultClient(
             apptentiveSignature = apptentiveSignature,
             apiVersion = Constants.API_VERSION,
             sdkVersion = Constants.SDK_VERSION,
-            baseURL = Constants.SERVER_URL,
-            callbackExecutor = stateQueue
+            baseURL = Constants.SERVER_URL
         )
 
-        val conversationFile = getConversationFile(context)
+        val conversationFile = getConversationFile(context) // FIXME: remove android specific api
         val conversationSerializer = SingleFileConversationSerializer(conversationFile)
         conversationManager = ConversationManager(
             conversationSerializer = conversationSerializer,
@@ -53,8 +52,6 @@ internal class ApptentiveDefaultClient(
             ),
             conversationFetchService = conversationService
         )
-
-        conversationManager.loadConversation()
     }
 
     override fun engage(context: Context, event: String) {

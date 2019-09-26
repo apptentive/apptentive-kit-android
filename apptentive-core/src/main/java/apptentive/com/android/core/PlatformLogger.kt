@@ -9,8 +9,8 @@ interface PlatformLogger {
     fun log(logLevel: LogLevel, throwable: Throwable)
 }
 
-class PlatformLoggerProvider(tag: String) : Provider<PlatformLogger> {
-    private val logger = DefaultPlatformLogger(tag)
+class DefaultLoggerProvider(tag: String) : Provider<PlatformLogger> {
+    private val logger by lazy { DefaultPlatformLogger(tag) }
 
     override fun get(): PlatformLogger = logger
 }

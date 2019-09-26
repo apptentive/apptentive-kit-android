@@ -1,8 +1,10 @@
 package apptentive.com.android.feedback.backend
 
-import apptentive.com.android.concurrent.Executor
+import apptentive.com.android.feedback.model.AppRelease
+import apptentive.com.android.feedback.model.Device
+import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.network.*
-import apptentive.com.android.util.Callback
+import apptentive.com.android.util.Result
 
 class DefaultConversationService(
     private val httpClient: HttpClient,
@@ -10,8 +12,7 @@ class DefaultConversationService(
     apptentiveSignature: String,
     apiVersion: Int,
     sdkVersion: String,
-    private val baseURL: String,
-    private val callbackExecutor: Executor
+    private val baseURL: String
 ) : ConversationService {
     private val defaultHeaders = MutableHttpHeaders().apply {
         this["User-Agent"] = "Apptentive/$sdkVersion (Android)"
@@ -24,27 +25,26 @@ class DefaultConversationService(
     }
 
     override fun fetchConversationToken(
-        payload: ConversationTokenFetchBody,
-        callback: Callback<ConversationTokenFetchResponse>
+        device: Device,
+        sdk: SDK,
+        appRelease: AppRelease,
+        callback: (Result<ConversationTokenFetchResponse>) -> Unit
     ) {
         val request = createJsonRequest<ConversationTokenFetchResponse>(
             method = HttpMethod.POST,
             path = "/conversation",
-            body = payload
+            body = ConversationTokenFetchBody.from(device, sdk, appRelease)
         )
         sendRequest(request, callback)
     }
 
-    private fun <T> sendRequest(request: HttpRequest<T>, callback: Callback<T>) {
-        httpClient.send(
-            request = request,
-            onValue = {
-                val payload = it.payload
-                callback.onComplete(payload)
-            },
-            onError = {
-                callback.onFailure(it)
-            })
+    private fun <T : Any> sendRequest(request: HttpRequest<T>, callback: (Result<T>) -> Unit) {
+        httpClient.send(request) {
+            when (it) {
+                is Result.Success -> callback(Result.Success(it.data.payload))
+                is Result.Error -> callback(it)
+            }
+        }
     }
 
     private inline fun <reified T> createJsonRequest(
@@ -64,7 +64,6 @@ class DefaultConversationService(
             .method(method, body)
             .headers(allHeaders)
             .responseReader(HttpJsonResponseReader(T::class.java))
-            .callbackOn(callbackExecutor)
             .build()
     }
 

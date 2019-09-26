@@ -3,9 +3,9 @@ package apptentive.com.android.feedback
 import android.app.Application
 import android.content.Context
 import apptentive.com.android.concurrent.ExecutorQueue
+import apptentive.com.android.core.DefaultExecutorQueueFactoryProvider
+import apptentive.com.android.core.DefaultLoggerProvider
 import apptentive.com.android.core.DependencyProvider
-import apptentive.com.android.core.ExecutorQueueFactoryProvider
-import apptentive.com.android.core.PlatformLoggerProvider
 import apptentive.com.android.network.DefaultHttpClient
 import apptentive.com.android.network.DefaultHttpNetwork
 import apptentive.com.android.network.DefaultHttpRequestRetryPolicy
@@ -25,14 +25,15 @@ object Apptentive {
         }
 
         // register dependency providers
-        DependencyProvider.register(PlatformLoggerProvider("Apptentive"))
-        DependencyProvider.register(ExecutorQueueFactoryProvider())
+        DependencyProvider.register(DefaultLoggerProvider("Apptentive"))
+        DependencyProvider.register(DefaultExecutorQueueFactoryProvider())
 
         stateQueue = ExecutorQueue.createSerialQueue("Apptentive")
 
         val httpClient = DefaultHttpClient(
             network = DefaultHttpNetwork(application.applicationContext),
             networkQueue = ExecutorQueue.createConcurrentQueue("Network"),
+            callbackExecutor = stateQueue,
             retryPolicy = DefaultHttpRequestRetryPolicy()
         )
 
@@ -50,6 +51,8 @@ object Apptentive {
     }
 
     fun engage(context: Context, event: String) {
-        client.engage(context, event)
+        stateQueue.execute {
+            client.engage(context, event)
+        }
     }
 }

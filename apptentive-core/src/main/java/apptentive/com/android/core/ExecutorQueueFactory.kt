@@ -9,11 +9,11 @@ interface ExecutorQueueFactory {
     fun createMainQueue(): ExecutorQueue
     fun createSerialQueue(name: String): ExecutorQueue
     fun createConcurrentQueue(name: String, maxConcurrentTasks: Int): ExecutorQueue
-    fun isMainQueue() : Boolean
+    fun isMainQueue(): Boolean
 }
 
-class ExecutorQueueFactoryProvider : Provider<ExecutorQueueFactory> {
-    private val factory: ExecutorQueueFactory = DefaultExecutorQueueFactory()
+class DefaultExecutorQueueFactoryProvider : Provider<ExecutorQueueFactory> {
+    private val factory: ExecutorQueueFactory by lazy { DefaultExecutorQueueFactory() }
     override fun get(): ExecutorQueueFactory = factory
 }
 
