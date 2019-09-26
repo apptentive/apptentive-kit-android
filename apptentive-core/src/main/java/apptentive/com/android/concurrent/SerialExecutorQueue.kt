@@ -39,9 +39,8 @@ class SerialExecutorQueue : ExecutorQueue {
     }
 
     override fun stop() {
-        // could use let here
         if (handlerThread != null) {
-            handler.removeCallbacks(null)
+            handler.removeCallbacksAndMessages(null)
             handlerThread.quit()
         }
     }

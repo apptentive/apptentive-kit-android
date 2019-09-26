@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package apptentive.com.android.util
 
 import android.content.Context
@@ -13,7 +15,7 @@ object NetworkUtils {
      * of being established.
      */
     fun isNetworkConnected(context: Context): Boolean {
-        // TODO: check ACCESS_NETWORK_STATE permission
+        // FIXME: check ACCESS_NETWORK_STATE permission
         return getActiveNetwork(context)?.isConnectedOrConnecting == true
     }
 

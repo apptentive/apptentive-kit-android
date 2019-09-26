@@ -8,7 +8,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -35,16 +34,17 @@ class MainActivity : AppCompatActivity() {
         navigationView.setNavigationItemSelectedListener { item ->
             drawer.closeDrawers()
 
-            if (item.itemId == R.id.nav_profile) {
-                showProfile()
-                true
+            when {
+                item.itemId == R.id.nav_profile -> {
+                    showProfile()
+                    true
+                }
+                item.itemId == R.id.nav_statistics -> {
+                    showStatistics()
+                    true
+                }
+                else -> false
             }
-            if (item.itemId == R.id.nav_statistics) {
-                showStatistics()
-                true
-            }
-
-            false
         }
 
         val adapter = createAdapter()
@@ -58,7 +58,10 @@ class MainActivity : AppCompatActivity() {
         viewModel.movies.observe(this, Observer { movies ->
             val items: MutableList<Item> = movies.map { MovieItem(it) }.toMutableList()
             items.add(RatingItem("rating_app", "How would your rate the app?"))
-            items.add(16, FeedbackItem("feedback_renting_experience", "How was your last renting experience?"))
+            items.add(
+                16,
+                FeedbackItem("feedback_renting_experience", "How was your last renting experience?")
+            )
             items.add(
                 8, SurveyItem(
                     "survey_origin", "Local or Foreign?",
@@ -96,7 +99,8 @@ class MainActivity : AppCompatActivity() {
 
         val username = ApptentiveLove.person.name
         val usernameView: TextView = header.findViewById(R.id.username)
-        usernameView.text = if (username.isNullOrEmpty()) getString(R.string.user_anonymous) else username
+        usernameView.text =
+            if (username.isNullOrEmpty()) getString(R.string.user_anonymous) else username
 
         val email = ApptentiveLove.person.email
         val emailView: TextView = header.findViewById(R.id.email)
@@ -138,11 +142,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        adapter.register(ItemType.MOVIE, object : RecyclerViewAdapter.LayoutIdFactory<MovieItem>(R.layout.movie_item) {
-            override fun createViewHolder(convertView: View): RecyclerViewAdapter.ViewHolder<MovieItem> {
-                return MovieItem.ViewHolder(convertView, imageLoader, movieClickListener)
-            }
-        })
+        adapter.register(
+            ItemType.MOVIE,
+            object : RecyclerViewAdapter.LayoutIdFactory<MovieItem>(R.layout.movie_item) {
+                override fun createViewHolder(convertView: View): RecyclerViewAdapter.ViewHolder<MovieItem> {
+                    return MovieItem.ViewHolder(convertView, imageLoader, movieClickListener)
+                }
+            })
         adapter.register(
             ItemType.FEEDBACK,
             object : RecyclerViewAdapter.LayoutIdFactory<FeedbackItem>(R.layout.feedback_item) {

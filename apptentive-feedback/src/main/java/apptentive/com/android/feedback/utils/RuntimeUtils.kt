@@ -4,6 +4,7 @@ import android.content.Context
 
 object RuntimeUtils {
     // TODO: cache the value since it won't change while the app is running
+    @Suppress("DEPRECATION")
     fun getApplicationInfo(context: Context): ApplicationInfo {
         val packageManager = context.packageManager
         val packageInfo = packageManager.getPackageInfo(context.packageName, 0)

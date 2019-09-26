@@ -8,6 +8,7 @@ import apptentive.com.android.util.Factory
 class DefaultDeviceFactory(
     private val context: Context
 ) : Factory<Device> {
+    @Suppress("DEPRECATION")
     override fun create(): Device {
         return Device(
             osName = "Android",
