@@ -1,4 +1,4 @@
-package apptentive.com.android.convert.json
+package apptentive.com.android.serialization.json
 
 import com.google.gson.Gson
 

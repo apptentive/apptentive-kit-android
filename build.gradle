@@ -4,9 +4,10 @@ buildscript {
     // Define versions in a single place
     ext {
         // Sdk and tools
-        compileSdkVersion = 28
-        minSdkVersion = 24
-        targetSdkVersion = 28
+        compileSdkVersion = 29
+        buildToolsVersion = '29.0.1'
+        minSdkVersion = 14
+        targetSdkVersion = 29
 
         // Gradle
         gradle_version = '3.6.0-alpha12'

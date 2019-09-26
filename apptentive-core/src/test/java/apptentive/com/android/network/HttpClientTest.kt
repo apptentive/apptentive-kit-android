@@ -1,8 +1,11 @@
 package apptentive.com.android.network
 
 import apptentive.com.android.TestCase
+import apptentive.com.android.concurrent.ImmediateExecutor
 import apptentive.com.android.concurrent.ImmediateExecutorQueue
-import org.junit.Assert.*
+import apptentive.com.android.util.Result
+import org.junit.Assert.assertEquals
+import org.junit.Assert.fail
 import org.junit.Test
 import java.io.InputStream
 import java.io.OutputStream
@@ -97,8 +100,11 @@ class HttpClientTest : TestCase() {
         val expected = "Some test data with Unicode chars 文字"
         var actual: String? = null
 
-        client.send(createMockHttpRequest(response = expected))
-            .then { res -> actual = res.payload }
+        client.send(createMockHttpRequest(response = expected)) {
+            if (it is Result.Success) {
+                actual = it.data.payload
+            }
+        }
         dispatchRequests()
 
         assertEquals(expected, actual)
@@ -114,8 +120,7 @@ class HttpClientTest : TestCase() {
     /* Should properly decode json responses */
     @Test
     fun testJsonResponse() {
-        val expected = MyResponse()
-        expected.value = "value"
+        val expected = MyResponse("value")
 
         val client = createHttpClient()
         val request = createMockJsonRequest(
@@ -123,8 +128,10 @@ class HttpClientTest : TestCase() {
         )
 
         var actual: MyResponse? = null
-        client.send(request).then { res ->
-            actual = res.payload
+        client.send(request) {
+            if (it is Result.Success) {
+                actual = it.data.payload
+            }
         }
         dispatchRequests()
 
@@ -307,23 +314,24 @@ class HttpClientTest : TestCase() {
     /**
      * Sends request and captures the result for checking.
      */
-    private fun sendRequest(
+    private fun <T : Any> sendRequest(
         httpClient: HttpClient,
-        request: HttpRequest<*>
+        request: HttpRequest<T>
     ) {
-        httpClient.send(request,
-            onValue = { res ->
-                addResult("${request.tag} finished: ${res.statusCode}")
-            },
-            onError = { exception ->
-                val message =
-                    when (exception) {
-                        is NetworkUnavailableException -> "failed: no network"
-                        is UnexpectedResponseException -> "failed: ${exception.statusCode} (${exception.statusMessage})"
-                        else -> "exception: ${exception.message}"
-                    }
-                addResult("${request.tag} $message")
-            })
+        httpClient.send(request) {
+            when (it) {
+                is Result.Success -> addResult("${request.tag} finished: ${it.data.statusCode}")
+                is Result.Error -> {
+                    val message =
+                        when (val exception = it.error) {
+                            is NetworkUnavailableException -> "failed: no network"
+                            is UnexpectedResponseException -> "failed: ${exception.statusCode} (${exception.statusMessage})"
+                            else -> "exception: ${exception.message}"
+                        }
+                    addResult("${request.tag} $message")
+                }
+            }
+        }
     }
 
     /**
@@ -349,7 +357,8 @@ class HttpClientTest : TestCase() {
             network = network,
             networkQueue = networkQueue,
             retryPolicy = retryPolicy ?: HttpRequestNoRetryPolicy,
-            listener = listener
+            listener = listener,
+            callbackExecutor = ImmediateExecutor
         )
     }
 
@@ -412,16 +421,4 @@ private object HttpRequestNoRetryPolicy : HttpRequestRetryPolicy {
 }
 
 /* For json request testing */
-private class MyResponse {
-    var value: String? = null
-
-    override fun toString() = """{"value": ${if (value != null) "\"$value\"" else "null"}}"""
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-        other as MyResponse
-        if (value != other.value) return false
-        return true
-    }
-}
+private data class MyResponse(val value: String)

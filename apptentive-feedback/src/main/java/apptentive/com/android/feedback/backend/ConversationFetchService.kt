@@ -4,13 +4,13 @@ import apptentive.com.android.feedback.model.AppRelease
 import apptentive.com.android.feedback.model.Device
 import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.payload.DevicePayload
-import apptentive.com.android.util.Callback
+import apptentive.com.android.util.Result
 import apptentive.com.android.util.generateUUID
 
 interface ConversationFetchService {
     fun fetchConversationToken(
         payload: ConversationTokenFetchBody,
-        callback: Callback<ConversationTokenFetchResponse>
+        callback: (Result<ConversationTokenFetchResponse>) -> Unit
     )
 }
 
