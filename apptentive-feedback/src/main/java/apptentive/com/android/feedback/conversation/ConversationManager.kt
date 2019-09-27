@@ -4,7 +4,7 @@ import androidx.annotation.WorkerThread
 import apptentive.com.android.core.MutableObservable
 import apptentive.com.android.core.Observable
 import apptentive.com.android.feedback.CONVERSATION
-import apptentive.com.android.feedback.backend.ConversationFetchService
+import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.model.*
 import apptentive.com.android.serialization.BinaryDecoder
 import apptentive.com.android.serialization.BinaryEncoder
@@ -22,15 +22,19 @@ class ConversationManager(
     private val personFactory: Factory<Person>,
     private val deviceFactory: Factory<Device>,
     private val sdkFactory: Factory<SDK>,
-    private val conversationFetchService: ConversationFetchService
+    private val conversationService: ConversationService
 ) {
     private val _activeConversation: MutableObservable<Conversation>
     val activeConversation: Observable<Conversation> get() = _activeConversation
+
+    private val _engagementManifest = MutableObservable(EngagementManifest())
+    val engagementManifest: Observable<EngagementManifest> = _engagementManifest
 
     init {
         val conversation = loadActiveConversation()
         _activeConversation = MutableObservable(conversation)
         _activeConversation.observe(::saveConversation)
+        _activeConversation.observe(::tryFetchEngagementManifest)
 
         // fetch conversation token if necessary
         if (!conversation.hasConversationToken) {
@@ -39,7 +43,7 @@ class ConversationManager(
     }
 
     private fun fetchConversationToken(conversation: Conversation) {
-        conversationFetchService.fetchConversationToken(
+        conversationService.fetchConversationToken(
             device = conversation.device,
             sdk = conversation.sdk,
             appRelease = conversation.appRelease
@@ -98,6 +102,20 @@ class ConversationManager(
             conversationSerializer.saveConversation(conversation)
         } catch (exception: Exception) {
             Log.e(CONVERSATION, "Exception while saving conversation")
+        }
+    }
+
+    @WorkerThread
+    private fun tryFetchEngagementManifest(conversation: Conversation) {
+        val token = conversation.conversationToken
+        val id = conversation.conversationId
+        if (token != null && id != null) {
+            conversationService.fetchEngagementManifest(
+                conversationToken = token,
+                conversationId = id
+            ) {
+                TODO()
+            }
         }
     }
 

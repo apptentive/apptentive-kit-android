@@ -50,7 +50,7 @@ internal class ApptentiveDefaultClient(
                 distribution = "Default",
                 distributionVersion = Constants.SDK_VERSION
             ),
-            conversationFetchService = conversationService
+            conversationService = conversationService
         )
     }
 

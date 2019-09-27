@@ -2,9 +2,11 @@ package apptentive.com.android.feedback.backend
 
 import apptentive.com.android.feedback.model.AppRelease
 import apptentive.com.android.feedback.model.Device
+import apptentive.com.android.feedback.model.EngagementManifest
 import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.network.*
 import apptentive.com.android.util.Result
+import java.io.InputStream
 
 class DefaultConversationService(
     private val httpClient: HttpClient,
@@ -38,6 +40,22 @@ class DefaultConversationService(
         sendRequest(request, callback)
     }
 
+    override fun fetchEngagementManifest(
+        conversationToken: String,
+        conversationId: String,
+        callback: (Result<EngagementManifest>) -> Unit
+    ) {
+        val request = createJsonRequest(
+            method = HttpMethod.GET,
+            path = "/conversations/$conversationId/interactions",
+            headers = MutableHttpHeaders().apply {
+                this["Authorization"] = "Bearer $conversationToken"
+            },
+            responseReader = EngagementManifestReader
+        )
+        sendRequest(request, callback)
+    }
+
     private fun <T : Any> sendRequest(request: HttpRequest<T>, callback: (Result<T>) -> Unit) {
         httpClient.send(request) {
             when (it) {
@@ -51,7 +69,8 @@ class DefaultConversationService(
         method: HttpMethod,
         path: String,
         body: Any? = null,
-        headers: HttpHeaders? = null
+        headers: HttpHeaders? = null,
+        responseReader: HttpResponseReader<T> = HttpJsonResponseReader(T::class.java)
     ): HttpRequest<T> {
         val allHeaders = MutableHttpHeaders()
         allHeaders.addAll(defaultHeaders)
@@ -63,9 +82,19 @@ class DefaultConversationService(
             .url(createURL(path))
             .method(method, body)
             .headers(allHeaders)
-            .responseReader(HttpJsonResponseReader(T::class.java))
+            .responseReader(responseReader)
             .build()
     }
 
     private fun createURL(path: String) = "$baseURL/$path"
+}
+
+internal object EngagementManifestReader :
+    HttpResponseReader<EngagementManifest> {
+    override fun read(stream: InputStream): EngagementManifest {
+        val bytes = stream.readBytes()
+        val json = if (bytes.isEmpty()) "{}" else String(bytes, Charsets.UTF_8)
+        return EngagementManifest.fromJson(json)
+    }
+
 }
