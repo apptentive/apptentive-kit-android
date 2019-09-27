@@ -6,7 +6,7 @@ import apptentive.com.android.core.ExecutorQueueFactory
 import apptentive.com.android.core.PlatformLogger
 import apptentive.com.android.util.LogLevel
 import org.junit.After
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Before
 
 // FIXME: all the test dependencies should be grouped in the core module
@@ -16,7 +16,7 @@ open class TestCase(
 ) {
     private val results = mutableListOf<Any>()
 
-    // Before/After
+    //region Before/After
 
     @Before
     open fun setUp() {
@@ -28,6 +28,14 @@ open class TestCase(
     @After
     open fun tearDown() {
         DependencyProvider.clear()
+    }
+
+    //endregion
+
+    //region Resources
+
+    protected fun readText(path: String): String {
+        return javaClass.classLoader!!.getResourceAsStream(path).bufferedReader().readText()
     }
 
     //endregion

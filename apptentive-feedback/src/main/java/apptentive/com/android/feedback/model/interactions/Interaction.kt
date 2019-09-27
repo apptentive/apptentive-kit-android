@@ -1,46 +1,23 @@
 package apptentive.com.android.feedback.model.interactions
 
-class Interaction(
+data class Interaction(
     val id: String,
-    val type: Type,
-    val displayType: DisplayType,
-    val version: Int
-
+    val type: String,
+    val priority: Int?,
+    val configuration: Map<String, *>,
+    val version: String,
+    val displayType: String? = null
 ) {
-    enum class Type {
-        UpgradeMessage,
-        EnjoymentDialog,
-        RatingDialog,
-        MessageCenter,
-        AppStoreRating,
-        Survey,
-        TextModal,
-        NavigateToLink,
-        unknown;
-
-        companion object {
-            fun parse(type: String): Type {
-                return try {
-                    valueOf(type)
-                } catch (e: IllegalArgumentException) {
-                    unknown
-                }
-            }
-        }
-    }
-
-    enum class DisplayType {
-        notification,
-        unknown;
-
-        companion object {
-            fun parse(type: String): DisplayType {
-                return try {
-                    valueOf(type)
-                } catch (e: Exception) {
-                    unknown
-                }
-            }
+    companion object {
+        fun fromJson(json: Map<String, *>): Interaction {
+            return Interaction(
+                id = json["id"] as String,
+                type = json["type"] as String,
+                priority = json["priority"] as? Int,
+                configuration = json["configuration"] as Map<String, *>,
+                version = json["version"].toString(),
+                displayType = json["display_type"] as? String
+            )
         }
     }
 }
