@@ -5,7 +5,7 @@ import com.google.gson.Gson
 /**
  * Utility class for JSON serialization
  */
-internal object JsonConverter {
+object JsonConverter {
     private val gson = Gson()
 
     /**
@@ -18,13 +18,26 @@ internal object JsonConverter {
     }
 
     /**
-     * Serializes an object to JSON string.
+     * De-serializes an object from JSON string.
      * @throws [JsonException] if conversion fails.
      */
     @Throws(JsonException::class)
     fun fromJson(json: String, type: Class<*>): Any {
         try {
             return gson.fromJson(json, type)
+        } catch (e: Exception) {
+            throw JsonException(e)
+        }
+    }
+
+    /**
+     * De-serializes JSON string to a Map.
+     * @throws [JsonException] if conversion fails.
+     */
+    @Throws(JsonException::class)
+    fun toMap(json: String): Map<String, *> {
+        try {
+            return gson.fromJson(json, Map::class.java) as Map<String, *>
         } catch (e: Exception) {
             throw JsonException(e)
         }

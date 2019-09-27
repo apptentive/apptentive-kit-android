@@ -13,7 +13,7 @@ open class TestCase(
 ) {
     private val results = mutableListOf<Any>()
 
-    // Before/After
+    //region Before/After
 
     @Before
     open fun setUp() {
