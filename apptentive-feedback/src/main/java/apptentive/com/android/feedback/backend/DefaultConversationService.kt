@@ -34,7 +34,7 @@ class DefaultConversationService(
     ) {
         val request = createJsonRequest<ConversationTokenFetchResponse>(
             method = HttpMethod.POST,
-            path = "/conversation",
+            path = "conversation",
             body = ConversationTokenFetchBody.from(device, sdk, appRelease)
         )
         sendRequest(request, callback)
@@ -47,7 +47,7 @@ class DefaultConversationService(
     ) {
         val request = createJsonRequest(
             method = HttpMethod.GET,
-            path = "/conversations/$conversationId/interactions",
+            path = "conversations/$conversationId/interactions",
             headers = MutableHttpHeaders().apply {
                 this["Authorization"] = "Bearer $conversationToken"
             },

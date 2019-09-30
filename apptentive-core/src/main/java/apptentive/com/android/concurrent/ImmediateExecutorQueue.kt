@@ -9,9 +9,9 @@ import java.util.concurrent.atomic.AtomicBoolean
  * Executes tasks synchronously on the same thread as dispatched.
  */
 class ImmediateExecutorQueue(
-    name: String,
+    name: String? = null,
     private val dispatchManually: Boolean = false
-) : ExecutorQueue(name) {
+) : ExecutorQueue(name ?: "Test Queue") {
     private var currentThread: Thread? = null
     private val tasks = mutableListOf<() -> Unit>()
 
