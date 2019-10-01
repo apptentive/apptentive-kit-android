@@ -5,23 +5,17 @@ import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.ExecutorQueueFactory
 import apptentive.com.android.core.PlatformLogger
 import apptentive.com.android.util.LogLevel
-import org.junit.rules.TestRule
+import org.junit.rules.TestWatcher
 import org.junit.runner.Description
-import org.junit.runners.model.Statement
 
-class DependencyProviderRule : TestRule {
-    override fun apply(base: Statement?, description: Description?): Statement {
-        return object : Statement() {
-            override fun evaluate() {
-                DependencyProvider.register(createPlatformLogger())
-                DependencyProvider.register(createExecutionQueueFactory())
-                try {
-                    base?.evaluate()
-                } catch (e: Exception) {
-                    DependencyProvider.clear()
-                }
-            }
-        }
+class DependencyProviderRule : TestWatcher() {
+    override fun starting(description: Description?) {
+        DependencyProvider.register(createPlatformLogger())
+        DependencyProvider.register(createExecutionQueueFactory())
+    }
+
+    override fun finished(description: Description?) {
+        DependencyProvider.clear()
     }
 }
 
