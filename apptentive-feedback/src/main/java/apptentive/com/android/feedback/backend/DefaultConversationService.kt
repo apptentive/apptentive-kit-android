@@ -1,12 +1,15 @@
 package apptentive.com.android.feedback.backend
 
+import apptentive.com.android.core.getTimeSeconds
+import apptentive.com.android.feedback.CONVERSATION
 import apptentive.com.android.feedback.model.AppRelease
 import apptentive.com.android.feedback.model.Device
 import apptentive.com.android.feedback.model.EngagementManifest
 import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.network.*
+import apptentive.com.android.network.HttpHeaders.Companion.CACHE_CONTROL
+import apptentive.com.android.util.Log
 import apptentive.com.android.util.Result
-import java.io.InputStream
 
 class DefaultConversationService(
     private val httpClient: HttpClient,
@@ -91,10 +94,24 @@ class DefaultConversationService(
 
 internal object EngagementManifestReader :
     HttpResponseReader<EngagementManifest> {
-    override fun read(stream: InputStream): EngagementManifest {
-        val bytes = stream.readBytes()
+    override fun read(
+        response: HttpNetworkResponse
+    ): EngagementManifest {
+        val bytes = response.stream.readBytes()
         val json = if (bytes.isEmpty()) "{}" else String(bytes, Charsets.UTF_8)
-        return EngagementManifest.fromJson(json)
+        val cacheControl = parseCacheControl(response.headers[CACHE_CONTROL]?.value)
+        val manifest = EngagementManifest.fromJson(json)
+        return manifest.copy(expiry = getTimeSeconds() + cacheControl.maxAgeSeconds)
     }
 
+    private fun parseCacheControl(value: String?): CacheControl {
+        if (value != null) {
+            try {
+                return CacheControl.parse(value)
+            } catch (e: Exception) {
+                Log.e(CONVERSATION, "Unable to parse cache control value: $value", e)
+            }
+        }
+        return CacheControl()
+    }
 }

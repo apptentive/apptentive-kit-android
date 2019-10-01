@@ -40,8 +40,8 @@ class HttpRequest<T> private constructor(
      * Creates an instance of the response content from an input stream of bytes.
      * This method will be called from a background thread.
      */
-    internal fun readResponseObject(stream: InputStream): T {
-        return responseReader.read(stream)
+    internal fun readResponseObject(response: HttpNetworkResponse): T {
+        return responseReader.read(response)
     }
 
     //endregion

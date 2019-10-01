@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.conversation
 
+import apptentive.com.android.core.getTimeSeconds
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.ConversationTokenFetchResponse
 import apptentive.com.android.feedback.mockAppRelease
@@ -10,11 +11,20 @@ import apptentive.com.android.feedback.model.*
 import apptentive.com.android.feedback.test.TestCase
 import apptentive.com.android.util.Factory
 import apptentive.com.android.util.Result
+import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
 class ConversationManagerTest : TestCase() {
     @Test
     fun getActiveConversation() {
+        val fetchResponse = ConversationTokenFetchResponse(
+            id = "id",
+            device_id = "device_id",
+            person_id = "person_id",
+            token = "token",
+            encryption_key = "encryption_key"
+        )
+
         val conversationSerializer: ConversationSerializer = MockConversationSerializer()
         val appReleaseFactory = MockAppReleaseFactory(mockAppRelease)
         val personFactory = MockPersonFactory(mockPerson)
@@ -26,8 +36,12 @@ class ConversationManagerTest : TestCase() {
             personFactory = personFactory,
             deviceFactory = deviceFactory,
             sdkFactory = sdkFactory,
-            conversationService = MockConversationService()
+            conversationService = MockConversationService(fetchResponse)
         )
+        val conversation: Conversation = conversationManager.activeConversation.value
+        assertThat(conversation.conversationToken).isEqualTo(fetchResponse.token)
+        assertThat(conversation.conversationId).isEqualTo(fetchResponse.id)
+        assertThat(conversation.person.id).isEqualTo(fetchResponse.person_id)
     }
 }
 
@@ -58,13 +72,17 @@ private class MockSdkFactory(private val sdk: SDK) : Factory<SDK> {
     override fun create() = sdk
 }
 
-private class MockConversationService : ConversationService {
+private class MockConversationService(
+    private val response: ConversationTokenFetchResponse
+) :
+    ConversationService {
     override fun fetchConversationToken(
         device: Device,
         sdk: SDK,
         appRelease: AppRelease,
         callback: (Result<ConversationTokenFetchResponse>) -> Unit
     ) {
+        callback(Result.Success(response))
     }
 
     override fun fetchEngagementManifest(
@@ -72,7 +90,7 @@ private class MockConversationService : ConversationService {
         conversationId: String,
         callback: (Result<EngagementManifest>) -> Unit
     ) {
-        TODO()
+        callback(Result.Success(EngagementManifest(expiry = getTimeSeconds() + 1800)))
     }
 
 }

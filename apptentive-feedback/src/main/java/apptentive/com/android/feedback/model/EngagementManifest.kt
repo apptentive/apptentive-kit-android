@@ -1,12 +1,16 @@
 package apptentive.com.android.feedback.model
 
+import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.feedback.model.interactions.Interaction
+import apptentive.com.android.serialization.Decoder
+import apptentive.com.android.serialization.Encoder
 import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.serialization.json.JsonException
 
 data class EngagementManifest(
     val interactions: List<Interaction> = listOf(),
-    val targets: Map<String, List<Target>> = mapOf()
+    val targets: Map<String, List<Target>> = mapOf(),
+    val expiry: TimeInterval = 0.0
 ) {
     companion object {
         @Throws(JsonException::class)
@@ -24,4 +28,12 @@ data class EngagementManifest(
             )
         }
     }
+}
+
+internal fun Encoder.encodeEngagementManifest(obj: EngagementManifest) {
+    TODO()
+}
+
+internal fun Decoder.decodeEngagementManifest(): EngagementManifest {
+    TODO()
 }

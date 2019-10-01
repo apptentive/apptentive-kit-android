@@ -3,6 +3,7 @@ package apptentive.com.android.feedback.conversation
 import androidx.annotation.WorkerThread
 import apptentive.com.android.core.MutableObservable
 import apptentive.com.android.core.Observable
+import apptentive.com.android.core.isInThePast
 import apptentive.com.android.feedback.CONVERSATION
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.model.*
@@ -107,6 +108,12 @@ class ConversationManager(
 
     @WorkerThread
     private fun tryFetchEngagementManifest(conversation: Conversation) {
+        val manifest = conversation.engagementManifest
+        if (!isInThePast(manifest.expiry)) {
+            Log.d(CONVERSATION, "Engagement manifest up to date")
+            return
+        }
+
         val token = conversation.conversationToken
         val id = conversation.conversationId
         if (token != null && id != null) {
@@ -114,7 +121,16 @@ class ConversationManager(
                 conversationToken = token,
                 conversationId = id
             ) {
-                TODO()
+                when (it) {
+                    is Result.Success -> {
+                        _activeConversation.value = _activeConversation.value.copy(
+                            engagementManifest = it.data
+                        )
+                    }
+                    is Result.Error -> {
+                        Log.e(CONVERSATION, "Error while fetching engagement manifest", it.error)
+                    }
+                }
             }
         }
     }

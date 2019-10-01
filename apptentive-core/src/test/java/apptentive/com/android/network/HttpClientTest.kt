@@ -7,7 +7,6 @@ import apptentive.com.android.util.Result
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Test
-import java.io.InputStream
 import java.io.OutputStream
 
 class HttpClientTest : TestCase() {
@@ -409,7 +408,8 @@ private object FailureRequestBody : HttpRequestBody {
  * Always fails deserialization.
  */
 private class FailureResponseReader<T> : HttpResponseReader<T> {
-    override fun read(stream: InputStream): T = throw AssertionError("Failed to serialize")
+    override fun read(response: HttpNetworkResponse): T =
+        throw AssertionError("Failed to serialize")
 }
 
 /**

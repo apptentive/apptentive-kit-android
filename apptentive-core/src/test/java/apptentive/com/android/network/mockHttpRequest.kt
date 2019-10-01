@@ -4,7 +4,6 @@ import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.serialization.json.JsonConverter
 import java.io.ByteArrayInputStream
 import java.io.IOException
-import java.io.InputStream
 import java.io.OutputStream
 
 /**
@@ -39,12 +38,14 @@ internal fun createMockHttpRequest(
     } else null
 
     val responseReader = object : HttpResponseReader<String> {
-        override fun read(stream: InputStream): String {
+        override fun read(
+            response: HttpNetworkResponse
+        ): String {
             if (exceptionOnReceive) {
                 throw IOException("failed to receive")
             }
 
-            return String(stream.readBytes())
+            return String(response.stream.readBytes())
         }
     }
 
@@ -70,8 +71,10 @@ internal fun createMockHttpRequest(
     retryPolicy: HttpRequestRetryPolicy? = null
 ): HttpRequest<String> {
     val responseReader = object : HttpResponseReader<String> {
-        override fun read(stream: InputStream): String {
-            return String(stream.readBytes())
+        override fun read(
+            response: HttpNetworkResponse
+        ): String {
+            return String(response.stream.readBytes())
         }
     }
 
