@@ -1,6 +1,6 @@
 package apptentive.com.android.feedback.model
 
-import apptentive.com.android.feedback.conversation.SingleFileConversationSerializer
+import apptentive.com.android.feedback.conversation.DefaultConversationSerializer
 import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test
@@ -83,12 +83,13 @@ class ConversationTest {
                 inheritStyle = false,
                 overrideStyle = true,
                 appStore = "appStore"
-            )
+            ),
+            engagementManifest = EngagementManifest() // TODO: pass actual value
         )
 
         val file = tempFolder.tempFile()
 
-        val serializer = SingleFileConversationSerializer(file)
+        val serializer = DefaultConversationSerializer(file)
 
         // should return no conversation before anything was saved
         assertThat(serializer.loadConversation()).isNull()
@@ -137,12 +138,13 @@ class ConversationTest {
                 versionCode = 1,
                 versionName = "versionName",
                 targetSdkVersion = "targetSdkVersion"
-            )
+            ),
+            engagementManifest = EngagementManifest() // TODO: pass actual value
         )
 
         val file = tempFolder.tempFile()
 
-        val serializer = SingleFileConversationSerializer(file)
+        val serializer = DefaultConversationSerializer(file)
 
         // save conversation
         serializer.saveConversation(expected)

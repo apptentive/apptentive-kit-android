@@ -6,23 +6,14 @@ import apptentive.com.android.core.Observable
 import apptentive.com.android.core.isInThePast
 import apptentive.com.android.feedback.CONVERSATION
 import apptentive.com.android.feedback.backend.ConversationService
-import apptentive.com.android.feedback.model.*
-import apptentive.com.android.serialization.BinaryDecoder
-import apptentive.com.android.serialization.BinaryEncoder
-import apptentive.com.android.util.Factory
+import apptentive.com.android.feedback.model.Conversation
+import apptentive.com.android.feedback.model.EngagementManifest
+import apptentive.com.android.feedback.model.hasConversationToken
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.Result
-import apptentive.com.android.util.generateUUID
-import java.io.DataInputStream
-import java.io.DataOutputStream
-import java.io.File
 
 class ConversationManager(
-    private val conversationSerializer: ConversationSerializer,
-    private val appReleaseFactory: Factory<AppRelease>,
-    private val personFactory: Factory<Person>,
-    private val deviceFactory: Factory<Device>,
-    private val sdkFactory: Factory<SDK>,
+    private val conversationRepository: ConversationRepository,
     private val conversationService: ConversationService
 ) {
     private val _activeConversation: MutableObservable<Conversation>
@@ -81,26 +72,20 @@ class ConversationManager(
     @Throws(ConversationSerializationException::class)
     @WorkerThread
     private fun loadActiveConversation(): Conversation {
-        val existingConversation = conversationSerializer.loadConversation()
+        val existingConversation = conversationRepository.loadConversation()
         if (existingConversation != null) {
             return existingConversation
         }
 
         // no active conversations: create a new one
         Log.i(CONVERSATION, "Creating 'anonymous' conversation...")
-        return Conversation(
-            localIdentifier = generateConversationIdentifier(),
-            person = personFactory.create(),
-            device = deviceFactory.create(),
-            appRelease = appReleaseFactory.create(),
-            sdk = sdkFactory.create()
-        )
+        return conversationRepository.createConversation()
     }
 
     @WorkerThread
     private fun saveConversation(conversation: Conversation) {
         try {
-            conversationSerializer.saveConversation(conversation)
+            conversationRepository.saveConversation(conversation)
         } catch (exception: Exception) {
             Log.e(CONVERSATION, "Exception while saving conversation")
         }
@@ -133,36 +118,5 @@ class ConversationManager(
                 }
             }
         }
-    }
-
-    companion object {
-        private fun generateConversationIdentifier() = generateUUID()
-    }
-}
-
-interface ConversationSerializer {
-    @Throws(ConversationSerializationException::class)
-    fun loadConversation(): Conversation?
-
-    @Throws(ConversationSerializationException::class)
-    fun saveConversation(conversation: Conversation)
-}
-
-internal class SingleFileConversationSerializer(
-    private val file: File
-) : ConversationSerializer {
-    override fun saveConversation(conversation: Conversation) {
-        file.outputStream().use { stream ->
-            val encoder = BinaryEncoder(DataOutputStream(stream))
-            encoder.encodeConversation(conversation)
-        }
-    }
-
-    override fun loadConversation(): Conversation? {
-        return if (!file.exists()) null else
-            file.inputStream().use { stream ->
-                val encoder = BinaryDecoder(DataInputStream(stream))
-                return@loadConversation encoder.decodeConversation()
-            }
     }
 }
