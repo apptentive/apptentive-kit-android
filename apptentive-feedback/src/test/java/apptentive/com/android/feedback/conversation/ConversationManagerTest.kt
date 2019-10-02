@@ -9,7 +9,6 @@ import apptentive.com.android.feedback.mockPerson
 import apptentive.com.android.feedback.mockSdk
 import apptentive.com.android.feedback.model.*
 import apptentive.com.android.feedback.test.TestCase
-import apptentive.com.android.util.Factory
 import apptentive.com.android.util.Result
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
@@ -25,24 +24,37 @@ class ConversationManagerTest : TestCase() {
             encryption_key = "encryption_key"
         )
 
-        val conversationSerializer: ConversationSerializer = MockConversationSerializer()
-        val appReleaseFactory = MockAppReleaseFactory(mockAppRelease)
-        val personFactory = MockPersonFactory(mockPerson)
-        val deviceFactory = MockDeviceFactory(mockDevice)
-        val sdkFactory = MockSdkFactory(mockSdk)
         val conversationManager = ConversationManager(
-            conversationSerializer = conversationSerializer,
-            appReleaseFactory = appReleaseFactory,
-            personFactory = personFactory,
-            deviceFactory = deviceFactory,
-            sdkFactory = sdkFactory,
+            conversationRepository = MockConversationRepository,
             conversationService = MockConversationService(fetchResponse)
         )
+
         val conversation: Conversation = conversationManager.activeConversation.value
         assertThat(conversation.conversationToken).isEqualTo(fetchResponse.token)
         assertThat(conversation.conversationId).isEqualTo(fetchResponse.id)
         assertThat(conversation.person.id).isEqualTo(fetchResponse.person_id)
     }
+}
+
+private object MockConversationRepository : ConversationRepository {
+    private var conversation: Conversation? = null
+
+    override fun createConversation(): Conversation {
+        return Conversation(
+            localIdentifier = "localIdentifier",
+            device = mockDevice,
+            person = mockPerson,
+            sdk = mockSdk,
+            appRelease = mockAppRelease,
+            engagementManifest = EngagementManifest()
+        )
+    }
+
+    override fun saveConversation(conversation: Conversation) {
+        this.conversation = conversation
+    }
+
+    override fun loadConversation(): Conversation? = conversation
 }
 
 private class MockConversationSerializer :
@@ -54,22 +66,6 @@ private class MockConversationSerializer :
     }
 
     override fun loadConversation(): Conversation? = conversation
-}
-
-data class MockAppReleaseFactory(private val appRelease: AppRelease) : Factory<AppRelease> {
-    override fun create() = appRelease
-}
-
-private class MockPersonFactory(private val person: Person) : Factory<Person> {
-    override fun create() = person
-}
-
-private class MockDeviceFactory(private val device: Device) : Factory<Device> {
-    override fun create() = device
-}
-
-private class MockSdkFactory(private val sdk: SDK) : Factory<SDK> {
-    override fun create() = sdk
 }
 
 private class MockConversationService(
