@@ -30,9 +30,12 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "androidx.appcompat:appcompat:$support_library_version"
     implementation "androidx.core:core-ktx:$ktx_version"
+    implementation "com.google.android.material:material:$material_design_version"
     implementation "androidx.constraintlayout:constraintlayout:$constraint_layout_version"
     implementation project(':apptentive-core')
     implementation project(':apptentive-feedback')
+    implementation project(':apptentive-core')
+    implementation project(':apptentive-feedback-ui')
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation "androidx.test.ext:junit:$junit_ext_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"
