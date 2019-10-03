@@ -37,6 +37,7 @@ object JsonConverter {
     @Throws(JsonException::class)
     fun toMap(json: String): Map<String, *> {
         try {
+            @Suppress("UNCHECKED_CAST")
             return gson.fromJson(json, Map::class.java) as Map<String, *>
         } catch (e: Exception) {
             throw JsonException(e)

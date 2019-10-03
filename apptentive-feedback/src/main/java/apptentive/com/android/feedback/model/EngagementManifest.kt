@@ -21,6 +21,7 @@ data class EngagementManifest(
             return fromJson(jsonMap)
         }
 
+        @Suppress("UNCHECKED_CAST")
         fun fromJson(json: Map<String, *>): EngagementManifest {
             return EngagementManifest(
                 interactions = (json.getList("interactions")).map { Interaction.fromJson(it as Map<String, *>) },
