@@ -10,8 +10,6 @@ open class Interaction(val id: String) {
         fun fromJson(json: Map<String, *>): Interaction {
             val id = json.getString("id")
             val type = json.getString("type")
-            val priority = json.optInt("priority")
-            val version = json.optString("version")
             val displayType = json.optString("display_type")
             val configuration = json.getMap("configuration")
 

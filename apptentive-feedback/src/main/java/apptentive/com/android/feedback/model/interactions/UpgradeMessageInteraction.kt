@@ -2,9 +2,9 @@ package apptentive.com.android.feedback.model.interactions
 
 class UpgradeMessageInteraction(
     id: String,
-    private val appVersion: String,
-    private val showAppIcon: Boolean,
-    private val showPoweredBy: Boolean,
-    private val body: String,
-    private val active: Boolean
+    val appVersion: String,
+    val showAppIcon: Boolean,
+    val showPoweredBy: Boolean,
+    val body: String,
+    val active: Boolean
 ) : Interaction(id)

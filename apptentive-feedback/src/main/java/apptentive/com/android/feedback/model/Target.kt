@@ -1,11 +1,14 @@
 package apptentive.com.android.feedback.model
 
+import apptentive.com.android.feedback.utils.getMap
+import apptentive.com.android.feedback.utils.getString
+
 data class Target(val interactionId: String, val criteria: Map<String, *>) {
     companion object {
         fun fromJson(json: Map<String, *>): Target {
             return Target(
-                interactionId = json["interaction_id"] as String,
-                criteria = json["criteria"] as Map<String, *>
+                interactionId = json.getString("interaction_id"),
+                criteria = json.getMap("criteria")
             )
         }
     }
