@@ -1,12 +1,12 @@
 package apptentive.com.android.feedback.model.interactions
 
+import android.net.Uri
 import apptentive.com.android.feedback.CONVERSATION
 import apptentive.com.android.util.Log
-import java.net.URL
 
 class NavigateToLinkInteraction(
     id: String,
-    url: URL,
+    url: Uri,
     target: Target
 ) : Interaction(id) {
     enum class Target {

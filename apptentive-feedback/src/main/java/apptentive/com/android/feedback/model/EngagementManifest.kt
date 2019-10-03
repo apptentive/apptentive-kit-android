@@ -34,9 +34,10 @@ data class EngagementManifest(
 }
 
 internal fun Encoder.encodeEngagementManifest(obj: EngagementManifest) {
-    TODO()
+    // FIXME: encode manifest
 }
 
 internal fun Decoder.decodeEngagementManifest(): EngagementManifest {
-    TODO()
+    // FIXME: decode manifest
+    return EngagementManifest()
 }

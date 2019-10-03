@@ -1,8 +1,8 @@
 package apptentive.com.android.feedback.model.interactions
 
+import android.net.Uri
 import apptentive.com.android.feedback.model.interactions.NavigateToLinkInteraction.Target
 import apptentive.com.android.feedback.utils.*
-import java.net.URL
 
 // TODO: turn it into a configurable factory so other interaction types could be registered
 open class Interaction(val id: String) {
@@ -17,8 +17,8 @@ open class Interaction(val id: String) {
             return when (type) {
                 "UpgradeMessage" -> UpgradeMessageInteraction(
                     id = id,
-                    active = configuration.getBoolean("active"),
-                    appVersion = configuration.getString("app_version"),
+                    active = configuration.optBoolean("active") ?: false,
+                    appVersion = configuration.optString("app_version"),
                     showAppIcon = configuration.getBoolean("show_app_icon"),
                     showPoweredBy = configuration.getBoolean("show_powered_by"),
                     body = configuration.getString("body")
@@ -38,12 +38,12 @@ open class Interaction(val id: String) {
                     remindText = configuration.getString("remind_text"),
                     declineText = configuration.getString("decline_text")
                 )
-                "MessageCenter" -> TODO()
+                "MessageCenter" -> MessageCenterInteraction(id = id) // FIXME: parse message center interaction
                 "AppStoreRating" -> AppStoreRatingInteraction(id = id)
                 "Survey" -> SurveyInteraction(
                     id = id,
                     name = configuration.getString("name"),
-                    description = configuration.getString("description"),
+                    description = configuration.optString("description"),
                     successMessage = configuration.optString("success_message"),
                     requiredText = configuration.optString("required_text"),
                     submitText = configuration.getString("submit_text"),
@@ -62,7 +62,7 @@ open class Interaction(val id: String) {
                 )
                 "NavigateToLink" -> NavigateToLinkInteraction(
                     id = id,
-                    url = URL(configuration.getString("url")),
+                    url = Uri.parse(configuration.getString("url")),
                     target = Target.tryParse(configuration.optString("target")) ?: Target.New
                 )
                 else -> UnknownInteraction

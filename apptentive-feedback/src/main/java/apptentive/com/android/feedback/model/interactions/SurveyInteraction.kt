@@ -3,7 +3,7 @@ package apptentive.com.android.feedback.model.interactions
 class SurveyInteraction(
     id: String,
     val name: String,
-    val description: String,
+    val description: String?,
     val successMessage: String?,
     val requiredText: String?,
     val submitText: String,

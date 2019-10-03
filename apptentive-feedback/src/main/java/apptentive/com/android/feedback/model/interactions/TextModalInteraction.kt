@@ -11,7 +11,7 @@ class TextModalInteraction(
 open class TextModalAction {
     companion object {
         fun fromJson(json: Map<String, *>): TextModalAction {
-            TODO()
+            return TextModalAction() // FIXME: read text modal actions
         }
     }
 }
