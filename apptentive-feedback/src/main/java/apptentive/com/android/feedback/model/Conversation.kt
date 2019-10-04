@@ -17,27 +17,3 @@ data class Conversation(
 )
 
 val Conversation.hasConversationToken get() = this.conversationToken != null
-
-internal fun Encoder.encodeConversation(obj: Conversation) {
-    encodeString(obj.localIdentifier)
-    encodeNullableString(obj.conversationToken)
-    encodeNullableString(obj.conversationId)
-    encodeDevice(obj.device)
-    encodePerson(obj.person)
-    encodeSDK(obj.sdk)
-    encodeAppRelease(obj.appRelease)
-    encodeEngagementManifest(obj.engagementManifest)
-}
-
-internal fun Decoder.decodeConversation(): Conversation {
-    return Conversation(
-        localIdentifier = decodeString(),
-        conversationToken = decodeNullableString(),
-        conversationId = decodeNullableString(),
-        device = decodeDevice(),
-        person = decodePerson(),
-        sdk = decodeSDK(),
-        appRelease = decodeAppRelease(),
-        engagementManifest = decodeEngagementManifest()
-    )
-}

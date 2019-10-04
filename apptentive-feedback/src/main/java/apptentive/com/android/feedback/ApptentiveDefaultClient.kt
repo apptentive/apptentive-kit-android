@@ -34,9 +34,13 @@ internal class ApptentiveDefaultClient(
         )
 
         val conversationFile = getConversationFile(context) // FIXME: remove android specific api
+        val manifestFile = getManifestFile(context)
         conversationManager = ConversationManager(
             conversationRepository = DefaultConversationRepository(
-                conversationSerializer = DefaultConversationSerializer(conversationFile),
+                conversationSerializer = DefaultConversationSerializer(
+                    conversationFile = conversationFile,
+                    manifestFile = manifestFile
+                ),
                 appReleaseFactory = DefaultAppReleaseFactory(context),
                 personFactory = DefaultPersonFactory(),
                 deviceFactory = DefaultDeviceFactory(context),
@@ -57,12 +61,21 @@ internal class ApptentiveDefaultClient(
 
     companion object {
         fun getConversationFile(context: Context): File {
-            val conversationsDir = FileUtil.getInternalDir(
+            val conversationsDir = getConversationDir(context)
+            return File(conversationsDir, "conversation.bin")
+        }
+
+        fun getManifestFile(context: Context): File {
+            val conversationsDir = getConversationDir(context)
+            return File(conversationsDir, "manifest.bin")
+        }
+
+        private fun getConversationDir(context: Context): File {
+            return FileUtil.getInternalDir(
                 context = context,
                 path = "conversations",
                 createIfNecessary = true
             )
-            return File(conversationsDir, "single.conversation")
         }
     }
 }

@@ -1,17 +1,28 @@
 package apptentive.com.android.feedback.model
 
+import apptentive.com.android.feedback.model.interactions.InteractionData
 import apptentive.com.android.feedback.test.TestCase
+import apptentive.com.android.serialization.json.JsonConverter
+import com.google.common.truth.Truth.assertThat
 import org.junit.Test
-
-import org.junit.Assert.*
-import org.junit.Ignore
 
 class EngagementManifestTest : TestCase() {
     @Test
-    @Ignore
     fun getInteractions() {
         val json = readText("manifest.json")
-        val manifest = EngagementManifest.fromJson(json)
-        TODO()
+        val manifest = JsonConverter.fromJson<EngagementManifest>(json)
+        assertThat(manifest.interactions).isEqualTo(listOf(InteractionData(
+                    id = "1234567890",
+                    displayType = null,
+                    type = "MyInteraction",
+                    configuration = mapOf(
+                        "string_key" to "value",
+                        "int_key" to 10.0,
+                        "boolean_key" to true,
+                        "null_key" to null
+                    )
+                )
+            )
+        )
     }
 }
