@@ -142,7 +142,7 @@ class DefaultConversationServiceTest {
 private class MockHttpNetwork : HttpNetwork {
     private val lookup = mutableMapOf<String, (Request) -> Response>()
 
-    override val isNetworkConnected = true
+    override fun isNetworkConnected() = true
 
     fun register(url: String, handler: (Request) -> Response) {
         lookup[url] = handler

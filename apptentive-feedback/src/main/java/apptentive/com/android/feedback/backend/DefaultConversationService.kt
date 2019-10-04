@@ -81,8 +81,7 @@ class DefaultConversationService(
             allHeaders.addAll(headers)
         }
 
-        return HttpRequest.Builder<T>()
-            .url(createURL(path))
+        return HttpRequest.Builder<T>(createURL(path))
             .method(method, body)
             .headers(allHeaders)
             .responseReader(responseReader)

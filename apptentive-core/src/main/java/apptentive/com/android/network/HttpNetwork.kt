@@ -1,12 +1,13 @@
 package apptentive.com.android.network
 
 import android.content.Context
+import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.toMilliseconds
 import apptentive.com.android.core.toSeconds
+import apptentive.com.android.network.Constants.DEFAULT_REQUEST_TIMEOUT
 import apptentive.com.android.util.NetworkUtils
 import java.io.IOException
 import java.io.InputStream
-import java.lang.ref.WeakReference
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.zip.GZIPInputStream
@@ -15,14 +16,18 @@ import java.util.zip.GZIPInputStream
  * Represents a basic network operation and network state query.
  */
 interface HttpNetwork {
-    val isNetworkConnected: Boolean
+    fun isNetworkConnected(): Boolean
     fun performRequest(request: HttpRequest<*>): HttpNetworkResponse
 }
 
-class DefaultHttpNetwork(context: Context) : HttpNetwork {
-    private val contextRef = WeakReference(context.applicationContext)
+class DefaultHttpNetwork(
+    context: Context,
+    private val connectTimeout: TimeInterval = DEFAULT_REQUEST_TIMEOUT,
+    private val readTimeout: TimeInterval = DEFAULT_REQUEST_TIMEOUT
+) : HttpNetwork {
+    private val applicationContext: Context = context.applicationContext
 
-    override val isNetworkConnected get() = NetworkUtils.isNetworkConnected(context)
+    override fun isNetworkConnected() = NetworkUtils.isNetworkConnected(applicationContext)
 
     override fun performRequest(request: HttpRequest<*>): HttpNetworkResponse {
         val startTime = System.currentTimeMillis()
@@ -59,7 +64,13 @@ class DefaultHttpNetwork(context: Context) : HttpNetwork {
 
             // duration
             val duration = toSeconds(System.currentTimeMillis() - startTime)
-            return HttpNetworkResponse(responseCode, responseMessage, stream, responseHeaders, duration)
+            return HttpNetworkResponse(
+                statusCode = responseCode,
+                statusMessage = responseMessage,
+                stream = stream,
+                headers = responseHeaders,
+                duration = duration
+            )
         } finally {
             if (closeConnection) {
                 connection.disconnect()
@@ -73,10 +84,9 @@ class DefaultHttpNetwork(context: Context) : HttpNetwork {
      * Opens [HttpURLConnection] for a given [request]
      */
     private fun openConnection(request: HttpRequest<*>): HttpURLConnection {
-        val timeout = toMilliseconds(request.timeout)
         val connection = createConnection(request.url)
-        connection.connectTimeout = timeout
-        connection.readTimeout = timeout
+        connection.connectTimeout = toMilliseconds(connectTimeout)
+        connection.readTimeout = toMilliseconds(readTimeout)
         connection.useCaches = false
         connection.doInput = true
         return connection
@@ -141,11 +151,12 @@ class DefaultHttpNetwork(context: Context) : HttpNetwork {
      *
      * See https://developer.android.com/reference/java/net/HttpURLConnection#response-handling
      */
-    private fun inputStreamForConnectionRespectingContentEncoding(connection: HttpURLConnection): InputStream = try {
-        connection.inputStream
-    } catch (e: IOException) {
-        connection.errorStream
-    }
+    private fun inputStreamForConnectionRespectingContentEncoding(connection: HttpURLConnection): InputStream =
+        try {
+            connection.inputStream
+        } catch (e: IOException) {
+            connection.errorStream
+        }
 
     /**
      * Returns true if connection response is gzip-encoded.
@@ -154,12 +165,6 @@ class DefaultHttpNetwork(context: Context) : HttpNetwork {
         val contentEncoding = connection.headerFields[HttpHeaders.CONTENT_ENCODING]
         return contentEncoding != null && contentEncoding.contains("gzip")
     }
-
-    //endregion
-
-    //region Helpers
-
-    private val context get() = contextRef.get()!! // application context should live as long as application lives
 
     //endregion
 }

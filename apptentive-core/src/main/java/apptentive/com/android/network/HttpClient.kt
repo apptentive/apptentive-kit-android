@@ -101,7 +101,7 @@ class DefaultHttpClient(
      */
     private fun <T> getResponseSync(request: HttpRequest<T>): HttpResponse<T>? {
         // check network status
-        if (!network.isNetworkConnected) {
+        if (!network.isNetworkConnected()) {
             // should we retry?
             if (shouldRetry(request)) {
                 return null
@@ -148,7 +148,6 @@ class DefaultHttpClient(
      * @return true if [request] should be retried again
      */
     private fun <T> shouldRetry(request: HttpRequest<T>, statusCode: Int? = null): Boolean {
-        val retryPolicy = retryPolicyForRequest(request)
         return retryPolicy.shouldRetry(statusCode ?: UNDEFINED, request.numRetries)
     }
 
@@ -162,7 +161,6 @@ class DefaultHttpClient(
         request: HttpRequest<T>,
         callback: (Result<HttpResponse<T>>) -> Unit
     ) {
-        val retryPolicy = retryPolicyForRequest(request)
         val delay = retryPolicy.getRetryDelay(request.numRetries)
         networkQueue.execute(delay) {
             request.numRetries++
@@ -205,15 +203,6 @@ class DefaultHttpClient(
             Log.e(LogTags.network, "Exception while notifying request complete listener", e)
         }
     }
-
-    //endregion
-
-    //region Helpers
-
-    /**
-     * @return retry policy for the [request]
-     */
-    private fun retryPolicyForRequest(request: HttpRequest<*>) = request.retryPolicy ?: this.retryPolicy
 
     //endregion
 }

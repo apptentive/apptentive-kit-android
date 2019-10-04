@@ -16,8 +16,7 @@ inline fun <reified T> createHttpJsonRequest(
 ): HttpRequest<T> {
     val requestBody = if (requestObject != null) HttpJsonRequestBody(requestObject) else null
     val responseReader = createHttpJsonResponseReader<T>()
-    return HttpRequest.Builder<T>()
-        .url(url)
+    return HttpRequest.Builder<T>(url)
         .method(method, requestBody)
         .responseReader(responseReader)
         .tag(tag)

@@ -24,8 +24,7 @@ class HttpClientTest : TestCase() {
     /* Only POST and PUT requests can have bodies */
     @Test(expected = IllegalArgumentException::class)
     fun testGetRequestWithBody() {
-        HttpRequest.Builder<String>()
-            .url("https://example.com")
+        HttpRequest.Builder<String>("https://example.com")
             .method(HttpMethod.GET, FailureRequestBody)
             .responseReader(FailureResponseReader())
             .build()
@@ -35,8 +34,7 @@ class HttpClientTest : TestCase() {
     /* POST and PUT requests can have empty bodies (allowed but bad practice) */
     @Test
     fun testPostRequestWithoutBody() {
-        HttpRequest.Builder<String>()
-            .url("https://example.com")
+        HttpRequest.Builder<String>("https://example.com")
             .get()
             .responseReader(FailureResponseReader())
             .build()
@@ -348,14 +346,14 @@ class HttpClientTest : TestCase() {
      */
     private fun createHttpClient(
         networkConnected: Boolean = true,
-        retryPolicy: HttpRequestRetryPolicy? = null,
+        retryPolicy: HttpRequestRetryPolicy = HttpRequestNoRetryPolicy,
         listener: HttpClientListener? = null
     ): HttpClient {
         network.networkConnected = networkConnected
         return DefaultHttpClient(
             network = network,
             networkQueue = networkQueue,
-            retryPolicy = retryPolicy ?: HttpRequestNoRetryPolicy,
+            retryPolicy = retryPolicy,
             listener = listener,
             callbackExecutor = ImmediateExecutor
         )
