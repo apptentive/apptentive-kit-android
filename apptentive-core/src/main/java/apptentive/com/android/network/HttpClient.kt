@@ -107,7 +107,7 @@ class DefaultHttpClient(
                 return null
             }
 
-            throw NetworkUnavailableException("Network is not available")
+            throw NetworkUnavailableException()
         }
 
         // response body
