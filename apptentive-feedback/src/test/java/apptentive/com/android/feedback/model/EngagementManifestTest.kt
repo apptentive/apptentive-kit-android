@@ -13,7 +13,7 @@ class EngagementManifestTest : TestCase() {
         val manifest = JsonConverter.fromJson<EngagementManifest>(json)
         assertThat(manifest.interactions).isEqualTo(listOf(InteractionData(
                     id = "1234567890",
-                    displayType = null,
+                    display_type = "display_type",
                     type = "MyInteraction",
                     configuration = mapOf(
                         "string_key" to "value",

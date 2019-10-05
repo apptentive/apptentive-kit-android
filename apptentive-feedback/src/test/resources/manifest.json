@@ -2,7 +2,7 @@
   "interactions": [
     {
       "id": "1234567890",
-      "display_type": null,
+      "display_type": "display_type",
       "type": "MyInteraction",
       "version": 1,
       "configuration": {
