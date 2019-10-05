@@ -2,12 +2,12 @@ package apptentive.com.android.feedback
 
 import android.content.Context
 import androidx.annotation.WorkerThread
-import apptentive.com.android.concurrent.ExecutorQueue
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.DefaultConversationService
 import apptentive.com.android.feedback.conversation.ConversationManager
 import apptentive.com.android.feedback.conversation.DefaultConversationRepository
 import apptentive.com.android.feedback.conversation.DefaultConversationSerializer
+import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.platform.*
 import apptentive.com.android.network.HttpClient
 import apptentive.com.android.util.FileUtil
@@ -16,8 +16,7 @@ import java.io.File
 internal class ApptentiveDefaultClient(
     private val apptentiveKey: String,
     private val apptentiveSignature: String,
-    private val httpClient: HttpClient,
-    private val stateQueue: ExecutorQueue
+    private val httpClient: HttpClient
 ) : ApptentiveClient {
     private lateinit var conversationService: ConversationService
     private lateinit var conversationManager: ConversationManager
@@ -55,8 +54,8 @@ internal class ApptentiveDefaultClient(
         )
     }
 
-    override fun engage(context: Context, event: String) {
-        TODO("Implement me")
+    override fun engage(context: Context, event: Event): EngagementResult {
+        TODO()
     }
 
     companion object {
