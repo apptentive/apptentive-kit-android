@@ -1,4 +1,4 @@
-package apptentive.com.android.feedback.model.criteria
+package apptentive.com.android.feedback.engagement.criteria
 
 import kotlin.math.abs
 

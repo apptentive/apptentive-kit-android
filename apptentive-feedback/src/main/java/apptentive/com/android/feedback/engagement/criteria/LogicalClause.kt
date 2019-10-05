@@ -1,4 +1,4 @@
-package apptentive.com.android.feedback.model.criteria
+package apptentive.com.android.feedback.engagement.criteria
 
 abstract class LogicalClause(protected val children: List<Clause>) : Clause
 

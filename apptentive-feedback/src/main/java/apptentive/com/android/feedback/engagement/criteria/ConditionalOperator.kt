@@ -1,4 +1,4 @@
-package apptentive.com.android.feedback.model.criteria
+package apptentive.com.android.feedback.engagement.criteria
 
 interface ConditionalOperator {
     fun apply(first: Any?, second: Any?): Boolean

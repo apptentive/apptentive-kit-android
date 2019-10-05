@@ -1,4 +1,4 @@
-package apptentive.com.android.feedback.model.criteria
+package apptentive.com.android.feedback.engagement.criteria
 
 import apptentive.com.android.feedback.model.EngagementManifest
 import apptentive.com.android.feedback.test.TestCase

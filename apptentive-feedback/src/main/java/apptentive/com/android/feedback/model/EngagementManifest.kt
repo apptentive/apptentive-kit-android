@@ -1,7 +1,7 @@
 package apptentive.com.android.feedback.model
 
 import apptentive.com.android.core.TimeInterval
-import apptentive.com.android.feedback.model.interactions.InteractionData
+import apptentive.com.android.feedback.engagement.interactions.InteractionData
 
 data class EngagementManifest(
     val interactions: List<InteractionData> = listOf(),

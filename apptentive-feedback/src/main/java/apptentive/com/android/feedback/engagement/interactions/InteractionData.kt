@@ -1,4 +1,4 @@
-package apptentive.com.android.feedback.model.interactions
+package apptentive.com.android.feedback.engagement.interactions
 
 data class InteractionData(
     val id: String,

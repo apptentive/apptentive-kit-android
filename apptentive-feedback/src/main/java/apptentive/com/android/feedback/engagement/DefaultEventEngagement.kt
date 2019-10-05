@@ -1,7 +1,7 @@
 package apptentive.com.android.feedback.engagement
 
 import apptentive.com.android.feedback.EngagementResult
-import apptentive.com.android.feedback.model.interactions.InteractionFactory
+import apptentive.com.android.feedback.engagement.interactions.InteractionFactory
 
 @Suppress("FoldInitializerAndIfToElvis")
 class DefaultEventEngagement(

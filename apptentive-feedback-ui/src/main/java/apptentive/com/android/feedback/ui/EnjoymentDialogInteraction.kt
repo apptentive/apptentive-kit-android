@@ -1,6 +1,6 @@
 package apptentive.com.android.feedback.ui
 
-import apptentive.com.android.feedback.model.interactions.Interaction
+import apptentive.com.android.feedback.engagement.interactions.Interaction
 
 class EnjoymentDialogInteraction(
     val id: String,

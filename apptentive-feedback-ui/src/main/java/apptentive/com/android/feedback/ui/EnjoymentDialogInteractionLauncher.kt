@@ -1,7 +1,7 @@
 package apptentive.com.android.feedback.ui
 
 import android.content.Context
-import apptentive.com.android.feedback.model.interactions.InteractionLauncher
+import apptentive.com.android.feedback.engagement.interactions.InteractionLauncher
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class EnjoymentDialogInteractionLauncher(private val context: Context) :
