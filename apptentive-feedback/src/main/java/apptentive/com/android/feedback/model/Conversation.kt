@@ -1,10 +1,5 @@
 package apptentive.com.android.feedback.model
 
-import apptentive.com.android.serialization.Decoder
-import apptentive.com.android.serialization.Encoder
-import apptentive.com.android.serialization.decodeNullableString
-import apptentive.com.android.serialization.encodeNullableString
-
 data class Conversation(
     val localIdentifier: String,
     val conversationToken: String? = null,
