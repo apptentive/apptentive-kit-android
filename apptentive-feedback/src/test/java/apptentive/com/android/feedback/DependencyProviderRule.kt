@@ -38,6 +38,8 @@ private object NullPlatformLogger : PlatformLogger {
 
     override fun log(logLevel: LogLevel, throwable: Throwable) {
     }
+
+    override fun isMainQueue() = false
 }
 
 private object MockPlatformLogger : PlatformLogger {
@@ -48,4 +50,6 @@ private object MockPlatformLogger : PlatformLogger {
     override fun log(logLevel: LogLevel, throwable: Throwable) {
         throwable.printStackTrace()
     }
+
+    override fun isMainQueue() = false
 }

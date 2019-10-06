@@ -1,10 +1,13 @@
 package apptentive.com.android
 
 import apptentive.com.android.concurrent.ImmediateExecutorQueue
-import apptentive.com.android.core.*
+import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.core.ExecutorQueueFactory
+import apptentive.com.android.core.PlatformLogger
+import apptentive.com.android.core.Provider
 import apptentive.com.android.util.LogLevel
 import org.junit.After
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Before
 
 open class TestCase(
@@ -31,17 +34,20 @@ open class TestCase(
 
     //region Factory
 
-    private fun createExecutionQueueFactoryProvider(): Provider<ExecutorQueueFactory> = object : Provider<ExecutorQueueFactory> {
-        override fun get(): ExecutorQueueFactory {
-            return MockExecutorQueueFactory(false)
+    private fun createExecutionQueueFactoryProvider(): Provider<ExecutorQueueFactory> =
+        object : Provider<ExecutorQueueFactory> {
+            override fun get(): ExecutorQueueFactory {
+                return MockExecutorQueueFactory(false)
+            }
+
         }
 
-    }
-    private fun createPlatformLoggerProvider(): Provider<PlatformLogger> = object : Provider<PlatformLogger> {
-        override fun get(): PlatformLogger {
-            return MockPlatformLogger(logMessages, logStackTraces)
+    private fun createPlatformLoggerProvider(): Provider<PlatformLogger> =
+        object : Provider<PlatformLogger> {
+            override fun get(): PlatformLogger {
+                return MockPlatformLogger(logMessages, logStackTraces)
+            }
         }
-    }
 
     //endregion
 
@@ -64,7 +70,9 @@ open class TestCase(
 private class MockExecutorQueueFactory(val poseAsMainQueue: Boolean) : ExecutorQueueFactory {
     override fun createMainQueue() = ImmediateExecutorQueue("main")
     override fun createSerialQueue(name: String) = ImmediateExecutorQueue(name)
-    override fun createConcurrentQueue(name: String, maxConcurrentTasks: Int) = ImmediateExecutorQueue(name)
+    override fun createConcurrentQueue(name: String, maxConcurrentTasks: Int) =
+        ImmediateExecutorQueue(name)
+
     override fun isMainQueue() = poseAsMainQueue
 }
 
@@ -83,4 +91,6 @@ private class MockPlatformLogger(
             throwable.printStackTrace()
         }
     }
+
+    override fun isMainQueue(): Boolean = false
 }

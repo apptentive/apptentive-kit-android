@@ -1,8 +1,7 @@
 package apptentive.com.android.util
 
-import apptentive.com.android.concurrent.ExecutorQueue
-import apptentive.com.android.core.PlatformLogger
 import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.core.PlatformLogger
 
 enum class LogLevel {
     Verbose,
@@ -26,7 +25,7 @@ object Log {
         val buffer = StringBuilder()
 
         // thread name
-        if (!ExecutorQueue.isMainQueue) {
+        if (!logger.isMainQueue()) {
             buffer.append('[')
             buffer.append(Thread.currentThread().name)
             buffer.append(']')
