@@ -7,7 +7,11 @@ import apptentive.com.android.feedback.backend.DefaultConversationService
 import apptentive.com.android.feedback.conversation.ConversationManager
 import apptentive.com.android.feedback.conversation.DefaultConversationRepository
 import apptentive.com.android.feedback.conversation.DefaultConversationSerializer
+import apptentive.com.android.feedback.engagement.DefaultEventEngagement
 import apptentive.com.android.feedback.engagement.Event
+import apptentive.com.android.feedback.engagement.InteractionEngagement
+import apptentive.com.android.feedback.engagement.InteractionResolver
+import apptentive.com.android.feedback.engagement.interactions.*
 import apptentive.com.android.feedback.platform.*
 import apptentive.com.android.network.HttpClient
 import apptentive.com.android.util.FileUtil
@@ -21,6 +25,8 @@ internal class ApptentiveDefaultClient(
     private lateinit var conversationService: ConversationService
     private lateinit var conversationManager: ConversationManager
 
+    //region Initialization
+
     @WorkerThread
     internal fun start(context: Context) {
         conversationService = DefaultConversationService(
@@ -31,7 +37,6 @@ internal class ApptentiveDefaultClient(
             sdkVersion = Constants.SDK_VERSION,
             baseURL = Constants.SERVER_URL
         )
-
         val conversationFile = getConversationFile(context) // FIXME: remove android specific api
         val manifestFile = getManifestFile(context)
         conversationManager = ConversationManager(
@@ -54,9 +59,59 @@ internal class ApptentiveDefaultClient(
         )
     }
 
+    //endregion
+
+    //region Engagement
+
     override fun engage(context: Context, event: Event): EngagementResult {
-        TODO()
+        val engagement = DefaultEventEngagement(
+            interactionResolver = FakeInteractionResolver,
+            interactionFactory = fakeInteractionFactory,
+            interactionEngagement = createInteractionEngagement(context),
+            recordEvent = ::recordEvent,
+            recordInteraction = ::recordInteraction
+        )
+        return engagement.engage(event)
     }
+
+    // FIXME: temporary code
+    private val enjoymentDialogProvider: InteractionProvider<Interaction> by lazy {
+        val providerClass =
+            Class.forName("apptentive.com.android.feedback.ui.EnjoymentDialogProvider")
+        providerClass.newInstance() as InteractionProvider<Interaction>
+    }
+
+    // FIXME: temporary code
+    private val fakeInteractionFactory: InteractionFactory by lazy {
+        DefaultInteractionFactory(
+            lookup = mapOf(
+                "EnjoymentDialog" to enjoymentDialogProvider.provideConverter()
+            )
+        )
+    }
+
+    // FIXME: temporary code
+    private fun createInteractionEngagement(context: Context): InteractionEngagement {
+        return object : InteractionEngagement {
+            override fun engage(interaction: Interaction): EngagementResult {
+                val launcher = enjoymentDialogProvider.provideLauncher(context)
+                launcher.launchInteraction(interaction)
+                return EngagementResult.Success
+            }
+        }
+    }
+
+    // FIXME: temporary code
+    private fun recordEvent(event: Event) {
+        conversationManager.recordEvent(event)
+    }
+
+    // FIXME: temporary code
+    private fun recordInteraction(interaction: Interaction) {
+        conversationManager.recordInteraction(interaction.id)
+    }
+
+    //endregion
 
     companion object {
         fun getConversationFile(context: Context): File {
@@ -75,6 +130,25 @@ internal class ApptentiveDefaultClient(
                 path = "conversations",
                 createIfNecessary = true
             )
+        }
+    }
+}
+
+// FIXME: temporary code
+private object FakeInteractionResolver : InteractionResolver {
+    override fun getInteraction(event: Event): InteractionData? {
+        return if (event.name == "enjoyment_dialog") {
+            InteractionData(
+                id = "id",
+                type = "EnjoymentDialog",
+                configuration = mapOf(
+                    "title" to "Do you love New SDK?",
+                    "yes_text" to "Yes",
+                    "no_text" to "No"
+                )
+            )
+        } else {
+            null
         }
     }
 }
