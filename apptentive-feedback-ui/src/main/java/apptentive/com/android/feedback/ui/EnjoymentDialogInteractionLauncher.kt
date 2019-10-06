@@ -4,7 +4,7 @@ import android.content.Context
 import apptentive.com.android.feedback.engagement.interactions.InteractionLauncher
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
-class EnjoymentDialogInteractionLauncher(private val context: Context) :
+internal class EnjoymentDialogInteractionLauncher(private val context: Context) :
     InteractionLauncher<EnjoymentDialogInteraction> {
     override fun launchInteraction(interaction: EnjoymentDialogInteraction) {
         MaterialAlertDialogBuilder(context).apply {

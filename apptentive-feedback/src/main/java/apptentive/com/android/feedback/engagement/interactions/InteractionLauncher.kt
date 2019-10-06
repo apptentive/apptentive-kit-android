@@ -1,5 +1,5 @@
 package apptentive.com.android.feedback.engagement.interactions
 
-interface InteractionLauncher<T : Interaction> {
+interface InteractionLauncher<in T : Interaction> {
     fun launchInteraction(interaction: T)
 }
