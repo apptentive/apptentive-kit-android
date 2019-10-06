@@ -4,6 +4,7 @@ import apptentive.com.android.feedback.model.Device
 import apptentive.com.android.feedback.model.IntegrationConfig
 import apptentive.com.android.util.generateUUID
 
+// TODO: exclude this class from ProGuard
 class DevicePayload(
     nonce: String,
     val uuid: String,
