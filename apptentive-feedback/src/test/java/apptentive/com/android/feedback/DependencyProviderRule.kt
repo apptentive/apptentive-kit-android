@@ -8,9 +8,9 @@ import apptentive.com.android.util.LogLevel
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 
-class DependencyProviderRule : TestWatcher() {
+class DependencyProviderRule(private val enableConsoleOutput: Boolean = false) : TestWatcher() {
     override fun starting(description: Description?) {
-        DependencyProvider.register(createPlatformLogger())
+        DependencyProvider.register(createPlatformLogger(enableConsoleOutput))
         DependencyProvider.register(createExecutionQueueFactory())
     }
 
@@ -20,7 +20,8 @@ class DependencyProviderRule : TestWatcher() {
 }
 
 private fun createExecutionQueueFactory(): ExecutorQueueFactory = MockExecutorQueueFactory(false)
-private fun createPlatformLogger(): PlatformLogger = MockPlatformLogger()
+private fun createPlatformLogger(enableOutput: Boolean) =
+    if (enableOutput) MockPlatformLogger else NullPlatformLogger
 
 private class MockExecutorQueueFactory(val poseAsMainQueue: Boolean) : ExecutorQueueFactory {
     override fun createMainQueue() = ImmediateExecutorQueue("main")
@@ -31,10 +32,17 @@ private class MockExecutorQueueFactory(val poseAsMainQueue: Boolean) : ExecutorQ
     override fun isMainQueue() = poseAsMainQueue
 }
 
-private class MockPlatformLogger(
-) : PlatformLogger {
+private object NullPlatformLogger : PlatformLogger {
     override fun log(logLevel: LogLevel, message: String) {
-        print(message)
+    }
+
+    override fun log(logLevel: LogLevel, throwable: Throwable) {
+    }
+}
+
+private object MockPlatformLogger : PlatformLogger {
+    override fun log(logLevel: LogLevel, message: String) {
+        println(message)
     }
 
     override fun log(logLevel: LogLevel, throwable: Throwable) {
