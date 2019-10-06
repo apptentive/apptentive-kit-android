@@ -1,12 +1,12 @@
 package apptentive.com.android.feedback.ui
 
 import android.content.Context
-import apptentive.com.android.feedback.engagement.interactions.InteractionLauncher
+import apptentive.com.android.feedback.engagement.interactions.AbstractInteractionLauncher
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class EnjoymentDialogInteractionLauncher(private val context: Context) :
-    InteractionLauncher<EnjoymentDialogInteraction> {
-    override fun launchInteraction(interaction: EnjoymentDialogInteraction) {
+    AbstractInteractionLauncher<EnjoymentDialogInteraction>() {
+    override fun launch(interaction: EnjoymentDialogInteraction) {
         MaterialAlertDialogBuilder(context).apply {
             setTitle(interaction.title)
             setPositiveButton(interaction.yesText) { _, _ ->

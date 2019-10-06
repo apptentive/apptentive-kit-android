@@ -15,7 +15,9 @@ import apptentive.com.android.util.Log
 
 sealed class EngagementResult {
     object Success : EngagementResult()
-    data class Failure(val reason: String) : EngagementResult()
+    data class Failure(val description: String) : EngagementResult()
+    data class Error(val message: String) : EngagementResult()
+    data class Exception(val error: kotlin.Exception) : EngagementResult()
 }
 
 object Apptentive {
@@ -58,7 +60,11 @@ object Apptentive {
         }
     }
 
-    fun engage(context: Context, eventName: String, callback: ((EngagementResult) -> Unit)? = null) {
+    fun engage(
+        context: Context,
+        eventName: String,
+        callback: ((EngagementResult) -> Unit)? = null
+    ) {
         // user callback should be executed on the main thread
         val callbackWrapper: ((EngagementResult) -> Unit)? = if (callback != null) {
             {
@@ -75,7 +81,12 @@ object Apptentive {
                 val result = client.engage(context, event)
                 callbackWrapper?.invoke(result)
             } catch (e: Exception) {
-                callbackWrapper?.invoke(EngagementResult.Failure("Exception while engaging '$eventName' event: ${e.message}"))
+                callbackWrapper?.invoke(
+                    EngagementResult.Exception(
+                        error = e,
+                        message = "Exception while engaging '$eventName' event: ${e.message}. Please, notify developer."
+                    )
+                )
             }
         }
     }
