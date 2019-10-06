@@ -81,12 +81,7 @@ object Apptentive {
                 val result = client.engage(context, event)
                 callbackWrapper?.invoke(result)
             } catch (e: Exception) {
-                callbackWrapper?.invoke(
-                    EngagementResult.Exception(
-                        error = e,
-                        message = "Exception while engaging '$eventName' event: ${e.message}. Please, notify developer."
-                    )
-                )
+                callbackWrapper?.invoke(EngagementResult.Exception(error = e))
             }
         }
     }
