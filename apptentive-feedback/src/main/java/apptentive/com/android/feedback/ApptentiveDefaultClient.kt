@@ -7,10 +7,7 @@ import apptentive.com.android.feedback.backend.DefaultConversationService
 import apptentive.com.android.feedback.conversation.ConversationManager
 import apptentive.com.android.feedback.conversation.DefaultConversationRepository
 import apptentive.com.android.feedback.conversation.DefaultConversationSerializer
-import apptentive.com.android.feedback.engagement.DefaultEventEngagement
-import apptentive.com.android.feedback.engagement.Event
-import apptentive.com.android.feedback.engagement.InteractionEngagement
-import apptentive.com.android.feedback.engagement.InteractionResolver
+import apptentive.com.android.feedback.engagement.*
 import apptentive.com.android.feedback.engagement.interactions.*
 import apptentive.com.android.feedback.platform.*
 import apptentive.com.android.network.HttpClient
@@ -67,15 +64,15 @@ internal class ApptentiveDefaultClient(
         val engagement = DefaultEventEngagement(
             interactionResolver = FakeInteractionResolver,
             interactionFactory = fakeInteractionFactory,
-            interactionEngagement = createInteractionEngagement(context),
+            interactionEngagement = fakeInteractionEngagement,
             recordEvent = ::recordEvent,
             recordInteraction = ::recordInteraction
         )
-        return engagement.engage(event)
+        return engagement.engage(context, event)
     }
 
     // FIXME: temporary code
-    private val enjoymentDialogProvider: InteractionProvider<Interaction> by lazy {
+    private val enjoymentDialog: InteractionProvider<Interaction> by lazy {
         val providerClass =
             Class.forName("apptentive.com.android.feedback.ui.EnjoymentDialogProvider")
         providerClass.newInstance() as InteractionProvider<Interaction>
@@ -85,20 +82,17 @@ internal class ApptentiveDefaultClient(
     private val fakeInteractionFactory: InteractionFactory by lazy {
         DefaultInteractionFactory(
             lookup = mapOf(
-                "EnjoymentDialog" to enjoymentDialogProvider.provideConverter()
+                "EnjoymentDialog" to enjoymentDialog.interactionConverter
             )
         )
     }
 
-    // FIXME: temporary code
-    private fun createInteractionEngagement(context: Context): InteractionEngagement {
-        return object : InteractionEngagement {
-            override fun engage(interaction: Interaction): EngagementResult {
-                val launcher = enjoymentDialogProvider.provideLauncher(context)
-                launcher.launchInteraction(interaction)
-                return EngagementResult.Success
-            }
-        }
+    private val fakeInteractionEngagement: InteractionEngagement by lazy {
+        DefaultInteractionEngagement(
+            lookup = mapOf(
+                enjoymentDialog.interactionClass to enjoymentDialog.interactionLauncher
+            )
+        )
     }
 
     // FIXME: temporary code

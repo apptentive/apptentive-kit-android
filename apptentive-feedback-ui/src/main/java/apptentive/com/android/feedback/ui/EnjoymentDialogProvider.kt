@@ -1,15 +1,10 @@
 package apptentive.com.android.feedback.ui
 
-import android.content.Context
-import apptentive.com.android.feedback.engagement.interactions.InteractionConverter
 import apptentive.com.android.feedback.engagement.interactions.InteractionProvider
 
+// TODO: exclude this class from ProGuard
 internal class EnjoymentDialogProvider : InteractionProvider<EnjoymentDialogInteraction> {
-    private val converter: InteractionConverter<EnjoymentDialogInteraction> by lazy {
-        EnjoymentDialogInteractionConverter()
-    }
-
-    override fun provideConverter() = converter
-
-    override fun provideLauncher(context: Context) = EnjoymentDialogInteractionLauncher(context)
+    override val interactionClass = EnjoymentDialogInteraction::class.java
+    override val interactionConverter get() = EnjoymentDialogInteractionConverter()
+    override val interactionLauncher get() = EnjoymentDialogInteractionLauncher()
 }
