@@ -72,17 +72,17 @@ internal class ApptentiveDefaultClient(
     }
 
     // FIXME: temporary code
-    private val enjoymentDialog: InteractionProvider<Interaction> by lazy {
+    private val enjoymentDialog: InteractionModule<Interaction> by lazy {
         val providerClass =
-            Class.forName("apptentive.com.android.feedback.ui.EnjoymentDialogProvider")
-        providerClass.newInstance() as InteractionProvider<Interaction>
+            Class.forName("apptentive.com.android.feedback.ui.EnjoymentDialogModule")
+        providerClass.newInstance() as InteractionModule<Interaction>
     }
 
     // FIXME: temporary code
     private val fakeInteractionFactory: InteractionFactory by lazy {
         DefaultInteractionFactory(
             lookup = mapOf(
-                "EnjoymentDialog" to enjoymentDialog.interactionConverter
+                "EnjoymentDialog" to enjoymentDialog.provideInteractionConverter()
             )
         )
     }
@@ -90,7 +90,7 @@ internal class ApptentiveDefaultClient(
     private val fakeInteractionEngagement: InteractionEngagement by lazy {
         DefaultInteractionEngagement(
             lookup = mapOf(
-                enjoymentDialog.interactionClass to enjoymentDialog.interactionLauncher
+                enjoymentDialog.interactionClass to enjoymentDialog.provideInteractionLauncher()
             )
         )
     }
