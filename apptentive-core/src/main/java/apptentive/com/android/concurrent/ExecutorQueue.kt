@@ -18,7 +18,6 @@ abstract class ExecutorQueue(val name: String) : Executor {
     companion object {
         private val queueFactory get() = DependencyProvider.of<ExecutorQueueFactory>()
         val mainQueue: ExecutorQueue = queueFactory.createMainQueue()
-        val isMainQueue = queueFactory.isMainQueue()
 
         fun createSerialQueue(name: String) = queueFactory.createSerialQueue(name)
         fun createConcurrentQueue(name: String, maxConcurrentTasks: Int = UNDEFINED) =

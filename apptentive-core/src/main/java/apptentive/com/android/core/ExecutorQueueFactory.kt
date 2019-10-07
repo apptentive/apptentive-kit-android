@@ -9,7 +9,6 @@ interface ExecutorQueueFactory {
     fun createMainQueue(): ExecutorQueue
     fun createSerialQueue(name: String): ExecutorQueue
     fun createConcurrentQueue(name: String, maxConcurrentTasks: Int): ExecutorQueue
-    fun isMainQueue(): Boolean
 }
 
 class DefaultExecutorQueueFactoryProvider : Provider<ExecutorQueueFactory> {
@@ -31,9 +30,5 @@ private class DefaultExecutorQueueFactory : ExecutorQueueFactory {
             return ConcurrentExecutorQueue(name) // let the implementation decide
         }
         return ConcurrentExecutorQueue(name, maxConcurrentTasks)
-    }
-
-    override fun isMainQueue(): Boolean {
-        return Looper.getMainLooper() == Looper.myLooper()
     }
 }
