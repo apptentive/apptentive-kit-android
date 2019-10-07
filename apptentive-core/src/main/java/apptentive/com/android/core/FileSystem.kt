@@ -11,17 +11,22 @@ interface FileSystem {
     fun getInternalDir(path: String, createIfNecessary: Boolean = false): File
 }
 
-class AndroidFileSystemProvider(context: Context) : Provider<FileSystem> {
-    private val context = context.applicationContext
+class AndroidFileSystemProvider(context: Context, private val domain: String) :
+    Provider<FileSystem> {
+    private val applicationContext = context.applicationContext
 
     override fun get(): FileSystem {
-        return AndroidFileSystem(context)
+        return AndroidFileSystem(applicationContext, domain)
     }
 }
 
-private class AndroidFileSystem(private val context: Context) : FileSystem {
+private class AndroidFileSystem(
+    private val applicationContext: Context,
+    private val domain: String
+) :
+    FileSystem {
     override fun getInternalDir(path: String, createIfNecessary: Boolean): File {
-        val internalDir = File(context.filesDir, path)
+        val internalDir = File(applicationContext.filesDir, "$domain/$path")
         if (!internalDir.exists() && createIfNecessary) {
             val succeed = internalDir.mkdirs()
             if (!succeed) {

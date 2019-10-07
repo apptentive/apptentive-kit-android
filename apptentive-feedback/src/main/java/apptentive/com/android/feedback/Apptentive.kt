@@ -39,7 +39,7 @@ object Apptentive {
         // register dependency providers
         DependencyProvider.register(DefaultLoggerProvider("Apptentive"))
         DependencyProvider.register(DefaultExecutorQueueFactoryProvider())
-        DependencyProvider.register(AndroidFileSystemProvider(application.applicationContext))
+        DependencyProvider.register(AndroidFileSystemProvider(application.applicationContext, "apptentive.com.android.feedback"))
 
         stateExecutor = ExecutorQueue.createSerialQueue("Apptentive")
         mainExecutor = ExecutorQueue.mainQueue
