@@ -1,19 +1,18 @@
 package apptentive.com.android.feedback.engagement
 
-import android.content.Context
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionFactory
 
 @Suppress("FoldInitializerAndIfToElvis")
-class DefaultEventEngagement(
+data class DefaultEventEngagement(
     private val interactionResolver: InteractionResolver,
     private val interactionFactory: InteractionFactory,
     private val interactionEngagement: InteractionEngagement,
     private val recordEvent: (Event) -> Unit = {},
     private val recordInteraction: (Interaction) -> Unit = {}
 ) : EventEngagement {
-    override fun engage(context: Context, event: Event): EngagementResult {
+    override fun engage(event: Event): EngagementResult {
         recordEvent(event)
 
         val interactionData = interactionResolver.getInteraction(event)
@@ -26,7 +25,7 @@ class DefaultEventEngagement(
             return EngagementResult.Error("Unknown interaction type '${interactionData.type}' for event '${event.name}'") // TODO: more description error message
         }
 
-        val result = interactionEngagement.engage(context, interaction)
+        val result = interactionEngagement.engage(interaction)
         if (result is EngagementResult.Success) {
             recordInteraction(interaction)
         }
