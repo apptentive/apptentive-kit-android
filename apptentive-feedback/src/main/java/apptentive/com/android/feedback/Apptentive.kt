@@ -12,6 +12,7 @@ import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.network.DefaultHttpClient
 import apptentive.com.android.network.DefaultHttpNetwork
 import apptentive.com.android.network.DefaultHttpRequestRetryPolicy
+import apptentive.com.android.network.HttpClient
 import apptentive.com.android.util.Log
 
 // TODO: better names for specific cases
@@ -48,12 +49,10 @@ object Apptentive {
         mainExecutor = ExecutorQueue.mainQueue
 
         // TODO: build a better dependency injection solution and lift all the dependencies up
-        val httpClient = createHttpClient(application.applicationContext)
-
         client = ApptentiveDefaultClient(
             apptentiveKey = configuration.apptentiveKey,
             apptentiveSignature = configuration.apptentiveSignature,
-            httpClient = httpClient
+            httpClient = createHttpClient(application.applicationContext)
         ).apply {
             stateExecutor.execute {
                 start(application.applicationContext)
@@ -61,7 +60,7 @@ object Apptentive {
         }
     }
 
-    private fun createHttpClient(context: Context): DefaultHttpClient {
+    private fun createHttpClient(context: Context): HttpClient {
         return DefaultHttpClient(
             network = DefaultHttpNetwork(context),
             networkQueue = ExecutorQueue.createConcurrentQueue("Network"),

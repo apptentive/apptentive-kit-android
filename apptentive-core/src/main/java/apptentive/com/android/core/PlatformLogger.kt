@@ -13,6 +13,7 @@ interface PlatformLogger {
     fun isMainQueue(): Boolean
 }
 
+// TODO: rename to AndroidLoggerProvider
 class DefaultLoggerProvider(tag: String) : Provider<PlatformLogger> {
     private val logger by lazy { DefaultPlatformLogger(tag) }
 
