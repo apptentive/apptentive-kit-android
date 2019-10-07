@@ -4,9 +4,7 @@ import android.content.Context
 import androidx.annotation.WorkerThread
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.DefaultConversationService
-import apptentive.com.android.feedback.conversation.ConversationManager
-import apptentive.com.android.feedback.conversation.DefaultConversationRepository
-import apptentive.com.android.feedback.conversation.DefaultConversationSerializer
+import apptentive.com.android.feedback.conversation.*
 import apptentive.com.android.feedback.engagement.*
 import apptentive.com.android.feedback.engagement.interactions.*
 import apptentive.com.android.feedback.platform.*
@@ -26,35 +24,47 @@ internal class ApptentiveDefaultClient(
 
     @WorkerThread
     internal fun start(context: Context) {
-        conversationService = DefaultConversationService(
-            httpClient = httpClient,
-            apptentiveKey = apptentiveKey,
-            apptentiveSignature = apptentiveSignature,
-            apiVersion = Constants.API_VERSION,
-            sdkVersion = Constants.SDK_VERSION,
-            baseURL = Constants.SERVER_URL
-        )
-        val conversationFile = getConversationFile(context) // FIXME: remove android specific api
-        val manifestFile = getManifestFile(context)
-        conversationManager = ConversationManager(
-            conversationRepository = DefaultConversationRepository(
-                conversationSerializer = DefaultConversationSerializer(
-                    conversationFile = conversationFile,
-                    manifestFile = manifestFile
-                ),
-                appReleaseFactory = DefaultAppReleaseFactory(context),
-                personFactory = DefaultPersonFactory(),
-                deviceFactory = DefaultDeviceFactory(context),
-                sdkFactory = DefaultSDKFactory(
-                    version = Constants.SDK_VERSION,
-                    distribution = "Default",
-                    distributionVersion = Constants.SDK_VERSION
-                ),
-                manifestFactory = DefaultEngagementManifestFactory()
-            ),
+        conversationService = createConversationService()
+        conversationManager = createConversationManager(context) // TODO: get rid of Context
+    }
+
+    private fun createConversationManager(context: Context): ConversationManager {
+        return ConversationManager(
+            conversationRepository = createConversationRepository(context),
             conversationService = conversationService
         )
     }
+
+    private fun createConversationRepository(context: Context): ConversationRepository {
+        return DefaultConversationRepository(
+            conversationSerializer = createConversationSerializer(),
+            appReleaseFactory = DefaultAppReleaseFactory(context),
+            personFactory = DefaultPersonFactory(),
+            deviceFactory = DefaultDeviceFactory(context),
+            sdkFactory = DefaultSDKFactory(
+                version = Constants.SDK_VERSION,
+                distribution = "Default",
+                distributionVersion = Constants.SDK_VERSION
+            ),
+            manifestFactory = DefaultEngagementManifestFactory()
+        )
+    }
+
+    private fun createConversationSerializer(): ConversationSerializer {
+        return DefaultConversationSerializer(
+            conversationFile = getConversationFile(),
+            manifestFile = getManifestFile()
+        )
+    }
+
+    private fun createConversationService(): ConversationService = DefaultConversationService(
+        httpClient = httpClient,
+        apptentiveKey = apptentiveKey,
+        apptentiveSignature = apptentiveSignature,
+        apiVersion = Constants.API_VERSION,
+        sdkVersion = Constants.SDK_VERSION,
+        baseURL = Constants.SERVER_URL
+    )
 
     //endregion
 
@@ -110,22 +120,18 @@ internal class ApptentiveDefaultClient(
     //endregion
 
     companion object {
-        fun getConversationFile(context: Context): File {
-            val conversationsDir = getConversationDir(context)
+        fun getConversationFile(): File {
+            val conversationsDir = getConversationDir()
             return File(conversationsDir, "conversation.bin")
         }
 
-        fun getManifestFile(context: Context): File {
-            val conversationsDir = getConversationDir(context)
+        fun getManifestFile(): File {
+            val conversationsDir = getConversationDir()
             return File(conversationsDir, "manifest.bin")
         }
 
-        private fun getConversationDir(context: Context): File {
-            return FileUtil.getInternalDir(
-                context = context,
-                path = "conversations",
-                createIfNecessary = true
-            )
+        private fun getConversationDir(): File {
+            return FileUtil.getInternalDir("conversations", createIfNecessary = true)
         }
     }
 }

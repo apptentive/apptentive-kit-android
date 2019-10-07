@@ -5,6 +5,7 @@ import android.content.Context
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.concurrent.ExecutorQueue
 import apptentive.com.android.core.DefaultExecutorQueueFactoryProvider
+import apptentive.com.android.core.AndroidPlatformUtilsProvider
 import apptentive.com.android.core.DefaultLoggerProvider
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.engagement.Event
@@ -38,6 +39,7 @@ object Apptentive {
         // register dependency providers
         DependencyProvider.register(DefaultLoggerProvider("Apptentive"))
         DependencyProvider.register(DefaultExecutorQueueFactoryProvider())
+        DependencyProvider.register(AndroidPlatformUtilsProvider(application.applicationContext))
 
         stateExecutor = ExecutorQueue.createSerialQueue("Apptentive")
         mainExecutor = ExecutorQueue.mainQueue
