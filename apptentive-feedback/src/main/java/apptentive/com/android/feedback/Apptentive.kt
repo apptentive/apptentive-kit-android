@@ -4,8 +4,8 @@ import android.app.Application
 import android.content.Context
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.concurrent.ExecutorQueue
+import apptentive.com.android.core.AndroidFileSystemProvider
 import apptentive.com.android.core.DefaultExecutorQueueFactoryProvider
-import apptentive.com.android.core.AndroidPlatformUtilsProvider
 import apptentive.com.android.core.DefaultLoggerProvider
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.engagement.Event
@@ -39,7 +39,7 @@ object Apptentive {
         // register dependency providers
         DependencyProvider.register(DefaultLoggerProvider("Apptentive"))
         DependencyProvider.register(DefaultExecutorQueueFactoryProvider())
-        DependencyProvider.register(AndroidPlatformUtilsProvider(application.applicationContext))
+        DependencyProvider.register(AndroidFileSystemProvider(application.applicationContext))
 
         stateExecutor = ExecutorQueue.createSerialQueue("Apptentive")
         mainExecutor = ExecutorQueue.mainQueue
@@ -63,7 +63,8 @@ object Apptentive {
         }
     }
 
-    fun engage(context: Context, eventName: String, callback: ((EngagementResult) -> Unit)? = null
+    fun engage(
+        context: Context, eventName: String, callback: ((EngagementResult) -> Unit)? = null
     ) {
         // user callback should be executed on the main thread
         val callbackWrapper: ((EngagementResult) -> Unit)? = if (callback != null) {
