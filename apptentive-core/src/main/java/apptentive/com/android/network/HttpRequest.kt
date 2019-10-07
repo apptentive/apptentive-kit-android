@@ -1,8 +1,5 @@
 package apptentive.com.android.network
 
-import apptentive.com.android.core.TimeInterval
-import apptentive.com.android.network.Constants.DEFAULT_REQUEST_TIMEOUT
-import java.io.InputStream
 import java.net.URL
 
 /**
@@ -10,24 +7,21 @@ import java.net.URL
  *
  * @param method HTTP-request method.
  * @param url URL
- * @param responseReader deserializer responsible for converting raw response stream to a typed response object.
- * @param requestBody optional request body.
  * @param headers HTTP-request headers
- * @param timeout request timeout.
+ * @param requestBody optional request body.
+ * @param responseReader deserializer responsible for converting raw response stream to a typed response object.
  * @param tag optional tag for request identification.
- * @param retryPolicy optional retry policy for the request.
  * @param userData optional user data associated with the request.
  */
 class HttpRequest<T> private constructor(
     val method: HttpMethod,
     val url: URL,
-    private val responseReader: HttpResponseReader<T>,
-    val requestBody: HttpRequestBody?,
     val headers: HttpHeaders,
-    val timeout: TimeInterval,
-    val tag: String?,
-    internal val retryPolicy: HttpRequestRetryPolicy?,
-    val userData: Any?
+    val requestBody: HttpRequestBody?,
+    val responseReader: HttpResponseReader<T>,
+    val tag: String? = null,
+    val userData: Any? = null
+
 ) {
     /**
      * Number of retries for this request.
@@ -51,29 +45,15 @@ class HttpRequest<T> private constructor(
     /**
      * Builder class for creating [HttpRequest] instances.
      */
-    class Builder<T> {
+    data class Builder<T>(val url: URL) {
         private val headers = MutableHttpHeaders()
-        private lateinit var requestUrl: URL
         private lateinit var reader: HttpResponseReader<T>
         private var method = HttpMethod.GET
         private var requestBody: HttpRequestBody? = null
-        private var retryPolicy: HttpRequestRetryPolicy? = null
         private var tag: String? = null
         private var userData: Any? = null
-        private var timeout = DEFAULT_REQUEST_TIMEOUT
 
-        //region URL
-
-        /** Sets request URL */
-        fun url(url: String) = url(URL(url))
-
-        /** Sets request URL */
-        fun url(url: URL): Builder<T> {
-            this.requestUrl = url
-            return this
-        }
-
-        //endregion
+        constructor(url: String) : this(URL(url))
 
         //region Method
 
@@ -156,16 +136,6 @@ class HttpRequest<T> private constructor(
 
         //endregion
 
-        //region Retry Policy
-
-        /** Sets an optional retry policy */
-        fun retryWith(policy: HttpRequestRetryPolicy?): Builder<T> {
-            this.retryPolicy = policy
-            return this
-        }
-
-        //endregion
-
         //region Tag
 
         /** Sets an optional request tag */
@@ -190,22 +160,17 @@ class HttpRequest<T> private constructor(
 
         /** Creates an HTTP-request instance */
         fun build(): HttpRequest<T> {
-            if (!this::requestUrl.isInitialized) {
-                throw IllegalStateException("Builder is missing a url")
-            }
             if (!this::reader.isInitialized) {
                 throw IllegalStateException("Builder is missing a response reader")
             }
 
             return HttpRequest(
                 method = method,
-                url = requestUrl,
+                url = url,
                 responseReader = reader,
                 requestBody = requestBody,
                 headers = headers,
-                timeout = timeout,
                 tag = tag,
-                retryPolicy = retryPolicy,
                 userData = userData
             )
         }

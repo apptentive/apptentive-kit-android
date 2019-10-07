@@ -12,7 +12,7 @@ import java.io.OutputStream
 internal fun createMockHttpRequest(
     tag: String? = null,
     method: HttpMethod = HttpMethod.GET,
-    url: String? = null,
+    url: String = "https://example.com",
     statusCode: Int = 200,
     response: String? = null,
     responseHeaders: HttpHeaders? = null,
@@ -66,7 +66,7 @@ internal fun createMockHttpRequest(
     responses: Array<HttpNetworkResponse>,
     tag: String? = null,
     method: HttpMethod = HttpMethod.GET,
-    url: String? = null,
+    url: String = "https://example.com",
     requestBody: HttpRequestBody? = null,
     retryPolicy: HttpRequestRetryPolicy? = null
 ): HttpRequest<String> {
@@ -84,8 +84,7 @@ internal fun createMockHttpRequest(
         tag = tag,
         method = method,
         url = url,
-        requestBody = requestBody,
-        retryPolicy = retryPolicy
+        requestBody = requestBody
     )
 }
 
@@ -96,7 +95,7 @@ internal fun <T> createMockHttpRequest(
     responseReader: HttpResponseReader<T>,
     tag: String? = null,
     method: HttpMethod = HttpMethod.GET,
-    url: String? = null,
+    url: String = "https://example.com",
     statusCode: Int = 200,
     content: ByteArray? = null,
     requestBody: HttpRequestBody? = null,
@@ -111,11 +110,10 @@ internal fun <T> createMockHttpRequest(
     return createMockHttpRequest(
         responses = arrayOf(response),
         responseReader = responseReader,
-        requestBody = requestBody,
-        url = url,
+        tag = tag,
         method = method,
-        retryPolicy = retryPolicy,
-        tag = tag
+        url = url,
+        requestBody = requestBody
     )
 }
 
@@ -127,16 +125,13 @@ internal fun <T> createMockHttpRequest(
     responseReader: HttpResponseReader<T>,
     tag: String? = null,
     method: HttpMethod = HttpMethod.GET,
-    url: String? = null,
-    requestBody: HttpRequestBody? = null,
-    retryPolicy: HttpRequestRetryPolicy? = null
+    url: String = "https://example.com",
+    requestBody: HttpRequestBody? = null
 ): HttpRequest<T> {
-    return HttpRequest.Builder<T>()
+    return HttpRequest.Builder<T>(url)
         .method(method, requestBody)
-        .url(url ?: "https://example.com")
         .responseReader(responseReader)
         .tag(tag)
-        .retryWith(retryPolicy)
         .userData(HttpNetworkResponseQueue(responses))
         .build()
 }

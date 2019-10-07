@@ -81,8 +81,7 @@ class DefaultConversationService(
             allHeaders.addAll(headers)
         }
 
-        return HttpRequest.Builder<T>()
-            .url(createURL(path))
+        return HttpRequest.Builder<T>(createURL(path))
             .method(method, body)
             .headers(allHeaders)
             .responseReader(responseReader)
@@ -92,15 +91,13 @@ class DefaultConversationService(
     private fun createURL(path: String) = "$baseURL/$path"
 }
 
-internal object EngagementManifestReader :
+private object EngagementManifestReader :
     HttpResponseReader<EngagementManifest> {
     override fun read(
         response: HttpNetworkResponse
     ): EngagementManifest {
-        val bytes = response.stream.readBytes()
-        val json = if (bytes.isEmpty()) "{}" else String(bytes, Charsets.UTF_8)
         val cacheControl = parseCacheControl(response.headers[CACHE_CONTROL]?.value)
-        val manifest = EngagementManifest.fromJson(json)
+        val manifest = HttpJsonResponseReader(EngagementManifest::class.java).read(response)
         return manifest.copy(expiry = getTimeSeconds() + cacheControl.maxAgeSeconds)
     }
 

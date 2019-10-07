@@ -16,6 +16,7 @@ interface ConversationFetchService {
     )
 }
 
+// TODO: exclude this class from ProGuard
 internal data class ConversationTokenFetchBody(
     val device: DevicePayload,
     val app_release: AppReleaseSdkPayload
@@ -29,6 +30,7 @@ internal data class ConversationTokenFetchBody(
     }
 }
 
+// TODO: exclude this class from ProGuard
 data class AppReleaseSdkPayload(
     val sdk_nonce: String,
     val sdk_author_email: String?,
@@ -73,6 +75,7 @@ data class AppReleaseSdkPayload(
     }
 }
 
+// TODO: exclude this class from ProGuard
 data class ConversationTokenFetchResponse(
     val id: String,
     val device_id: String,

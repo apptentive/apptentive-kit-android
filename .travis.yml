@@ -21,9 +21,11 @@ android:
     - extra-google-m2repository
     - extra-android-m2repository
 before_install:
-- yes | sdkmanager "platforms;android-29"
+  - yes | sdkmanager "platforms;android-29"
 install: true
 script:
   - ./gradlew apptentive-core:test -i
   - ./gradlew apptentive-feedback:test -i
+  - ./gradlew apptentive-feedback-ui:test -i
   - ./gradlew apptentive-love:test -i
+  - ./gradlew apptentive-love-ui:test -i

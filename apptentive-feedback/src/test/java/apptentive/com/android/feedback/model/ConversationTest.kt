@@ -2,15 +2,10 @@ package apptentive.com.android.feedback.model
 
 import apptentive.com.android.feedback.conversation.DefaultConversationSerializer
 import com.google.common.truth.Truth.assertThat
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.TemporaryFolder
 import java.io.File
 
 class ConversationTest {
-    @get:Rule
-    val tempFolder = TemporaryFolder()
-
     @Test
     fun binaryFileSerialization() {
         val expected = Conversation(
@@ -87,9 +82,7 @@ class ConversationTest {
             engagementManifest = EngagementManifest() // TODO: pass actual value
         )
 
-        val file = tempFolder.tempFile()
-
-        val serializer = DefaultConversationSerializer(file)
+        val serializer = createSerializer()
 
         // should return no conversation before anything was saved
         assertThat(serializer.loadConversation()).isNull()
@@ -142,9 +135,7 @@ class ConversationTest {
             engagementManifest = EngagementManifest() // TODO: pass actual value
         )
 
-        val file = tempFolder.tempFile()
-
-        val serializer = DefaultConversationSerializer(file)
+        val serializer = createSerializer()
 
         // save conversation
         serializer.saveConversation(expected)
@@ -152,10 +143,17 @@ class ConversationTest {
         val actual = serializer.loadConversation()
         assertThat(expected).isEqualTo(actual)
     }
+
+    private fun createSerializer(): DefaultConversationSerializer {
+        val conversationFile = createTempFile()
+        val manifestFile = createTempFile()
+
+        return DefaultConversationSerializer(conversationFile, manifestFile)
+    }
 }
 
-fun TemporaryFolder.tempFile(): File {
-    val file = createTempFile()
+private fun createTempFile(): File {
+    val file = kotlin.io.createTempFile()
     file.delete()
     return file
 }

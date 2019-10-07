@@ -1,6 +1,8 @@
-package apptentive.com.android.feedback.utils
+package apptentive.com.android.util
 
 // FIXME: unit tests
+
+class MissingKeyException(key: String) : RuntimeException("Missing key: $key")
 
 @Throws(MissingKeyException::class)
 fun Map<String, *>.getString(key: String): String = optString(key) ?: throw MissingKeyException(key)

@@ -1,2 +1,3 @@
 include ':apptentive-core', ':apptentive-feedback', ':apptentive-love', ':app-movies', ':apptentive-love-ui'
 include ':app'
+include ':apptentive-feedback-ui'
