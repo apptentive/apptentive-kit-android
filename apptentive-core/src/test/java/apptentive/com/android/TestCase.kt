@@ -70,7 +70,7 @@ open class TestCase(
 object MockExecutorQueueFactory : ExecutorQueueFactory {
     override fun createMainQueue() = ImmediateExecutorQueue("main")
     override fun createSerialQueue(name: String) = ImmediateExecutorQueue(name)
-    override fun createConcurrentQueue(name: String, maxConcurrentTasks: Int) =
+    override fun createConcurrentQueue(name: String, maxConcurrentTasks: Int?) =
         ImmediateExecutorQueue(name)
 }
 

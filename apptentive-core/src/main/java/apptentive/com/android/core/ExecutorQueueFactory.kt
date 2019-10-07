@@ -9,7 +9,7 @@ import apptentive.com.android.concurrent.SerialExecutorQueue
 interface ExecutorQueueFactory {
     fun createMainQueue(): ExecutorQueue
     fun createSerialQueue(name: String): ExecutorQueue
-    fun createConcurrentQueue(name: String, maxConcurrentTasks: Int): ExecutorQueue
+    fun createConcurrentQueue(name: String, maxConcurrentTasks: Int? = null): ExecutorQueue
 }
 
 // TODO: rename to AndroidExecutorFactoryProvider
@@ -28,11 +28,7 @@ private class DefaultExecutorQueueFactory : ExecutorQueueFactory {
         return SerialExecutorQueue(name)
     }
 
-    // TODO: make maxConcurrentTasks optional
-    override fun createConcurrentQueue(name: String, maxConcurrentTasks: Int): ExecutorQueue {
-        if (maxConcurrentTasks == UNDEFINED) {
-            return ConcurrentExecutorQueue(name) // let the implementation decide
-        }
+    override fun createConcurrentQueue(name: String, maxConcurrentTasks: Int?): ExecutorQueue {
         return ConcurrentExecutorQueue(name, maxConcurrentTasks)
     }
 }
