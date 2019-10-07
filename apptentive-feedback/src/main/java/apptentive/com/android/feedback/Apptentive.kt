@@ -27,6 +27,9 @@ object Apptentive {
     private lateinit var stateExecutor: Executor
     private lateinit var mainExecutor: Executor
 
+    //region Initialization
+
+    @Suppress("MemberVisibilityCanBePrivate")
     val registered @Synchronized get() = client != ApptentiveClient.NULL
 
     @Synchronized
@@ -44,14 +47,9 @@ object Apptentive {
         stateExecutor = ExecutorQueue.createSerialQueue("Apptentive")
         mainExecutor = ExecutorQueue.mainQueue
 
-        val httpClient = DefaultHttpClient(
-            network = DefaultHttpNetwork(application.applicationContext),
-            networkQueue = ExecutorQueue.createConcurrentQueue("Network"),
-            callbackExecutor = stateExecutor,
-            retryPolicy = DefaultHttpRequestRetryPolicy()
-        )
+        // TODO: build a better dependency injection solution and lift all the dependencies up
+        val httpClient = createHttpClient(application.applicationContext)
 
-        // TODO: replace with a builder class and lift all the dependencies up
         client = ApptentiveDefaultClient(
             apptentiveKey = configuration.apptentiveKey,
             apptentiveSignature = configuration.apptentiveSignature,
@@ -63,9 +61,18 @@ object Apptentive {
         }
     }
 
-    fun engage(
-        context: Context, eventName: String, callback: ((EngagementResult) -> Unit)? = null
-    ) {
+    private fun createHttpClient(context: Context): DefaultHttpClient {
+        return DefaultHttpClient(
+            network = DefaultHttpNetwork(context),
+            networkQueue = ExecutorQueue.createConcurrentQueue("Network"),
+            callbackExecutor = stateExecutor,
+            retryPolicy = DefaultHttpRequestRetryPolicy()
+        )
+    }
+
+    //endregion
+
+    fun engage(context: Context, eventName: String, callback: ((EngagementResult) -> Unit)? = null) {
         // user callback should be executed on the main thread
         val callbackWrapper: ((EngagementResult) -> Unit)? = if (callback != null) {
             {
