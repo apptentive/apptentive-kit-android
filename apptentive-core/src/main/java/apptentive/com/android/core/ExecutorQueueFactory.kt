@@ -5,17 +5,20 @@ import apptentive.com.android.concurrent.ConcurrentExecutorQueue
 import apptentive.com.android.concurrent.ExecutorQueue
 import apptentive.com.android.concurrent.SerialExecutorQueue
 
+// TODO: rename to ExecutorFactory
 interface ExecutorQueueFactory {
     fun createMainQueue(): ExecutorQueue
     fun createSerialQueue(name: String): ExecutorQueue
     fun createConcurrentQueue(name: String, maxConcurrentTasks: Int): ExecutorQueue
 }
 
+// TODO: rename to AndroidExecutorFactoryProvider
 class DefaultExecutorQueueFactoryProvider : Provider<ExecutorQueueFactory> {
     private val factory: ExecutorQueueFactory by lazy { DefaultExecutorQueueFactory() }
     override fun get(): ExecutorQueueFactory = factory
 }
 
+// TODO: rename to AndroidExecutorFactory
 private class DefaultExecutorQueueFactory : ExecutorQueueFactory {
     override fun createMainQueue(): ExecutorQueue {
         return SerialExecutorQueue(Looper.getMainLooper(), "main")
@@ -25,6 +28,7 @@ private class DefaultExecutorQueueFactory : ExecutorQueueFactory {
         return SerialExecutorQueue(name)
     }
 
+    // TODO: make maxConcurrentTasks optional
     override fun createConcurrentQueue(name: String, maxConcurrentTasks: Int): ExecutorQueue {
         if (maxConcurrentTasks == UNDEFINED) {
             return ConcurrentExecutorQueue(name) // let the implementation decide
