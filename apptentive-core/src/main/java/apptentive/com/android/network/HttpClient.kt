@@ -122,7 +122,7 @@ class DefaultHttpClient(
                 return HttpResponse(
                     statusCode,
                     statusMessage,
-                    request.readResponseObject(response.stream),
+                    request.readResponseObject(response),
                     response.headers,
                     response.duration
                 )

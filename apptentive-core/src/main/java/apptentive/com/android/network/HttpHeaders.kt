@@ -6,10 +6,30 @@ data class HttpHeader(val name: String, val value: String) {
     }
 }
 
+open class HttpHeaders(headers: Map<String, HttpHeader> = mapOf()) : Iterable<HttpHeader> {
+    protected val headers = mutableMapOf<String, HttpHeader>().apply { putAll(headers) }
 
-abstract class HttpHeaders : Iterable<HttpHeader> {
-    abstract val size: Int
-    abstract operator fun get(name: String): HttpHeader?
+    val size: Int get() = headers.size
+    operator fun get(name: String): HttpHeader? = headers[name]
+
+    override fun iterator(): Iterator<HttpHeader> {
+        return headers.values.iterator()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as HttpHeaders
+
+        if (headers != other.headers) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return headers.hashCode()
+    }
 
     companion object {
         const val ACCEPT = "accept"
@@ -63,12 +83,6 @@ abstract class HttpHeaders : Iterable<HttpHeader> {
 }
 
 class MutableHttpHeaders : HttpHeaders() {
-    private val headers = mutableMapOf<String, HttpHeader>()
-
-    override val size: Int get() = headers.size
-
-    override fun get(name: String): HttpHeader? = headers[name]
-
     operator fun set(name: String, value: Int) {
         set(name, value.toString())
     }
@@ -79,10 +93,6 @@ class MutableHttpHeaders : HttpHeaders() {
 
     operator fun set(name: String, value: String) {
         headers[name] = HttpHeader(name, value)
-    }
-
-    override fun iterator(): Iterator<HttpHeader> {
-        return headers.values.iterator()
     }
 
     fun addAll(headers: HttpHeaders) {

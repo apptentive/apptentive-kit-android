@@ -1,41 +1,34 @@
 package apptentive.com.android.feedback.test
 
-import apptentive.com.android.concurrent.ImmediateExecutorQueue
-import apptentive.com.android.core.DependencyProvider
-import apptentive.com.android.core.ExecutorQueueFactory
-import apptentive.com.android.core.PlatformLogger
-import apptentive.com.android.util.LogLevel
-import org.junit.After
-import org.junit.Assert.*
+import apptentive.com.android.feedback.DependencyProviderRule
+import org.junit.Assert.assertEquals
 import org.junit.Before
+import org.junit.Rule
 
 // FIXME: all the test dependencies should be grouped in the core module
 open class TestCase(
     private val logMessages: Boolean = false,
     private val logStackTraces: Boolean = false
 ) {
+    @get:Rule
+    val dependencyRule = DependencyProviderRule()
+
     private val results = mutableListOf<Any>()
 
-    // Before/After
+    //region Before/After
 
     @Before
     open fun setUp() {
-        DependencyProvider.register(createPlatformLogger())
-        DependencyProvider.register(createExecutionQueueFactory())
         results.clear()
-    }
-
-    @After
-    open fun tearDown() {
-        DependencyProvider.clear()
     }
 
     //endregion
 
-    //region Factory
+    //region Resources
 
-    private fun createExecutionQueueFactory(): ExecutorQueueFactory = MockExecutorQueueFactory(false)
-    private fun createPlatformLogger(): PlatformLogger = MockPlatformLogger(logMessages, logStackTraces)
+    protected fun readText(path: String): String {
+        return javaClass.classLoader!!.getResourceAsStream(path).bufferedReader().readText()
+    }
 
     //endregion
 
@@ -53,28 +46,4 @@ open class TestCase(
     }
 
     //endregion
-}
-
-private class MockExecutorQueueFactory(val poseAsMainQueue: Boolean) : ExecutorQueueFactory {
-    override fun createMainQueue() = ImmediateExecutorQueue("main")
-    override fun createSerialQueue(name: String) = ImmediateExecutorQueue(name)
-    override fun createConcurrentQueue(name: String, maxConcurrentTasks: Int) = ImmediateExecutorQueue(name)
-    override fun isMainQueue() = poseAsMainQueue
-}
-
-private class MockPlatformLogger(
-    private val logMessages: Boolean,
-    private val logStackTraces: Boolean
-) : PlatformLogger {
-    override fun log(logLevel: LogLevel, message: String) {
-        if (logMessages) {
-            print(message)
-        }
-    }
-
-    override fun log(logLevel: LogLevel, throwable: Throwable) {
-        if (logStackTraces) {
-            throwable.printStackTrace()
-        }
-    }
 }

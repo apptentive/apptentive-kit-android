@@ -6,15 +6,10 @@ import apptentive.com.android.concurrent.ExecutorQueue
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.DefaultConversationService
 import apptentive.com.android.feedback.conversation.ConversationManager
-import apptentive.com.android.feedback.conversation.SingleFileConversationSerializer
-import apptentive.com.android.feedback.platform.DefaultAppReleaseFactory
-import apptentive.com.android.feedback.platform.DefaultDeviceFactory
-import apptentive.com.android.feedback.platform.DefaultPersonFactory
-import apptentive.com.android.feedback.platform.DefaultSDKFactory
-import apptentive.com.android.network.DefaultHttpClient
-import apptentive.com.android.network.DefaultHttpRequestRetryPolicy
+import apptentive.com.android.feedback.conversation.DefaultConversationRepository
+import apptentive.com.android.feedback.conversation.DefaultConversationSerializer
+import apptentive.com.android.feedback.platform.*
 import apptentive.com.android.network.HttpClient
-import apptentive.com.android.network.HttpNetwork
 import apptentive.com.android.util.FileUtil
 import java.io.File
 
@@ -39,18 +34,20 @@ internal class ApptentiveDefaultClient(
         )
 
         val conversationFile = getConversationFile(context) // FIXME: remove android specific api
-        val conversationSerializer = SingleFileConversationSerializer(conversationFile)
         conversationManager = ConversationManager(
-            conversationSerializer = conversationSerializer,
-            appReleaseFactory = DefaultAppReleaseFactory(context),
-            personFactory = DefaultPersonFactory(),
-            deviceFactory = DefaultDeviceFactory(context),
-            sdkFactory = DefaultSDKFactory(
-                version = Constants.SDK_VERSION,
-                distribution = "Default",
-                distributionVersion = Constants.SDK_VERSION
+            conversationRepository = DefaultConversationRepository(
+                conversationSerializer = DefaultConversationSerializer(conversationFile),
+                appReleaseFactory = DefaultAppReleaseFactory(context),
+                personFactory = DefaultPersonFactory(),
+                deviceFactory = DefaultDeviceFactory(context),
+                sdkFactory = DefaultSDKFactory(
+                    version = Constants.SDK_VERSION,
+                    distribution = "Default",
+                    distributionVersion = Constants.SDK_VERSION
+                ),
+                manifestFactory = DefaultEngagementManifestFactory()
             ),
-            conversationFetchService = conversationService
+            conversationService = conversationService
         )
     }
 

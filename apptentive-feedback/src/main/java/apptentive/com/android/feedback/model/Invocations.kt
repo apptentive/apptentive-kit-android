@@ -1,6 +1,5 @@
 package apptentive.com.android.feedback.model
 
-class Invocations(
-    private val targets: List<Target>
-) {
-}
+data class Invocations(
+    val targets: List<Target> = listOf()
+)

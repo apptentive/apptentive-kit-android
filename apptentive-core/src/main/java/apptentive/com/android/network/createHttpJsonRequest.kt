@@ -1,7 +1,6 @@
 package apptentive.com.android.network
 
 import apptentive.com.android.serialization.json.JsonConverter
-import java.io.InputStream
 import java.io.OutputStream
 
 /**
@@ -52,8 +51,10 @@ inline fun <reified T> createHttpJsonResponseReader(): HttpResponseReader<T> {
  * @param type the type of the response object
  */
 class HttpJsonResponseReader<T>(private val type: Class<T>) : HttpResponseReader<T> {
-    override fun read(stream: InputStream): T {
-        val bytes = stream.readBytes()
+    override fun read(
+        response: HttpNetworkResponse
+    ): T {
+        val bytes = response.stream.readBytes()
         val json = if (bytes.isEmpty()) "{}" else String(bytes, Charsets.UTF_8)
 
         @Suppress("UNCHECKED_CAST")
