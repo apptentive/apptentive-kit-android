@@ -7,6 +7,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 internal class EnjoymentDialogInteractionLauncher :
     InteractionLauncher<EnjoymentDialogInteraction> {
     override fun launchInteraction(context: Context, interaction: EnjoymentDialogInteraction) {
+        // FIXME: add UI configuration and view model
         MaterialAlertDialogBuilder(context).apply {
             setTitle(interaction.title)
             setPositiveButton(interaction.yesText) { _, _ ->

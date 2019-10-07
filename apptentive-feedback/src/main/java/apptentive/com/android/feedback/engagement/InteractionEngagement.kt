@@ -21,6 +21,6 @@ data class DefaultInteractionEngagement(
             return EngagementResult.Success
         }
 
-        return EngagementResult.Error("Interaction launcher not found: ${interactionClass.name}")
+        return EngagementResult.Error("Interaction launcher not found: ${interactionClass.name}") // TODO: better error description
     }
 }

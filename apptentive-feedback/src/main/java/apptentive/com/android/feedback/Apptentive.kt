@@ -13,6 +13,7 @@ import apptentive.com.android.network.DefaultHttpNetwork
 import apptentive.com.android.network.DefaultHttpRequestRetryPolicy
 import apptentive.com.android.util.Log
 
+// TODO: better names for specific cases
 sealed class EngagementResult {
     object Success : EngagementResult()
     data class Failure(val description: String) : EngagementResult()
@@ -60,10 +61,7 @@ object Apptentive {
         }
     }
 
-    fun engage(
-        context: Context,
-        eventName: String,
-        callback: ((EngagementResult) -> Unit)? = null
+    fun engage(context: Context, eventName: String, callback: ((EngagementResult) -> Unit)? = null
     ) {
         // user callback should be executed on the main thread
         val callbackWrapper: ((EngagementResult) -> Unit)? = if (callback != null) {

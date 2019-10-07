@@ -123,6 +123,8 @@ class ConversationManager(
 
     fun recordEvent(event: Event) {
         // FIXME: record event
+        // 1. save it to conversation data
+        // 2. send a payload
     }
 
     fun recordInteraction(interactionId: String) {

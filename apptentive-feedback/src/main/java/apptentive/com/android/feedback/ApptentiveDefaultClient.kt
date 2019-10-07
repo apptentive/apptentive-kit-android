@@ -61,6 +61,7 @@ internal class ApptentiveDefaultClient(
     //region Engagement
 
     override fun engage(context: Context, event: Event): EngagementResult {
+        // FIXME: create the object at the SDK initialization
         val engagement = DefaultEventEngagement(
             interactionResolver = FakeInteractionResolver,
             interactionFactory = fakeInteractionFactory,

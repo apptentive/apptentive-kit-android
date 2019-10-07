@@ -1,7 +1,7 @@
 package apptentive.com.android.feedback.engagement.criteria
 
 interface InteractionCriteria {
-    fun isMet(state: TargetingState): Boolean
+    fun isMet(state: TargetingState): Boolean // TODO: return a result with more context info
 }
 
 data class InteractionClauseCriteria(private val rootClause: Clause) : InteractionCriteria {

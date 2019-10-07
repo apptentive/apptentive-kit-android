@@ -23,7 +23,7 @@ class DefaultEventEngagement(
 
         val interaction = interactionFactory.createInteraction(interactionData)
         if (interaction == null) {
-            return EngagementResult.Error("Unknown interaction type '${interactionData.type}' for event '${event.name}'")
+            return EngagementResult.Error("Unknown interaction type '${interactionData.type}' for event '${event.name}'") // TODO: more description error message
         }
 
         val result = interactionEngagement.engage(context, interaction)
