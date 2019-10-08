@@ -5,6 +5,7 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionModule
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.core
 
+// TODO: should we load interaction modules lazily?
 // FIXME: unit tests
 class InteractionModuleComponent(
     private val interactionNames: List<String>,
