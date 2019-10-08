@@ -61,15 +61,15 @@ internal class ApptentiveDefaultClient(
     //region Engagement
 
     override fun engage(context: Context, event: Event): EngagementResult {
-        // FIXME: create the object at the SDK initialization
+        // engagement depends on the Context so should be created each time with a new context object
         val engagement = DefaultEventEngagement(
             interactionResolver = FakeInteractionResolver,
             interactionFactory = fakeInteractionFactory,
-            interactionEngagement = fakeInteractionEngagement,
+            interactionEngagement = createInteractionEngagement(context),
             recordEvent = ::recordEvent,
             recordInteraction = ::recordInteraction
         )
-        return engagement.engage(context, event)
+        return engagement.engage(event)
     }
 
     // FIXME: temporary code
@@ -88,11 +88,12 @@ internal class ApptentiveDefaultClient(
         )
     }
 
-    private val fakeInteractionEngagement: InteractionEngagement by lazy {
-        DefaultInteractionEngagement(
-            lookup = mapOf(
-                enjoymentDialog.interactionClass to enjoymentDialog.provideInteractionLauncher()
-            )
+    private fun createInteractionEngagement(context: Context): InteractionEngagement {
+        return DefaultInteractionEngagement(
+            lookup = mapOf(enjoymentDialog.interactionClass to enjoymentDialog.provideInteractionLauncher()),
+            launchInteraction = { launcher, interaction ->
+                launcher.launchInteraction(context, interaction)
+            }
         )
     }
 
