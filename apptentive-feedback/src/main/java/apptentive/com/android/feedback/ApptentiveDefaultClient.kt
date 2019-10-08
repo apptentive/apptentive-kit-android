@@ -115,7 +115,7 @@ internal class ApptentiveDefaultClient(
         val component = InteractionModuleComponent(
             interactionNames = interactionNames,
             packageName = "apptentive.com.android.feedback.ui",
-            classPrefix = "Module"
+            classSuffix = "Module"
         )
         return component.getModules()
     }

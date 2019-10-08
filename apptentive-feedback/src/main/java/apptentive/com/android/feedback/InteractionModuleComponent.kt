@@ -6,20 +6,24 @@ import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.core
 
 // TODO: should we load interaction modules lazily?
-// FIXME: unit tests
 class InteractionModuleComponent(
     private val interactionNames: List<String>,
     private val packageName: String,
-    private val classPrefix: String
+    private val classPrefix: String = "",
+    private val classSuffix: String = ""
 ) {
     fun getModules(): Map<String, InteractionModule<Interaction>> {
-        val classNames = getClassNames(packageName, classPrefix)
+        val classNames = getClassNames(packageName, classPrefix, classSuffix)
         return getModules(classNames)
     }
 
-    private fun getClassNames(packageName: String, classPrefix: String): List<String> {
+    private fun getClassNames(
+        packageName: String,
+        classPrefix: String,
+        classSuffix: String
+    ): List<String> {
         return interactionNames.map { interactionType ->
-            "$packageName.$interactionType$classPrefix"
+            "$packageName.$classPrefix$interactionType$classSuffix"
         }
     }
 
