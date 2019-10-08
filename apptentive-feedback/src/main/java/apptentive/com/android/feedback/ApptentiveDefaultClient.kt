@@ -19,11 +19,13 @@ internal class ApptentiveDefaultClient(
 ) : ApptentiveClient {
     private lateinit var conversationService: ConversationService
     private lateinit var conversationManager: ConversationManager
+    private lateinit var interactionModules: Map<InteractionType, InteractionModule<Interaction>>
 
     //region Initialization
 
     @WorkerThread
     internal fun start(context: Context) {
+        interactionModules = loadInteractionModules()
         conversationService = createConversationService()
         conversationManager = createConversationManager(context) // TODO: get rid of Context
     }
@@ -74,7 +76,7 @@ internal class ApptentiveDefaultClient(
         // engagement depends on the Context so should be created each time with a new context object
         val engagement = DefaultEventEngagement(
             interactionResolver = FakeInteractionResolver,
-            interactionFactory = fakeInteractionFactory,
+            interactionFactory = interactionFactory,
             interactionEngagement = createInteractionEngagement(context),
             recordEvent = ::recordEvent,
             recordInteraction = ::recordInteraction
@@ -83,28 +85,39 @@ internal class ApptentiveDefaultClient(
     }
 
     // FIXME: temporary code
-    private val enjoymentDialog: InteractionModule<Interaction> by lazy {
-        val providerClass =
-            Class.forName("apptentive.com.android.feedback.ui.EnjoymentDialogModule")
-        providerClass.newInstance() as InteractionModule<Interaction>
+    private val interactionLaunchersLookup: Map<Class<Interaction>, InteractionLauncher<Interaction>> by lazy {
+        interactionModules.map { (_, module) ->
+            Pair(module.interactionClass, module.provideInteractionLauncher())
+        }.toMap()
     }
 
     // FIXME: temporary code
-    private val fakeInteractionFactory: InteractionFactory by lazy {
+    private val interactionFactory: InteractionFactory by lazy {
         DefaultInteractionFactory(
-            lookup = mapOf(
-                "EnjoymentDialog" to enjoymentDialog.provideInteractionConverter()
-            )
+            lookup = interactionModules.mapValues { (_, module) ->
+                module.provideInteractionConverter()
+            }
         )
     }
 
+    // FIXME: temporary code
     private fun createInteractionEngagement(context: Context): InteractionEngagement {
         return DefaultInteractionEngagement(
-            lookup = mapOf(enjoymentDialog.interactionClass to enjoymentDialog.provideInteractionLauncher()),
+            lookup = interactionLaunchersLookup,
             launchInteraction = { launcher, interaction ->
                 launcher.launchInteraction(context, interaction)
             }
         )
+    }
+
+    // FIXME: temporary code
+    private fun loadInteractionModules(): Map<String, InteractionModule<Interaction>> {
+        val component = InteractionModuleComponent(
+            interactionNames = interactionNames,
+            packageName = "apptentive.com.android.feedback.ui",
+            classPrefix = "Module"
+        )
+        return component.getModules()
     }
 
     // FIXME: temporary code
@@ -120,12 +133,24 @@ internal class ApptentiveDefaultClient(
     //endregion
 
     companion object {
-        fun getConversationFile(): File {
+        // FIXME: temporary code
+        private val interactionNames = listOf(
+            "UpgradeMessage",
+            "EnjoymentDialog",
+            "RatingDialog",
+            "MessageCenter",
+            "AppStoreRating",
+            "Survey",
+            "TextModal",
+            "NavigateToLink"
+        )
+
+        private fun getConversationFile(): File {
             val conversationsDir = getConversationDir()
             return File(conversationsDir, "conversation.bin")
         }
 
-        fun getManifestFile(): File {
+        private fun getManifestFile(): File {
             val conversationsDir = getConversationDir()
             return File(conversationsDir, "manifest.bin")
         }
