@@ -18,10 +18,10 @@ class ConversationManagerTest : TestCase() {
     fun getActiveConversation() {
         val fetchResponse = ConversationTokenFetchResponse(
             id = "id",
-            device_id = "device_id",
-            person_id = "person_id",
+            deviceId = "device_id",
+            personId = "person_id",
             token = "token",
-            encryption_key = "encryption_key"
+            encryptionKey = "encryption_key"
         )
 
         val conversationManager = ConversationManager(
@@ -32,7 +32,7 @@ class ConversationManagerTest : TestCase() {
         val conversation: Conversation = conversationManager.activeConversation.value
         assertThat(conversation.conversationToken).isEqualTo(fetchResponse.token)
         assertThat(conversation.conversationId).isEqualTo(fetchResponse.id)
-        assertThat(conversation.person.id).isEqualTo(fetchResponse.person_id)
+        assertThat(conversation.person.id).isEqualTo(fetchResponse.personId)
     }
 }
 

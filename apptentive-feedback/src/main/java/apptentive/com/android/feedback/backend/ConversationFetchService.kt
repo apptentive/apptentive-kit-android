@@ -19,13 +19,13 @@ interface ConversationFetchService {
 // TODO: exclude this class from ProGuard
 internal data class ConversationTokenFetchBody(
     val device: DevicePayload,
-    val app_release: AppReleaseSdkPayload
+    val appRelease: AppReleaseSdkPayload
 ) {
     companion object {
         fun from(device: Device, sdk: SDK, appRelease: AppRelease) =
             ConversationTokenFetchBody(
                 device = DevicePayload.fromDevice(device),
-                app_release = AppReleaseSdkPayload.from(appRelease, sdk)
+                appRelease = AppReleaseSdkPayload.from(appRelease, sdk)
             )
     }
 }
@@ -78,8 +78,8 @@ data class AppReleaseSdkPayload(
 // TODO: exclude this class from ProGuard
 data class ConversationTokenFetchResponse(
     val id: String,
-    val device_id: String,
-    val person_id: String,
+    val deviceId: String,
+    val personId: String,
     val token: String,
-    val encryption_key: String
+    val encryptionKey: String
 )
