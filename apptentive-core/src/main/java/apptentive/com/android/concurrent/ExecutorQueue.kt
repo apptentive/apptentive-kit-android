@@ -20,7 +20,7 @@ abstract class ExecutorQueue(val name: String) : Executor {
         val mainQueue: ExecutorQueue = queueFactory.createMainQueue()
 
         fun createSerialQueue(name: String) = queueFactory.createSerialQueue(name)
-        fun createConcurrentQueue(name: String, maxConcurrentTasks: Int = UNDEFINED) =
+        fun createConcurrentQueue(name: String, maxConcurrentTasks: Int? = null) =
             queueFactory.createConcurrentQueue(name, maxConcurrentTasks)
     }
 }
