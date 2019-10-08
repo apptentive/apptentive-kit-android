@@ -7,7 +7,7 @@ class JsonConverterTest {
     @Test
     fun fromJson() {
         val json =
-            """{"doubleField":1.0,"floatField":2.0,"longField":3,"intField":4,"shortField":5,"byteField":6,"stringField":"value","child":{"doubleField":7.0,"floatField":8.0,"longField":9,"intField":10,"shortField":11,"byteField":12,"stringField":"child value"}}"""
+            """{"double_field":1.0,"float_field":2.0,"long_field":3,"int_field":4,"short_field":5,"byte_field":6,"string_field":"value","child":{"double_field":7.0,"float_field":8.0,"long_field":9,"int_field":10,"short_field":11,"byte_field":12,"string_field":"child value"}}"""
         val actual = MyClass(
             doubleField = 1.0,
             floatField = 2.0f,
