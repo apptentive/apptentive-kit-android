@@ -1,12 +1,18 @@
 package apptentive.com.android.serialization.json
 
+import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 
 /**
  * Utility class for JSON serialization
  */
 object JsonConverter {
-    private val gson = Gson()
+    private val gson: Gson by lazy {
+        GsonBuilder()
+            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+            .create()
+    }
 
     /**
      * Serializes an object to JSON string.

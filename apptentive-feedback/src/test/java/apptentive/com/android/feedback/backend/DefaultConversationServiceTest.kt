@@ -54,17 +54,14 @@ class DefaultConversationServiceTest {
                             "locale_raw" to mockDevice.localeRaw,
                             "utc_offset" to mockDevice.utcOffset.toString(),
                             "advertiser_id" to mockDevice.advertiserId,
-                            "custom_data" to mapOf("key" to "value")
-                            ,
+                            "custom_data" to mapOf("key" to "value"),
                             "integration_config" to mapOf(
-                                "apptentive" to mapOf("apptentive_key" to "apptentive_value")
-                                , "amazonAwsSns" to mapOf("amazon_key" to "amazon_value")
-                                , "urbanAirship" to mapOf("urban_key" to "urban_value")
-                            )
-                            ,
+                                "apptentive" to mapOf("apptentive_key" to "apptentive_value"),
+                                "amazon_aws_sns" to mapOf("amazon_key" to "amazon_value"),
+                                "urban_airship" to mapOf("urban_key" to "urban_value")
+                            ),
                             "nonce" to "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-                        )
-                        ,
+                        ),
                         "app_release" to mapOf(
                             "sdk_nonce" to "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
                             "sdk_author_email" to mockSdk.authorEmail,
@@ -127,10 +124,10 @@ class DefaultConversationServiceTest {
                 is Result.Success -> {
                     with(it.data) {
                         assertThat(id).isEqualTo("conversation_id")
-                        assertThat(device_id).isEqualTo("device_id")
-                        assertThat(person_id).isEqualTo("person_id")
+                        assertThat(deviceId).isEqualTo("device_id")
+                        assertThat(personId).isEqualTo("person_id")
                         assertThat(token).isEqualTo("token")
-                        assertThat(encryption_key).isEqualTo("encryption_key")
+                        assertThat(encryptionKey).isEqualTo("encryption_key")
                     }
                 }
                 is Result.Error -> throw AssertionError(it.error)

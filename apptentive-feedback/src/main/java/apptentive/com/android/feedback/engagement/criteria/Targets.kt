@@ -49,7 +49,7 @@ data class TargetConverter(
     private val criteriaConverter: Converter<Map<String, Any>, InteractionCriteria> = CriteriaConverter()
 ) : Converter<TargetData, Target> {
     override fun convert(source: TargetData) = Target(
-        interactionId = source.interaction_id,
+        interactionId = source.interactionId,
         criteria = criteriaConverter.convert(source.criteria)
     )
 }

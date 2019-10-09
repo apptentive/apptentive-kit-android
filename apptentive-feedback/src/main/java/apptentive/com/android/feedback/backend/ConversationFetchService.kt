@@ -19,58 +19,58 @@ interface ConversationFetchService {
 // TODO: exclude this class from ProGuard
 internal data class ConversationTokenFetchBody(
     val device: DevicePayload,
-    val app_release: AppReleaseSdkPayload
+    val appRelease: AppReleaseSdkPayload
 ) {
     companion object {
         fun from(device: Device, sdk: SDK, appRelease: AppRelease) =
             ConversationTokenFetchBody(
                 device = DevicePayload.fromDevice(device),
-                app_release = AppReleaseSdkPayload.from(appRelease, sdk)
+                appRelease = AppReleaseSdkPayload.from(appRelease, sdk)
             )
     }
 }
 
 // TODO: exclude this class from ProGuard
 data class AppReleaseSdkPayload(
-    val sdk_nonce: String,
-    val sdk_author_email: String?,
-    val sdk_author_name: String?,
-    val sdk_distribution: String,
-    val sdk_distribution_version: String,
-    val sdk_platform: String,
-    val sdk_programming_language: String?,
-    val sdk_version: String,
+    val sdkNonce: String,
+    val sdkAuthorEmail: String?,
+    val sdkAuthorName: String?,
+    val sdkDistribution: String,
+    val sdkDistributionVersion: String,
+    val sdkPlatform: String,
+    val sdkProgrammingLanguage: String?,
+    val sdkVersion: String,
     val nonce: String,
-    val app_store: String?,
+    val appStore: String?,
     val debug: Boolean,
     val identifier: String,
-    val inheriting_styles: Boolean,
-    val overriding_styles: Boolean,
-    val target_sdk_version: String,
+    val inheritingStyles: Boolean,
+    val overridingStyles: Boolean,
+    val targetSdkVersion: String,
     val type: String,
-    val version_code: Int,
-    val version_name: String
+    val versionCode: Int,
+    val versionName: String
 ) {
     companion object {
         fun from(appRelease: AppRelease, sdk: SDK) = AppReleaseSdkPayload(
-            sdk_nonce = generateUUID(),
-            sdk_author_email = sdk.authorEmail,
-            sdk_author_name = sdk.authorName,
-            sdk_distribution = sdk.distribution,
-            sdk_distribution_version = sdk.distributionVersion,
-            sdk_platform = sdk.platform,
-            sdk_programming_language = sdk.programmingLanguage,
-            sdk_version = sdk.version,
+            sdkNonce = generateUUID(),
+            sdkAuthorEmail = sdk.authorEmail,
+            sdkAuthorName = sdk.authorName,
+            sdkDistribution = sdk.distribution,
+            sdkDistributionVersion = sdk.distributionVersion,
+            sdkPlatform = sdk.platform,
+            sdkProgrammingLanguage = sdk.programmingLanguage,
+            sdkVersion = sdk.version,
             nonce = generateUUID(),
-            app_store = appRelease.appStore,
+            appStore = appRelease.appStore,
             debug = appRelease.debug,
             identifier = appRelease.identifier,
-            inheriting_styles = appRelease.inheritStyle,
-            overriding_styles = appRelease.overrideStyle,
-            target_sdk_version = appRelease.targetSdkVersion,
+            inheritingStyles = appRelease.inheritStyle,
+            overridingStyles = appRelease.overrideStyle,
+            targetSdkVersion = appRelease.targetSdkVersion,
             type = appRelease.type,
-            version_code = appRelease.versionCode,
-            version_name = appRelease.versionName
+            versionCode = appRelease.versionCode,
+            versionName = appRelease.versionName
         )
     }
 }
@@ -78,8 +78,8 @@ data class AppReleaseSdkPayload(
 // TODO: exclude this class from ProGuard
 data class ConversationTokenFetchResponse(
     val id: String,
-    val device_id: String,
-    val person_id: String,
+    val deviceId: String,
+    val personId: String,
     val token: String,
-    val encryption_key: String
+    val encryptionKey: String
 )

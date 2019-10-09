@@ -61,7 +61,7 @@ class ConversationManager(
                             conversationToken = it.data.token,
                             conversationId = it.data.id,
                             person = currentConversation.person.copy(
-                                id = it.data.person_id
+                                id = it.data.personId
                             )
                         )
                     }
