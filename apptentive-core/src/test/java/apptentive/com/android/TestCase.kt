@@ -37,7 +37,7 @@ open class TestCase(
     private fun createExecutionQueueFactoryProvider(): Provider<ExecutorQueueFactory> =
         object : Provider<ExecutorQueueFactory> {
             override fun get(): ExecutorQueueFactory {
-                return MockExecutorQueueFactory(false)
+                return MockExecutorQueueFactory
             }
 
         }
@@ -67,13 +67,11 @@ open class TestCase(
     //endregion
 }
 
-private class MockExecutorQueueFactory(val poseAsMainQueue: Boolean) : ExecutorQueueFactory {
+object MockExecutorQueueFactory : ExecutorQueueFactory {
     override fun createMainQueue() = ImmediateExecutorQueue("main")
     override fun createSerialQueue(name: String) = ImmediateExecutorQueue(name)
-    override fun createConcurrentQueue(name: String, maxConcurrentTasks: Int) =
+    override fun createConcurrentQueue(name: String, maxConcurrentTasks: Int?) =
         ImmediateExecutorQueue(name)
-
-    override fun isMainQueue() = poseAsMainQueue
 }
 
 private class MockPlatformLogger(

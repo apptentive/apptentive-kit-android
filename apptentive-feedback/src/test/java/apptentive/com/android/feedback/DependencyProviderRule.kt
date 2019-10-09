@@ -19,17 +19,15 @@ class DependencyProviderRule(private val enableConsoleOutput: Boolean = false) :
     }
 }
 
-private fun createExecutionQueueFactory(): ExecutorQueueFactory = MockExecutorQueueFactory(false)
+private fun createExecutionQueueFactory(): ExecutorQueueFactory = MockExecutorQueueFactory
 private fun createPlatformLogger(enableOutput: Boolean) =
     if (enableOutput) MockPlatformLogger else NullPlatformLogger
 
-private class MockExecutorQueueFactory(val poseAsMainQueue: Boolean) : ExecutorQueueFactory {
+private object MockExecutorQueueFactory : ExecutorQueueFactory {
     override fun createMainQueue() = ImmediateExecutorQueue("main")
     override fun createSerialQueue(name: String) = ImmediateExecutorQueue(name)
-    override fun createConcurrentQueue(name: String, maxConcurrentTasks: Int) =
+    override fun createConcurrentQueue(name: String, maxConcurrentTasks: Int?) =
         ImmediateExecutorQueue(name)
-
-    override fun isMainQueue() = poseAsMainQueue
 }
 
 private object NullPlatformLogger : PlatformLogger {

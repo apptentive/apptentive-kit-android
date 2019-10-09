@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.concurrent.ExecutorQueue
+import apptentive.com.android.core.AndroidFileSystemProvider
 import apptentive.com.android.core.DefaultExecutorQueueFactoryProvider
 import apptentive.com.android.core.DefaultLoggerProvider
 import apptentive.com.android.core.DependencyProvider
@@ -11,6 +12,7 @@ import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.network.DefaultHttpClient
 import apptentive.com.android.network.DefaultHttpNetwork
 import apptentive.com.android.network.DefaultHttpRequestRetryPolicy
+import apptentive.com.android.network.HttpClient
 import apptentive.com.android.util.Log
 
 // TODO: better names for specific cases
@@ -26,6 +28,9 @@ object Apptentive {
     private lateinit var stateExecutor: Executor
     private lateinit var mainExecutor: Executor
 
+    //region Initialization
+
+    @Suppress("MemberVisibilityCanBePrivate")
     val registered @Synchronized get() = client != ApptentiveClient.NULL
 
     @Synchronized
@@ -38,22 +43,16 @@ object Apptentive {
         // register dependency providers
         DependencyProvider.register(DefaultLoggerProvider("Apptentive"))
         DependencyProvider.register(DefaultExecutorQueueFactoryProvider())
+        DependencyProvider.register(AndroidFileSystemProvider(application.applicationContext, "apptentive.com.android.feedback"))
 
         stateExecutor = ExecutorQueue.createSerialQueue("Apptentive")
         mainExecutor = ExecutorQueue.mainQueue
 
-        val httpClient = DefaultHttpClient(
-            network = DefaultHttpNetwork(application.applicationContext),
-            networkQueue = ExecutorQueue.createConcurrentQueue("Network"),
-            callbackExecutor = stateExecutor,
-            retryPolicy = DefaultHttpRequestRetryPolicy()
-        )
-
-        // TODO: replace with a builder class and lift all the dependencies up
+        // TODO: build a better dependency injection solution and lift all the dependencies up
         client = ApptentiveDefaultClient(
             apptentiveKey = configuration.apptentiveKey,
             apptentiveSignature = configuration.apptentiveSignature,
-            httpClient = httpClient
+            httpClient = createHttpClient(application.applicationContext)
         ).apply {
             stateExecutor.execute {
                 start(application.applicationContext)
@@ -61,8 +60,18 @@ object Apptentive {
         }
     }
 
-    fun engage(context: Context, eventName: String, callback: ((EngagementResult) -> Unit)? = null
-    ) {
+    private fun createHttpClient(context: Context): HttpClient {
+        return DefaultHttpClient(
+            network = DefaultHttpNetwork(context),
+            networkQueue = ExecutorQueue.createConcurrentQueue("Network"),
+            callbackExecutor = stateExecutor,
+            retryPolicy = DefaultHttpRequestRetryPolicy()
+        )
+    }
+
+    //endregion
+
+    fun engage(context: Context, eventName: String, callback: ((EngagementResult) -> Unit)? = null) {
         // user callback should be executed on the main thread
         val callbackWrapper: ((EngagementResult) -> Unit)? = if (callback != null) {
             {
