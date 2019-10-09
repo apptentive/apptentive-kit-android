@@ -5,6 +5,7 @@ import android.os.Build
 import apptentive.com.android.feedback.model.Device
 import apptentive.com.android.util.Factory
 
+// TODO: rename to AndroidDefaultDeviceFactory
 class DefaultDeviceFactory(
     private val context: Context
 ) : Factory<Device> {

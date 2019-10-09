@@ -5,6 +5,7 @@ import apptentive.com.android.feedback.model.AppRelease
 import apptentive.com.android.feedback.utils.RuntimeUtils
 import apptentive.com.android.util.Factory
 
+// TODO: rename to AndroidAppReleaseFactory
 class DefaultAppReleaseFactory(
     private val context: Context
 ) : Factory<AppRelease> {

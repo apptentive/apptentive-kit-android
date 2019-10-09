@@ -12,7 +12,7 @@ data class DefaultEventEngagement(
     private val recordEvent: (Event) -> Unit = {},
     private val recordInteraction: (Interaction) -> Unit = {}
 ) : EventEngagement {
-    override fun engage(event: Event): EngagementResult {
+    override fun engage(context: EngagementContext, event: Event): EngagementResult {
         recordEvent(event)
 
         val interactionData = interactionResolver.getInteraction(event)
@@ -25,7 +25,7 @@ data class DefaultEventEngagement(
             return EngagementResult.Error("Unknown interaction type '${interactionData.type}' for event '${event.name}'") // TODO: more description error message
         }
 
-        val result = interactionEngagement.engage(interaction)
+        val result = interactionEngagement.engage(context, interaction)
         if (result is EngagementResult.Success) {
             recordInteraction(interaction)
         }
