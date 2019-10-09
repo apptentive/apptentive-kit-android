@@ -3,7 +3,6 @@ package apptentive.com.android.feedback.ui
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.Event
 
-// TODO: unit tests
 data class EnjoymentDialogViewModel(private val context: EngagementContext) {
     fun onYesButton() {
         engageCodePoint(CODE_POINT_YES)
@@ -26,9 +25,9 @@ data class EnjoymentDialogViewModel(private val context: EngagementContext) {
     }
 
     companion object {
-        private const val CODE_POINT_DISMISS = "dismiss"
-        private const val CODE_POINT_CANCEL = "cancel"
-        private const val CODE_POINT_YES = "yes"
-        private const val CODE_POINT_NO = "no"
+        internal const val CODE_POINT_DISMISS = "dismiss"
+        internal const val CODE_POINT_CANCEL = "cancel"
+        internal const val CODE_POINT_YES = "yes"
+        internal const val CODE_POINT_NO = "no"
     }
 }
