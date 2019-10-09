@@ -4,5 +4,5 @@ import apptentive.com.android.feedback.EngagementResult
 
 // TODO: a better name
 interface EventEngagement {
-    fun engage(event: Event): EngagementResult
+    fun engage(context: EngagementContext, event: Event): EngagementResult
 }

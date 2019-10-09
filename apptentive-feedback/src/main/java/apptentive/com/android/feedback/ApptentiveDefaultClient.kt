@@ -73,15 +73,19 @@ internal class ApptentiveDefaultClient(
     //region Engagement
 
     override fun engage(context: Context, event: Event): EngagementResult {
-        // engagement depends on the Context so should be created each time with a new context object
-        val engagement = DefaultEventEngagement(
+        val engagementContext = AndroidEngagementContext(context, engagement)
+        return engagement.engage(engagementContext, event)
+    }
+
+    // FIXME: engagement should get updated every time conversation changes and be no-op before that
+    private val engagement: EventEngagement by lazy {
+        DefaultEventEngagement(
             interactionResolver = FakeInteractionResolver,
             interactionFactory = interactionFactory,
-            interactionEngagement = createInteractionEngagement(context),
+            interactionEngagement = createInteractionEngagement(),
             recordEvent = ::recordEvent,
             recordInteraction = ::recordInteraction
         )
-        return engagement.engage(event)
     }
 
     // FIXME: temporary code
@@ -101,13 +105,8 @@ internal class ApptentiveDefaultClient(
     }
 
     // FIXME: temporary code
-    private fun createInteractionEngagement(context: Context): InteractionEngagement {
-        return DefaultInteractionEngagement(
-            lookup = interactionLaunchersLookup,
-            launchInteraction = { launcher, interaction ->
-                launcher.launchInteraction(context, interaction)
-            }
-        )
+    private fun createInteractionEngagement(): InteractionEngagement {
+        return DefaultInteractionEngagement(lookup = interactionLaunchersLookup)
     }
 
     // FIXME: temporary code

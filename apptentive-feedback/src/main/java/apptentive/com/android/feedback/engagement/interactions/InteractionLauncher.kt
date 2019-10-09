@@ -1,7 +1,7 @@
 package apptentive.com.android.feedback.engagement.interactions
 
-import android.content.Context
+import apptentive.com.android.feedback.engagement.EngagementContext
 
 interface InteractionLauncher<in T : Interaction> {
-    fun launchInteraction(context: Context, interaction: T)
+    fun launchInteraction(context: EngagementContext, interaction: T)
 }
