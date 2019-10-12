@@ -2,89 +2,250 @@ package apptentive.com.android.feedback.engagement.criteria
 
 import apptentive.com.android.feedback.engagement.Event
 
-/* Note: this class was generated via script */
+// FIXME: proof read the descriptions
+
 @Suppress("ClassName")
-sealed class Field {
+sealed class Field(val type: Type, val description: String) {
+    enum class Type {
+        String,
+        Boolean,
+        Number,
+        DateTime,
+        Version,
+        Any
+    }
+
     object application {
-        object version_code : Field()
-        object version_name : Field()
+        object version_code : Field(type = Type.Number, description = "application versionCode")
+        object version_name : Field(type = Type.Version, description = "application versionName")
     }
 
     object sdk {
-        object version : Field()
+        object version : Field(type = Type.Version, description = "SDK version")
     }
 
-    object current_time : Field()
+    object current_time : Field(type = Type.DateTime, description = "current time")
+
     object is_update {
-        object version_code : Field()
-        object version_name : Field()
+        object version_code : Field(
+            type = Type.Boolean,
+            description = "is_update/version_code" // TODO: better description
+        )
+
+        object version_name : Field(
+            type = Type.Boolean,
+            description = "is_update/version_name" // TODO: better description
+        )
     }
 
     object time_at_install {
-        object total : Field()
-        object version_code : Field()
-        object version_name : Field()
+        object total : Field(
+            type = Type.DateTime,
+            description = "time_at_install/total" // TODO: better description
+        )
+
+        object version_code : Field(
+            type = Type.DateTime,
+            description = "time_at_install/version_code" // TODO: better description
+        )
+
+        object version_name : Field(
+            type = Type.DateTime,
+            description = "time_at_install/version_name" // TODO: better description
+        )
     }
 
     object code_point {
         object invokes {
-            data class total(val event: Event) : Field()
-            data class version_code(val event: Event) : Field()
-            data class version_name(val event: Event) : Field()
+            data class total(val event: Event) : Field(
+                type = Type.Number,
+                description = "total number of invokes for event $event"
+            )
+
+            data class version_code(val event: Event) : Field(
+                type = Type.Number,
+                description = "$event/invokes/version_code" // TODO: better description
+            )
+
+            data class version_name(val event: Event) : Field(
+                type = Type.Number,
+                description = "$event/invokes/version_name" // TODO: better description
+            )
         }
 
         object last_invoked_at {
-            data class total(val event: Event) : Field()
+            data class total(val event: Event) : Field(
+                type = Type.DateTime,
+                description = "$event/last_invoked_at/total" // TODO: better description
+            )
         }
     }
 
     object interactions {
         object invokes {
-            data class total(val interactionId: String) : Field()
-            data class version_code(val interactionId: String) : Field()
-            data class version_name(val interactionId: String) : Field()
+            data class total(val interactionId: String) : Field(
+                type = Type.Number,
+                description = "total number of invokes for event $interactionId"
+            )
+
+            data class version_code(val interactionId: String) : Field(
+                type = Type.Number,
+                description = "$interactionId/invokes/version_code" // TODO: better description
+            )
+
+            data class version_name(val interactionId: String) : Field(
+                type = Type.Number,
+                description = "$interactionId/invokes/version_name" // TODO: better description
+            )
         }
 
         object last_invoked_at {
-            data class total(val interactionId: String) : Field()
+            data class total(val interactionId: String) : Field(
+                type = Type.DateTime,
+                description = "$interactionId/last_invoked_at/total" // TODO: better description
+            )
         }
     }
 
     object person {
-        object name : Field()
-        object email : Field()
-        data class custom_data(val key: String) : Field()
+        object name : Field(type = Type.String, description = "person name")
+
+        object email : Field(type = Type.String, description = "person email")
+
+        data class custom_data(val key: String) : Field(
+            type = Type.Any,
+            description = "person custom_data[$key]"
+        )
     }
 
     object device {
-        object os_name : Field()
-        object os_version : Field()
-        object os_build : Field()
-        object manufacturer : Field()
-        object model : Field()
-        object board : Field()
-        object product : Field()
-        object brand : Field()
-        object cpu : Field()
-        object hardware : Field()
-        object device : Field()
-        object uuid : Field()
-        object carrier : Field()
-        object current_carrier : Field()
-        object network_type : Field()
-        object build_type : Field()
-        object build_id : Field()
-        object bootloader_version : Field()
-        object radio_version : Field()
-        object locale_country_code : Field()
-        object locale_language_code : Field()
-        object locale_raw : Field()
-        object os_api_level : Field()
-        object utc_offset : Field()
-        data class custom_data(val key: String) : Field()
+        object os_name : Field(
+            type = Type.String,
+            description = "device OS"
+        )
+
+        object os_version : Field(
+            type = Type.String,
+            description = "device OS version"
+        )
+
+        object os_build : Field(
+            type = Type.String,
+            description = "device OS build"
+        )
+
+        object manufacturer : Field(
+            type = Type.String,
+            description = "device manufacturer"
+        )
+
+        object model : Field(
+            type = Type.String,
+            description = "device model"
+        )
+
+        object board : Field(
+            type = Type.String,
+            description = "device board"
+        )
+
+        object product : Field(
+            type = Type.String,
+            description = "device product"
+        )
+
+        object brand : Field(
+            type = Type.String,
+            description = "device brand"
+        )
+
+        object cpu : Field(
+            type = Type.String,
+            description = "device CPU"
+        )
+
+        object hardware : Field(
+            type = Type.String,
+            description = "device hardware"
+        )
+
+        object device : Field(
+            type = Type.String,
+            description = "device"
+        )
+
+        object uuid : Field(
+            type = Type.String,
+            description = "device UUID"
+        )
+
+        object carrier : Field(
+            type = Type.String,
+            description = "device carrier"
+        )
+
+        object current_carrier : Field(
+            type = Type.String,
+            description = "device current carrier"
+        )
+
+        object network_type : Field(
+            type = Type.String,
+            description = "device network type"
+        )
+
+        object build_type : Field(
+            type = Type.String,
+            description = "device build type"
+        )
+
+        object build_id : Field(
+            type = Type.String,
+            description = "device build id"
+        )
+
+        object bootloader_version : Field(
+            type = Type.String,
+            description = "device bootloader version"
+        )
+
+        object radio_version : Field(
+            type = Type.String,
+            description = "device radio version"
+        )
+
+        object locale_country_code : Field(
+            type = Type.String,
+            description = "device country code"
+        )
+
+        object locale_language_code : Field(
+            type = Type.String,
+            description = "device language code"
+        )
+
+        object locale_raw : Field(
+            type = Type.String,
+            description = "device locale"
+        )
+
+        object os_api_level : Field(
+            type = Type.String,
+            description = "device OS API level"
+        )
+
+        object utc_offset : Field(
+            type = Type.String,
+            description = "device UTC offset"
+        )
+
+        data class custom_data(val key: String) : Field(
+            type = Type.Any,
+            description = "device custom_data[$key]"
+        )
     }
 
-    data class unknown(val path: String) : Field()
+    data class unknown(val path: String) : Field(Type.Any, "unknown path $path")
 
     companion object {
         @Suppress("LocalVariableName")

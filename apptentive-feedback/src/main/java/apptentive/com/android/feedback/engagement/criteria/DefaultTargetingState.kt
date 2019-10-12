@@ -12,17 +12,17 @@ data class DefaultTargetingState(
     private val sdk: SDK,
     private val appRelease: AppRelease
 ) : TargetingState {
-    override fun getValue(field: Field): FieldValue {
-        when (field) {
-            is application.version_code -> FieldValue.number(
+    override fun getValue(field: Field): Value {
+        return when (field) {
+            is application.version_code -> Value.number(
                 value = appRelease.versionCode,
                 description = "app version code (${appRelease.versionCode})"
             )
-            is application.version_name -> FieldValue.version(
+            is application.version_name -> Value.version(
                 value = appRelease.versionName,
                 description = "app version name (${appRelease.versionName})"
             )
-            is sdk.version -> FieldValue.version(
+            is sdk.version -> Value.version(
                 value = sdk.version,
                 description = "SDK version (${sdk.version})"
             )
@@ -40,11 +40,11 @@ data class DefaultTargetingState(
             is interactions.invokes.version_code -> TODO()
             is interactions.invokes.version_name -> TODO()
             is interactions.last_invoked_at.total -> TODO()
-            is person.name -> FieldValue.string(
+            is person.name -> Value.string(
                 value = person.name,
                 description = "person name (${person.name})"
             )
-            is person.email -> FieldValue.string(
+            is person.email -> Value.string(
                 value = person.email,
                 description = "person name (${person.email})"
             )
@@ -74,8 +74,7 @@ data class DefaultTargetingState(
             is device.utc_offset -> TODO()
             is device.custom_data -> TODO()
             is person.custom_data -> TODO()
+            else -> TODO()
         }
-
-        TODO()
     }
 }

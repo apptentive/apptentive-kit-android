@@ -1,8 +1,8 @@
 package apptentive.com.android.feedback.engagement.criteria
 
 interface ConditionalOperator {
-    fun apply(first: Any?, second: Any?): Boolean
-    fun description(description: String, second: Any?, first: Any?): String
+    fun apply(first: Value, second: Value): Boolean
+    fun description(description: String, second: Value, first: Value): String
 
     companion object {
         fun parse(value: String): ConditionalOperator = when (value) {
@@ -23,11 +23,11 @@ interface ConditionalOperator {
 
         private val exists: ConditionalOperator by lazy {
             object : ConditionalOperator {
-                override fun apply(first: Any?, second: Any?): Boolean {
+                override fun apply(first: Value, second: Value): Boolean {
                     TODO()
                 }
 
-                override fun description(description: String, second: Any?, first: Any?): String {
+                override fun description(description: String, second: Value, first: Value): String {
                     return "$description ('$first') exists"
                 }
             }
@@ -35,11 +35,11 @@ interface ConditionalOperator {
 
         private val ne: ConditionalOperator by lazy {
             object : ConditionalOperator {
-                override fun apply(first: Any?, second: Any?): Boolean {
+                override fun apply(first: Value, second: Value): Boolean {
                     TODO()
                 }
 
-                override fun description(description: String, second: Any?, first: Any?): String {
+                override fun description(description: String, second: Value, first: Value): String {
                     return "$description ('$first') not equal to '$second'"
                 }
             }
@@ -47,11 +47,11 @@ interface ConditionalOperator {
 
         private val eq: ConditionalOperator by lazy {
             object : ConditionalOperator {
-                override fun apply(first: Any?, second: Any?): Boolean {
+                override fun apply(first: Value, second: Value): Boolean {
                     TODO()
                 }
 
-                override fun description(description: String, second: Any?, first: Any?): String {
+                override fun description(description: String, second: Value, first: Value): String {
                     return "$description ('$first') equal to '$second'"
                 }
             }
@@ -59,11 +59,11 @@ interface ConditionalOperator {
 
         private val lt: ConditionalOperator by lazy {
             object : ConditionalOperator {
-                override fun apply(first: Any?, second: Any?): Boolean {
+                override fun apply(first: Value, second: Value): Boolean {
                     TODO()
                 }
 
-                override fun description(description: String, second: Any?, first: Any?): String {
+                override fun description(description: String, second: Value, first: Value): String {
                     return "$description ($first) less than $second"
                 }
             }
@@ -71,11 +71,11 @@ interface ConditionalOperator {
 
         private val lte: ConditionalOperator by lazy {
             object : ConditionalOperator {
-                override fun apply(first: Any?, second: Any?): Boolean {
+                override fun apply(first: Value, second: Value): Boolean {
                     TODO()
                 }
 
-                override fun description(description: String, second: Any?, first: Any?): String {
+                override fun description(description: String, second: Value, first: Value): String {
                     return "$description ($first) is less than or equal to $second"
                 }
             }
@@ -83,11 +83,11 @@ interface ConditionalOperator {
 
         private val gt: ConditionalOperator by lazy {
             object : ConditionalOperator {
-                override fun apply(first: Any?, second: Any?): Boolean {
+                override fun apply(first: Value, second: Value): Boolean {
                     TODO()
                 }
 
-                override fun description(description: String, second: Any?, first: Any?): String {
+                override fun description(description: String, second: Value, first: Value): String {
                     return "$description ($first) greater than $second"
                 }
             }
@@ -95,11 +95,11 @@ interface ConditionalOperator {
 
         private val gte: ConditionalOperator by lazy {
             object : ConditionalOperator {
-                override fun apply(first: Any?, second: Any?): Boolean {
+                override fun apply(first: Value, second: Value): Boolean {
                     TODO()
                 }
 
-                override fun description(description: String, second: Any?, first: Any?): String {
+                override fun description(description: String, second: Value, first: Value): String {
                     return "$description ($first) is greater than or equal to $second"
                 }
             }
@@ -107,11 +107,11 @@ interface ConditionalOperator {
 
         private val contains: ConditionalOperator by lazy {
             object : ConditionalOperator {
-                override fun apply(first: Any?, second: Any?): Boolean {
+                override fun apply(first: Value, second: Value): Boolean {
                     TODO()
                 }
 
-                override fun description(description: String, second: Any?, first: Any?): String {
+                override fun description(description: String, second: Value, first: Value): String {
                     return "$description ('$first') contains '$second'"
                 }
             }
@@ -119,11 +119,11 @@ interface ConditionalOperator {
 
         private val starts_with: ConditionalOperator by lazy {
             object : ConditionalOperator {
-                override fun apply(first: Any?, second: Any?): Boolean {
+                override fun apply(first: Value, second: Value): Boolean {
                     TODO()
                 }
 
-                override fun description(description: String, second: Any?, first: Any?): String {
+                override fun description(description: String, second: Value, first: Value): String {
                     return "$description ('$first') starts with '$second'"
                 }
             }
@@ -131,11 +131,11 @@ interface ConditionalOperator {
 
         private val ends_with: ConditionalOperator by lazy {
             object : ConditionalOperator {
-                override fun apply(first: Any?, second: Any?): Boolean {
+                override fun apply(first: Value, second: Value): Boolean {
                     TODO()
                 }
 
-                override fun description(description: String, second: Any?, first: Any?): String {
+                override fun description(description: String, second: Value, first: Value): String {
                     return "$description ('$first') starts with '$second'"
                 }
             }
@@ -143,11 +143,11 @@ interface ConditionalOperator {
 
         private val before: ConditionalOperator by lazy {
             object : ConditionalOperator {
-                override fun apply(first: Any?, second: Any?): Boolean {
+                override fun apply(first: Value, second: Value): Boolean {
                     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                 }
 
-                override fun description(description: String, second: Any?, first: Any?): String {
+                override fun description(description: String, second: Value, first: Value): String {
                     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                 }
             }
@@ -155,11 +155,11 @@ interface ConditionalOperator {
 
         private val after: ConditionalOperator by lazy {
             object : ConditionalOperator {
-                override fun apply(first: Any?, second: Any?): Boolean {
+                override fun apply(first: Value, second: Value): Boolean {
                     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                 }
 
-                override fun description(description: String, second: Any?, first: Any?): String {
+                override fun description(description: String, second: Value, first: Value): String {
                     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                 }
             }
@@ -167,11 +167,11 @@ interface ConditionalOperator {
 
         private val unknown: ConditionalOperator by lazy {
             object : ConditionalOperator {
-                override fun apply(first: Any?, second: Any?): Boolean {
+                override fun apply(first: Value, second: Value): Boolean {
                     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                 }
 
-                override fun description(description: String, second: Any?, first: Any?): String {
+                override fun description(description: String, second: Value, first: Value): String {
                     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                 }
             }

@@ -61,6 +61,29 @@ sealed class Value {
     object Null : Value() {
         override fun toString() = "null"
     }
+
+    companion object {
+        fun boolean(value: kotlin.Boolean?, description: kotlin.String): Value {
+            return if (value != null) Boolean(value) else Null
+        }
+
+        fun number(value: Int?, description: kotlin.String): Value {
+            return if (value != null) Number(value) else Null
+        }
+
+        fun string(value: kotlin.String?, description: kotlin.String): Value {
+            return if (value != null) String(value) else Null
+        }
+
+        fun dateTime(seconds: Long?, description: kotlin.String): Value {
+            return if (seconds != null) DateTime(seconds) else Null
+        }
+
+        // FIXME: implement version
+        fun version(value: kotlin.String?, description: kotlin.String): Value {
+            TODO()
+        }
+    }
 }
 
 operator fun <T : Value> Value.compareTo(other: T): Int =
@@ -70,4 +93,20 @@ operator fun <T : Value> Value.compareTo(other: T): Int =
         0
     }
 
-val Value.isNull get() = this is Value.Null
+fun Field.value(value: Any?) : Value {
+    return when(type) {
+        Field.Type.String -> {
+            Value.String(value as String)
+        }
+        Field.Type.Number -> {
+            Value.Number(value as Long)
+        }
+        Field.Type.Boolean -> {
+            Value.Boolean(value as Boolean)
+        }
+        Field.Type.DateTime -> {
+            Value.Boolean(value as Boolean)
+        }
+        else -> TODO()
+    }
+}

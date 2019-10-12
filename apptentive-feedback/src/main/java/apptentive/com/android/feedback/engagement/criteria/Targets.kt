@@ -17,17 +17,27 @@ class ClauseConverter : Converter<Map<String, Any>, Clause> {
             and -> LogicalAndClause(convertChildren(source))
             or -> LogicalOrClause(convertChildren(source))
             not -> LogicalNotClause(convertChildren(source))
-            else -> { ConditionalClause(key, convertConditionalTests(source)) }
+            else -> {
+                val field = Field.parse(key)
+                if (field is Field.unknown) {
+                    TODO() // FIXME: return special clause which would fail criteria
+                } else {
+                    ConditionalClause(field, convertConditionalTests(field, source))
+                }
+            }
         }
     }
 
-    private fun convertConditionalTests(source: Map<String, Any?>): List<ConditionalTest> {
-        return source.map { (key, value) -> convertConditionalTest(key, value) }
+    private fun convertConditionalTests(
+        field: Field,
+        source: Map<String, Any?>
+    ): List<ConditionalTest> {
+        return source.map { (key, value) -> convertConditionalTest(field, key, value) }
     }
 
-    private fun convertConditionalTest(key: String, value: Any?): ConditionalTest {
+    private fun convertConditionalTest(field: Field, key: String, value: Any?): ConditionalTest {
         val operator = ConditionalOperator.parse(key)
-        val parameter = TODO()
+        val parameter = field.value(value)
         return ConditionalTest(operator, parameter)
     }
 
