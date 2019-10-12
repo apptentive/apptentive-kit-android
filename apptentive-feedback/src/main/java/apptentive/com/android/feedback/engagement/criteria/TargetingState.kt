@@ -5,5 +5,3 @@ interface TargetingState {
 }
 
 typealias FieldPath = String
-
-val Value.isNull get() = this is Value.Null

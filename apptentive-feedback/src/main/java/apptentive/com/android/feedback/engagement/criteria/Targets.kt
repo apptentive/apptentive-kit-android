@@ -27,7 +27,7 @@ class ClauseConverter : Converter<Map<String, Any>, Clause> {
 
     private fun convertConditionalTest(key: String, value: Any?): ConditionalTest {
         val operator = ConditionalOperator.parse(key)
-        val parameter = Value.from(value)
+        val parameter = TODO()
         return ConditionalTest(operator, parameter)
     }
 

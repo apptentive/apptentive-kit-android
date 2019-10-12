@@ -1,51 +1,73 @@
 package apptentive.com.android.feedback.engagement.criteria
 
-import kotlin.math.abs
+sealed class Value {
+    data class String(private val value: kotlin.String) : Value(), Comparable<String> {
+        fun contains(other: String) = value.contains(other.value, ignoreCase = true)
 
-sealed class Value(val description: String) : Comparable<Value> {
-    class Str(description: String, val value: String) : Value(description) {
-        fun contains(other: Str) = value.contains(other.value, ignoreCase = true)
-        fun startsWith(other: Str) = value.startsWith(other.value, ignoreCase = true)
-        fun endsWith(other: Str) = value.endsWith(other.value, ignoreCase = true)
+        fun startsWith(other: String) = value.startsWith(other.value, ignoreCase = true)
 
-        override fun equals(other: Any?): Boolean {
-            return other is Str && value.equals(other.value, ignoreCase = true)
-        }
+        fun endsWith(other: String) = value.endsWith(other.value, ignoreCase = true)
+
+        override fun equals(other: Any?) =
+            other is String && value.equals(other.value, ignoreCase = true)
+
+        override fun compareTo(other: String) = value?.compareTo(other.value) ?: 0
 
         override fun toString() = value
     }
 
-    class Bool(description: String, val value: Boolean) : Value(description) {
-        override fun equals(other: Any?): Boolean {
-            return other is Bool && value == other.value
-        }
+    data class Boolean(private val value: kotlin.Boolean) : Value() {
+        override fun toString() = value.toString()
+    }
+
+    data class Number(private val value: Long) : Value(), Comparable<Number> {
+        constructor(value: Int) : this(value.toLong())
+
+        override fun compareTo(other: Number) = value.compareTo(other.value)
 
         override fun toString() = value.toString()
     }
 
-    class Number(description: String, val value: Double) : Value(description) {
-        override fun equals(other: Any?): Boolean {
-            return other is Number && abs(value - other.value) < 0.0000001
-        }
+    data class DateTime(private val seconds: Long) : Value(), Comparable<DateTime> {
+        override fun compareTo(other: DateTime) = seconds.compareTo(other.seconds)
 
-        override fun toString() = value.toString()
+        override fun toString() = seconds.toString()
     }
 
-    class Null(description: String) : Value(description) {
+    // FIXME: add support for semantic versioning https://semver.org/
+    class Version(
+        private val major: Long,
+        private val minor: Long,
+        private val patch: Long
+    ) : Value(), Comparable<Version> {
+
+        override fun compareTo(other: Version): Int {
+            val majorCmp = major.compareTo(other.major)
+            if (majorCmp != 0) {
+                return majorCmp
+            }
+
+            val minorCmp = minor.compareTo(other.minor)
+            if (minorCmp != 0) {
+                return minorCmp
+            }
+
+            return patch.compareTo(other.patch)
+        }
+
+        override fun toString() = "$major.$minor.$patch"
+    }
+
+    object Null : Value() {
         override fun toString() = "null"
     }
-
-    override fun compareTo(other: Value): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    companion object {
-        fun from(obj: Any?): Value = when (obj) {
-            null -> Null("description")
-            is String -> Str("description", obj)
-            is Double -> Number("description", obj)
-            is Boolean -> Bool("description", obj)
-            else -> TODO()
-        }
-    }
 }
+
+operator fun <T : Value> Value.compareTo(other: T): Int =
+    if (this.javaClass == other.javaClass && this is Comparable<*>) {
+        this.compareTo(other)
+    } else {
+        0
+    }
+
+val Value.isNull get() = this is Value.Null
