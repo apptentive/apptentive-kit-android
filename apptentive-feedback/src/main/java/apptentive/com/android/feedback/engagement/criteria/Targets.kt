@@ -17,7 +17,7 @@ class ClauseConverter : Converter<Map<String, Any>, Clause> {
             "\$and" -> LogicalAndClause(convertChildren(source))
             "\$or" -> LogicalOrClause(convertChildren(source))
             "\$not" -> LogicalNotClause(convertChildren(source))
-            else -> ConditionalClause(key, convertConditionalTests(source))
+            else -> TODO() // ConditionalClause(key, convertConditionalTests(source))
         }
     }
 
