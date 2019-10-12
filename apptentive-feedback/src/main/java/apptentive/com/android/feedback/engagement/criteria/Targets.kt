@@ -9,15 +9,15 @@ data class Targets(val targets: Map<String, List<Target>> = mapOf())
 
 class ClauseConverter : Converter<Map<String, Any>, Clause> {
     override fun convert(source: Map<String, Any>): Clause {
-        return convert("\$and", source)
+        return convert(and, source)
     }
 
     private fun convert(key: String, source: Map<String, Any>): Clause {
         return when (key) {
-            "\$and" -> LogicalAndClause(convertChildren(source))
-            "\$or" -> LogicalOrClause(convertChildren(source))
-            "\$not" -> LogicalNotClause(convertChildren(source))
-            else -> TODO() // ConditionalClause(key, convertConditionalTests(source))
+            and -> LogicalAndClause(convertChildren(source))
+            or -> LogicalOrClause(convertChildren(source))
+            not -> LogicalNotClause(convertChildren(source))
+            else -> { ConditionalClause(key, convertConditionalTests(source)) }
         }
     }
 
@@ -32,7 +32,13 @@ class ClauseConverter : Converter<Map<String, Any>, Clause> {
     }
 
     private fun convertChildren(source: Map<String, Any>): List<Clause> {
-        return source.map { (key, value) -> convert(key, value as Map<String, Any>)  }
+        return source.map { (key, value) -> convert(key, value as Map<String, Any>) }
+    }
+
+    companion object {
+        private const val and = "\$and"
+        private const val or = "\$or"
+        private const val not = "\$not"
     }
 }
 

@@ -2,6 +2,7 @@ package apptentive.com.android.feedback.engagement.criteria
 
 import apptentive.com.android.feedback.engagement.Event
 
+/* Note: this class was generated via script */
 @Suppress("ClassName")
 sealed class Field {
     object application {
@@ -83,5 +84,102 @@ sealed class Field {
         data class custom_data(val key: String) : Field()
     }
 
-    object unknown : Field()
+    data class unknown(val path: String) : Field()
+
+    companion object {
+        @Suppress("LocalVariableName")
+        fun parse(path: String): Field {
+            val components = path.split("/")
+            when (components[0]) {
+                "application" -> when (components[1]) {
+                    "version_code" -> return application.version_code
+                    "version_name" -> return application.version_name
+                }
+                "sdk" -> when (components[1]) {
+                    "version" -> return sdk.version
+                }
+                "current_time" -> return current_time
+                "is_update" -> when (components[1]) {
+                    "version_code" -> return is_update.version_code
+                    "version_name" -> return is_update.version_name
+                }
+                "time_at_install" -> when (components[1]) {
+                    "total" -> return time_at_install.total
+                    "version_code" -> return time_at_install.version_code
+                    "version_name" -> return time_at_install.version_name
+                }
+                "code_point" -> {
+                    val code_point_name = Event.parse(components[1])
+                    when (components[2]) {
+                        "invokes" -> when (components[3]) {
+                            "total" -> return code_point.invokes.total(code_point_name)
+                            "version_code" -> return code_point.invokes.version_code(code_point_name)
+                            "version_name" -> return code_point.invokes.version_name(code_point_name)
+                        }
+                        "last_invoked_at" -> when (components[3]) {
+                            "total" -> return code_point.last_invoked_at.total(code_point_name)
+                        }
+                    }
+                }
+                "interactions" -> {
+                    val interaction_instance_id = components[1]
+                    when (components[2]) {
+                        "invokes" -> when (components[3]) {
+                            "total" -> return interactions.invokes.total(interaction_instance_id)
+                            "version_code" -> return interactions.invokes.version_code(
+                                interaction_instance_id
+                            )
+                            "version_name" -> return interactions.invokes.version_name(
+                                interaction_instance_id
+                            )
+                        }
+                        "last_invoked_at" -> when (components[3]) {
+                            "total" -> return interactions.last_invoked_at.total(
+                                interaction_instance_id
+                            )
+                        }
+                    }
+                }
+                "person" -> when (components[1]) {
+                    "name" -> return person.name
+                    "email" -> return person.email
+                    "custom_data" -> {
+                        val key = components[2]
+                        return person.custom_data(key)
+                    }
+                }
+                "device" -> when (components[1]) {
+                    "os_name" -> return device.os_name
+                    "os_version" -> return device.os_version
+                    "os_build" -> return device.os_build
+                    "manufacturer" -> return device.manufacturer
+                    "model" -> return device.model
+                    "board" -> return device.board
+                    "product" -> return device.product
+                    "brand" -> return device.brand
+                    "cpu" -> return device.cpu
+                    "hardware" -> return device.hardware
+                    "device" -> return device.device
+                    "uuid" -> return device.uuid
+                    "carrier" -> return device.carrier
+                    "current_carrier" -> return device.current_carrier
+                    "network_type" -> return device.network_type
+                    "build_type" -> return device.build_type
+                    "build_id" -> return device.build_id
+                    "bootloader_version" -> return device.bootloader_version
+                    "radio_version" -> return device.radio_version
+                    "locale_country_code" -> return device.locale_country_code
+                    "locale_language_code" -> return device.locale_language_code
+                    "locale_raw" -> return device.locale_raw
+                    "os_api_level" -> return device.os_api_level
+                    "utc_offset" -> return device.utc_offset
+                    "custom_data" -> {
+                        val key = components[2]
+                        return device.custom_data(key)
+                    }
+                }
+            }
+            return unknown(path)
+        }
+    }
 }
