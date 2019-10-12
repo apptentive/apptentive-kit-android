@@ -14,5 +14,11 @@ data class Event(val vendor: String, val interaction: String, val name: String) 
             .replace("%", "%25")
             .replace("#", "%23")
             .replace("/", "%2F")
+
+        fun parse(value: String): Event {
+            val tokens = value.split("#")
+            require(tokens.size == 3) { "Invalid event name: '$value'" }
+            return Event(vendor = tokens[0], interaction = tokens[1], name = tokens[2])
+        }
     }
 }
