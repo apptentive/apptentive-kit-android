@@ -2,7 +2,7 @@ package apptentive.com.android.feedback.engagement.criteria
 
 interface ConditionalOperator {
     fun apply(first: Any?, second: Any?): Boolean
-    fun description(description: String, second: Any?, first: Any?): String
+    fun description(description: String, first: Any?, second: Any?): String
 
     companion object {
         fun parse(value: String): ConditionalOperator = when (value) {
@@ -27,7 +27,7 @@ interface ConditionalOperator {
                     TODO()
                 }
 
-                override fun description(description: String, second: Any?, first: Any?): String {
+                override fun description(description: String, first: Any?, second: Any?): String {
                     return "$description ('$first') exists"
                 }
             }
@@ -39,7 +39,7 @@ interface ConditionalOperator {
                     TODO()
                 }
 
-                override fun description(description: String, second: Any?, first: Any?): String {
+                override fun description(description: String, first: Any?, second: Any?): String {
                     return "$description ('$first') not equal to '$second'"
                 }
             }
@@ -51,7 +51,7 @@ interface ConditionalOperator {
                     TODO()
                 }
 
-                override fun description(description: String, second: Any?, first: Any?): String {
+                override fun description(description: String, first: Any?, second: Any?): String {
                     return "$description ('$first') equal to '$second'"
                 }
             }
@@ -63,7 +63,7 @@ interface ConditionalOperator {
                     TODO()
                 }
 
-                override fun description(description: String, second: Any?, first: Any?): String {
+                override fun description(description: String, first: Any?, second: Any?): String {
                     return "$description ($first) less than $second"
                 }
             }
@@ -75,7 +75,7 @@ interface ConditionalOperator {
                     TODO()
                 }
 
-                override fun description(description: String, second: Any?, first: Any?): String {
+                override fun description(description: String, first: Any?, second: Any?): String {
                     return "$description ($first) is less than or equal to $second"
                 }
             }
@@ -87,7 +87,7 @@ interface ConditionalOperator {
                     TODO()
                 }
 
-                override fun description(description: String, second: Any?, first: Any?): String {
+                override fun description(description: String, first: Any?, second: Any?): String {
                     return "$description ($first) greater than $second"
                 }
             }
@@ -99,7 +99,7 @@ interface ConditionalOperator {
                     TODO()
                 }
 
-                override fun description(description: String, second: Any?, first: Any?): String {
+                override fun description(description: String, first: Any?, second: Any?): String {
                     return "$description ($first) is greater than or equal to $second"
                 }
             }
@@ -111,7 +111,7 @@ interface ConditionalOperator {
                     TODO()
                 }
 
-                override fun description(description: String, second: Any?, first: Any?): String {
+                override fun description(description: String, first: Any?, second: Any?): String {
                     return "$description ('$first') contains '$second'"
                 }
             }
@@ -123,7 +123,7 @@ interface ConditionalOperator {
                     TODO()
                 }
 
-                override fun description(description: String, second: Any?, first: Any?): String {
+                override fun description(description: String, first: Any?, second: Any?): String {
                     return "$description ('$first') starts with '$second'"
                 }
             }
@@ -135,7 +135,7 @@ interface ConditionalOperator {
                     TODO()
                 }
 
-                override fun description(description: String, second: Any?, first: Any?): String {
+                override fun description(description: String, first: Any?, second: Any?): String {
                     return "$description ('$first') starts with '$second'"
                 }
             }
@@ -147,7 +147,7 @@ interface ConditionalOperator {
                     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                 }
 
-                override fun description(description: String, second: Any?, first: Any?): String {
+                override fun description(description: String, first: Any?, second: Any?): String {
                     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                 }
             }
@@ -159,7 +159,7 @@ interface ConditionalOperator {
                     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                 }
 
-                override fun description(description: String, second: Any?, first: Any?): String {
+                override fun description(description: String, first: Any?, second: Any?): String {
                     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                 }
             }
@@ -171,7 +171,7 @@ interface ConditionalOperator {
                     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                 }
 
-                override fun description(description: String, second: Any?, first: Any?): String {
+                override fun description(description: String, first: Any?, second: Any?): String {
                     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                 }
             }
