@@ -5,20 +5,35 @@ interface ConditionalOperator {
     fun description(description: String, first: Any?, second: Any?): String
 
     companion object {
-        fun parse(value: String): ConditionalOperator = when (value) {
-            "\$exists" -> exists
-            "\$ne" -> ne
-            "\$eq" -> eq
-            "\$lt" -> lt
-            "\$lte" -> lte
-            "\$gt" -> gt
-            "\$gte" -> gte
-            "\$contains" -> contains
-            "\$starts_with" -> starts_with
-            "\$ends_with" -> ends_with
-            "\$before" -> before
-            "\$after" -> after
-            else -> unknown
+        const val EXISTS = "\$exists"
+        const val NE = "\$ne"
+        const val EQ = "\$eq"
+        const val LT = "\$lt"
+        const val LTE = "\$lte"
+        const val GT = "\$gt"
+        const val GTE = "\$gte"
+        const val CONTAINS = "\$contains"
+        const val STARTS_WITH = "\$starts_with"
+        const val ENDS_WITH = "\$ends_with"
+        const val BEFORE = "\$before"
+        const val AFTER = "\$after"
+
+        fun parse(value: String): ConditionalOperator {
+            return when (value) {
+                EXISTS -> exists
+                NE -> ne
+                EQ -> eq
+                LT -> lt
+                LTE -> lte
+                GT -> gt
+                GTE -> gte
+                CONTAINS -> contains
+                STARTS_WITH -> starts_with
+                ENDS_WITH -> ends_with
+                BEFORE -> before
+                AFTER -> after
+                else -> unknown
+            }
         }
 
         private val exists: ConditionalOperator by lazy {
@@ -257,7 +272,7 @@ interface ConditionalOperator {
 }
 
 @Suppress("UNCHECKED_CAST")
-private fun compare(a: Any, b: Any) : Int {
+private fun compare(a: Any, b: Any): Int {
     if (a.javaClass != b.javaClass) {
         return 0
     }
