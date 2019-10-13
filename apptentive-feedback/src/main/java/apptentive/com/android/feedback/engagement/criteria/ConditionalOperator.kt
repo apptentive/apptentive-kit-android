@@ -24,7 +24,14 @@ interface ConditionalOperator {
         private val exists: ConditionalOperator by lazy {
             object : ConditionalOperator {
                 override fun apply(first: Any?, second: Any?): Boolean {
-                    TODO()
+                    if (second == null) {
+                        return false
+                    }
+                    if (second !is Boolean) {
+                        return false
+                    }
+                    val exists = first != null
+                    return exists == second
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
@@ -36,7 +43,16 @@ interface ConditionalOperator {
         private val ne: ConditionalOperator by lazy {
             object : ConditionalOperator {
                 override fun apply(first: Any?, second: Any?): Boolean {
-                    TODO()
+                    if (first == null || second == null) {
+                        return false
+                    }
+                    if (first.javaClass != second.javaClass) {
+                        return false
+                    }
+                    if (first is String && second is String) {
+                        return !first.equals(second, ignoreCase = true)
+                    }
+                    return compare(first, second) != 0
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
@@ -48,7 +64,19 @@ interface ConditionalOperator {
         private val eq: ConditionalOperator by lazy {
             object : ConditionalOperator {
                 override fun apply(first: Any?, second: Any?): Boolean {
-                    TODO()
+                    if (first == null && second == null) {
+                        return true
+                    }
+                    if (first == null || second == null) {
+                        return false
+                    }
+                    if (first.javaClass != second.javaClass) {
+                        return false
+                    }
+                    if (first is String && second is String) {
+                        return first.equals(second, ignoreCase = true)
+                    }
+                    return compare(first, second) == 0
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
@@ -60,7 +88,13 @@ interface ConditionalOperator {
         private val lt: ConditionalOperator by lazy {
             object : ConditionalOperator {
                 override fun apply(first: Any?, second: Any?): Boolean {
-                    TODO()
+                    if (first == null || second == null) {
+                        return false
+                    }
+                    if (first.javaClass != second.javaClass) {
+                        return false
+                    }
+                    return compare(first, second) < 0
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
@@ -72,7 +106,14 @@ interface ConditionalOperator {
         private val lte: ConditionalOperator by lazy {
             object : ConditionalOperator {
                 override fun apply(first: Any?, second: Any?): Boolean {
-                    TODO()
+                    if (first == null || second == null) {
+                        return false
+                    }
+                    if (first.javaClass != second.javaClass) {
+                        return false
+                    }
+
+                    return compare(first, second) <= 0
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
@@ -84,7 +125,13 @@ interface ConditionalOperator {
         private val gt: ConditionalOperator by lazy {
             object : ConditionalOperator {
                 override fun apply(first: Any?, second: Any?): Boolean {
-                    TODO()
+                    if (first == null || second == null) {
+                        return false
+                    }
+                    if (first.javaClass != second.javaClass) {
+                        return false
+                    }
+                    return compare(first, second) > 0
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
@@ -96,7 +143,13 @@ interface ConditionalOperator {
         private val gte: ConditionalOperator by lazy {
             object : ConditionalOperator {
                 override fun apply(first: Any?, second: Any?): Boolean {
-                    TODO()
+                    if (first == null || second == null) {
+                        return false
+                    }
+                    if (first.javaClass != second.javaClass) {
+                        return false
+                    }
+                    return compare(first, second) >= 0
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
@@ -108,7 +161,13 @@ interface ConditionalOperator {
         private val contains: ConditionalOperator by lazy {
             object : ConditionalOperator {
                 override fun apply(first: Any?, second: Any?): Boolean {
-                    TODO()
+                    if (first == null || second == null) {
+                        return false
+                    }
+                    if (first !is String || second !is String) {
+                        return false
+                    }
+                    return first.contains(second, ignoreCase = true)
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
@@ -120,7 +179,10 @@ interface ConditionalOperator {
         private val starts_with: ConditionalOperator by lazy {
             object : ConditionalOperator {
                 override fun apply(first: Any?, second: Any?): Boolean {
-                    TODO()
+                    if (first !is String || second !is String) {
+                        return false
+                    }
+                    return first.startsWith(second, ignoreCase = true)
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
@@ -132,7 +194,10 @@ interface ConditionalOperator {
         private val ends_with: ConditionalOperator by lazy {
             object : ConditionalOperator {
                 override fun apply(first: Any?, second: Any?): Boolean {
-                    TODO()
+                    if (first !is String || second !is String) {
+                        return false
+                    }
+                    return first.endsWith(second, ignoreCase = true)
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
@@ -144,7 +209,13 @@ interface ConditionalOperator {
         private val before: ConditionalOperator by lazy {
             object : ConditionalOperator {
                 override fun apply(first: Any?, second: Any?): Boolean {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    if (first !is DateTime) {
+                        return false
+                    }
+                    if (second !is DateTime) {
+                        return false
+                    }
+                    return first < second
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
@@ -156,7 +227,13 @@ interface ConditionalOperator {
         private val after: ConditionalOperator by lazy {
             object : ConditionalOperator {
                 override fun apply(first: Any?, second: Any?): Boolean {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    if (first !is DateTime) {
+                        return false
+                    }
+                    if (second !is DateTime) {
+                        return false
+                    }
+                    return first > second
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
@@ -168,7 +245,7 @@ interface ConditionalOperator {
         private val unknown: ConditionalOperator by lazy {
             object : ConditionalOperator {
                 override fun apply(first: Any?, second: Any?): Boolean {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    return false
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
@@ -177,4 +254,18 @@ interface ConditionalOperator {
             }
         }
     }
+}
+
+@Suppress("UNCHECKED_CAST")
+private fun compare(a: Any, b: Any) : Int {
+    if (a.javaClass != b.javaClass) {
+        return 0
+    }
+    val c1 = a as? Comparable<Any>
+    val c2 = b as? Comparable<Any>
+    if (c1 != null && c2 != null) {
+        return a.compareTo(b)
+    }
+
+    return 0
 }
