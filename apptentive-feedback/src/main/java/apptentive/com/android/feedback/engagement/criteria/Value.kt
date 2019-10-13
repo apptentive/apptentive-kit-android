@@ -35,7 +35,7 @@ sealed class Value {
     }
 
     // FIXME: add support for semantic versioning https://semver.org/
-    class Version(
+    data class Version(
         private val major: Long,
         private val minor: Long,
         private val patch: Long
@@ -56,6 +56,17 @@ sealed class Value {
         }
 
         override fun toString() = "$major.$minor.$patch"
+
+        companion object {
+            fun parse(value: kotlin.String): Version {
+                val components = value.split(".")
+                return Version(
+                    major = components[0].toLong(),
+                    minor = if (components.size > 1) components[1].toLong() else 0,
+                    patch = if (components.size > 2) components[2].toLong() else 0
+                )
+            }
+        }
     }
 
     object Null : Value() {
@@ -63,25 +74,37 @@ sealed class Value {
     }
 
     companion object {
-        fun boolean(value: kotlin.Boolean?, description: kotlin.String): Value {
+        fun boolean(value: kotlin.Boolean?): Value {
             return if (value != null) Boolean(value) else Null
         }
 
-        fun number(value: Int?, description: kotlin.String): Value {
+        fun number(value: Int?): Value {
             return if (value != null) Number(value) else Null
         }
 
-        fun string(value: kotlin.String?, description: kotlin.String): Value {
+        fun string(value: kotlin.String?): Value {
             return if (value != null) String(value) else Null
         }
 
-        fun dateTime(seconds: Long?, description: kotlin.String): Value {
+        fun dateTime(seconds: Long?): Value {
             return if (seconds != null) DateTime(seconds) else Null
         }
 
-        // FIXME: implement version
-        fun version(value: kotlin.String?, description: kotlin.String): Value {
-            TODO()
+        fun version(value: kotlin.String?): Value {
+            return if (value != null) Version.parse(value) else Null
+        }
+
+        fun any(value: Any?): Value {
+            if (value == null) {
+                return Null
+            }
+            return when (value) {
+                is kotlin.String -> String(value)
+                is kotlin.Boolean -> Boolean(value)
+                is Int -> Number(value)
+                is Long -> Number(value)
+                else -> throw IllegalArgumentException("Unsupported value: $value (${value.javaClass})")
+            }
         }
     }
 }
@@ -93,8 +116,8 @@ operator fun <T : Value> Value.compareTo(other: T): Int =
         0
     }
 
-fun Field.value(value: Any?) : Value {
-    return when(type) {
+fun Field.value(value: Any?): Value {
+    return when (type) {
         Field.Type.String -> {
             Value.String(value as String)
         }

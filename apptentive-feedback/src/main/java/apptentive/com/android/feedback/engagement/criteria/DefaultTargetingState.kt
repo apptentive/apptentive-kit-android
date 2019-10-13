@@ -14,18 +14,9 @@ data class DefaultTargetingState(
 ) : TargetingState {
     override fun getValue(field: Field): Value {
         return when (field) {
-            is application.version_code -> Value.number(
-                value = appRelease.versionCode,
-                description = "app version code (${appRelease.versionCode})"
-            )
-            is application.version_name -> Value.version(
-                value = appRelease.versionName,
-                description = "app version name (${appRelease.versionName})"
-            )
-            is sdk.version -> Value.version(
-                value = sdk.version,
-                description = "SDK version (${sdk.version})"
-            )
+            is application.version_code -> Value.number(appRelease.versionCode)
+            is application.version_name -> Value.version(appRelease.versionName)
+            is sdk.version -> Value.version(sdk.version)
             is current_time -> TODO()
             is is_update.version_code -> TODO()
             is is_update.version_name -> TODO()
@@ -40,41 +31,42 @@ data class DefaultTargetingState(
             is interactions.invokes.version_code -> TODO()
             is interactions.invokes.version_name -> TODO()
             is interactions.last_invoked_at.total -> TODO()
-            is person.name -> Value.string(
-                value = person.name,
-                description = "person name (${person.name})"
-            )
-            is person.email -> Value.string(
-                value = person.email,
-                description = "person name (${person.email})"
-            )
-            is device.os_name -> TODO()
-            is device.os_version -> TODO()
-            is device.os_build -> TODO()
-            is device.manufacturer -> TODO()
-            is device.model -> TODO()
-            is device.board -> TODO()
-            is device.product -> TODO()
-            is device.brand -> TODO()
-            is device.cpu -> TODO()
-            is device.hardware -> TODO()
-            is device.device -> TODO()
-            is device.uuid -> TODO()
-            is device.carrier -> TODO()
-            is device.current_carrier -> TODO()
-            is device.network_type -> TODO()
-            is device.build_type -> TODO()
-            is device.build_id -> TODO()
-            is device.bootloader_version -> TODO()
-            is device.radio_version -> TODO()
-            is device.locale_country_code -> TODO()
-            is device.locale_language_code -> TODO()
-            is device.locale_raw -> TODO()
-            is device.os_api_level -> TODO()
-            is device.utc_offset -> TODO()
-            is device.custom_data -> TODO()
-            is person.custom_data -> TODO()
-            else -> TODO()
+            is person.name -> Value.string(person.name)
+            is person.email -> Value.string(person.email)
+            is person.custom_data -> {
+                val value = person.customData[field.key]
+                return Value.any(value)
+            }
+            is device.os_name -> Value.string(device.osName)
+            is device.os_version -> Value.string(device.osVersion)
+            is device.os_build -> Value.string(device.osBuild)
+            is device.manufacturer -> Value.string(device.manufacturer)
+            is device.model -> Value.string(device.model)
+            is device.board -> Value.string(device.board)
+            is device.product -> Value.string(device.product)
+            is device.brand -> Value.string(device.brand)
+            is device.cpu -> Value.string(device.cpu)
+            is device.hardware -> Value.Null // this key is unknown
+            is device.device -> Value.string(device.device)
+            is device.uuid -> Value.string(device.uuid)
+            is device.carrier -> Value.string(device.carrier)
+            is device.current_carrier -> Value.string(device.currentCarrier)
+            is device.network_type -> Value.string(device.networkType)
+            is device.build_type -> Value.string(device.buildType)
+            is device.build_id -> Value.string(device.buildId)
+            is device.bootloader_version -> Value.string(device.bootloaderVersion)
+            is device.radio_version -> Value.string(device.radioVersion)
+            is device.locale_country_code -> Value.string(device.localeCountryCode)
+            is device.locale_language_code -> Value.string(device.localeLanguageCode)
+            is device.locale_raw -> Value.string(device.localeRaw)
+            is device.os_api_level -> Value.number(device.osApiLevel)
+            is device.utc_offset -> Value.number(device.utcOffset)
+            is device.custom_data -> {
+                val value = device.customData[field.key]
+                return Value.any(value)
+            }
+
+            else -> Value.Null // FIXME: add error description or return unknown value
         }
     }
 }

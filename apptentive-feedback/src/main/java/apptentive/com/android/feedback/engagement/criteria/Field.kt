@@ -2,8 +2,6 @@ package apptentive.com.android.feedback.engagement.criteria
 
 import apptentive.com.android.feedback.engagement.Event
 
-// FIXME: proof read the descriptions
-
 @Suppress("ClassName")
 sealed class Field(val type: Type, val description: String) {
     enum class Type {
