@@ -1,6 +1,6 @@
 package apptentive.com.android.feedback.engagement.criteria
 
 interface TargetingState {
-    fun getValue(field: Field): Value
+    fun getValue(field: Field): Any?
 }
 

@@ -342,3 +342,14 @@ sealed class Field(val type: Type, val description: String) {
         }
     }
 }
+
+fun Field.convert(value: Any?): Any? {
+    return when (type) {
+        Field.Type.String -> value as? String // FIXME: check type
+        Field.Type.Number -> value as? Long // FIXME: check type
+        Field.Type.Boolean -> value as? Boolean // FIXME: check type
+        Field.Type.DateTime -> TODO()
+        Field.Type.Version -> TODO()
+        Field.Type.Any -> value
+    }
+}

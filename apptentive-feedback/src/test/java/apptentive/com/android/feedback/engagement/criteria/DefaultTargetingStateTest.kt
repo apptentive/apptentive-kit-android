@@ -1,9 +1,6 @@
 package apptentive.com.android.feedback.engagement.criteria
 
 import apptentive.com.android.feedback.engagement.criteria.Field.*
-import apptentive.com.android.feedback.engagement.criteria.Value.*
-import apptentive.com.android.feedback.engagement.criteria.Value.Number
-import apptentive.com.android.feedback.engagement.criteria.Value.String
 import apptentive.com.android.feedback.mockAppRelease
 import apptentive.com.android.feedback.mockDevice
 import apptentive.com.android.feedback.mockPerson
@@ -27,7 +24,7 @@ class DefaultTargetingStateTest {
             )
         )
 
-        assertThat(state.getValue(application.version_code)).isEqualTo(Number(100000))
+        assertThat(state.getValue(application.version_code)).isEqualTo(100000)
         assertThat(state.getValue(application.version_name)).isEqualTo(Version.parse("1.0.0"))
     }
 
@@ -71,9 +68,9 @@ class DefaultTargetingStateTest {
             )
         )
 
-        assertThat(state.getValue(person.name)).isEqualTo(String("First Last"))
-        assertThat(state.getValue(person.email)).isEqualTo(String("person@company.com"))
-        assertThat(state.getValue(person.custom_data("person_key"))).isEqualTo(String("person_value"))
+        assertThat(state.getValue(person.name)).isEqualTo("First Last")
+        assertThat(state.getValue(person.email)).isEqualTo("person@company.com")
+        assertThat(state.getValue(person.custom_data("person_key"))).isEqualTo("person_value")
     }
 
     @Test
@@ -82,9 +79,9 @@ class DefaultTargetingStateTest {
             person = Person()
         )
 
-        assertThat(state.getValue(person.name)).isEqualTo(Null)
-        assertThat(state.getValue(person.email)).isEqualTo(Null)
-        assertThat(state.getValue(person.custom_data("person_key"))).isEqualTo(Null)
+        assertThat(state.getValue(person.name)).isNull()
+        assertThat(state.getValue(person.email)).isNull()
+        assertThat(state.getValue(person.custom_data("person_key"))).isNull()
     }
 
     @Test
@@ -118,33 +115,33 @@ class DefaultTargetingStateTest {
             )
         )
 
-        assertThat(state.getValue(device.os_name)).isEqualTo(String("device_os_name"))
-        assertThat(state.getValue(device.os_version)).isEqualTo(String("device_os_version"))
-        assertThat(state.getValue(device.os_build)).isEqualTo(String("device_os_build"))
-        assertThat(state.getValue(device.manufacturer)).isEqualTo(String("device_manufacturer"))
-        assertThat(state.getValue(device.model)).isEqualTo(String("device_model"))
-        assertThat(state.getValue(device.board)).isEqualTo(String("device_board"))
-        assertThat(state.getValue(device.product)).isEqualTo(String("device_product"))
-        assertThat(state.getValue(device.brand)).isEqualTo(String("device_brand"))
-        assertThat(state.getValue(device.cpu)).isEqualTo(String("device_cpu"))
-        assertThat(state.getValue(device.hardware)).isEqualTo(Null)
-        assertThat(state.getValue(device.device)).isEqualTo(String("device_device"))
-        assertThat(state.getValue(device.uuid)).isEqualTo(String("device_uuid"))
-        assertThat(state.getValue(device.carrier)).isEqualTo(String("device_carrier"))
-        assertThat(state.getValue(device.current_carrier)).isEqualTo(String("device_current_carrier"))
-        assertThat(state.getValue(device.network_type)).isEqualTo(String("device_network_type"))
-        assertThat(state.getValue(device.build_type)).isEqualTo(String("device_build_type"))
-        assertThat(state.getValue(device.build_id)).isEqualTo(String("device_build_id"))
-        assertThat(state.getValue(device.bootloader_version)).isEqualTo(String("device_bootloader_version"))
-        assertThat(state.getValue(device.radio_version)).isEqualTo(String("device_radio_version"))
-        assertThat(state.getValue(device.locale_country_code)).isEqualTo(String("device_locale_country_code"))
-        assertThat(state.getValue(device.locale_language_code)).isEqualTo(String("device_locale_language_code"))
-        assertThat(state.getValue(device.locale_raw)).isEqualTo(String("device_locale_raw"))
-        assertThat(state.getValue(device.os_api_level)).isEqualTo(Number(30))
-        assertThat(state.getValue(device.utc_offset)).isEqualTo(Number(18000))
-        assertThat(state.getValue(device.custom_data("device_key"))).isEqualTo(String("device_value"))
+        assertThat(state.getValue(device.os_name)).isEqualTo("device_os_name")
+        assertThat(state.getValue(device.os_version)).isEqualTo("device_os_version")
+        assertThat(state.getValue(device.os_build)).isEqualTo("device_os_build")
+        assertThat(state.getValue(device.manufacturer)).isEqualTo("device_manufacturer")
+        assertThat(state.getValue(device.model)).isEqualTo("device_model")
+        assertThat(state.getValue(device.board)).isEqualTo("device_board")
+        assertThat(state.getValue(device.product)).isEqualTo("device_product")
+        assertThat(state.getValue(device.brand)).isEqualTo("device_brand")
+        assertThat(state.getValue(device.cpu)).isEqualTo("device_cpu")
+        assertThat(state.getValue(device.hardware)).isNull()
+        assertThat(state.getValue(device.device)).isEqualTo("device_device")
+        assertThat(state.getValue(device.uuid)).isEqualTo("device_uuid")
+        assertThat(state.getValue(device.carrier)).isEqualTo("device_carrier")
+        assertThat(state.getValue(device.current_carrier)).isEqualTo("device_current_carrier")
+        assertThat(state.getValue(device.network_type)).isEqualTo("device_network_type")
+        assertThat(state.getValue(device.build_type)).isEqualTo("device_build_type")
+        assertThat(state.getValue(device.build_id)).isEqualTo("device_build_id")
+        assertThat(state.getValue(device.bootloader_version)).isEqualTo("device_bootloader_version")
+        assertThat(state.getValue(device.radio_version)).isEqualTo("device_radio_version")
+        assertThat(state.getValue(device.locale_country_code)).isEqualTo("device_locale_country_code")
+        assertThat(state.getValue(device.locale_language_code)).isEqualTo("device_locale_language_code")
+        assertThat(state.getValue(device.locale_raw)).isEqualTo("device_locale_raw")
+        assertThat(state.getValue(device.os_api_level)).isEqualTo(30)
+        assertThat(state.getValue(device.utc_offset)).isEqualTo(18000)
+        assertThat(state.getValue(device.custom_data("device_key"))).isEqualTo("device_value")
     }
-    
+
     @Test
     fun deviceMissingData() {
         val state = state.copy(
@@ -170,30 +167,31 @@ class DefaultTargetingStateTest {
             )
         )
 
-        assertThat(state.getValue(device.os_name)).isEqualTo(String("device_os_name"))
-        assertThat(state.getValue(device.os_version)).isEqualTo(String("device_os_version"))
-        assertThat(state.getValue(device.os_build)).isEqualTo(String("device_os_build"))
-        assertThat(state.getValue(device.manufacturer)).isEqualTo(String("device_manufacturer"))
-        assertThat(state.getValue(device.model)).isEqualTo(String("device_model"))
-        assertThat(state.getValue(device.board)).isEqualTo(String("device_board"))
-        assertThat(state.getValue(device.product)).isEqualTo(String("device_product"))
-        assertThat(state.getValue(device.brand)).isEqualTo(String("device_brand"))
-        assertThat(state.getValue(device.cpu)).isEqualTo(String("device_cpu"))
-        assertThat(state.getValue(device.hardware)).isEqualTo(Null)
-        assertThat(state.getValue(device.device)).isEqualTo(String("device_device"))
-        assertThat(state.getValue(device.uuid)).isEqualTo(String("device_uuid"))
-        assertThat(state.getValue(device.carrier)).isEqualTo(Null)
-        assertThat(state.getValue(device.current_carrier)).isEqualTo(Null)
-        assertThat(state.getValue(device.network_type)).isEqualTo(Null)
-        assertThat(state.getValue(device.build_type)).isEqualTo(String("device_build_type"))
-        assertThat(state.getValue(device.build_id)).isEqualTo(String("device_build_id"))
-        assertThat(state.getValue(device.bootloader_version)).isEqualTo(Null)
-        assertThat(state.getValue(device.radio_version)).isEqualTo(Null)
-        assertThat(state.getValue(device.locale_country_code)).isEqualTo(String("device_locale_country_code"))
-        assertThat(state.getValue(device.locale_language_code)).isEqualTo(String("device_locale_language_code"))
-        assertThat(state.getValue(device.locale_raw)).isEqualTo(String("device_locale_raw"))
-        assertThat(state.getValue(device.os_api_level)).isEqualTo(Number(30))
-        assertThat(state.getValue(device.utc_offset)).isEqualTo(Number(18000))
-        assertThat(state.getValue(device.custom_data("device_key"))).isEqualTo(Null)
+        assertThat(state.getValue(device.os_name)).isEqualTo("device_os_name")
+        assertThat(state.getValue(device.os_version)).isEqualTo("device_os_version")
+        assertThat(state.getValue(device.os_build)).isEqualTo("device_os_build")
+        assertThat(state.getValue(device.manufacturer)).isEqualTo("device_manufacturer")
+        assertThat(state.getValue(device.model)).isEqualTo("device_model")
+        assertThat(state.getValue(device.board)).isEqualTo("device_board")
+        assertThat(state.getValue(device.product)).isEqualTo("device_product")
+        assertThat(state.getValue(device.brand)).isEqualTo("device_brand")
+        assertThat(state.getValue(device.cpu)).isEqualTo("device_cpu")
+        assertThat(state.getValue(device.hardware)).isNull()
+        assertThat(state.getValue(device.device)).isEqualTo("device_device")
+        assertThat(state.getValue(device.uuid)).isEqualTo("device_uuid")
+        assertThat(state.getValue(device.carrier)).isNull()
+        assertThat(state.getValue(device.current_carrier)).isNull()
+        assertThat(state.getValue(device.network_type)).isNull()
+        assertThat(state.getValue(device.build_type)).isEqualTo("device_build_type")
+        assertThat(state.getValue(device.build_id)).isEqualTo("device_build_id")
+        assertThat(state.getValue(device.bootloader_version)).isNull()
+        assertThat(state.getValue(device.radio_version)).isNull()
+        assertThat(state.getValue(device.locale_country_code)).isEqualTo("device_locale_country_code")
+        assertThat(state.getValue(device.locale_language_code)).isEqualTo("device_locale_language_code")
+        assertThat(state.getValue(device.locale_raw)).isEqualTo("device_locale_raw")
+        assertThat(state.getValue(device.os_api_level)).isEqualTo(30)
+        assertThat(state.getValue(device.utc_offset)).isEqualTo(18000)
+        assertThat(state.getValue(device.custom_data("device_key"))).isNull()
     }
 }
+
