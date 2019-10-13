@@ -5,18 +5,18 @@ interface ConditionalOperator {
     fun description(description: String, first: Any?, second: Any?): String
 
     companion object {
-        const val EXISTS = "\$exists"
-        const val NE = "\$ne"
-        const val EQ = "\$eq"
-        const val LT = "\$lt"
-        const val LTE = "\$lte"
-        const val GT = "\$gt"
-        const val GTE = "\$gte"
-        const val CONTAINS = "\$contains"
-        const val STARTS_WITH = "\$starts_with"
-        const val ENDS_WITH = "\$ends_with"
-        const val BEFORE = "\$before"
-        const val AFTER = "\$after"
+        internal const val EXISTS = "\$exists"
+        internal const val NE = "\$ne"
+        internal const val EQ = "\$eq"
+        internal const val LT = "\$lt"
+        internal const val LTE = "\$lte"
+        internal const val GT = "\$gt"
+        internal const val GTE = "\$gte"
+        internal const val CONTAINS = "\$contains"
+        internal const val STARTS_WITH = "\$starts_with"
+        internal const val ENDS_WITH = "\$ends_with"
+        internal const val BEFORE = "\$before"
+        internal const val AFTER = "\$after"
 
         fun parse(value: String): ConditionalOperator {
             return when (value) {
