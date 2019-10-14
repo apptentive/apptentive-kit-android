@@ -348,7 +348,7 @@ fun Field.convert(value: Any?): Any? {
         Field.Type.String -> value as? String // FIXME: check type
         Field.Type.Number -> value as? Long // FIXME: check type
         Field.Type.Boolean -> value as? Boolean // FIXME: check type
-        Field.Type.DateTime -> TODO()
+        Field.Type.DateTime -> TODO() // TODO: add UTC-offset while converting DateTime
         Field.Type.Version -> TODO()
         Field.Type.Any -> value
     }

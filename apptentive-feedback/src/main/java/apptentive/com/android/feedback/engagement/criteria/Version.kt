@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.engagement.criteria
 
 // FIXME: add support for semantic versioning https://semver.org/
+// FIXME: unit testing
 data class Version(
     private val major: Long,
     private val minor: Long,
