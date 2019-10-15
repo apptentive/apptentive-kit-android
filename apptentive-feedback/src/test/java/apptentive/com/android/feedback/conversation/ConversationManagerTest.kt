@@ -46,23 +46,13 @@ private object MockConversationRepository : ConversationRepository {
             person = mockPerson,
             sdk = mockSdk,
             appRelease = mockAppRelease,
-            engagementManifest = EngagementManifest()
+            engagementManifest = EngagementManifest(),
+            engagementData = EngagementData()
         )
     }
 
     override fun saveConversation(conversation: Conversation) {
         this.conversation = conversation
-    }
-
-    override fun loadConversation(): Conversation? = conversation
-}
-
-private class MockConversationSerializer :
-    ConversationSerializer {
-    private var conversation: Conversation? = null
-
-    override fun saveConversation(conversation: Conversation) {
-        this.conversation = conversation.copy()
     }
 
     override fun loadConversation(): Conversation? = conversation
