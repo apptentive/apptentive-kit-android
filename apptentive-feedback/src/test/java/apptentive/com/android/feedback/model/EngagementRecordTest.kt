@@ -3,12 +3,7 @@ package apptentive.com.android.feedback.model
 import org.junit.Ignore
 import org.junit.Test
 
-class EngagementRecordsTest {
-    @Test
-    @Ignore
-    fun totalInvokes() {
-    }
-
+class EngagementRecordTest {
     @Test
     @Ignore
     fun invokesForVersionCode() {
@@ -21,7 +16,12 @@ class EngagementRecordsTest {
 
     @Test
     @Ignore
-    fun lastInvoke() {
+    fun getTotalInvokes() {
+    }
+
+    @Test
+    @Ignore
+    fun getLastInvoked() {
     }
 
     @Test

@@ -6,24 +6,32 @@ import apptentive.com.android.feedback.utils.VersionName
 
 data class EngagementRecords<Key : Any>(private val records: MutableMap<Key, EngagementRecord> = mutableMapOf()) {
     fun totalInvokes(key: Key): Long? {
-        val record = getRecord(key)
-        return record?.totalInvokes
+        return records[key]?.getTotalInvokes()
     }
 
     fun invokesForVersionCode(key: Key, versionCode: VersionCode): Long? {
-        val record = getRecord(key)
-        return record?.invokesForVersionCode(versionCode)
+        return records[key]?.invokesForVersionCode(versionCode)
     }
 
     fun invokesForVersionName(key: Key, versionName: VersionName): Long? {
-        val record = getRecord(key)
-        return record?.invokesForVersionName(versionName)
+        return records[key]?.invokesForVersionName(versionName)
     }
 
     fun lastInvoke(key: Key): DateTime? {
-        val record = getRecord(key)
-        return record?.lastInvoked
+        return records[key]?.getLastInvoked()
     }
 
-    private fun getRecord(key: Key) = records[key]
+    fun addInvoke(
+        key: Key,
+        versionName: VersionName,
+        versionCode: VersionCode,
+        lastInvoked: DateTime
+    ) {
+        val existingRecord = records[key]
+        if (existingRecord != null) {
+            existingRecord.addInvoke(versionCode, versionName, lastInvoked)
+        } else {
+            records[key] = EngagementRecord(versionCode, versionName, lastInvoked)
+        }
+    }
 }
