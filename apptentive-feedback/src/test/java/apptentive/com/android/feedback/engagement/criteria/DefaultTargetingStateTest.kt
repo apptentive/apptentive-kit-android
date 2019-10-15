@@ -7,13 +7,14 @@ import apptentive.com.android.feedback.mockPerson
 import apptentive.com.android.feedback.mockSdk
 import apptentive.com.android.feedback.model.CustomData
 import apptentive.com.android.feedback.model.Device
+import apptentive.com.android.feedback.model.EngagementData
 import apptentive.com.android.feedback.model.Person
 import com.google.common.truth.Truth.assertThat
 import org.junit.Ignore
 import org.junit.Test
 
 class DefaultTargetingStateTest {
-    private val state = DefaultTargetingState(mockPerson, mockDevice, mockSdk, mockAppRelease)
+    private val state = DefaultTargetingState(mockPerson, mockDevice, mockSdk, mockAppRelease, EngagementData())
 
     @Test
     fun application() {
