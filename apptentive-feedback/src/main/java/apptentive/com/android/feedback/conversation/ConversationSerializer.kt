@@ -136,7 +136,7 @@ private fun Encoder.encodeSDK(obj: SDK) {
 private fun Encoder.encodeAppRelease(obj: AppRelease) {
     encodeString(obj.type)
     encodeString(obj.identifier)
-    encodeInt(obj.versionCode)
+    encodeLong(obj.versionCode)
     encodeString(obj.versionName)
     encodeString(obj.targetSdkVersion)
     encodeBoolean(obj.debug)
@@ -226,7 +226,7 @@ private fun Decoder.decodeAppRelease(): AppRelease {
     return AppRelease(
         type = decodeString(),
         identifier = decodeString(),
-        versionCode = decodeInt(),
+        versionCode = decodeLong(),
         versionName = decodeString(),
         targetSdkVersion = decodeString(),
         debug = decodeBoolean(),
