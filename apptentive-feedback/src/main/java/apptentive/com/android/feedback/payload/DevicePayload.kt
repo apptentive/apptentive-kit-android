@@ -68,10 +68,10 @@ class DevicePayload(
 }
 
 data class IntegrationConfigPayload(
-    val apptentive: Map<String, Any>? = null,
-    val amazonAwsSns: Map<String, Any>? = null,
-    val urbanAirship: Map<String, Any>? = null,
-    val parse: Map<String, Any>? = null
+    val apptentive: Map<String, Any?>? = null,
+    val amazonAwsSns: Map<String, Any?>? = null,
+    val urbanAirship: Map<String, Any?>? = null,
+    val parse: Map<String, Any?>? = null
 ) {
     companion object {
         fun fromIntegrationConfig(config: IntegrationConfig) = IntegrationConfigPayload(

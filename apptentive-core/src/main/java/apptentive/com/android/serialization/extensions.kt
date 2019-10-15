@@ -38,76 +38,123 @@ private enum class ValueType {
     TYPE_FLOAT,
     TYPE_DOUBLE,
     TYPE_CHAR,
-    TYPE_STRING
+    TYPE_STRING,
+    TYPE_NULL
 }
 
-fun Encoder.encodeMap(obj: Map<String, Any>) {
+object BasicTypeSerializer : TypeSerializer<Any?> {
+    override fun encode(encoder: Encoder, value: Any?) {
+        when (value) {
+            is Boolean -> {
+                encoder.encodeEnum(ValueType.TYPE_BOOLEAN)
+                encoder.encodeBoolean(value as Boolean)
+            }
+            is Byte -> {
+                encoder.encodeEnum(ValueType.TYPE_BYTE)
+                encoder.encodeByte(value as Byte)
+            }
+            is Short -> {
+                encoder.encodeEnum(ValueType.TYPE_SHORT)
+                encoder.encodeShort(value as Short)
+            }
+            is Int -> {
+                encoder.encodeEnum(ValueType.TYPE_INT)
+                encoder.encodeInt(value as Int)
+            }
+            is Long -> {
+                encoder.encodeEnum(ValueType.TYPE_LONG)
+                encoder.encodeLong(value as Long)
+            }
+            is Float -> {
+                encoder.encodeEnum(ValueType.TYPE_FLOAT)
+                encoder.encodeFloat(value as Float)
+            }
+            is Double -> {
+                encoder.encodeEnum(ValueType.TYPE_DOUBLE)
+                encoder.encodeDouble(value as Double)
+            }
+            is Char -> {
+                encoder.encodeEnum(ValueType.TYPE_CHAR)
+                encoder.encodeChar(value as Char)
+            }
+            is String -> {
+                encoder.encodeEnum(ValueType.TYPE_STRING)
+                encoder.encodeString(value as String)
+            }
+            null -> encoder.encodeEnum(ValueType.TYPE_NULL)
+            else -> throw NotImplementedError("Unsupported value type: ${value?.javaClass}")
+        }
+    }
+
+    override fun decode(decoder: Decoder): Any? {
+        val type = decoder.decodeEnum<ValueType>()
+        return when (type) {
+            ValueType.TYPE_BOOLEAN -> decoder.decodeBoolean()
+            ValueType.TYPE_BYTE -> decoder.decodeByte()
+            ValueType.TYPE_SHORT -> decoder.decodeShort()
+            ValueType.TYPE_INT -> decoder.decodeInt()
+            ValueType.TYPE_LONG -> decoder.decodeLong()
+            ValueType.TYPE_FLOAT -> decoder.decodeFloat()
+            ValueType.TYPE_DOUBLE -> decoder.decodeDouble()
+            ValueType.TYPE_CHAR -> decoder.decodeChar()
+            ValueType.TYPE_STRING -> decoder.decodeString()
+            ValueType.TYPE_NULL -> null
+        }
+    }
+}
+
+object StringSerializer : TypeSerializer<String> {
+    override fun encode(encoder: Encoder, value: String) = encoder.encodeString(value)
+
+    override fun decode(decoder: Decoder) = decoder.decodeString()
+}
+
+object LongSerializer : TypeSerializer<Long> {
+    override fun encode(encoder: Encoder, value: Long) = encoder.encodeLong(value)
+
+    override fun decode(decoder: Decoder) = decoder.decodeLong()
+}
+
+fun Encoder.encodeMap(obj: Map<String, Any?>) {
+    encodeMap(
+        obj = obj,
+        keyEncoder = StringSerializer,
+        valueEncoder = BasicTypeSerializer
+    )
+}
+
+fun <Key : Any, Value> Encoder.encodeMap(
+    obj: Map<Key, Value>,
+    keyEncoder: TypeEncoder<Key>,
+    valueEncoder: TypeEncoder<Value>
+) {
     encodeInt(obj.size)
     obj.forEach { pair ->
-        encodeString(pair.key)
-        when {
-            pair.value is Boolean -> {
-                encodeEnum(ValueType.TYPE_BOOLEAN)
-                encodeBoolean(pair.value as Boolean)
-            }
-            pair.value is Byte -> {
-                encodeEnum(ValueType.TYPE_BYTE)
-                encodeByte(pair.value as Byte)
-            }
-            pair.value is Short -> {
-                encodeEnum(ValueType.TYPE_SHORT)
-                encodeShort(pair.value as Short)
-            }
-            pair.value is Int -> {
-                encodeEnum(ValueType.TYPE_INT)
-                encodeInt(pair.value as Int)
-            }
-            pair.value is Long -> {
-                encodeEnum(ValueType.TYPE_LONG)
-                encodeLong(pair.value as Long)
-            }
-            pair.value is Float -> {
-                encodeEnum(ValueType.TYPE_FLOAT)
-                encodeFloat(pair.value as Float)
-            }
-            pair.value is Double -> {
-                encodeEnum(ValueType.TYPE_DOUBLE)
-                encodeDouble(pair.value as Double)
-            }
-            pair.value is Char -> {
-                encodeEnum(ValueType.TYPE_CHAR)
-                encodeChar(pair.value as Char)
-            }
-            pair.value is String -> {
-                encodeEnum(ValueType.TYPE_STRING)
-                encodeString(pair.value as String)
-            }
-            else -> throw NotImplementedError("Unsupported value type: ${pair.value.javaClass}")
-        }
+        keyEncoder.encode(this, pair.key)
+        valueEncoder.encode(this, pair.value)
     }
 }
 
-fun Decoder.decodeMap(): Map<String, Any> {
+fun Decoder.decodeMap(): Map<String, Any?> {
+    return decodeMap(
+        keyDecoder = StringSerializer,
+        valueDecoder = BasicTypeSerializer
+    )
+}
+
+fun <Key : Any, Value> Decoder.decodeMap(
+    keyDecoder: TypeDecoder<Key>,
+    valueDecoder: TypeDecoder<Value>
+): MutableMap<Key, Value> {
     val size = decodeInt()
     if (size == 0) {
-        return mapOf()
+        return mutableMapOf()
     }
 
-    val map = mutableMapOf<String, Any>()
+    val map = mutableMapOf<Key, Value>()
     for (i in 0 until size) {
-        val key = decodeString()
-        val type = decodeEnum<ValueType>()
-        val value: Any = when (type) {
-            ValueType.TYPE_BOOLEAN -> decodeBoolean()
-            ValueType.TYPE_BYTE -> decodeByte()
-            ValueType.TYPE_SHORT -> decodeShort()
-            ValueType.TYPE_INT -> decodeInt()
-            ValueType.TYPE_LONG -> decodeLong()
-            ValueType.TYPE_FLOAT -> decodeFloat()
-            ValueType.TYPE_DOUBLE -> decodeDouble()
-            ValueType.TYPE_CHAR -> decodeChar()
-            ValueType.TYPE_STRING -> decodeString()
-        }
+        val key = keyDecoder.decode(this)
+        val value = valueDecoder.decode(this)
         map[key] = value
     }
     return map

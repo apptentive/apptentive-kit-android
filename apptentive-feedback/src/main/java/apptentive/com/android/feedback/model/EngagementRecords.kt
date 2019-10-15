@@ -4,7 +4,7 @@ import apptentive.com.android.feedback.engagement.criteria.DateTime
 import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
 
-data class EngagementRecords<Key : Any>(private val records: MutableMap<Key, EngagementRecord> = mutableMapOf()) {
+data class EngagementRecords<Key : Any>(val records: MutableMap<Key, EngagementRecord> = mutableMapOf()) {
     fun totalInvokes(key: Key): Long? {
         return records[key]?.getTotalInvokes()
     }
