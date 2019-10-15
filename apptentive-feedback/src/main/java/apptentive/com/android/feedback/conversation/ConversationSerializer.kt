@@ -77,6 +77,7 @@ private fun Encoder.encodeConversation(obj: Conversation) {
     encodePerson(obj.person)
     encodeSDK(obj.sdk)
     encodeAppRelease(obj.appRelease)
+    encodeEngagementData(obj.engagementData)
 }
 
 private fun Encoder.encodeDevice(obj: Device) {
@@ -145,6 +146,10 @@ private fun Encoder.encodeAppRelease(obj: AppRelease) {
     encodeNullableString(obj.appStore)
 }
 
+private fun Encoder.encodeEngagementData(engagementData: EngagementData) {
+    // FIXME: encode engagement data
+}
+
 private fun Encoder.encodeEngagementManifest(obj: EngagementManifest) {
     // FIXME: encode manifest
 }
@@ -158,7 +163,8 @@ private fun Decoder.decodeConversation(): Conversation {
         person = decodePerson(),
         sdk = decodeSDK(),
         appRelease = decodeAppRelease(),
-        engagementManifest = EngagementManifest()
+        engagementManifest = EngagementManifest(),
+        engagementData = decodeEngagementData()
     )
 }
 
@@ -234,6 +240,11 @@ private fun Decoder.decodeAppRelease(): AppRelease {
         overrideStyle = decodeBoolean(),
         appStore = decodeNullableString()
     )
+}
+
+private fun Decoder.decodeEngagementData(): EngagementData {
+    // FIXME: decode engagement data
+    return EngagementData()
 }
 
 private fun Decoder.decodeEngagementManifest(): EngagementManifest {
