@@ -1,6 +1,8 @@
 package apptentive.com.android.feedback.engagement.interactions
 
-abstract class Interaction(val id: String) {
+typealias InteractionId = String
+
+abstract class Interaction(val id: InteractionId) {
     override fun toString(): String {
         return "${javaClass.simpleName}(id=$id)"
     }

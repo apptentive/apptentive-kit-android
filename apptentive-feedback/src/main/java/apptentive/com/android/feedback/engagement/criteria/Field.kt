@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.engagement.criteria
 
 import apptentive.com.android.feedback.engagement.Event
+import apptentive.com.android.feedback.engagement.interactions.InteractionId
 
 @Suppress("ClassName")
 sealed class Field(val type: Type, val description: String) {
@@ -98,7 +99,7 @@ sealed class Field(val type: Type, val description: String) {
         }
 
         object last_invoked_at {
-            data class total(val interactionId: String) : Field(
+            data class total(val interactionId: InteractionId) : Field(
                 type = Type.DateTime,
                 description = "$interactionId/last_invoked_at/total" // TODO: better description
             )
