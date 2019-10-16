@@ -40,15 +40,15 @@ class ExtensionsTest {
     @Test
     fun encodeMap() {
         val expected = mapOf(
-            Pair("key1", true),
-            Pair("key2", 10.toByte()),
-            Pair("key3", 20.toShort()),
-            Pair("key4", 30),
-            Pair("key5", 40.toLong()),
-            Pair("key6", 3.14f),
-            Pair("key7", 4.14),
-            Pair("key8", 'å'),
-            Pair("key9", "Strøng")
+            "key1" to true,
+            "key2" to 10.toByte(),
+            "key3" to 20.toShort(),
+            "key4" to 30,
+            "key5" to 40.toLong(),
+            "key6" to 3.14f,
+            "key7" to 4.14,
+            "key8" to "Strøng",
+            "key9" to null
         )
         val bytes = encodeToByteArray { out ->
             out.encodeMap(expected)

@@ -4,8 +4,7 @@ import apptentive.com.android.feedback.engagement.criteria.DateTime
 import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
 
-@Suppress("DataClassPrivateConstructor")
-data class EngagementRecord private constructor(
+data class EngagementRecord(
     private var totalInvokes: Long = 0,
     private val versionCodeLookup: MutableMap<VersionCode, Long> = mutableMapOf(),
     private val versionNameLookup: MutableMap<VersionName, Long> = mutableMapOf(),
