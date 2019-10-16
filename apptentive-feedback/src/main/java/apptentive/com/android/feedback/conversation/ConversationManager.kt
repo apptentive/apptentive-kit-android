@@ -7,6 +7,7 @@ import apptentive.com.android.core.isInThePast
 import apptentive.com.android.feedback.CONVERSATION
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.engagement.Event
+import apptentive.com.android.feedback.engagement.criteria.DateTime
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.EngagementManifest
 import apptentive.com.android.feedback.model.hasConversationToken
@@ -122,12 +123,28 @@ class ConversationManager(
     }
 
     fun recordEvent(event: Event) {
-        // FIXME: record event
         // 1. save it to conversation data
+        val conversation = _activeConversation.value
+        _activeConversation.value = conversation.copy(
+            engagementData = conversation.engagementData.addInvoke(
+                event = event,
+                versionName = conversation.appRelease.versionName,
+                versionCode = conversation.appRelease.versionCode,
+                lastInvoked = DateTime.now()
+            )
+        )
         // 2. send a payload
     }
 
     fun recordInteraction(interactionId: String) {
-        // FIXME: record interaction
+        val conversation = _activeConversation.value
+        _activeConversation.value = conversation.copy(
+            engagementData = conversation.engagementData.addInvoke(
+                interactionId = interactionId,
+                versionName = conversation.appRelease.versionName,
+                versionCode = conversation.appRelease.versionCode,
+                lastInvoked = DateTime.now()
+            )
+        )
     }
 }

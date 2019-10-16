@@ -15,17 +15,20 @@ object RuntimeUtils {
         return ApplicationInfo(
             packageName = context.packageName,
             versionName = packageInfo.versionName,
-            versionCode = packageInfo.versionCode,
+            versionCode = packageInfo.versionCode.toLong(),
             targetSdkVersion = targetSdkVersion,
             debuggable = debuggable
         )
     }
 }
 
+typealias VersionCode = Long
+typealias VersionName = String
+
 data class ApplicationInfo(
     val packageName: String,
-    val versionName: String,
-    val versionCode: Int,
+    val versionName: VersionName,
+    val versionCode: VersionCode,
     val targetSdkVersion: Int,
     val debuggable: Boolean
 )

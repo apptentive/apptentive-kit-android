@@ -1,9 +1,9 @@
 package apptentive.com.android.feedback.backend
 
-import apptentive.com.android.feedback.model.AppRelease
-import apptentive.com.android.feedback.model.Device
-import apptentive.com.android.feedback.model.SDK
+import apptentive.com.android.feedback.model.*
 import apptentive.com.android.feedback.payload.DevicePayload
+import apptentive.com.android.feedback.utils.VersionCode
+import apptentive.com.android.feedback.utils.VersionName
 import apptentive.com.android.util.Result
 import apptentive.com.android.util.generateUUID
 
@@ -48,8 +48,8 @@ data class AppReleaseSdkPayload(
     val overridingStyles: Boolean,
     val targetSdkVersion: String,
     val type: String,
-    val versionCode: Int,
-    val versionName: String
+    val versionCode: VersionCode,
+    val versionName: VersionName
 ) {
     companion object {
         fun from(appRelease: AppRelease, sdk: SDK) = AppReleaseSdkPayload(

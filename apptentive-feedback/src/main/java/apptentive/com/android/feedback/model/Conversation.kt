@@ -8,6 +8,7 @@ data class Conversation(
     val person: Person,
     val sdk: SDK,
     val appRelease: AppRelease,
+    val engagementData: EngagementData,
     val engagementManifest: EngagementManifest
 )
 

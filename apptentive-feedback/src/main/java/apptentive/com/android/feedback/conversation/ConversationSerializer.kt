@@ -77,6 +77,7 @@ private fun Encoder.encodeConversation(obj: Conversation) {
     encodePerson(obj.person)
     encodeSDK(obj.sdk)
     encodeAppRelease(obj.appRelease)
+    encodeEngagementData(obj.engagementData)
 }
 
 private fun Encoder.encodeDevice(obj: Device) {
@@ -136,13 +137,17 @@ private fun Encoder.encodeSDK(obj: SDK) {
 private fun Encoder.encodeAppRelease(obj: AppRelease) {
     encodeString(obj.type)
     encodeString(obj.identifier)
-    encodeInt(obj.versionCode)
+    encodeLong(obj.versionCode)
     encodeString(obj.versionName)
     encodeString(obj.targetSdkVersion)
     encodeBoolean(obj.debug)
     encodeBoolean(obj.inheritStyle)
     encodeBoolean(obj.overrideStyle)
     encodeNullableString(obj.appStore)
+}
+
+private fun Encoder.encodeEngagementData(engagementData: EngagementData) {
+    // FIXME: encode engagement data
 }
 
 private fun Encoder.encodeEngagementManifest(obj: EngagementManifest) {
@@ -158,7 +163,8 @@ private fun Decoder.decodeConversation(): Conversation {
         person = decodePerson(),
         sdk = decodeSDK(),
         appRelease = decodeAppRelease(),
-        engagementManifest = EngagementManifest()
+        engagementManifest = EngagementManifest(),
+        engagementData = decodeEngagementData()
     )
 }
 
@@ -226,7 +232,7 @@ private fun Decoder.decodeAppRelease(): AppRelease {
     return AppRelease(
         type = decodeString(),
         identifier = decodeString(),
-        versionCode = decodeInt(),
+        versionCode = decodeLong(),
         versionName = decodeString(),
         targetSdkVersion = decodeString(),
         debug = decodeBoolean(),
@@ -234,6 +240,11 @@ private fun Decoder.decodeAppRelease(): AppRelease {
         overrideStyle = decodeBoolean(),
         appStore = decodeNullableString()
     )
+}
+
+private fun Decoder.decodeEngagementData(): EngagementData {
+    // FIXME: decode engagement data
+    return EngagementData()
 }
 
 private fun Decoder.decodeEngagementManifest(): EngagementManifest {

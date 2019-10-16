@@ -38,6 +38,7 @@ internal class ApptentiveDefaultClient(
     }
 
     private fun createConversationRepository(context: Context): ConversationRepository {
+        // TODO: refactor this - replace with use cases
         return DefaultConversationRepository(
             conversationSerializer = createConversationSerializer(),
             appReleaseFactory = DefaultAppReleaseFactory(context),
@@ -48,7 +49,8 @@ internal class ApptentiveDefaultClient(
                 distribution = "Default",
                 distributionVersion = Constants.SDK_VERSION
             ),
-            manifestFactory = DefaultEngagementManifestFactory()
+            manifestFactory = DefaultEngagementManifestFactory(),
+            engagementDataFactory = DefaultEngagementDataFactory()
         )
     }
 

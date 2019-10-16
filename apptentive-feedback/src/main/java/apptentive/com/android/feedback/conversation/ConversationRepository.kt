@@ -20,7 +20,8 @@ class DefaultConversationRepository(
     private val personFactory: Factory<Person>,
     private val deviceFactory: Factory<Device>,
     private val sdkFactory: Factory<SDK>,
-    private val manifestFactory: Factory<EngagementManifest>
+    private val manifestFactory: Factory<EngagementManifest>,
+    private val engagementDataFactory: Factory<EngagementData>
 ) : ConversationRepository {
     override fun createConversation(): Conversation {
         return Conversation(
@@ -29,7 +30,8 @@ class DefaultConversationRepository(
             device = deviceFactory.create(),
             appRelease = appReleaseFactory.create(),
             sdk = sdkFactory.create(),
-            engagementManifest = manifestFactory.create()
+            engagementManifest = manifestFactory.create(),
+            engagementData = engagementDataFactory.create()
         )
     }
 

@@ -79,7 +79,8 @@ class ConversationTest {
                 overrideStyle = true,
                 appStore = "appStore"
             ),
-            engagementManifest = EngagementManifest() // TODO: pass actual value
+            engagementManifest = EngagementManifest(), // TODO: pass actual value
+            engagementData = EngagementData()
         )
 
         val serializer = createSerializer()
@@ -132,7 +133,8 @@ class ConversationTest {
                 versionName = "versionName",
                 targetSdkVersion = "targetSdkVersion"
             ),
-            engagementManifest = EngagementManifest() // TODO: pass actual value
+            engagementManifest = EngagementManifest(), // TODO: pass actual value
+            engagementData = EngagementData()
         )
 
         val serializer = createSerializer()
