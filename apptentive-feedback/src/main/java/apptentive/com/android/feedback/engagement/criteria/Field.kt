@@ -349,8 +349,36 @@ fun Field.convert(value: Any?): Any? {
         Field.Type.String -> value as? String // FIXME: check type
         Field.Type.Number -> value as? Long // FIXME: check type
         Field.Type.Boolean -> value as? Boolean // FIXME: check type
-        Field.Type.DateTime -> TODO() // TODO: add UTC-offset while converting DateTime
-        Field.Type.Version -> TODO()
+        Field.Type.DateTime -> {
+            when (value) {
+                is Double -> DateTime(value.toLong())
+                is Map<*, *> -> {
+                    val type = value["_type"]
+                    if (type == "datetime") {
+                        val seconds = value["sec"] as Double
+                        return DateTime(seconds.toLong())
+                    } else {
+                        TODO()
+                    }
+                }
+                else -> TODO()
+            }
+        }
+        Field.Type.Version -> {
+            when (value) {
+                is String -> Version.parse(value)
+                is Map<*, *> -> {
+                    val type = value["_type"]
+                    if (type == "version") {
+                        val version = value["version"].toString()
+                        return Version.parse(version)
+                    } else {
+                        TODO()
+                    }
+                }
+                else -> TODO()
+            }
+        }
         Field.Type.Any -> value
     }
 }

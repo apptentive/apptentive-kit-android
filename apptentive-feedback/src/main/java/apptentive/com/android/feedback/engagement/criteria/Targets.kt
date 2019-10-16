@@ -15,7 +15,7 @@ class ClauseConverter : Converter<Map<String, Any>, Clause> {
         return convert(and, source)
     }
 
-    private fun convert(key: String, source: Map<String, Any>): Clause {
+    private fun convert(key: String, source: Any): Clause {
         return when (key) {
             and -> LogicalAndClause(convertChildren(source))
             or -> LogicalOrClause(convertChildren(source))
@@ -33,9 +33,20 @@ class ClauseConverter : Converter<Map<String, Any>, Clause> {
 
     private fun convertConditionalTests(
         field: Field,
-        source: Map<String, Any?>
+        source: Any
     ): List<ConditionalTest> {
-        return source.map { (key, value) -> convertConditionalTest(field, key, value) }
+        return when (source) {
+            is Map<*, *> -> {
+                return source.map { (key, value) ->
+                    convertConditionalTest(
+                        field = field,
+                        key = key as String,
+                        value = value
+                    )
+                }
+            }
+            else -> TODO()
+        }
     }
 
     private fun convertConditionalTest(field: Field, key: String, value: Any?): ConditionalTest {
@@ -44,8 +55,20 @@ class ClauseConverter : Converter<Map<String, Any>, Clause> {
         return ConditionalTest(operator, parameter)
     }
 
-    private fun convertChildren(source: Map<String, Any>): List<Clause> {
-        return source.map { (key, value) -> convert(key, value as Map<String, Any>) }
+    private fun convertComplexValue(field: Field, source: Map<*, *>): List<ConditionalTest> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    private fun convertChildren(source: Any): List<Clause> {
+        when (source) {
+            is List<*> -> {
+                return source.map { convert(and, it as Any) }
+            }
+            is Map<*, *> -> {
+                return source.map { convert(it.key as String, it.value as Any) }
+            }
+            else -> throw IllegalArgumentException("Invalid source: $source")
+        }
     }
 
     companion object {
