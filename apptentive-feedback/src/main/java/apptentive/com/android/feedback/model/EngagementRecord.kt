@@ -10,6 +10,9 @@ data class EngagementRecord(
     private val versionNameLookup: MutableMap<VersionName, Long> = mutableMapOf(),
     private var lastInvoked: DateTime = DateTime(0)
 ) {
+    val versionCodes: Map<VersionCode, Long> = versionCodeLookup
+    val versionNames: Map<VersionName, Long> = versionNameLookup
+
     constructor(versionCode: VersionCode, versionName: VersionName, lastInvoked: DateTime) : this(
         totalInvokes = 1,
         versionCodeLookup = mutableMapOf(versionCode to 1L),
@@ -29,7 +32,7 @@ data class EngagementRecord(
         return versionNameLookup[versionName]
     }
 
-    fun addInvoke(versionCode: VersionCode, versionName: VersionName, lastInvoked: DateTime) {
+    fun addInvoke(versionCode: VersionCode, versionName: VersionName, lastInvoked: DateTime): EngagementRecord {
         this.lastInvoked = lastInvoked
 
         totalInvokes += 1
@@ -39,5 +42,7 @@ data class EngagementRecord(
         versionNameLookup.apply {
             this[versionName] = 1 + (this[versionName] ?: 0)
         }
+
+        return this
     }
 }
