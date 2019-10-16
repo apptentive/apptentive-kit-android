@@ -6,7 +6,11 @@ import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.DefaultConversationService
 import apptentive.com.android.feedback.conversation.*
 import apptentive.com.android.feedback.engagement.*
+import apptentive.com.android.feedback.engagement.criteria.CachedTargetRepository
+import apptentive.com.android.feedback.engagement.criteria.DefaultTargetingState
+import apptentive.com.android.feedback.engagement.criteria.TargetConverter
 import apptentive.com.android.feedback.engagement.interactions.*
+import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.platform.*
 import apptentive.com.android.network.HttpClient
 import apptentive.com.android.util.FileUtil
@@ -20,6 +24,7 @@ internal class ApptentiveDefaultClient(
     private lateinit var conversationService: ConversationService
     private lateinit var conversationManager: ConversationManager
     private lateinit var interactionModules: Map<InteractionType, InteractionModule<Interaction>>
+    private var engagement: EventEngagement = NullEventEngagement()
 
     //region Initialization
 
@@ -28,6 +33,16 @@ internal class ApptentiveDefaultClient(
         interactionModules = loadInteractionModules()
         conversationService = createConversationService()
         conversationManager = createConversationManager(context) // TODO: get rid of Context
+        conversationManager.activeConversation.observe { conversation ->
+            // FIXME: most of these values can be cached and only changed when the actual data changes
+            engagement = DefaultEventEngagement(
+                interactions = createInteractionRepository(conversation),
+                interactionFactory = interactionFactory,
+                interactionEngagement = createInteractionEngagement(),
+                recordEvent = ::recordEvent,
+                recordInteraction = ::recordInteraction
+            )
+        }
     }
 
     private fun createConversationManager(context: Context): ConversationManager {
@@ -70,6 +85,23 @@ internal class ApptentiveDefaultClient(
         baseURL = Constants.SERVER_URL
     )
 
+    private fun createInteractionRepository(conversation: Conversation): InteractionRepository {
+        return CriteriaInteractionRepository(
+            interactions = conversation.engagementManifest.interactions.map { it.id to it }.toMap(),
+            targets = CachedTargetRepository(
+                conversation.engagementManifest.targets,
+                TargetConverter()
+            ),
+            state = DefaultTargetingState(
+                conversation.person,
+                conversation.device,
+                conversation.sdk,
+                conversation.appRelease,
+                conversation.engagementData
+            )
+        )
+    }
+
     //endregion
 
     //region Engagement
@@ -77,17 +109,6 @@ internal class ApptentiveDefaultClient(
     override fun engage(context: Context, event: Event): EngagementResult {
         val engagementContext = AndroidEngagementContext(context, engagement)
         return engagement.engage(engagementContext, event)
-    }
-
-    // FIXME: engagement should get updated every time conversation changes and be no-op before that
-    private val engagement: EventEngagement by lazy {
-        DefaultEventEngagement(
-            interactionResolver = FakeInteractionResolver,
-            interactionFactory = interactionFactory,
-            interactionEngagement = createInteractionEngagement(),
-            recordEvent = ::recordEvent,
-            recordInteraction = ::recordInteraction
-        )
     }
 
     // FIXME: temporary code
@@ -158,25 +179,6 @@ internal class ApptentiveDefaultClient(
 
         private fun getConversationDir(): File {
             return FileUtil.getInternalDir("conversations", createIfNecessary = true)
-        }
-    }
-}
-
-// FIXME: temporary code
-private object FakeInteractionResolver : InteractionResolver {
-    override fun getInteraction(event: Event): InteractionData? {
-        return if (event.name == "enjoyment_dialog") {
-            InteractionData(
-                id = "id",
-                type = "EnjoymentDialog",
-                configuration = mapOf(
-                    "title" to "Do you love New SDK?",
-                    "yes_text" to "Yes",
-                    "no_text" to "No"
-                )
-            )
-        } else {
-            null
         }
     }
 }

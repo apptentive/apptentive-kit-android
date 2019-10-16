@@ -6,7 +6,7 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionFactor
 
 @Suppress("FoldInitializerAndIfToElvis")
 data class DefaultEventEngagement(
-    private val interactionResolver: InteractionResolver,
+    private val interactions: InteractionRepository,
     private val interactionFactory: InteractionFactory,
     private val interactionEngagement: InteractionEngagement,
     private val recordEvent: (Event) -> Unit = {},
@@ -15,7 +15,7 @@ data class DefaultEventEngagement(
     override fun engage(context: EngagementContext, event: Event): EngagementResult {
         recordEvent(event)
 
-        val interactionData = interactionResolver.getInteraction(event)
+        val interactionData = interactions.getInteraction(event)
         if (interactionData == null) {
             return EngagementResult.Failure("No runnable interactions for event '${event.name}'")
         }
