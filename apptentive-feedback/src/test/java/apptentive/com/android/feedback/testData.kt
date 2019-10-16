@@ -2,6 +2,7 @@ package apptentive.com.android.feedback
 
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
+import apptentive.com.android.feedback.engagement.interactions.InteractionData
 import apptentive.com.android.feedback.model.*
 
 const val SDK_VERSION = "6.0.0"
@@ -155,4 +156,28 @@ val mockEngagementData = EngagementData(
             )
         )
     )
+)
+
+val mockEngagementManifest = EngagementManifest(
+    interactions = listOf(
+        InteractionData("id1", "type1"),
+        InteractionData("id2", "type2", displayType = "display_type"),
+        InteractionData("id3", "type3", configuration = mapOf("key" to "value"))
+    ),
+    targets = mapOf(
+        "local#app#event" to listOf(
+            TargetData(
+                interactionId = "id1",
+                criteria = mapOf("interactions/id2/invokes/version_name" to mapOf("\$eq" to 1))
+            ),
+            TargetData(
+                interactionId = "id2",
+                criteria = mapOf("interactions/id3/invokes/version_code" to mapOf("\$gt" to 0))
+            ),
+            TargetData(
+                interactionId = "id3"
+            )
+        )
+    ),
+    expiry = 1000.0
 )
