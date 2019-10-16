@@ -11,6 +11,7 @@ import apptentive.com.android.feedback.model.*
 import apptentive.com.android.feedback.test.TestCase
 import apptentive.com.android.util.Result
 import com.google.common.truth.Truth.assertThat
+import org.junit.Ignore
 import org.junit.Test
 
 class ConversationManagerTest : TestCase() {
@@ -33,6 +34,16 @@ class ConversationManagerTest : TestCase() {
         assertThat(conversation.conversationToken).isEqualTo(fetchResponse.token)
         assertThat(conversation.conversationId).isEqualTo(fetchResponse.id)
         assertThat(conversation.person.id).isEqualTo(fetchResponse.personId)
+    }
+
+    @Test
+    @Ignore
+    fun corruptedConversationData() {
+    }
+
+    @Test
+    @Ignore
+    fun conversationDataMigration() {
     }
 }
 
