@@ -75,7 +75,6 @@ internal class DefaultConversationSerializer(
 }
 
 // TODO: refactor this
-// FIXME: unit testing
 internal object Serializers {
     val versionCodeSerializer = LongSerializer
 
