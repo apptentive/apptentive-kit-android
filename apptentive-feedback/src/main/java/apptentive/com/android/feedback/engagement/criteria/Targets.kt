@@ -1,14 +1,9 @@
 package apptentive.com.android.feedback.engagement.criteria
 
 import apptentive.com.android.core.Converter
-import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.model.TargetData
 
 data class Target(val interactionId: String, val criteria: InteractionCriteria)
-
-data class Targets(val targets: Map<Event, List<Target>> = mapOf()) {
-    operator fun get(event: Event) = targets[event]
-}
 
 class ClauseConverter : Converter<Map<String, Any>, Clause> {
     override fun convert(source: Map<String, Any>): Clause {
