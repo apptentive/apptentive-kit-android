@@ -43,6 +43,9 @@ internal class ApptentiveDefaultClient(
                 recordInteraction = ::recordInteraction
             )
         }
+
+        // FIXME: temporary code
+        engage(context, Event.internal("launch"))
     }
 
     private fun createConversationManager(context: Context): ConversationManager {
