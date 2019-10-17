@@ -5,14 +5,12 @@ import apptentive.com.android.feedback.model.TargetData
 
 data class Target(val interactionId: String, val criteria: InteractionCriteria)
 
-data class Targets(val targets: Map<String, List<Target>> = mapOf())
-
 class ClauseConverter : Converter<Map<String, Any>, Clause> {
     override fun convert(source: Map<String, Any>): Clause {
         return convert(and, source)
     }
 
-    private fun convert(key: String, source: Map<String, Any>): Clause {
+    private fun convert(key: String, source: Any): Clause {
         return when (key) {
             and -> LogicalAndClause(convertChildren(source))
             or -> LogicalOrClause(convertChildren(source))
@@ -20,7 +18,7 @@ class ClauseConverter : Converter<Map<String, Any>, Clause> {
             else -> {
                 val field = Field.parse(key)
                 if (field is Field.unknown) {
-                    TODO() // FIXME: return special clause which would fail criteria
+                    throw IllegalArgumentException("Unknown field: ${field.path}")
                 } else {
                     ConditionalClause(field, convertConditionalTests(field, source))
                 }
@@ -30,19 +28,38 @@ class ClauseConverter : Converter<Map<String, Any>, Clause> {
 
     private fun convertConditionalTests(
         field: Field,
-        source: Map<String, Any?>
+        source: Any
     ): List<ConditionalTest> {
-        return source.map { (key, value) -> convertConditionalTest(field, key, value) }
+        return when (source) {
+            is Map<*, *> -> {
+                return source.map { (key, value) ->
+                    convertConditionalTest(
+                        field = field,
+                        key = key as String,
+                        value = value
+                    )
+                }
+            }
+            else -> TODO()
+        }
     }
 
     private fun convertConditionalTest(field: Field, key: String, value: Any?): ConditionalTest {
         val operator = ConditionalOperator.parse(key)
-        val parameter = field.convert(value)
+        val parameter = field.convertValue(value)
         return ConditionalTest(operator, parameter)
     }
 
-    private fun convertChildren(source: Map<String, Any>): List<Clause> {
-        return source.map { (key, value) -> convert(key, value as Map<String, Any>) }
+    private fun convertChildren(source: Any): List<Clause> {
+        return when (source) {
+            is List<*> -> {
+                source.map { convert(and, it as Any) }
+            }
+            is Map<*, *> -> {
+                source.map { convert(it.key as String, it.value as Any) }
+            }
+            else -> throw IllegalArgumentException("Invalid source: $source")
+        }
     }
 
     companion object {

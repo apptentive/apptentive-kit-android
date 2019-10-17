@@ -4,6 +4,7 @@ import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.Field.*
 import apptentive.com.android.feedback.engagement.criteria.Field.Companion.parse
 import com.google.common.truth.Truth.assertThat
+import org.junit.Ignore
 import org.junit.Test
 
 class FieldTest {
@@ -120,5 +121,10 @@ class FieldTest {
     @Test
     fun parseUnknown() {
         assertThat(parse("fake/code/point")).isEqualTo(unknown("fake/code/point"))
+    }
+
+    @Test
+    @Ignore
+    fun convertValue() {
     }
 }

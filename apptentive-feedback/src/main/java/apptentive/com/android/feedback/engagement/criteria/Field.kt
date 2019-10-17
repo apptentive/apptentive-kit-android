@@ -124,7 +124,7 @@ sealed class Field(val type: Type, val description: String) {
         )
 
         object os_version : Field(
-            type = Type.String,
+            type = Type.Version,
             description = "device OS version"
         )
 
@@ -204,12 +204,12 @@ sealed class Field(val type: Type, val description: String) {
         )
 
         object bootloader_version : Field(
-            type = Type.String,
+            type = Type.Version,
             description = "device bootloader version"
         )
 
         object radio_version : Field(
-            type = Type.String,
+            type = Type.Version,
             description = "device radio version"
         )
 
@@ -344,13 +344,50 @@ sealed class Field(val type: Type, val description: String) {
     }
 }
 
-fun Field.convert(value: Any?): Any? {
+fun Field.convertValue(value: Any?): Any? {
+    val converted = convertComplexValue(value)
+
     return when (type) {
-        Field.Type.String -> value as? String // FIXME: check type
-        Field.Type.Number -> value as? Long // FIXME: check type
-        Field.Type.Boolean -> value as? Boolean // FIXME: check type
-        Field.Type.DateTime -> TODO() // TODO: add UTC-offset while converting DateTime
-        Field.Type.Version -> TODO()
-        Field.Type.Any -> value
+        Field.Type.String -> converted as String
+        Field.Type.Number -> converted as Long
+        Field.Type.Boolean -> converted as Boolean
+        Field.Type.DateTime -> {
+            return when (converted) {
+                is DateTime -> converted
+                is Long -> DateTime(converted)
+                else -> throw IllegalArgumentException("Illegal value for DateTime: $converted (${converted?.javaClass?.simpleName})")
+            }
+        }
+        Field.Type.Version -> {
+            return when (converted) {
+                is Version -> converted
+                else -> Version.tryParse(converted.toString())
+            }
+        }
+        Field.Type.Any -> true
+    }
+}
+
+private fun convertComplexValue(value: Any?): Any? {
+    return when (value) {
+        is Map<*, *> -> {
+            val type = value["_type"]
+            if (type != null) {
+                return when (type) {
+                    "datetime" -> {
+                        val seconds = value["sec"] as Double
+                        DateTime(seconds.toLong())
+                    }
+                    "version" -> {
+                        val version = value["version"].toString()
+                        Version.parse(version)
+                    }
+                    else -> throw IllegalArgumentException("Unknown complex type: $type")
+                }
+            }
+            throw IllegalArgumentException("Unexpected value: $value")
+        }
+        is Double -> value.toLong() // every number in json parsed as double
+        else -> value // return as-is
     }
 }
