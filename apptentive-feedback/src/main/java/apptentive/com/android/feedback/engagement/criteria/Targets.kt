@@ -23,7 +23,7 @@ class ClauseConverter : Converter<Map<String, Any>, Clause> {
             else -> {
                 val field = Field.parse(key)
                 if (field is Field.unknown) {
-                    TODO() // FIXME: return special clause which would fail criteria
+                    throw IllegalArgumentException("Unknown field: ${field.path}")
                 } else {
                     ConditionalClause(field, convertConditionalTests(field, source))
                 }
