@@ -51,12 +51,8 @@ class ClauseConverter : Converter<Map<String, Any>, Clause> {
 
     private fun convertConditionalTest(field: Field, key: String, value: Any?): ConditionalTest {
         val operator = ConditionalOperator.parse(key)
-        val parameter = field.convert(value)
+        val parameter = field.convertValue(value)
         return ConditionalTest(operator, parameter)
-    }
-
-    private fun convertComplexValue(field: Field, source: Map<*, *>): List<ConditionalTest> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     private fun convertChildren(source: Any): List<Clause> {

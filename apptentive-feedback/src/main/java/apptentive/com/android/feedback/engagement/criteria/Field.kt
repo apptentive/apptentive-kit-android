@@ -344,42 +344,50 @@ sealed class Field(val type: Type, val description: String) {
     }
 }
 
-fun Field.convert(value: Any?): Any? {
+fun Field.convertValue(value: Any?): Any? {
+    val converted = convertComplexValue(value)
+
     return when (type) {
-        Field.Type.String -> value as String
-        Field.Type.Number -> (value as Double).toLong()
-        Field.Type.Boolean -> value as Boolean
+        Field.Type.String -> converted as String
+        Field.Type.Number -> converted as Long
+        Field.Type.Boolean -> converted as Boolean
         Field.Type.DateTime -> {
-            when (value) {
-                is Double -> DateTime(value.toLong())
-                is Map<*, *> -> {
-                    val type = value["_type"]
-                    if (type == "datetime") {
-                        val seconds = value["sec"] as Double
-                        return DateTime(seconds.toLong())
-                    } else {
-                        TODO()
-                    }
-                }
-                else -> TODO()
+            return when (converted) {
+                is DateTime -> converted
+                is Long -> DateTime(converted)
+                else -> throw IllegalArgumentException("Illegal value for DateTime: $converted (${converted?.javaClass?.simpleName})")
             }
         }
         Field.Type.Version -> {
-            when (value) {
-                is Double -> Version.parse(value.toString())
-                is String -> Version.parse(value)
-                is Map<*, *> -> {
-                    val type = value["_type"]
-                    if (type == "version") {
-                        val version = value["version"].toString()
-                        return Version.parse(version)
-                    } else {
-                        TODO()
-                    }
-                }
-                else -> TODO()
+            return when (converted) {
+                is Version -> converted
+                else -> Version.tryParse(converted.toString())
             }
         }
-        Field.Type.Any -> value
+        Field.Type.Any -> true
+    }
+}
+
+private fun convertComplexValue(value: Any?): Any? {
+    return when (value) {
+        is Map<*, *> -> {
+            val type = value["_type"]
+            if (type != null) {
+                return when (type) {
+                    "datetime" -> {
+                        val seconds = value["sec"] as Double
+                        DateTime(seconds.toLong())
+                    }
+                    "version" -> {
+                        val version = value["version"].toString()
+                        Version.parse(version)
+                    }
+                    else -> throw IllegalArgumentException("Unknown complex type: $type")
+                }
+            }
+            throw IllegalArgumentException("Unexpected value: $value")
+        }
+        is Double -> value.toLong() // every number in json parsed as double
+        else -> value // return as-is
     }
 }
