@@ -75,8 +75,7 @@ internal class DefaultConversationSerializer(
 }
 
 // TODO: refactor this
-// FIXME: unit testing
-private object Serializers {
+internal object Serializers {
     val versionCodeSerializer = LongSerializer
 
     val versionNameSerializer = StringSerializer
@@ -86,11 +85,11 @@ private object Serializers {
     val dateTimeSerializer: TypeSerializer<DateTime> by lazy {
         object : TypeSerializer<DateTime> {
             override fun encode(encoder: Encoder, value: DateTime) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                encoder.encodeLong(value.seconds)
             }
 
             override fun decode(decoder: Decoder): DateTime {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                return DateTime(seconds = decoder.decodeLong())
             }
         }
     }
@@ -299,7 +298,18 @@ private object Serializers {
     val engagementRecordSerializer: TypeSerializer<EngagementRecord> by lazy {
         object : TypeSerializer<EngagementRecord> {
             override fun encode(encoder: Encoder, value: EngagementRecord) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                encoder.encodeLong(value.getTotalInvokes())
+                encoder.encodeMap(
+                    obj = value.versionCodes,
+                    keyEncoder = versionCodeSerializer,
+                    valueEncoder = LongSerializer
+                )
+                encoder.encodeMap(
+                    obj = value.versionNames,
+                    keyEncoder = versionNameSerializer,
+                    valueEncoder = LongSerializer
+                )
+                dateTimeSerializer.encode(encoder, value.getLastInvoked())
             }
 
             override fun decode(decoder: Decoder): EngagementRecord {

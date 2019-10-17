@@ -8,8 +8,8 @@ data class Conversation(
     val person: Person,
     val sdk: SDK,
     val appRelease: AppRelease,
-    val engagementData: EngagementData,
-    val engagementManifest: EngagementManifest
+    val engagementData: EngagementData = EngagementData(),
+    val engagementManifest: EngagementManifest = EngagementManifest()
 )
 
 val Conversation.hasConversationToken get() = this.conversationToken != null
