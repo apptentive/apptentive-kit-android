@@ -51,12 +51,12 @@ class ClauseConverter : Converter<Map<String, Any>, Clause> {
     }
 
     private fun convertChildren(source: Any): List<Clause> {
-        when (source) {
+        return when (source) {
             is List<*> -> {
-                return source.map { convert(and, it as Any) }
+                source.map { convert(and, it as Any) }
             }
             is Map<*, *> -> {
-                return source.map { convert(it.key as String, it.value as Any) }
+                source.map { convert(it.key as String, it.value as Any) }
             }
             else -> throw IllegalArgumentException("Invalid source: $source")
         }
