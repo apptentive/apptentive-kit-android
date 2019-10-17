@@ -124,7 +124,7 @@ sealed class Field(val type: Type, val description: String) {
         )
 
         object os_version : Field(
-            type = Type.String,
+            type = Type.Version,
             description = "device OS version"
         )
 
@@ -204,12 +204,12 @@ sealed class Field(val type: Type, val description: String) {
         )
 
         object bootloader_version : Field(
-            type = Type.String,
+            type = Type.Version,
             description = "device bootloader version"
         )
 
         object radio_version : Field(
-            type = Type.String,
+            type = Type.Version,
             description = "device radio version"
         )
 
@@ -346,9 +346,9 @@ sealed class Field(val type: Type, val description: String) {
 
 fun Field.convert(value: Any?): Any? {
     return when (type) {
-        Field.Type.String -> value as? String // FIXME: check type
-        Field.Type.Number -> value as? Long // FIXME: check type
-        Field.Type.Boolean -> value as? Boolean // FIXME: check type
+        Field.Type.String -> value as String
+        Field.Type.Number -> (value as Double).toLong()
+        Field.Type.Boolean -> value as Boolean
         Field.Type.DateTime -> {
             when (value) {
                 is Double -> DateTime(value.toLong())
@@ -366,6 +366,7 @@ fun Field.convert(value: Any?): Any? {
         }
         Field.Type.Version -> {
             when (value) {
+                is Double -> Version.parse(value.toString())
                 is String -> Version.parse(value)
                 is Map<*, *> -> {
                     val type = value["_type"]
