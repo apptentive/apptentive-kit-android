@@ -17,7 +17,7 @@ data class DefaultTargetingState(
 
             is sdk.version -> Version.tryParse(sdk.version)
 
-            is current_time -> TODO()
+            is current_time -> DateTime.now()
 
             is is_update.version_code -> TODO()
             is is_update.version_name -> TODO()
