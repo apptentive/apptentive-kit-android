@@ -6,7 +6,7 @@ data class HttpHeader(val name: String, val value: String) {
     }
 }
 
-open class HttpHeaders(headers: Map<String, HttpHeader> = mapOf()) : Iterable<HttpHeader> {
+open class HttpHeaders(headers: Map<String, HttpHeader> = emptyMap()) : Iterable<HttpHeader> {
     protected val headers = mutableMapOf<String, HttpHeader>().apply { putAll(headers) }
 
     val size: Int get() = headers.size
