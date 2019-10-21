@@ -36,11 +36,11 @@ class InteractionModuleComponentTest : TestCase() {
     }
 
     @Test
-    @Ignore
     fun testExceptionInModuleInitializer() {
         // 1. create a new interaction module which would throw an exception upon initialization
         // 2. get all the modules
         // 3. observe nothing had crashed and you have successfully loaded everything else
+        TODO("Implement me")
     }
 }
 
