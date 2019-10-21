@@ -1,11 +1,12 @@
 package apptentive.com.android.feedback.engagement
 
-import apptentive.com.android.feedback.engagement.criteria.*
+import apptentive.com.android.feedback.engagement.criteria.Field
 import apptentive.com.android.feedback.engagement.criteria.Target
+import apptentive.com.android.feedback.engagement.criteria.TargetRepository
+import apptentive.com.android.feedback.engagement.criteria.TargetingState
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
-import java.lang.AssertionError
 
 class CriteriaInteractionRepositoryTest {
 
@@ -50,8 +51,3 @@ private object FailureTargetingState : TargetingState {
     }
 }
 
-private object FailureInteractionCriteria : InteractionCriteria {
-    override fun isMet(state: TargetingState): Boolean {
-        throw RuntimeException("Error")
-    }
-}
