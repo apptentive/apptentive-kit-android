@@ -23,15 +23,24 @@ class InteractionModuleComponentTest : TestCase() {
     }
 
     @Test
-    @Ignore
     fun testAbstractModule() {
-        TODO("Should skip module and log error message")
+        val component = InteractionModuleComponent(
+            interactionNames = listOf("AbstractInteraction", "TestInteraction"),
+            packageName = javaClass.getPackage()!!.name,
+            classPrefix = "My",
+            classSuffix = "Module"
+        )
+        val modules = component.getModules()
+        assertThat(modules.size).isEqualTo(1)
+        assertThat(modules["TestInteraction"]).isInstanceOf(MyTestInteractionModule::class.java)
     }
 
     @Test
     @Ignore
     fun testExceptionInModuleInitializer() {
-        TODO("Should skip module and log error message")
+        // 1. create a new interaction module which would throw an exception upon initialization
+        // 2. get all the modules
+        // 3. observe nothing had crashed and you have successfully loaded everything else
     }
 }
 
@@ -48,3 +57,5 @@ private class MyTestInteractionModule : InteractionModule<TestInteraction> {
         throw AssertionError("Should not get there")
     }
 }
+
+private abstract class MyAbstractInteractionModule : InteractionModule<TestInteraction>
