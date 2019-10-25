@@ -1,7 +1,7 @@
 package apptentive.com.android.feedback.engagement.criteria
 
 import apptentive.com.android.core.Converter
-import apptentive.com.android.feedback.model.TargetData
+import apptentive.com.android.feedback.model.InvocationData
 
 data class Target(val interactionId: String, val criteria: InteractionCriteria)
 
@@ -80,8 +80,8 @@ class CriteriaConverter(
 
 data class TargetConverter(
     private val criteriaConverter: Converter<Map<String, Any>, InteractionCriteria> = CriteriaConverter()
-) : Converter<TargetData, Target> {
-    override fun convert(source: TargetData) = Target(
+) : Converter<InvocationData, Target> {
+    override fun convert(source: InvocationData) = Target(
         interactionId = source.interactionId,
         criteria = criteriaConverter.convert(source.criteria)
     )

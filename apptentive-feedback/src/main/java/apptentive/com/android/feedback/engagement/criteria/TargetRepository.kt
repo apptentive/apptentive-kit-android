@@ -3,7 +3,7 @@ package apptentive.com.android.feedback.engagement.criteria
 import apptentive.com.android.core.Converter
 import apptentive.com.android.feedback.CRITERIA
 import apptentive.com.android.feedback.engagement.Event
-import apptentive.com.android.feedback.model.TargetData
+import apptentive.com.android.feedback.model.InvocationData
 import apptentive.com.android.util.Log
 
 interface TargetRepository {
@@ -11,8 +11,8 @@ interface TargetRepository {
 }
 
 class CachedTargetRepository(
-    private val data: Map<String, List<TargetData>>,
-    private val converter: Converter<TargetData, Target>
+    private val data: Map<String, List<InvocationData>>,
+    private val converter: Converter<InvocationData, Target>
 ) : TargetRepository {
     private val cache = mutableMapOf<Event, List<Target>>()
 

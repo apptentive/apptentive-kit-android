@@ -3,7 +3,7 @@ package apptentive.com.android.feedback.engagement.criteria
 import apptentive.com.android.core.Converter
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.FailureInteractionCriteria
-import apptentive.com.android.feedback.model.TargetData
+import apptentive.com.android.feedback.model.InvocationData
 import apptentive.com.android.feedback.test.TestCase
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
@@ -16,7 +16,7 @@ class CachedTargetRepositoryTest : TestCase() {
 
         val interactionId = "123456789"
         val data = mapOf(
-            event.fullName to listOf(TargetData(interactionId = interactionId))
+            event.fullName to listOf(InvocationData(interactionId = interactionId))
         )
 
         val target = Target(
@@ -24,8 +24,8 @@ class CachedTargetRepositoryTest : TestCase() {
             criteria = FailureInteractionCriteria
         )
         val result = mutableListOf<Target>()
-        val converter = object : Converter<TargetData, Target> {
-            override fun convert(source: TargetData): Target {
+        val converter = object : Converter<InvocationData, Target> {
+            override fun convert(source: InvocationData): Target {
                 result.add(target)
                 return target
             }
@@ -47,8 +47,8 @@ class CachedTargetRepositoryTest : TestCase() {
 
     @Test
     fun testExceptionWhileConvertingRawData() {
-        val converter = object : Converter<TargetData, Target> {
-            override fun convert(source: TargetData): Target {
+        val converter = object : Converter<InvocationData, Target> {
+            override fun convert(source: InvocationData): Target {
                 throw RuntimeException("Error")
             }
         }
