@@ -2,7 +2,7 @@ package apptentive.com.android.feedback.engagement
 
 import apptentive.com.android.feedback.engagement.criteria.Field
 import apptentive.com.android.feedback.engagement.criteria.Invocation
-import apptentive.com.android.feedback.engagement.criteria.TargetRepository
+import apptentive.com.android.feedback.engagement.criteria.InvocationRepository
 import apptentive.com.android.feedback.engagement.criteria.TargetingState
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
 import com.google.common.truth.Truth.assertThat
@@ -31,9 +31,9 @@ class CriteriaInteractionRepositoryTest {
         }.toMap()
     }
 
-    private fun createFailedCriteriaTargets(interactionId: String): TargetRepository {
-        return object : TargetRepository {
-            override fun getTargets(event: Event): List<Invocation>? {
+    private fun createFailedCriteriaTargets(interactionId: String): InvocationRepository {
+        return object : InvocationRepository {
+            override fun getInvocations(event: Event): List<Invocation>? {
                 return listOf(
                     Invocation(
                         interactionId = interactionId,

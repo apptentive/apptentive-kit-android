@@ -9,9 +9,9 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import java.lang.RuntimeException
 
-class CachedTargetRepositoryTest : TestCase() {
+class CachedInvocationRepositoryTest : TestCase() {
     @Test
-    fun getTargets() {
+    fun getInvocations() {
         val event = Event.local("event")
 
         val interactionId = "123456789"
@@ -19,30 +19,30 @@ class CachedTargetRepositoryTest : TestCase() {
             event.fullName to listOf(InvocationData(interactionId = interactionId))
         )
 
-        val target = Invocation(
+        val invocation = Invocation(
             interactionId = interactionId,
             criteria = FailureInteractionCriteria
         )
         val result = mutableListOf<Invocation>()
         val converter = object : Converter<InvocationData, Invocation> {
             override fun convert(source: InvocationData): Invocation {
-                result.add(target)
-                return target
+                result.add(invocation)
+                return invocation
             }
         }
-        val repository = CachedTargetRepository(data, converter)
-        repository.getTargets(event)
-        assertThat(result[0]).isEqualTo(target)
+        val repository = CachedInvocationRepository(data, converter)
+        repository.getInvocations(event)
+        assertThat(result[0]).isEqualTo(invocation)
 
         result.clear()
 
-        repository.getTargets(event)
+        repository.getInvocations(event)
         assertThat(result).isEmpty()
     }
 
     @Test
     fun testMissingData() {
-        TODO("Try to get targets for missing event (there should be no raw data)")
+        TODO("Try to get invocations for missing event (there should be no raw data)")
     }
 
     @Test

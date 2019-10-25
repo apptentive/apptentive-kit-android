@@ -6,9 +6,9 @@ import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.DefaultConversationService
 import apptentive.com.android.feedback.conversation.*
 import apptentive.com.android.feedback.engagement.*
-import apptentive.com.android.feedback.engagement.criteria.CachedTargetRepository
+import apptentive.com.android.feedback.engagement.criteria.CachedInvocationRepository
 import apptentive.com.android.feedback.engagement.criteria.DefaultTargetingState
-import apptentive.com.android.feedback.engagement.criteria.TargetConverter
+import apptentive.com.android.feedback.engagement.criteria.InvocationConverter
 import apptentive.com.android.feedback.engagement.interactions.*
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.platform.*
@@ -91,9 +91,9 @@ internal class ApptentiveDefaultClient(
     private fun createInteractionRepository(conversation: Conversation): InteractionRepository {
         return CriteriaInteractionRepository(
             interactions = conversation.engagementManifest.interactions.map { it.id to it }.toMap(),
-            targets = CachedTargetRepository(
+            invocations = CachedInvocationRepository(
                 conversation.engagementManifest.targets,
-                TargetConverter()
+                InvocationConverter()
             ),
             state = DefaultTargetingState(
                 conversation.person,

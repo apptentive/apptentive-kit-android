@@ -6,13 +6,13 @@ import apptentive.com.android.serialization.json.JsonConverter
 import org.junit.Ignore
 import org.junit.Test
 
-class TargetConverterTest : TestCase() {
+class InvocationConverterTest : TestCase() {
     @Test
     @Ignore
     fun convert() {
         val json = readText("manifest.json")
         val manifest = JsonConverter.fromJson<EngagementManifest>(json)
-        val converter = TargetConverter()
+        val converter = InvocationConverter()
         val result = manifest.targets.mapValues { (_, targets) ->
             targets.map { converter.convert(it) }
         }

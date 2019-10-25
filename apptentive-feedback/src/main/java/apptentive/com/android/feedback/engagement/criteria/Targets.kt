@@ -78,7 +78,7 @@ class CriteriaConverter(
     }
 }
 
-data class TargetConverter(
+data class InvocationConverter(
     private val criteriaConverter: Converter<Map<String, Any>, InteractionCriteria> = CriteriaConverter()
 ) : Converter<InvocationData, Invocation> {
     override fun convert(source: InvocationData) = Invocation(
