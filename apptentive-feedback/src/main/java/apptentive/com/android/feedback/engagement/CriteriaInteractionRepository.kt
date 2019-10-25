@@ -1,6 +1,6 @@
 package apptentive.com.android.feedback.engagement
 
-import apptentive.com.android.feedback.engagement.criteria.Target
+import apptentive.com.android.feedback.engagement.criteria.Invocation
 import apptentive.com.android.feedback.engagement.criteria.TargetRepository
 import apptentive.com.android.feedback.engagement.criteria.TargetingState
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
@@ -12,13 +12,13 @@ class CriteriaInteractionRepository(
     private val state: TargetingState
 ) : InteractionRepository {
     override fun getInteraction(event: Event): InteractionData? {
-        val targets = targets.getTargets(event)
-        if (targets == null) {
+        val invocations = targets.getTargets(event)
+        if (invocations == null) {
             // FIXME: log statement
             return null
         }
 
-        val interactionId = getInteractionId(targets)
+        val interactionId = getInteractionId(invocations)
         if (interactionId == null) {
             // FIXME: log statement
             return null
@@ -27,11 +27,11 @@ class CriteriaInteractionRepository(
         return interactions[interactionId]
     }
 
-    private fun getInteractionId(targets: List<Target>): InteractionId? {
+    private fun getInteractionId(invocations: List<Invocation>): InteractionId? {
         // FIXME: exception handling
-        for (target in targets) {
-            if (target.criteria.isMet(state)) {
-                return target.interactionId
+        for (invocation in invocations) {
+            if (invocation.criteria.isMet(state)) {
+                return invocation.interactionId
             }
         }
         return null

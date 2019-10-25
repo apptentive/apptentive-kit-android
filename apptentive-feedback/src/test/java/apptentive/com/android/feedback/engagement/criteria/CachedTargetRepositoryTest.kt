@@ -19,13 +19,13 @@ class CachedTargetRepositoryTest : TestCase() {
             event.fullName to listOf(InvocationData(interactionId = interactionId))
         )
 
-        val target = Target(
+        val target = Invocation(
             interactionId = interactionId,
             criteria = FailureInteractionCriteria
         )
-        val result = mutableListOf<Target>()
-        val converter = object : Converter<InvocationData, Target> {
-            override fun convert(source: InvocationData): Target {
+        val result = mutableListOf<Invocation>()
+        val converter = object : Converter<InvocationData, Invocation> {
+            override fun convert(source: InvocationData): Invocation {
                 result.add(target)
                 return target
             }
@@ -47,8 +47,8 @@ class CachedTargetRepositoryTest : TestCase() {
 
     @Test
     fun testExceptionWhileConvertingRawData() {
-        val converter = object : Converter<InvocationData, Target> {
-            override fun convert(source: InvocationData): Target {
+        val converter = object : Converter<InvocationData, Invocation> {
+            override fun convert(source: InvocationData): Invocation {
                 throw RuntimeException("Error")
             }
         }

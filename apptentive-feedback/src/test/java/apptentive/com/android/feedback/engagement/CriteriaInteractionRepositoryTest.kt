@@ -1,7 +1,7 @@
 package apptentive.com.android.feedback.engagement
 
 import apptentive.com.android.feedback.engagement.criteria.Field
-import apptentive.com.android.feedback.engagement.criteria.Target
+import apptentive.com.android.feedback.engagement.criteria.Invocation
 import apptentive.com.android.feedback.engagement.criteria.TargetRepository
 import apptentive.com.android.feedback.engagement.criteria.TargetingState
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
@@ -33,9 +33,9 @@ class CriteriaInteractionRepositoryTest {
 
     private fun createFailedCriteriaTargets(interactionId: String): TargetRepository {
         return object : TargetRepository {
-            override fun getTargets(event: Event): List<Target>? {
+            override fun getTargets(event: Event): List<Invocation>? {
                 return listOf(
-                    Target(
+                    Invocation(
                         interactionId = interactionId,
                         criteria = FailureInteractionCriteria
                     )
