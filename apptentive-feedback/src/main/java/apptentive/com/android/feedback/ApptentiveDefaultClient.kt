@@ -125,7 +125,7 @@ internal class ApptentiveDefaultClient(
     private val interactionFactory: InteractionFactory by lazy {
         DefaultInteractionFactory(
             lookup = interactionModules.mapValues { (_, module) ->
-                module.provideInteractionConverter()
+                module.provideInteractionTypeConverter()
             }
         )
     }
