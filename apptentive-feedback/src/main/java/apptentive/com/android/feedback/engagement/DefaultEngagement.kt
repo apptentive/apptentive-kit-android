@@ -5,13 +5,13 @@ import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionFactory
 
 @Suppress("FoldInitializerAndIfToElvis")
-data class DefaultEventEngagement(
+data class DefaultEngagement(
     private val interactions: InteractionRepository,
     private val interactionFactory: InteractionFactory,
     private val interactionEngagement: InteractionEngagement,
     private val recordEvent: (Event) -> Unit = {},
     private val recordInteraction: (Interaction) -> Unit = {}
-) : EventEngagement {
+) : Engagement {
     override fun engage(context: EngagementContext, event: Event): EngagementResult {
         recordEvent(event)
 

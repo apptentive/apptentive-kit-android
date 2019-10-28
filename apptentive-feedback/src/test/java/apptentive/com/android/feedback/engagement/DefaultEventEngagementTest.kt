@@ -11,13 +11,13 @@ import org.junit.Before
 import org.junit.Test
 
 class DefaultEventEngagementTest : TestCase() {
-    private lateinit var engagement: EventEngagement
+    private lateinit var engagement: Engagement
     private lateinit var interactionEngagement: MockInteractionEngagement
 
     @Before
     fun setup() {
         interactionEngagement = MockInteractionEngagement()
-        engagement = DefaultEventEngagement(
+        engagement = DefaultEngagement(
             interactions = MockInteractionRepository(),
             interactionFactory = MockInteractionFactory(),
             interactionEngagement = interactionEngagement,

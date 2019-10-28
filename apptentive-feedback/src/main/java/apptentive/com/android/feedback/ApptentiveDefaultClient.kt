@@ -25,7 +25,7 @@ internal class ApptentiveDefaultClient(
     private lateinit var conversationService: ConversationService
     private lateinit var conversationManager: ConversationManager
     private lateinit var interactionModules: Map<InteractionType, InteractionModule<Interaction>>
-    private var engagement: EventEngagement = NullEventEngagement()
+    private var engagement: Engagement = NullEngagement()
 
     //region Initialization
 
@@ -36,7 +36,7 @@ internal class ApptentiveDefaultClient(
         conversationManager = createConversationManager(context) // TODO: get rid of Context
         conversationManager.activeConversation.observe { conversation ->
             // FIXME: most of these values can be cached and only changed when the actual data changes
-            engagement = DefaultEventEngagement(
+            engagement = DefaultEngagement(
                 interactions = createInteractionRepository(conversation),
                 interactionFactory = interactionFactory,
                 interactionEngagement = createInteractionEngagement(),
