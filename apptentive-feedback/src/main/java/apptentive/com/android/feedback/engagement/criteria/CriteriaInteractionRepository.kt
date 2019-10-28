@@ -1,8 +1,7 @@
-package apptentive.com.android.feedback.engagement
+package apptentive.com.android.feedback.engagement.criteria
 
-import apptentive.com.android.feedback.engagement.criteria.Invocation
-import apptentive.com.android.feedback.engagement.criteria.InvocationRepository
-import apptentive.com.android.feedback.engagement.criteria.TargetingState
+import apptentive.com.android.feedback.engagement.Event
+import apptentive.com.android.feedback.engagement.InteractionRepository
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
 

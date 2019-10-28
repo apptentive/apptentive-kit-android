@@ -84,7 +84,7 @@ sealed class Field(val type: Type, val description: String) {
         object invokes {
             data class total(val interactionId: String) : Field(
                 type = Type.Number,
-                description = "total number of invokes for event $interactionId"
+                description = "total number of invokes for interaction $interactionId"
             )
 
             data class version_code(val interactionId: String) : Field(

@@ -7,6 +7,7 @@ import apptentive.com.android.feedback.backend.DefaultConversationService
 import apptentive.com.android.feedback.conversation.*
 import apptentive.com.android.feedback.engagement.*
 import apptentive.com.android.feedback.engagement.criteria.CachedInvocationRepository
+import apptentive.com.android.feedback.engagement.criteria.CriteriaInteractionRepository
 import apptentive.com.android.feedback.engagement.criteria.InvocationConverter
 import apptentive.com.android.feedback.engagement.criteria.DefaultTargetingState
 import apptentive.com.android.feedback.engagement.interactions.*

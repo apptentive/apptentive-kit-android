@@ -1,9 +1,6 @@
 package apptentive.com.android.feedback.engagement
 
-import apptentive.com.android.feedback.engagement.criteria.Field
-import apptentive.com.android.feedback.engagement.criteria.Invocation
-import apptentive.com.android.feedback.engagement.criteria.InvocationRepository
-import apptentive.com.android.feedback.engagement.criteria.TargetingState
+import apptentive.com.android.feedback.engagement.criteria.*
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
@@ -19,7 +16,12 @@ class CriteriaInteractionRepositoryTest {
         )
         val interactions = createInteractions(listOf(expected))
         val targets = createFailedCriteriaTargets(interactionId)
-        val repository = CriteriaInteractionRepository(interactions, targets, FailureTargetingState)
+        val repository =
+            CriteriaInteractionRepository(
+                interactions,
+                targets,
+                FailureTargetingState
+            )
 
         val actual = repository.getInteraction(Event.local("event"))
         assertThat(actual).isEqualTo(expected)
