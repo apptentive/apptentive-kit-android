@@ -12,7 +12,7 @@ class InvocationConverterTest : TestCase() {
     fun convert() {
         val json = readText("manifest.json")
         val manifest = JsonConverter.fromJson<EngagementManifest>(json)
-        val converter = InvocationConverter()
+        val converter = InvocationConverter
         val result = manifest.targets.mapValues { (_, targets) ->
             targets.map { converter.convert(it) }
         }
