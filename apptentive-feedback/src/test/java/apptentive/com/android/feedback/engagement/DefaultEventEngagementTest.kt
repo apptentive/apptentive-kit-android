@@ -18,7 +18,7 @@ class DefaultEventEngagementTest : TestCase() {
     fun setup() {
         interactionEngagement = MockInteractionEngagement()
         engagement = DefaultEngagement(
-            interactions = MockInteractionRepository(),
+            interactionDataProvider = MockInteractionDataProvider(),
             interactionFactory = MockInteractionFactory(),
             interactionEngagement = interactionEngagement,
             recordEvent = ::recordEvent,

@@ -7,7 +7,7 @@ import apptentive.com.android.feedback.backend.DefaultConversationService
 import apptentive.com.android.feedback.conversation.*
 import apptentive.com.android.feedback.engagement.*
 import apptentive.com.android.feedback.engagement.criteria.CachedInvocationRepository
-import apptentive.com.android.feedback.engagement.criteria.CriteriaInteractionRepository
+import apptentive.com.android.feedback.engagement.criteria.CriteriaInteractionDataProvider
 import apptentive.com.android.feedback.engagement.criteria.InvocationConverter
 import apptentive.com.android.feedback.engagement.criteria.DefaultTargetingState
 import apptentive.com.android.feedback.engagement.interactions.*
@@ -37,7 +37,7 @@ internal class ApptentiveDefaultClient(
         conversationManager.activeConversation.observe { conversation ->
             // FIXME: most of these values can be cached and only changed when the actual data changes
             engagement = DefaultEngagement(
-                interactions = createInteractionRepository(conversation),
+                interactionDataProvider = createInteractionDataProvider(conversation),
                 interactionFactory = interactionFactory,
                 interactionEngagement = createInteractionEngagement(),
                 recordEvent = ::recordEvent,
@@ -89,8 +89,8 @@ internal class ApptentiveDefaultClient(
         baseURL = Constants.SERVER_URL
     )
 
-    private fun createInteractionRepository(conversation: Conversation): InteractionRepository {
-        return CriteriaInteractionRepository(
+    private fun createInteractionDataProvider(conversation: Conversation): InteractionDataProvider {
+        return CriteriaInteractionDataProvider(
             interactions = conversation.engagementManifest.interactions.map { it.id to it }.toMap(),
             invocations = CachedInvocationRepository(
                 conversation.engagementManifest.targets,

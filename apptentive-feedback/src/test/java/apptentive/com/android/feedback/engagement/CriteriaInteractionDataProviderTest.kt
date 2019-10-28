@@ -5,8 +5,7 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionData
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
-class CriteriaInteractionRepositoryTest {
-
+class CriteriaInteractionDataProviderTest {
     @Test
     fun getInteraction() {
         val interactionId = "123456789"
@@ -16,14 +15,13 @@ class CriteriaInteractionRepositoryTest {
         )
         val interactions = createInteractions(listOf(expected))
         val targets = createFailedCriteriaTargets(interactionId)
-        val repository =
-            CriteriaInteractionRepository(
-                interactions,
-                targets,
-                FailureTargetingState
-            )
+        val provider = CriteriaInteractionDataProvider(
+            interactions = interactions,
+            invocations = targets,
+            state = FailureTargetingState
+        )
 
-        val actual = repository.getInteraction(Event.local("event"))
+        val actual = provider.getInteraction(Event.local("event"))
         assertThat(actual).isEqualTo(expected)
     }
 

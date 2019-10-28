@@ -1,15 +1,15 @@
 package apptentive.com.android.feedback.engagement.criteria
 
 import apptentive.com.android.feedback.engagement.Event
-import apptentive.com.android.feedback.engagement.InteractionRepository
+import apptentive.com.android.feedback.engagement.InteractionDataProvider
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
 
-class CriteriaInteractionRepository(
+class CriteriaInteractionDataProvider(
     private val interactions: Map<InteractionId, InteractionData>,
     private val invocations: InvocationRepository,
     private val state: TargetingState
-) : InteractionRepository {
+) : InteractionDataProvider {
     override fun getInteraction(event: Event): InteractionData? {
         val invocations = invocations.getInvocations(event)
         if (invocations == null) {
