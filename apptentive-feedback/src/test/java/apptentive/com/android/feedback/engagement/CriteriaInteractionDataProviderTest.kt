@@ -14,10 +14,10 @@ class CriteriaInteractionDataProviderTest {
             type = "MyInteraction"
         )
         val interactions = createInteractions(listOf(expected))
-        val targets = createFailedCriteriaTargets(interactionId)
+        val invocationProvider = createFailedInvocationProvider(interactionId)
         val provider = CriteriaInteractionDataProvider(
             interactions = interactions,
-            invocations = targets,
+            invocationProvider = invocationProvider,
             state = FailureTargetingState
         )
 
@@ -31,8 +31,8 @@ class CriteriaInteractionDataProviderTest {
         }.toMap()
     }
 
-    private fun createFailedCriteriaTargets(interactionId: String): InvocationRepository {
-        return object : InvocationRepository {
+    private fun createFailedInvocationProvider(interactionId: String): InvocationProvider {
+        return object : InvocationProvider {
             override fun getInvocations(event: Event): List<Invocation>? {
                 return listOf(
                     Invocation(

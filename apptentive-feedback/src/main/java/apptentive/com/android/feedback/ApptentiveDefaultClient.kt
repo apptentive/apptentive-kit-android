@@ -6,7 +6,7 @@ import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.DefaultConversationService
 import apptentive.com.android.feedback.conversation.*
 import apptentive.com.android.feedback.engagement.*
-import apptentive.com.android.feedback.engagement.criteria.CachedInvocationRepository
+import apptentive.com.android.feedback.engagement.criteria.CachedInvocationProvider
 import apptentive.com.android.feedback.engagement.criteria.CriteriaInteractionDataProvider
 import apptentive.com.android.feedback.engagement.criteria.DefaultTargetingState
 import apptentive.com.android.feedback.engagement.criteria.InvocationConverter
@@ -92,7 +92,7 @@ internal class ApptentiveDefaultClient(
     private fun createInteractionDataProvider(conversation: Conversation): InteractionDataProvider {
         return CriteriaInteractionDataProvider(
             interactions = conversation.engagementManifest.interactions.map { it.id to it }.toMap(),
-            invocations = CachedInvocationRepository(
+            invocationProvider = CachedInvocationProvider(
                 conversation.engagementManifest.targets,
                 InvocationConverter
             ),

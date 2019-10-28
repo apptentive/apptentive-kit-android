@@ -30,13 +30,13 @@ class CachedInvocationRepositoryTest : TestCase() {
                 return invocation
             }
         }
-        val repository = CachedInvocationRepository(data, converter)
-        repository.getInvocations(event)
+        val provider = CachedInvocationProvider(data, converter)
+        provider.getInvocations(event)
         assertThat(result[0]).isEqualTo(invocation)
 
         result.clear()
 
-        repository.getInvocations(event)
+        provider.getInvocations(event)
         assertThat(result).isEmpty()
     }
 

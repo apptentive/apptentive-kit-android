@@ -7,11 +7,11 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionId
 
 class CriteriaInteractionDataProvider(
     private val interactions: Map<InteractionId, InteractionData>,
-    private val invocations: InvocationRepository,
+    private val invocationProvider: InvocationProvider,
     private val state: TargetingState
 ) : InteractionDataProvider {
     override fun getInteraction(event: Event): InteractionData? {
-        val invocations = invocations.getInvocations(event)
+        val invocations = invocationProvider.getInvocations(event)
         if (invocations == null) {
             // FIXME: log statement
             return null
