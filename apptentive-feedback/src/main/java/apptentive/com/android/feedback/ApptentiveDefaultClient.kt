@@ -111,8 +111,7 @@ internal class ApptentiveDefaultClient(
     //region Engagement
 
     override fun engage(context: Context, event: Event): EngagementResult {
-        val engagementContext = AndroidEngagementContext(context, engagement)
-        return engagement.engage(engagementContext, event)
+        return AndroidEngagementContext(context, engagement).engage(event)
     }
 
     // FIXME: temporary code

@@ -1,7 +1,10 @@
 package apptentive.com.android.feedback.engagement
 
-class MockEngagementContext(private val onEngage: (Event) -> Unit = {}) : EngagementContext {
-    override fun engage(event: Event) {
-        onEngage(event)
-    }
-}
+import apptentive.com.android.feedback.EngagementResult
+
+class MockEngagementContext(onEngage: ((Event) -> EngagementResult)? = null) :
+    EngagementContext(object : Engagement {
+        override fun engage(context: EngagementContext, event: Event): EngagementResult {
+            return onEngage?.invoke(event) ?: EngagementResult.Success
+        }
+    })

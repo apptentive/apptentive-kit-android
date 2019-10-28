@@ -1,15 +1,15 @@
 package apptentive.com.android.feedback.platform
 
 import android.content.Context
-import apptentive.com.android.feedback.engagement.EngagementContext
-import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.Engagement
+import apptentive.com.android.feedback.engagement.EngagementContext
 
+/**
+ * Android-specific implementation of the [EngagementContext].
+ * @param androidContext - enclosing [android.content.Context] object.
+ * @param engagement - target [Engagement] object.
+ */
 class AndroidEngagementContext(
     val androidContext: Context,
-    private val engagement: Engagement
-) : EngagementContext {
-    override fun engage(event: Event) {
-        engagement.engage(this, event)
-    }
-}
+    engagement: Engagement
+) : EngagementContext(engagement)
