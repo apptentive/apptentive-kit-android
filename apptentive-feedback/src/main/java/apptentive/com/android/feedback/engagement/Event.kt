@@ -1,5 +1,10 @@
 package apptentive.com.android.feedback.engagement
 
+/**
+ * @param vendor the organization that created the event. For start, there will be two defined.
+ * @param interaction the name of the interaction that the event was invoked through. In the case of events lying outside of an interaction, use <code>app</code>.
+ * @param name the actual name of the event.
+ */
 data class Event(val vendor: String, val interaction: String, val name: String) {
     val fullName: String =
         "${escapeCharacters(vendor)}#${escapeCharacters(interaction)}#${escapeCharacters(name)}"
