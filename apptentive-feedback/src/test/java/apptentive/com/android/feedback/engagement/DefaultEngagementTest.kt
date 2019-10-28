@@ -2,7 +2,7 @@ package apptentive.com.android.feedback.engagement
 
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.interactions.Interaction
-import apptentive.com.android.feedback.engagement.interactions.MockInteractionFactory
+import apptentive.com.android.feedback.engagement.interactions.MockInteractionDataConverter
 import apptentive.com.android.feedback.engagement.interactions.mockEvent
 import apptentive.com.android.feedback.engagement.interactions.mockInteraction
 import apptentive.com.android.feedback.test.TestCase
@@ -10,7 +10,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Before
 import org.junit.Test
 
-class DefaultEventEngagementTest : TestCase() {
+class DefaultEngagementTest : TestCase() {
     private lateinit var engagement: Engagement
     private lateinit var interactionEngagement: MockInteractionEngagement
 
@@ -19,7 +19,7 @@ class DefaultEventEngagementTest : TestCase() {
         interactionEngagement = MockInteractionEngagement()
         engagement = DefaultEngagement(
             interactionDataProvider = MockInteractionDataProvider(),
-            interactionFactory = MockInteractionFactory(),
+            interactionConverter = MockInteractionDataConverter(),
             interactionEngagement = interactionEngagement,
             recordEvent = ::recordEvent,
             recordInteraction = ::recordInteraction

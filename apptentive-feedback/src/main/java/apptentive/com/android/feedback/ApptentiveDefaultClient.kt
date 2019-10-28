@@ -8,8 +8,8 @@ import apptentive.com.android.feedback.conversation.*
 import apptentive.com.android.feedback.engagement.*
 import apptentive.com.android.feedback.engagement.criteria.CachedInvocationRepository
 import apptentive.com.android.feedback.engagement.criteria.CriteriaInteractionDataProvider
-import apptentive.com.android.feedback.engagement.criteria.InvocationConverter
 import apptentive.com.android.feedback.engagement.criteria.DefaultTargetingState
+import apptentive.com.android.feedback.engagement.criteria.InvocationConverter
 import apptentive.com.android.feedback.engagement.interactions.*
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.platform.*
@@ -38,7 +38,7 @@ internal class ApptentiveDefaultClient(
             // FIXME: most of these values can be cached and only changed when the actual data changes
             engagement = DefaultEngagement(
                 interactionDataProvider = createInteractionDataProvider(conversation),
-                interactionFactory = interactionFactory,
+                interactionConverter = interactionConverter,
                 interactionEngagement = createInteractionEngagement(),
                 recordEvent = ::recordEvent,
                 recordInteraction = ::recordInteraction
@@ -123,8 +123,8 @@ internal class ApptentiveDefaultClient(
     }
 
     // FIXME: temporary code
-    private val interactionFactory: InteractionFactory by lazy {
-        DefaultInteractionFactory(
+    private val interactionConverter: InteractionDataConverter by lazy {
+        DefaultInteractionDataConverter(
             lookup = interactionModules.mapValues { (_, module) ->
                 module.provideInteractionTypeConverter()
             }

@@ -2,12 +2,12 @@ package apptentive.com.android.feedback.engagement
 
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.interactions.Interaction
-import apptentive.com.android.feedback.engagement.interactions.InteractionFactory
+import apptentive.com.android.feedback.engagement.interactions.InteractionDataConverter
 
 @Suppress("FoldInitializerAndIfToElvis")
 data class DefaultEngagement(
     private val interactionDataProvider: InteractionDataProvider,
-    private val interactionFactory: InteractionFactory,
+    private val interactionConverter: InteractionDataConverter,
     private val interactionEngagement: InteractionEngagement,
     private val recordEvent: (Event) -> Unit = {},
     private val recordInteraction: (Interaction) -> Unit = {}
@@ -20,7 +20,7 @@ data class DefaultEngagement(
             return EngagementResult.Failure("No runnable interactions for event '${event.name}'")
         }
 
-        val interaction = interactionFactory.createInteraction(interactionData)
+        val interaction = interactionConverter.convert(interactionData)
         if (interaction == null) {
             return EngagementResult.Error("Unknown interaction type '${interactionData.type}' for event '${event.name}'") // TODO: more description error message
         }
