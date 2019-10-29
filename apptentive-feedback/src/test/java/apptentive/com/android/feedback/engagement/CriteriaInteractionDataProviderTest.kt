@@ -1,15 +1,11 @@
 package apptentive.com.android.feedback.engagement
 
-import apptentive.com.android.feedback.engagement.criteria.Field
-import apptentive.com.android.feedback.engagement.criteria.Target
-import apptentive.com.android.feedback.engagement.criteria.TargetRepository
-import apptentive.com.android.feedback.engagement.criteria.TargetingState
+import apptentive.com.android.feedback.engagement.criteria.*
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
-class CriteriaInteractionRepositoryTest {
-
+class CriteriaInteractionDataProviderTest {
     @Test
     fun getInteraction() {
         val interactionId = "123456789"
@@ -18,10 +14,14 @@ class CriteriaInteractionRepositoryTest {
             type = "MyInteraction"
         )
         val interactions = createInteractions(listOf(expected))
-        val targets = createFailedCriteriaTargets(interactionId)
-        val repository = CriteriaInteractionRepository(interactions, targets, FailureTargetingState)
+        val invocationProvider = createFailedInvocationProvider(interactionId)
+        val provider = CriteriaInteractionDataProvider(
+            interactions = interactions,
+            invocationProvider = invocationProvider,
+            state = FailureTargetingState
+        )
 
-        val actual = repository.getInteraction(Event.local("event"))
+        val actual = provider.getInteraction(Event.local("event"))
         assertThat(actual).isEqualTo(expected)
     }
 
@@ -31,11 +31,11 @@ class CriteriaInteractionRepositoryTest {
         }.toMap()
     }
 
-    private fun createFailedCriteriaTargets(interactionId: String): TargetRepository {
-        return object : TargetRepository {
-            override fun getTargets(event: Event): List<Target>? {
+    private fun createFailedInvocationProvider(interactionId: String): InvocationProvider {
+        return object : InvocationProvider {
+            override fun getInvocations(event: Event): List<Invocation>? {
                 return listOf(
-                    Target(
+                    Invocation(
                         interactionId = interactionId,
                         criteria = FailureInteractionCriteria
                     )

@@ -1,12 +1,11 @@
 package apptentive.com.android.feedback
 
 import apptentive.com.android.feedback.engagement.interactions.Interaction
-import apptentive.com.android.feedback.engagement.interactions.InteractionConverter
+import apptentive.com.android.feedback.engagement.interactions.InteractionTypeConverter
 import apptentive.com.android.feedback.engagement.interactions.InteractionLauncher
 import apptentive.com.android.feedback.engagement.interactions.InteractionModule
 import apptentive.com.android.feedback.test.TestCase
 import com.google.common.truth.Truth.assertThat
-import org.junit.Ignore
 import org.junit.Test
 
 class InteractionModuleComponentTest : TestCase() {
@@ -49,7 +48,7 @@ private class TestInteraction(id: String) : Interaction(id)
 private class MyTestInteractionModule : InteractionModule<TestInteraction> {
     override val interactionClass = TestInteraction::class.java
 
-    override fun provideInteractionConverter(): InteractionConverter<TestInteraction> {
+    override fun provideInteractionTypeConverter(): InteractionTypeConverter<TestInteraction> {
         throw AssertionError("Should not get there")
     }
 

@@ -3,52 +3,52 @@ package apptentive.com.android.feedback.engagement.criteria
 import apptentive.com.android.core.Converter
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.FailureInteractionCriteria
-import apptentive.com.android.feedback.model.TargetData
+import apptentive.com.android.feedback.model.InvocationData
 import apptentive.com.android.feedback.test.TestCase
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import java.lang.RuntimeException
 
-class CachedTargetRepositoryTest : TestCase() {
+class CachedInvocationRepositoryTest : TestCase() {
     @Test
-    fun getTargets() {
+    fun getInvocations() {
         val event = Event.local("event")
 
         val interactionId = "123456789"
         val data = mapOf(
-            event.fullName to listOf(TargetData(interactionId = interactionId))
+            event.fullName to listOf(InvocationData(interactionId = interactionId))
         )
 
-        val target = Target(
+        val invocation = Invocation(
             interactionId = interactionId,
             criteria = FailureInteractionCriteria
         )
-        val result = mutableListOf<Target>()
-        val converter = object : Converter<TargetData, Target> {
-            override fun convert(source: TargetData): Target {
-                result.add(target)
-                return target
+        val result = mutableListOf<Invocation>()
+        val converter = object : Converter<InvocationData, Invocation> {
+            override fun convert(source: InvocationData): Invocation {
+                result.add(invocation)
+                return invocation
             }
         }
-        val repository = CachedTargetRepository(data, converter)
-        repository.getTargets(event)
-        assertThat(result[0]).isEqualTo(target)
+        val provider = CachedInvocationProvider(data, converter)
+        provider.getInvocations(event)
+        assertThat(result[0]).isEqualTo(invocation)
 
         result.clear()
 
-        repository.getTargets(event)
+        provider.getInvocations(event)
         assertThat(result).isEmpty()
     }
 
     @Test
     fun testMissingData() {
-        TODO("Try to get targets for missing event (there should be no raw data)")
+        TODO("Try to get invocations for missing event (there should be no raw data)")
     }
 
     @Test
     fun testExceptionWhileConvertingRawData() {
-        val converter = object : Converter<TargetData, Target> {
-            override fun convert(source: TargetData): Target {
+        val converter = object : Converter<InvocationData, Invocation> {
+            override fun convert(source: InvocationData): Invocation {
                 throw RuntimeException("Error")
             }
         }
