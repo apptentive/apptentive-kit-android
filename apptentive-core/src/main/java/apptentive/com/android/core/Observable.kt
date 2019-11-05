@@ -2,7 +2,7 @@ package apptentive.com.android.core
 
 import androidx.annotation.WorkerThread
 
-sealed class Observable<T>(private var _value: T) {
+open class Observable<T>(private var _value: T) {
     private val observers = mutableListOf<(T) -> Unit>()
 
     open var value: T
@@ -41,14 +41,6 @@ sealed class Observable<T>(private var _value: T) {
     private fun notifyObserver(observer: (T) -> Unit, value: T) {
         observer(value)
     }
-}
-
-class MutableObservable<T>(value: T) : Observable<T>(value) {
-    override var value: T
-        get() = super.value
-        public set(value) {
-            super.value = value
-        }
 }
 
 interface Subscription {

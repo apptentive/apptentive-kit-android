@@ -1,7 +1,7 @@
 package apptentive.com.android.feedback.conversation
 
 import androidx.annotation.WorkerThread
-import apptentive.com.android.core.MutableObservable
+import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.Observable
 import apptentive.com.android.core.isInThePast
 import apptentive.com.android.feedback.CONVERSATION
@@ -18,17 +18,14 @@ class ConversationManager(
     private val conversationRepository: ConversationRepository,
     private val conversationService: ConversationService
 ) {
-    private val _activeConversation: MutableObservable<Conversation>
-    val activeConversation: Observable<Conversation> get() = _activeConversation
-
-    private val _engagementManifest = MutableObservable(EngagementManifest())
-    val engagementManifest: Observable<EngagementManifest> = _engagementManifest
+    private val activeConversationSubject: BehaviorSubject<Conversation>
+    val activeConversation: Observable<Conversation> get() = activeConversationSubject
 
     init {
         val conversation = loadActiveConversation()
-        _activeConversation = MutableObservable(conversation)
-        _activeConversation.observe(::saveConversation)
-        _activeConversation.observe(::tryFetchEngagementManifest)
+        activeConversationSubject = BehaviorSubject(conversation)
+        activeConversationSubject.observe(::saveConversation)
+        activeConversationSubject.observe(::tryFetchEngagementManifest)
 
         // fetch conversation token if necessary
         if (!conversation.hasConversationToken) {
@@ -45,7 +42,7 @@ class ConversationManager(
             when (it) {
                 is Result.Error -> Log.e(CONVERSATION, "Unable to fetch conversation")
                 is Result.Success -> {
-                    val currentConversation = _activeConversation.value
+                    val currentConversation = activeConversationSubject.value
                     @Suppress("CascadeIf")
                     if (currentConversation.localIdentifier != conversation.localIdentifier) {
                         Log.d(
@@ -58,7 +55,7 @@ class ConversationManager(
                             "Conversation fetch token request should only affect conversations without token but active conversation has token ${currentConversation.conversationToken}"
                         )
                     } else {
-                        _activeConversation.value = currentConversation.copy(
+                        activeConversationSubject.value = currentConversation.copy(
                             conversationToken = it.data.token,
                             conversationId = it.data.id,
                             person = currentConversation.person.copy(
@@ -110,7 +107,7 @@ class ConversationManager(
             ) {
                 when (it) {
                     is Result.Success -> {
-                        _activeConversation.value = _activeConversation.value.copy(
+                        activeConversationSubject.value = activeConversationSubject.value.copy(
                             engagementManifest = it.data
                         )
                     }
@@ -124,8 +121,8 @@ class ConversationManager(
 
     fun recordEvent(event: Event) {
         // 1. save it to conversation data
-        val conversation = _activeConversation.value
-        _activeConversation.value = conversation.copy(
+        val conversation = activeConversationSubject.value
+        activeConversationSubject.value = conversation.copy(
             engagementData = conversation.engagementData.addInvoke(
                 event = event,
                 versionName = conversation.appRelease.versionName,
@@ -137,8 +134,8 @@ class ConversationManager(
     }
 
     fun recordInteraction(interactionId: String) {
-        val conversation = _activeConversation.value
-        _activeConversation.value = conversation.copy(
+        val conversation = activeConversationSubject.value
+        activeConversationSubject.value = conversation.copy(
             engagementData = conversation.engagementData.addInvoke(
                 interactionId = interactionId,
                 versionName = conversation.appRelease.versionName,
