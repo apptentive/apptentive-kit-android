@@ -6,6 +6,7 @@ import apptentive.com.android.feedback.engagement.FailureInteractionCriteria
 import apptentive.com.android.feedback.model.InvocationData
 import apptentive.com.android.feedback.test.TestCase
 import com.google.common.truth.Truth.assertThat
+import org.junit.Ignore
 import org.junit.Test
 import java.lang.RuntimeException
 
@@ -41,11 +42,13 @@ class CachedInvocationRepositoryTest : TestCase() {
     }
 
     @Test
+    @Ignore
     fun testMissingData() {
         TODO("Try to get invocations for missing event (there should be no raw data)")
     }
 
     @Test
+    @Ignore
     fun testExceptionWhileConvertingRawData() {
         val converter = object : Converter<InvocationData, Invocation> {
             override fun convert(source: InvocationData): Invocation {

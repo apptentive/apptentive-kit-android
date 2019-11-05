@@ -3,10 +3,12 @@ package apptentive.com.android.feedback.engagement
 import apptentive.com.android.feedback.engagement.criteria.*
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
 import com.google.common.truth.Truth.assertThat
+import org.junit.Ignore
 import org.junit.Test
 
 class CriteriaInteractionDataProviderTest {
     @Test
+    @Ignore
     fun getInteraction() {
         val interactionId = "123456789"
         val expected = InteractionData(

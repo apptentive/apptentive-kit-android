@@ -6,6 +6,7 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionLaunch
 import apptentive.com.android.feedback.engagement.interactions.InteractionModule
 import apptentive.com.android.feedback.test.TestCase
 import com.google.common.truth.Truth.assertThat
+import org.junit.Ignore
 import org.junit.Test
 
 class InteractionModuleComponentTest : TestCase() {
@@ -35,6 +36,7 @@ class InteractionModuleComponentTest : TestCase() {
     }
 
     @Test
+    @Ignore
     fun testExceptionInModuleInitializer() {
         // 1. create a new interaction module which would throw an exception upon initialization
         // 2. get all the modules
