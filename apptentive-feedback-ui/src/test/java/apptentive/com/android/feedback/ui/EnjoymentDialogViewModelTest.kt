@@ -1,5 +1,7 @@
 package apptentive.com.android.feedback.ui
 
+import apptentive.com.android.feedback.EngagementResult
+import apptentive.com.android.feedback.engagement.Engagement
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.ui.EnjoymentDialogViewModel.Companion.CODE_POINT_CANCEL
@@ -14,12 +16,13 @@ class EnjoymentDialogViewModelTest {
     fun testEvents() {
         val events = mutableListOf<Event>()
 
-        val context = object : EngagementContext {
-            override fun engage(event: Event) {
+        val engagement = object : Engagement {
+            override fun engage(context: EngagementContext, event: Event): EngagementResult {
                 events.add(event)
+                return EngagementResult.Success
             }
         }
-        val viewModel = EnjoymentDialogViewModel(context)
+        val viewModel = EnjoymentDialogViewModel(EngagementContext(engagement))
         viewModel.onYesButton()
         viewModel.onNoButton()
         viewModel.onDismissButton()

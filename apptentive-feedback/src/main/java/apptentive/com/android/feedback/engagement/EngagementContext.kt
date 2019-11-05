@@ -5,6 +5,6 @@ package apptentive.com.android.feedback.engagement
  * Allows capturing platform specific context (e.g. [android.content.Context]) before making an
  * actual engagement call.
  */
-abstract class EngagementContext(private val engagement: Engagement) {
+open class EngagementContext(private val engagement: Engagement) {
     fun engage(event: Event) = engagement.engage(this, event)
 }
