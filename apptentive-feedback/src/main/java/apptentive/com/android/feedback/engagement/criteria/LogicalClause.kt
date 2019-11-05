@@ -4,25 +4,13 @@ abstract class LogicalClause(protected val children: List<Clause>) : Clause
 
 class LogicalAndClause(children: List<Clause>) : LogicalClause(children) {
     override fun evaluate(state: TargetingState): Boolean {
-        for (clause in children) {
-            val ret = clause.evaluate(state)
-            if (!ret) {
-                return false
-            }
-        }
-        return true
+        return children.all { clause: Clause -> clause.evaluate(state) }
     }
 }
 
 class LogicalOrClause(children: List<Clause>) : LogicalClause(children) {
     override fun evaluate(state: TargetingState): Boolean {
-        for (clause in children) {
-            val ret = clause.evaluate(state)
-            if (ret) {
-                return true
-            }
-        }
-        return false
+        return children.any { clause: Clause -> clause.evaluate(state) }
     }
 }
 
@@ -32,8 +20,6 @@ class LogicalNotClause(children: List<Clause>) : LogicalClause(children) {
     }
 
     override fun evaluate(state: TargetingState): Boolean {
-        val clause = children[0]
-        val ret = clause.evaluate(state)
-        return !ret
+        return !children.first().evaluate(state)
     }
 }
