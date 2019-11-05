@@ -166,15 +166,15 @@ val mockEngagementManifest = EngagementManifest(
     ),
     targets = mapOf(
         "local#app#event" to listOf(
-            TargetData(
+            InvocationData(
                 interactionId = "id1",
                 criteria = mapOf("interactions/id2/invokes/version_name" to mapOf("\$eq" to 1))
             ),
-            TargetData(
+            InvocationData(
                 interactionId = "id2",
                 criteria = mapOf("interactions/id3/invokes/version_code" to mapOf("\$gt" to 0))
             ),
-            TargetData(
+            InvocationData(
                 interactionId = "id3"
             )
         )

@@ -6,9 +6,10 @@ import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.DefaultConversationService
 import apptentive.com.android.feedback.conversation.*
 import apptentive.com.android.feedback.engagement.*
-import apptentive.com.android.feedback.engagement.criteria.CachedTargetRepository
+import apptentive.com.android.feedback.engagement.criteria.CachedInvocationProvider
+import apptentive.com.android.feedback.engagement.criteria.CriteriaInteractionDataProvider
 import apptentive.com.android.feedback.engagement.criteria.DefaultTargetingState
-import apptentive.com.android.feedback.engagement.criteria.TargetConverter
+import apptentive.com.android.feedback.engagement.criteria.InvocationConverter
 import apptentive.com.android.feedback.engagement.interactions.*
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.platform.*
@@ -24,7 +25,7 @@ internal class ApptentiveDefaultClient(
     private lateinit var conversationService: ConversationService
     private lateinit var conversationManager: ConversationManager
     private lateinit var interactionModules: Map<InteractionType, InteractionModule<Interaction>>
-    private var engagement: EventEngagement = NullEventEngagement()
+    private var engagement: Engagement = NullEngagement()
 
     //region Initialization
 
@@ -35,9 +36,9 @@ internal class ApptentiveDefaultClient(
         conversationManager = createConversationManager(context) // TODO: get rid of Context
         conversationManager.activeConversation.observe { conversation ->
             // FIXME: most of these values can be cached and only changed when the actual data changes
-            engagement = DefaultEventEngagement(
-                interactions = createInteractionRepository(conversation),
-                interactionFactory = interactionFactory,
+            engagement = DefaultEngagement(
+                interactionDataProvider = createInteractionDataProvider(conversation),
+                interactionConverter = interactionConverter,
                 interactionEngagement = createInteractionEngagement(),
                 recordEvent = ::recordEvent,
                 recordInteraction = ::recordInteraction
@@ -88,12 +89,12 @@ internal class ApptentiveDefaultClient(
         baseURL = Constants.SERVER_URL
     )
 
-    private fun createInteractionRepository(conversation: Conversation): InteractionRepository {
-        return CriteriaInteractionRepository(
+    private fun createInteractionDataProvider(conversation: Conversation): InteractionDataProvider {
+        return CriteriaInteractionDataProvider(
             interactions = conversation.engagementManifest.interactions.map { it.id to it }.toMap(),
-            targets = CachedTargetRepository(
+            invocationProvider = CachedInvocationProvider(
                 conversation.engagementManifest.targets,
-                TargetConverter()
+                InvocationConverter
             ),
             state = DefaultTargetingState(
                 conversation.person,
@@ -110,8 +111,7 @@ internal class ApptentiveDefaultClient(
     //region Engagement
 
     override fun engage(context: Context, event: Event): EngagementResult {
-        val engagementContext = AndroidEngagementContext(context, engagement)
-        return engagement.engage(engagementContext, event)
+        return AndroidEngagementContext(context, engagement).engage(event)
     }
 
     // FIXME: temporary code
@@ -122,10 +122,10 @@ internal class ApptentiveDefaultClient(
     }
 
     // FIXME: temporary code
-    private val interactionFactory: InteractionFactory by lazy {
-        DefaultInteractionFactory(
+    private val interactionConverter: InteractionDataConverter by lazy {
+        DefaultInteractionDataConverter(
             lookup = interactionModules.mapValues { (_, module) ->
-                module.provideInteractionConverter()
+                module.provideInteractionTypeConverter()
             }
         )
     }

@@ -1,12 +1,12 @@
 package apptentive.com.android.feedback.ui
 
-import apptentive.com.android.feedback.engagement.interactions.InteractionConverter
+import apptentive.com.android.feedback.engagement.interactions.InteractionTypeConverter
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
 
 import apptentive.com.android.util.getString
 import apptentive.com.android.util.optString
 
-internal class EnjoymentDialogInteractionConverter : InteractionConverter<EnjoymentDialogInteraction> {
+internal class EnjoymentDialogInteractionTypeConverter : InteractionTypeConverter<EnjoymentDialogInteraction> {
     override fun convert(data: InteractionData) = EnjoymentDialogInteraction(
         id = data.id,
         title = data.configuration.getString("title"),
