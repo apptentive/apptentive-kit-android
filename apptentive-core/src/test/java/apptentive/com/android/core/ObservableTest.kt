@@ -6,7 +6,7 @@ import org.junit.Test
 class ObservableTest : TestCase() {
     @Test
     fun testValue() {
-        val observable = MutableObservable("1")
+        val observable = BehaviorSubject("1")
         // new observer should get current value
         val subscriptionA = observable.observe {
             addResult("A$it")
@@ -47,7 +47,7 @@ class ObservableTest : TestCase() {
             addResult(value)
         }
 
-        val observable = MutableObservable("1")
+        val observable = BehaviorSubject("1")
         observable.observe(observer)
 
         assertResults("1")

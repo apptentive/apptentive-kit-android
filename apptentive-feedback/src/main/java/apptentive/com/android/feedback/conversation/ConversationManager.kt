@@ -1,7 +1,7 @@
 package apptentive.com.android.feedback.conversation
 
 import androidx.annotation.WorkerThread
-import apptentive.com.android.core.MutableObservable
+import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.Observable
 import apptentive.com.android.core.isInThePast
 import apptentive.com.android.feedback.CONVERSATION
@@ -18,15 +18,15 @@ class ConversationManager(
     private val conversationRepository: ConversationRepository,
     private val conversationService: ConversationService
 ) {
-    private val _activeConversation: MutableObservable<Conversation>
+    private val _activeConversation: BehaviorSubject<Conversation>
     val activeConversation: Observable<Conversation> get() = _activeConversation
 
-    private val _engagementManifest = MutableObservable(EngagementManifest())
+    private val _engagementManifest = BehaviorSubject(EngagementManifest())
     val engagementManifest: Observable<EngagementManifest> = _engagementManifest
 
     init {
         val conversation = loadActiveConversation()
-        _activeConversation = MutableObservable(conversation)
+        _activeConversation = BehaviorSubject(conversation)
         _activeConversation.observe(::saveConversation)
         _activeConversation.observe(::tryFetchEngagementManifest)
 
