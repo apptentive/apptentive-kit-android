@@ -12,7 +12,7 @@ interface ConversationFetchService {
         device: Device,
         sdk: SDK,
         appRelease: AppRelease,
-        callback: (Result<ConversationTokenFetchResponse>) -> Unit
+        callback: (Result<ConversationCredentials>) -> Unit
     )
 }
 
@@ -76,7 +76,7 @@ data class AppReleaseSdkPayload(
 }
 
 // TODO: exclude this class from ProGuard
-data class ConversationTokenFetchResponse(
+data class ConversationCredentials(
     val id: String,
     val deviceId: String,
     val personId: String,

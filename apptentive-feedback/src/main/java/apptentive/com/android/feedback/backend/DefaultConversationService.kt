@@ -33,9 +33,9 @@ class DefaultConversationService(
         device: Device,
         sdk: SDK,
         appRelease: AppRelease,
-        callback: (Result<ConversationTokenFetchResponse>) -> Unit
+        callback: (Result<ConversationCredentials>) -> Unit
     ) {
-        val request = createJsonRequest<ConversationTokenFetchResponse>(
+        val request = createJsonRequest<ConversationCredentials>(
             method = HttpMethod.POST,
             path = "conversation",
             body = ConversationTokenFetchBody.from(device, sdk, appRelease)

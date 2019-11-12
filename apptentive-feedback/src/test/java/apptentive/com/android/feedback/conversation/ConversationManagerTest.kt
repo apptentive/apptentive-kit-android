@@ -2,7 +2,7 @@ package apptentive.com.android.feedback.conversation
 
 import apptentive.com.android.core.getTimeSeconds
 import apptentive.com.android.feedback.backend.ConversationService
-import apptentive.com.android.feedback.backend.ConversationTokenFetchResponse
+import apptentive.com.android.feedback.backend.ConversationCredentials
 import apptentive.com.android.feedback.mockAppRelease
 import apptentive.com.android.feedback.mockDevice
 import apptentive.com.android.feedback.mockPerson
@@ -17,7 +17,7 @@ import org.junit.Test
 class ConversationManagerTest : TestCase() {
     @Test
     fun getActiveConversation() {
-        val fetchResponse = ConversationTokenFetchResponse(
+        val fetchResponse = ConversationCredentials(
             id = "id",
             deviceId = "device_id",
             personId = "person_id",
@@ -70,14 +70,14 @@ private object MockConversationRepository : ConversationRepository {
 }
 
 private class MockConversationService(
-    private val response: ConversationTokenFetchResponse
+    private val response: ConversationCredentials
 ) :
     ConversationService {
     override fun fetchConversationToken(
         device: Device,
         sdk: SDK,
         appRelease: AppRelease,
-        callback: (Result<ConversationTokenFetchResponse>) -> Unit
+        callback: (Result<ConversationCredentials>) -> Unit
     ) {
         callback(Result.Success(response))
     }
