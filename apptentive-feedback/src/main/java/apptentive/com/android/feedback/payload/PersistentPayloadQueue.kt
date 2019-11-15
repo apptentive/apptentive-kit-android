@@ -1,5 +1,7 @@
 package apptentive.com.android.feedback.payload
 
+import apptentive.com.android.data.DataStore
+
 class PersistentPayloadQueue(private val dataStore: DataStore) : PayloadQueue {
     /*
     nonce: Text

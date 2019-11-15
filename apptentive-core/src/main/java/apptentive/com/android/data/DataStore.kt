@@ -1,4 +1,4 @@
-package apptentive.com.android.feedback.payload
+package apptentive.com.android.data
 
 interface DataStore {
     fun saveData(name: String, data: ByteArray)
