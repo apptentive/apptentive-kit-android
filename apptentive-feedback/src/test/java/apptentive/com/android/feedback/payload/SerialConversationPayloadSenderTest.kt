@@ -14,7 +14,7 @@ class SerialConversationPayloadSenderTest : TestCase() {
 
         val payload = Payload(
             nonce = "1",
-            type = Payload.PayloadType.Event,
+            type = PayloadType.Event,
             mediaType = MediaType.applicationJson,
             data = "This a payload".toByteArray()
         )

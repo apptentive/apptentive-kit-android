@@ -8,14 +8,3 @@ data class Payload(
     val mediaType: MediaType,
     val data: ByteArray
 )
-{
-    enum class PayloadType {
-        Person,
-        Device,
-        AppRelease,
-        SDK,
-        Message,
-        Event,
-        SurveyResponse
-    }
-}
