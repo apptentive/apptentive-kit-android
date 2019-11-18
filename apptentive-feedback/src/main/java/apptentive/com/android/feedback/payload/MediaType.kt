@@ -9,8 +9,16 @@ data class MediaType(
     }
 
     companion object {
-        fun parse(value: String) {
-            TODO()
+        fun parse(value: String): MediaType {
+            val tokens = value.split("/")
+            if (tokens.size != 2) {
+                throw IllegalArgumentException("Invalid value for media type: $value")
+            }
+
+            return MediaType(
+                type = tokens[0],
+                subType = tokens[1]
+            )
         }
 
         val applicationJson = MediaType("application", "json")

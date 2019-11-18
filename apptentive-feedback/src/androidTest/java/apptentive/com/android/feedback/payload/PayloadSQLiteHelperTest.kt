@@ -25,31 +25,29 @@ class PayloadSQLiteHelperTest {
 
     @Test
     fun addingAndRemovingPayloads() {
-        val actual1 = Payload(
+        val actual1 = PayloadEntity(
             nonce = "nonce-1",
-            type = PayloadType.Event,
-            mediaType = MediaType.applicationJson,
-            data = "Payload - 1".toByteArray()
+            type = PayloadType.Event.toString(),
+            mediaType = MediaType.applicationJson.toString()
         )
-        val actual2 = Payload(
+        val actual2 = PayloadEntity(
             nonce = "nonce-2",
-            type = PayloadType.AppRelease,
-            mediaType = MediaType.applicationJson,
-            data = "Payload - 2".toByteArray()
+            type = PayloadType.AppRelease.toString(),
+            mediaType = MediaType.applicationJson.toString()
         )
         dbHelper.addPayload(actual1)
         dbHelper.addPayload(actual2)
 
-        assertEqual(actual1, dbHelper.getNextUnsentPayload())
-        assertEqual(actual1, dbHelper.getNextUnsentPayload())
+        assertEqual(actual1, dbHelper.nextUnsentPayload())
+        assertEqual(actual1, dbHelper.nextUnsentPayload())
 
-        dbHelper.deletePayload(actual1)
+        dbHelper.deletePayload(actual1.nonce)
 
-        assertEqual(actual2, dbHelper.getNextUnsentPayload())
-        assertEqual(actual2, dbHelper.getNextUnsentPayload())
+        assertEqual(actual2, dbHelper.nextUnsentPayload())
+        assertEqual(actual2, dbHelper.nextUnsentPayload())
 
-        dbHelper.deletePayload(actual2)
+        dbHelper.deletePayload(actual2.nonce)
 
-        assertNull(dbHelper.getNextUnsentPayload())
+        assertNull(dbHelper.nextUnsentPayload())
     }
 }

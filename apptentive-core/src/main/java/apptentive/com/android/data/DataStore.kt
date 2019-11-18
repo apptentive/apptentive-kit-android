@@ -1,7 +1,7 @@
 package apptentive.com.android.data
 
 interface DataStore {
-    fun saveData(name: String, data: ByteArray)
-    fun readData(nonce: String): ByteArray?
-    fun deleteData(nonce: String): Boolean
+    fun saveData(key: String, data: ByteArray)
+    fun readData(key: String): ByteArray?
+    fun deleteData(key: String): Boolean
 }

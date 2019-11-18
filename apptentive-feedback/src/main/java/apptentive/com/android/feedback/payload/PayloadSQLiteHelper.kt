@@ -2,6 +2,7 @@ package apptentive.com.android.feedback.payload
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
@@ -9,12 +10,13 @@ class PayloadSQLiteHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase) {
-        val query = ("CREATE TABLE " +
-                TABLE_NAME + "("
-                + COL_ID + " INTEGER PRIMARY KEY," +
-                COL_PAYLOAD_TYPE + " TEXT," +
-                COL_MEDIA_TYPE + " TEXT," +
-                COL_DATA + " BLOB" + ")")
+        val query = "CREATE TABLE $TABLE_NAME (" +
+                "$COL_PRIMARY_KEY INTEGER PRIMARY KEY, " +
+                "$COL_NONCE TEXT, " +
+                "$COL_TYPE TEXT, " +
+                "$COL_MEDIA_TYPE TEXT" +
+                ")"
+
         db.execSQL(query)
     }
 
@@ -23,12 +25,11 @@ class PayloadSQLiteHelper(context: Context) :
         onCreate(db)
     }
 
-    fun addPayload(payload: Payload) {
+    fun addPayload(payload: PayloadEntity) {
         val values = ContentValues().apply {
-            put(COL_ID, payload.nonce)
-            put(COL_PAYLOAD_TYPE, payload.type.toString())
-            put(COL_MEDIA_TYPE, payload.mediaType.toString())
-            put(COL_DATA, payload.data)
+            put(COL_NONCE, payload.nonce)
+            put(COL_TYPE, payload.type)
+            put(COL_MEDIA_TYPE, payload.mediaType)
         }
 
         writableDatabase.use { db ->
@@ -36,8 +37,8 @@ class PayloadSQLiteHelper(context: Context) :
         }
     }
 
-    fun deletePayload(payload: Payload): Boolean {
-        val query = "DELETE * FROM $TABLE_NAME WHERE $COL_ID = \"${payload.nonce}\" LIMIT 1"
+    fun deletePayload(nonce: String): Boolean {
+        val query = "DELETE FROM $TABLE_NAME WHERE $COL_NONCE = \"${nonce}\""
         writableDatabase.use { db ->
             db.rawQuery(query, null).use { cursor ->
                 if (cursor.moveToFirst()) {
@@ -49,17 +50,38 @@ class PayloadSQLiteHelper(context: Context) :
 
     }
 
-    fun getNextUnsentPayload(): Payload? {
-        TODO()
+    fun nextUnsentPayload(): PayloadEntity? {
+        val query = "SELECT * FROM $TABLE_NAME ORDER BY ${COL_PRIMARY_KEY.name} ASC LIMIT 1"
+        writableDatabase.use { db ->
+            db.rawQuery(query, null).use { cursor ->
+                if (cursor.moveToFirst()) {
+                    return PayloadEntity(
+                        nonce = cursor.getString(COL_NONCE),
+                        type = cursor.getString(COL_TYPE),
+                        mediaType = cursor.getString(COL_MEDIA_TYPE)
+                    )
+                }
+
+                return null
+            }
+        }
     }
 
     companion object {
         private const val DATABASE_NAME = "payload_db"
         private const val DATABASE_VERSION = 1
         const val TABLE_NAME = "payloads"
-        const val COL_ID = "uuid"
-        const val COL_PAYLOAD_TYPE = "payload_type"
-        const val COL_MEDIA_TYPE = "media_type"
-        const val COL_DATA = "data"
+        private val COL_PRIMARY_KEY = Column(index = 0, name = "_id")
+        private val COL_NONCE = Column(index = 1, name = "nonce")
+        private val COL_TYPE = Column(index = 2, name = "payload_type")
+        private val COL_MEDIA_TYPE = Column(index = 3, name = "media_type")
     }
 }
+
+private data class Column(val index: Int, val name: String) {
+    override fun toString() = name
+}
+
+private fun ContentValues.put(column: Column, value: String) = put(column.name, value)
+
+private fun Cursor.getString(column: Column): String = getString(column.index)

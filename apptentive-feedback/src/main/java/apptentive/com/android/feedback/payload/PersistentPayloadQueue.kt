@@ -2,32 +2,40 @@ package apptentive.com.android.feedback.payload
 
 import apptentive.com.android.data.DataStore
 
-class PersistentPayloadQueue(private val dataStore: DataStore) : PayloadQueue {
-    /*
-    nonce: Text
-    type: Text,
-    mediaType: Text,  application/json
-     */
+class PersistentPayloadQueue(
+    private val dbHelper: PayloadSQLiteHelper,
+    private val dataStore: DataStore
+) : PayloadQueue {
     override fun enqueuePayload(payload: Payload) {
+        val entity = PayloadEntity.fromModel(payload)
+        // 1. store payload data to a file
         dataStore.saveData(payload.nonce, payload.data)
-        // 1. store payload data in a file and get the filename (use uuid for filename)
-        // 2. convert Payload to PayloadEntity (if using room)
-        // 3. insert payload entity into database
+        // 2. store entity into the database
+        dbHelper.addPayload(entity)
     }
 
     override fun nextUnsentPayload(): Payload? {
-        val payload: Payload = null ?: return null
-        val data = dataStore.readData(payload.nonce)
-        // 1. resolve filename for payload data
-        // 2. read payload data from a file
-        // 3. create Payload instance
-        TODO()
+        val entity = dbHelper.nextUnsentPayload() ?: return null
+
+        // FIXME: if you don't have payload data on the disk anymore - delete entity
+        val data = dataStore.readData(entity.nonce) ?: return null
+
+        // FIXME: if type is unknown - delete entity
+        val type = PayloadType.parse(entity.type) ?: return null
+
+        // FIXME: if media type is unknown - delete entity
+        val mediaType = MediaType.parse(entity.mediaType)
+
+        return Payload(
+            nonce = entity.nonce,
+            type = type,
+            mediaType = mediaType,
+            data = data
+        )
     }
 
     override fun deletePayload(payload: Payload) {
         dataStore.deleteData(payload.nonce)
-        // 1. resolve filename for payload data
-        // 2. delete payload file
-        // 3. delete entity
+        dbHelper.deletePayload(payload.nonce)
     }
 }
