@@ -6,22 +6,16 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
+// FIXME: provide a name for the helper (based on local conversation id)
 class PayloadSQLiteHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase) {
-        val query = "CREATE TABLE $TABLE_NAME (" +
-                "$COL_PRIMARY_KEY INTEGER PRIMARY KEY, " +
-                "$COL_NONCE TEXT, " +
-                "$COL_TYPE TEXT, " +
-                "$COL_MEDIA_TYPE TEXT" +
-                ")"
-
-        db.execSQL(query)
+        db.execSQL(SQL_QUERY_CREATE_TABLE)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
+        db.execSQL(SQL_QUERY_DROP_TABLE)
         onCreate(db)
     }
 
@@ -38,8 +32,8 @@ class PayloadSQLiteHelper(context: Context) :
     }
 
     fun deletePayload(nonce: String): Boolean {
-        val query = "DELETE FROM $TABLE_NAME WHERE $COL_NONCE = \"${nonce}\""
         writableDatabase.use { db ->
+            val query = createPayloadDeleteQuery(nonce)
             db.rawQuery(query, null).use { cursor ->
                 if (cursor.moveToFirst()) {
                     return true
@@ -51,9 +45,8 @@ class PayloadSQLiteHelper(context: Context) :
     }
 
     fun nextUnsentPayload(): PayloadEntity? {
-        val query = "SELECT * FROM $TABLE_NAME ORDER BY ${COL_PRIMARY_KEY.name} ASC LIMIT 1"
         writableDatabase.use { db ->
-            db.rawQuery(query, null).use { cursor ->
+            db.rawQuery(SQL_QUERY_NEXT_UNSENT_PAYLOAD, null).use { cursor ->
                 if (cursor.moveToFirst()) {
                     return PayloadEntity(
                         nonce = cursor.getString(COL_NONCE),
@@ -75,6 +68,19 @@ class PayloadSQLiteHelper(context: Context) :
         private val COL_NONCE = Column(index = 1, name = "nonce")
         private val COL_TYPE = Column(index = 2, name = "payload_type")
         private val COL_MEDIA_TYPE = Column(index = 3, name = "media_type")
+
+        private val SQL_QUERY_CREATE_TABLE = "CREATE TABLE $TABLE_NAME (" +
+                "$COL_PRIMARY_KEY INTEGER PRIMARY KEY, " +
+                "$COL_NONCE TEXT, " +
+                "$COL_TYPE TEXT, " +
+                "$COL_MEDIA_TYPE TEXT" +
+                ")"
+        private const val SQL_QUERY_DROP_TABLE = "DROP TABLE IF EXISTS $TABLE_NAME"
+        private val SQL_QUERY_NEXT_UNSENT_PAYLOAD =
+            "SELECT * FROM $TABLE_NAME ORDER BY ${COL_PRIMARY_KEY.name} ASC LIMIT 1"
+
+        private fun createPayloadDeleteQuery(nonce: String) =
+            "DELETE FROM $TABLE_NAME WHERE $COL_NONCE = \"${nonce}\""
     }
 }
 
