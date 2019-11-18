@@ -59,6 +59,41 @@ class PersistentPayloadQueueTest {
 
         assertNull(queue.nextUnsentPayload())
     }
+
+    @Test
+    fun missingPayloadData() {
+        val actual1 = Payload(
+            nonce = "nonce-1",
+            type = PayloadType.Event,
+            mediaType = MediaType.applicationJson,
+            data = "Payload - 1".toByteArray()
+        )
+        val actual2 = Payload(
+            nonce = "nonce-2",
+            type = PayloadType.AppRelease,
+            mediaType = MediaType.applicationJson,
+            data = "Payload - 1".toByteArray()
+        )
+
+        val dataStore = MemoryDataStore()
+
+        val queue = PersistentPayloadQueue(
+            dbHelper = dbHelper,
+            dataStore = dataStore
+        )
+
+        queue.enqueuePayload(actual1)
+        queue.enqueuePayload(actual2)
+
+        dataStore.deleteData(actual1.nonce)
+
+        Assert.assertEqual(actual2, queue.nextUnsentPayload())
+        Assert.assertEqual(actual2, queue.nextUnsentPayload())
+
+        queue.deletePayload(actual2)
+
+        assertNull(queue.nextUnsentPayload())
+    }
 }
 
 private class MemoryDataStore : DataStore {

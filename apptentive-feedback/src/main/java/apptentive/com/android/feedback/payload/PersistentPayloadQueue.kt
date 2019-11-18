@@ -15,27 +15,36 @@ class PersistentPayloadQueue(
     }
 
     override fun nextUnsentPayload(): Payload? {
-        val entity = dbHelper.nextUnsentPayload() ?: return null
+        var entity = dbHelper.nextUnsentPayload()
 
-        // FIXME: if you don't have payload data on the disk anymore - delete entity
-        val data = dataStore.readData(entity.nonce) ?: return null
+        while (entity != null) {
+            try {
+                val data = readPayloadData(entity.nonce)
+                val type = PayloadType.parse(entity.type)
+                val mediaType = MediaType.parse(entity.mediaType)
 
-        // FIXME: if type is unknown - delete entity
-        val type = PayloadType.parse(entity.type) ?: return null
+                return Payload(
+                    nonce = entity.nonce,
+                    type = type,
+                    mediaType = mediaType,
+                    data = data
+                )
+            } catch (e: Exception) {
+                // FIXME: log exception
+                dbHelper.deletePayload(entity.nonce)
+                entity = dbHelper.nextUnsentPayload()
+            }
+        }
 
-        // FIXME: if media type is unknown - delete entity
-        val mediaType = MediaType.parse(entity.mediaType)
-
-        return Payload(
-            nonce = entity.nonce,
-            type = type,
-            mediaType = mediaType,
-            data = data
-        )
+        return null
     }
 
     override fun deletePayload(payload: Payload) {
         dataStore.deleteData(payload.nonce)
         dbHelper.deletePayload(payload.nonce)
+    }
+
+    private fun readPayloadData(nonce: String): ByteArray {
+        return dataStore.readData(nonce) ?: throw MissingPayloadDataException(nonce)
     }
 }
