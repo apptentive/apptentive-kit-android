@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.payload
 
+// FIXME: rename it to "PayloadMetadata"
 data class PayloadEntity(
     val nonce: String,
     val type: String,

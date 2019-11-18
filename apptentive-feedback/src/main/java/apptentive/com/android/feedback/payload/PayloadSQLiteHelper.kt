@@ -6,8 +6,17 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
+/*
+interface PayloadMetadataStore {
+    fun addMetadata(payload: PayloadMetadata)
+    fun deleteMetadata(nonce: String): Boolean
+    fun nextUnsentPayloadMetadata(): PayloadMetadata?
+}
+*/
+
 // FIXME: provide a name for the helper (based on local conversation id)
-class PayloadSQLiteHelper(context: Context) :
+// TODO: PayloadMetadataSQLiteStore?
+class PayloadSQLiteHelper(context: Context) : /* implement PayloadMetadataStore */
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase) {
