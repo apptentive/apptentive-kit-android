@@ -22,14 +22,15 @@ class SerialPayloadSender(
         sendNextUnsentPayload()
     }
 
-    private fun handleSentPayload(nextPayload: Payload) {
-        TODO()
-        //remote payload form the persistent queue and send the next one
+    private fun handleSentPayload(payload: Payload) {
+        payloadQueue.deletePayload(payload)
+        sendNextUnsentPayload()
     }
 
     private fun handleFailedPayload(payload: Payload, error: Throwable) {
-        TODO()
-        //remote payload form the persistent queue and send the next one
+        payloadQueue.deletePayload(payload)
+        sendNextUnsentPayload()
+        error.printStackTrace()
     }
 
     private fun sendNextUnsentPayload() {
