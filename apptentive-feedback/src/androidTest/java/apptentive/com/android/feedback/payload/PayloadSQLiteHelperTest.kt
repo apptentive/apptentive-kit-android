@@ -25,12 +25,12 @@ class PayloadSQLiteHelperTest {
 
     @Test
     fun addingAndRemovingPayloads() {
-        val actual1 = PayloadEntity(
+        val actual1 = PayloadMetadata(
             nonce = "nonce-1",
             type = PayloadType.Event.toString(),
             mediaType = MediaType.applicationJson.toString()
         )
-        val actual2 = PayloadEntity(
+        val actual2 = PayloadMetadata(
             nonce = "nonce-2",
             type = PayloadType.AppRelease.toString(),
             mediaType = MediaType.applicationJson.toString()

@@ -1,14 +1,13 @@
 package apptentive.com.android.feedback.payload
 
-// FIXME: rename it to "PayloadMetadata"
-data class PayloadEntity(
+data class PayloadMetadata(
     val nonce: String,
     val type: String,
     val mediaType: String
 ) {
     companion object {
-        fun fromModel(payload: Payload): PayloadEntity {
-            return PayloadEntity(
+        fun fromModel(payload: Payload): PayloadMetadata {
+            return PayloadMetadata(
                 nonce = payload.nonce,
                 type = payload.type.toString(),
                 mediaType = payload.mediaType.toString()

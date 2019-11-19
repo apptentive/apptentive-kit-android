@@ -28,7 +28,7 @@ class PayloadSQLiteHelper(context: Context) : /* implement PayloadMetadataStore 
         onCreate(db)
     }
 
-    fun addPayload(payload: PayloadEntity) {
+    fun addPayload(payload: PayloadMetadata) {
         val values = ContentValues().apply {
             put(COL_NONCE, payload.nonce)
             put(COL_TYPE, payload.type)
@@ -53,11 +53,11 @@ class PayloadSQLiteHelper(context: Context) : /* implement PayloadMetadataStore 
 
     }
 
-    fun nextUnsentPayload(): PayloadEntity? {
+    fun nextUnsentPayload(): PayloadMetadata? {
         writableDatabase.use { db ->
             db.rawQuery(SQL_QUERY_NEXT_UNSENT_PAYLOAD, null).use { cursor ->
                 if (cursor.moveToFirst()) {
-                    return PayloadEntity(
+                    return PayloadMetadata(
                         nonce = cursor.getString(COL_NONCE),
                         type = cursor.getString(COL_TYPE),
                         mediaType = cursor.getString(COL_MEDIA_TYPE)

@@ -7,7 +7,7 @@ class PersistentPayloadQueue(
     private val dataStore: DataStore
 ) : PayloadQueue {
     override fun enqueuePayload(payload: Payload) {
-        val entity = PayloadEntity.fromModel(payload)
+        val entity = PayloadMetadata.fromModel(payload)
         // 1. store payload data to a file
         dataStore.saveData(payload.nonce, payload.data)
         // 2. store entity into the database
