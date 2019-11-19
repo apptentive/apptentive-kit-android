@@ -15,11 +15,23 @@ class SerialPayloadSender(
             }
         }
 
-    var busySending: Boolean = false
+    private var busySending: Boolean = false
 
     override fun sendPayload(payload: Payload, callback: (Result<Payload>) -> Unit) {
         payloadQueue.enqueuePayload(payload)
+        sendNextUnsentPayload()
 
+    }
+
+    private fun handleSentPayload(nextPayload: Payload) {
+        // TODO: remote payload form the persistent queue and send the next one
+    }
+
+    private fun handleFailedPayload(payload: Payload, error: Throwable) {
+        // TODO: remote payload form the persistent queue and send the next one
+    }
+
+    private fun sendNextUnsentPayload() {
         if (!active) {
             // TODO: log message: con't send while being inactive
             return
@@ -47,18 +59,6 @@ class SerialPayloadSender(
                 is Result.Error -> handleFailedPayload(nextPayload, it.error)
             }
         }
-    }
-
-    private fun handleSentPayload(nextPayload: Payload) {
-        // TODO: remote payload form the persistent queue and send the next one
-    }
-
-    private fun handleFailedPayload(payload: Payload, error: Throwable) {
-        // TODO: remote payload form the persistent queue and send the next one
-    }
-
-    private fun sendNextUnsentPayload() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
 
