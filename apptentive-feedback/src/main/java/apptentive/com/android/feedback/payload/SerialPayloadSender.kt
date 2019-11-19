@@ -50,19 +50,18 @@ class SerialPayloadSender(
     }
 
     private fun handleSentPayload(nextPayload: Payload) {
-        // TODO: remote payload form the persistent queue and send the next one
+        TODO()
     }
 
     private fun handleFailedPayload(payload: Payload, error: Throwable) {
-        // TODO: remote payload form the persistent queue and send the next one
+        TODO()
     }
 
     private fun sendNextUnsentPayload() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-
     fun setPayloadService(service: PayloadService) {
-        //todo
+        TODO()
     }
 }

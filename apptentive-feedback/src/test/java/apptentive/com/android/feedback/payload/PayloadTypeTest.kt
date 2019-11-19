@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.payload
 
-import org.junit.Assert.*
+import com.google.common.truth.Truth.assertThat
+import org.junit.Assert.fail
 import org.junit.Test
 
 class PayloadTypeTest {
@@ -13,8 +14,7 @@ class PayloadTypeTest {
             PayloadType.SDK,
             PayloadType.Message,
             PayloadType.Event,
-            PayloadType.SurveyResponse,
-            null
+            PayloadType.SurveyResponse
         )
         val values = listOf(
             "Person",
@@ -23,12 +23,20 @@ class PayloadTypeTest {
             "SDK",
             "Message",
             "Event",
-            "SurveyResponse",
-            "MyPayload"
+            "SurveyResponse"
         )
 
         for (i in types.indices) {
-            assertEquals(types[i], PayloadType.parse(values[i]))
+            assertThat(types[i]).isEqualTo(PayloadType.parse(values[i]))
+        }
+    }
+
+    @Test
+    fun parseInvalidType() {
+        try {
+            PayloadType.parse("MyPayload")
+            fail("Should not get there")
+        } catch (_: IllegalArgumentException) {
         }
     }
 }
