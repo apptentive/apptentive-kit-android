@@ -20,15 +20,16 @@ class SerialPayloadSender(
     override fun sendPayload(payload: Payload, callback: (Result<Payload>) -> Unit) {
         payloadQueue.enqueuePayload(payload)
         sendNextUnsentPayload()
-
     }
 
     private fun handleSentPayload(nextPayload: Payload) {
-        // TODO: remote payload form the persistent queue and send the next one
+        TODO()
+        //remote payload form the persistent queue and send the next one
     }
 
     private fun handleFailedPayload(payload: Payload, error: Throwable) {
-        // TODO: remote payload form the persistent queue and send the next one
+        TODO()
+        //remote payload form the persistent queue and send the next one
     }
 
     private fun sendNextUnsentPayload() {
@@ -44,10 +45,8 @@ class SerialPayloadSender(
 
 
         val nextPayload = payloadQueue.nextUnsentPayload()
-        if (nextPayload == null) {
-            // TODO: log message 'all done'
+            ?: // TODO: log message 'all done'
             return
-        }
 
         busySending = true
 
@@ -63,6 +62,6 @@ class SerialPayloadSender(
 
 
     fun setPayloadService(service: PayloadService) {
-        //todo
+        TODO()
     }
 }
