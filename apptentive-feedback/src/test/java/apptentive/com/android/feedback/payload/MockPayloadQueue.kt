@@ -8,7 +8,7 @@ internal class MockPayloadQueue : PayloadQueue {
     }
 
     override fun nextUnsentPayload(): Payload? {
-        return if (payloads.isEmpty()) null else payloads.removeAt(0)
+        return if (payloads.isEmpty()) null else payloads[0]
     }
 
     override fun deletePayload(payload: Payload) {
