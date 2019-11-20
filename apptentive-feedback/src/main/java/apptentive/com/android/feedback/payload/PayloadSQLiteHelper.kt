@@ -77,6 +77,12 @@ class PayloadSQLiteHelper(context: Context) :
         return deletedRows > 0
     }
 
+    @VisibleForTesting
+    internal fun deleteDatabase(context: Context): Boolean {
+        val file = context.getDatabasePath(DATABASE_NAME)
+        return file.delete()
+    }
+
     companion object {
         private const val DATABASE_NAME = "payloads.db"
         private const val DATABASE_VERSION = 1
@@ -95,12 +101,6 @@ class PayloadSQLiteHelper(context: Context) :
                 "$COL_PAYLOAD_DATA BLOB" +
                 ")"
         private const val SQL_QUERY_DROP_TABLE = "DROP TABLE IF EXISTS $TABLE_NAME"
-
-        @VisibleForTesting
-        fun deleteDatabase(context: Context): Boolean {
-            val file = context.getDatabasePath(DATABASE_NAME)
-            return file.delete()
-        }
     }
 }
 

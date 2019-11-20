@@ -15,8 +15,8 @@ class PayloadSQLiteHelperTest {
 
     @Before
     fun setupDb() {
-        PayloadSQLiteHelper.deleteDatabase(context)
         dbHelper = PayloadSQLiteHelper(context)
+        dbHelper.deleteDatabase(context)
     }
 
     @After
