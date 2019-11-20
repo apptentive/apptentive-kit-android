@@ -73,7 +73,7 @@ class PayloadSQLiteHelper(context: Context) : /* implement PayloadMetadataStore 
         private const val DATABASE_NAME = "payloads.db"
         private const val DATABASE_VERSION = 1
         const val TABLE_NAME = "payloads"
-        private val COL_PRIMARY_KEY = Column(index = 0, name = "_id")
+        private val COL_PRIMARY_KEY = Column(index = 0, name = "_ID")
         private val COL_NONCE = Column(index = 1, name = "nonce")
         private val COL_TYPE = Column(index = 2, name = "payload_type")
         private val COL_MEDIA_TYPE = Column(index = 3, name = "media_type")
