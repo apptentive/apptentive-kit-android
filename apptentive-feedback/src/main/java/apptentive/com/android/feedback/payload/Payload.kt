@@ -8,6 +8,10 @@ data class Payload(
     val mediaType: MediaType,
     val data: ByteArray
 ) {
+    override fun toString(): String {
+        return "${javaClass.simpleName}(nonce=$nonce, type=$type, mediaType=$mediaType, data=${data.size} bytes)"
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
