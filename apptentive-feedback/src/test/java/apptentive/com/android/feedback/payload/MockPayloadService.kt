@@ -1,6 +1,5 @@
 package apptentive.com.android.feedback.payload
 
-import apptentive.com.android.network.UnexpectedResponseException
 import apptentive.com.android.util.Result
 
 internal class MockPayloadService(private val sendResult: ((Payload) -> Result<Payload>)? = null) :
@@ -12,13 +11,5 @@ internal class MockPayloadService(private val sendResult: ((Payload) -> Result<P
 
     companion object {
         fun success() = MockPayloadService()
-        fun failure(statusCode: Int) = MockPayloadService {
-            Result.Error(
-                UnexpectedResponseException(
-                    statusCode = statusCode,
-                    statusMessage = "Something went wrong"
-                )
-            )
-        }
     }
 }

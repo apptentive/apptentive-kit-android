@@ -4,33 +4,53 @@ import apptentive.com.android.util.Result
 
 class SerialPayloadSender(
     private val payloadService: PayloadService,
-    private val payloadQueue: PayloadQueue
+    private val payloadQueue: PayloadQueue,
+    private val callback: (Result<Payload>) -> Unit
 ) : PayloadSender {
-    var active: Boolean = true
-        set(value) {
-            val oldValue = field
-            field = value
-            if (value && !oldValue) {
-                sendNextUnsentPayload()
-            }
-        }
-
+    private var active: Boolean = true
     private var busySending: Boolean = false
 
-    override fun sendPayload(payload: Payload, callback: (Result<Payload>) -> Unit) {
+    override fun sendPayload(payload: Payload) {
         payloadQueue.enqueuePayload(payload)
         sendNextUnsentPayload()
     }
 
+    fun pauseSending() {
+        active = false
+    }
+
+    fun resumeSending() {
+        val wasActive = active
+        active = true
+        if (!wasActive) {
+            sendNextUnsentPayload()
+        }
+    }
+
     private fun handleSentPayload(payload: Payload) {
         payloadQueue.deletePayload(payload)
+        notifySuccess(payload)
         sendNextUnsentPayload()
     }
 
     private fun handleFailedPayload(payload: Payload, error: Throwable) {
-        payloadQueue.deletePayload(payload)
-        sendNextUnsentPayload()
-        error.printStackTrace()
+        val shouldDeletePayload = shouldDeletePayload(error)
+        if (shouldDeletePayload) {
+            payloadQueue.deletePayload(payload)
+            notifyFailure(error, payload)
+            sendNextUnsentPayload()
+        } else {
+            notifyFailure(error, payload)
+        }
+    }
+
+    private fun shouldDeletePayload(error: Throwable): Boolean {
+        return when (error) {
+            is PayloadRejectedException -> {
+                return true
+            }
+            else -> false // FIXME: figure out an error resolution strategy
+        }
     }
 
     private fun sendNextUnsentPayload() {
@@ -61,8 +81,27 @@ class SerialPayloadSender(
         }
     }
 
-
     fun setPayloadService(service: PayloadService) {
         TODO()
+    }
+
+    private fun notifySuccess(payload: Payload) {
+        try {
+            callback.invoke(Result.Success(payload))
+        } catch (e: Exception) {
+            // FIXME: print error message
+        }
+    }
+
+    private fun notifyFailure(error: Throwable, payload: Payload) {
+        try {
+            if (error is PayloadSendException) {
+                callback(Result.Error(error))
+            } else {
+                callback(Result.Error(PayloadSendException(payload, cause = error)))
+            }
+        } catch (e: Exception) {
+            // FIXME: print error message
+        }
     }
 }

@@ -9,34 +9,67 @@ class SerialPayloadSenderTest : TestCase() {
     fun testSendingPayload() {
         val service = MockPayloadService.success()
 
-        val payload = createPayload("payload-1")
         val sender = SerialPayloadSender(
             payloadService = service,
-            payloadQueue = MockPayloadQueue()
+            payloadQueue = MockPayloadQueue(),
+            callback = ::payloadCallback
         )
-        sender.sendPayload(payload, ::payloadCallback)
 
-        assertResults("success: ${payload.nonce}")
+        val payload1 = createPayload("payload-1")
+        val payload2 = createPayload("payload-2")
+
+        sender.sendPayload(payload1)
+        sender.pauseSending()
+
+        sender.sendPayload(payload2)
+
+        assertResults("success: ${payload1.nonce}")
+
+        sender.resumeSending()
+        assertResults("success: ${payload2.nonce}")
     }
 
     @Test
     fun testFailedPayload() {
-        val service = MockPayloadService.failure(statusCode = 401)
+        val service = MockPayloadService {
+            when (it.nonce) {
+                "payload-2" -> Result.Error(
+                    error = PayloadRejectedException(it)
+                )
+                else -> Result.Success(it)
+            }
+        }
 
-        val payload = createPayload("payload-1")
+        val payload1 = createPayload("payload-1")
+        val payload2 = createPayload("payload-2")
+        val payload3 = createPayload("payload-3")
         val sender = SerialPayloadSender(
             payloadService = service,
-            payloadQueue = MockPayloadQueue()
+            payloadQueue = MockPayloadQueue(),
+            callback = ::payloadCallback
         )
-        sender.sendPayload(payload, ::payloadCallback)
+        sender.sendPayload(payload1)
+        sender.sendPayload(payload2)
+        sender.sendPayload(payload3)
 
-        assertResults("failure: ${payload.nonce}")
+        assertResults(
+            "success: ${payload1.nonce}",
+            "failure: ${payload2.nonce}",
+            "success: ${payload3.nonce}"
+        )
     }
 
     private fun payloadCallback(result: Result<Payload>) {
         when (result) {
             is Result.Success -> addResult("success: ${result.data.nonce}")
-            is Result.Error -> addResult("failure: ${result.error.message}")
+            is Result.Error -> {
+                val error = result.error
+                if (error is PayloadSendException) {
+                    addResult("failure: ${error.payload.nonce}")
+                } else {
+                    throw AssertionError("Unexpected exception: $error")
+                }
+            }
         }
     }
 
