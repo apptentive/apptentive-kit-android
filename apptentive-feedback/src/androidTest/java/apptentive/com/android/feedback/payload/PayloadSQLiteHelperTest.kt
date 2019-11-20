@@ -15,6 +15,7 @@ class PayloadSQLiteHelperTest {
 
     @Before
     fun setupDb() {
+        PayloadSQLiteHelper.deleteDatabase(context)
         dbHelper = PayloadSQLiteHelper(context)
     }
 
@@ -25,15 +26,17 @@ class PayloadSQLiteHelperTest {
 
     @Test
     fun addingAndRemovingPayloads() {
-        val actual1 = PayloadMetadata(
+        val actual1 = createPayload(
             nonce = "nonce-1",
-            type = PayloadType.Event.toString(),
-            mediaType = MediaType.applicationJson.toString()
+            type = PayloadType.Event,
+            mediaType = MediaType.applicationJson,
+            data = "payload-1"
         )
-        val actual2 = PayloadMetadata(
+        val actual2 = createPayload(
             nonce = "nonce-2",
-            type = PayloadType.AppRelease.toString(),
-            mediaType = MediaType.applicationJson.toString()
+            type = PayloadType.AppRelease,
+            mediaType = MediaType.applicationJson,
+            data = "payload-2"
         )
         dbHelper.addPayload(actual1)
         dbHelper.addPayload(actual2)
@@ -49,5 +52,19 @@ class PayloadSQLiteHelperTest {
         dbHelper.deletePayload(actual2.nonce)
 
         assertNull(dbHelper.nextUnsentPayload())
+    }
+
+    private fun createPayload(
+        nonce: String,
+        type: PayloadType,
+        mediaType: MediaType,
+        data: String
+    ): Payload {
+        return Payload(
+            nonce = nonce,
+            type = type,
+            mediaType = mediaType,
+            data = data.toByteArray()
+        )
     }
 }
