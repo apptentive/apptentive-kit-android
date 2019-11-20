@@ -6,6 +6,7 @@ import apptentive.com.android.debug.Assert.assertEqual
 import junit.framework.Assert.assertNull
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 
 class PayloadSQLiteHelperTest {
@@ -52,6 +53,15 @@ class PayloadSQLiteHelperTest {
         dbHelper.deletePayload(actual2.nonce)
 
         assertNull(dbHelper.nextUnsentPayload())
+    }
+
+    @Test
+    @Ignore
+    fun testCorruptedPayloads() {
+        // 1. add payload to a database
+        // 2. use SQL query to corrupt payload data
+        // 3. observe nothing crashing
+        TODO()
     }
 
     private fun createPayload(
