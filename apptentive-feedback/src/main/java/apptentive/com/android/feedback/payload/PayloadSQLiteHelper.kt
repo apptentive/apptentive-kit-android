@@ -70,7 +70,7 @@ class PayloadSQLiteHelper(context: Context) : /* implement PayloadMetadataStore 
     }
 
     companion object {
-        private const val DATABASE_NAME = "payload_db"
+        private const val DATABASE_NAME = "payloads.db"
         private const val DATABASE_VERSION = 1
         const val TABLE_NAME = "payloads"
         private val COL_PRIMARY_KEY = Column(index = 0, name = "_id")
