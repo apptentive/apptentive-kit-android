@@ -6,17 +6,8 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
-/*
-interface PayloadMetadataStore {
-    fun addMetadata(payload: PayloadMetadata)
-    fun deleteMetadata(nonce: String): Boolean
-    fun nextUnsentPayloadMetadata(): PayloadMetadata?
-}
-*/
-
 // FIXME: provide a name for the helper (based on local conversation id)
-// TODO: PayloadMetadataSQLiteStore?
-class PayloadSQLiteHelper(context: Context) : /* implement PayloadMetadataStore */
+class PayloadSQLiteHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -42,12 +33,8 @@ class PayloadSQLiteHelper(context: Context) : /* implement PayloadMetadataStore 
 
     fun deletePayload(nonce: String): Boolean {
         writableDatabase.use { db ->
-            val query = createPayloadDeleteQuery(nonce)
-            db.rawQuery(query, null).use { cursor ->
-                if (cursor.moveToFirst()) {
-                    return true
-                }
-            }
+            val deletedRows = db.delete(TABLE_NAME, column = COL_NONCE, value = nonce)
+            deletedRows > 0
         }
         return false
 
@@ -55,8 +42,10 @@ class PayloadSQLiteHelper(context: Context) : /* implement PayloadMetadataStore 
 
     fun nextUnsentPayload(): PayloadMetadata? {
         writableDatabase.use { db ->
-            db.rawQuery(SQL_QUERY_NEXT_UNSENT_PAYLOAD, null).use { cursor ->
+            db.select(tableName = TABLE_NAME, orderBy = COL_PRIMARY_KEY, limit = 1).use { cursor ->
                 if (cursor.moveToFirst()) {
+                    val primary = cursor.getInt(COL_PRIMARY_KEY.index)
+
                     return PayloadMetadata(
                         nonce = cursor.getString(COL_NONCE),
                         type = cursor.getString(COL_TYPE),
@@ -85,17 +74,28 @@ class PayloadSQLiteHelper(context: Context) : /* implement PayloadMetadataStore 
                 "$COL_MEDIA_TYPE TEXT" +
                 ")"
         private const val SQL_QUERY_DROP_TABLE = "DROP TABLE IF EXISTS $TABLE_NAME"
-        private val SQL_QUERY_NEXT_UNSENT_PAYLOAD =
-            "SELECT * FROM $TABLE_NAME ORDER BY ${COL_PRIMARY_KEY.name} ASC LIMIT 1"
-
-        private fun createPayloadDeleteQuery(nonce: String) =
-            "DELETE FROM $TABLE_NAME WHERE $COL_NONCE = \"${nonce}\""
     }
 }
 
 private data class Column(val index: Int, val name: String) {
     override fun toString() = name
 }
+
+private fun SQLiteDatabase.select(tableName: String, orderBy: Column, limit: Int? = null): Cursor {
+    return query(
+        tableName,
+        null,
+        null,
+        null,
+        null,
+        null,
+        "${orderBy.name} ASC",
+        limit?.toString()
+    )
+}
+
+private fun SQLiteDatabase.delete(tableName: String, column: Column, value: String) =
+    delete(tableName, "${column.name} = ?", arrayOf(value))
 
 private fun ContentValues.put(column: Column, value: String) = put(column.name, value)
 
