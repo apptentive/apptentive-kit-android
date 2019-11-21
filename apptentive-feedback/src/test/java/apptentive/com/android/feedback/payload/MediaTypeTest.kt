@@ -10,10 +10,12 @@ class MediaTypeTest {
         try {
             MediaType.parse("MyMediaType")
             Assert.fail("Should not get there")
+        } catch (_: IllegalArgumentException) {
+        }
 
+        try{
             MediaType.parse("MyMediaType/MyMediaSubtype/MyMediaSubSubtype")
             Assert.fail("Should not get there")
-
         } catch (_: IllegalArgumentException) {
         }
     }
