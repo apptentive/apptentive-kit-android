@@ -7,7 +7,7 @@ open class PayloadSendException(
 ) :
     Exception(createMessage(payload, detailMessage), cause) {
     companion object {
-        fun createMessage(payload: Payload, detailMessage: String?): String {
+        private fun createMessage(payload: Payload, detailMessage: String?): String {
             return if (detailMessage != null) {
                 "Payload sending failed $payload: $detailMessage"
             } else {
