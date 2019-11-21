@@ -10,7 +10,6 @@ class SerialPayloadSenderTest : TestCase() {
         val service = MockPayloadService.success()
 
         val sender = SerialPayloadSender(
-            payloadService = service,
             payloadQueue = MockPayloadQueue(),
             callback = ::payloadCallback
         )
@@ -18,6 +17,7 @@ class SerialPayloadSenderTest : TestCase() {
         val payload1 = createPayload("payload-1")
         val payload2 = createPayload("payload-2")
 
+        sender.setPayloadService(service)
         sender.sendPayload(payload1)
         sender.pauseSending()
 
@@ -44,13 +44,16 @@ class SerialPayloadSenderTest : TestCase() {
         val payload2 = createPayload("payload-2")
         val payload3 = createPayload("payload-3")
         val sender = SerialPayloadSender(
-            payloadService = service,
             payloadQueue = MockPayloadQueue(),
             callback = ::payloadCallback
         )
         sender.sendPayload(payload1)
         sender.sendPayload(payload2)
         sender.sendPayload(payload3)
+
+        assertResults()
+
+        sender.setPayloadService(service)
 
         assertResults(
             "success: ${payload1.nonce}",
