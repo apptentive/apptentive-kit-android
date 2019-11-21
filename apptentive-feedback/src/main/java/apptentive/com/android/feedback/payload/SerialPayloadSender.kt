@@ -3,12 +3,12 @@ package apptentive.com.android.feedback.payload
 import apptentive.com.android.util.Result
 
 class SerialPayloadSender(
-    private val payloadService: PayloadService,
     private val payloadQueue: PayloadQueue,
     private val callback: (Result<Payload>) -> Unit
 ) : PayloadSender {
     private var active: Boolean = true
     private var busySending: Boolean = false
+    private var payloadService: PayloadService? = null
 
     override fun sendPayload(payload: Payload) {
         payloadQueue.enqueuePayload(payload)
@@ -54,6 +54,11 @@ class SerialPayloadSender(
     }
 
     private fun sendNextUnsentPayload() {
+        if (payloadService == null) {
+            //TODO: log message: can't send as payload service is null
+            return
+        }
+
         if (!active) {
             // TODO: log message: con't send while being inactive
             return
@@ -71,7 +76,7 @@ class SerialPayloadSender(
 
         busySending = true
 
-        payloadService.sendPayload(nextPayload) {
+        payloadService?.sendPayload(nextPayload) {
             busySending = false
 
             when (it) {
@@ -82,7 +87,8 @@ class SerialPayloadSender(
     }
 
     fun setPayloadService(service: PayloadService) {
-        TODO()
+        payloadService = service
+        sendNextUnsentPayload()
     }
 
     private fun notifySuccess(payload: Payload) {
