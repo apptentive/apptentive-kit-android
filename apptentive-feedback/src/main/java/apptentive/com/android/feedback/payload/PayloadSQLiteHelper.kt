@@ -60,6 +60,7 @@ class PayloadSQLiteHelper(context: Context) :
                                     data = cursor.getBlob(COL_PAYLOAD_DATA)
                                 )
                             } catch (e: Exception) {
+                                // TODO: error message
                                 deletePayload(db, nonce)
                             }
                         } else {
@@ -81,6 +82,28 @@ class PayloadSQLiteHelper(context: Context) :
     internal fun deleteDatabase(context: Context): Boolean {
         val file = context.getDatabasePath(DATABASE_NAME)
         return file.delete()
+    }
+
+    @VisibleForTesting
+    internal fun updatePayload(nonce: String, payloadType: String) {
+        writableDatabase.use { db ->
+            val values = ContentValues().apply {
+                put(COL_TYPE, payloadType)
+            }
+
+            val selection = "$COL_NONCE = ?"
+            val selectionArgs = arrayOf(nonce)
+            val count = db.update(
+                TABLE_NAME,
+                values,
+                selection,
+                selectionArgs
+            )
+
+            if (count == -1) {
+                throw RuntimeException("Unable to update payload")
+            }
+        }
     }
 
     companion object {

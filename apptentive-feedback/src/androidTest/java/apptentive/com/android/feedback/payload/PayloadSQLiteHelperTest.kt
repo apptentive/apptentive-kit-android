@@ -56,12 +56,27 @@ class PayloadSQLiteHelperTest {
     }
 
     @Test
-    @Ignore
     fun testCorruptedPayloads() {
-        // 1. add payload to a database
-        // 2. use SQL query to corrupt payload data
-        // 3. observe nothing crashing
-        TODO()
+        val actual1 = createPayload(
+            nonce = "nonce-1",
+            type = PayloadType.Event,
+            mediaType = MediaType.applicationJson,
+            data = "payload-1"
+        )
+
+        val actual2 = createPayload(
+            nonce = "nonce-2",
+            type = PayloadType.AppRelease,
+            mediaType = MediaType.applicationJson,
+            data = "payload-2"
+        )
+        dbHelper.addPayload(actual1)
+        dbHelper.addPayload(actual2)
+
+        assertEqual(actual1, dbHelper.nextUnsentPayload())
+
+        dbHelper.updatePayload("nonce-1", "MyPayloadType")
+        assertEqual(actual2, dbHelper.nextUnsentPayload())
     }
 
     private fun createPayload(
