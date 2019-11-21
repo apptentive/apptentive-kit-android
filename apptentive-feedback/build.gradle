@@ -35,6 +35,7 @@ dependencies {
     testImplementation "com.google.truth:truth:$truth_version"
     testImplementation "io.mockk:mockk:$mockk_version"
     androidTestImplementation "androidx.test:runner:$test_runner_version"
+    androidTestImplementation 'androidx.test:core:1.2.0' // TODO: extract version variable
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"
 }
 repositories {

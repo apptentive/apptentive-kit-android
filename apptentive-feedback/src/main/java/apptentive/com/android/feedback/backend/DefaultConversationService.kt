@@ -38,7 +38,7 @@ class DefaultConversationService(
         val request = createJsonRequest<ConversationCredentials>(
             method = HttpMethod.POST,
             path = "conversation",
-            body = ConversationTokenFetchBody.from(device, sdk, appRelease)
+            body = ConversationTokenRequestData.from(device, sdk, appRelease)
         )
         sendRequest(request, callback)
     }
