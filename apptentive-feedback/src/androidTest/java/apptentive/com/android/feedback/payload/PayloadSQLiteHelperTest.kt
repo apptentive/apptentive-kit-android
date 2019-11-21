@@ -6,7 +6,6 @@ import apptentive.com.android.debug.Assert.assertEqual
 import junit.framework.Assert.assertNull
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 
 class PayloadSQLiteHelperTest {
