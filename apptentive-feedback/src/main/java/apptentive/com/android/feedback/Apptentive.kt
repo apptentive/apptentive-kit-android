@@ -6,7 +6,7 @@ import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.concurrent.ExecutorQueue
 import apptentive.com.android.core.AndroidFileSystemProvider
 import apptentive.com.android.core.DefaultExecutorQueueFactoryProvider
-import apptentive.com.android.core.DefaultLoggerProvider
+import apptentive.com.android.core.AndroidLoggerProvider
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.network.DefaultHttpClient
@@ -41,7 +41,7 @@ object Apptentive {
         }
 
         // register dependency providers
-        DependencyProvider.register(DefaultLoggerProvider("Apptentive"))
+        DependencyProvider.register(AndroidLoggerProvider("Apptentive"))
         DependencyProvider.register(DefaultExecutorQueueFactoryProvider())
         DependencyProvider.register(AndroidFileSystemProvider(application.applicationContext, "apptentive.com.android.feedback"))
 
