@@ -15,11 +15,11 @@ abstract class ExecutorQueue(val name: String) : Executor {
     abstract fun stop()
 
     companion object {
-        private val queueFactory get() = DependencyProvider.of<ExecutorFactory>()
-        val mainQueue: ExecutorQueue = queueFactory.createMainQueue()
+        private val executorFactory get() = DependencyProvider.of<ExecutorFactory>()
+        val mainQueue: ExecutorQueue = executorFactory.createMainQueue()
 
-        fun createSerialQueue(name: String) = queueFactory.createSerialQueue(name)
+        fun createSerialQueue(name: String) = executorFactory.createSerialQueue(name)
         fun createConcurrentQueue(name: String, maxConcurrentTasks: Int? = null) =
-            queueFactory.createConcurrentQueue(name, maxConcurrentTasks)
+            executorFactory.createConcurrentQueue(name, maxConcurrentTasks)
     }
 }

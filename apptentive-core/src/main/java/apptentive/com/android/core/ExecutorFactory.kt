@@ -11,14 +11,12 @@ interface ExecutorFactory {
     fun createConcurrentQueue(name: String, maxConcurrentTasks: Int? = null): ExecutorQueue
 }
 
-// TODO: rename to AndroidExecutorFactoryProvider
-class DefaultExecutorQueueFactoryProvider : Provider<ExecutorFactory> {
-    private val factory: ExecutorFactory by lazy { DefaultExecutorFactory() }
+class AndroidExecutorFactoryProvider : Provider<ExecutorFactory> {
+    private val factory: ExecutorFactory by lazy { AndroidExecutorFactory() }
     override fun get(): ExecutorFactory = factory
 }
 
-// TODO: rename to AndroidExecutorFactory
-private class DefaultExecutorFactory : ExecutorFactory {
+private class AndroidExecutorFactory : ExecutorFactory {
     override fun createMainQueue(): ExecutorQueue {
         return SerialExecutorQueue(Looper.getMainLooper(), "main")
     }
