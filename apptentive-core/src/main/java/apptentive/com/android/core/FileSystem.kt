@@ -23,8 +23,7 @@ class AndroidFileSystemProvider(context: Context, private val domain: String) :
 private class AndroidFileSystem(
     private val applicationContext: Context,
     private val domain: String
-) :
-    FileSystem {
+) : FileSystem {
     override fun getInternalDir(path: String, createIfNecessary: Boolean): File {
         val internalDir = File(applicationContext.filesDir, "$domain/$path")
         if (!internalDir.exists() && createIfNecessary) {

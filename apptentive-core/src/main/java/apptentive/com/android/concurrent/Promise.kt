@@ -3,6 +3,7 @@ package apptentive.com.android.concurrent
 /**
  * Represents the eventual completion (or failure) of an asynchronous operation, and its resulting value.
  */
+// TODO: delete this class
 interface Promise<T> {
     /**
      * Appends fulfillment handlers to the promise, and returns a new promise resolving to the return value
