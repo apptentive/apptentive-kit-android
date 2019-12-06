@@ -2,7 +2,7 @@ package apptentive.com.android
 
 import apptentive.com.android.concurrent.ImmediateExecutorQueue
 import apptentive.com.android.core.DependencyProvider
-import apptentive.com.android.core.ExecutorQueueFactory
+import apptentive.com.android.core.ExecutorFactory
 import apptentive.com.android.core.Logger
 import apptentive.com.android.core.Provider
 import apptentive.com.android.util.LogLevel
@@ -34,10 +34,10 @@ open class TestCase(
 
     //region Factory
 
-    private fun createExecutionQueueFactoryProvider(): Provider<ExecutorQueueFactory> =
-        object : Provider<ExecutorQueueFactory> {
-            override fun get(): ExecutorQueueFactory {
-                return MockExecutorQueueFactory
+    private fun createExecutionQueueFactoryProvider(): Provider<ExecutorFactory> =
+        object : Provider<ExecutorFactory> {
+            override fun get(): ExecutorFactory {
+                return MockExecutorFactory
             }
 
         }
@@ -67,7 +67,7 @@ open class TestCase(
     //endregion
 }
 
-object MockExecutorQueueFactory : ExecutorQueueFactory {
+object MockExecutorFactory : ExecutorFactory {
     override fun createMainQueue() = ImmediateExecutorQueue("main")
     override fun createSerialQueue(name: String) = ImmediateExecutorQueue(name)
     override fun createConcurrentQueue(name: String, maxConcurrentTasks: Int?) =
