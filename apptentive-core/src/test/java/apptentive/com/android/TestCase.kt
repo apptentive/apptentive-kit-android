@@ -3,7 +3,7 @@ package apptentive.com.android
 import apptentive.com.android.concurrent.ImmediateExecutorQueue
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.ExecutorQueueFactory
-import apptentive.com.android.core.PlatformLogger
+import apptentive.com.android.core.Logger
 import apptentive.com.android.core.Provider
 import apptentive.com.android.util.LogLevel
 import org.junit.After
@@ -42,10 +42,10 @@ open class TestCase(
 
         }
 
-    private fun createPlatformLoggerProvider(): Provider<PlatformLogger> =
-        object : Provider<PlatformLogger> {
-            override fun get(): PlatformLogger {
-                return MockPlatformLogger(logMessages, logStackTraces)
+    private fun createPlatformLoggerProvider(): Provider<Logger> =
+        object : Provider<Logger> {
+            override fun get(): Logger {
+                return MockLogger(logMessages, logStackTraces)
             }
         }
 
@@ -74,10 +74,10 @@ object MockExecutorQueueFactory : ExecutorQueueFactory {
         ImmediateExecutorQueue(name)
 }
 
-private class MockPlatformLogger(
+private class MockLogger(
     private val logMessages: Boolean,
     private val logStackTraces: Boolean
-) : PlatformLogger {
+) : Logger {
     override fun log(logLevel: LogLevel, message: String) {
         if (logMessages) {
             print(message)

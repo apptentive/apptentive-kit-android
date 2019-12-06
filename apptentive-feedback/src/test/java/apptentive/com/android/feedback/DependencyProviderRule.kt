@@ -3,7 +3,7 @@ package apptentive.com.android.feedback
 import apptentive.com.android.concurrent.ImmediateExecutorQueue
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.ExecutorQueueFactory
-import apptentive.com.android.core.PlatformLogger
+import apptentive.com.android.core.Logger
 import apptentive.com.android.util.LogLevel
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
@@ -21,7 +21,7 @@ class DependencyProviderRule(private val enableConsoleOutput: Boolean = false) :
 
 private fun createExecutionQueueFactory(): ExecutorQueueFactory = MockExecutorQueueFactory
 private fun createPlatformLogger(enableOutput: Boolean) =
-    if (enableOutput) MockPlatformLogger else NullPlatformLogger
+    if (enableOutput) MockLogger else NullLogger
 
 private object MockExecutorQueueFactory : ExecutorQueueFactory {
     override fun createMainQueue() = ImmediateExecutorQueue("main")
@@ -30,7 +30,7 @@ private object MockExecutorQueueFactory : ExecutorQueueFactory {
         ImmediateExecutorQueue(name)
 }
 
-private object NullPlatformLogger : PlatformLogger {
+private object NullLogger : Logger {
     override fun log(logLevel: LogLevel, message: String) {
     }
 
@@ -40,7 +40,7 @@ private object NullPlatformLogger : PlatformLogger {
     override fun isMainQueue() = false
 }
 
-private object MockPlatformLogger : PlatformLogger {
+private object MockLogger : Logger {
     override fun log(logLevel: LogLevel, message: String) {
         println(message)
     }
