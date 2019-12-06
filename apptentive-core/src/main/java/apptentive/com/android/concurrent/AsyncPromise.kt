@@ -8,6 +8,7 @@ import apptentive.com.android.util.LogTags
  *
  * @param [callbackExecutor] optional executor to invoke async fulfilment/rejection callbacks.
  */
+// TODO: delete this class
 class AsyncPromise<T>(private val callbackExecutor: Executor? = null) : Promise<T> {
     private var resolveCallback: (value: T) -> Unit = {}
     private var rejectCallback: (e: Exception) -> Unit = {}
@@ -54,7 +55,7 @@ class AsyncPromise<T>(private val callbackExecutor: Executor? = null) : Promise<
         try {
             rejectCallback(e)
         } catch (e: Exception) {
-            Log.e(LogTags.core,"Exception while rejecting promise", e)
+            Log.e(LogTags.core, "Exception while rejecting promise", e)
         }
     }
 }
