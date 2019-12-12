@@ -1,6 +1,6 @@
 package apptentive.com.android.feedback.payload
 
-import apptentive.com.android.feedback.test.TestCase
+import apptentive.com.android.TestCase
 import apptentive.com.android.util.Result
 import org.junit.Test
 

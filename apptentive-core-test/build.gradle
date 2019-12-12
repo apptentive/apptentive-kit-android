@@ -11,9 +11,9 @@ android {
         targetSdkVersion rootProject.targetSdkVersion
         versionCode 1
         versionName "1.0"
-        consumerProguardFiles 'consumer-proguard-rules.pro'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'consumer-rules.pro'
     }
 
     buildTypes {
@@ -22,23 +22,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "androidx.appcompat:appcompat:$support_library_version"
     implementation project(':apptentive-core')
-
-    testImplementation project(':apptentive-core-test')
-    testImplementation "junit:junit:$junit_version"
-    testImplementation "com.google.truth:truth:$truth_version"
-    testImplementation "io.mockk:mockk:$mockk_version"
-    androidTestImplementation "androidx.test:runner:$test_runner_version"
-    androidTestImplementation 'androidx.test:core:1.2.0' // TODO: extract version variable
-    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"
-}
-repositories {
-    mavenCentral()
+    implementation "junit:junit:$junit_version"
 }

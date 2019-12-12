@@ -1,4 +1,4 @@
-package apptentive.com.android.feedback
+package apptentive.com.android
 
 import apptentive.com.android.concurrent.ImmediateExecutorQueue
 import apptentive.com.android.core.DependencyProvider
@@ -20,12 +20,13 @@ class DependencyProviderRule(private val enableConsoleOutput: Boolean = false) :
 }
 
 private fun createExecutionQueueFactory(): ExecutorFactory = MockExecutorFactory
-private fun createPlatformLogger(enableOutput: Boolean) =
-    if (enableOutput) MockLogger else NullLogger
+private fun createPlatformLogger(enableOutput: Boolean) = if (enableOutput) MockLogger else NullLogger
 
 private object MockExecutorFactory : ExecutorFactory {
-    override fun createMainQueue() = ImmediateExecutorQueue("main")
-    override fun createSerialQueue(name: String) = ImmediateExecutorQueue(name)
+    override fun createMainQueue() =
+        ImmediateExecutorQueue("main")
+    override fun createSerialQueue(name: String) =
+        ImmediateExecutorQueue(name)
     override fun createConcurrentQueue(name: String, maxConcurrentTasks: Int?) =
         ImmediateExecutorQueue(name)
 }

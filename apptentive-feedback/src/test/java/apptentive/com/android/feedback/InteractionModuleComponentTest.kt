@@ -1,10 +1,10 @@
 package apptentive.com.android.feedback
 
+import apptentive.com.android.TestCase
 import apptentive.com.android.feedback.engagement.interactions.Interaction
-import apptentive.com.android.feedback.engagement.interactions.InteractionTypeConverter
 import apptentive.com.android.feedback.engagement.interactions.InteractionLauncher
 import apptentive.com.android.feedback.engagement.interactions.InteractionModule
-import apptentive.com.android.feedback.test.TestCase
+import apptentive.com.android.feedback.engagement.interactions.InteractionTypeConverter
 import com.google.common.truth.Truth.assertThat
 import org.junit.Ignore
 import org.junit.Test

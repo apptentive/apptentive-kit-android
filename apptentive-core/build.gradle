@@ -38,6 +38,7 @@ dependencies {
 
     implementation "com.google.code.gson:gson:$gson_version"
 
+    testImplementation project(':apptentive-core-test')
     testImplementation "junit:junit:$junit_version"
     testImplementation "com.google.truth:truth:$truth_version"
     androidTestImplementation "androidx.test:runner:$test_runner_version"
