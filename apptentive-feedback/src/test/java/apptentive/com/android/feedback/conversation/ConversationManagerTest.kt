@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.conversation
 
+import apptentive.com.android.TestCase
 import apptentive.com.android.core.getTimeSeconds
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.ConversationCredentials
@@ -8,7 +9,6 @@ import apptentive.com.android.feedback.mockDevice
 import apptentive.com.android.feedback.mockPerson
 import apptentive.com.android.feedback.mockSdk
 import apptentive.com.android.feedback.model.*
-import apptentive.com.android.feedback.test.TestCase
 import apptentive.com.android.util.Result
 import com.google.common.truth.Truth.assertThat
 import org.junit.Ignore

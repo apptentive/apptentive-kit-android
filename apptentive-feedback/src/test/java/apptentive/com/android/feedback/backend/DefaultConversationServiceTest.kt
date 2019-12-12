@@ -1,8 +1,12 @@
 package apptentive.com.android.feedback.backend
 
+import apptentive.com.android.DependencyProviderRule
 import apptentive.com.android.concurrent.ImmediateExecutorQueue
 import apptentive.com.android.core.TimeInterval
-import apptentive.com.android.feedback.*
+import apptentive.com.android.feedback.GenerateUUIDRule
+import apptentive.com.android.feedback.mockAppRelease
+import apptentive.com.android.feedback.mockDevice
+import apptentive.com.android.feedback.mockSdk
 import apptentive.com.android.network.*
 import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.util.Result

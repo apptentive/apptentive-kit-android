@@ -1,10 +1,10 @@
 package apptentive.com.android.feedback.engagement.criteria
 
+import apptentive.com.android.TestCase
 import apptentive.com.android.core.Converter
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.FailureInteractionCriteria
 import apptentive.com.android.feedback.model.InvocationData
-import apptentive.com.android.feedback.test.TestCase
 import com.google.common.truth.Truth.assertThat
 import org.junit.Ignore
 import org.junit.Test

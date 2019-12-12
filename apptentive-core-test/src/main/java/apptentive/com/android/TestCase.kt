@@ -1,11 +1,9 @@
-package apptentive.com.android.feedback.test
+package apptentive.com.android
 
-import apptentive.com.android.feedback.DependencyProviderRule
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 
-// FIXME: all the test dependencies should be grouped in the core module
 open class TestCase(
     private val logMessages: Boolean = false,
     private val logStackTraces: Boolean = false

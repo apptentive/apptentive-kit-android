@@ -1,7 +1,7 @@
 package apptentive.com.android.feedback.engagement.criteria
 
+import apptentive.com.android.TestCase
 import apptentive.com.android.feedback.model.EngagementManifest
-import apptentive.com.android.feedback.test.TestCase
 import apptentive.com.android.serialization.json.JsonConverter
 import org.junit.Ignore
 import org.junit.Test
