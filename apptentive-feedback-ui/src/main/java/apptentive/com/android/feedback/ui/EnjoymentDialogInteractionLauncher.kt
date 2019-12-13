@@ -13,23 +13,25 @@ internal class EnjoymentDialogInteractionLauncher :
     ) {
         val viewModel = EnjoymentDialogViewModel(context)
 
-        MaterialAlertDialogBuilder(context.androidContext).apply {
-            setTitle(interaction.title)
-            setPositiveButton(interaction.yesText) { _, _ ->
-                viewModel.onYesButton()
-            }
-            setNegativeButton(interaction.noText) { _, _ ->
-                viewModel.onNoButton()
-            }
-            if (interaction.dismissText != null) {
-                setNeutralButton(interaction.dismissText) { _, _ ->
-                    viewModel.onDismissButton()
+        context.executors.main.execute {
+            MaterialAlertDialogBuilder(context.androidContext).apply {
+                setTitle(interaction.title)
+                setPositiveButton(interaction.yesText) { _, _ ->
+                    viewModel.onYesButton()
                 }
+                setNegativeButton(interaction.noText) { _, _ ->
+                    viewModel.onNoButton()
+                }
+                if (interaction.dismissText != null) {
+                    setNeutralButton(interaction.dismissText) { _, _ ->
+                        viewModel.onDismissButton()
+                    }
+                }
+                setOnCancelListener {
+                    viewModel.onCancel()
+                }
+                show()
             }
-            setOnCancelListener {
-                viewModel.onCancel()
-            }
-            show()
         }
     }
 }
