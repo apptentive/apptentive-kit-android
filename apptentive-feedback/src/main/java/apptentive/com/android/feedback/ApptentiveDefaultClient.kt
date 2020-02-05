@@ -12,6 +12,8 @@ import apptentive.com.android.feedback.engagement.criteria.DefaultTargetingState
 import apptentive.com.android.feedback.engagement.criteria.InvocationConverter
 import apptentive.com.android.feedback.engagement.interactions.*
 import apptentive.com.android.feedback.model.Conversation
+import apptentive.com.android.feedback.payload.ConversationPayloadService
+import apptentive.com.android.feedback.payload.PayloadService
 import apptentive.com.android.feedback.platform.*
 import apptentive.com.android.network.HttpClient
 import apptentive.com.android.util.FileUtil
@@ -24,6 +26,7 @@ internal class ApptentiveDefaultClient(
 ) : ApptentiveClient {
     private lateinit var conversationService: ConversationService
     private lateinit var conversationManager: ConversationManager
+    private var conversationPayloadService: PayloadService? = null
     private lateinit var interactionModules: Map<InteractionType, InteractionModule<Interaction>>
     private var engagement: Engagement = NullEngagement()
 
@@ -43,10 +46,23 @@ internal class ApptentiveDefaultClient(
                 recordEvent = ::recordEvent,
                 recordInteraction = ::recordInteraction
             )
+            createConversationPayloadServiceIfNeeded(conversation)
         }
 
         // FIXME: temporary code
         engage(context, Event.internal("launch"))
+    }
+
+    private fun createConversationPayloadServiceIfNeeded(conversation: Conversation) {
+        if (conversationPayloadService == null) {
+            conversationPayloadService = conversation.conversationId?.let { id ->
+                conversation.conversationToken?.let { token ->
+                    createConversationPayloadService(
+                        id, token
+                    )
+                }
+            }
+        }
     }
 
     private fun createConversationManager(context: Context): ConversationManager {
@@ -87,6 +103,20 @@ internal class ApptentiveDefaultClient(
         apiVersion = Constants.API_VERSION,
         sdkVersion = Constants.SDK_VERSION,
         baseURL = Constants.SERVER_URL
+    )
+
+    private fun createConversationPayloadService(
+        conversationId: String,
+        conversationToken: String
+    ): PayloadService = ConversationPayloadService(
+        httpClient = httpClient,
+        apptentiveKey = apptentiveKey,
+        apptentiveSignature = apptentiveSignature,
+        apiVersion = Constants.API_VERSION,
+        sdkVersion = Constants.SDK_VERSION,
+        baseURL = Constants.SERVER_URL,
+        conversationId = conversationId,
+        conversationToken = conversationToken
     )
 
     private fun createInteractionDataProvider(conversation: Conversation): InteractionDataProvider {
