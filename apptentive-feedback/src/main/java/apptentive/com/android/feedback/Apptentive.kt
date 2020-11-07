@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.concurrent.ExecutorQueue
+import apptentive.com.android.concurrent.Executors
 import apptentive.com.android.core.AndroidFileSystemProvider
 import apptentive.com.android.core.AndroidExecutorFactoryProvider
 import apptentive.com.android.core.AndroidLoggerProvider
@@ -52,7 +53,11 @@ object Apptentive {
         client = ApptentiveDefaultClient(
             apptentiveKey = configuration.apptentiveKey,
             apptentiveSignature = configuration.apptentiveSignature,
-            httpClient = createHttpClient(application.applicationContext)
+            httpClient = createHttpClient(application.applicationContext),
+            executors = Executors(
+                state = stateExecutor,
+                main = mainExecutor
+            )
         ).apply {
             stateExecutor.execute {
                 start(application.applicationContext)

@@ -4,6 +4,8 @@ import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.Event
 
 data class EnjoymentDialogViewModel(private val context: EngagementContext) {
+    private val stateExecutor = context.executors.state
+
     fun onYesButton() {
         engageCodePoint(CODE_POINT_YES)
     }
@@ -21,7 +23,9 @@ data class EnjoymentDialogViewModel(private val context: EngagementContext) {
     }
 
     private fun engageCodePoint(name: String) {
-        context.engage(Event.internal(name))
+        stateExecutor.execute {
+            context.engage(Event.internal(name))
+        }
     }
 
     companion object {

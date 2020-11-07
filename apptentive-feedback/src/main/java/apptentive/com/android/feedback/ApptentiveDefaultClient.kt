@@ -2,6 +2,7 @@ package apptentive.com.android.feedback
 
 import android.content.Context
 import androidx.annotation.WorkerThread
+import apptentive.com.android.concurrent.Executors
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.DefaultConversationService
 import apptentive.com.android.feedback.conversation.*
@@ -22,7 +23,8 @@ import java.io.File
 internal class ApptentiveDefaultClient(
     private val apptentiveKey: String,
     private val apptentiveSignature: String,
-    private val httpClient: HttpClient
+    private val httpClient: HttpClient,
+    private val executors: Executors
 ) : ApptentiveClient {
     private lateinit var conversationService: ConversationService
     private lateinit var conversationManager: ConversationManager
@@ -141,7 +143,7 @@ internal class ApptentiveDefaultClient(
     //region Engagement
 
     override fun engage(context: Context, event: Event): EngagementResult {
-        return AndroidEngagementContext(context, engagement).engage(event)
+        return AndroidEngagementContext(context, engagement, executors).engage(event)
     }
 
     // FIXME: temporary code

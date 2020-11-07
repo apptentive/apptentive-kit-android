@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.engagement
 
+import androidx.annotation.WorkerThread
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionDataConverter
@@ -12,6 +13,7 @@ data class DefaultEngagement(
     private val recordEvent: (Event) -> Unit = {},
     private val recordInteraction: (Interaction) -> Unit = {}
 ) : Engagement {
+    @WorkerThread
     override fun engage(context: EngagementContext, event: Event): EngagementResult {
         recordEvent(event)
 

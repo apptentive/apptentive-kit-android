@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.platform
 
 import android.content.Context
+import apptentive.com.android.concurrent.Executors
 import apptentive.com.android.feedback.engagement.Engagement
 import apptentive.com.android.feedback.engagement.EngagementContext
 
@@ -11,5 +12,6 @@ import apptentive.com.android.feedback.engagement.EngagementContext
  */
 class AndroidEngagementContext(
     val androidContext: Context,
-    engagement: Engagement
-) : EngagementContext(engagement)
+    engagement: Engagement,
+    executors: Executors
+) : EngagementContext(engagement, executors)
