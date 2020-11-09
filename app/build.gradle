@@ -35,7 +35,7 @@ dependencies {
     implementation project(':apptentive-core')
     implementation project(':apptentive-feedback')
     implementation project(':apptentive-core')
-    implementation project(':apptentive-feedback-ui')
+    implementation project(':apptentive-enjoyment-dialog')
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation "androidx.test.ext:junit:$junit_ext_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"
