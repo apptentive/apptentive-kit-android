@@ -1,5 +1,7 @@
 package apptentive.com.android.feedback.ui
 
+import apptentive.com.android.concurrent.Executors
+import apptentive.com.android.concurrent.ImmediateExecutor
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.Engagement
 import apptentive.com.android.feedback.engagement.EngagementContext
@@ -22,7 +24,10 @@ class EnjoymentDialogViewModelTest {
                 return EngagementResult.Success
             }
         }
-        val viewModel = EnjoymentDialogViewModel(EngagementContext(engagement))
+        val viewModel = EnjoymentDialogViewModel(EngagementContext(
+                engagement = engagement,
+                executors = Executors(ImmediateExecutor, ImmediateExecutor)
+        ))
         viewModel.onYesButton()
         viewModel.onNoButton()
         viewModel.onDismissButton()
