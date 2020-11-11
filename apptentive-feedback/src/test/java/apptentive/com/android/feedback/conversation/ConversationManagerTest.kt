@@ -77,6 +77,7 @@ private class MockConversationService(
         device: Device,
         sdk: SDK,
         appRelease: AppRelease,
+        person: Person,
         callback: (Result<ConversationCredentials>) -> Unit
     ) {
         callback(Result.Success(response))

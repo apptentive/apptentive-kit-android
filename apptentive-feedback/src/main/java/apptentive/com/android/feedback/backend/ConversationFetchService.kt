@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.backend
 
+import androidx.annotation.Keep
 import apptentive.com.android.feedback.model.*
 import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
@@ -11,20 +12,23 @@ interface ConversationFetchService {
         device: Device,
         sdk: SDK,
         appRelease: AppRelease,
+        person: Person,
         callback: (Result<ConversationCredentials>) -> Unit
     )
 }
 
-// TODO: exclude this class from ProGuard
+@Keep
 internal data class ConversationTokenRequestData private constructor(
     private val device: DeviceRequestData,
-    private val appRelease: AppReleaseSdkRequestData
+    private val appRelease: AppReleaseSdkRequestData,
+    private val person: PersonRequestData
 ) {
     companion object {
-        fun from(device: Device, sdk: SDK, appRelease: AppRelease) =
+        fun from(device: Device, sdk: SDK, appRelease: AppRelease, person: Person) =
             ConversationTokenRequestData(
                 device = DeviceRequestData.from(device),
-                appRelease = AppReleaseSdkRequestData.from(appRelease, sdk)
+                appRelease = AppReleaseSdkRequestData.from(appRelease, sdk),
+                person = PersonRequestData.from(person)
             )
     }
 }
@@ -108,7 +112,7 @@ private data class IntegrationConfigRequestData(
     }
 }
 
-// TODO: exclude this class from ProGuard
+@Keep
 private data class AppReleaseSdkRequestData(
     val sdkNonce: String,
     val sdkAuthorEmail: String?,
@@ -153,7 +157,24 @@ private data class AppReleaseSdkRequestData(
     }
 }
 
-// TODO: exclude this class from ProGuard
+@Keep
+private data class PersonRequestData(
+    val name: String?,
+    val email: String?,
+    val mparticleId: String?, // this is not a typo: the backend expectes it as 'mparticle_id'
+    val customData: Map<String, Any?>?
+) {
+    companion object {
+        fun from(person: Person) = PersonRequestData(
+            name = person.name,
+            email = person.email,
+            mparticleId = person.mParticleId,
+            customData = person.customData.content
+        )
+    }
+}
+
+@Keep
 data class ConversationCredentials(
     val id: String,
     val deviceId: String,
