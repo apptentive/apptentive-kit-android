@@ -168,11 +168,11 @@ val mockEngagementManifest = EngagementManifest(
         "local#app#event" to listOf(
             InvocationData(
                 interactionId = "id1",
-                criteria = mapOf("interactions/id2/invokes/version_name" to mapOf("\$eq" to 1))
+                criteria = mapOf("interactions/id2/invokes/version_name" to mapOf("\$eq" to 1.0))
             ),
             InvocationData(
                 interactionId = "id2",
-                criteria = mapOf("interactions/id3/invokes/version_code" to mapOf("\$gt" to 0))
+                criteria = mapOf("interactions/id3/invokes/version_code" to mapOf("\$gt" to 0.0))
             ),
             InvocationData(
                 interactionId = "id3"
@@ -180,4 +180,26 @@ val mockEngagementManifest = EngagementManifest(
         )
     ),
     expiry = 1000.0
+)
+
+fun createMockConversation(
+    localIdentifier: String = "localIdentifier",
+    conversationToken: String? = null,
+    conversationId: String? = null,
+    device: Device? = null,
+    person: Person? = null,
+    sdk: SDK? = null,
+    appRelease: AppRelease? = null,
+    engagementData: EngagementData? = null,
+    engagementManifest: EngagementManifest? = null
+) = Conversation(
+    localIdentifier = localIdentifier,
+    conversationToken = conversationToken,
+    conversationId = conversationId,
+    device = device ?: mockDevice,
+    person = person ?: mockPerson,
+    sdk = sdk ?: mockSdk,
+    appRelease = appRelease ?: mockAppRelease,
+    engagementData = engagementData ?: mockEngagementData,
+    engagementManifest = engagementManifest ?: mockEngagementManifest
 )
