@@ -8,18 +8,14 @@ import java.io.InputStream
  * A container to hold a generic response from [HttpNetwork]
  * @param statusCode HTTP-status code
  * @param statusMessage HTTP-status message
- * @param stream input stream of the connection
+ * @param data raw connection response
  * @param headers HTTP-response headers
  * @param duration duration of the request
  */
 data class HttpNetworkResponse(
     val statusCode: Int,
     val statusMessage: String,
-    val stream: InputStream,
+    val data: ByteArray,
     val headers: HttpHeaders,
     val duration: TimeInterval
-) : Closeable {
-    override fun close() {
-        stream.close()
-    }
-}
+)

@@ -53,7 +53,7 @@ class HttpJsonResponseReader<T>(private val type: Class<T>) : HttpResponseReader
     override fun read(
         response: HttpNetworkResponse
     ): T {
-        val bytes = response.stream.readBytes()
+        val bytes = response.data
         val json = if (bytes.isEmpty()) "{}" else String(bytes, Charsets.UTF_8)
 
         @Suppress("UNCHECKED_CAST")
