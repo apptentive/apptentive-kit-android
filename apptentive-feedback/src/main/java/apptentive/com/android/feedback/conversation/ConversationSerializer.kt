@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.conversation
 
 import apptentive.com.android.core.TimeInterval
+import apptentive.com.android.feedback.CONVERSATION
 import apptentive.com.android.feedback.conversation.Serializers.conversationSerializer
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
@@ -8,6 +9,7 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionId
 import apptentive.com.android.feedback.model.*
 import apptentive.com.android.serialization.*
 import apptentive.com.android.serialization.json.JsonConverter
+import apptentive.com.android.util.Log
 import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.io.EOFException
@@ -70,9 +72,13 @@ internal class DefaultConversationSerializer(
     }
 
     private fun readEngagementManifest(): EngagementManifest? {
-        if (manifestFile.exists()) {
-            val json = manifestFile.readText()
-            return JsonConverter.fromJson(json)
+        try {
+            if (manifestFile.exists()) {
+                val json = manifestFile.readText()
+                return JsonConverter.fromJson(json)
+            }
+        } catch (e: Exception) {
+            Log.e(CONVERSATION, "Unable to load engagement manifest: $manifestFile", e)
         }
         return null
     }

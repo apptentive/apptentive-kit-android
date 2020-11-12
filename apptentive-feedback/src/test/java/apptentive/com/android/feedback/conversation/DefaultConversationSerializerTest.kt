@@ -5,7 +5,6 @@ import apptentive.com.android.feedback.createMockConversation
 import apptentive.com.android.feedback.model.EngagementManifest
 import com.google.common.truth.Truth.assertThat
 import org.junit.Assert.assertFalse
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -91,7 +90,7 @@ class DefaultConversationSerializerTest : TestCase() {
     }
 
     @Test(expected = ConversationSerializationException::class)
-    fun testCorruptedData() {
+    fun testCorruptedConversationData() {
         val conversationFile = createTempFile("conversation.bin")
         // write random data
         conversationFile.writeBytes(Random.nextBytes(10))
@@ -107,10 +106,30 @@ class DefaultConversationSerializerTest : TestCase() {
     }
 
     @Test
-    @Ignore
-    fun testCorruptedManifest()
+    fun testCorruptedManifestData()
     {
-        
+        val manifestFile = createTempFile("manifest.json")
+        val serializer = DefaultConversationSerializer(
+            conversationFile = createTempFile("conversation.bin"),
+            manifestFile = manifestFile
+        )
+
+        val conversation = createMockConversation()
+        serializer.saveConversation(conversation)
+
+        // write corrupted data
+        manifestFile.writeText("{") // illegal json
+
+        // this should still load a valid conversation
+        val actual = serializer.loadConversation()
+        assertThat(actual).isNotNull()
+
+        // manifest would just be set to "default" and re-fetched next time
+        val expected = createMockConversation(
+            engagementManifest = EngagementManifest()
+        )
+
+        assertThat(actual).isEqualTo(expected)
     }
 
     private fun createTempFile(name: String) = File(tempFolder.root, "${UUID.randomUUID()}-${name}")
