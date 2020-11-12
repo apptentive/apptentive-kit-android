@@ -3,10 +3,7 @@ package apptentive.com.android.feedback.backend
 import apptentive.com.android.DependencyProviderRule
 import apptentive.com.android.concurrent.ImmediateExecutorQueue
 import apptentive.com.android.core.TimeInterval
-import apptentive.com.android.feedback.GenerateUUIDRule
-import apptentive.com.android.feedback.mockAppRelease
-import apptentive.com.android.feedback.mockDevice
-import apptentive.com.android.feedback.mockSdk
+import apptentive.com.android.feedback.*
 import apptentive.com.android.network.*
 import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.util.Result
@@ -85,6 +82,12 @@ class DefaultConversationServiceTest {
                             "type" to mockAppRelease.type,
                             "version_code" to mockAppRelease.versionCode.toDouble(),
                             "version_name" to mockAppRelease.versionName
+                        ),
+                        "person" to mapOf(
+                            "name" to mockPerson.name,
+                            "email" to mockPerson.email,
+                            "mparticle_id" to mockPerson.mParticleId,
+                            "custom_data" to mapOf("person_key" to "person_value")
                         )
                     )
                 )
@@ -122,7 +125,8 @@ class DefaultConversationServiceTest {
         service.fetchConversationToken(
             device = mockDevice,
             sdk = mockSdk,
-            appRelease = mockAppRelease
+            appRelease = mockAppRelease,
+            person = mockPerson
         ) {
             when (it) {
                 is Result.Success -> {

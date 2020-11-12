@@ -26,6 +26,4 @@ install: true
 script:
   - ./gradlew apptentive-core:test -i
   - ./gradlew apptentive-feedback:test -i
-  - ./gradlew apptentive-feedback-ui:test -i
-  - ./gradlew apptentive-love:test -i
-  - ./gradlew apptentive-love-ui:test -i
+  - ./gradlew apptentive-enjoyment-dialog:test -i

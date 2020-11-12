@@ -9,7 +9,6 @@ import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
 import apptentive.com.android.feedback.model.Conversation
-import apptentive.com.android.feedback.model.EngagementManifest
 import apptentive.com.android.feedback.model.hasConversationToken
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.Result
@@ -37,7 +36,8 @@ class ConversationManager(
         conversationService.fetchConversationToken(
             device = conversation.device,
             sdk = conversation.sdk,
-            appRelease = conversation.appRelease
+            appRelease = conversation.appRelease,
+            person = conversation.person
         ) {
             when (it) {
                 is Result.Error -> Log.e(CONVERSATION, "Unable to fetch conversation")
