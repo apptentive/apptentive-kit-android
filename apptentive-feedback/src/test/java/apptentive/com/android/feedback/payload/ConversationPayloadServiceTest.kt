@@ -141,7 +141,7 @@ private class MockHttpNetwork : HttpNetwork {
             return HttpNetworkResponse(
                 statusCode = response.statusCode,
                 statusMessage = response.statusMessage,
-                stream = ByteArrayInputStream(JsonConverter.toJson(response.body).toByteArray()),
+                data = JsonConverter.toJson(response.body).toByteArray(),
                 headers = response.headers,
                 duration = response.duration
             )

@@ -112,31 +112,30 @@ class DefaultHttpClient(
 
         // response body
         val networkResponse = network.performRequest(request)
-        networkResponse.use { response ->
-            // status
-            val statusCode = response.statusCode
-            val statusMessage = response.statusMessage
 
-            // successful?
-            if (statusCode in 200..299) {
-                return HttpResponse(
-                    statusCode,
-                    statusMessage,
-                    request.readResponseObject(response),
-                    response.headers,
-                    response.duration
-                )
-            }
+        // status
+        val statusCode = networkResponse.statusCode
+        val statusMessage = networkResponse.statusMessage
 
-            // should we retry?
-            if (shouldRetry(request, statusCode)) {
-                return null
-            }
-
-            // give up
-            val errorMessage = response.stream.readBytes().toString(Charsets.UTF_8)
-            throw UnexpectedResponseException(statusCode, statusMessage, errorMessage)
+        // successful?
+        if (statusCode in 200..299) {
+            return HttpResponse(
+                statusCode,
+                statusMessage,
+                request.readResponseObject(networkResponse),
+                networkResponse.headers,
+                networkResponse.duration
+            )
         }
+
+        // should we retry?
+        if (shouldRetry(request, statusCode)) {
+            return null
+        }
+
+        // give up
+        val errorMessage = networkResponse.data.toString(Charsets.UTF_8)
+        throw UnexpectedResponseException(statusCode, statusMessage, errorMessage)
     }
 
     //endregion

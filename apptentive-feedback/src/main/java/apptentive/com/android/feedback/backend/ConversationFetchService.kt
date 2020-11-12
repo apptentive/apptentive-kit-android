@@ -161,7 +161,7 @@ private data class AppReleaseSdkRequestData(
 private data class PersonRequestData(
     val name: String?,
     val email: String?,
-    val mparticleId: String?, // this is not a typo: the backend expectes it as 'mparticle_id'
+    val mparticleId: String?, // this is not a typo: the backend expects it as 'mparticle_id'
     val customData: Map<String, Any?>?
 ) {
     companion object {

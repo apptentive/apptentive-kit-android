@@ -45,7 +45,7 @@ internal fun createMockHttpRequest(
                 throw IOException("failed to receive")
             }
 
-            return String(response.stream.readBytes())
+            return String(response.data)
         }
     }
 
@@ -74,7 +74,7 @@ internal fun createMockHttpRequest(
         override fun read(
             response: HttpNetworkResponse
         ): String {
-            return String(response.stream.readBytes())
+            return String(response.data)
         }
     }
 
@@ -192,7 +192,7 @@ internal fun createNetworkResponse(
     return HttpNetworkResponse(
         statusCode = statusCode,
         statusMessage = getStatusMessage(statusCode),
-        stream = ByteArrayInputStream(content ?: ByteArray(0)),
+        data = content ?: ByteArray(0),
         headers = responseHeaders ?: MutableHttpHeaders(),
         duration = duration
     )

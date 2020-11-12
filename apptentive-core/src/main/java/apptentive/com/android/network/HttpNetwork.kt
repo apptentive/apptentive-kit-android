@@ -33,7 +33,6 @@ class DefaultHttpNetwork(
         val startTime = System.currentTimeMillis()
 
         val connection = openConnection(request)
-        var closeConnection = true
         try {
             // request headers
             setRequestHeaders(connection, request.headers)
@@ -59,22 +58,17 @@ class DefaultHttpNetwork(
             // response
             val stream = getResponseStream(connection)
 
-            // we would need to keep this connection open in order to read from its input stream
-            closeConnection = false
-
             // duration
             val duration = toSeconds(System.currentTimeMillis() - startTime)
             return HttpNetworkResponse(
                 statusCode = responseCode,
                 statusMessage = responseMessage,
-                stream = stream,
+                data = stream.readBytes(),
                 headers = responseHeaders,
                 duration = duration
             )
         } finally {
-            if (closeConnection) {
-                connection.disconnect()
-            }
+            connection.disconnect()
         }
     }
 
