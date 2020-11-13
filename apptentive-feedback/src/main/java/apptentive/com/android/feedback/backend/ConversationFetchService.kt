@@ -33,7 +33,7 @@ internal data class ConversationTokenRequestData private constructor(
     }
 }
 
-// TODO: exclude this class from ProGuard
+@Keep
 private class DeviceRequestData(
     val nonce: String,
     val uuid: String,
@@ -96,6 +96,7 @@ private class DeviceRequestData(
     }
 }
 
+@Keep
 private data class IntegrationConfigRequestData(
     val apptentive: Map<String, Any?>? = null,
     val amazonAwsSns: Map<String, Any?>? = null,

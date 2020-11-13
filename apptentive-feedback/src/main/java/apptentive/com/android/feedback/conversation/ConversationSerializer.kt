@@ -1,16 +1,18 @@
 package apptentive.com.android.feedback.conversation
 
+import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.feedback.CONVERSATION
 import apptentive.com.android.feedback.conversation.Serializers.conversationSerializer
-import apptentive.com.android.feedback.conversation.Serializers.engagementManifestSerializer
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
 import apptentive.com.android.feedback.model.*
 import apptentive.com.android.serialization.*
+import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.util.Log
 import java.io.DataInputStream
 import java.io.DataOutputStream
+import java.io.EOFException
 import java.io.File
 
 interface ConversationSerializer {
@@ -25,30 +27,27 @@ internal class DefaultConversationSerializer(
     private val conversationFile: File,
     private val manifestFile: File
 ) : ConversationSerializer {
-    private var shouldSaveManifest: Boolean = true
+    // we keep track of the last seen engagement manifest expiry date and only update storage if it changes
+    private var lastKnownManifestExpiry: TimeInterval = 0.0
 
-    // TODO: unit tests
     override fun saveConversation(conversation: Conversation) {
         conversationFile.outputStream().use { stream ->
             val encoder = BinaryEncoder(DataOutputStream(stream))
             conversationSerializer.encode(encoder, conversation)
         }
-        if (shouldSaveManifest) {
-            manifestFile.outputStream().use { stream ->
-                val encoder = BinaryEncoder(DataOutputStream(stream))
-                engagementManifestSerializer.encode(encoder, conversation.engagementManifest)
-            }
-            shouldSaveManifest = false
+
+        val newExpiry = conversation.engagementManifest.expiry
+        if (lastKnownManifestExpiry != newExpiry) {
+            val json = JsonConverter.toJson(conversation.engagementManifest)
+            manifestFile.writeText(json) // TODO: use atomic file
+            lastKnownManifestExpiry = newExpiry
         }
     }
 
     override fun loadConversation(): Conversation? {
         if (conversationFile.exists()) {
-            val conversation = conversationFile.inputStream().use { stream ->
-                val decoder = BinaryDecoder(DataInputStream(stream))
-                conversationSerializer.decode(decoder)
-            }
-            val engagementManifest = loadEngagementManifest()
+            val conversation = readConversation()
+            val engagementManifest = readEngagementManifest()
             if (engagementManifest != null) {
                 return conversation.copy(engagementManifest = engagementManifest)
             }
@@ -59,16 +58,27 @@ internal class DefaultConversationSerializer(
         return null
     }
 
-    private fun loadEngagementManifest(): EngagementManifest? {
-        if (manifestFile.exists()) {
-            try {
-                return manifestFile.inputStream().use { stream ->
-                    val encoder = BinaryDecoder(DataInputStream(stream))
-                    engagementManifestSerializer.decode(encoder)
-                }
-            } catch (e: Exception) {
-                Log.e(CONVERSATION, "Exception while loading manifest file", e)
+    private fun readConversation(): Conversation {
+        try {
+            return conversationFile.inputStream().use { stream ->
+                val decoder = BinaryDecoder(DataInputStream(stream))
+                conversationSerializer.decode(decoder)
             }
+        } catch (e: EOFException) {
+            throw ConversationSerializationException("Unable to load conversation: file corrupted", e)
+        } catch (e: Exception) {
+            throw ConversationSerializationException("Unable to load conversation", e)
+        }
+    }
+
+    private fun readEngagementManifest(): EngagementManifest? {
+        try {
+            if (manifestFile.exists()) {
+                val json = manifestFile.readText()
+                return JsonConverter.fromJson(json)
+            }
+        } catch (e: Exception) {
+            Log.e(CONVERSATION, "Unable to load engagement manifest: $manifestFile", e)
         }
         return null
     }
@@ -425,19 +435,6 @@ internal object Serializers {
                     engagementManifest = EngagementManifest(), // EngagementManifest is serialized separately
                     engagementData = engagementDataSerializer.decode(decoder)
                 )
-            }
-        }
-    }
-
-    val engagementManifestSerializer: TypeSerializer<EngagementManifest> by lazy {
-        object : TypeSerializer<EngagementManifest> {
-            override fun encode(encoder: Encoder, value: EngagementManifest) {
-                // FIXME: encode manifest
-            }
-
-            override fun decode(decoder: Decoder): EngagementManifest {
-                // FIXME: decode manifest
-                return EngagementManifest()
             }
         }
     }

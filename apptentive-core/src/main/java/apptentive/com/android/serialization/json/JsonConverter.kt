@@ -30,7 +30,8 @@ object JsonConverter {
     @Throws(JsonException::class)
     fun fromJson(json: String, type: Class<*>): Any {
         try {
-            return gson.fromJson(json, type)
+            val fixedJson = if (json.isBlank()) "{}" else json
+            return gson.fromJson(fixedJson, type)
         } catch (e: Exception) {
             throw JsonException(e)
         }
