@@ -14,6 +14,7 @@ import apptentive.com.android.feedback.engagement.criteria.InvocationConverter
 import apptentive.com.android.feedback.engagement.interactions.*
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.payload.ConversationPayloadService
+import apptentive.com.android.feedback.payload.PayloadRequestSender
 import apptentive.com.android.feedback.payload.PayloadService
 import apptentive.com.android.feedback.platform.*
 import apptentive.com.android.network.HttpClient
@@ -48,19 +49,21 @@ internal class ApptentiveDefaultClient(
                 recordEvent = ::recordEvent,
                 recordInteraction = ::recordInteraction
             )
-            createConversationPayloadServiceIfNeeded(conversation)
+            createConversationPayloadServiceIfNeeded(conversation, conversationService)
         }
 
         // FIXME: temporary code
         engage(context, Event.internal("launch"))
     }
 
-    private fun createConversationPayloadServiceIfNeeded(conversation: Conversation) {
+    private fun createConversationPayloadServiceIfNeeded(conversation: Conversation, requestSender: PayloadRequestSender) {
         if (conversationPayloadService == null) {
             conversationPayloadService = conversation.conversationId?.let { id ->
                 conversation.conversationToken?.let { token ->
-                    createConversationPayloadService(
-                        id, token
+                    ConversationPayloadService(
+                        requestSender = requestSender,
+                        conversationId = id,
+                        conversationToken = token
                     )
                 }
             }
@@ -105,20 +108,6 @@ internal class ApptentiveDefaultClient(
         apiVersion = Constants.API_VERSION,
         sdkVersion = Constants.SDK_VERSION,
         baseURL = Constants.SERVER_URL
-    )
-
-    private fun createConversationPayloadService(
-        conversationId: String,
-        conversationToken: String
-    ): PayloadService = ConversationPayloadService(
-        httpClient = httpClient,
-        apptentiveKey = apptentiveKey,
-        apptentiveSignature = apptentiveSignature,
-        apiVersion = Constants.API_VERSION,
-        sdkVersion = Constants.SDK_VERSION,
-        baseURL = Constants.SERVER_URL,
-        conversationId = conversationId,
-        conversationToken = conversationToken
     )
 
     private fun createInteractionDataProvider(conversation: Conversation): InteractionDataProvider {

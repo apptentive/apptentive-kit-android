@@ -9,6 +9,8 @@ import apptentive.com.android.feedback.mockDevice
 import apptentive.com.android.feedback.mockPerson
 import apptentive.com.android.feedback.mockSdk
 import apptentive.com.android.feedback.model.*
+import apptentive.com.android.feedback.payload.Payload
+import apptentive.com.android.feedback.payload.PayloadResponse
 import apptentive.com.android.util.Result
 import com.google.common.truth.Truth.assertThat
 import org.junit.Ignore
@@ -89,6 +91,15 @@ private class MockConversationService(
         callback: (Result<EngagementManifest>) -> Unit
     ) {
         callback(Result.Success(EngagementManifest(expiry = getTimeSeconds() + 1800)))
+    }
+
+    override fun sendPayloadRequest(
+        payload: Payload,
+        conversationId: String,
+        conversationToken: String,
+        callback: (Result<PayloadResponse>) -> Unit
+    ) {
+        TODO("Not yet implemented")
     }
 
 }

@@ -1,6 +1,6 @@
 package apptentive.com.android.feedback.backend
 
-import apptentive.com.android.DependencyProviderRule
+import apptentive.com.android.TestCase
 import apptentive.com.android.concurrent.ImmediateExecutorQueue
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.feedback.*
@@ -10,13 +10,9 @@ import apptentive.com.android.util.Result
 import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test
-import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
-class DefaultConversationServiceTest {
-    @get:Rule
-    val dependencyRule = DependencyProviderRule()
-
+class DefaultConversationServiceTest : TestCase() {
     @get:Rule
     val uuidRule = GenerateUUIDRule()
 

@@ -1,3 +1,5 @@
 package apptentive.com.android.feedback.backend
 
-interface ConversationService : ConversationFetchService, EngagementManifestService
+import apptentive.com.android.feedback.payload.PayloadRequestSender
+
+interface ConversationService : ConversationFetchService, EngagementManifestService, PayloadRequestSender

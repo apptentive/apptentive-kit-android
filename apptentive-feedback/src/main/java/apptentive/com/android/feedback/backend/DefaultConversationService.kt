@@ -3,6 +3,8 @@ package apptentive.com.android.feedback.backend
 import apptentive.com.android.core.getTimeSeconds
 import apptentive.com.android.feedback.CONVERSATION
 import apptentive.com.android.feedback.model.*
+import apptentive.com.android.feedback.payload.Payload
+import apptentive.com.android.feedback.payload.PayloadResponse
 import apptentive.com.android.network.*
 import apptentive.com.android.network.HttpHeaders.Companion.CACHE_CONTROL
 import apptentive.com.android.util.Log
@@ -54,6 +56,22 @@ class DefaultConversationService(
             },
             responseReader = EngagementManifestReader
         )
+        sendRequest(request, callback)
+    }
+
+    override fun sendPayloadRequest(
+        payload: Payload,
+        conversationId: String,
+        conversationToken: String,
+        callback: (Result<PayloadResponse>) -> Unit
+    ) {
+        val url = createURL(payload.path.replace(":conversation_id", conversationId))
+        val request = HttpRequest.Builder<PayloadResponse>(url)
+            .method(payload.method, payload.data)
+            .headers(defaultHeaders)
+            .header("Authorization", "Bearer $conversationToken")
+            .responseReader(HttpJsonResponseReader(PayloadResponse::class.java))
+            .build()
         sendRequest(request, callback)
     }
 
