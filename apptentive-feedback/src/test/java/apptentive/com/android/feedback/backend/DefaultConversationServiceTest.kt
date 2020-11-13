@@ -8,6 +8,7 @@ import apptentive.com.android.network.*
 import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.util.Result
 import com.google.common.truth.Truth.assertThat
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import java.io.ByteArrayOutputStream
@@ -102,21 +103,7 @@ class DefaultConversationServiceTest : TestCase() {
                 )
             }
         }
-        val httpClient = DefaultHttpClient(
-            network = network,
-            networkQueue = ImmediateExecutorQueue(),
-            callbackExecutor = ImmediateExecutorQueue(),
-            retryPolicy = DefaultHttpRequestRetryPolicy()
-        )
-
-        val service = DefaultConversationService(
-            httpClient = httpClient,
-            apptentiveKey = "key",
-            apptentiveSignature = "signature",
-            apiVersion = 9,
-            sdkVersion = "6.0.0",
-            baseURL = "https://api.apptentive.com"
-        )
+        val service = createConversationService(network)
 
         service.fetchConversationToken(
             device = mockDevice,
@@ -137,6 +124,36 @@ class DefaultConversationServiceTest : TestCase() {
                 is Result.Error -> throw AssertionError(it.error)
             }
         }
+    }
+
+    @Test
+    @Ignore
+    fun fetchEngagementManifest() {
+        TODO("Implement me")
+    }
+
+    @Test
+    @Ignore
+    fun sendPayloadRequest() {
+        TODO("Implement me")
+    }
+
+    private fun createConversationService(network: MockHttpNetwork): ConversationService {
+        val httpClient = DefaultHttpClient(
+            network = network,
+            networkQueue = ImmediateExecutorQueue(),
+            callbackExecutor = ImmediateExecutorQueue(),
+            retryPolicy = DefaultHttpRequestRetryPolicy()
+        )
+
+        return DefaultConversationService(
+            httpClient = httpClient,
+            apptentiveKey = "key",
+            apptentiveSignature = "signature",
+            apiVersion = 9,
+            sdkVersion = "6.0.0",
+            baseURL = "https://api.apptentive.com"
+        )
     }
 }
 
