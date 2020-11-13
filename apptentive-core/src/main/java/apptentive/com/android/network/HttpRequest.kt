@@ -72,6 +72,16 @@ class HttpRequest<T> private constructor(
         /** Sets PATCH method with optional request body */
         fun patch(body: HttpRequestBody? = null) = method(HttpMethod.PATCH, body)
 
+        fun method(method: HttpMethod, body: ByteArray, contentType: String): Builder<T> {
+            return method(
+                method = method,
+                requestBody = BinaryRequestBody(
+                    data = body,
+                    contentType = contentType
+                )
+            )
+        }
+
         fun method(method: HttpMethod, body: Any? = null): Builder<T> {
             return method(
                 method = method,

@@ -11,6 +11,8 @@ data class Payload(
     val mediaType: MediaType,
     val data: ByteArray
 ) {
+    fun resolvePath(conversationId: String) = path.replace(":conversation_id", conversationId)
+
     override fun toString(): String {
         return "${javaClass.simpleName}(nonce=$nonce, type=$type, mediaType=$mediaType, data=${data.size} bytes)"
     }

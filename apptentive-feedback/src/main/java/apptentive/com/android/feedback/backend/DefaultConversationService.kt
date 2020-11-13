@@ -65,9 +65,9 @@ class DefaultConversationService(
         conversationToken: String,
         callback: (Result<PayloadResponse>) -> Unit
     ) {
-        val url = createURL(payload.path.replace(":conversation_id", conversationId))
+        val url = createURL(payload.resolvePath(conversationId))
         val request = HttpRequest.Builder<PayloadResponse>(url)
-            .method(payload.method, payload.data)
+            .method(payload.method, payload.data, contentType = payload.mediaType.toString())
             .headers(defaultHeaders)
             .header("Authorization", "Bearer $conversationToken")
             .responseReader(HttpJsonResponseReader(PayloadResponse::class.java))
@@ -104,7 +104,9 @@ class DefaultConversationService(
             .build()
     }
 
-    private fun createURL(path: String) = "$baseURL/$path"
+    private fun createURL(path: String): String {
+        return if (path.startsWith("/")) "$baseURL$path" else "$baseURL/$path"
+    }
 }
 
 private object EngagementManifestReader :

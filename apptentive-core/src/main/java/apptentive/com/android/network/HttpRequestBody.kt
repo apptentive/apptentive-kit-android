@@ -10,3 +10,12 @@ interface HttpRequestBody {
     /** Writes HTTP-request body to an output stream */
     fun write(stream: OutputStream)
 }
+
+class BinaryRequestBody(
+    private val data: ByteArray,
+    override val contentType: String
+) : HttpRequestBody {
+    override fun write(stream: OutputStream) {
+        stream.write(data)
+    }
+}
