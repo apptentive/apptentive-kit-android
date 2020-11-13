@@ -1,10 +1,13 @@
 package apptentive.com.android.feedback.payload
 
+import apptentive.com.android.network.HttpMethod
 import apptentive.com.android.util.generateUUID
 
 data class Payload(
     val nonce: String = generateUUID(),
     val type: PayloadType,
+    val path: String,
+    val method: HttpMethod,
     val mediaType: MediaType,
     val data: ByteArray
 ) {
@@ -20,6 +23,8 @@ data class Payload(
 
         if (nonce != other.nonce) return false
         if (type != other.type) return false
+        if (path != other.path) return false
+        if (method != other.method) return false
         if (mediaType != other.mediaType) return false
         if (!data.contentEquals(other.data)) return false
 
@@ -29,6 +34,8 @@ data class Payload(
     override fun hashCode(): Int {
         var result = nonce.hashCode()
         result = 31 * result + type.hashCode()
+        result = 31 * result + path.hashCode()
+        result = 31 * result + method.hashCode()
         result = 31 * result + mediaType.hashCode()
         result = 31 * result + data.contentHashCode()
         return result
