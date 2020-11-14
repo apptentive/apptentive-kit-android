@@ -1,5 +1,7 @@
 package apptentive.com.android.feedback.payload
 
+import android.content.Context
+
 class PersistentPayloadQueue(
     private val dbHelper: PayloadSQLiteHelper
 ) : PayloadQueue {
@@ -13,5 +15,11 @@ class PersistentPayloadQueue(
 
     override fun deletePayload(payload: Payload) {
         dbHelper.deletePayload(payload.nonce)
+    }
+
+    companion object {
+        fun create(context: Context) = PersistentPayloadQueue(
+            dbHelper = PayloadSQLiteHelper(context)
+        )
     }
 }

@@ -91,6 +91,8 @@ class SerialPayloadSender(
         sendNextUnsentPayload()
     }
 
+    val hasPayloadService get() = payloadService != null
+
     private fun notifySuccess(payload: Payload) {
         try {
             callback.invoke(Result.Success(payload))
