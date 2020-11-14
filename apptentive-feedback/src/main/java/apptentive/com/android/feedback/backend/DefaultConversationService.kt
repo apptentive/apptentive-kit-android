@@ -3,7 +3,7 @@ package apptentive.com.android.feedback.backend
 import apptentive.com.android.core.getTimeSeconds
 import apptentive.com.android.feedback.CONVERSATION
 import apptentive.com.android.feedback.model.*
-import apptentive.com.android.feedback.payload.Payload
+import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadResponse
 import apptentive.com.android.network.*
 import apptentive.com.android.network.HttpHeaders.Companion.CACHE_CONTROL
@@ -60,7 +60,7 @@ class DefaultConversationService(
     }
 
     override fun sendPayloadRequest(
-        payload: Payload,
+        payload: PayloadData,
         conversationId: String,
         conversationToken: String,
         callback: (Result<PayloadResponse>) -> Unit

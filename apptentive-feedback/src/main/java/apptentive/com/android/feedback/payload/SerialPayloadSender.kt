@@ -4,13 +4,13 @@ import apptentive.com.android.util.Result
 
 class SerialPayloadSender(
     private val payloadQueue: PayloadQueue,
-    private val callback: (Result<Payload>) -> Unit
+    private val callback: (Result<PayloadData>) -> Unit
 ) : PayloadSender {
     private var active: Boolean = true
     private var busySending: Boolean = false
     private var payloadService: PayloadService? = null
 
-    override fun sendPayload(payload: Payload) {
+    override fun sendPayload(payload: PayloadData) {
         payloadQueue.enqueuePayload(payload)
         sendNextUnsentPayload()
     }
@@ -27,13 +27,13 @@ class SerialPayloadSender(
         }
     }
 
-    private fun handleSentPayload(payload: Payload) {
+    private fun handleSentPayload(payload: PayloadData) {
         payloadQueue.deletePayload(payload)
         notifySuccess(payload)
         sendNextUnsentPayload()
     }
 
-    private fun handleFailedPayload(payload: Payload, error: Throwable) {
+    private fun handleFailedPayload(payload: PayloadData, error: Throwable) {
         val shouldDeletePayload = shouldDeletePayload(error)
         if (shouldDeletePayload) {
             payloadQueue.deletePayload(payload)
@@ -93,7 +93,7 @@ class SerialPayloadSender(
 
     val hasPayloadService get() = payloadService != null
 
-    private fun notifySuccess(payload: Payload) {
+    private fun notifySuccess(payload: PayloadData) {
         try {
             callback.invoke(Result.Success(payload))
         } catch (e: Exception) {
@@ -101,7 +101,7 @@ class SerialPayloadSender(
         }
     }
 
-    private fun notifyFailure(error: Throwable, payload: Payload) {
+    private fun notifyFailure(error: Throwable, payload: PayloadData) {
         try {
             if (error is PayloadSendException) {
                 callback(Result.Error(error))

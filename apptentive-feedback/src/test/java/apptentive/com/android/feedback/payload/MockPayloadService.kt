@@ -2,9 +2,9 @@ package apptentive.com.android.feedback.payload
 
 import apptentive.com.android.util.Result
 
-internal class MockPayloadService(private val sendResult: ((Payload) -> Result<Payload>)? = null) :
+internal class MockPayloadService(private val sendResult: ((PayloadData) -> Result<PayloadData>)? = null) :
     PayloadService {
-    override fun sendPayload(payload: Payload, callback: (Result<Payload>) -> Unit) {
+    override fun sendPayload(payload: PayloadData, callback: (Result<PayloadData>) -> Unit) {
         val result = sendResult?.invoke(payload) ?: Result.Success(payload)
         callback(result)
     }

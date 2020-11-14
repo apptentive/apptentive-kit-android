@@ -178,7 +178,7 @@ internal class ApptentiveDefaultClient(
     }
 
     @WorkerThread
-    private fun onPayloadSendFinish(result: Result<Payload>) {
+    private fun onPayloadSendFinish(result: Result<PayloadData>) {
         // TODO: notify the rest of the sdk
     }
 

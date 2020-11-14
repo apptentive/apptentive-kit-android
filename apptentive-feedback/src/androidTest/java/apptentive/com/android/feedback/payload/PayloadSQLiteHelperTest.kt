@@ -93,8 +93,8 @@ class PayloadSQLiteHelperTest {
         method: HttpMethod,
         mediaType: MediaType,
         data: String
-    ): Payload {
-        return Payload(
+    ): PayloadData {
+        return PayloadData(
             nonce = nonce,
             type = type,
             path = path,

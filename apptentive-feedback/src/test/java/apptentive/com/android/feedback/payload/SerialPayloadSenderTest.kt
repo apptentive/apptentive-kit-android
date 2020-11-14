@@ -63,7 +63,7 @@ class SerialPayloadSenderTest : TestCase() {
         )
     }
 
-    private fun payloadCallback(result: Result<Payload>) {
+    private fun payloadCallback(result: Result<PayloadData>) {
         when (result) {
             is Result.Success -> addResult("success: ${result.data.nonce}")
             is Result.Error -> {
@@ -82,7 +82,7 @@ class SerialPayloadSenderTest : TestCase() {
         data: String = "Payload data",
         path: String = ":conversation_id/payloads",
         method: HttpMethod = HttpMethod.POST
-    ) = Payload(
+    ) = PayloadData(
         nonce = nonce,
         type = PayloadType.Event,
         path = path,

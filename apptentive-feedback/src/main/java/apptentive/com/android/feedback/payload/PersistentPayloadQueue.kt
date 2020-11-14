@@ -5,15 +5,15 @@ import android.content.Context
 class PersistentPayloadQueue(
     private val dbHelper: PayloadSQLiteHelper
 ) : PayloadQueue {
-    override fun enqueuePayload(payload: Payload) {
+    override fun enqueuePayload(payload: PayloadData) {
         dbHelper.addPayload(payload)
     }
 
-    override fun nextUnsentPayload(): Payload? {
+    override fun nextUnsentPayload(): PayloadData? {
         return dbHelper.nextUnsentPayload()
     }
 
-    override fun deletePayload(payload: Payload) {
+    override fun deletePayload(payload: PayloadData) {
         dbHelper.deletePayload(payload.nonce)
     }
 

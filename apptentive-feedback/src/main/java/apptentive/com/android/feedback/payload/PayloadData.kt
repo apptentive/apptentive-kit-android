@@ -3,7 +3,7 @@ package apptentive.com.android.feedback.payload
 import apptentive.com.android.network.HttpMethod
 import apptentive.com.android.util.generateUUID
 
-data class Payload(
+data class PayloadData(
     val nonce: String = generateUUID(),
     val type: PayloadType,
     val path: String,
@@ -21,7 +21,7 @@ data class Payload(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as Payload
+        other as PayloadData
 
         if (nonce != other.nonce) return false
         if (type != other.type) return false

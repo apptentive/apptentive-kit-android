@@ -9,7 +9,7 @@ class PayloadResponse {
 
 interface PayloadRequestSender {
     fun sendPayloadRequest(
-        payload: Payload,
+        payload: PayloadData,
         conversationId: String,
         conversationToken: String,
         callback: (Result<PayloadResponse>) -> Unit
@@ -21,7 +21,7 @@ class ConversationPayloadService(
     private val conversationId: String,
     private val conversationToken: String
 ) : PayloadService {
-    override fun sendPayload(payload: Payload, callback: (Result<Payload>) -> Unit) {
+    override fun sendPayload(payload: PayloadData, callback: (Result<PayloadData>) -> Unit) {
         requestSender.sendPayloadRequest(
             payload = payload,
             conversationId = conversationId,

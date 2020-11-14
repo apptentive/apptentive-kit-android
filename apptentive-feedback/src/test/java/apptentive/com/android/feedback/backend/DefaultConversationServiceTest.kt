@@ -5,7 +5,7 @@ import apptentive.com.android.concurrent.ImmediateExecutorQueue
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.feedback.*
 import apptentive.com.android.feedback.payload.MediaType
-import apptentive.com.android.feedback.payload.Payload
+import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadType
 import apptentive.com.android.network.*
 import apptentive.com.android.serialization.json.JsonConverter
@@ -159,7 +159,7 @@ class DefaultConversationServiceTest : TestCase() {
                 )
             }
         }
-        val payload = Payload(
+        val payload = PayloadData(
             nonce = nonce,
             type = PayloadType.Event,
             path = "/conversations/:conversation_id/events",

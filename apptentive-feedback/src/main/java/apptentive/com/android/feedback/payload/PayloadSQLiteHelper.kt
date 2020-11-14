@@ -21,7 +21,7 @@ class PayloadSQLiteHelper(context: Context) :
         onCreate(db)
     }
 
-    fun addPayload(payload: Payload) {
+    fun addPayload(payload: PayloadData) {
         val values = ContentValues().apply {
             put(COL_NONCE, payload.nonce)
             put(COL_TYPE, payload.type.toString())
@@ -47,7 +47,7 @@ class PayloadSQLiteHelper(context: Context) :
 
     }
 
-    fun nextUnsentPayload(): Payload? {
+    fun nextUnsentPayload(): PayloadData? {
         writableDatabase.use { db ->
             while (true) {
                 db.select(tableName = TABLE_NAME, orderBy = COL_PRIMARY_KEY, limit = 1)
@@ -56,7 +56,7 @@ class PayloadSQLiteHelper(context: Context) :
                             val nonce = cursor.getString(COL_NONCE)
 
                             try {
-                                return Payload(
+                                return PayloadData(
                                     nonce = nonce,
                                     type = PayloadType.parse(cursor.getString(COL_TYPE)),
                                     path = cursor.getString(COL_PATH),
