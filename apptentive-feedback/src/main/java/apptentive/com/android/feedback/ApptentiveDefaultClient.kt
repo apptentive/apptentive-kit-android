@@ -166,7 +166,10 @@ internal class ApptentiveDefaultClient(
 
     // FIXME: temporary code
     private fun recordEvent(event: Event) {
+        // store event locally
         conversationManager.recordEvent(event)
+
+        // TODO: send event to the backend
     }
 
     // FIXME: temporary code
@@ -175,7 +178,7 @@ internal class ApptentiveDefaultClient(
     }
 
     private fun onPayloadSendFinish(result: Result<Payload>) {
-        TODO("Not yet implemented")
+        // TODO: notify the rest of the sdk
     }
 
     //endregion
