@@ -164,7 +164,7 @@ internal class ApptentiveDefaultClient(
         return component.getModules()
     }
 
-    // FIXME: temporary code
+    @WorkerThread
     private fun recordEvent(event: Event) {
         // store event locally
         conversationManager.recordEvent(event)
@@ -172,11 +172,12 @@ internal class ApptentiveDefaultClient(
         // TODO: send event to the backend
     }
 
-    // FIXME: temporary code
+    @WorkerThread
     private fun recordInteraction(interaction: Interaction) {
         conversationManager.recordInteraction(interaction.id)
     }
 
+    @WorkerThread
     private fun onPayloadSendFinish(result: Result<Payload>) {
         // TODO: notify the rest of the sdk
     }
