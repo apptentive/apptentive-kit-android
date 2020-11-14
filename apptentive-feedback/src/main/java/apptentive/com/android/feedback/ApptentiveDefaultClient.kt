@@ -41,6 +41,7 @@ internal class ApptentiveDefaultClient(
             payloadQueue = PersistentPayloadQueue.create(context),
             callback = ::onPayloadSendFinish
         )
+        payloadSender = serialPayloadSender
 
         val conversationService = createConversationService()
         conversationManager = ConversationManager(
