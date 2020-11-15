@@ -14,7 +14,7 @@ class MockEngagementContext(onEngage: ((Event) -> EngagementResult)? = null) :
                 interactionId: String?,
                 data: Map<String, Any>?,
                 customData: Map<String, Any>?,
-                vararg extendedData: ExtendedData
+                extendedData: List<ExtendedData>?
             ): EngagementResult {
                 return onEngage?.invoke(event) ?: EngagementResult.Success
             }

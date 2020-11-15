@@ -6,6 +6,7 @@ import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.MockInteractionDataConverter
 import apptentive.com.android.feedback.engagement.interactions.mockEvent
 import apptentive.com.android.feedback.engagement.interactions.mockInteraction
+import apptentive.com.android.feedback.model.payloads.ExtendedData
 import com.google.common.truth.Truth.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -49,7 +50,13 @@ class DefaultEngagementTest : TestCase() {
         assertResults("Event: ${mockEvent.fullName}")
     }
 
-    private fun recordEvent(event: Event) {
+    private fun recordEvent(
+        event: Event,
+        interactionId: String?,
+        data: Map<String, Any>?,
+        customData: Map<String, Any>?,
+        extendedData: List<ExtendedData>?
+    ) {
         addResult("Event: ${event.fullName}")
     }
 

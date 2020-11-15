@@ -63,14 +63,6 @@ class EventPayload(
     }
 
     //endregion
-
-    //region Companion
-
-    companion object {
-        fun fromEvent(event: Event) = EventPayload(label = event.fullName)
-    }
-
-    //endregion
 }
 
 class ExtendedData {

@@ -6,13 +6,23 @@ import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionDataConverter
 import apptentive.com.android.feedback.model.payloads.ExtendedData
 
+typealias RecordEventCallback = (
+    event: Event,
+    interactionId: String?,
+    data: Map<String, Any>?,
+    customData: Map<String, Any>?,
+    extendedData: List<ExtendedData>?
+) -> Unit
+
+typealias RecordInteractionCallback = (interaction: Interaction) -> Unit
+
 @Suppress("FoldInitializerAndIfToElvis")
 data class DefaultEngagement(
     private val interactionDataProvider: InteractionDataProvider,
     private val interactionConverter: InteractionDataConverter,
     private val interactionEngagement: InteractionEngagement,
-    private val recordEvent: (Event) -> Unit = {},
-    private val recordInteraction: (Interaction) -> Unit = {}
+    private val recordEvent: RecordEventCallback,
+    private val recordInteraction: RecordInteractionCallback
 ) : Engagement {
     @WorkerThread
     override fun engage(
@@ -23,7 +33,7 @@ data class DefaultEngagement(
         customData: Map<String, Any>?,
         extendedData: List<ExtendedData>?
     ): EngagementResult {
-        recordEvent(event)
+        recordEvent(event, interactionId, data, customData, extendedData)
 
         val interactionData = interactionDataProvider.getInteraction(event)
         if (interactionData == null) {
@@ -37,7 +47,7 @@ data class DefaultEngagement(
 
         val result = interactionEngagement.engage(context, interaction)
         if (result is EngagementResult.Success) {
-            recordInteraction(interaction)
+            recordInteraction.invoke(interaction)
         }
 
         return result

@@ -14,6 +14,7 @@ import apptentive.com.android.feedback.engagement.criteria.InvocationConverter
 import apptentive.com.android.feedback.engagement.interactions.*
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.payloads.EventPayload
+import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.feedback.payload.*
 import apptentive.com.android.feedback.platform.*
 import apptentive.com.android.network.HttpClient
@@ -167,12 +168,26 @@ internal class ApptentiveDefaultClient(
     }
 
     @WorkerThread
-    private fun recordEvent(event: Event) {
+    private fun recordEvent(
+        event: Event,
+        interactionId: String?,
+        data: Map<String, Any>?,
+        customData: Map<String, Any>?,
+        extendedData: List<ExtendedData>?
+    ) {
         // store event locally
         conversationManager.recordEvent(event)
 
         // send event to the backend
-        payloadSender.sendPayload(EventPayload.fromEvent(event))
+        payloadSender.sendPayload(
+            EventPayload(
+                label = event.fullName,
+                interactionId = interactionId,
+                data = data,
+                customData = customData,
+                extendedData = extendedData
+            )
+        )
     }
 
     @WorkerThread
