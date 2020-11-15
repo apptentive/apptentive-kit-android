@@ -6,6 +6,7 @@ import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.Engagement
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.Event
+import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.feedback.ui.EnjoymentDialogViewModel.Companion.CODE_POINT_CANCEL
 import apptentive.com.android.feedback.ui.EnjoymentDialogViewModel.Companion.CODE_POINT_DISMISS
 import apptentive.com.android.feedback.ui.EnjoymentDialogViewModel.Companion.CODE_POINT_NO
@@ -19,7 +20,14 @@ class EnjoymentDialogViewModelTest {
         val events = mutableListOf<Event>()
 
         val engagement = object : Engagement {
-            override fun engage(context: EngagementContext, event: Event): EngagementResult {
+            override fun engage(
+                context: EngagementContext,
+                event: Event,
+                interactionId: String?,
+                data: Map<String, Any>?,
+                customData: Map<String, Any>?,
+                extendedData: List<ExtendedData>?
+            ): EngagementResult {
                 events.add(event)
                 return EngagementResult.Success
             }

@@ -13,6 +13,7 @@ import apptentive.com.android.feedback.engagement.criteria.DefaultTargetingState
 import apptentive.com.android.feedback.engagement.criteria.InvocationConverter
 import apptentive.com.android.feedback.engagement.interactions.*
 import apptentive.com.android.feedback.model.Conversation
+import apptentive.com.android.feedback.model.payloads.EventPayload
 import apptentive.com.android.feedback.payload.*
 import apptentive.com.android.feedback.platform.*
 import apptentive.com.android.network.HttpClient
@@ -170,7 +171,8 @@ internal class ApptentiveDefaultClient(
         // store event locally
         conversationManager.recordEvent(event)
 
-        // TODO: send event to the backend
+        // send event to the backend
+        payloadSender.sendPayload(EventPayload.fromEvent(event))
     }
 
     @WorkerThread

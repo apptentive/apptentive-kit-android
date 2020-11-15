@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.model.payloads
 
+import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.payload.MediaType
 import apptentive.com.android.feedback.payload.PayloadType
 import apptentive.com.android.network.HttpMethod
@@ -59,6 +60,14 @@ class EventPayload(
         result = 31 * result + (customData?.hashCode() ?: 0)
         result = 31 * result + (extendedData?.hashCode() ?: 0)
         return result
+    }
+
+    //endregion
+
+    //region Companion
+
+    companion object {
+        fun fromEvent(event: Event) = EventPayload(label = event.fullName)
     }
 
     //endregion
