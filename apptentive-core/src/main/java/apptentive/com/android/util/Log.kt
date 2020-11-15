@@ -32,11 +32,11 @@ object Log {
         }
 
         // tag
-        buffer.append(' ')
+        buffer.append(" [")
         buffer.append(tag.name)
+        buffer.append("] ")
 
         // message
-        buffer.append(' ')
         buffer.append(message)
 
         // output

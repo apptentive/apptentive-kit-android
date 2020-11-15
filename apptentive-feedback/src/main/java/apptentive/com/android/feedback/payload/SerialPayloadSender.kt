@@ -60,30 +60,35 @@ class SerialPayloadSender(
     }
 
     private fun sendNextUnsentPayload() {
-        if (payloadService == null) {
-            //TODO: log message: can't send as payload service is null
+        val service = payloadService
+        if (service == null) {
+            Log.w(PAYLOADS, "unable to send payload: ${PayloadService::class.java.simpleName} is null")
             return
         }
 
         if (!active) {
-            // TODO: log message: con't send while being inactive
+            Log.w(PAYLOADS, "unable to send payload: payload sender is not active")
             return
         }
 
         if (busySending) {
-            // TODO: log message: con't send while still busy
+            Log.w(PAYLOADS, "unable to send payload: another payload being sent")
             return
         }
 
-
         val nextPayload = payloadQueue.nextUnsentPayload()
-            ?: // TODO: log message 'all done'
+        if (nextPayload == null) {
+            Log.w(PAYLOADS, "unable to send payload: payload queue is empty")
             return
+        }
 
         busySending = true
 
-        payloadService?.sendPayload(nextPayload) {
+        Log.v(PAYLOADS, "Start sending payload: $nextPayload")
+
+        service.sendPayload(nextPayload) {
             busySending = false
+            Log.v(PAYLOADS, "Payload send finished")
 
             when (it) {
                 is Result.Success -> handleSentPayload(nextPayload)

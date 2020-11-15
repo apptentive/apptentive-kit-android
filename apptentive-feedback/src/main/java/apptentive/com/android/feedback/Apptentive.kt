@@ -46,7 +46,7 @@ object Apptentive {
         DependencyProvider.register(AndroidExecutorFactoryProvider())
         DependencyProvider.register(AndroidFileSystemProvider(application.applicationContext, "apptentive.com.android.feedback"))
 
-        stateExecutor = ExecutorQueue.createSerialQueue("Apptentive")
+        stateExecutor = ExecutorQueue.createSerialQueue("SDK Queue")
         mainExecutor = ExecutorQueue.mainQueue
 
         // TODO: build a better dependency injection solution and lift all the dependencies up
