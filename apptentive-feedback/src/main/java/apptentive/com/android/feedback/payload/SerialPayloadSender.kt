@@ -1,5 +1,8 @@
 package apptentive.com.android.feedback.payload
 
+import apptentive.com.android.feedback.PAYLOADS
+import apptentive.com.android.feedback.model.payloads.Payload
+import apptentive.com.android.util.Log
 import apptentive.com.android.util.Result
 
 class SerialPayloadSender(
@@ -10,8 +13,11 @@ class SerialPayloadSender(
     private var busySending: Boolean = false
     private var payloadService: PayloadService? = null
 
-    override fun sendPayload(payload: PayloadData) {
-        payloadQueue.enqueuePayload(payload)
+    override fun sendPayload(payload: Payload) {
+        val payloadData = getPayloadData(payload)
+        if (payloadData != null) {
+            payloadQueue.enqueuePayload(payloadData)
+        }
         sendNextUnsentPayload()
     }
 
@@ -92,6 +98,16 @@ class SerialPayloadSender(
     }
 
     val hasPayloadService get() = payloadService != null
+
+    private fun getPayloadData(payload: Payload): PayloadData? {
+        try {
+            return payload.toPayloadData()
+        } catch (e: Exception) {
+            Log.e(PAYLOADS, "Exception while creating payload data: $payload", e)
+        }
+
+        return null
+    }
 
     private fun notifySuccess(payload: PayloadData) {
         try {

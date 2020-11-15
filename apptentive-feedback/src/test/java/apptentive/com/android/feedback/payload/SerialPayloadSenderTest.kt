@@ -1,7 +1,7 @@
 package apptentive.com.android.feedback.payload
 
 import apptentive.com.android.TestCase
-import apptentive.com.android.network.HttpMethod
+import apptentive.com.android.feedback.model.payloads.EventPayload
 import apptentive.com.android.util.Result
 import org.junit.Test
 
@@ -78,17 +78,10 @@ class SerialPayloadSenderTest : TestCase() {
     }
 
     private fun createPayload(
-        nonce: String,
-        data: String = "Payload data",
-        path: String = ":conversation_id/payloads",
-        method: HttpMethod = HttpMethod.POST
-    ) = PayloadData(
+        nonce: String
+    ) = EventPayload(
         nonce = nonce,
-        type = PayloadType.Event,
-        path = path,
-        method = method,
-        mediaType = MediaType.applicationJson,
-        data = data.toByteArray()
+        label = "app#local#event"
     )
 }
 
