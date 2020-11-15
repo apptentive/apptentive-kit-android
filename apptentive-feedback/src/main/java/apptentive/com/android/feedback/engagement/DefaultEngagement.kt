@@ -47,7 +47,7 @@ data class DefaultEngagement(
 
         val result = interactionEngagement.engage(context, interaction)
         if (result is EngagementResult.Success) {
-            recordInteraction.invoke(interaction)
+            recordInteraction(interaction)
         }
 
         return result
