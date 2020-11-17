@@ -4,9 +4,7 @@ import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.concurrent.ExecutorQueue
 import apptentive.com.android.core.UNDEFINED
 import apptentive.com.android.core.format
-import apptentive.com.android.core.getTimeSeconds
 import apptentive.com.android.util.Log
-import apptentive.com.android.util.LogTag
 import apptentive.com.android.util.LogTags
 import apptentive.com.android.util.Result
 
@@ -117,8 +115,6 @@ class DefaultHttpClient(
         Log.v(LogTags.network, "Headers:\n${request.headers}")
         Log.v(LogTags.network, "Request Body: ${request.requestBody?.asString()}")
 
-        val start = getTimeSeconds()
-
         // response body
         val networkResponse = network.performRequest(request)
 
@@ -126,8 +122,7 @@ class DefaultHttpClient(
         val statusCode = networkResponse.statusCode
         val statusMessage = networkResponse.statusMessage
 
-        val elapsed = getTimeSeconds() - start
-        Log.d(LogTags.network, "<-- $statusCode $statusMessage (${elapsed.format()} sec)")
+        Log.d(LogTags.network, "<-- $statusCode $statusMessage (${networkResponse.duration.format()} sec)")
         Log.v(LogTags.network, "Response Body: ${networkResponse.asString()}")
 
         // successful?
