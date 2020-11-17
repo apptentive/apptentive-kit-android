@@ -5,16 +5,12 @@ import android.content.Context
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.concurrent.ExecutorQueue
 import apptentive.com.android.concurrent.Executors
-import apptentive.com.android.core.AndroidFileSystemProvider
-import apptentive.com.android.core.AndroidExecutorFactoryProvider
-import apptentive.com.android.core.AndroidLoggerProvider
-import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.core.*
 import apptentive.com.android.feedback.engagement.Event
-import apptentive.com.android.network.DefaultHttpClient
-import apptentive.com.android.network.DefaultHttpNetwork
-import apptentive.com.android.network.DefaultHttpRequestRetryPolicy
-import apptentive.com.android.network.HttpClient
+import apptentive.com.android.network.*
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags
+import apptentive.com.android.util.LogTags.network
 
 // TODO: better names for specific cases
 sealed class EngagementResult {
@@ -66,11 +62,26 @@ object Apptentive {
     }
 
     private fun createHttpClient(context: Context): HttpClient {
+        val loggingInterceptor = object: HttpLoggingInterceptor {
+            override fun intercept(request: HttpRequest<*>) {
+                Log.d(network, "--> ${request.method} ${request.url}")
+                Log.v(network, "Headers:\n${request.headers}")
+                Log.v(network, "Request Body: ${request.requestBody?.asString()}")
+            }
+
+            override fun intercept(response: HttpNetworkResponse) {
+                val statusCode = response.statusCode
+                val statusMessage = response.statusMessage
+                Log.d(network, "<-- $statusCode $statusMessage (${response.duration.format()} sec)")
+                Log.v(network, "Response Body: ${response.asString()}")
+            }
+        }
         return DefaultHttpClient(
             network = DefaultHttpNetwork(context),
             networkQueue = ExecutorQueue.createConcurrentQueue("Network"),
             callbackExecutor = stateExecutor,
-            retryPolicy = DefaultHttpRequestRetryPolicy()
+            retryPolicy = DefaultHttpRequestRetryPolicy(),
+            loggingInterceptor = loggingInterceptor
         )
     }
 

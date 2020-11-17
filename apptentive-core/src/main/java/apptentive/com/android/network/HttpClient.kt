@@ -3,7 +3,6 @@ package apptentive.com.android.network
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.concurrent.ExecutorQueue
 import apptentive.com.android.core.UNDEFINED
-import apptentive.com.android.core.format
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags
 import apptentive.com.android.util.Result
@@ -37,7 +36,8 @@ class DefaultHttpClient(
     private val networkQueue: ExecutorQueue,
     private val callbackExecutor: Executor,
     private val retryPolicy: HttpRequestRetryPolicy,
-    private val listener: HttpClientListener? = null
+    private val listener: HttpClientListener? = null,
+    private val loggingInterceptor: HttpLoggingInterceptor? = null
 ) : HttpClient {
     //region Request sending
 
@@ -111,19 +111,18 @@ class DefaultHttpClient(
             throw NetworkUnavailableException()
         }
 
-        Log.d(LogTags.network, "--> ${request.method} ${request.url}")
-        Log.v(LogTags.network, "Headers:\n${request.headers}")
-        Log.v(LogTags.network, "Request Body: ${request.requestBody?.asString()}")
+        // log request
+        loggingInterceptor?.intercept(request)
 
         // response body
         val networkResponse = network.performRequest(request)
 
+        // log response
+        loggingInterceptor?.intercept(networkResponse)
+
         // status
         val statusCode = networkResponse.statusCode
         val statusMessage = networkResponse.statusMessage
-
-        Log.d(LogTags.network, "<-- $statusCode $statusMessage (${networkResponse.duration.format()} sec)")
-        Log.v(LogTags.network, "Response Body: ${networkResponse.asString()}")
 
         // successful?
         if (statusCode in 200..299) {
