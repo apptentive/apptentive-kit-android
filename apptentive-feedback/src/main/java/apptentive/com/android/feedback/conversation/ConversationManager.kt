@@ -120,7 +120,6 @@ class ConversationManager(
     }
 
     fun recordEvent(event: Event) {
-        // 1. save it to conversation data
         val conversation = activeConversationSubject.value
         activeConversationSubject.value = conversation.copy(
             engagementData = conversation.engagementData.addInvoke(
@@ -130,7 +129,6 @@ class ConversationManager(
                 lastInvoked = DateTime.now()
             )
         )
-        // 2. send a payload
     }
 
     fun recordInteraction(interactionId: String) {

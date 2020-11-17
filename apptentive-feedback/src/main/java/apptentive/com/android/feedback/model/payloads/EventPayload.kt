@@ -1,6 +1,5 @@
 package apptentive.com.android.feedback.model.payloads
 
-import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.payload.MediaType
 import apptentive.com.android.feedback.payload.PayloadType
 import apptentive.com.android.network.HttpMethod
@@ -65,5 +64,6 @@ class EventPayload(
     //endregion
 }
 
+// FIXME: figure it out
 class ExtendedData {
 }
