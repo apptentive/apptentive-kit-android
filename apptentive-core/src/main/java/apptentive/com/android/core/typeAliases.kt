@@ -16,3 +16,5 @@ fun getUtcOffset(): Int {
 }
 
 fun isInThePast(time: TimeInterval) = getTimeSeconds() > time
+
+fun TimeInterval.format(digits: Int = 3) = "%.${digits}f".format(this)
