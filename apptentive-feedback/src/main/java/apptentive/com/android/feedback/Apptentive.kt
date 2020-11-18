@@ -42,6 +42,9 @@ object Apptentive {
         DependencyProvider.register(AndroidExecutorFactoryProvider())
         DependencyProvider.register(AndroidFileSystemProvider(application.applicationContext, "apptentive.com.android.feedback"))
 
+        // set log level
+        Log.logLevel = configuration.logLevel
+
         stateExecutor = ExecutorQueue.createSerialQueue("SDK Queue")
         mainExecutor = ExecutorQueue.mainQueue
 

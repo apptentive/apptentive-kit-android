@@ -3,6 +3,7 @@ package apptentive.com.android.feedback.payload
 import android.content.Context
 import apptentive.com.android.feedback.PAYLOADS
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogLevel
 import apptentive.com.android.util.createStringTable
 
 class PersistentPayloadQueue(
@@ -23,6 +24,11 @@ class PersistentPayloadQueue(
     }
 
     private fun printPayloads(title: String) {
+        if (!Log.canLog(LogLevel.Verbose)) {
+            // avoid unnecessary computations
+            return
+        }
+
         try {
             val payloads = dbHelper.readPayloads()
             if (payloads.isEmpty()) {
