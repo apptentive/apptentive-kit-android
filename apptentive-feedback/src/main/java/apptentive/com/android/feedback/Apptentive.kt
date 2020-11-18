@@ -78,6 +78,10 @@ object Apptentive {
                 Log.d(network, "<-- $statusCode $statusMessage (${response.duration.format()} sec)")
                 Log.v(network, "Response Body: ${response.asString()}")
             }
+
+            override fun retry(request: HttpRequest<*>, delay: TimeInterval) {
+                Log.d(network, "Retrying request ${request.method} ${request.url} in ${delay.format()} sec...")
+            }
         }
         return DefaultHttpClient(
             network = DefaultHttpNetwork(context),

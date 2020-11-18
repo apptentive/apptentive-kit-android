@@ -168,6 +168,8 @@ class DefaultHttpClient(
         callback: (Result<HttpResponse<T>>) -> Unit
     ) {
         val delay = retryPolicy.getRetryDelay(request.numRetries)
+        loggingInterceptor?.retry(request, delay)
+
         networkQueue.execute(delay) {
             request.numRetries++
 
