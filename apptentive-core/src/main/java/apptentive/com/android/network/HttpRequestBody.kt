@@ -1,5 +1,6 @@
 package apptentive.com.android.network
 
+import java.io.ByteArrayOutputStream
 import java.io.OutputStream
 
 /** Represent an HTTP-request body */
@@ -9,6 +10,12 @@ interface HttpRequestBody {
 
     /** Writes HTTP-request body to an output stream */
     fun write(stream: OutputStream)
+}
+
+fun HttpRequestBody.asString(): String {
+    val stream = ByteArrayOutputStream()
+    write(stream)
+    return stream.toByteArray().toString(Charsets.UTF_8)
 }
 
 class BinaryRequestBody(

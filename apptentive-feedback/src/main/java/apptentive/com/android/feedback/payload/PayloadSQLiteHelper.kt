@@ -44,7 +44,6 @@ class PayloadSQLiteHelper(context: Context) :
             deletePayload(db, nonce)
         }
         return false
-
     }
 
     fun nextUnsentPayload(): PayloadData? {
@@ -53,19 +52,11 @@ class PayloadSQLiteHelper(context: Context) :
                 db.select(tableName = TABLE_NAME, orderBy = COL_PRIMARY_KEY, limit = 1)
                     .use { cursor ->
                         if (cursor.moveToFirst()) {
-                            val nonce = cursor.getString(COL_NONCE)
-
                             try {
-                                return PayloadData(
-                                    nonce = nonce,
-                                    type = PayloadType.parse(cursor.getString(COL_TYPE)),
-                                    path = cursor.getString(COL_PATH),
-                                    method = HttpMethod.valueOf(cursor.getString(COL_METHOD)),
-                                    mediaType = MediaType.parse(cursor.getString(COL_MEDIA_TYPE)),
-                                    data = cursor.getBlob(COL_PAYLOAD_DATA)
-                                )
+                                return readPayload(cursor)
                             } catch (e: Exception) {
                                 // FIXME: error message
+                                val nonce = cursor.getString(COL_NONCE)
                                 deletePayload(db, nonce)
                             }
                         } else {
@@ -81,6 +72,30 @@ class PayloadSQLiteHelper(context: Context) :
     private fun deletePayload(db: SQLiteDatabase, nonce: String): Boolean {
         val deletedRows = db.delete(TABLE_NAME, column = COL_NONCE, value = nonce)
         return deletedRows > 0
+    }
+
+    internal fun readPayloads(): List<PayloadData> {
+        readableDatabase.use { db ->
+            db.select(tableName = TABLE_NAME, orderBy = COL_PRIMARY_KEY)
+                .use { cursor ->
+                    val result = mutableListOf<PayloadData>()
+                    while (cursor.moveToNext()) {
+                        result.add(readPayload(cursor))
+                    }
+                    return result
+                }
+        }
+    }
+
+    private fun readPayload(cursor: Cursor): PayloadData {
+        return PayloadData(
+            nonce = cursor.getString(COL_NONCE),
+            type = PayloadType.parse(cursor.getString(COL_TYPE)),
+            path = cursor.getString(COL_PATH),
+            method = HttpMethod.valueOf(cursor.getString(COL_METHOD)),
+            mediaType = MediaType.parse(cursor.getString(COL_MEDIA_TYPE)),
+            data = cursor.getBlob(COL_PAYLOAD_DATA)
+        )
     }
 
     @VisibleForTesting

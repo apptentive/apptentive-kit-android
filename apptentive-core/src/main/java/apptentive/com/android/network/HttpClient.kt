@@ -36,7 +36,8 @@ class DefaultHttpClient(
     private val networkQueue: ExecutorQueue,
     private val callbackExecutor: Executor,
     private val retryPolicy: HttpRequestRetryPolicy,
-    private val listener: HttpClientListener? = null
+    private val listener: HttpClientListener? = null,
+    private val loggingInterceptor: HttpLoggingInterceptor? = null
 ) : HttpClient {
     //region Request sending
 
@@ -110,8 +111,14 @@ class DefaultHttpClient(
             throw NetworkUnavailableException()
         }
 
+        // log request
+        loggingInterceptor?.intercept(request)
+
         // response body
         val networkResponse = network.performRequest(request)
+
+        // log response
+        loggingInterceptor?.intercept(networkResponse)
 
         // status
         val statusCode = networkResponse.statusCode
@@ -161,6 +168,8 @@ class DefaultHttpClient(
         callback: (Result<HttpResponse<T>>) -> Unit
     ) {
         val delay = retryPolicy.getRetryDelay(request.numRetries)
+        loggingInterceptor?.retry(request, delay)
+
         networkQueue.execute(delay) {
             request.numRetries++
 

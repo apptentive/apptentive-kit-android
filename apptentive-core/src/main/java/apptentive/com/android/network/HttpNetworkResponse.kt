@@ -18,4 +18,6 @@ data class HttpNetworkResponse(
     val data: ByteArray,
     val headers: HttpHeaders,
     val duration: TimeInterval
-)
+) {
+    fun asString(): String = data.toString(Charsets.UTF_8)
+}
