@@ -45,7 +45,7 @@ class InteractionModuleComponentTest : TestCase() {
     }
 }
 
-private class TestInteraction(id: String) : Interaction(id)
+private class TestInteraction(id: String) : Interaction(id, type = "Test")
 
 private class MyTestInteractionModule : InteractionModule<TestInteraction> {
     override val interactionClass = TestInteraction::class.java
