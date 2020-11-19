@@ -13,7 +13,7 @@ data class Event(val vendor: String, val interaction: String, val name: String) 
 
     companion object {
         fun local(name: String): Event = Event("local", "app", name)
-        fun internal(name: String): Event = Event("com.apptentive", "app", name)
+        fun internal(name: String, interaction: String = "app"): Event = Event("com.apptentive", interaction, name)
 
         private fun escapeCharacters(value: String): String = value
             .replace("%", "%25")

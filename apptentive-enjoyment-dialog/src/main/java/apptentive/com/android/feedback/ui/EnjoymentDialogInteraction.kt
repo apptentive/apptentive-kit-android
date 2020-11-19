@@ -8,4 +8,4 @@ internal class EnjoymentDialogInteraction(
     val yesText: String,
     val noText: String,
     val dismissText: String?
-) : Interaction(id)
+) : Interaction(id = id, type = "EnjoymentDialog")
