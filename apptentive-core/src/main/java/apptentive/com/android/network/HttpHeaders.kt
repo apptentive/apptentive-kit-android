@@ -1,5 +1,7 @@
 package apptentive.com.android.network
 
+import java.lang.StringBuilder
+
 data class HttpHeader(val name: String, val value: String) {
     override fun toString(): String {
         return "$name: \"$value\""
@@ -29,6 +31,17 @@ open class HttpHeaders(headers: Map<String, HttpHeader> = emptyMap()) : Iterable
 
     override fun hashCode(): Int {
         return headers.hashCode()
+    }
+
+    override fun toString(): String {
+        val result = StringBuilder()
+        for (header in headers.values) {
+            if (result.isNotEmpty()) {
+                result.append('\n')
+            }
+            result.append(header)
+        }
+        return result.toString()
     }
 
     companion object {

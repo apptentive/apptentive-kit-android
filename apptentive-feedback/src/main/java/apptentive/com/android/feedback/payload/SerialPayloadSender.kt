@@ -1,17 +1,23 @@
 package apptentive.com.android.feedback.payload
 
+import apptentive.com.android.feedback.PAYLOADS
+import apptentive.com.android.feedback.model.payloads.Payload
+import apptentive.com.android.util.Log
 import apptentive.com.android.util.Result
 
 class SerialPayloadSender(
     private val payloadQueue: PayloadQueue,
-    private val callback: (Result<Payload>) -> Unit
+    private val callback: (Result<PayloadData>) -> Unit
 ) : PayloadSender {
     private var active: Boolean = true
     private var busySending: Boolean = false
     private var payloadService: PayloadService? = null
 
     override fun sendPayload(payload: Payload) {
-        payloadQueue.enqueuePayload(payload)
+        val payloadData = getPayloadData(payload)
+        if (payloadData != null) {
+            payloadQueue.enqueuePayload(payloadData)
+        }
         sendNextUnsentPayload()
     }
 
@@ -27,13 +33,13 @@ class SerialPayloadSender(
         }
     }
 
-    private fun handleSentPayload(payload: Payload) {
+    private fun handleSentPayload(payload: PayloadData) {
         payloadQueue.deletePayload(payload)
         notifySuccess(payload)
         sendNextUnsentPayload()
     }
 
-    private fun handleFailedPayload(payload: Payload, error: Throwable) {
+    private fun handleFailedPayload(payload: PayloadData, error: Throwable) {
         val shouldDeletePayload = shouldDeletePayload(error)
         if (shouldDeletePayload) {
             payloadQueue.deletePayload(payload)
@@ -54,30 +60,35 @@ class SerialPayloadSender(
     }
 
     private fun sendNextUnsentPayload() {
-        if (payloadService == null) {
-            //TODO: log message: can't send as payload service is null
+        val service = payloadService
+        if (service == null) {
+            Log.w(PAYLOADS, "unable to send payload: ${PayloadService::class.java.simpleName} is null")
             return
         }
 
         if (!active) {
-            // TODO: log message: con't send while being inactive
+            Log.w(PAYLOADS, "unable to send payload: payload sender is not active")
             return
         }
 
         if (busySending) {
-            // TODO: log message: con't send while still busy
+            Log.w(PAYLOADS, "unable to send payload: another payload being sent")
             return
         }
 
-
         val nextPayload = payloadQueue.nextUnsentPayload()
-            ?: // TODO: log message 'all done'
+        if (nextPayload == null) {
+            Log.w(PAYLOADS, "unable to send payload: payload queue is empty")
             return
+        }
 
         busySending = true
 
-        payloadService?.sendPayload(nextPayload) {
+        Log.v(PAYLOADS, "Start sending payload: $nextPayload")
+
+        service.sendPayload(nextPayload) {
             busySending = false
+            Log.v(PAYLOADS, "Payload send finished")
 
             when (it) {
                 is Result.Success -> handleSentPayload(nextPayload)
@@ -91,7 +102,19 @@ class SerialPayloadSender(
         sendNextUnsentPayload()
     }
 
-    private fun notifySuccess(payload: Payload) {
+    val hasPayloadService get() = payloadService != null
+
+    private fun getPayloadData(payload: Payload): PayloadData? {
+        try {
+            return payload.toPayloadData()
+        } catch (e: Exception) {
+            Log.e(PAYLOADS, "Exception while creating payload data: $payload", e)
+        }
+
+        return null
+    }
+
+    private fun notifySuccess(payload: PayloadData) {
         try {
             callback.invoke(Result.Success(payload))
         } catch (e: Exception) {
@@ -99,7 +122,7 @@ class SerialPayloadSender(
         }
     }
 
-    private fun notifyFailure(error: Throwable, payload: Payload) {
+    private fun notifyFailure(error: Throwable, payload: PayloadData) {
         try {
             if (error is PayloadSendException) {
                 callback(Result.Error(error))

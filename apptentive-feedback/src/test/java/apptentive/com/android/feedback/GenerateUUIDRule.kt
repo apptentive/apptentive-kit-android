@@ -1,7 +1,6 @@
 package apptentive.com.android.feedback
 
 import apptentive.com.android.util.generateUUID
-import io.mockk.clearStaticMockk
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic

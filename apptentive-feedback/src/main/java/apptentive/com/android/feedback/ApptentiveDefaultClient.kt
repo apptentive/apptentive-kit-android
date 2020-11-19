@@ -13,11 +13,13 @@ import apptentive.com.android.feedback.engagement.criteria.DefaultTargetingState
 import apptentive.com.android.feedback.engagement.criteria.InvocationConverter
 import apptentive.com.android.feedback.engagement.interactions.*
 import apptentive.com.android.feedback.model.Conversation
-import apptentive.com.android.feedback.payload.ConversationPayloadService
-import apptentive.com.android.feedback.payload.PayloadService
+import apptentive.com.android.feedback.model.payloads.EventPayload
+import apptentive.com.android.feedback.model.payloads.ExtendedData
+import apptentive.com.android.feedback.payload.*
 import apptentive.com.android.feedback.platform.*
 import apptentive.com.android.network.HttpClient
 import apptentive.com.android.util.FileUtil
+import apptentive.com.android.util.Result
 import java.io.File
 
 internal class ApptentiveDefaultClient(
@@ -26,9 +28,8 @@ internal class ApptentiveDefaultClient(
     private val httpClient: HttpClient,
     private val executors: Executors
 ) : ApptentiveClient {
-    private lateinit var conversationService: ConversationService
     private lateinit var conversationManager: ConversationManager
-    private var conversationPayloadService: PayloadService? = null
+    private lateinit var payloadSender: PayloadSender
     private lateinit var interactionModules: Map<InteractionType, InteractionModule<Interaction>>
     private var engagement: Engagement = NullEngagement()
 
@@ -37,8 +38,18 @@ internal class ApptentiveDefaultClient(
     @WorkerThread
     internal fun start(context: Context) {
         interactionModules = loadInteractionModules()
-        conversationService = createConversationService()
-        conversationManager = createConversationManager(context) // TODO: get rid of Context
+
+        val serialPayloadSender = SerialPayloadSender(
+            payloadQueue = PersistentPayloadQueue.create(context),
+            callback = ::onPayloadSendFinish
+        )
+        payloadSender = serialPayloadSender
+
+        val conversationService = createConversationService()
+        conversationManager = ConversationManager(
+            conversationRepository = createConversationRepository(context),
+            conversationService = conversationService
+        )
         conversationManager.activeConversation.observe { conversation ->
             // FIXME: most of these values can be cached and only changed when the actual data changes
             engagement = DefaultEngagement(
@@ -48,30 +59,23 @@ internal class ApptentiveDefaultClient(
                 recordEvent = ::recordEvent,
                 recordInteraction = ::recordInteraction
             )
-            createConversationPayloadServiceIfNeeded(conversation)
+
+            // once we have received conversationId and conversationToken we can setup payload sender service
+            val conversationId = conversation.conversationId
+            val conversationToken = conversation.conversationToken
+            if (conversationId != null && conversationToken != null && !serialPayloadSender.hasPayloadService) {
+                serialPayloadSender.setPayloadService(
+                    service = ConversationPayloadService(
+                        requestSender = conversationService,
+                        conversationId = conversationId,
+                        conversationToken = conversationToken
+                    )
+                )
+            }
         }
 
         // FIXME: temporary code
         engage(context, Event.internal("launch"))
-    }
-
-    private fun createConversationPayloadServiceIfNeeded(conversation: Conversation) {
-        if (conversationPayloadService == null) {
-            conversationPayloadService = conversation.conversationId?.let { id ->
-                conversation.conversationToken?.let { token ->
-                    createConversationPayloadService(
-                        id, token
-                    )
-                }
-            }
-        }
-    }
-
-    private fun createConversationManager(context: Context): ConversationManager {
-        return ConversationManager(
-            conversationRepository = createConversationRepository(context),
-            conversationService = conversationService
-        )
     }
 
     private fun createConversationRepository(context: Context): ConversationRepository {
@@ -105,20 +109,6 @@ internal class ApptentiveDefaultClient(
         apiVersion = Constants.API_VERSION,
         sdkVersion = Constants.SDK_VERSION,
         baseURL = Constants.SERVER_URL
-    )
-
-    private fun createConversationPayloadService(
-        conversationId: String,
-        conversationToken: String
-    ): PayloadService = ConversationPayloadService(
-        httpClient = httpClient,
-        apptentiveKey = apptentiveKey,
-        apptentiveSignature = apptentiveSignature,
-        apiVersion = Constants.API_VERSION,
-        sdkVersion = Constants.SDK_VERSION,
-        baseURL = Constants.SERVER_URL,
-        conversationId = conversationId,
-        conversationToken = conversationToken
     )
 
     private fun createInteractionDataProvider(conversation: Conversation): InteractionDataProvider {
@@ -177,14 +167,37 @@ internal class ApptentiveDefaultClient(
         return component.getModules()
     }
 
-    // FIXME: temporary code
-    private fun recordEvent(event: Event) {
+    @WorkerThread
+    private fun recordEvent(
+        event: Event,
+        interactionId: String?,
+        data: Map<String, Any>?,
+        customData: Map<String, Any>?,
+        extendedData: List<ExtendedData>?
+    ) {
+        // store event locally
         conversationManager.recordEvent(event)
+
+        // send event to the backend
+        payloadSender.sendPayload(
+            EventPayload(
+                label = event.fullName,
+                interactionId = interactionId,
+                data = data,
+                customData = customData,
+                extendedData = extendedData
+            )
+        )
     }
 
-    // FIXME: temporary code
+    @WorkerThread
     private fun recordInteraction(interaction: Interaction) {
         conversationManager.recordInteraction(interaction.id)
+    }
+
+    @WorkerThread
+    private fun onPayloadSendFinish(result: Result<PayloadData>) {
+        // TODO: notify the rest of the sdk
     }
 
     //endregion

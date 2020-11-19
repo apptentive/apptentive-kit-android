@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.payload
 
 import apptentive.com.android.TestCase
+import apptentive.com.android.feedback.model.payloads.EventPayload
 import apptentive.com.android.util.Result
 import org.junit.Test
 
@@ -62,7 +63,7 @@ class SerialPayloadSenderTest : TestCase() {
         )
     }
 
-    private fun payloadCallback(result: Result<Payload>) {
+    private fun payloadCallback(result: Result<PayloadData>) {
         when (result) {
             is Result.Success -> addResult("success: ${result.data.nonce}")
             is Result.Error -> {
@@ -76,11 +77,11 @@ class SerialPayloadSenderTest : TestCase() {
         }
     }
 
-    private fun createPayload(nonce: String, data: String = "Payload data") = Payload(
+    private fun createPayload(
+        nonce: String
+    ) = EventPayload(
         nonce = nonce,
-        type = PayloadType.Event,
-        mediaType = MediaType.applicationJson,
-        data = data.toByteArray()
+        label = "app#local#event"
     )
 }
 

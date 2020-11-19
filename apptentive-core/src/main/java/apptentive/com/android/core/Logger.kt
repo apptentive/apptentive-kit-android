@@ -26,7 +26,7 @@ class AndroidLoggerProvider(tag: String) : Provider<Logger> {
 /** Android-specific logger implementation */
 private class AndroidLogger(val tag: String) : Logger {
     override fun log(logLevel: LogLevel, message: String) {
-        android.util.Log.println(logLevel.ordinal, tag, message)
+        android.util.Log.println(getLogPriority(logLevel), tag, message)
     }
 
     override fun log(logLevel: LogLevel, throwable: Throwable) {
@@ -39,5 +39,17 @@ private class AndroidLogger(val tag: String) : Logger {
         val writer = StringWriter()
         throwable.printStackTrace(PrintWriter(writer))
         return writer.toString()
+    }
+
+    private companion object {
+        fun getLogPriority(logLevel: LogLevel): Int {
+            return when (logLevel) {
+                LogLevel.Verbose -> android.util.Log.VERBOSE
+                LogLevel.Debug -> android.util.Log.DEBUG
+                LogLevel.Info -> android.util.Log.INFO
+                LogLevel.Warning -> android.util.Log.WARN
+                LogLevel.Error -> android.util.Log.ERROR
+            }
+        }
     }
 }

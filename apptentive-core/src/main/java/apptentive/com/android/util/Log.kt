@@ -12,6 +12,7 @@ enum class LogLevel {
 }
 
 object Log {
+    var logLevel: LogLevel = LogLevel.Info
     private val logger = DependencyProvider.of<Logger>()
 
     fun v(tag: LogTag, message: String) = log(LogLevel.Verbose, tag, message)
@@ -22,6 +23,10 @@ object Log {
     fun e(tag: LogTag, message: String, e: Throwable) = log(LogLevel.Error, tag, message, e)
 
     private fun log(level: LogLevel, tag: LogTag, message: String, throwable: Throwable? = null) {
+        if (!canLog(level)) {
+            return
+        }
+
         val buffer = StringBuilder()
 
         // thread name
@@ -32,11 +37,11 @@ object Log {
         }
 
         // tag
-        buffer.append(' ')
+        buffer.append(" [")
         buffer.append(tag.name)
+        buffer.append("] ")
 
         // message
-        buffer.append(' ')
         buffer.append(message)
 
         // output
@@ -46,6 +51,10 @@ object Log {
         if (throwable != null) {
             logger.log(level, throwable)
         }
+    }
+
+    fun canLog(level: LogLevel): Boolean {
+        return level.ordinal >= logLevel.ordinal
     }
 }
 

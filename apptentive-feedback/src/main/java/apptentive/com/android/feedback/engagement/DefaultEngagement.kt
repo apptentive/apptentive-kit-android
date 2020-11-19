@@ -4,18 +4,36 @@ import androidx.annotation.WorkerThread
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionDataConverter
+import apptentive.com.android.feedback.model.payloads.ExtendedData
+
+typealias RecordEventCallback = (
+    event: Event,
+    interactionId: String?,
+    data: Map<String, Any>?,
+    customData: Map<String, Any>?,
+    extendedData: List<ExtendedData>?
+) -> Unit
+
+typealias RecordInteractionCallback = (interaction: Interaction) -> Unit
 
 @Suppress("FoldInitializerAndIfToElvis")
 data class DefaultEngagement(
     private val interactionDataProvider: InteractionDataProvider,
     private val interactionConverter: InteractionDataConverter,
     private val interactionEngagement: InteractionEngagement,
-    private val recordEvent: (Event) -> Unit = {},
-    private val recordInteraction: (Interaction) -> Unit = {}
+    private val recordEvent: RecordEventCallback,
+    private val recordInteraction: RecordInteractionCallback
 ) : Engagement {
     @WorkerThread
-    override fun engage(context: EngagementContext, event: Event): EngagementResult {
-        recordEvent(event)
+    override fun engage(
+        context: EngagementContext,
+        event: Event,
+        interactionId: String?,
+        data: Map<String, Any>?,
+        customData: Map<String, Any>?,
+        extendedData: List<ExtendedData>?
+    ): EngagementResult {
+        recordEvent(event, interactionId, data, customData, extendedData)
 
         val interactionData = interactionDataProvider.getInteraction(event)
         if (interactionData == null) {

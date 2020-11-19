@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.engagement
 
 import apptentive.com.android.concurrent.Executors
+import apptentive.com.android.feedback.model.payloads.ExtendedData
 
 /**
  * Wrapper class around [Engagement] object.
@@ -11,5 +12,18 @@ open class EngagementContext(
     private val engagement: Engagement,
     val executors: Executors
 ) {
-    fun engage(event: Event) = engagement.engage(this, event)
+    fun engage(
+        event: Event,
+        interactionId: String? = null,
+        data: Map<String, Any>? = null,
+        customData: Map<String, Any>? = null,
+        extendedData: List<ExtendedData>? = null
+    ) = engagement.engage(
+        context = this,
+        event = event,
+        interactionId = interactionId,
+        data = data,
+        customData = customData,
+        extendedData = extendedData
+    )
 }

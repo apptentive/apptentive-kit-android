@@ -3,6 +3,7 @@ package apptentive.com.android.feedback.payload
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import apptentive.com.android.debug.Assert.assertEqual
+import apptentive.com.android.network.HttpMethod
 import junit.framework.Assert.assertNull
 import org.junit.After
 import org.junit.Before
@@ -29,12 +30,16 @@ class PayloadSQLiteHelperTest {
         val actual1 = createPayload(
             nonce = "nonce-1",
             type = PayloadType.Event,
+            path = ":conversation_id/events",
+            method = HttpMethod.POST,
             mediaType = MediaType.applicationJson,
             data = "payload-1"
         )
         val actual2 = createPayload(
             nonce = "nonce-2",
             type = PayloadType.AppRelease,
+            path = ":conversation_id/app_release",
+            method = HttpMethod.PUT,
             mediaType = MediaType.applicationJson,
             data = "payload-2"
         )
@@ -59,13 +64,16 @@ class PayloadSQLiteHelperTest {
         val actual1 = createPayload(
             nonce = "nonce-1",
             type = PayloadType.Event,
+            path = ":conversation_id/events",
+            method = HttpMethod.POST,
             mediaType = MediaType.applicationJson,
             data = "payload-1"
         )
-
         val actual2 = createPayload(
             nonce = "nonce-2",
             type = PayloadType.AppRelease,
+            path = ":conversation_id/app_release",
+            method = HttpMethod.PUT,
             mediaType = MediaType.applicationJson,
             data = "payload-2"
         )
@@ -81,12 +89,16 @@ class PayloadSQLiteHelperTest {
     private fun createPayload(
         nonce: String,
         type: PayloadType,
+        path: String,
+        method: HttpMethod,
         mediaType: MediaType,
         data: String
-    ): Payload {
-        return Payload(
+    ): PayloadData {
+        return PayloadData(
             nonce = nonce,
             type = type,
+            path = path,
+            method = method,
             mediaType = mediaType,
             data = data.toByteArray()
         )

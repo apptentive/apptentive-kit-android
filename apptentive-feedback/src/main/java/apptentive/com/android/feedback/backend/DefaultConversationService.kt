@@ -3,6 +3,8 @@ package apptentive.com.android.feedback.backend
 import apptentive.com.android.core.getTimeSeconds
 import apptentive.com.android.feedback.CONVERSATION
 import apptentive.com.android.feedback.model.*
+import apptentive.com.android.feedback.payload.PayloadData
+import apptentive.com.android.feedback.payload.PayloadResponse
 import apptentive.com.android.network.*
 import apptentive.com.android.network.HttpHeaders.Companion.CACHE_CONTROL
 import apptentive.com.android.util.Log
@@ -57,6 +59,22 @@ class DefaultConversationService(
         sendRequest(request, callback)
     }
 
+    override fun sendPayloadRequest(
+        payload: PayloadData,
+        conversationId: String,
+        conversationToken: String,
+        callback: (Result<PayloadResponse>) -> Unit
+    ) {
+        val url = createURL(payload.resolvePath(conversationId))
+        val request = HttpRequest.Builder<PayloadResponse>(url)
+            .method(payload.method, payload.data, contentType = payload.mediaType.toString())
+            .headers(defaultHeaders)
+            .header("Authorization", "Bearer $conversationToken")
+            .responseReader(HttpJsonResponseReader(PayloadResponse::class.java))
+            .build()
+        sendRequest(request, callback)
+    }
+
     private fun <T : Any> sendRequest(request: HttpRequest<T>, callback: (Result<T>) -> Unit) {
         httpClient.send(request) {
             when (it) {
@@ -86,7 +104,9 @@ class DefaultConversationService(
             .build()
     }
 
-    private fun createURL(path: String) = "$baseURL/$path"
+    private fun createURL(path: String): String {
+        return if (path.startsWith("/")) "$baseURL$path" else "$baseURL/$path"
+    }
 }
 
 private object EngagementManifestReader :

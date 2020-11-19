@@ -1,13 +1,13 @@
 package apptentive.com.android.feedback.payload
 
 open class PayloadSendException(
-    val payload: Payload,
+    val payload: PayloadData,
     detailMessage: String? = null,
     cause: Throwable? = null
 ) :
     Exception(createMessage(payload, detailMessage), cause) {
     companion object {
-        private fun createMessage(payload: Payload, detailMessage: String?): String {
+        private fun createMessage(payload: PayloadData, detailMessage: String?): String {
             return if (detailMessage != null) {
                 "Payload sending failed $payload: $detailMessage"
             } else {

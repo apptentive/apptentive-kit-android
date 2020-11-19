@@ -1,22 +1,23 @@
 package apptentive.com.android.feedback.backend
 
-import apptentive.com.android.DependencyProviderRule
+import apptentive.com.android.TestCase
 import apptentive.com.android.concurrent.ImmediateExecutorQueue
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.feedback.*
+import apptentive.com.android.feedback.payload.MediaType
+import apptentive.com.android.feedback.payload.PayloadData
+import apptentive.com.android.feedback.payload.PayloadType
 import apptentive.com.android.network.*
 import apptentive.com.android.serialization.json.JsonConverter
+import apptentive.com.android.serialization.json.JsonException
 import apptentive.com.android.util.Result
 import com.google.common.truth.Truth.assertThat
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
-import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
-class DefaultConversationServiceTest {
-    @get:Rule
-    val dependencyRule = DependencyProviderRule()
-
+class DefaultConversationServiceTest : TestCase() {
     @get:Rule
     val uuidRule = GenerateUUIDRule()
 
@@ -29,7 +30,7 @@ class DefaultConversationServiceTest {
                 val expected = Request(
                     method = HttpMethod.POST,
                     headers = request.headers,
-                    body = mapOf(
+                    payload = mapOf(
                         "device" to mapOf(
                             "uuid" to "uuid",
                             "os_name" to mockDevice.osName,
@@ -106,21 +107,7 @@ class DefaultConversationServiceTest {
                 )
             }
         }
-        val httpClient = DefaultHttpClient(
-            network = network,
-            networkQueue = ImmediateExecutorQueue(),
-            callbackExecutor = ImmediateExecutorQueue(),
-            retryPolicy = DefaultHttpRequestRetryPolicy()
-        )
-
-        val service = DefaultConversationService(
-            httpClient = httpClient,
-            apptentiveKey = "key",
-            apptentiveSignature = "signature",
-            apiVersion = 9,
-            sdkVersion = "6.0.0",
-            baseURL = "https://api.apptentive.com"
-        )
+        val service = createConversationService(network)
 
         service.fetchConversationToken(
             device = mockDevice,
@@ -142,6 +129,72 @@ class DefaultConversationServiceTest {
             }
         }
     }
+
+    @Test
+    @Ignore
+    fun fetchEngagementManifest() {
+        TODO("Implement me")
+    }
+
+    @Test
+    fun sendPayloadRequest() {
+        val conversationId = "conversation_id"
+        val conversationToken = "conversation_token"
+        val nonce = "nonce"
+
+        val network = MockHttpNetwork().apply {
+            register("https://api.apptentive.com/conversations/$conversationId/events") { request ->
+                // this is what we expect to be sent from the client
+                val expected = Request(
+                    method = HttpMethod.POST,
+                    headers = request.headers,
+                    body = "Payload Data".toByteArray()
+                )
+
+                assertThat(expected).isEqualTo(request)
+
+                // the response is empty
+                Response(
+                    body = emptyMap<String, Any>()
+                )
+            }
+        }
+        val payload = PayloadData(
+            nonce = nonce,
+            type = PayloadType.Event,
+            path = "/conversations/:conversation_id/events",
+            method = HttpMethod.POST,
+            mediaType = MediaType.applicationJson,
+            data = "Payload Data".toByteArray()
+        )
+
+        val service = createConversationService(network)
+        service.sendPayloadRequest(
+            payload = payload,
+            conversationToken = conversationToken,
+            conversationId = conversationId
+        ) {
+            assertThat(it is Result.Success).isTrue()
+        }
+    }
+
+    private fun createConversationService(network: MockHttpNetwork): ConversationService {
+        val httpClient = DefaultHttpClient(
+            network = network,
+            networkQueue = ImmediateExecutorQueue(),
+            callbackExecutor = ImmediateExecutorQueue(),
+            retryPolicy = DefaultHttpRequestRetryPolicy()
+        )
+
+        return DefaultConversationService(
+            httpClient = httpClient,
+            apptentiveKey = "key",
+            apptentiveSignature = "signature",
+            apiVersion = 9,
+            sdkVersion = "6.0.0",
+            baseURL = "https://api.apptentive.com"
+        )
+    }
 }
 
 private class MockHttpNetwork : HttpNetwork {
@@ -157,11 +210,14 @@ private class MockHttpNetwork : HttpNetwork {
         val url = request.url.toString()
         val handler = lookup[url]
         if (handler != null) {
+            val payload = request.requestBody.toJson()
+            val data = if (payload == null) request.requestBody.toByteArray() else null
             val response = handler.invoke(
                 Request(
                     method = request.method,
                     headers = request.headers,
-                    body = request.requestBody.toJson()
+                    payload = payload,
+                    body = data
                 )
             )
             return HttpNetworkResponse(
@@ -179,8 +235,38 @@ private class MockHttpNetwork : HttpNetwork {
 private data class Request(
     val method: HttpMethod,
     val headers: HttpHeaders = HttpHeaders(),
-    val body: Map<String, *> = mapOf<String, Any>()
-)
+    val body: ByteArray? = null,
+    val payload: Map<String, *>? = null
+) {
+    init {
+        require(body != null || payload != null)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Request
+
+        if (method != other.method) return false
+        if (headers != other.headers) return false
+        if (body != null) {
+            if (other.body == null) return false
+            if (!body.contentEquals(other.body)) return false
+        } else if (other.body != null) return false
+        if (payload != other.payload) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = method.hashCode()
+        result = 31 * result + headers.hashCode()
+        result = 31 * result + (body?.contentHashCode() ?: 0)
+        result = 31 * result + (payload?.hashCode() ?: 0)
+        return result
+    }
+}
 
 private data class Response(
     val statusCode: Int = 200,
@@ -190,7 +276,7 @@ private data class Response(
     val duration: TimeInterval = 1.0
 )
 
-fun HttpRequestBody?.toJson(): Map<String, *> {
+fun HttpRequestBody?.toJson(): Map<String, *>? {
     if (this != null) {
         val stream = ByteArrayOutputStream()
         stream.use {
@@ -198,7 +284,22 @@ fun HttpRequestBody?.toJson(): Map<String, *> {
         }
         val bytes = stream.toByteArray()
         val json = String(bytes)
-        return JsonConverter.toMap(json)
+        try {
+            return JsonConverter.toMap(json)
+        } catch (e: JsonException) {
+            // ignore
+        }
     }
-    return mapOf<String, Any>()
+    return null
+}
+
+fun HttpRequestBody?.toByteArray(): ByteArray {
+    if (this != null) {
+        val stream = ByteArrayOutputStream()
+        stream.use {
+            write(stream)
+        }
+        return stream.toByteArray()
+    }
+    return ByteArray(0)
 }
