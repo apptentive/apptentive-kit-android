@@ -17,7 +17,7 @@ import org.junit.Test
 class EnjoymentDialogViewModelTest {
     @Test
     fun testEvents() {
-        val events = mutableListOf<Event>()
+        val engagementCalls = mutableListOf<EngagementCall>()
 
         val engagement = object : Engagement {
             override fun engage(
@@ -28,12 +28,21 @@ class EnjoymentDialogViewModelTest {
                 customData: Map<String, Any>?,
                 extendedData: List<ExtendedData>?
             ): EngagementResult {
-                events.add(event)
+                engagementCalls.add(
+                    EngagementCall(
+                        event = event,
+                        interactionId = interactionId,
+                        data = data,
+                        customData = customData,
+                        extendedData = extendedData
+                    )
+                )
                 return EngagementResult.Success
             }
         }
+        val interactionId = "123456789"
         val interaction = EnjoymentDialogInteraction(
-            id = "id",
+            id = interactionId,
             title = "Title",
             yesText = "Yes",
             noText = "No",
@@ -51,14 +60,28 @@ class EnjoymentDialogViewModelTest {
         viewModel.onDismissButton()
         viewModel.onCancel()
 
-        assertThat(events).isEqualTo(
+        assertThat(engagementCalls).isEqualTo(
             listOf(
-                Event.internal(CODE_POINT_YES, interaction = "EnjoymentDialog"),
-                Event.internal(CODE_POINT_NO, interaction = "EnjoymentDialog"),
-                Event.internal(CODE_POINT_DISMISS, interaction = "EnjoymentDialog"),
-                Event.internal(CODE_POINT_CANCEL, interaction = "EnjoymentDialog")
+                createCall(CODE_POINT_YES, interactionId = interactionId),
+                createCall(CODE_POINT_NO, interactionId = interactionId),
+                createCall(CODE_POINT_DISMISS, interactionId = interactionId),
+                createCall(CODE_POINT_CANCEL, interactionId = interactionId)
             )
         )
     }
+
+    private fun createCall(codePoint: String, interactionId: String) =
+        EngagementCall(
+            event = Event.internal(codePoint, interaction = "EnjoymentDialog"),
+            interactionId = interactionId
+        )
+
+    private data class EngagementCall(
+        val event: Event,
+        val interactionId: String? = null,
+        val data: Map<String, Any>? = null,
+        val customData: Map<String, Any>? = null,
+        val extendedData: List<ExtendedData>? = null
+    )
 }
 
