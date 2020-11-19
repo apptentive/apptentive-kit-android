@@ -32,10 +32,20 @@ class EnjoymentDialogViewModelTest {
                 return EngagementResult.Success
             }
         }
-        val viewModel = EnjoymentDialogViewModel(EngagementContext(
+        val interaction = EnjoymentDialogInteraction(
+            id = "id",
+            title = "Title",
+            yesText = "Yes",
+            noText = "No",
+            dismissText = "Dismiss"
+        )
+        val viewModel = EnjoymentDialogViewModel(
+            context = EngagementContext(
                 engagement = engagement,
                 executors = Executors(ImmediateExecutor, ImmediateExecutor)
-        ))
+            ),
+            interaction = interaction
+        )
         viewModel.onYesButton()
         viewModel.onNoButton()
         viewModel.onDismissButton()
@@ -43,10 +53,10 @@ class EnjoymentDialogViewModelTest {
 
         assertThat(events).isEqualTo(
             listOf(
-                Event.internal(CODE_POINT_YES),
-                Event.internal(CODE_POINT_NO),
-                Event.internal(CODE_POINT_DISMISS),
-                Event.internal(CODE_POINT_CANCEL)
+                Event.internal(CODE_POINT_YES, interaction = "EnjoymentDialog"),
+                Event.internal(CODE_POINT_NO, interaction = "EnjoymentDialog"),
+                Event.internal(CODE_POINT_DISMISS, interaction = "EnjoymentDialog"),
+                Event.internal(CODE_POINT_CANCEL, interaction = "EnjoymentDialog")
             )
         )
     }
