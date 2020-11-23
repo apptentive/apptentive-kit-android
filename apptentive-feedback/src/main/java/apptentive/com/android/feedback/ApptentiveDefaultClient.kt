@@ -133,7 +133,7 @@ internal class ApptentiveDefaultClient(
     //region Engagement
 
     override fun engage(context: Context, event: Event): EngagementResult {
-        return AndroidEngagementContext(context, engagement, executors).engage(event)
+        return AndroidEngagementContext(context, engagement, payloadSender, executors).engage(event)
     }
 
     // FIXME: temporary code
