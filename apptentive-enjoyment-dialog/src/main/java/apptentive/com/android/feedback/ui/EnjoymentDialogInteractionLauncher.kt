@@ -11,7 +11,7 @@ internal class EnjoymentDialogInteractionLauncher :
         context: AndroidEngagementContext,
         interaction: EnjoymentDialogInteraction
     ) {
-        val viewModel = EnjoymentDialogViewModel(context)
+        val viewModel = EnjoymentDialogViewModel(context, interaction)
 
         context.executors.main.execute {
             MaterialAlertDialogBuilder(context.androidContext).apply {

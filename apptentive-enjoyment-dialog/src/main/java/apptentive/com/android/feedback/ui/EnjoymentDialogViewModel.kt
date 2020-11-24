@@ -2,8 +2,12 @@ package apptentive.com.android.feedback.ui
 
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.Event
+import apptentive.com.android.feedback.engagement.interactions.Interaction
 
-data class EnjoymentDialogViewModel(private val context: EngagementContext) {
+data class EnjoymentDialogViewModel(
+    private val context: EngagementContext,
+    private val interaction: Interaction
+) {
     private val stateExecutor = context.executors.state
 
     fun onYesButton() {
@@ -24,7 +28,10 @@ data class EnjoymentDialogViewModel(private val context: EngagementContext) {
 
     private fun engageCodePoint(name: String) {
         stateExecutor.execute {
-            context.engage(Event.internal(name))
+            context.engage(
+                event = Event.internal(name, interaction.type),
+                interactionId = interaction.id
+            )
         }
     }
 

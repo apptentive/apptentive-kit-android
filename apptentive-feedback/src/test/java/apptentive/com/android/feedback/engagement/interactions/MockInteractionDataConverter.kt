@@ -4,7 +4,7 @@ import apptentive.com.android.feedback.engagement.Event
 
 val mockEvent = Event.local("mock")
 val mockInteractionData = InteractionData(id = "interaction_id", type = "interaction_type")
-val mockInteraction = object : Interaction(id = "interaction_id") {}
+val mockInteraction = object : Interaction(id = "interaction_id", type = "Test") {}
 
 class MockInteractionDataConverter : InteractionDataConverter {
     override fun convert(data: InteractionData): Interaction? {
