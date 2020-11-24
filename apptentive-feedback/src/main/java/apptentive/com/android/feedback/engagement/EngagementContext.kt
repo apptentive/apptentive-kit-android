@@ -2,6 +2,8 @@ package apptentive.com.android.feedback.engagement
 
 import apptentive.com.android.concurrent.Executors
 import apptentive.com.android.feedback.model.payloads.ExtendedData
+import apptentive.com.android.feedback.model.payloads.Payload
+import apptentive.com.android.feedback.payload.PayloadSender
 
 /**
  * Wrapper class around [Engagement] object.
@@ -10,6 +12,7 @@ import apptentive.com.android.feedback.model.payloads.ExtendedData
  */
 open class EngagementContext(
     private val engagement: Engagement,
+    private val payloadSender: PayloadSender,
     val executors: Executors
 ) {
     fun engage(
@@ -26,4 +29,6 @@ open class EngagementContext(
         customData = customData,
         extendedData = extendedData
     )
+
+    fun sendPayload(payload: Payload) = payloadSender.sendPayload(payload)
 }
