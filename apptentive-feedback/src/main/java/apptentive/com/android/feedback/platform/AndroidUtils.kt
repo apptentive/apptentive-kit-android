@@ -1,11 +1,14 @@
 package apptentive.com.android.feedback.platform
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings.Secure.ANDROID_ID
 import android.provider.Settings.Secure.getString
 import android.telephony.TelephonyManager
+import androidx.core.content.ContextCompat
 import apptentive.com.android.feedback.SYSTEM
 import apptentive.com.android.util.Log
 import java.util.*
@@ -41,11 +44,18 @@ internal object AndroidUtils {
         "GSM", // 16
         "TD_SCDMA", // 17
         "IWLAN",   // 18
-        "LTE_CA" //19
+        "LTE_CA", //19
+        "5G" //  20
     )
 
+    @SuppressLint("MissingPermission")
     fun getNetworkType(context: Context): String {
-        val networkType = getTelephonyManager(context).networkType
+        var networkType = 0
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            networkType = getTelephonyManager(context).networkType
+        } else if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+            networkType = getTelephonyManager(context).dataNetworkType
+        }
         return if (networkType >= 0 && networkType < networkTypeLookup.size)
             networkTypeLookup[networkType] else "UNKNOWN"
     }
