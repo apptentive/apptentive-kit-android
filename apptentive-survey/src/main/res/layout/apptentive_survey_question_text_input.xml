@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.textfield.TextInputLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/answer_text_input_layout"
+    android:id="@+id/other_text_input_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:animateLayoutChanges="true"
+    android:visibility="gone"
     app:errorEnabled="true"
     app:hintAnimationEnabled="true">
 
     <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/answer_text"
+        android:id="@+id/other_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:minHeight="48dp" />
-    <!-- android:textAppearance="@style/Apptentive.TextAppearance.Body1"-->
-
+        android:inputType="textMultiLine|textCapSentences"
+        android:minHeight="48dp"
+        android:saveEnabled="false" />
 </com.google.android.material.textfield.TextInputLayout>
