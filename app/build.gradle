@@ -23,6 +23,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
 
 }
 
@@ -37,6 +44,8 @@ dependencies {
     implementation project(':apptentive-feedback')
     implementation project(':apptentive-core')
     implementation project(':apptentive-enjoyment-dialog')
+    implementation project(path: ':apptentive-survey')
+    implementation project(path: ':apptentive-core-ui')
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation "androidx.test.ext:junit:$junit_ext_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"

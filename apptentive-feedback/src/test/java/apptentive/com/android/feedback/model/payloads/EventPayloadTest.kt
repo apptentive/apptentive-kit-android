@@ -11,7 +11,7 @@ import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
-class PayloadTest {
+class EventPayloadTest {
     @get:Rule
     val timeRule = MockTimeRule(currentTime = 1000.0, utcOffset = -18000)
 

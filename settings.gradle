@@ -1,3 +1,6 @@
+include ':apptentive-feedback-test'
+include ':apptentive-core-ui'
+include ':apptentive-survey'
 include ':apptentive-core', ':apptentive-core-test', ':apptentive-feedback'
 include ':app'
 include ':apptentive-enjoyment-dialog'

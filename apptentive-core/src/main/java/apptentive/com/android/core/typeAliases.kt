@@ -2,6 +2,8 @@ package apptentive.com.android.core
 
 import java.util.*
 
+typealias Callback = () -> Unit
+
 typealias TimeInterval = Double
 
 const val UNDEFINED: Int = -1 // FIXME: replace with nullable types

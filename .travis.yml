@@ -24,6 +24,7 @@ before_install:
   - yes | sdkmanager "platforms;android-29"
 install: true
 script:
-  - ./gradlew apptentive-core:test -i
-  - ./gradlew apptentive-feedback:test -i
-  - ./gradlew apptentive-enjoyment-dialog:test -i
+  - ./gradlew apptentive-core:test -q
+  - ./gradlew apptentive-feedback:test -q
+  - ./gradlew apptentive-enjoyment-dialog:test -q
+  - ./gradlew apptentive-survey:test -q

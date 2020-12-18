@@ -1,5 +1,6 @@
 package apptentive.com.android
 
+import apptentive.com.android.serialization.json.JsonConverter
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -26,6 +27,11 @@ open class TestCase(
 
     protected fun readText(path: String): String {
         return javaClass.classLoader!!.getResourceAsStream(path).bufferedReader().readText()
+    }
+
+    protected inline fun <reified T> readJson(path: String): T {
+        val json = readText(path)
+        return JsonConverter.fromJson(json)
     }
 
     //endregion

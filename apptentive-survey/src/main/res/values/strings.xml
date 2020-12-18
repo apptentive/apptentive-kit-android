@@ -1,0 +1,11 @@
+<resources>
+    <string name="title_activity_survey">SurveyActivity</string>
+    <!--
+    This string is used for square devices and overridden by hello_world in
+    values-round/strings.xml for round devices.
+    -->
+    <string name="apptentive_survey_send_response">Send</string>
+    <string name="apptentive_required">Required</string>
+    <string name="range_min_label">%1$s = %2$s</string>
+    <string name="range_max_label">%1$s = %2$s</string>
+</resources>

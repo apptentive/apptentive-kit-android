@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/survey_scrollview"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".SurveyActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:paddingStart="@dimen/apptentive_interaction_extended_toolbar_margin_start"
+            android:paddingLeft="@dimen/apptentive_interaction_extended_toolbar_margin_start"
+            android:paddingEnd="@dimen/apptentive_interaction_extended_toolbar_margin_end"
+            android:paddingRight="@dimen/apptentive_interaction_extended_toolbar_margin_end">
+
+            <LinearLayout
+                android:layout_width="@dimen/apptentive_interaction_extended_toolbar_width"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:alpha="0.8"
+                    android:autoLink="all"
+                    android:maxWidth="436dp"
+                    android:textAppearance="?attr/textAppearanceSubtitle2" />
+
+                <!--
+                <ImageButton
+                    android:id="@+id/info"
+                    style="@style/Apptentive.Style.Widget.ImageButton.Info"
+                    android:layout_width="@dimen/apptentive_message_center_icon_dimension"
+                    android:layout_height="@dimen/apptentive_message_center_icon_dimension"
+                    android:layout_gravity="end"
+                    android:layout_marginBottom="2dp" />
+                -->
+            </LinearLayout>
+        </FrameLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/apptentive_survey_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingTop="16dp"
+            android:paddingBottom="40dp">
+
+            <Button
+                android:id="@+id/send"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:layout_margin="8dp"
+                android:text="@string/apptentive_survey_send_response" />
+
+            <TextView
+                android:id="@+id/terms_and_conditions_body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="8dp"
+                android:gravity="center"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/terms_and_conditions_link"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:gravity="center"
+                android:visibility="gone" />
+
+        </LinearLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

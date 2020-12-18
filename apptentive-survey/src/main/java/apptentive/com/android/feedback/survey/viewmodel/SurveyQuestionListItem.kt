@@ -1,0 +1,125 @@
+package apptentive.com.android.feedback.survey.viewmodel
+
+import androidx.annotation.CallSuper
+import apptentive.com.android.feedback.survey.view.SurveyQuestionContainerView
+import apptentive.com.android.ui.ListViewAdapter
+import apptentive.com.android.ui.ListViewItem
+import apptentive.com.android.ui.ViewHolderFactory
+
+/**
+ * Base class for representing question list item state
+ * @param id question id
+ * @param title question title
+ * @param instructions optional instructions text (for example, "Required. Select between 1 and 3 answers")
+ * @param validationError contains validation error message in case if the question has an invalid
+ *                        answer or <code>null</code> if the answer is valid.
+ */
+
+abstract class SurveyQuestionListItem(
+    id: String,
+    type: Type,
+    val title: String,
+    val instructions: String?,
+    val validationError: String?
+) : ListViewItem(id, type.ordinal) {
+    enum class Type {
+        SingleLineQuestion,
+        RangeQuestion,
+        MultiChoiceQuestion
+    }
+
+    //region List View
+
+    override fun getChangePayloadMask(oldItem: ListViewItem): Int {
+        oldItem as SurveyQuestionListItem
+
+        // check if error message changed
+        if (validationError != oldItem.validationError) {
+            return MASK_VALIDATION_ERROR
+        }
+
+        return 0
+    }
+
+    //endregion
+
+    //region Equality
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is SurveyQuestionListItem) return false
+        if (!super.equals(other)) return false
+
+        if (title != other.title) return false
+        if (instructions != other.instructions) return false
+        if (validationError != other.validationError) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + title.hashCode()
+        result = 31 * result + (instructions?.hashCode() ?: 0)
+        result = 31 * result + (validationError?.hashCode() ?: 0)
+        return result
+    }
+
+    //endregion
+
+    //region String Representation
+
+    override fun toString(): String {
+        return "SurveyQuestionListItem(title='$title', instructions=$instructions, validationError=$validationError)"
+    }
+
+    //endregion
+
+    //region Companion
+
+    protected companion object {
+        const val MASK_VALIDATION_ERROR = 0x1
+        const val MASK_CUSTOM = 0x2
+    }
+
+    //endregion
+
+    abstract class ViewHolder<T : SurveyQuestionListItem>(
+        itemView: SurveyQuestionContainerView
+    ) : ListViewAdapter.ViewHolder<T>(itemView) {
+        private val containerView: SurveyQuestionContainerView = itemView
+        private lateinit var _questionId: String
+        protected val questionId get() = _questionId // disallow accidental modifications
+
+        @CallSuper
+        /** Called every time the adapter needs to create a list item from scratch (initial setup) */
+        override fun bindView(item: T, position: Int) {
+            _questionId = item.id
+
+            // title
+            containerView.title = item.title
+
+            // instructions
+            containerView.instructions = item.instructions
+
+            // validation error
+            updateValidationError(item.validationError)
+        }
+
+        @CallSuper
+        /** Any called if a part of the view was changed */
+        override fun updateView(item: T, position: Int, changeMask: Int) {
+            if (changeMask and MASK_VALIDATION_ERROR != 0) {
+                updateValidationError(item.validationError)
+            }
+        }
+
+        @CallSuper
+        protected open fun updateValidationError(errorMessage: String?) {
+            containerView.setInvalid(errorMessage != null)
+        }
+    }
+}
+
+fun ListViewAdapter.register(type: SurveyQuestionListItem.Type, factory: ViewHolderFactory) =
+    register(type.ordinal, factory)

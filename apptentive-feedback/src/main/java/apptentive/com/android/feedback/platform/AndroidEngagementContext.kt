@@ -16,4 +16,8 @@ class AndroidEngagementContext(
     engagement: Engagement,
     payloadSender: PayloadSender,
     executors: Executors
-) : EngagementContext(engagement, payloadSender, executors)
+) : EngagementContext(engagement, payloadSender, executors) {
+    fun getString(resId: Int): String {
+        return androidContext.getString(resId)
+    }
+}
