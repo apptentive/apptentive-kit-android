@@ -6,7 +6,7 @@ buildscript {
         // Sdk and tools
         compileSdkVersion = 30
         buildToolsVersion = '30.0.2'
-        minSdkVersion = 14
+        minSdkVersion = 19
         targetSdkVersion = 30
 
         // Gradle

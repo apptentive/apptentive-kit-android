@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.ui
 
+import apptentive.com.android.core.Callback
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.Interaction
@@ -9,17 +10,21 @@ data class EnjoymentDialogViewModel(
     private val interaction: Interaction
 ) {
     private val stateExecutor = context.executors.state
+    var onDismiss: Callback? = null
 
     fun onYesButton() {
         engageCodePoint(CODE_POINT_YES)
+        onDismiss?.invoke()
     }
 
     fun onNoButton() {
         engageCodePoint(CODE_POINT_NO)
+        onDismiss?.invoke()
     }
 
     fun onDismissButton() {
         engageCodePoint(CODE_POINT_DISMISS)
+        onDismiss?.invoke()
     }
 
     fun onCancel() {

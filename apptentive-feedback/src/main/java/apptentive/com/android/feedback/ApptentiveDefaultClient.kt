@@ -202,6 +202,15 @@ internal class ApptentiveDefaultClient(
 
     //endregion
 
+    //region Debug
+
+    internal fun reset() {
+        conversationManager.clear()
+        conversationManager.recordEvent(Event.internal("launch")) // trick sdk to think it was launched
+    }
+
+    //endregion
+
     companion object {
         // FIXME: temporary code
         private val interactionNames = listOf(

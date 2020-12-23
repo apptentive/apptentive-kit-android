@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.ui
 
+import apptentive.com.android.TestCase
 import apptentive.com.android.concurrent.Executors
 import apptentive.com.android.concurrent.ImmediateExecutor
 import apptentive.com.android.feedback.EngagementResult
@@ -13,14 +14,11 @@ import apptentive.com.android.feedback.ui.EnjoymentDialogViewModel.Companion.COD
 import apptentive.com.android.feedback.ui.EnjoymentDialogViewModel.Companion.CODE_POINT_DISMISS
 import apptentive.com.android.feedback.ui.EnjoymentDialogViewModel.Companion.CODE_POINT_NO
 import apptentive.com.android.feedback.ui.EnjoymentDialogViewModel.Companion.CODE_POINT_YES
-import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
-class EnjoymentDialogViewModelTest {
+class EnjoymentDialogViewModelTest : TestCase() {
     @Test
     fun testEvents() {
-        val engagementCalls = mutableListOf<EngagementCall>()
-
         val engagement = object : Engagement {
             override fun engage(
                 context: EngagementContext,
@@ -30,7 +28,7 @@ class EnjoymentDialogViewModelTest {
                 customData: Map<String, Any>?,
                 extendedData: List<ExtendedData>?
             ): EngagementResult {
-                engagementCalls.add(
+                addResult(
                     EngagementCall(
                         event = event,
                         interactionId = interactionId,
@@ -62,18 +60,29 @@ class EnjoymentDialogViewModelTest {
             ),
             interaction = interaction
         )
-        viewModel.onYesButton()
-        viewModel.onNoButton()
-        viewModel.onDismissButton()
-        viewModel.onCancel()
+        viewModel.onDismiss = { addResult("onDismiss") }
 
-        assertThat(engagementCalls).isEqualTo(
-            listOf(
-                createCall(CODE_POINT_YES, interactionId = interactionId),
-                createCall(CODE_POINT_NO, interactionId = interactionId),
-                createCall(CODE_POINT_DISMISS, interactionId = interactionId),
-                createCall(CODE_POINT_CANCEL, interactionId = interactionId)
-            )
+        viewModel.onYesButton()
+        assertResults(
+            createCall(CODE_POINT_YES, interactionId = interactionId),
+            "onDismiss"
+        )
+
+        viewModel.onNoButton()
+        assertResults(
+            createCall(CODE_POINT_NO, interactionId = interactionId),
+            "onDismiss"
+        )
+
+        viewModel.onDismissButton()
+        assertResults(
+            createCall(CODE_POINT_DISMISS, interactionId = interactionId),
+            "onDismiss"
+        )
+
+        viewModel.onCancel()
+        assertResults(
+            createCall(CODE_POINT_CANCEL, interactionId = interactionId)
         )
     }
 

@@ -1,0 +1,16 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/abc_dialog_padding_material"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.DialogTitle
+        android:id="@+id/alertTitle"
+        style="?attr/materialAlertDialogTitleTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <android.widget.Space
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/abc_dialog_title_divider_material" />
+</LinearLayout>

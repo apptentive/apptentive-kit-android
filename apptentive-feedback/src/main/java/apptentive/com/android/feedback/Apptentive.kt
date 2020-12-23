@@ -115,4 +115,20 @@ object Apptentive {
             }
         }
     }
+
+    //region Debug
+
+    // FIXME: extract to 'debug' module
+    fun reset() {
+        stateExecutor.execute {
+            val client = client as? ApptentiveDefaultClient
+            if (client != null) {
+                client.reset()
+            } else {
+                Log.e(LogTags.core, "Unable to clear event: sdk is not initialized")
+            }
+        }
+    }
+
+    //endregion
 }

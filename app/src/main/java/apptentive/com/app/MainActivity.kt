@@ -3,6 +3,8 @@ package apptentive.com.app
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
 import apptentive.com.android.concurrent.Executors
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.ExecutorFactory
@@ -26,12 +28,33 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val prefs = getSharedPreferences("prefs", MODE_PRIVATE)
+
+        val night = prefs.getBoolean("night", false)
+        nightSwitch.isChecked = night
+        delegate.localNightMode = if (night) MODE_NIGHT_YES else MODE_NIGHT_NO
+
+        nightSwitch.setOnCheckedChangeListener { _, isChecked ->
+            delegate.localNightMode = if (isChecked) MODE_NIGHT_YES else MODE_NIGHT_NO
+            prefs.edit().putBoolean("night", isChecked).apply()
+        }
+
+
         engage_button.setOnClickListener {
             val eventName = event_name_edit_text.text.toString().trim()
             if (eventName.isEmpty()) {
                 Toast.makeText(this, "Empty event name", Toast.LENGTH_LONG).show()
             } else {
                 Apptentive.engage(this, eventName)
+            }
+        }
+
+        love_dialog_button.setOnClickListener {
+            Apptentive.reset()
+            Apptentive.engage(this, "love_dialog_test") {
+                if (it != EngagementResult.Success) {
+                    Toast.makeText(this, "Not engaged: $it", Toast.LENGTH_LONG).show()
+                }
             }
         }
 

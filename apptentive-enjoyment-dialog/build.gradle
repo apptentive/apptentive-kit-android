@@ -40,6 +40,7 @@ dependencies {
     implementation "androidx.core:core-ktx:$ktx_version"
     implementation "com.google.android.material:material:$material_design_version"
     implementation project(':apptentive-core')
+    implementation project(':apptentive-core-ui')
     implementation project(':apptentive-feedback')
     testImplementation project(':apptentive-core-test')
     testImplementation "junit:junit:$junit_version"
