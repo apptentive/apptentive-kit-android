@@ -28,3 +28,4 @@ script:
   - ./gradlew apptentive-feedback:test -q
   - ./gradlew apptentive-enjoyment-dialog:test -q
   - ./gradlew apptentive-survey:test -q
+  - ./gradlew apptentive-notes:test -q
