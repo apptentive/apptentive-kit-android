@@ -1,3 +1,4 @@
+include ':apptentive-notes'
 include ':apptentive-feedback-test'
 include ':apptentive-core-ui'
 include ':apptentive-survey'
