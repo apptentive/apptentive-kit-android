@@ -1,12 +1,15 @@
 package apptentive.com.android.feedback.ui
 
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
+import apptentive.com.android.feedback.model.InvocationData
 import apptentive.com.android.serialization.json.JsonConverter
+import com.google.common.truth.Truth
 import org.junit.Test
 
 class TextModalInteractionTypeConverterTest {
     @Test
-    fun convert() {
+    fun testConvert() {
+        val eq = "eq"
         val json = """
             {
               "id": "id",
@@ -22,7 +25,11 @@ class TextModalInteractionTypeConverterTest {
                     "invokes": [
                       {
                         "interaction_id": "interaction_1",
-                        "criteria": {}
+                        "criteria": {
+                          "interactions/1234567890/invokes/version_name": {
+                            "$eq": 0
+                          }
+                        }
                       }
                     ]
                   },
@@ -40,7 +47,30 @@ class TextModalInteractionTypeConverterTest {
         val expected = TextModalInteraction(
             id = "id",
             title = "Title",
-            body = "Body"
+            body = "Body",
+            actions = listOf(
+                TextModalInteraction.Action.Invoke(
+                    id = "action_id_1",
+                    label = "Label 1",
+                    invocations = listOf(
+                        InvocationData(
+                            interactionId = "interaction_1",
+                            criteria = mapOf(
+                                "interactions/1234567890/invokes/version_name" to mapOf(
+                                    eq to 0.0
+                                )
+                            )
+                        )
+                    )
+                ),
+                TextModalInteraction.Action.Dismiss(
+                    id = "action_id_2",
+                    label = "Label 2"
+                )
+            )
         )
+
+        val actual = TextModalInteractionTypeConverter().convert(data)
+        Truth.assertThat(actual).isEqualTo(expected)
     }
 }
