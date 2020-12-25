@@ -41,7 +41,6 @@ dependencies {
     implementation project(':apptentive-core')
     implementation project(':apptentive-core-ui')
     implementation project(':apptentive-feedback')
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     testImplementation project(':apptentive-core-test')
     testImplementation "junit:junit:$junit_version"
     testImplementation "com.google.truth:truth:$truth_version"

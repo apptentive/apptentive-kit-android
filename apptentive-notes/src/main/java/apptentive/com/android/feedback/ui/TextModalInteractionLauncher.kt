@@ -1,10 +1,20 @@
 package apptentive.com.android.feedback.ui
 
-import apptentive.com.android.feedback.engagement.EngagementContext
-import apptentive.com.android.feedback.engagement.interactions.InteractionLauncher
+import apptentive.com.android.feedback.platform.AndroidEngagementContext
+import apptentive.com.android.feedback.platform.AndroidInteractionLauncher
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
-class TextModalInteractionLauncher : InteractionLauncher<TextModalInteraction> {
-    override fun launchInteraction(context: EngagementContext, interaction: TextModalInteraction) {
-        TODO("Not yet implemented")
+class TextModalInteractionLauncher : AndroidInteractionLauncher<TextModalInteraction>() {
+    override fun launchInteraction(
+        context: AndroidEngagementContext,
+        interaction: TextModalInteraction
+    ) {
+        context.executors.main.execute {
+            MaterialAlertDialogBuilder(context.androidContext).apply {
+                setTitle(interaction.title)
+                setMessage(interaction.body)
+                show()
+            }
+        }
     }
 }
