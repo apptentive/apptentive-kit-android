@@ -4,6 +4,9 @@ import androidx.annotation.Keep
 import apptentive.com.android.feedback.engagement.interactions.InteractionLauncher
 import apptentive.com.android.feedback.engagement.interactions.InteractionModule
 import apptentive.com.android.feedback.engagement.interactions.InteractionTypeConverter
+import apptentive.com.android.feedback.notes.interaction.TextModalInteraction
+import apptentive.com.android.feedback.notes.interaction.TextModalInteractionLauncher
+import apptentive.com.android.feedback.notes.interaction.TextModalInteractionTypeConverter
 
 @Keep
 internal class TextModalModule : InteractionModule<TextModalInteraction> {

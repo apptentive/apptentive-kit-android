@@ -1,4 +1,4 @@
-package apptentive.com.android.feedback.ui
+package apptentive.com.android.feedback.notes.interaction
 
 import apptentive.com.android.feedback.platform.AndroidEngagementContext
 import apptentive.com.android.feedback.platform.AndroidInteractionLauncher
