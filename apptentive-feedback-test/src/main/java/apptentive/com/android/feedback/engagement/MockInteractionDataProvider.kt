@@ -5,7 +5,7 @@ import apptentive.com.android.feedback.engagement.interactions.mockEvent
 import apptentive.com.android.feedback.engagement.interactions.mockInteractionData
 
 class MockInteractionDataProvider : InteractionDataProvider {
-    override fun getInteraction(event: Event): InteractionData? {
+    override fun getInteractionData(event: Event): InteractionData? {
         if (event == mockEvent) {
             return mockInteractionData
         }

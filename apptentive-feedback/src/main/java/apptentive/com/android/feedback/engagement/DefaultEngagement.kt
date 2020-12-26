@@ -2,6 +2,7 @@ package apptentive.com.android.feedback.engagement
 
 import androidx.annotation.WorkerThread
 import apptentive.com.android.feedback.EngagementResult
+import apptentive.com.android.feedback.engagement.criteria.Invocation
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionDataConverter
 import apptentive.com.android.feedback.model.payloads.ExtendedData
@@ -35,7 +36,7 @@ data class DefaultEngagement(
     ): EngagementResult {
         recordEvent(event, interactionId, data, customData, extendedData)
 
-        val interactionData = interactionDataProvider.getInteraction(event)
+        val interactionData = interactionDataProvider.getInteractionData(event)
         if (interactionData == null) {
             return EngagementResult.Failure("No runnable interactions for event '${event.name}'")
         }
@@ -45,6 +46,30 @@ data class DefaultEngagement(
             return EngagementResult.Error("Unknown interaction type '${interactionData.type}' for event '${event.name}'") // TODO: more description error message
         }
 
+        return engage(context, interaction)
+    }
+
+    override fun engage(
+        context: EngagementContext,
+        invocations: List<Invocation>
+    ): EngagementResult {
+        val interactionData = interactionDataProvider.getInteractionData(invocations)
+        if (interactionData == null) {
+            return EngagementResult.Failure("No runnable interactions")
+        }
+
+        val interaction = interactionConverter.convert(interactionData)
+        if (interaction == null) {
+            return EngagementResult.Error("Unknown interaction type '${interactionData.type}'")
+        }
+
+        return engage(context, interaction)
+    }
+
+    private fun engage(
+        context: EngagementContext,
+        interaction: Interaction
+    ): EngagementResult {
         val result = interactionEngagement.engage(context, interaction)
         if (result is EngagementResult.Success) {
             recordInteraction(interaction)

@@ -23,7 +23,7 @@ class CriteriaInteractionDataProviderTest {
             state = FailureTargetingState
         )
 
-        val actual = provider.getInteraction(Event.local("event"))
+        val actual = provider.getInteractionData(Event.local("event"))
         assertThat(actual).isEqualTo(expected)
     }
 
