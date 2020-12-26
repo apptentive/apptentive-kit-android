@@ -178,5 +178,14 @@ class MainActivity : AppCompatActivity() {
             )
             launcher.launchInteraction(context, interaction)
         }
+
+        notes_button.setOnClickListener {
+            Apptentive.reset()
+            Apptentive.engage(this, "note_event") {
+                if (it != EngagementResult.Success) {
+                    Toast.makeText(this, "Not engaged: $it", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
     }
 }
