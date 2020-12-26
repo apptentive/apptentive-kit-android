@@ -7,6 +7,7 @@ import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.Engagement
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.Event
+import apptentive.com.android.feedback.engagement.criteria.Invocation
 import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.feedback.model.payloads.Payload
 import apptentive.com.android.feedback.payload.PayloadSender
@@ -38,6 +39,13 @@ class EnjoymentDialogViewModelTest : TestCase() {
                     )
                 )
                 return EngagementResult.Success
+            }
+
+            override fun engage(
+                context: EngagementContext,
+                invocations: List<Invocation>
+            ): EngagementResult {
+                TODO("Not yet implemented")
             }
         }
         val interactionId = "123456789"

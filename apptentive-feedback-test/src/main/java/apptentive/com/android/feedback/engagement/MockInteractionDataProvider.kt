@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.engagement
 
+import apptentive.com.android.feedback.engagement.criteria.Invocation
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
 import apptentive.com.android.feedback.engagement.interactions.mockEvent
 import apptentive.com.android.feedback.engagement.interactions.mockInteractionData
@@ -11,5 +12,9 @@ class MockInteractionDataProvider : InteractionDataProvider {
         }
 
         return null
+    }
+
+    override fun getInteractionData(invocations: List<Invocation>): InteractionData? {
+        TODO("Not yet implemented")
     }
 }
