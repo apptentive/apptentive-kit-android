@@ -1,16 +1,10 @@
 package apptentive.com.android.feedback.ui
 
 import apptentive.com.android.TestCase
-import apptentive.com.android.concurrent.Executors
-import apptentive.com.android.concurrent.ImmediateExecutor
 import apptentive.com.android.feedback.EngagementResult
-import apptentive.com.android.feedback.engagement.Engagement
-import apptentive.com.android.feedback.engagement.EngagementContext
+import apptentive.com.android.feedback.engagement.EngageArgs
 import apptentive.com.android.feedback.engagement.Event
-import apptentive.com.android.feedback.engagement.criteria.Invocation
-import apptentive.com.android.feedback.model.payloads.ExtendedData
-import apptentive.com.android.feedback.model.payloads.Payload
-import apptentive.com.android.feedback.payload.PayloadSender
+import apptentive.com.android.feedback.engagement.MockEngagementContext
 import apptentive.com.android.feedback.ui.EnjoymentDialogViewModel.Companion.CODE_POINT_CANCEL
 import apptentive.com.android.feedback.ui.EnjoymentDialogViewModel.Companion.CODE_POINT_DISMISS
 import apptentive.com.android.feedback.ui.EnjoymentDialogViewModel.Companion.CODE_POINT_NO
@@ -20,34 +14,15 @@ import org.junit.Test
 class EnjoymentDialogViewModelTest : TestCase() {
     @Test
     fun testEvents() {
-        val engagement = object : Engagement {
-            override fun engage(
-                context: EngagementContext,
-                event: Event,
-                interactionId: String?,
-                data: Map<String, Any>?,
-                customData: Map<String, Any>?,
-                extendedData: List<ExtendedData>?
-            ): EngagementResult {
-                addResult(
-                    EngagementCall(
-                        event = event,
-                        interactionId = interactionId,
-                        data = data,
-                        customData = customData,
-                        extendedData = extendedData
-                    )
-                )
-                return EngagementResult.Success
+        val context = MockEngagementContext(
+            onEngage = { args ->
+                addResult(args)
+                EngagementResult.Success
+            },
+            onSendPayload = { payload ->
+                throw AssertionError("We didn't expect any payloads here but this one slipped though: $payload")
             }
-
-            override fun engage(
-                context: EngagementContext,
-                invocations: List<Invocation>
-            ): EngagementResult {
-                TODO("Not yet implemented")
-            }
-        }
+        )
         val interactionId = "123456789"
         val interaction = EnjoymentDialogInteraction(
             id = interactionId,
@@ -57,15 +32,7 @@ class EnjoymentDialogViewModelTest : TestCase() {
             dismissText = "Dismiss"
         )
         val viewModel = EnjoymentDialogViewModel(
-            context = EngagementContext(
-                engagement = engagement,
-                payloadSender = object : PayloadSender {
-                    override fun sendPayload(payload: Payload) {
-                        throw AssertionError("We didn't expect any payloads here but this one slipped though: $payload")
-                    }
-                },
-                executors = Executors(ImmediateExecutor, ImmediateExecutor)
-            ),
+            context = context,
             interaction = interaction
         )
         viewModel.onDismiss = { addResult("onDismiss") }
@@ -95,17 +62,9 @@ class EnjoymentDialogViewModelTest : TestCase() {
     }
 
     private fun createCall(codePoint: String, interactionId: String) =
-        EngagementCall(
+        EngageArgs(
             event = Event.internal(codePoint, interaction = "EnjoymentDialog"),
             interactionId = interactionId
         )
-
-    private data class EngagementCall(
-        val event: Event,
-        val interactionId: String? = null,
-        val data: Map<String, Any>? = null,
-        val customData: Map<String, Any>? = null,
-        val extendedData: List<ExtendedData>? = null
-    )
 }
 
