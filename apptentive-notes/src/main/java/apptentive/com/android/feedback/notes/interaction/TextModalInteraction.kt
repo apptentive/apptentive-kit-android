@@ -35,6 +35,12 @@ class TextModalInteraction(
 
         class Dismiss(id: String, label: String) : Action(id, label)
 
+        class Event(
+            id: String,
+            label: String,
+            val event: apptentive.com.android.feedback.engagement.Event
+        ) : Action(id, label)
+
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (other !is Action) return false

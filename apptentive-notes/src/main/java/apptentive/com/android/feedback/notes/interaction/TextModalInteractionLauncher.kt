@@ -13,12 +13,22 @@ class TextModalInteractionLauncher : AndroidInteractionLauncher<TextModalInterac
         context: AndroidEngagementContext,
         interaction: TextModalInteraction
     ) {
-        val viewModel = TextModalViewModel(interaction, context.executors) { invocations ->
-            val result = context.engage(invocations)
-            if (result !is EngagementResult.Success) {
-                Log.e(LogTags.core, "No runnable interactions") // TODO: better error message
+        val viewModel = TextModalViewModel(
+            interaction = interaction,
+            executors = context.executors,
+            invocationCallback = { invocations ->
+                val result = context.engage(invocations)
+                if (result !is EngagementResult.Success) {
+                    Log.e(LogTags.core, "No runnable interactions") // TODO: better error message
+                }
+            },
+            eventCallback = { event ->
+                val result = context.engage(event)
+                if (result !is EngagementResult.Success) {
+                    Log.e(LogTags.core, "No runnable interactions for event: $event") // TODO: better error message
+                }
             }
-        }
+        )
         context.executors.main.execute {
             MaterialAlertDialogBuilder(context.androidContext).apply {
                 setTitle(interaction.title)
