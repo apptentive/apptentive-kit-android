@@ -18,20 +18,8 @@ class TextModalInteractionLauncher : AndroidInteractionLauncher<TextModalInterac
         interaction: TextModalInteraction
     ) {
         val viewModel = TextModalViewModel(
-            interaction = interaction,
-            executors = context.executors,
-            invocationCallback = { invocations ->
-                val result = context.engage(invocations)
-                if (result !is EngagementResult.Success) {
-                    Log.e(LogTags.core, "No runnable interactions") // TODO: better error message
-                }
-            },
-            eventCallback = { event ->
-                val result = context.engage(event)
-                if (result !is EngagementResult.Success) {
-                    Log.e(LogTags.core, "No runnable interactions for event: $event") // TODO: better error message
-                }
-            }
+            context = context,
+            interaction = interaction
         )
         context.executors.main.execute {
             val dialog = MaterialAlertDialogBuilder(context.androidContext).apply {

@@ -1,31 +1,37 @@
 package apptentive.com.android.feedback.notes.viewmodel
 
-import apptentive.com.android.concurrent.Executors
 import apptentive.com.android.core.Callback
-import apptentive.com.android.feedback.engagement.Event
-import apptentive.com.android.feedback.model.InvocationData
+import apptentive.com.android.feedback.EngagementResult
+import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.notes.interaction.TextModalInteraction
 
 class TextModalViewModel(
-    private val interaction: TextModalInteraction,
-    private val executors: Executors,
-    private val invocationCallback: (List<InvocationData>) -> Unit,
-    private val eventCallback: (Event) -> Unit
+    private val context: EngagementContext,
+    private val interaction: TextModalInteraction
 ) {
     var onDismiss: Callback? = null
 
     fun invokeAction(id: String) {
-        executors.state.execute {
+        context.executors.state.execute {
             val action = findAction(id) ?: throw IllegalArgumentException("Can't find action: $id")
             when (action) {
                 is TextModalInteraction.Action.Dismiss -> {
                     // nothing
                 }
                 is TextModalInteraction.Action.Invoke -> {
-                    invocationCallback.invoke(action.invocations)
+                    val result = context.engage(action.invocations)
+                    if (result != EngagementResult.Success) {
+                        // FIXME: error message
+                    }
                 }
                 is TextModalInteraction.Action.Event -> {
-                    eventCallback.invoke(action.event)
+                    val result = context.engage(
+                        event = action.event,
+                        interactionId = interaction.id
+                    )
+                    if (result != EngagementResult.Success) {
+                        // FIXME: error message
+                    }
                 }
                 else -> {
                     throw IllegalArgumentException("Unexpected action: $action")

@@ -18,10 +18,13 @@ data class EngageArgs(
 
 typealias EngagementCallback = (EngageArgs) -> EngagementResult
 
+typealias InvocationCallback = (List<Invocation>) -> EngagementResult
+
 typealias PayloadSenderCallback = (Payload) -> Unit
 
 class MockEngagementContext(
     onEngage: EngagementCallback? = null,
+    onInvoke: InvocationCallback? = null,
     onSendPayload: PayloadSenderCallback? = null
 ) : EngagementContext(
     engagement = object : Engagement {
@@ -48,7 +51,7 @@ class MockEngagementContext(
             context: EngagementContext,
             invocations: List<Invocation>
         ): EngagementResult {
-            TODO("Not yet implemented")
+            return onInvoke?.invoke(invocations) ?: EngagementResult.Success
         }
     },
     payloadSender = MockPayloadSender(onSendPayload),
