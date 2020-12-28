@@ -13,6 +13,7 @@ import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.Engagement
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.Event
+import apptentive.com.android.feedback.engagement.criteria.Invocation
 import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.feedback.model.payloads.Payload
 import apptentive.com.android.feedback.payload.PayloadSender
@@ -74,6 +75,13 @@ class MainActivity : AppCompatActivity() {
                         extendedData: List<ExtendedData>?
                     ): EngagementResult {
                         Log.i(LogTags.core, "Engaged event: $event")
+                        return EngagementResult.Success
+                    }
+
+                    override fun engage(
+                        context: EngagementContext,
+                        invocations: List<Invocation>
+                    ): EngagementResult {
                         return EngagementResult.Success
                     }
                 },

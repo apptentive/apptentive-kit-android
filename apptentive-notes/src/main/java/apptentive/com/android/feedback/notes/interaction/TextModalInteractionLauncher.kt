@@ -1,6 +1,10 @@
 package apptentive.com.android.feedback.notes.interaction
 
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.widget.TextView
 import apptentive.com.android.feedback.EngagementResult
+import apptentive.com.android.feedback.notes.R
 import apptentive.com.android.feedback.notes.viewmodel.TextModalViewModel
 import apptentive.com.android.feedback.platform.AndroidEngagementContext
 import apptentive.com.android.feedback.platform.AndroidInteractionLauncher
@@ -30,24 +34,31 @@ class TextModalInteractionLauncher : AndroidInteractionLauncher<TextModalInterac
             }
         )
         context.executors.main.execute {
-            MaterialAlertDialogBuilder(context.androidContext).apply {
-                setTitle(interaction.title)
-                setMessage(interaction.body)
-                val actions = interaction.actions
-                setPositiveButton(actions[0].label) { _, _ ->
-                    viewModel.invokeAction(actions[0].id)
-                }
-                if (actions.size > 1) {
-                    setNegativeButton(actions[1].label) { _, _ ->
-                        viewModel.invokeAction(actions[1].id)
+            val dialog = MaterialAlertDialogBuilder(context.androidContext).apply {
+                val inflater = LayoutInflater.from(context.androidContext)
+                val contentView = inflater.inflate(R.layout.apptentive_note, null)
+                setView(contentView)
+
+                val titleView = contentView.findViewById<TextView>(R.id.alertTitle)
+                titleView.text = interaction.title
+
+                val viewGroup = contentView.findViewById<ViewGroup>(R.id.apptentive_note_button_bar)
+                interaction.actions.forEach { action ->
+                    val button = inflater.inflate(R.layout.apptentive_note_action, null) as TextView
+                    button.text = action.label
+                    viewGroup.addView(button)
+                    button.setOnClickListener {
+                        viewModel.invokeAction(action.id)
                     }
                 }
-                if (actions.size > 2) {
-                    setNeutralButton(actions[2].label) { _, _ ->
-                        viewModel.invokeAction(actions[2].id)
-                    }
+
+                setOnCancelListener {
+                    viewModel.onCancel()
                 }
-                show()
+            }.show()
+
+            viewModel.onDismiss = {
+                dialog.dismiss()
             }
         }
     }

@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.notes.viewmodel
 
 import apptentive.com.android.concurrent.Executors
+import apptentive.com.android.core.Callback
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.model.InvocationData
 import apptentive.com.android.feedback.notes.interaction.TextModalInteraction
@@ -11,6 +12,8 @@ class TextModalViewModel(
     private val invocationCallback: (List<InvocationData>) -> Unit,
     private val eventCallback: (Event) -> Unit
 ) {
+    var onDismiss: Callback? = null
+
     fun invokeAction(id: String) {
         executors.state.execute {
             val action = findAction(id) ?: throw IllegalArgumentException("Can't find action: $id")
@@ -29,6 +32,11 @@ class TextModalViewModel(
                 }
             }
         }
+        onDismiss?.invoke()
+    }
+
+    fun onCancel() {
+        // TODO: engage 'cancel' event?
     }
 
     private fun findAction(id: String): TextModalInteraction.Action? {
