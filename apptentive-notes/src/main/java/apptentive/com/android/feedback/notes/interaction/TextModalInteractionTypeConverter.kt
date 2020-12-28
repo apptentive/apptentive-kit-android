@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.notes.interaction
 
+import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
 import apptentive.com.android.feedback.engagement.interactions.InteractionTypeConverter
 import apptentive.com.android.feedback.model.InvocationData
@@ -31,6 +32,11 @@ class TextModalInteractionTypeConverter : InteractionTypeConverter<TextModalInte
             "dismiss" -> TextModalInteraction.Action.Dismiss(
                 id = id,
                 label = label
+            )
+            "event" -> TextModalInteraction.Action.Event(
+                id = id,
+                label = label,
+                event = Event.parse(data.getString("event"))
             )
             else -> throw IllegalArgumentException("Unexpected action: $action")
         }

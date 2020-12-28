@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.notes.interaction
 
+import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
 import apptentive.com.android.feedback.model.InvocationData
 import apptentive.com.android.serialization.json.JsonConverter
@@ -37,6 +38,12 @@ class TextModalInteractionTypeConverterTest {
                     "id": "action_id_2",
                     "label": "Label 2",
                     "action": "dismiss"
+                  },
+                  {
+                    "id": "action_id_3",
+                    "label": "Label 3",
+                    "action": "event",
+                    "event": "com.apptentive#TextModal#event_1"
                   }
                 ]
               }
@@ -66,6 +73,11 @@ class TextModalInteractionTypeConverterTest {
                 TextModalInteraction.Action.Dismiss(
                     id = "action_id_2",
                     label = "Label 2"
+                ),
+                TextModalInteraction.Action.Event(
+                    id = "action_id_3",
+                    label = "Label 3",
+                    event = Event.internal("event_1", "TextModal")
                 )
             )
         )
