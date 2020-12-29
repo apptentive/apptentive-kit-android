@@ -53,8 +53,8 @@ class DefaultEngagementTest : TestCase() {
     private fun recordEvent(
         event: Event,
         interactionId: String?,
-        data: Map<String, Any>?,
-        customData: Map<String, Any>?,
+        data: Map<String, Any?>?,
+        customData: Map<String, Any?>?,
         extendedData: List<ExtendedData>?
     ) {
         addResult("Event: ${event.fullName}")

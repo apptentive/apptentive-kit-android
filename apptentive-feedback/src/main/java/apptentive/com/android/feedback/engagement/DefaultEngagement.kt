@@ -10,8 +10,8 @@ import apptentive.com.android.feedback.model.payloads.ExtendedData
 typealias RecordEventCallback = (
     event: Event,
     interactionId: String?,
-    data: Map<String, Any>?,
-    customData: Map<String, Any>?,
+    data: Map<String, Any?>?,
+    customData: Map<String, Any?>?,
     extendedData: List<ExtendedData>?
 ) -> Unit
 
@@ -30,8 +30,8 @@ data class DefaultEngagement(
         context: EngagementContext,
         event: Event,
         interactionId: String?,
-        data: Map<String, Any>?,
-        customData: Map<String, Any>?,
+        data: Map<String, Any?>?,
+        customData: Map<String, Any?>?,
         extendedData: List<ExtendedData>?
     ): EngagementResult {
         recordEvent(event, interactionId, data, customData, extendedData)

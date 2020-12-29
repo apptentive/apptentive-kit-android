@@ -12,8 +12,8 @@ interface Engagement {
         context: EngagementContext,
         event: Event,
         interactionId: String? = null,
-        data: Map<String, Any>? = null,
-        customData: Map<String, Any>? = null,
+        data: Map<String, Any?>? = null,
+        customData: Map<String, Any?>? = null,
         extendedData: List<ExtendedData>? = null
     ): EngagementResult
 
@@ -28,8 +28,8 @@ class NullEngagement : Engagement {
         context: EngagementContext,
         event: Event,
         interactionId: String?,
-        data: Map<String, Any>?,
-        customData: Map<String, Any>?,
+        data: Map<String, Any?>?,
+        customData: Map<String, Any?>?,
         extendedData: List<ExtendedData>?
     ): EngagementResult {
         return EngagementResult.Failure("Unable to engage event $event: SDK is not fully initialized")

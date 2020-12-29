@@ -20,8 +20,8 @@ open class EngagementContext(
     fun engage(
         event: Event,
         interactionId: String? = null,
-        data: Map<String, Any>? = null,
-        customData: Map<String, Any>? = null,
+        data: Map<String, Any?>? = null,
+        customData: Map<String, Any?>? = null,
         extendedData: List<ExtendedData>? = null
     ) = engagement.engage(
         context = this,

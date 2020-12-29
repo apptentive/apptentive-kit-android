@@ -11,8 +11,8 @@ import apptentive.com.android.feedback.payload.MockPayloadSender
 data class EngageArgs(
     val event: Event,
     val interactionId: String? = null,
-    val data: Map<String, Any>? = null,
-    val customData: Map<String, Any>? = null,
+    val data: Map<String, Any?>? = null,
+    val customData: Map<String, Any?>? = null,
     val extendedData: List<ExtendedData>? = null
 )
 
@@ -32,8 +32,8 @@ class MockEngagementContext(
             context: EngagementContext,
             event: Event,
             interactionId: String?,
-            data: Map<String, Any>?,
-            customData: Map<String, Any>?,
+            data: Map<String, Any?>?,
+            customData: Map<String, Any?>?,
             extendedData: List<ExtendedData>?
         ): EngagementResult {
             return onEngage?.invoke(
