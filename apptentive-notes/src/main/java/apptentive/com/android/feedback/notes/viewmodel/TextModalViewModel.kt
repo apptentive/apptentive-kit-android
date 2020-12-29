@@ -20,18 +20,19 @@ class TextModalViewModel(
                     engageCodePoint(CODE_POINT_DISMISS)
                 }
                 is TextModalInteraction.Action.Invoke -> {
+                    // run invocation
+                    val result = context.engage(action.invocations)
+
                     // engage
-                    val data = mapOf<String, Any?>(
+                    val data = mapOf(
                         "action_id" to action.id,
                         "label" to action.label,
                         "position" to position,
-                        "invoked_interaction_id" to null
+                        "invoked_interaction_id" to (result as? EngagementResult.Success)?.interactionId
                     )
                     engageCodePoint(CODE_POINT_INTERACTION, data)
 
-                    // run invocation
-                    val result = context.engage(action.invocations)
-                    if (result !is EngagementResult.Success) {
+                    if (result is EngagementResult.Success) {
                         // FIXME: error message
                     }
                 }
