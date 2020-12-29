@@ -17,7 +17,7 @@ data class DefaultInteractionEngagement(
         val launcher = lookup[interactionClass]
         if (launcher != null) {
             launcher.launchInteraction(context, interaction)
-            return EngagementResult.Success
+            return EngagementResult.Success(interactionId = interaction.id)
         }
 
         return EngagementResult.Error("Interaction launcher not found: ${interactionClass.name}") // TODO: better error description

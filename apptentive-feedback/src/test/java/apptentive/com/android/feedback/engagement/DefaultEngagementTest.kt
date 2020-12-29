@@ -29,10 +29,10 @@ class DefaultEngagementTest : TestCase() {
 
     @Test
     fun engageSuccessful() {
-        interactionEngagement.addResult(EngagementResult.Success)
+        interactionEngagement.addResult(EngagementResult.Success(mockInteraction.id))
 
         val result = engagement.engage(MockEngagementContext(), mockEvent)
-        assertThat(result).isEqualTo(EngagementResult.Success)
+        assertThat(result).isInstanceOf(EngagementResult.Success::class.java)
 
         assertResults(
             "Event: ${mockEvent.fullName}",

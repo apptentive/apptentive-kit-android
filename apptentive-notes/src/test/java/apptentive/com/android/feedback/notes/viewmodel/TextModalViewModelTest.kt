@@ -16,11 +16,11 @@ class TextModalViewModelTest : TestCase() {
         val context = MockEngagementContext(
             onEngage = { args ->
                 addResult(args)
-                EngagementResult.Success
+                EngagementResult.Failure("No runnable interactions")
             },
             onInvoke = { invocations ->
                 addResult(invocations)
-                EngagementResult.Success
+                EngagementResult.Failure("No runnable interactions")
             },
             onSendPayload = { payload ->
                 throw AssertionError("We didn't expect any payloads here but this one slipped though: $payload")

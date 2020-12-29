@@ -44,14 +44,14 @@ class MockEngagementContext(
                     customData,
                     extendedData
                 )
-            ) ?: EngagementResult.Success
+            ) ?: EngagementResult.Failure("No runnable interactions")
         }
 
         override fun engage(
             context: EngagementContext,
             invocations: List<Invocation>
         ): EngagementResult {
-            return onInvoke?.invoke(invocations) ?: EngagementResult.Success
+            return onInvoke?.invoke(invocations) ?: EngagementResult.Failure("No runnable interactions")
         }
     },
     payloadSender = MockPayloadSender(onSendPayload),
