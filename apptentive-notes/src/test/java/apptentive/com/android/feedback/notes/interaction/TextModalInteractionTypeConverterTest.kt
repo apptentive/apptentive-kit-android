@@ -10,7 +10,6 @@ import org.junit.Test
 class TextModalInteractionTypeConverterTest {
     @Test
     fun testConvert() {
-        val eq = "eq"
         val json = """
             {
               "id": "id",
@@ -48,9 +47,8 @@ class TextModalInteractionTypeConverterTest {
                 ]
               }
             }
-        """.trimIndent()
+        """
 
-        val data = JsonConverter.fromJson<InteractionData>(json)
         val expected = TextModalInteraction(
             id = "id",
             title = "Title",
@@ -82,7 +80,52 @@ class TextModalInteractionTypeConverterTest {
             )
         )
 
+        testConverter(json, expected)
+    }
+
+    @Test
+    fun testConvertMissingFields() {
+        val json = """
+            {
+              "id": "id",
+              "type": "TextModal",
+              "configuration": {
+                "actions": [
+                  {
+                    "id": "action_id_1",
+                    "label": "Label 1",
+                    "action": "dismiss"
+                  }
+                ]
+              }
+            }
+        """
+
+        val expected = TextModalInteraction(
+            id = "id",
+            title = null,
+            body = null,
+            actions = listOf(
+                TextModalInteraction.Action.Dismiss(
+                    id = "action_id_1",
+                    label = "Label 1"
+                )
+            )
+        )
+
+        testConverter(json, expected)
+    }
+
+    private fun testConverter(
+        json: String,
+        expected: TextModalInteraction
+    ) {
+        val data = JsonConverter.fromJson<InteractionData>(json.trimIndent())
         val actual = TextModalInteractionTypeConverter().convert(data)
         Truth.assertThat(actual).isEqualTo(expected)
+    }
+
+    companion object {
+        private const val eq = "\$eq" // raw string would not allow escaping characters
     }
 }
