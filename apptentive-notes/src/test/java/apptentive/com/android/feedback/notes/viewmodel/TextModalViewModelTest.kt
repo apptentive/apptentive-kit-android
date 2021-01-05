@@ -23,90 +23,196 @@ class TextModalViewModelTest : TestCase() {
         body = "Body",
         actions = listOf(
             TextModalInteraction.Action.Invoke(
-                id = "action_invoke",
-                label = "Invoke Action",
+                id = ACTION_ID_INTERACTION,
+                label = ACTION_LABEL_INTERACTION,
                 invocations = invocations
             ),
             TextModalInteraction.Action.Event(
-                id = "action_event",
-                label = "Event Action",
-                event = Event.internal("my_event", interaction = "TextModal")
+                id = ACTION_ID_EVENT,
+                label = ACTION_LABEL_EVENT,
+                event = Event.internal(TARGET_EVENT, interaction = "TextModal")
             ),
             TextModalInteraction.Action.Dismiss(
-                id = "action_dismiss",
-                label = "Dismiss Action"
+                id = ACTION_ID_DISMISS,
+                label = ACTION_LABEL_DISMISS
             )
         )
     )
 
+    //region Interaction
+
     @Test
-    fun testEvents() {
-        val context = MockEngagementContext(
-            onEngage = { args ->
-                addResult(args)
-                EngagementResult.Failure("No runnable interactions")
-            },
-            onInvoke = { invocations ->
-                addResult(invocations)
-                EngagementResult.Failure("No runnable interactions")
-            },
-            onSendPayload = { payload ->
-                throw AssertionError("We didn't expect any payloads here but this one slipped though: $payload")
+    fun testInvokeInteraction() {
+        val targetInteractionId = "target_id"
+        val viewModel = createViewModel(
+            onInvoke = {
+                // trick it to think an interaction has been invoked
+                EngagementResult.Success(targetInteractionId)
             }
         )
-        val interactionId = "123456789"
-        val invocations = listOf<InvocationData>()
-        val interaction = TextModalInteraction(
-            id = interactionId,
-            title = "Title",
-            body = "Body",
-            actions = listOf(
-                TextModalInteraction.Action.Invoke(
-                    id = "action_1",
-                    label = "Action 1",
-                    invocations = invocations
-                ),
-                TextModalInteraction.Action.Event(
-                    id = "action_2",
-                    label = "Action 2",
-                    event = Event.internal("my_event", interaction = "TextModal")
-                ),
-                TextModalInteraction.Action.Dismiss(
-                    id = "action_3",
-                    label = "Action 3"
-                )
-            )
-        )
-        val viewModel = TextModalViewModel(
-            context = context,
-            interaction = interaction
-        )
-        viewModel.onDismiss = { addResult("onDismiss") }
 
-        viewModel.invokeAction(id = "action_1")
+        // invoke first action
+        viewModel.invokeAction(id = ACTION_ID_INTERACTION)
         assertResults(
+            // attempt to invoke an interaction
             invocations.map(InvocationConverter::convert),
-            "onDismiss"
+            // engage "interaction" event
+            EngageArgs(
+                event = Event.internal("interaction", "TextModal"),
+                interactionId = interactionId,
+                data = mapOf(
+                    "action_id" to ACTION_ID_INTERACTION,
+                    "label" to ACTION_LABEL_INTERACTION,
+                    "position" to 0,
+                    "invoked_interaction_id" to targetInteractionId
+                )
+            ),
+            // dismiss UI
+            RESULT_DISMISS_UI
+        )
+    }
+
+    @Test
+    fun testInvokeMissingInteraction() {
+        val viewModel = createViewModel(
+            onInvoke = {
+                // no interactions to invoke
+                EngagementResult.Failure("No runnable interactions")
+            }
         )
 
-        viewModel.invokeAction(id = "action_2")
+        // invoke action
+        viewModel.invokeAction(id = ACTION_ID_INTERACTION)
+
+        // check results
         assertResults(
+            // attempt to invoke an interaction
+            invocations.map(InvocationConverter::convert),
+            // engage "interaction" event
             EngageArgs(
-                event = Event.internal("my_event", interaction = "TextModal"),
+                event = Event.internal("interaction", "TextModal"),
+                interactionId = interactionId,
+                data = mapOf(
+                    "action_id" to ACTION_ID_INTERACTION,
+                    "label" to ACTION_LABEL_INTERACTION,
+                    "position" to 0,
+                    "invoked_interaction_id" to null
+                )
+            ),
+            // dismiss UI
+            RESULT_DISMISS_UI
+        )
+    }
+
+    //endregion
+
+    //region Event
+
+    @Test
+    fun testEventAction() {
+        // NOTE: this is not supported on the backend yet!!!
+        val targetInteractionId = "target_id"
+        val viewModel = createViewModel(
+            onEngage = {
+                // trick it to think an interaction has been invoked
+                if (it.event.name == TARGET_EVENT) EngagementResult.Success(targetInteractionId)
+                else EngagementResult.Failure("No runnable interactions")
+            }
+        )
+
+        // invoke action
+        viewModel.invokeAction(id = ACTION_ID_EVENT)
+
+        // check results
+        assertResults(
+            // engage event
+            EngageArgs(
+                event = Event.internal(TARGET_EVENT, interaction = "TextModal"),
                 interactionId = interactionId
             ),
-            "onDismiss"
+            // engage "interaction" event
+            EngageArgs(
+                event = Event.internal("event", "TextModal"),
+                interactionId = interactionId,
+                data = mapOf(
+                    "action_id" to ACTION_ID_EVENT,
+                    "label" to ACTION_LABEL_EVENT,
+                    "position" to 1,
+                    "invoked_interaction_id" to targetInteractionId
+                )
+            ),
+            // dismiss UI
+            RESULT_DISMISS_UI
         )
-
-        viewModel.invokeAction(id = "action_3")
-        assertResults(
-            "onDismiss"
-        )
-
-        viewModel.onCancel()
-
-        assertResults()
     }
+
+    @Test
+    fun testMissingEventAction() {
+        // NOTE: this is not supported on the backend yet!!!
+        val viewModel = createViewModel(
+            onEngage = {
+                // no interactions to invoke
+                EngagementResult.Failure("No runnable interactions")
+            }
+        )
+
+        // invoke action
+        viewModel.invokeAction(id = ACTION_ID_EVENT)
+
+        // check results
+        assertResults(
+            // engage event
+            EngageArgs(
+                event = Event.internal(TARGET_EVENT, interaction = "TextModal"),
+                interactionId = interactionId
+            ),
+            // engage "interaction" event
+            EngageArgs(
+                event = Event.internal("event", "TextModal"),
+                interactionId = interactionId,
+                data = mapOf(
+                    "action_id" to ACTION_ID_EVENT,
+                    "label" to ACTION_LABEL_EVENT,
+                    "position" to 1,
+                    "invoked_interaction_id" to null
+                )
+            ),
+            // dismiss UI
+            RESULT_DISMISS_UI
+        )
+    }
+
+    //endregion
+
+    //region Dismiss
+
+    @Test
+    fun testDismissAction() {
+        val viewModel = createViewModel()
+
+        // invoke action
+        viewModel.invokeAction(id = ACTION_ID_DISMISS)
+
+        // check results
+        assertResults(
+            // engage "dismiss" event
+            EngageArgs(
+                event = Event.internal("dismiss", "TextModal"),
+                interactionId = interactionId,
+                data = mapOf(
+                    "action_id" to ACTION_ID_DISMISS,
+                    "label" to ACTION_LABEL_DISMISS,
+                    "position" to 2
+                )
+            ),
+            // dismiss UI
+            RESULT_DISMISS_UI
+        )
+    }
+
+    //endregion
+
+    //region Helpers
 
     private fun createViewModel(
         onEngage: EngagementCallback? = null,
@@ -117,7 +223,7 @@ class TextModalViewModelTest : TestCase() {
             context = context,
             interaction = interaction
         )
-        viewModel.onDismiss = { addResult("onDismiss") }
+        viewModel.onDismiss = { addResult(RESULT_DISMISS_UI) }
         return viewModel
     }
 
@@ -142,4 +248,25 @@ class TextModalViewModelTest : TestCase() {
             throw AssertionError("We didn't expect any payloads here but this one slipped though: $payload")
         }
     )
+
+    //endregion
+
+    //region Companion
+
+    companion object {
+        private const val ACTION_ID_INTERACTION = "action_invoke"
+        private const val ACTION_LABEL_INTERACTION = "Invoke Action"
+
+        private const val ACTION_ID_EVENT = "action_event"
+        private const val ACTION_LABEL_EVENT = "Event Action"
+
+        private const val ACTION_ID_DISMISS = "action_dismiss"
+        private const val ACTION_LABEL_DISMISS = "Dismiss Action"
+
+        private const val TARGET_EVENT = "my_event"
+
+        private const val RESULT_DISMISS_UI = "Dismiss UI"
+    }
+
+    //endregion
 }
