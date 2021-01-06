@@ -3,13 +3,10 @@ package apptentive.com.android.feedback.notes.interaction
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
-import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.notes.R
 import apptentive.com.android.feedback.notes.viewmodel.TextModalViewModel
 import apptentive.com.android.feedback.platform.AndroidEngagementContext
 import apptentive.com.android.feedback.platform.AndroidInteractionLauncher
-import apptentive.com.android.util.Log
-import apptentive.com.android.util.LogTags
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class TextModalInteractionLauncher : AndroidInteractionLauncher<TextModalInteraction>() {
@@ -45,7 +42,7 @@ class TextModalInteractionLauncher : AndroidInteractionLauncher<TextModalInterac
                 }
             }.show()
 
-            viewModel.onDismiss = {
+            viewModel.onClose = {
                 dialog.dismiss()
             }
         }

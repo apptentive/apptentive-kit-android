@@ -223,7 +223,7 @@ class TextModalViewModelTest : TestCase() {
             context = context,
             interaction = interaction
         )
-        viewModel.onDismiss = { addResult(RESULT_DISMISS_UI) }
+        viewModel.onClose = { addResult(RESULT_DISMISS_UI) }
         return viewModel
     }
 

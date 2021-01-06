@@ -12,7 +12,7 @@ class TextModalViewModel(
     private val context: EngagementContext,
     private val interaction: TextModalInteraction
 ) {
-    var onDismiss: Callback? = null
+    var onClose: Callback? = null
 
     fun invokeAction(id: String) {
         context.executors.state.execute {
@@ -54,7 +54,7 @@ class TextModalViewModel(
                 }
             }
         }
-        onDismiss?.invoke()
+        onClose?.invoke()
     }
 
     fun onCancel() {
