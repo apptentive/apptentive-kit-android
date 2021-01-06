@@ -12,7 +12,7 @@ class TextModalViewModel(
     private val context: EngagementContext,
     private val interaction: TextModalInteraction
 ) {
-    var onClose: Callback? = null
+    var onDismiss: Callback? = null
 
     fun invokeAction(id: String) {
         context.executors.state.execute {
@@ -54,10 +54,16 @@ class TextModalViewModel(
                 }
             }
         }
-        onClose?.invoke()
+        onDismiss?.invoke()
     }
 
-    fun onCancel() {
+    fun launch() {
+        context.executors.state.execute {
+            engageCodePoint(CODE_POINT_LAUNCH)
+        }
+    }
+
+    fun cancel() {
         context.executors.state.execute {
             engageCodePoint(CODE_POINT_CANCEL)
         }
@@ -84,6 +90,7 @@ class TextModalViewModel(
         const val CODE_POINT_EVENT = "event"
         const val CODE_POINT_DISMISS = "dismiss"
         const val CODE_POINT_CANCEL = "cancel"
+        const val CODE_POINT_LAUNCH = "launch"
 
         private const val DATA_ACTION_ID = "action_id"
         private const val DATA_ACTION_LABEL = "label"

@@ -39,6 +39,26 @@ class TextModalViewModelTest : TestCase() {
         )
     )
 
+    //region Launch
+
+    @Test
+    fun testLaunch() {
+        val viewModel = createViewModel()
+
+        // launch
+        viewModel.launch()
+
+        // check results
+        assertResults(
+            EngageArgs(
+                event = Event.internal("launch", "TextModal"),
+                interactionId = interactionId
+            )
+        )
+    }
+
+    //endregion
+
     //region Interaction
 
     @Test
@@ -212,6 +232,27 @@ class TextModalViewModelTest : TestCase() {
 
     //endregion
 
+    //region Cancel
+
+    @Test
+    fun testCancel() {
+        val viewModel = createViewModel()
+
+        // invoke action
+        viewModel.cancel()
+
+        // check results
+        assertResults(
+            // engage "dismiss" event
+            EngageArgs(
+                event = Event.internal("cancel", "TextModal"),
+                interactionId = interactionId
+            )
+        )
+    }
+
+    //endregion
+
     //region Helpers
 
     private fun createViewModel(
@@ -223,7 +264,7 @@ class TextModalViewModelTest : TestCase() {
             context = context,
             interaction = interaction
         )
-        viewModel.onClose = { addResult(RESULT_DISMISS_UI) }
+        viewModel.onDismiss = { addResult(RESULT_DISMISS_UI) }
         return viewModel
     }
 

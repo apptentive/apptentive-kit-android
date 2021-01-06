@@ -38,11 +38,13 @@ class TextModalInteractionLauncher : AndroidInteractionLauncher<TextModalInterac
                 }
 
                 setOnCancelListener {
-                    viewModel.onCancel()
+                    viewModel.cancel()
                 }
+
+                viewModel.launch()
             }.show()
 
-            viewModel.onClose = {
+            viewModel.onDismiss = {
                 dialog.dismiss()
             }
         }
