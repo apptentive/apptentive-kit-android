@@ -24,19 +24,25 @@ class TextModalInteractionTypeConverter : InteractionTypeConverter<TextModalInte
         val action = data.getString("action")
         @Suppress("UNCHECKED_CAST")
         return when (action) {
-            "interaction" -> TextModalInteraction.Action.Invoke(
-                id = id,
-                label = label,
-                invocations = (data.getList("invokes") as List<Map<String, Any?>>).map(::convertInvocation)
-            )
+            "interaction" -> {
+                val event = data.optString("event")
+                if (event != null) {
+                    TextModalInteraction.Action.Event(
+                        id = id,
+                        label = label,
+                        event = Event.parse(event)
+                    )
+                } else {
+                    TextModalInteraction.Action.Invoke(
+                        id = id,
+                        label = label,
+                        invocations = (data.getList("invokes") as List<Map<String, Any?>>).map(::convertInvocation)
+                    )
+                }
+            }
             "dismiss" -> TextModalInteraction.Action.Dismiss(
                 id = id,
                 label = label
-            )
-            "event" -> TextModalInteraction.Action.Event(
-                id = id,
-                label = label,
-                event = Event.parse(data.getString("event"))
             )
             else -> throw IllegalArgumentException("Unexpected action: $action")
         }

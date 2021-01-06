@@ -41,7 +41,7 @@ class TextModalInteractionTypeConverterTest {
                   {
                     "id": "action_id_3",
                     "label": "Label 3",
-                    "action": "event",
+                    "action": "interaction",
                     "event": "com.apptentive#TextModal#event_1"
                   }
                 ]
