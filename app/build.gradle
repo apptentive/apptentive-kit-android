@@ -41,7 +41,6 @@ dependencies {
     implementation "com.google.android.material:material:$material_design_version"
     implementation "androidx.constraintlayout:constraintlayout:$constraint_layout_version"
     implementation project(':apptentive-core')
-    implementation project(':apptentive-core')
     implementation project(':apptentive-core-ui')
     implementation project(':apptentive-feedback')
     implementation project(':apptentive-enjoyment-dialog')
