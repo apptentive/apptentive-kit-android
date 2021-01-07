@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.MainThread
 import androidx.appcompat.app.AlertDialog
 import apptentive.com.android.feedback.notes.R
 import apptentive.com.android.feedback.notes.viewmodel.TextModalViewModel
@@ -44,6 +45,7 @@ class TextModalDialog(
         }
     }
 
+    @MainThread
     fun show() {
         require(!dialog.isShowing) { "Dialog already showing" }
 
