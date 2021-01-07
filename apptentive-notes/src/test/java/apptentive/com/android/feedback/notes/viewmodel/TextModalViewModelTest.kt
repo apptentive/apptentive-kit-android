@@ -10,6 +10,7 @@ import apptentive.com.android.feedback.engagement.MockEngagementContext
 import apptentive.com.android.feedback.engagement.criteria.InvocationConverter
 import apptentive.com.android.feedback.model.InvocationData
 import apptentive.com.android.feedback.notes.interaction.TextModalInteraction
+import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
 class TextModalViewModelTest : TestCase() {
@@ -71,8 +72,13 @@ class TextModalViewModelTest : TestCase() {
             }
         )
 
-        // invoke first action
-        viewModel.invokeAction(id = ACTION_ID_INTERACTION)
+        // check action title
+        val action = viewModel.actions[0]
+        assertThat(action.title).isEqualTo(ACTION_LABEL_INTERACTION)
+
+        // invoke action
+        action.invoke()
+
         assertResults(
             // attempt to invoke an interaction
             invocations.map(InvocationConverter::convert),
@@ -101,8 +107,12 @@ class TextModalViewModelTest : TestCase() {
             }
         )
 
+        // check action title
+        val action = viewModel.actions[0]
+        assertThat(action.title).isEqualTo(ACTION_LABEL_INTERACTION)
+
         // invoke action
-        viewModel.invokeAction(id = ACTION_ID_INTERACTION)
+        action.invoke()
 
         // check results
         assertResults(
@@ -140,8 +150,12 @@ class TextModalViewModelTest : TestCase() {
             }
         )
 
+        // check action title
+        val action = viewModel.actions[1]
+        assertThat(action.title).isEqualTo(ACTION_LABEL_EVENT)
+
         // invoke action
-        viewModel.invokeAction(id = ACTION_ID_EVENT)
+        action.invoke()
 
         // check results
         assertResults(
@@ -176,8 +190,12 @@ class TextModalViewModelTest : TestCase() {
             }
         )
 
+        // check action title
+        val action = viewModel.actions[1]
+        assertThat(action.title).isEqualTo(ACTION_LABEL_EVENT)
+
         // invoke action
-        viewModel.invokeAction(id = ACTION_ID_EVENT)
+        action.invoke()
 
         // check results
         assertResults(
@@ -210,8 +228,12 @@ class TextModalViewModelTest : TestCase() {
     fun testDismissAction() {
         val viewModel = createViewModel()
 
+        // check action title
+        val action = viewModel.actions[2]
+        assertThat(action.title).isEqualTo(ACTION_LABEL_DISMISS)
+
         // invoke action
-        viewModel.invokeAction(id = ACTION_ID_DISMISS)
+        action.invoke()
 
         // check results
         assertResults(

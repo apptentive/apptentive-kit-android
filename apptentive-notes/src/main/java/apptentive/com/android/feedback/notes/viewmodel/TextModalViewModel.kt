@@ -2,60 +2,31 @@ package apptentive.com.android.feedback.notes.viewmodel
 
 import apptentive.com.android.core.Callback
 import apptentive.com.android.feedback.EngagementResult
+import apptentive.com.android.feedback.INTERACTIONS
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.notes.interaction.TextModalInteraction
 import apptentive.com.android.util.Log
-import apptentive.com.android.feedback.INTERACTIONS
 
 class TextModalViewModel(
     private val context: EngagementContext,
     private val interaction: TextModalInteraction
 ) {
-    var onDismiss: Callback? = null
+    val title = interaction.title
+    val actions = interaction.actions.mapIndexed { index, action ->
+        ActionModel(
+            title = action.label,
+            callback = {
+                // invoke action
+                context.executors.state.execute(createActionCallback(action, index))
 
-    fun invokeAction(id: String) {
-        context.executors.state.execute {
-            val position = indexOfAction(id)
-            when (val action = interaction.actions[position]) {
-                is TextModalInteraction.Action.Dismiss -> {
-                    // engage event
-                    val data = createEventData(action, position)
-                    engageCodePoint(CODE_POINT_DISMISS, data)
-                }
-                is TextModalInteraction.Action.Invoke -> {
-                    // run invocation
-                    val result = context.engage(action.invocations)
-                    if (result !is EngagementResult.Success) {
-                        Log.e(INTERACTIONS, "No runnable interactions") // TODO: better message
-                    }
-
-                    // engage event
-                    val data = createEventData(action, position, result)
-                    engageCodePoint(CODE_POINT_INTERACTION, data)
-
-                }
-                is TextModalInteraction.Action.Event -> {
-                    // engage target event
-                    val result = context.engage(
-                        event = action.event,
-                        interactionId = interaction.id
-                    )
-                    if (result !is EngagementResult.Success) {
-                        Log.e(INTERACTIONS, "No runnable interactions") // TODO: better message
-                    }
-
-                    // engage event
-                    val data = createEventData(action, position, result)
-                    engageCodePoint(CODE_POINT_EVENT, data)
-                }
-                else -> {
-                    throw IllegalArgumentException("Unexpected action: $action")
-                }
+                // dismiss UI
+                onDismiss?.invoke()
             }
-        }
-        onDismiss?.invoke()
+        )
     }
+
+    var onDismiss: Callback? = null
 
     fun launch() {
         context.executors.state.execute {
@@ -77,12 +48,53 @@ class TextModalViewModel(
         )
     }
 
-    private fun indexOfAction(id: String): Int {
-        val index = interaction.actions.indexOfFirst { it.id == id }
-        if (index == -1) {
-            throw IllegalArgumentException("Can't find action: $id")
+    private fun createActionCallback(action: TextModalInteraction.Action, index: Int): Callback =
+        when (action) {
+            is TextModalInteraction.Action.Dismiss -> {
+                {
+                    // engage event
+                    val data = createEventData(action, index)
+                    engageCodePoint(CODE_POINT_DISMISS, data)
+                }
+            }
+            is TextModalInteraction.Action.Invoke -> {
+                {
+                    // run invocation
+                    val result = context.engage(action.invocations)
+                    if (result !is EngagementResult.Success) {
+                        Log.e(INTERACTIONS, "No runnable interactions") // TODO: better message
+                    }
+
+                    // engage event
+                    val data = createEventData(action, index, result)
+                    engageCodePoint(CODE_POINT_INTERACTION, data)
+                }
+            }
+            is TextModalInteraction.Action.Event -> {
+                {
+                    // engage target event
+                    val result = context.engage(
+                        event = action.event,
+                        interactionId = interaction.id
+                    )
+                    if (result !is EngagementResult.Success) {
+                        Log.e(INTERACTIONS, "No runnable interactions") // TODO: better message
+                    }
+
+                    // engage event
+                    val data = createEventData(action, index, result)
+                    engageCodePoint(CODE_POINT_EVENT, data)
+                }
+            }
+            else -> {
+                throw IllegalArgumentException("Unexpected action: $action")
+            }
         }
-        return index
+
+    data class ActionModel(val title: String, val callback: Callback) {
+        operator fun invoke() {
+            callback.invoke()
+        }
     }
 
     companion object {

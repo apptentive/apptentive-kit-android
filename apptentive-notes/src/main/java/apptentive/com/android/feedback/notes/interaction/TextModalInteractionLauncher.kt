@@ -25,15 +25,15 @@ class TextModalInteractionLauncher : AndroidInteractionLauncher<TextModalInterac
                 setView(contentView)
 
                 val titleView = contentView.findViewById<TextView>(R.id.alertTitle)
-                titleView.text = interaction.title
+                titleView.text = viewModel.title
 
                 val viewGroup = contentView.findViewById<ViewGroup>(R.id.apptentive_note_button_bar)
-                interaction.actions.forEach { action ->
+                viewModel.actions.forEach { action ->
                     val button = inflater.inflate(R.layout.apptentive_note_action, null) as TextView
-                    button.text = action.label
+                    button.text = action.title
                     viewGroup.addView(button)
                     button.setOnClickListener {
-                        viewModel.invokeAction(action.id)
+                        action.invoke()
                     }
                 }
 
