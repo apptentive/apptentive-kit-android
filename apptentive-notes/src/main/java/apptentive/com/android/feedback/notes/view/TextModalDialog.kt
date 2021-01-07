@@ -22,7 +22,7 @@ class TextModalDialog(
             val contentView = inflater.inflate(R.layout.apptentive_note, null)
             setView(contentView)
 
-            val titleView = contentView.findViewById<TextView>(R.id.alertTitle)
+            val titleView = contentView.findViewById<TextView>(R.id.apptentive_note_title)
             titleView.text = viewModel.title
 
             val viewGroup = contentView.findViewById<ViewGroup>(R.id.apptentive_note_button_bar)
