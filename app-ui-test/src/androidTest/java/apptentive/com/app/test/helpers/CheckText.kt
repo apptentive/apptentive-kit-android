@@ -8,3 +8,9 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 fun checkText(id: Int, text: String) {
     onView(withId(id)).check(matches(withText(text)))
 }
+
+fun checkText(id: Int, vararg texts: String) {
+    texts.forEachIndexed { index, text ->
+        onView(withIndex(withId(id), index)).check(matches(withText(text)))
+    }
+}

@@ -2,6 +2,8 @@ package apptentive.com.app.test.interactions
 
 import android.content.Intent
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import apptentive.com.app.test.AbstractActivityTest
 import apptentive.com.app.test.MainActivity
@@ -18,6 +20,20 @@ class TextModalDialogTest : AbstractActivityTest(createIntent()) {
         clickButton("simple.json")
         checkText(R.id.apptentive_note_title, "Title")
         checkText(R.id.apptentive_note_action_button, "Dismiss")
+    }
+
+    @Test
+    fun testMultipleNote() {
+        clickButton("multiple.json")
+        checkText(R.id.apptentive_note_title, "Title")
+        checkText(R.id.apptentive_note_action_button, "Interaction", "Event", "Dismiss")
+    }
+
+    @Test
+    fun testMultipleStackedNote() {
+        clickButton("multiple-stacked.json")
+        checkText(R.id.apptentive_note_title, "Title")
+        checkText(R.id.apptentive_note_action_button, "Long Interaction Label", "Long Event Label", "Long Dismiss Label")
     }
 
     companion object {
