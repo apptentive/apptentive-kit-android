@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.appcompat.widget.ButtonBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<apptentive.com.android.ui.ButtonBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/apptentive_note_button_bar"
     style="?attr/buttonBarStyle"
     android:layout_width="match_parent"
@@ -21,4 +21,4 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:visibility="invisible" />
-</androidx.appcompat.widget.ButtonBarLayout>
+</apptentive.com.android.ui.ButtonBarLayout>
