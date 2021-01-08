@@ -4,7 +4,7 @@
  * under which redistribution and use of this file is permitted.
  */
 
-package apptentive.com.android.feedback;
+package apptentive.com.app.test.rules;
 
 import android.Manifest;
 import android.content.Context;
@@ -27,9 +27,9 @@ import java.util.Arrays;
  * https://product.reverb.com/disabling-animations-in-espresso-for-android-testing-de17f7cf236f
  */
 public class DisableAnimationsRule implements TestRule {
-	private Method mSetAnimationScalesMethod;
-	private Method mGetAnimationScalesMethod;
-	private Object mWindowManagerObject;
+	private final Method mSetAnimationScalesMethod;
+	private final Method mGetAnimationScalesMethod;
+	private final Object mWindowManagerObject;
 
 	public DisableAnimationsRule() {
 		try {
