@@ -26,7 +26,7 @@ class TextModalDialog(
             titleView.text = viewModel.title
 
             val viewGroup = contentView.findViewById<ViewGroup>(R.id.apptentive_note_button_bar)
-            viewModel.actions.forEach { action ->
+            viewModel.actions.reversed().forEach { action ->
                 val button = inflater.inflate(R.layout.apptentive_note_action, null) as TextView
                 button.text = action.title
                 viewGroup.addView(button)
