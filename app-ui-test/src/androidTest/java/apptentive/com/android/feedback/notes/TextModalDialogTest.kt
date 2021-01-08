@@ -1,13 +1,12 @@
 package apptentive.com.android.feedback.notes
 
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.concurrent.Executors
+import apptentive.com.android.feedback.DisableAnimationsRule
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.Engagement
 import apptentive.com.android.feedback.engagement.EngagementContext
@@ -26,6 +25,9 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class TextModalDialogTest {
+    @get:Rule
+    var disableAnimations = DisableAnimationsRule()
+
     @get:Rule
     var activityRule = ActivityScenarioRule(MainActivity::class.java)
 
@@ -53,6 +55,9 @@ class TextModalDialogTest {
 
             onView(withId(R.id.apptentive_note_title))
                 .check(matches(withText("Title")))
+
+            onView(withId(R.id.apptentive_note_action_button))
+                .check(matches(withText("Dismiss")))
         }
     }
 
@@ -89,5 +94,9 @@ class TextModalDialogTest {
         override fun execute(task: () -> Unit) {
             task()
         }
+    }
+
+    companion object {
+        private const val TAG: String = "Test"
     }
 }
