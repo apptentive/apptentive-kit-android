@@ -1,3 +1,4 @@
+include ':app-ui-test'
 include ':apptentive-notes'
 include ':apptentive-feedback-test'
 include ':apptentive-core-ui'

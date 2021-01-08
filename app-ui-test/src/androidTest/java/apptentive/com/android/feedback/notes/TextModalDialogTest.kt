@@ -19,7 +19,7 @@ import apptentive.com.android.feedback.notes.interaction.TextModalInteraction
 import apptentive.com.android.feedback.notes.view.TextModalDialog
 import apptentive.com.android.feedback.notes.viewmodel.TextModalViewModel
 import apptentive.com.android.feedback.payload.PayloadSender
-import apptentive.com.app.MainActivity
+import apptentive.com.app.test.MainActivity
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
