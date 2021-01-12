@@ -2,6 +2,7 @@ package apptentive.com.android.feedback.notes.view
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.MainThread
@@ -23,7 +24,18 @@ class TextModalDialog(
             setView(contentView)
 
             val titleView = contentView.findViewById<TextView>(R.id.apptentive_note_title)
-            titleView.text = viewModel.title
+            if (viewModel.title != null) {
+                titleView.text = viewModel.title
+            } else {
+                titleView.visibility = View.GONE
+            }
+
+            val messageView = contentView.findViewById<TextView>(R.id.apptentive_note_message)
+            if (viewModel.message != null) {
+                messageView.text = viewModel.message
+            } else {
+                messageView.visibility = View.GONE
+            }
 
             val viewGroup = contentView.findViewById<ViewGroup>(R.id.apptentive_note_button_bar)
             viewModel.actions.forEach { action ->

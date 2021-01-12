@@ -13,6 +13,8 @@ class TextModalViewModel(
     private val interaction: TextModalInteraction
 ) {
     val title = interaction.title
+    val message = interaction.body
+
     val actions = interaction.actions.mapIndexed { index, action ->
         ActionModel(
             title = action.label,
