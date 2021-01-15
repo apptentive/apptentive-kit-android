@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.appcompat.widget.ButtonBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<apptentive.com.android.ui.ButtonBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="?attr/buttonBarStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -32,4 +32,4 @@
         style="?attr/buttonBarPositiveButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-</androidx.appcompat.widget.ButtonBarLayout>
+</apptentive.com.android.ui.ButtonBarLayout>

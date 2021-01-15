@@ -41,11 +41,11 @@ dependencies {
     implementation "com.google.android.material:material:$material_design_version"
     implementation "androidx.constraintlayout:constraintlayout:$constraint_layout_version"
     implementation project(':apptentive-core')
+    implementation project(':apptentive-core-ui')
     implementation project(':apptentive-feedback')
-    implementation project(':apptentive-core')
     implementation project(':apptentive-enjoyment-dialog')
-    implementation project(path: ':apptentive-survey')
-    implementation project(path: ':apptentive-core-ui')
+    implementation project(':apptentive-survey')
+    implementation project(':apptentive-notes')
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation "androidx.test.ext:junit:$junit_ext_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"

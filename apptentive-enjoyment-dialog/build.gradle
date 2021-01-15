@@ -43,6 +43,7 @@ dependencies {
     implementation project(':apptentive-core-ui')
     implementation project(':apptentive-feedback')
     testImplementation project(':apptentive-core-test')
+    testImplementation project(':apptentive-feedback-test')
     testImplementation "junit:junit:$junit_version"
     testImplementation "com.google.truth:truth:$truth_version"
     androidTestImplementation "androidx.test.ext:junit:$junit_ext_version"

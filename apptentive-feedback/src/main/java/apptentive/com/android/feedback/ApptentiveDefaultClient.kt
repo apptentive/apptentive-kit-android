@@ -171,8 +171,8 @@ internal class ApptentiveDefaultClient(
     private fun recordEvent(
         event: Event,
         interactionId: String?,
-        data: Map<String, Any>?,
-        customData: Map<String, Any>?,
+        data: Map<String, Any?>?,
+        customData: Map<String, Any?>?,
         extendedData: List<ExtendedData>?
     ) {
         // store event locally

@@ -7,6 +7,7 @@ import apptentive.com.android.concurrent.ExecutorQueue
 import apptentive.com.android.concurrent.Executors
 import apptentive.com.android.core.*
 import apptentive.com.android.feedback.engagement.Event
+import apptentive.com.android.feedback.engagement.interactions.InteractionId
 import apptentive.com.android.network.*
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags
@@ -14,7 +15,7 @@ import apptentive.com.android.util.LogTags.network
 
 // TODO: better names for specific cases
 sealed class EngagementResult {
-    object Success : EngagementResult()
+    data class Success(val interactionId: InteractionId) : EngagementResult()
     data class Failure(val description: String) : EngagementResult()
     data class Error(val message: String) : EngagementResult()
     data class Exception(val error: kotlin.Exception) : EngagementResult()

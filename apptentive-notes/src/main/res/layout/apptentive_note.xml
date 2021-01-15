@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/apptentive_note"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="start|left|top"
+    android:orientation="vertical">
+
+    <include layout="@layout/apptentive_note_title" />
+
+    <include layout="@layout/apptentive_note_message" />
+
+    <include
+        layout="@layout/apptentive_note_actions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

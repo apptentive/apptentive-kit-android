@@ -13,6 +13,7 @@ import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.Engagement
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.Event
+import apptentive.com.android.feedback.engagement.criteria.Invocation
 import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.feedback.model.payloads.Payload
 import apptentive.com.android.feedback.payload.PayloadSender
@@ -52,7 +53,7 @@ class MainActivity : AppCompatActivity() {
         love_dialog_button.setOnClickListener {
             Apptentive.reset()
             Apptentive.engage(this, "love_dialog_test") {
-                if (it != EngagementResult.Success) {
+                if (it !is EngagementResult.Success) {
                     Toast.makeText(this, "Not engaged: $it", Toast.LENGTH_LONG).show()
                 }
             }
@@ -69,18 +70,31 @@ class MainActivity : AppCompatActivity() {
                         context: EngagementContext,
                         event: Event,
                         interactionId: String?,
-                        data: Map<String, Any>?,
-                        customData: Map<String, Any>?,
+                        data: Map<String, Any?>?,
+                        customData: Map<String, Any?>?,
                         extendedData: List<ExtendedData>?
                     ): EngagementResult {
                         Log.i(LogTags.core, "Engaged event: $event")
-                        return EngagementResult.Success
+                        return if (interactionId != null)
+                            EngagementResult.Success(interactionId = interactionId) else
+                            EngagementResult.Failure("No runnable interactions")
+                    }
+
+                    override fun engage(
+                        context: EngagementContext,
+                        invocations: List<Invocation>
+                    ): EngagementResult {
+                        return EngagementResult.Failure("No runnable interactions")
                     }
                 },
                 payloadSender = object : PayloadSender {
                     override fun sendPayload(payload: Payload) {
                         runOnUiThread {
-                            Toast.makeText(ctx, "Payload send: ${payload::class.java.simpleName}", Toast.LENGTH_LONG).show()
+                            Toast.makeText(
+                                ctx,
+                                "Payload send: ${payload::class.java.simpleName}",
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
                     }
                 },
@@ -177,6 +191,15 @@ class MainActivity : AppCompatActivity() {
                 )
             )
             launcher.launchInteraction(context, interaction)
+        }
+
+        notes_button.setOnClickListener {
+            Apptentive.reset()
+            Apptentive.engage(this, "note_event") {
+                if (it !is EngagementResult.Success) {
+                    Toast.makeText(this, "Not engaged: $it", Toast.LENGTH_LONG).show()
+                }
+            }
         }
     }
 }

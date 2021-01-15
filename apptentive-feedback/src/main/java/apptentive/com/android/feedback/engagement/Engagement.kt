@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.engagement
 
 import apptentive.com.android.feedback.EngagementResult
+import apptentive.com.android.feedback.engagement.criteria.Invocation
 import apptentive.com.android.feedback.model.payloads.ExtendedData
 
 /**
@@ -11,10 +12,12 @@ interface Engagement {
         context: EngagementContext,
         event: Event,
         interactionId: String? = null,
-        data: Map<String, Any>? = null,
-        customData: Map<String, Any>? = null,
+        data: Map<String, Any?>? = null,
+        customData: Map<String, Any?>? = null,
         extendedData: List<ExtendedData>? = null
     ): EngagementResult
+
+    fun engage(context: EngagementContext, invocations: List<Invocation>): EngagementResult
 }
 
 /**
@@ -25,10 +28,17 @@ class NullEngagement : Engagement {
         context: EngagementContext,
         event: Event,
         interactionId: String?,
-        data: Map<String, Any>?,
-        customData: Map<String, Any>?,
+        data: Map<String, Any?>?,
+        customData: Map<String, Any?>?,
         extendedData: List<ExtendedData>?
     ): EngagementResult {
         return EngagementResult.Failure("Unable to engage event $event: SDK is not fully initialized")
+    }
+
+    override fun engage(
+        context: EngagementContext,
+        invocations: List<Invocation>
+    ): EngagementResult {
+        return EngagementResult.Failure("Unable to engage invocations: SDK is not fully initialized")
     }
 }

@@ -9,8 +9,8 @@ class EventPayload(
     nonce: String = generateUUID(),
     val label: String,
     val interactionId: String? = null,
-    val data: Map<String, Any>? = null,
-    val customData: Map<String, Any>? = null,
+    val data: Map<String, Any?>? = null,
+    val customData: Map<String, Any?>? = null,
     val extendedData: List<ExtendedData>? = null
 ) : ConversationPayload(
     nonce = nonce
