@@ -15,7 +15,6 @@ import apptentive.com.android.feedback.engagement.criteria.Invocation
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
 import apptentive.com.android.feedback.engagement.interactions.InteractionModule
-import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.feedback.model.payloads.Payload
 import apptentive.com.android.feedback.payload.PayloadSender
@@ -61,11 +60,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val interactionModules: Map<String, InteractionModule<Interaction>> by lazy {
-        val component = InteractionModuleComponent(
-            packageName = "apptentive.com.android.feedback.ui",
-            classSuffix = "Module"
-        )
-        component.getModules()
+        InteractionModuleComponent.default().getModules()
     }
 
     companion object {

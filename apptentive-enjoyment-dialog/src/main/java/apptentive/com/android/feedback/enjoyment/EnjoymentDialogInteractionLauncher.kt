@@ -1,9 +1,7 @@
-package apptentive.com.android.feedback.ui
+package apptentive.com.android.feedback.enjoyment
 
 import android.view.LayoutInflater
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
-import androidx.core.view.isVisible
 import apptentive.com.android.feedback.platform.AndroidEngagementContext
 import apptentive.com.android.feedback.platform.AndroidInteractionLauncher
 import com.google.android.material.dialog.MaterialAlertDialogBuilder

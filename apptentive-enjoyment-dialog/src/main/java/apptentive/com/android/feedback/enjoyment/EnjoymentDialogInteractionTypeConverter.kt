@@ -1,4 +1,4 @@
-package apptentive.com.android.feedback.ui
+package apptentive.com.android.feedback.enjoyment
 
 import apptentive.com.android.feedback.engagement.interactions.InteractionTypeConverter
 import apptentive.com.android.feedback.engagement.interactions.InteractionData

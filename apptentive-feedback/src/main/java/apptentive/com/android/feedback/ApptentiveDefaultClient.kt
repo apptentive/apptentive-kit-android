@@ -159,11 +159,7 @@ internal class ApptentiveDefaultClient(
 
     // FIXME: temporary code
     private fun loadInteractionModules(): Map<String, InteractionModule<Interaction>> {
-        val component = InteractionModuleComponent(
-            packageName = "apptentive.com.android.feedback.ui",
-            classSuffix = "Module"
-        )
-        return component.getModules()
+        return InteractionModuleComponent.default().getModules()
     }
 
     @WorkerThread
