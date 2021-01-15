@@ -172,7 +172,7 @@ class MainActivity : AppCompatActivity() {
                             mapOf<String, Any?>(
                                 "id" to "choice_2",
                                 "value" to "Other",
-                                "type" to "select_option",
+                                "type" to "select_other",
                                 "hint" to "Hint"
                             )
                         )
