@@ -9,7 +9,7 @@ import apptentive.com.android.util.LogTags.core
 // TODO: should we load interaction modules lazily?
 class InteractionModuleComponent(
     private val packageName: String,
-    private val interactionNames: List<String> = InteractionType.names(),
+    private val interactionNames: List<String>,
     private val classPrefix: String = "",
     private val classSuffix: String = ""
 ) {
@@ -55,5 +55,13 @@ class InteractionModuleComponent(
         }
 
         return null
+    }
+
+    companion object {
+        fun default() = InteractionModuleComponent(
+            packageName = "apptentive.com.android.feedback",
+            interactionNames = InteractionType.names(),
+            classSuffix = "Module"
+        )
     }
 }

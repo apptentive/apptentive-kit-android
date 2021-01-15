@@ -1,4 +1,4 @@
-package apptentive.com.android.feedback.ui
+package apptentive.com.android.feedback
 
 import androidx.annotation.Keep
 import apptentive.com.android.feedback.engagement.interactions.InteractionTypeConverter

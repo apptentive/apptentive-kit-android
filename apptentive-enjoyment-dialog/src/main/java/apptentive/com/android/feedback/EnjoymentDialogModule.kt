@@ -1,9 +1,12 @@
-package apptentive.com.android.feedback.ui
+package apptentive.com.android.feedback
 
 import androidx.annotation.Keep
-import apptentive.com.android.feedback.engagement.interactions.InteractionTypeConverter
 import apptentive.com.android.feedback.engagement.interactions.InteractionLauncher
 import apptentive.com.android.feedback.engagement.interactions.InteractionModule
+import apptentive.com.android.feedback.engagement.interactions.InteractionTypeConverter
+import apptentive.com.android.feedback.ui.EnjoymentDialogInteraction
+import apptentive.com.android.feedback.ui.EnjoymentDialogInteractionLauncher
+import apptentive.com.android.feedback.ui.EnjoymentDialogInteractionTypeConverter
 
 @Keep
 internal class EnjoymentDialogModule : InteractionModule<EnjoymentDialogInteraction> {
