@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.survey.interaction
 
 import apptentive.com.android.feedback.engagement.interactions.Interaction
+import apptentive.com.android.feedback.engagement.interactions.InteractionType
 
 typealias SurveyQuestionConfiguration = Map<String, Any?>
 
@@ -27,4 +28,4 @@ class SurveyInteraction(
     val successMessage: String?,
     val isRequired: Boolean,
     val questions: List<SurveyQuestionConfiguration>
-) : Interaction(id, type = "Survey")
+) : Interaction(id, type = InteractionType.Survey)

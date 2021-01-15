@@ -7,10 +7,8 @@ interface InteractionDataConverter {
     fun convert(data: InteractionData): Interaction?
 }
 
-typealias InteractionType = String
-
 data class DefaultInteractionDataConverter(
-    private val lookup: Map<InteractionType, InteractionTypeConverter<*>>
+    private val lookup: Map<String, InteractionTypeConverter<*>>
 ) : InteractionDataConverter {
     override fun convert(data: InteractionData): Interaction? {
         val converter = lookup[data.type]

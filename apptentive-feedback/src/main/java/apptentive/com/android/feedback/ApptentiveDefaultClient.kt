@@ -30,7 +30,7 @@ internal class ApptentiveDefaultClient(
 ) : ApptentiveClient {
     private lateinit var conversationManager: ConversationManager
     private lateinit var payloadSender: PayloadSender
-    private lateinit var interactionModules: Map<InteractionType, InteractionModule<Interaction>>
+    private lateinit var interactionModules: Map<String, InteractionModule<Interaction>>
     private var engagement: Engagement = NullEngagement()
 
     //region Initialization
@@ -160,7 +160,6 @@ internal class ApptentiveDefaultClient(
     // FIXME: temporary code
     private fun loadInteractionModules(): Map<String, InteractionModule<Interaction>> {
         val component = InteractionModuleComponent(
-            interactionNames = interactionNames,
             packageName = "apptentive.com.android.feedback.ui",
             classSuffix = "Module"
         )
@@ -212,18 +211,6 @@ internal class ApptentiveDefaultClient(
     //endregion
 
     companion object {
-        // FIXME: temporary code
-        private val interactionNames = listOf(
-            "UpgradeMessage",
-            "EnjoymentDialog",
-            "RatingDialog",
-            "MessageCenter",
-            "AppStoreRating",
-            "Survey",
-            "TextModal",
-            "NavigateToLink"
-        )
-
         private fun getConversationFile(): File {
             val conversationsDir = getConversationDir()
             return File(conversationsDir, "conversation.bin")

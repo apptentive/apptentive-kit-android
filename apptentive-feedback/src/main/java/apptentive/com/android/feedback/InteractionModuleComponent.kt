@@ -2,13 +2,14 @@ package apptentive.com.android.feedback
 
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionModule
+import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.core
 
 // TODO: should we load interaction modules lazily?
 class InteractionModuleComponent(
-    private val interactionNames: List<String>,
     private val packageName: String,
+    private val interactionNames: List<String> = InteractionType.names(),
     private val classPrefix: String = "",
     private val classSuffix: String = ""
 ) {
@@ -28,6 +29,7 @@ class InteractionModuleComponent(
     }
 
     private fun getModules(classNames: List<String>): Map<String, InteractionModule<Interaction>> {
+        @Suppress("UNCHECKED_CAST")
         return interactionNames.zip(classNames)
             .asSequence()
             .toMap()
@@ -41,7 +43,7 @@ class InteractionModuleComponent(
             val moduleClass = Class.forName(className)
             return moduleClass.newInstance() as InteractionModule<*>
         } catch (e: ClassNotFoundException) {
-            Log.d(core, "Module not found: $className")
+            Log.v(core, "Module not found: $className")
         } catch (e: IllegalAccessException) {
             Log.e(core, "Module class or its nullary constructor is not accessible: $className", e)
         } catch (e: InstantiationException) {

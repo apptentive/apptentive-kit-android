@@ -15,6 +15,7 @@ import apptentive.com.android.feedback.engagement.criteria.Invocation
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
 import apptentive.com.android.feedback.engagement.interactions.InteractionModule
+import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.feedback.model.payloads.Payload
 import apptentive.com.android.feedback.payload.PayloadSender
@@ -61,7 +62,6 @@ class MainActivity : AppCompatActivity() {
 
     private val interactionModules: Map<String, InteractionModule<Interaction>> by lazy {
         val component = InteractionModuleComponent(
-            interactionNames = interactionNames,
             packageName = "apptentive.com.android.feedback.ui",
             classSuffix = "Module"
         )
@@ -70,18 +70,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_INTERACTIONS_PATH = "interactions_path"
-
-        // FIXME: temporary code
-        private val interactionNames = listOf(
-            "UpgradeMessage",
-            "EnjoymentDialog",
-            "RatingDialog",
-            "MessageCenter",
-            "AppStoreRating",
-            "Survey",
-            "TextModal",
-            "NavigateToLink"
-        )
     }
 
     private val engagementContext: EngagementContext by lazy {
