@@ -1,5 +1,7 @@
 package apptentive.com.android.feedback.engagement
 
+import apptentive.com.android.feedback.engagement.interactions.InteractionType
+
 /**
  * @param vendor the organization that created the event. For start, there will be two defined.
  * @param interaction the name of the interaction that the event was invoked through. In the case of events lying outside of an interaction, use <code>app</code>.
@@ -12,8 +14,9 @@ data class Event(val vendor: String, val interaction: String, val name: String) 
     override fun toString(): String = fullName
 
     companion object {
-        fun local(name: String): Event = Event("local", "app", name)
-        fun internal(name: String, interaction: String = "app"): Event = Event("com.apptentive", interaction, name)
+        fun local(name: String) = Event("local", "app", name)
+        fun internal(name: String, interaction: String = "app") = Event("com.apptentive", interaction, name)
+        fun internal(name: String, interaction: InteractionType) = internal(name, interaction.toString())
 
         private fun escapeCharacters(value: String): String = value
             .replace("%", "%25")

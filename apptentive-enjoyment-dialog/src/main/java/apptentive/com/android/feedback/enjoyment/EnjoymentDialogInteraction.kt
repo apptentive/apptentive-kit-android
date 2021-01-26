@@ -1,6 +1,7 @@
-package apptentive.com.android.feedback.ui
+package apptentive.com.android.feedback.enjoyment
 
 import apptentive.com.android.feedback.engagement.interactions.Interaction
+import apptentive.com.android.feedback.engagement.interactions.InteractionType
 
 internal class EnjoymentDialogInteraction(
     id: String,
@@ -8,4 +9,4 @@ internal class EnjoymentDialogInteraction(
     val yesText: String,
     val noText: String,
     val dismissText: String?
-) : Interaction(id = id, type = "EnjoymentDialog")
+) : Interaction(id = id, type = InteractionType.EnjoymentDialog)

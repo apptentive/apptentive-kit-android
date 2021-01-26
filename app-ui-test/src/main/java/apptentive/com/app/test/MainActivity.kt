@@ -60,28 +60,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val interactionModules: Map<String, InteractionModule<Interaction>> by lazy {
-        val component = InteractionModuleComponent(
-            interactionNames = interactionNames,
-            packageName = "apptentive.com.android.feedback.ui",
-            classSuffix = "Module"
-        )
-        component.getModules()
+        InteractionModuleComponent.default().getModules()
     }
 
     companion object {
         const val EXTRA_INTERACTIONS_PATH = "interactions_path"
-
-        // FIXME: temporary code
-        private val interactionNames = listOf(
-            "UpgradeMessage",
-            "EnjoymentDialog",
-            "RatingDialog",
-            "MessageCenter",
-            "AppStoreRating",
-            "Survey",
-            "TextModal",
-            "NavigateToLink"
-        )
     }
 
     private val engagementContext: EngagementContext by lazy {

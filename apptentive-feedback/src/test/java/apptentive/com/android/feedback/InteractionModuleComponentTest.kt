@@ -4,6 +4,7 @@ import apptentive.com.android.TestCase
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionLauncher
 import apptentive.com.android.feedback.engagement.interactions.InteractionModule
+import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.feedback.engagement.interactions.InteractionTypeConverter
 import com.google.common.truth.Truth.assertThat
 import org.junit.Ignore
@@ -45,7 +46,7 @@ class InteractionModuleComponentTest : TestCase() {
     }
 }
 
-private class TestInteraction(id: String) : Interaction(id, type = "Test")
+private class TestInteraction(id: String) : Interaction(id, type = InteractionType("Test"))
 
 private class MyTestInteractionModule : InteractionModule<TestInteraction> {
     override val interactionClass = TestInteraction::class.java

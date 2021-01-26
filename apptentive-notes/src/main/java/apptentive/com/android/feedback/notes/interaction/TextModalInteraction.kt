@@ -2,6 +2,7 @@ package apptentive.com.android.feedback.notes.interaction
 
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
+import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.feedback.model.InvocationData
 
 class TextModalInteraction(
@@ -9,7 +10,7 @@ class TextModalInteraction(
     val title: String?,
     val body: String?,
     val actions: List<Action>
-) : Interaction(id, "TextModal") {
+) : Interaction(id, InteractionType.TextModal) {
     sealed class Action(val id: String, val label: String) {
         class Invoke(
             id: String,

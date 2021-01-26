@@ -1,4 +1,4 @@
-package apptentive.com.android.feedback.ui
+package apptentive.com.android.feedback.enjoyment
 
 import apptentive.com.android.core.Callback
 import apptentive.com.android.feedback.engagement.EngagementContext
