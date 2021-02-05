@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.platform
 
 import android.content.Context
+import android.content.Intent
 import apptentive.com.android.concurrent.Executors
 import apptentive.com.android.feedback.engagement.Engagement
 import apptentive.com.android.feedback.engagement.EngagementContext
@@ -20,4 +21,6 @@ class AndroidEngagementContext(
     fun getString(resId: Int): String {
         return androidContext.getString(resId)
     }
+
+    fun tryStartActivity(intent: Intent) = androidContext.tryStartActivity(intent)
 }

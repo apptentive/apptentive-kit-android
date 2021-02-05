@@ -45,6 +45,7 @@ dependencies {
     implementation project(':apptentive-enjoyment-dialog')
     implementation project(':apptentive-survey')
     implementation project(':apptentive-notes')
+    implementation project(':apptentive-navigate-to-link')
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation "androidx.test.ext:junit:$junit_ext_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"

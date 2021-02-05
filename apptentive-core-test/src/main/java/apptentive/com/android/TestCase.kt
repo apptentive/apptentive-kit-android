@@ -1,14 +1,10 @@
 package apptentive.com.android
 
-import apptentive.com.android.serialization.json.JsonConverter
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 
-open class TestCase(
-    private val logMessages: Boolean = false,
-    private val logStackTraces: Boolean = false
-) {
+open class TestCase {
     @get:Rule
     val dependencyRule = DependencyProviderRule()
 
@@ -19,19 +15,6 @@ open class TestCase(
     @Before
     open fun setUp() {
         results.clear()
-    }
-
-    //endregion
-
-    //region Resources
-
-    protected fun readText(path: String): String {
-        return javaClass.classLoader!!.getResourceAsStream(path).bufferedReader().readText()
-    }
-
-    protected inline fun <reified T> readJson(path: String): T {
-        val json = readText(path)
-        return JsonConverter.fromJson(json)
     }
 
     //endregion

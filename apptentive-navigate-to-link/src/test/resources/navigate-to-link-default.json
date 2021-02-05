@@ -1,0 +1,7 @@
+{
+  "id": "id",
+  "type": "NavigateToLink",
+  "configuration": {
+    "url": "http://www.apptentive.com"
+  }
+}
