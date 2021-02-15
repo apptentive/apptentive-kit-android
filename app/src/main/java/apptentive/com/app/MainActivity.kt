@@ -89,13 +89,13 @@ class MainActivity : AppCompatActivity() {
                 },
                 payloadSender = object : PayloadSender {
                     override fun sendPayload(payload: Payload) {
-                        runOnUiThread {
-                            Toast.makeText(
-                                ctx,
-                                "Payload send: ${payload::class.java.simpleName}",
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
+//                        runOnUiThread {
+//                            Toast.makeText(
+//                                ctx,
+//                                "Payload send: ${payload::class.java.simpleName}",
+//                                Toast.LENGTH_LONG
+//                            ).show()
+//                        }
                     }
                 },
                 executors = Executors(
@@ -106,13 +106,13 @@ class MainActivity : AppCompatActivity() {
             val launcher = SurveyInteractionLauncher()
             val interaction = SurveyInteraction(
                 id = "id",
-                description = "description",
-                name = "name",
-                submitText = "Submit",
+                description = "Tell us about your experience!",
+                name = "Please provide your feedback",
+                submitText = "Submit survey",
                 requiredText = "Required",
-                validationError = "Validation error",
+                validationError = "Please fix the errors in your responses",
                 showSuccessMessage = true,
-                successMessage = "Success",
+                successMessage = "Thank you for taking this survey!",
                 isRequired = false,
                 questions = listOf(
                     mapOf(

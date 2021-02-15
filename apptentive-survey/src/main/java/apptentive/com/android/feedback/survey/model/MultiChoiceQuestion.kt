@@ -60,6 +60,11 @@ class MultiChoiceQuestion(
         return checkedCount in minSelections..maxSelections && allChoicesAreValid(answer.choices)
     }
 
+    override fun isAnswered(answer: Answer): Boolean {
+        val checkedCount = answer.choices.sumBy { if (it.checked) 1 else 0 }
+        return checkedCount > 0
+    }
+
     private fun allChoicesAreValid(choices: List<Answer.Choice>) =
         // all "checked" choices must be valid
         choices

@@ -2,14 +2,15 @@ package apptentive.com.android.feedback.survey.view
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.view.isVisible
 import apptentive.com.android.feedback.survey.R
+import apptentive.com.android.ui.getThemeColor
 
 class SurveyQuestionContainerView(
     context: Context,
@@ -19,6 +20,7 @@ class SurveyQuestionContainerView(
     private val titleTextView: TextView
     private val instructionsTextView: TextView
     private val answerContainerView: ViewGroup // FIXME: change to ViewStub https://developer.android.com/training/improving-layouts/loading-ondemand
+    private val errorMessageView: TextView
 
     var title: CharSequence?
         get() = titleTextView.text
@@ -51,11 +53,12 @@ class SurveyQuestionContainerView(
         titleTextView = contentView.findViewById(R.id.question_title)
         instructionsTextView = contentView.findViewById(R.id.question_instructions)
         answerContainerView = contentView.findViewById(R.id.answer_container)
+        errorMessageView = contentView.findViewById(R.id.error_message)
 
         titleTextViewDefaultColor = titleTextView.textColors
         instructionsTextViewDefaultColor = instructionsTextView.textColors
 
-        errorColor = Color.RED // FIXME: resolve error color from view xml custom attribute or theme
+        errorColor = context.getThemeColor(R.attr.colorError)
     }
 
     fun setAnswerView(layoutId: Int) {
@@ -64,13 +67,16 @@ class SurveyQuestionContainerView(
         answerContainerView.addView(answerView)
     }
 
-    fun setInvalid(invalid: Boolean) {
-        if (invalid) {
+    fun setErrorMessage(errorMessage: String?) {
+        if (errorMessage != null) {
             titleTextView.setTextColor(errorColor)
             instructionsTextView.setTextColor(errorColor)
+            errorMessageView.visibility = View.VISIBLE
+            errorMessageView.text = errorMessage
         } else {
             titleTextView.setTextColor(titleTextViewDefaultColor)
             instructionsTextView.setTextColor(instructionsTextViewDefaultColor)
+            errorMessageView.visibility = View.INVISIBLE
         }
     }
 }

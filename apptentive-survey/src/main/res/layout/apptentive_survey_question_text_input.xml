@@ -7,13 +7,19 @@
     android:animateLayoutChanges="true"
     android:visibility="gone"
     app:errorEnabled="true"
-    app:hintAnimationEnabled="true">
+    app:hintAnimationEnabled="false"
+    app:hintEnabled="false"
+    app:errorIconDrawable="@null"
+    android:layout_marginStart="@dimen/margin_40dp"
+    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/other_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minLines="1"
+        android:maxLines="4"
         android:inputType="textMultiLine|textCapSentences"
-        android:minHeight="48dp"
+        android:minHeight="@dimen/min_height_radio_checkbox_component"
         android:saveEnabled="false" />
 </com.google.android.material.textfield.TextInputLayout>

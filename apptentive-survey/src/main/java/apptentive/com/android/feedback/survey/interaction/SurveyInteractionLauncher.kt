@@ -42,15 +42,24 @@ class SurveyInteractionLauncher(
         }
     }
 
-    private fun createSurveyModel(context: AndroidEngagementContext, interaction: SurveyInteraction) = SurveyModel(
+    private fun createSurveyModel(
+        context: AndroidEngagementContext,
+        interaction: SurveyInteraction
+    ) = SurveyModel(
         questions = interaction.questions.map { config ->
             questionConverter.convert(
                 config = config,
-                requiredTextMessage = interaction.requiredText ?: context.getString(R.string.apptentive_required)
+                requiredTextMessage = interaction.requiredText
+                    ?: context.getString(R.string.apptentive_required)
             )
         },
-        validationError = interaction.validationError
-        // FIXME: pass the rest of the configuration
+        name = interaction.name,
+        description = interaction.description,
+        submitText = interaction.submitText,
+        requiredText = interaction.requiredText,
+        validationError = interaction.validationError,
+        showSuccessMessage = interaction.showSuccessMessage,
+        successMessage = interaction.successMessage
     )
 
     @VisibleForTesting

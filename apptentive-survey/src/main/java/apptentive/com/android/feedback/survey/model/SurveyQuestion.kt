@@ -21,8 +21,14 @@ abstract class SurveyQuestion<Answer : SurveyQuestionAnswer>(
     /** Returns <code>true</code> if the question has a valid answer. */
     val hasValidAnswer get() = isValidAnswer(answer)
 
+    /** Returns <code>true</code> if the question has a any answer. */
+    val hasAnswer get() = isAnswered(answer)
+
     /** Checks if the given answer is valid for this specific question */
     protected abstract fun isValidAnswer(answer: Answer): Boolean
+
+    /** Checks if user provided any answer */
+    protected abstract fun isAnswered(answer: Answer): Boolean
 
     //region Equality
 

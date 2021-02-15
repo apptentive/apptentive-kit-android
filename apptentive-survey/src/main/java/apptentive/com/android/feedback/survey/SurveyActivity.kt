@@ -3,9 +3,9 @@ package apptentive.com.android.feedback.survey
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.MotionEvent
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import apptentive.com.android.feedback.survey.view.SurveyQuestionViewHolderFactory
@@ -15,9 +15,8 @@ import apptentive.com.android.feedback.survey.viewmodel.SingleLineQuestionListIt
 import apptentive.com.android.feedback.survey.viewmodel.SurveyQuestionListItem.Type.*
 import apptentive.com.android.feedback.survey.viewmodel.SurveyViewModel
 import apptentive.com.android.feedback.survey.viewmodel.register
-import apptentive.com.android.ui.ApptentiveViewModelActivity
-import apptentive.com.android.ui.ListViewAdapter
-import apptentive.com.android.ui.hideSoftKeyboard
+import apptentive.com.android.ui.*
+import kotlinx.android.synthetic.main.apptentive_activity_survey.*
 
 class SurveyActivity : ApptentiveViewModelActivity<SurveyViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,10 +31,14 @@ class SurveyActivity : ApptentiveViewModelActivity<SurveyViewModel>() {
             adapter.submitList(items)
         })
 
-        viewModel.validationErrorText.observe(this, Observer { errorText ->
-            if (errorText != null) {
-                // TODO: show customizable toast
-                Toast.makeText(this, errorText, Toast.LENGTH_LONG).show()
+        viewModel.surveySubmitMessageState.observe(this, Observer { state ->
+            if (state != null) {
+                success_error_message.text = state.message
+                if (state.isValid) {
+                    success_error_message.setTextColor(getThemeColor(R.attr.colorOnBackground))
+                } else {
+                    success_error_message.setTextColor(getThemeColor(R.attr.colorError))
+                }
             }
         })
 
@@ -43,10 +46,41 @@ class SurveyActivity : ApptentiveViewModelActivity<SurveyViewModel>() {
             finish()
         })
 
-        val sendButton = findViewById<Button>(R.id.send)
+        viewModel.showConfirmation.observe(this, Observer {
+            showConfirmationDialog(
+                context = this,
+                title = getString(R.string.confirmation_dialog_title),
+                message = getString(R.string.confirmation_dialog_message),
+                positiveButton = DialogButton(getString(R.string.confirmation_dialog_back_to_survey)),
+                negativeButton = DialogButton(getString(R.string.close)){
+                    viewModel.exit(showConfirmation = false)
+                }
+            )
+        })
+
+        val sendButton = findViewById<Button>(R.id.submitButton)
         sendButton.setOnClickListener {
             viewModel.submit()
         }
+
+        supportActionBar?.hide()
+
+        topAppBar.title = viewModel.title
+        topAppBar.setNavigationOnClickListener {
+            viewModel.exit(showConfirmation = true)
+        }
+
+        if (!viewModel.introduction.isNullOrBlank()) {
+            survey_introduction.text = viewModel.introduction
+            survey_introduction.visibility = View.VISIBLE
+        }
+
+        submitButton.text = viewModel.submitButtonText
+
+    }
+
+    override fun onBackPressed() {
+        viewModel.exit(showConfirmation = true)
     }
 
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {

@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.survey.viewmodel
 
+import androidx.annotation.MainThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,12 +10,13 @@ import apptentive.com.android.core.asLiveData
 import apptentive.com.android.core.postIfChanged
 import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion
 import apptentive.com.android.feedback.survey.model.RangeQuestion
+import apptentive.com.android.feedback.survey.model.SingleLineQuestion
 import apptentive.com.android.feedback.survey.model.SurveyModel
 import apptentive.com.android.feedback.survey.model.SurveyQuestion
-import apptentive.com.android.feedback.survey.model.SingleLineQuestion
 import apptentive.com.android.feedback.survey.model.SurveyQuestionAnswer
 import apptentive.com.android.feedback.survey.model.update
 import apptentive.com.android.ui.ApptentiveViewModel
+import java.lang.Thread.sleep
 
 typealias SurveySubmitCallback = (Map<String, SurveyQuestionAnswer>) -> Unit
 
@@ -25,7 +27,8 @@ class SurveyViewModel(
     questionListItemFactory: SurveyQuestionListItemFactory = DefaultSurveyQuestionListItemFactory()
 ) : ApptentiveViewModel() {
     /** LiveData which transforms a list of {SurveyQuestion} into a list of {SurveyQuestionListItem} */
-    private val questionsStream: LiveData<List<SurveyQuestion<*>>> = model.questionsStream.asLiveData()
+    private val questionsStream: LiveData<List<SurveyQuestion<*>>> =
+        model.questionsStream.asLiveData()
 
     /** Holds an index to the first invalid question (or -1 if all questions are valid) */
     private val firstInvalidQuestionIndexEvent = LiveEvent<Int>()
@@ -44,23 +47,35 @@ class SurveyViewModel(
     private val requiredTextEvent = LiveEvent<String?>()
     val requiredText: LiveData<String?> = requiredTextEvent
 
-    private val validationErrorTextEvent = LiveEvent<String?>()
-    val validationErrorText: LiveData<String?> = validationErrorTextEvent
+    private val _surveySubmitMessageState = MutableLiveData<SurveySubmitMessageState>()
+    val surveySubmitMessageState: LiveData<SurveySubmitMessageState> = _surveySubmitMessageState
 
     private val exitEvent = LiveEvent<Boolean>()
     val exitStream: LiveData<Boolean> = exitEvent
+
+    private val showConfirmationEvent = LiveEvent<Boolean>()
+    val showConfirmation: LiveData<Boolean> = showConfirmationEvent
+
+    private var submitAttempted: Boolean = false
+    private var anyQuestionWasAnswered: Boolean = false
+
+    val title = model.name
+    val introduction = model.description
+    val submitButtonText = model.submitText
 
     //region Answers
 
     fun updateAnswer(id: String, value: String) {
         updateModel {
             model.updateAnswer(id, SingleLineQuestion.Answer(value))
+            updateQuestionAnsweredFlag(model.hasAnyAnswer)
         }
     }
 
     fun updateAnswer(id: String, selectedIndex: Int) {
         updateModel {
             model.updateAnswer(id, RangeQuestion.Answer(selectedIndex))
+            updateQuestionAnsweredFlag(model.hasAnyAnswer)
         }
     }
 
@@ -76,13 +91,22 @@ class SurveyViewModel(
             )
             if (oldAnswer != newAnswer) {
                 model.updateAnswer(questionId, newAnswer)
+                updateQuestionAnsweredFlag(model.hasAnyAnswer)
             }
+        }
+    }
+
+    private fun updateQuestionAnsweredFlag(updated: Boolean) {
+        executors.main.execute {
+            anyQuestionWasAnswered = anyQuestionWasAnswered || updated
         }
     }
 
     //endregion
 
     fun submit() {
+        submitAttempted = true
+
         updateModel {
             if (model.allRequiredAnswersAreValid) {
                 onSubmit(model.questions
@@ -91,11 +115,20 @@ class SurveyViewModel(
                     .toMap()
                 )
 
+                if (!model.successMessage.isNullOrBlank()) {
+                    _surveySubmitMessageState.postValue(SurveySubmitMessageState(model.successMessage, true))
+                    sleep(1000)
+                }
+
                 // tell the activity to finish
-                exitEvent.postValue(true)
+                executors.main.execute {
+                    exit(showConfirmation = false)
+                }
             } else {
                 // trigger error message
-                validationErrorTextEvent.postValue(model.validationError)
+                if (!model.validationError.isNullOrBlank()) {
+                    _surveySubmitMessageState.postValue(SurveySubmitMessageState(model.validationError, false))
+                }
 
                 // trigger scrolling to the first invalid question
                 firstInvalidQuestionIndexEvent.postValue(model.getFirstInvalidRequiredQuestionIndex())
@@ -103,6 +136,15 @@ class SurveyViewModel(
                 // show all invalid questions
                 showInvalidQuestionsStream.postIfChanged(true)
             }
+        }
+    }
+
+    @MainThread
+    fun exit(showConfirmation: Boolean) {
+        if (showConfirmation && (submitAttempted or anyQuestionWasAnswered)) {
+            showConfirmationEvent.postValue(true)
+        } else {
+            exitEvent.postValue(true)
         }
     }
 
@@ -141,3 +183,8 @@ class SurveyViewModel(
         }
     }
 }
+
+data class SurveySubmitMessageState(
+    val message: String,
+    val isValid: Boolean
+)

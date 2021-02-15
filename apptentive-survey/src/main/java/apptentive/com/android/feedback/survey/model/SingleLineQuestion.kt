@@ -25,6 +25,8 @@ class SingleLineQuestion(
 
     override fun isValidAnswer(answer: Answer) = !answer.value.isNullOrBlank()
 
+    override fun isAnswered(answer: Answer) = !answer.value.isNullOrEmpty()
+
     //region Equality
 
     override fun equals(other: Any?): Boolean {

@@ -116,7 +116,7 @@ abstract class SurveyQuestionListItem(
 
         @CallSuper
         protected open fun updateValidationError(errorMessage: String?) {
-            containerView.setInvalid(errorMessage != null)
+            containerView.setErrorMessage(errorMessage)
         }
     }
 }

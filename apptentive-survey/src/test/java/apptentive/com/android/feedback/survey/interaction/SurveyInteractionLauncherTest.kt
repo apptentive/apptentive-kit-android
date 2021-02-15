@@ -100,6 +100,15 @@ class SurveyInteractionLauncherTest : TestCase() {
     )
 
     private fun createSurveyModel(questions: List<SurveyQuestion<*>>? = null): SurveyModel {
-        return SurveyModel(questions = questions ?: emptyList(), validationError = null)
+        return SurveyModel(
+            questions = questions ?: emptyList(),
+            name = "name",
+            description = "description",
+            submitText = "submitText",
+            requiredText = "requiredText",
+            validationError = null,
+            showSuccessMessage = false,
+            successMessage = "successMessage"
+        )
     }
 }

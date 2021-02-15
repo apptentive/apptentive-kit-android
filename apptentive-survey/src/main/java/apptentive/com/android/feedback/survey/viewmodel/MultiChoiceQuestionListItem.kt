@@ -122,7 +122,7 @@ class MultiChoiceQuestionListItem(
 
                 // update hint
                 textInputLayout.editText?.setText(choice.text)
-                textInputLayout.hint = choice.hint
+                textInputLayout.placeholderText = choice.hint
                 textInputLayout.editText?.doAfterTextChanged {
                     onSelectionChanged.invoke(questionId, choice.id, true, it.toString())
                 }

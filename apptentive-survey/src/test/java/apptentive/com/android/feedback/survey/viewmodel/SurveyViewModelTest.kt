@@ -7,6 +7,7 @@ import apptentive.com.android.feedback.survey.model.SingleLineQuestion
 import apptentive.com.android.feedback.survey.model.SurveyModel
 import apptentive.com.android.feedback.survey.model.SurveyQuestion
 import apptentive.com.android.feedback.survey.model.createSingleLineQuestion
+import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test
 
@@ -18,7 +19,9 @@ class SurveyViewModelTest : TestCase() {
     fun testListItems() {
         val questionId1 = "id_1"
         val questionId2 = "id_2"
-        val surveyValidationError = "Survey is not valid"
+        val surveyValidationErrorState = SurveySubmitMessageState(message = "Survey is not valid",
+            isValid = false
+        )
 
         // create a view model
         val viewModel = createViewModel(
@@ -39,12 +42,11 @@ class SurveyViewModelTest : TestCase() {
                     errorMessage = "Question 2 is invalid"
                 )
             ),
-            surveyValidationError = surveyValidationError
-        )
+        surveyValidationError = surveyValidationErrorState.message)
 
         // observer survey validation error
-        viewModel.validationErrorText.observeForever {
-            if (it != null) addResult("Validation failed: $it")
+        viewModel.surveySubmitMessageState.observeForever {
+            if (it != null) addResult(it.message)
         }
 
         // observer first invalid index
@@ -75,7 +77,7 @@ class SurveyViewModelTest : TestCase() {
 
         // check results
         assertResults(
-            "Validation failed: $surveyValidationError", // survey validation error should be shown
+            surveyValidationErrorState.message, // survey validation error should be shown
             "Invalid question: 0", // first invalid question index
             SingleLineQuestionListItem(
                 id = questionId1,
@@ -114,8 +116,105 @@ class SurveyViewModelTest : TestCase() {
             "Submit",
             mapOf(
                 questionId1 to SingleLineQuestion.Answer("Answer")
-            )
+            ),
+            "successMessage"
         )
+    }
+
+    @Test
+    fun testNoConfirmationWhenNothingChanged() {
+        val viewModel = createViewModelForExitConfirmationTest()
+
+        // attempt to exit with confirmation
+        viewModel.exit(showConfirmation = true)
+
+        // exit without confirmation
+        assertResults("exit")
+    }
+
+    @Test
+    fun testExitConfirmationAfterSubmitAttempt() {
+        val viewModel = createViewModelForExitConfirmationTest()
+
+        // attempt to submit the survey
+        viewModel.submit()
+
+        // attempt to exit with confirmation
+        viewModel.exit(showConfirmation = true)
+
+        // exit without confirmation
+        assertResults("confirmation")
+    }
+
+    @Test
+    fun testExitConfirmationAfterQuestionAnswered() {
+        val viewModel = createViewModelForExitConfirmationTest()
+
+        // answer the question
+        viewModel.updateAnswer("id_1", "My answer")
+
+        // attempt to exit with confirmation
+        viewModel.exit(showConfirmation = true)
+
+        // exit without confirmation
+        assertResults("confirmation")
+    }
+
+    @Test
+    fun testExitWithoutConfirmation() {
+        val viewModel = createViewModelForExitConfirmationTest()
+
+        // try to submit
+        viewModel.submit()
+
+        // answer the question
+        viewModel.updateAnswer("id_1", "My answer")
+
+        // attempt to exit with confirmation
+        viewModel.exit(showConfirmation = false)
+
+        // exit without confirmation
+        assertResults("exit")
+    }
+
+    private fun createViewModelForExitConfirmationTest(): SurveyViewModel {
+        val questionId1 = "id_1"
+        val questionId2 = "id_2"
+        val surveyValidationErrorState = SurveySubmitMessageState(
+            message = "Survey is not valid",
+            isValid = false
+        )
+
+        // create a view model
+        val viewModel = createViewModel(
+            questions = listOf(
+                // required question
+                createSingleLineQuestion(
+                    id = questionId1,
+                    title = "title 1",
+                    required = true,
+                    requiredText = "Required",
+                    errorMessage = "Question 1 is invalid"
+                ),
+                // non-required question
+                createSingleLineQuestion(
+                    id = questionId2,
+                    title = "title 2",
+                    required = false,
+                    errorMessage = "Question 2 is invalid"
+                )
+            ),
+            surveyValidationError = surveyValidationErrorState.message
+        )
+
+        viewModel.exitStream.observeForever {
+            addResult("exit")
+        }
+
+        viewModel.showConfirmation.observeForever {
+            addResult("confirmation")
+        }
+        return viewModel
     }
 
     private fun createViewModel(
@@ -124,7 +223,13 @@ class SurveyViewModelTest : TestCase() {
     ): SurveyViewModel {
         val model = SurveyModel(
             questions = questions,
-            validationError = surveyValidationError
+            name = "name",
+            description = "description",
+            submitText = "submitText",
+            requiredText = "requiredText",
+            validationError = surveyValidationError,
+            showSuccessMessage = false,
+            successMessage = "successMessage"
         )
         return SurveyViewModel(
             model = model,

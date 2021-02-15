@@ -88,13 +88,11 @@ class SingleLineQuestionListItem(
             super.bindView(item, position)
 
             // hint
-            answerTextInputLayout.hint = item.freeFormHint
+            answerTextInputLayout.placeholderText = item.freeFormHint
             answerTextInputLayout.contentDescription = item.freeFormHint
 
             // accessibility
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                answerTextInputLayout.labelFor = R.id.answer_text
-            }
+            answerTextInputLayout.labelFor = R.id.answer_text
 
             // look-and-feel
             if (item.multiline) {
@@ -102,8 +100,8 @@ class SingleLineQuestionListItem(
                 answerEditText.gravity = TOP or START
                 answerEditText.inputType =
                     TYPE_CLASS_TEXT or TYPE_TEXT_FLAG_CAP_SENTENCES or TYPE_TEXT_FLAG_MULTI_LINE
-                answerEditText.minLines = 5
-                answerEditText.maxLines = 12
+                answerEditText.minLines = 4
+                answerEditText.maxLines = 8
                 answerEditText.imeOptions = IME_FLAG_NO_ENTER_ACTION
             } else {
                 answerTextInputLayout.gravity = CENTER_VERTICAL or START
@@ -120,7 +118,10 @@ class SingleLineQuestionListItem(
         override fun updateValidationError(errorMessage: String?) {
             super.updateValidationError(errorMessage)
 
-            answerTextInputLayout.error = errorMessage
+            /* the reason for doing this check is to avoid multiple error messages being displayed
+            below the TextInputLayout. The TextInputLayout already supports an error message as part
+            of material design and we also have an explicit error text view in the layout */
+            answerTextInputLayout.error = if (errorMessage != null) " " else null
         }
     }
 

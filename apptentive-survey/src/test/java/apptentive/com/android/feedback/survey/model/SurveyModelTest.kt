@@ -198,6 +198,12 @@ class SurveyModelTest : TestCase() {
 
     private fun createSurveyModel(vararg questions: SurveyQuestion<*>) = SurveyModel(
         questions = questions.toList(),
-        validationError = "Validation error"
+        name = "name",
+        description = "description",
+        submitText = "submitText",
+        requiredText = "requiredText",
+        validationError = "Validation error",
+        showSuccessMessage = false,
+        successMessage = "successMessage"
     )
 }

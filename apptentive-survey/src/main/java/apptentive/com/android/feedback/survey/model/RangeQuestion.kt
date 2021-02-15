@@ -29,6 +29,10 @@ class RangeQuestion(
         return answer.selectedIndex in min..max
     }
 
+    override fun isAnswered(answer: Answer): Boolean {
+        return answer.selectedIndex != null
+    }
+
     //region Equality
 
     override fun equals(other: Any?): Boolean {

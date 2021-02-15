@@ -7,6 +7,7 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:animateLayoutChanges="true"
@@ -14,14 +15,16 @@
 
     <RadioButton
         android:id="@+id/checkbox"
+        style="?attr/textAppearanceBody2"
+        android:textColor="?attr/colorOnBackground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:drawablePadding="0dp"
-        android:gravity="top|start"
-        android:minHeight="48dp"
-        android:paddingTop="5dp"
+        android:gravity="start|center_vertical"
+        android:minHeight="@dimen/min_height_radio_checkbox_component"
         android:saveEnabled="false"
-        android:text="" />
+        android:text=""
+        android:paddingStart="@dimen/margin_8dp"
+        tools:ignore="RtlSymmetry" />
 
     <include layout="@layout/apptentive_survey_question_text_input" />
 </LinearLayout>

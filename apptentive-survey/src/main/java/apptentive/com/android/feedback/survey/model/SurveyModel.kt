@@ -6,7 +6,13 @@ import apptentive.com.android.core.Observable
 
 class SurveyModel(
     questions: List<SurveyQuestion<*>>,
-    val validationError: String?
+    val name: String?,
+    val description: String?,
+    val submitText: String?,
+    val requiredText: String?,
+    val validationError: String?,
+    val showSuccessMessage: Boolean,
+    val successMessage: String?
 ) {
     private val questionsSubject = QuestionListSubject(questions) // BehaviourSubject<List<SurveyQuestion<*>>>
     val questionsStream: Observable<List<SurveyQuestion<*>>> = questionsSubject
@@ -14,6 +20,8 @@ class SurveyModel(
     val questions: List<SurveyQuestion<*>> get() = questionsSubject.value
 
     val allRequiredAnswersAreValid get() = getFirstInvalidRequiredQuestionIndex() == -1
+
+    val hasAnyAnswer get() = questions.any { it.hasAnswer }
 
     @WorkerThread
     fun <T : SurveyQuestionAnswer> updateAnswer(questionId: String, answer: T) {
