@@ -98,6 +98,8 @@ object Apptentive {
     @JvmStatic
     @JvmOverloads
     fun engage(context: Context, eventName: String, callback: EngagementCallback? = null) {
+        // the above statement would not compile without force unwrapping on Kotlin 1.4.x
+        @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
         val callbackFunc: ((EngagementResult) -> Unit)? = if (callback != null) callback!!::onComplete else null
         engage(context, eventName, callbackFunc)
     }
