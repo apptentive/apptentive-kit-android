@@ -9,6 +9,7 @@ import apptentive.com.android.feedback.survey.R
 import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion
 import apptentive.com.android.feedback.survey.view.SurveyQuestionContainerView
 import apptentive.com.android.ui.ListViewItem
+import apptentive.com.android.ui.setInvalid
 import com.google.android.material.textfield.TextInputLayout
 
 /**
@@ -147,6 +148,15 @@ class MultiChoiceQuestionListItem(
 
             if ((changeMask and MASK_SELECTED_ITEMS) != 0) {
                 updateSelection(item)
+            }
+        }
+
+        override fun updateValidationError(errorMessage: String?) {
+            super.updateValidationError(errorMessage)
+            if (this::cachedViews.isInitialized) {
+                cachedViews.forEach { view ->
+                    view.textInputLayout.setInvalid(errorMessage != null)
+                }
             }
         }
 
