@@ -32,6 +32,7 @@ object Apptentive {
     val registered @Synchronized get() = client != ApptentiveClient.NULL
 
     @Synchronized
+    @JvmStatic
     fun register(application: Application, configuration: ApptentiveConfiguration) {
         if (registered) {
             Log.w(SYSTEM, "Apptentive SDK already registered")
@@ -95,6 +96,8 @@ object Apptentive {
 
     //endregion
 
+    @JvmStatic
+    @JvmOverloads
     fun engage(context: Context, eventName: String, callback: ((EngagementResult) -> Unit)? = null) {
         // user callback should be executed on the main thread
         val callbackWrapper: ((EngagementResult) -> Unit)? = if (callback != null) {
