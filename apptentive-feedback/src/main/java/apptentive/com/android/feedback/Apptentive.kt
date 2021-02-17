@@ -95,9 +95,13 @@ object Apptentive {
     }
 
     //endregion
-
     @JvmStatic
     @JvmOverloads
+    fun engage(context: Context, eventName: String, callback: EngagementCallback? = null) {
+        val callbackFunc: ((EngagementResult) -> Unit)? = if (callback != null) callback!!::onComplete else null
+        engage(context, eventName, callbackFunc)
+    }
+
     fun engage(context: Context, eventName: String, callback: ((EngagementResult) -> Unit)? = null) {
         // user callback should be executed on the main thread
         val callbackWrapper: ((EngagementResult) -> Unit)? = if (callback != null) {
