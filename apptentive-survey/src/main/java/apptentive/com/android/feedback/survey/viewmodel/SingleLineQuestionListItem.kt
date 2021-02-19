@@ -7,6 +7,7 @@ import android.widget.EditText
 import androidx.core.widget.doAfterTextChanged
 import apptentive.com.android.feedback.survey.R
 import apptentive.com.android.feedback.survey.view.SurveyQuestionContainerView
+import apptentive.com.android.ui.setInvalid
 import com.google.android.material.textfield.TextInputLayout
 
 /**
@@ -117,11 +118,7 @@ class SingleLineQuestionListItem(
 
         override fun updateValidationError(errorMessage: String?) {
             super.updateValidationError(errorMessage)
-
-            /* the reason for doing this check is to avoid multiple error messages being displayed
-            below the TextInputLayout. The TextInputLayout already supports an error message as part
-            of material design and we also have an explicit error text view in the layout */
-            answerTextInputLayout.error = if (errorMessage != null) " " else null
+            answerTextInputLayout.setInvalid(errorMessage != null)
         }
     }
 
