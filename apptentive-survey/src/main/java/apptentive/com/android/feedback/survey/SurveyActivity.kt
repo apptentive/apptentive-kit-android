@@ -3,7 +3,6 @@ package apptentive.com.android.feedback.survey
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.MotionEvent
-import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import androidx.lifecycle.Observer
@@ -12,7 +11,9 @@ import apptentive.com.android.feedback.survey.view.SurveyQuestionViewHolderFacto
 import apptentive.com.android.feedback.survey.viewmodel.MultiChoiceQuestionListItem
 import apptentive.com.android.feedback.survey.viewmodel.RangeQuestionListItem
 import apptentive.com.android.feedback.survey.viewmodel.SingleLineQuestionListItem
-import apptentive.com.android.feedback.survey.viewmodel.SurveyQuestionListItem.Type.*
+import apptentive.com.android.feedback.survey.viewmodel.SurveyFooterListItem
+import apptentive.com.android.feedback.survey.viewmodel.SurveyHeaderListItem
+import apptentive.com.android.feedback.survey.viewmodel.SurveyListItem.Type.*
 import apptentive.com.android.feedback.survey.viewmodel.SurveyViewModel
 import apptentive.com.android.feedback.survey.viewmodel.register
 import apptentive.com.android.ui.*
@@ -31,17 +32,6 @@ class SurveyActivity : ApptentiveViewModelActivity<SurveyViewModel>() {
             adapter.submitList(items)
         })
 
-        viewModel.surveySubmitMessageState.observe(this, Observer { state ->
-            if (state != null) {
-                success_error_message.text = state.message
-                if (state.isValid) {
-                    success_error_message.setTextColor(getThemeColor(R.attr.colorOnBackground))
-                } else {
-                    success_error_message.setTextColor(getThemeColor(R.attr.colorError))
-                }
-            }
-        })
-
         viewModel.exitStream.observe(this, Observer {
             finish()
         })
@@ -52,16 +42,11 @@ class SurveyActivity : ApptentiveViewModelActivity<SurveyViewModel>() {
                 title = getString(R.string.confirmation_dialog_title),
                 message = getString(R.string.confirmation_dialog_message),
                 positiveButton = DialogButton(getString(R.string.confirmation_dialog_back_to_survey)),
-                negativeButton = DialogButton(getString(R.string.close)){
+                negativeButton = DialogButton(getString(R.string.close)) {
                     viewModel.exit(showConfirmation = false)
                 }
             )
         })
-
-        val sendButton = findViewById<Button>(R.id.submitButton)
-        sendButton.setOnClickListener {
-            viewModel.submit()
-        }
 
         supportActionBar?.hide()
 
@@ -69,14 +54,6 @@ class SurveyActivity : ApptentiveViewModelActivity<SurveyViewModel>() {
         topAppBar.setNavigationOnClickListener {
             viewModel.exit(showConfirmation = true)
         }
-
-        if (!viewModel.introduction.isNullOrBlank()) {
-            survey_introduction.text = viewModel.introduction
-            survey_introduction.visibility = View.VISIBLE
-        }
-
-        submitButton.text = viewModel.submitButtonText
-
     }
 
     override fun onBackPressed() {
@@ -103,6 +80,14 @@ class SurveyActivity : ApptentiveViewModelActivity<SurveyViewModel>() {
     }
 
     private fun createAdapter() = ListViewAdapter().apply {
+        // Header view
+        register(
+            type = Header,
+            factory = LayoutViewHolderFactory(R.layout.apptentive_survey_header) {
+                SurveyHeaderListItem.ViewHolder(it)
+            }
+        )
+
         // Single Line Question
         register(
             type = SingleLineQuestion,
@@ -127,6 +112,16 @@ class SurveyActivity : ApptentiveViewModelActivity<SurveyViewModel>() {
             factory = SurveyQuestionViewHolderFactory(R.layout.apptentive_survey_question_multichoice) {
                 MultiChoiceQuestionListItem.ViewHolder(it) { questionId, choiceId, selected, text ->
                     viewModel.updateAnswer(questionId, choiceId, selected, text)
+                }
+            }
+        )
+
+        // Submit button
+        register(
+            type = Footer,
+            factory = LayoutViewHolderFactory(R.layout.apptentive_survey_footer) {
+                SurveyFooterListItem.ViewHolder(it) {
+                    viewModel.submit()
                 }
             }
         )

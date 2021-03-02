@@ -34,21 +34,16 @@ class SurveyViewModel(
     private val firstInvalidQuestionIndexEvent = LiveEvent<Int>()
     val firstInvalidQuestionIndex: LiveData<Int> = firstInvalidQuestionIndexEvent
 
-    /** LiveData which keeps track if "invalid" answers should be displayed */
-    private val showInvalidQuestionsStream = MutableLiveData<Boolean>()
+    /** Live data which keeps track of the survey "submit" message (shown under the "submit" button) */
+    private val surveySubmitMessageState = MutableLiveData<SurveySubmitMessageState>()
 
     /** LiveData which holds the current list of SurveyQuestionListItem */
-    val listItems: LiveData<List<SurveyQuestionListItem>> = createQuestionListLiveData(
-        questionsStream,
-        showInvalidQuestionsStream,
-        questionListItemFactory
+    val listItems: LiveData<List<SurveyListItem>> = createQuestionListLiveData(
+        questionListItemFactory = questionListItemFactory
     )
 
     private val requiredTextEvent = LiveEvent<String?>()
     val requiredText: LiveData<String?> = requiredTextEvent
-
-    private val _surveySubmitMessageState = MutableLiveData<SurveySubmitMessageState>()
-    val surveySubmitMessageState: LiveData<SurveySubmitMessageState> = _surveySubmitMessageState
 
     private val exitEvent = LiveEvent<Boolean>()
     val exitStream: LiveData<Boolean> = exitEvent
@@ -60,8 +55,6 @@ class SurveyViewModel(
     private var anyQuestionWasAnswered: Boolean = false
 
     val title = model.name
-    val introduction = model.description
-    val submitButtonText = model.submitText
 
     //region Answers
 
@@ -116,7 +109,12 @@ class SurveyViewModel(
                 )
 
                 if (!model.successMessage.isNullOrBlank()) {
-                    _surveySubmitMessageState.postValue(SurveySubmitMessageState(model.successMessage, true))
+                    surveySubmitMessageState.postValue(
+                        SurveySubmitMessageState(
+                            model.successMessage,
+                            true
+                        )
+                    )
                     sleep(1000)
                 }
 
@@ -127,14 +125,16 @@ class SurveyViewModel(
             } else {
                 // trigger error message
                 if (!model.validationError.isNullOrBlank()) {
-                    _surveySubmitMessageState.postValue(SurveySubmitMessageState(model.validationError, false))
+                    surveySubmitMessageState.postValue(
+                        SurveySubmitMessageState(
+                            model.validationError,
+                            false
+                        )
+                    )
                 }
 
                 // trigger scrolling to the first invalid question
                 firstInvalidQuestionIndexEvent.postValue(model.getFirstInvalidRequiredQuestionIndex())
-
-                // show all invalid questions
-                showInvalidQuestionsStream.postIfChanged(true)
             }
         }
     }
@@ -156,29 +156,60 @@ class SurveyViewModel(
 
     //endregion
 
-    companion object {
-        private fun createQuestionListLiveData(
-            questionsStream: LiveData<List<SurveyQuestion<*>>>,
-            showInvalidQuestionsStream: LiveData<Boolean>,
-            questionListItemFactory: SurveyQuestionListItemFactory
-        ): LiveData<List<SurveyQuestionListItem>> {
-            return MediatorLiveData<List<SurveyQuestionListItem>>().apply {
-                addSource(showInvalidQuestionsStream) { showInvalidQuestion ->
-                    value = (questionsStream.value ?: emptyList()).map { question ->
-                        questionListItemFactory.createListItem(
-                            question,
-                            showInvalidQuestion
-                        )
-                    }
+    private fun createQuestionListLiveData(
+        questionListItemFactory: SurveyQuestionListItemFactory
+    ): LiveData<List<SurveyListItem>> {
+        fun createListItems(
+            questions: List<SurveyQuestion<*>>?,
+            messageState: SurveySubmitMessageState?
+        ): List<SurveyListItem> {
+            val questionList = questions ?: emptyList()
+            val showInvalidQuestionsFlag = messageState != null && !messageState.isValid
+            val questionsListItems = questionList.map { question ->
+                questionListItemFactory.createListItem(
+                    question,
+                    showInvalidQuestionsFlag
+                )
+            }
+            return mutableListOf<SurveyListItem>().apply {
+                // header
+                if (!model.description.isNullOrEmpty()) {
+                    add(SurveyHeaderListItem(model.description))
                 }
-                addSource(questionsStream) { questions ->
-                    value = questions.map { question ->
-                        questionListItemFactory.createListItem(
-                            question,
-                            showInvalidQuestionsStream.value ?: false
-                        )
-                    }
+
+                // questions
+                addAll(questionsListItems)
+
+                // footer
+                add(SurveyFooterListItem(model.submitText, messageState))
+            }
+        }
+
+        return MediatorLiveData<List<SurveyListItem>>().apply {
+            // questions stream
+            addSource(questionsStream) { questions ->
+                // only show message state if:
+                // 1. user pressed submit button
+                // 2. model provides a validation error
+                // 3. at least one of the required questions is not answered
+                val messageState: SurveySubmitMessageState? = if (submitAttempted && model.validationError != null && !model.allRequiredAnswersAreValid) {
+                    SurveySubmitMessageState(model.validationError,false)
+                } else {
+                    null
                 }
+
+                value = createListItems(
+                    questions,
+                    messageState
+                )
+            }
+
+            // submit message state
+            addSource(surveySubmitMessageState) { messageState ->
+                value = createListItems(
+                    questionsStream.value,
+                    messageState
+                )
             }
         }
     }

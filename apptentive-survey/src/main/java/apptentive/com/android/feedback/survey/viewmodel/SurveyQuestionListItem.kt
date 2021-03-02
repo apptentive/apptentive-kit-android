@@ -21,13 +21,7 @@ abstract class SurveyQuestionListItem(
     val title: String,
     val instructions: String?,
     val validationError: String?
-) : ListViewItem(id, type.ordinal) {
-    enum class Type {
-        SingleLineQuestion,
-        RangeQuestion,
-        MultiChoiceQuestion
-    }
-
+) : SurveyListItem(id, type) {
     //region List View
 
     override fun getChangePayloadMask(oldItem: ListViewItem): Int {
@@ -120,6 +114,3 @@ abstract class SurveyQuestionListItem(
         }
     }
 }
-
-fun ListViewAdapter.register(type: SurveyQuestionListItem.Type, factory: ViewHolderFactory) =
-    register(type.ordinal, factory)

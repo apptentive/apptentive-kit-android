@@ -104,7 +104,7 @@ object Apptentive {
         engage(context, eventName, callbackFunc)
     }
 
-    fun engage(context: Context, eventName: String, callback: ((EngagementResult) -> Unit)? = null) {
+    fun engage(context: Context, eventName: String, callback: ((EngagementResult) -> Unit)?) {
         // user callback should be executed on the main thread
         val callbackWrapper: ((EngagementResult) -> Unit)? = if (callback != null) {
             {

@@ -7,7 +7,7 @@ import apptentive.com.android.feedback.survey.model.SingleLineQuestion
 import apptentive.com.android.feedback.survey.model.SurveyModel
 import apptentive.com.android.feedback.survey.model.SurveyQuestion
 import apptentive.com.android.feedback.survey.model.createSingleLineQuestion
-import com.google.common.truth.Truth.assertThat
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
@@ -22,6 +22,10 @@ class SurveyViewModelTest : TestCase() {
         val surveyValidationErrorState = SurveySubmitMessageState(message = "Survey is not valid",
             isValid = false
         )
+
+        val surveyDescription = "description"
+        val submitText = "submitText"
+        val successMessage = "successMessage"
 
         // create a view model
         val viewModel = createViewModel(
@@ -42,12 +46,10 @@ class SurveyViewModelTest : TestCase() {
                     errorMessage = "Question 2 is invalid"
                 )
             ),
-        surveyValidationError = surveyValidationErrorState.message)
-
-        // observer survey validation error
-        viewModel.surveySubmitMessageState.observeForever {
-            if (it != null) addResult(it.message)
-        }
+            description = surveyDescription,
+            validationError = surveyValidationErrorState.message,
+            successMessage = successMessage
+        )
 
         // observer first invalid index
         viewModel.firstInvalidQuestionIndex.observeForever {
@@ -61,6 +63,7 @@ class SurveyViewModelTest : TestCase() {
 
         // check results: both questions are marked as valid
         assertResults(
+            SurveyHeaderListItem(surveyDescription),
             SingleLineQuestionListItem(
                 id = questionId1,
                 title = "title 1",
@@ -69,7 +72,8 @@ class SurveyViewModelTest : TestCase() {
             SingleLineQuestionListItem(
                 id = questionId2,
                 title = "title 2"
-            )
+            ),
+            SurveyFooterListItem(submitText)
         )
 
         // attempt to submit the survey
@@ -77,8 +81,7 @@ class SurveyViewModelTest : TestCase() {
 
         // check results
         assertResults(
-            surveyValidationErrorState.message, // survey validation error should be shown
-            "Invalid question: 0", // first invalid question index
+            SurveyHeaderListItem(instructions=surveyDescription),
             SingleLineQuestionListItem(
                 id = questionId1,
                 title = "title 1",
@@ -88,7 +91,10 @@ class SurveyViewModelTest : TestCase() {
             SingleLineQuestionListItem(
                 id = questionId2,
                 title = "title 2"
-            )
+            ),
+            SurveyFooterListItem(buttonTitle=submitText, messageState=SurveySubmitMessageState(message="Survey is not valid", isValid=false)),
+
+            "Invalid question: 0" // first invalid question index
         )
 
         // update answer
@@ -96,6 +102,7 @@ class SurveyViewModelTest : TestCase() {
 
         // the question marked as valid
         assertResults(
+            SurveyHeaderListItem(instructions=surveyDescription),
             SingleLineQuestionListItem(
                 id = questionId1,
                 title = "title 1",
@@ -105,7 +112,8 @@ class SurveyViewModelTest : TestCase() {
             SingleLineQuestionListItem(
                 id = questionId2,
                 title = "title 2"
-            )
+            ),
+            SurveyFooterListItem(buttonTitle=submitText)
         )
 
         // submit the survey
@@ -117,8 +125,31 @@ class SurveyViewModelTest : TestCase() {
             mapOf(
                 questionId1 to SingleLineQuestion.Answer("Answer")
             ),
-            "successMessage"
+            SurveyHeaderListItem(instructions=surveyDescription),
+            SingleLineQuestionListItem(
+                id = questionId1,
+                title = "title 1",
+                text = "Answer",
+                instructions = "Required"
+            ),
+            SingleLineQuestionListItem(
+                id = questionId2,
+                title = "title 2"
+            ),
+            SurveyFooterListItem(buttonTitle=submitText, messageState = SurveySubmitMessageState(message=successMessage, isValid=true))
         )
+    }
+
+    @Ignore
+    @Test
+    fun testNoSurveyDescription() {
+        // header list item should be missing
+    }
+
+    @Ignore
+    @Test
+    fun testNoValidationError() {
+        // footer item should not contain any message
     }
 
     @Test
@@ -204,7 +235,7 @@ class SurveyViewModelTest : TestCase() {
                     errorMessage = "Question 2 is invalid"
                 )
             ),
-            surveyValidationError = surveyValidationErrorState.message
+            validationError = surveyValidationErrorState.message
         )
 
         viewModel.exitStream.observeForever {
@@ -219,17 +250,22 @@ class SurveyViewModelTest : TestCase() {
 
     private fun createViewModel(
         questions: List<SurveyQuestion<*>>,
-        surveyValidationError: String
+        name: String? = "name",
+        description: String? = "description",
+        submitText: String? = "submitText",
+        requiredText: String? = "requiredText",
+        validationError: String? = "validationError",
+        successMessage: String? = "successMessage"
     ): SurveyViewModel {
         val model = SurveyModel(
             questions = questions,
-            name = "name",
-            description = "description",
-            submitText = "submitText",
-            requiredText = "requiredText",
-            validationError = surveyValidationError,
-            showSuccessMessage = false,
-            successMessage = "successMessage"
+            name = name,
+            description = description,
+            submitText = submitText,
+            requiredText = requiredText,
+            validationError = validationError,
+            showSuccessMessage = true,
+            successMessage = successMessage
         )
         return SurveyViewModel(
             model = model,
