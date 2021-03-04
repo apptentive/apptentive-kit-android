@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_16dp"
+        android:layout_marginBottom="@dimen/margin_16dp"
         android:gravity="center"
         android:textColor="?attr/colorOnBackground"
         tools:text="Tell us about your experience!" />
