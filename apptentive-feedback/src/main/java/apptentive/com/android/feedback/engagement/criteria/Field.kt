@@ -2,6 +2,8 @@ package apptentive.com.android.feedback.engagement.criteria
 
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
+import apptentive.com.android.util.appVersionCode
+import apptentive.com.android.util.appVersionName
 
 @Suppress("ClassName")
 sealed class Field(val type: Type, val description: String) {
@@ -28,29 +30,29 @@ sealed class Field(val type: Type, val description: String) {
     object is_update {
         object version_code : Field(
             type = Type.Boolean,
-            description = "is_update/version_code" // TODO: better description
+            description = "app version code changed"
         )
 
         object version_name : Field(
             type = Type.Boolean,
-            description = "is_update/version_name" // TODO: better description
+            description = "app version name changed"
         )
     }
 
     object time_at_install {
         object total : Field(
             type = Type.DateTime,
-            description = "time_at_install/total" // TODO: better description
+            description = "time at install"
         )
 
         object version_code : Field(
             type = Type.DateTime,
-            description = "time_at_install/version_code" // TODO: better description
+            description = "time at install for version code '$appVersionCode'"
         )
 
         object version_name : Field(
             type = Type.DateTime,
-            description = "time_at_install/version_name" // TODO: better description
+            description = "time at install for version name '$appVersionName'"
         )
     }
 
@@ -63,19 +65,19 @@ sealed class Field(val type: Type, val description: String) {
 
             data class version_code(val event: Event) : Field(
                 type = Type.Number,
-                description = "$event/invokes/version_code" // TODO: better description
+                description = "number of invokes for event '${event.name}' for version code '$appVersionCode'"
             )
 
             data class version_name(val event: Event) : Field(
                 type = Type.Number,
-                description = "$event/invokes/version_name" // TODO: better description
+                description = "number of invokes for event '${event.name}' for version name '$appVersionName'"
             )
         }
 
         object last_invoked_at {
             data class total(val event: Event) : Field(
                 type = Type.DateTime,
-                description = "$event/last_invoked_at/total" // TODO: better description
+                description = "last time event '${event.name}' was invoked"
             )
         }
     }
@@ -84,24 +86,24 @@ sealed class Field(val type: Type, val description: String) {
         object invokes {
             data class total(val interactionId: String) : Field(
                 type = Type.Number,
-                description = "total number of invokes for interaction $interactionId"
+                description = "total number of invokes for interaction id $interactionId"
             )
 
             data class version_code(val interactionId: String) : Field(
                 type = Type.Number,
-                description = "$interactionId/invokes/version_code" // TODO: better description
+                description = "number of invokes for interaction id '$interactionId' for version code '$appVersionCode'"
             )
 
             data class version_name(val interactionId: String) : Field(
                 type = Type.Number,
-                description = "$interactionId/invokes/version_name" // TODO: better description
+                description = "number of invokes for interaction id '$interactionId' for version name '$appVersionName'"
             )
         }
 
         object last_invoked_at {
             data class total(val interactionId: InteractionId) : Field(
                 type = Type.DateTime,
-                description = "$interactionId/last_invoked_at/total" // TODO: better description
+                description = "last time interaction id '$interactionId' was invoked"
             )
         }
     }

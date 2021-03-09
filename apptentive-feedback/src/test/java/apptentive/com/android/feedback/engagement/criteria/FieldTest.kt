@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.engagement.criteria
 
+import apptentive.com.android.TestCase
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.Field.*
 import apptentive.com.android.feedback.engagement.criteria.Field.Companion.parse
@@ -7,7 +8,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Ignore
 import org.junit.Test
 
-class FieldTest {
+class FieldTest : TestCase() {
     @Test
     fun parseApplication() {
         assertThat(parse("application/version_code")).isEqualTo(application.version_code)

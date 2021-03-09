@@ -41,6 +41,7 @@ object Apptentive {
 
         // register dependency providers
         DependencyProvider.register(AndroidLoggerProvider("Apptentive"))
+        DependencyProvider.register<ApplicationInfo>(AndroidApplicationInfo(application.applicationContext))
         DependencyProvider.register(AndroidExecutorFactoryProvider())
         DependencyProvider.register(AndroidFileSystemProvider(application.applicationContext, "apptentive.com.android.feedback"))
 
