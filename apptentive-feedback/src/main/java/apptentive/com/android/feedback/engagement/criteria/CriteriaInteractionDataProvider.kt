@@ -33,7 +33,7 @@ class CriteriaInteractionDataProvider(
     private fun getInteractionId(invocations: List<Invocation>): InteractionId? {
         // FIXME: exception handling
         for (invocation in invocations) {
-            if (invocation.criteria.isMet(state)) {
+            if (invocation.criteria.isMet(state, verbose = true)) {
                 return invocation.interactionId
             }
         }

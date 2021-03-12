@@ -113,7 +113,7 @@ interface ConditionalOperator {
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
-                    return "$description ($first) less than $second"
+                    return "$description ('$first') less than '$second'"
                 }
             }
         }
@@ -132,7 +132,7 @@ interface ConditionalOperator {
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
-                    return "$description ($first) is less than or equal to $second"
+                    return "$description ('$first') is less than or equal to '$second'"
                 }
             }
         }
@@ -150,7 +150,7 @@ interface ConditionalOperator {
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
-                    return "$description ($first) greater than $second"
+                    return "$description ('$first') greater than '$second'"
                 }
             }
         }
@@ -168,7 +168,7 @@ interface ConditionalOperator {
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
-                    return "$description ($first) is greater than or equal to $second"
+                    return "$description ('$first') is greater than or equal to '$second'"
                 }
             }
         }
@@ -234,7 +234,7 @@ interface ConditionalOperator {
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    return "$description ('${toPrettyDate(first)}') before date '${toPrettyDate(second)}'"
                 }
             }
         }
@@ -252,7 +252,7 @@ interface ConditionalOperator {
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    return "$description ('${toPrettyDate(first)}') after date '${toPrettyDate(second)}'"
                 }
             }
         }
@@ -264,9 +264,13 @@ interface ConditionalOperator {
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    return "Unknown field '$description'"
                 }
             }
+        }
+
+        private fun toPrettyDate(value: Any?): String {
+            return value.toString() // FIXME: date formatting
         }
     }
 }
