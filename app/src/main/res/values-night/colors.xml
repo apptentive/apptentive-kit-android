@@ -4,12 +4,11 @@
     <color name="color_primary_variant">#2D2D2D</color>
     <color name="color_on_primary_variant">#E1E1E1</color>
     <color name="color_on_primary">#2D2D2D</color>
-    <color name="color_secondary">#2D2D2D</color>
+    <color name="color_secondary">#80B9F2</color>
     <color name="color_on_background">#E1E1E1</color>
     <color name="color_on_secondary">#E1E1E1</color>
     <color name="color_background">#212121</color>
     <color name="color_text_color_secondary">#C9C9C9</color>
-    <color name="color_C0C0C0">#C0C0C0</color>
     <color name="color_error">#CF6679</color>
     <color name="color_secondary_variant">#4589CD</color>
 
