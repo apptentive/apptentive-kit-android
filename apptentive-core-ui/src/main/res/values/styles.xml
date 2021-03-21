@@ -1,6 +1,6 @@
 <resources>
     <!-- Base Apptentive theme. -->
-    <style name="ApptentiveDefaultTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.Apptentive" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/color_primary</item>
         <item name="colorOnPrimary">@color/color_on_primary</item>
         <item name="colorPrimaryVariant">@color/color_primary_variant</item>
@@ -12,5 +12,4 @@
         <item name="android:textColorSecondary">@color/color_text_color_secondary</item>
         <item name="colorError">@color/color_error</item>
     </style>
-
 </resources>
