@@ -1,7 +1,14 @@
 package apptentive.com.android.ui
 
+import android.os.Bundle
+import androidx.annotation.CallSuper
 import androidx.appcompat.app.AppCompatActivity
 
-open class ApptentiveActivity : AppCompatActivity() {
-    // TODO: runtime theme resolution here
+abstract class ApptentiveActivity : AppCompatActivity() {
+    @CallSuper
+    override fun onCreate(savedInstanceState: Bundle?) {
+        overrideTheme()
+
+        super.onCreate(savedInstanceState)
+    }
 }
