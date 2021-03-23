@@ -26,10 +26,10 @@ open class ApptentiveViewModelActivity<VM : ApptentiveViewModel> : ApptentiveAct
 
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
         // set the local night mode to the same value as the parent context has
         delegate.localNightMode = intent.getIntExtra(EXTRA_LOCAL_DARK_MODE, MODE_NIGHT_UNSPECIFIED)
+
+        super.onCreate(savedInstanceState)
     }
 
     companion object {
