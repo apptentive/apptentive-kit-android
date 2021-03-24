@@ -29,7 +29,7 @@ fun Context.overrideTheme() {
 
     /* Step 4: Apply optional theme override specified in host app's style */
     val themeOverrideResId: Int = resources.getIdentifier(
-        "Theme.ApptentiveOverride",
+        "ApptentiveThemeOverride",
         "style", packageName
     )
     if (themeOverrideResId != 0) {
