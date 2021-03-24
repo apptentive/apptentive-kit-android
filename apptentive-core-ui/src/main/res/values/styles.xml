@@ -1,15 +1,19 @@
 <resources>
     <!-- Base Apptentive theme. -->
     <style name="Theme.Apptentive" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/color_primary</item>
-        <item name="colorOnPrimary">@color/color_on_primary</item>
-        <item name="colorPrimaryVariant">@color/color_primary_variant</item>
-        <item name="colorSecondary">@color/color_secondary</item>
-        <item name="colorSecondaryVariant">@color/color_secondary_variant</item>
-        <item name="colorOnSecondary">@color/color_on_secondary</item>
-        <item name="android:colorBackground">@color/color_background</item>
-        <item name="colorOnBackground">@color/color_on_background</item>
-        <item name="android:textColorSecondary">@color/color_text_color_secondary</item>
-        <item name="colorError">@color/color_error</item>
+        <item name="colorPrimary">@color/apptentive_color_primary</item>
+        <item name="colorOnPrimary">@color/apptentive_color_on_primary</item>
+        <item name="colorPrimaryVariant">@color/apptentive_color_primary_variant</item>
+        <item name="colorSecondary">@color/apptentive_color_secondary</item>
+        <item name="colorSecondaryVariant">@color/apptentive_color_secondary_variant</item>
+        <item name="colorOnSecondary">@color/apptentive_color_on_secondary</item>
+        <item name="android:colorBackground">@color/apptentive_color_background</item>
+        <item name="android:background">@color/apptentive_color_background</item>
+        <item name="colorOnBackground">@color/apptentive_color_on_background</item>
+        <item name="android:textColorSecondary">@color/apptentive_color_text_color_secondary</item>
+        <item name="colorError">@color/apptentive_color_error</item>
     </style>
+
+    <style name="Theme.Apptentive.Dialog.Alert" parent="Theme.MaterialComponents.DayNight.Dialog.Alert" />
+
 </resources>

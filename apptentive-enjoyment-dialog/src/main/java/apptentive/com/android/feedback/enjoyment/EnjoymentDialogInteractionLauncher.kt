@@ -1,9 +1,12 @@
 package apptentive.com.android.feedback.enjoyment
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.widget.TextView
+import androidx.appcompat.view.ContextThemeWrapper
 import apptentive.com.android.feedback.platform.AndroidEngagementContext
 import apptentive.com.android.feedback.platform.AndroidInteractionLauncher
+import apptentive.com.android.ui.overrideTheme
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 // TODO: UI-tests
@@ -16,8 +19,12 @@ internal class EnjoymentDialogInteractionLauncher :
         val viewModel = EnjoymentDialogViewModel(context, interaction)
 
         context.executors.main.execute {
-            val dialog = MaterialAlertDialogBuilder(context.androidContext).apply {
-                val contentView = LayoutInflater.from(context.androidContext)
+            val ctx: Context = ContextThemeWrapper(context.androidContext, R.style.Theme_Apptentive_Dialog_Alert).apply {
+                overrideTheme()
+            }
+
+            val dialog = MaterialAlertDialogBuilder(ctx).apply {
+                val contentView = LayoutInflater.from(ctx)
                     .inflate(R.layout.apptentive_enjoyment_dialog, null)
                 setView(contentView)
 
