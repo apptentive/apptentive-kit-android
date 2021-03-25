@@ -5,6 +5,7 @@
     <application>
         <activity
             android:name=".SurveyActivity"
+            android:theme="@style/Theme.Apptentive"
             android:label="@string/title_activity_survey" />
     </application>
 

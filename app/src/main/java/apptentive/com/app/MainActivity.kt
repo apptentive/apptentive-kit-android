@@ -40,7 +40,6 @@ class MainActivity : AppCompatActivity() {
             prefs.edit().putBoolean("night", isChecked).apply()
         }
 
-
         engage_button.setOnClickListener {
             val eventName = event_name_edit_text.text.toString().trim()
             if (eventName.isEmpty()) {
