@@ -13,35 +13,30 @@ pipeline {
   }
 
   stages {
-    stage('Staging Merged') {
-      when {
-        expression { env.ENVIRONMENT == 'shared-dev' }
-      }
-
-      stages {
-        stage('release') {
-          steps {
-            script {
-              gitCommit = apptentiveGetReleaseCommit()
-              imageName = apptentiveDockerBuild('build', gitCommit)
-              container('docker') {
-                sh 'docker run ${imageName} ./gradlew assembleRelease && ./gradlew tag && ./gradlew pushTag && ./gradlew githubRelease'
-              }
-            }
-          }
-        }
-      }
-    }
-
     stage('Dev PR') {
       when {
-        changeRequest target: 'develop'
+        anyOf {
+          changeRequest target: 'develop'
+          branch 'develop'
+        }
         expression { env.ENVIRONMENT == 'dev' }
       }
 
       stages {
         stage('verification') {
           parallel {
+            stage('lint') {
+              steps {
+                script {
+                  gitCommit = apptentiveGetReleaseCommit()
+                  imageName = apptentiveDockerBuild('build', gitCommit)
+                  container('docker') {
+                    //sh "docker run ${imageName} ./gradlew lint"
+                  }
+                }
+              }
+            }
+            
             stage('test') {
               steps {
                 script {
@@ -54,17 +49,29 @@ pipeline {
               }
             }
 
-            stage('lint') {
-              steps {
-                script {
-                  gitCommit = apptentiveGetReleaseCommit()
-                  imageName = apptentiveDockerBuild('build', gitCommit)
-                  container('docker') {
-                    //sh "docker run ${imageName} ./gradlew lint"
-                  }
-                }
-              }
-            }
+          }
+        }
+      }
+    }
+    
+    stage('deploy') {
+      when {
+        anyOf {
+
+          // staging/shared-dev deploy
+          allOf {
+            branch 'staging'
+            expression { env.ENVIRONMENT == 'shared-dev' }
+          }
+        }
+      }
+
+      steps {
+        script {
+          gitCommit = apptentiveGetReleaseCommit()
+          imageName = apptentiveDockerBuild('build', gitCommit)
+          container('docker') {
+            sh "docker run ${imageName} ./gradlew assembleRelease && ./gradlew tag && ./gradlew pushTag && ./gradlew githubRelease"
           }
         }
       }
