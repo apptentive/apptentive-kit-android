@@ -13,27 +13,40 @@ pipeline {
   }
 
   stages {
-    stage('Dev PR') {
+    stage('Staging Merged') {
       when {
-        changeRequest target: 'dev'
-        expression { env.ENVIRONMENT == 'dev' }
+        branch 'staging'
       }
 
       stages {
-        stage('build'){
+        stage('build') {
           steps {
             script {
               gitCommit = apptentiveGetReleaseCommit()
               imageName = apptentiveDockerBuild('build', gitCommit)
+              container('docker') {
+                sh 'docker run ${imageName} ./gradlew assembleRelease && ./gradlew tag && ./gradlew githubRelease'
+              }
             }
           }
         }
+      }
+    }
 
+    stage('Dev PR') {
+      when {
+        changeRequest target: 'develop'
+        expression { env.ENVIRONMENT == 'dev' }
+      }
+
+      stages {
         stage('verification') {
           parallel {
             stage('test') {
               steps {
                 script {
+                  gitCommit = apptentiveGetReleaseCommit()
+                  imageName = apptentiveDockerBuild('build', gitCommit)
                   container('docker') {
                     sh "docker run ${imageName} ./gradlew test"
                   }
@@ -44,6 +57,8 @@ pipeline {
             stage('lint') {
               steps {
                 script {
+                  gitCommit = apptentiveGetReleaseCommit()
+                  imageName = apptentiveDockerBuild('build', gitCommit)
                   container('docker') {
                     sh "docker run ${imageName} ./gradlew lint"
                   }

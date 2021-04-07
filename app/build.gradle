@@ -11,6 +11,7 @@ apply plugin: 'org.jlleitschuh.gradle.ktlint'
 def theVersionCode = System.getenv("BUILD_NUMBER") ?: 100
 def theVersionName = extractSdkVersion()
 def githubToken = System.getenv("GITHUB_TOKEN") ?: "ABC123"
+def gitBranch = System.getenv("BRANCH_NAME") ?: "master"
 
 android {
     compileSdkVersion rootProject.compileSdkVersion
@@ -25,11 +26,24 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+    
+    signingConfigs {
+        debug {
+            storeFile file("debug.keystore")
+        }
+        release {
+            storeFile file('release.keystore')
+            storePassword 'androidisbetter'
+            keyAlias 'release'
+            keyPassword 'androidisbetter'
+        }
+    }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
@@ -66,19 +80,14 @@ def extractSdkVersion() {
     return match[0][1]
 }
 
-def getGitHash() {
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        commandLine 'git', 'rev-parse', '--short', 'HEAD'
-        standardOutput = stdout
-    }
-    return stdout.toString().trim()
+def getTagString() {
+    return extractSdkVersion()
 }
 
 task tag(type: Exec) {
     workingDir '.'
     
-    commandLine 'git', 'tag', extractSdkVersion()
+    commandLine 'git', 'tag', getTagString()
     commandLine 'git', 'push', '--tags'
 }
 
@@ -86,17 +95,21 @@ github {
     owner = 'apptentive'
     repo = 'android-sdk'
     token = githubToken
-    tagName = extractSdkVersion()
+    tagName = getTagString()
     targetCommitish = 'artifacts'
-    name = "v${extractSdkVersion()}"
+    name = "v${getTagString()}"
     body = """# Apptentive Android SDK
 Release notes go here.
 """
     assets = [
-    '../foo'
-/*        'build/outputs/apk/release/app-release-unsigned.apk',
-        'app/build/outputs/apk/release/app-release-unsigned.apk',
-        '../app/build/outputs/apk/release/app-release-unsigned.apk',
-*/    ]
+        'app/build/outputs/apk/release/app-release.apk',
+        'apptentive-core-ui/build/outputs/aar/apptentive-core-ui-release.aar',
+        'apptentive-core/build/outputs/aar/apptentive-core-release.aar',
+        'apptentive-enjoyment-dialog/build/outputs/aar/apptentive-enjoyment-dialog-release.aar',
+        'apptentive-feedback/build/outputs/aar/apptentive-feedback-release.aar',
+        'apptentive-navigate-to-link/build/outputs/aar/apptentive-navigate-to-link-release.aar',
+        'apptentive-notes/build/outputs/aar/apptentive-notes-release.aar',
+        'apptentive-survey/build/outputs/aar/apptentive-survey-release.aar',
+    ]
 }
 
