@@ -15,7 +15,7 @@ pipeline {
   stages {
     stage('Staging Merged') {
       when {
-        branch 'staging'
+        expression { env.ENVIRONMENT == 'shared-dev' }
       }
 
       stages {
