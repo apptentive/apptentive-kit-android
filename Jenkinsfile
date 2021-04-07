@@ -19,13 +19,13 @@ pipeline {
       }
 
       stages {
-        stage('build') {
+        stage('release') {
           steps {
             script {
               gitCommit = apptentiveGetReleaseCommit()
               imageName = apptentiveDockerBuild('build', gitCommit)
               container('docker') {
-                sh 'docker run ${imageName} ./gradlew assembleRelease && ./gradlew tag && ./gradlew githubRelease'
+                sh 'docker run ${imageName} ./gradlew assembleRelease && ./gradlew tag && ./gradlew pushTag && ./gradlew githubRelease'
               }
             }
           }

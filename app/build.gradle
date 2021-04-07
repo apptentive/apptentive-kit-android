@@ -8,10 +8,11 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
 
 // Set from Jenkins or Travis. Set by parent job and passed into template job.
-def theVersionCode = System.getenv("BUILD_NUMBER") ?: 100
+def theVersionCode = System.getenv("BUILD_NUMBER") as Integer ?: 100
 def theVersionName = extractSdkVersion()
 def githubToken = System.getenv("GITHUB_TOKEN") ?: "ABC123"
-def gitBranch = System.getenv("BRANCH_NAME") ?: "master"
+def gitBranch = System.getenv("BRANCH_NAME") ?: "git branch --show-current".execute().text.trim()
+def gitTag = getTagString(gitBranch, theVersionName, theVersionCode)
 
 android {
     compileSdkVersion rootProject.compileSdkVersion
@@ -80,14 +81,23 @@ def extractSdkVersion() {
     return match[0][1]
 }
 
-def getTagString() {
-    return extractSdkVersion()
+def getTagString(gitBranch, versionName, versionCode) {
+    if (gitBranch == 'production') {
+        return versionName
+    } else {
+        return "${versionName}-${gitBranch}+${versionCode}"
+    }
 }
 
 task tag(type: Exec) {
     workingDir '.'
+        
+    commandLine 'git', 'tag', gitTag
+}
+
+task pushTag(type: Exec) {
+    workingDir '.'
     
-    commandLine 'git', 'tag', getTagString()
     commandLine 'git', 'push', '--tags'
 }
 
@@ -95,9 +105,9 @@ github {
     owner = 'apptentive'
     repo = 'android-sdk'
     token = githubToken
-    tagName = getTagString()
+    tagName = gitTag
     targetCommitish = 'artifacts'
-    name = "v${getTagString()}"
+    name = "v${gitTag}"
     body = """# Apptentive Android SDK
 Release notes go here.
 """
