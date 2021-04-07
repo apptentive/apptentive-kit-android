@@ -29,7 +29,7 @@ pipeline {
               }
             }
           }
-        }
+        }DeveloDevleofdsjkl;fdsafdsfdsfds
       }
     }
 
@@ -60,7 +60,7 @@ pipeline {
                   gitCommit = apptentiveGetReleaseCommit()
                   imageName = apptentiveDockerBuild('build', gitCommit)
                   container('docker') {
-                    sh "docker run ${imageName} ./gradlew lint"
+                    //sh "docker run ${imageName} ./gradlew lint"
                   }
                 }
               }
