@@ -5,6 +5,7 @@ LABEL maintainer="Brett McGinnis <brett.mcginnis@apptentive.com>"
 # Install Android SDK
 ARG SDK_URL="https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip"
 ARG ANDROID_HOME="/usr/local/android-sdk"
+ARG JAVA_HOME="/opt/java/openjdk/bin/java"
 
 RUN mkdir -p "$ANDROID_HOME" /root/.android \
   && touch /root/.android/repositories.cfg
@@ -31,6 +32,8 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 ENV ANDROID_HOME=${ANDROID_HOME}
+ENV JAVA_HOME=${JAVA_HOME}
+
 
 # Project Specific
 WORKDIR /app
