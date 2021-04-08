@@ -101,6 +101,13 @@ task pushTag(type: Exec) {
     commandLine 'git', 'push', '--tags'
 }
 
+tasks.register('deploy') {
+    dependsOn ':app:assembleRelease'
+    dependsOn ':app:tag'
+    dependsOn ':app:pushTag'
+    dependsOn ':app:githubRelease'
+}
+
 github {
     owner = 'apptentive'
     repo = 'android-sdk'

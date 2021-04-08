@@ -71,7 +71,7 @@ pipeline {
           gitCommit = apptentiveGetReleaseCommit()
           imageName = apptentiveDockerBuild('build', gitCommit)
           container('docker') {
-            sh "docker run ${imageName} ./gradlew assembleRelease && ./gradlew tag && ./gradlew pushTag && ./gradlew githubRelease"
+            sh "docker run ${imageName} ./gradlew :app:deploy"
           }
         }
       }
