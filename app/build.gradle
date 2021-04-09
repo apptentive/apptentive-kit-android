@@ -95,16 +95,9 @@ task tag(type: Exec) {
     commandLine 'git', 'tag', gitTag
 }
 
-task pushTag(type: Exec) {
-    workingDir '.'
-    
-    commandLine 'git', 'push', '--tags'
-}
-
 tasks.register('deploy') {
     dependsOn ':app:assembleRelease'
     dependsOn ':app:tag'
-    dependsOn ':app:pushTag'
     dependsOn ':app:githubRelease'
 }
 

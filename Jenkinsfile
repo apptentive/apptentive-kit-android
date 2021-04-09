@@ -87,7 +87,7 @@ pipeline {
           gitCommit = apptentiveGetReleaseCommit()
           imageName = apptentiveDockerBuild('build', gitCommit)
           container('docker') {
-            sh "docker run ${imageName} --env GITHUB_TOKEN=${GITHUB_TOKEN} ./gradlew :app:deploy"
+            sh "docker run  --env GITHUB_TOKEN=${GITHUB_TOKEN} --env BUILD_NUMBER=${BUILD_NUMBER} --env BRANCH_NAME=${BRANCH_NAME} ${imageName} ./gradlew :app:deploy"
           }
         }
       }
