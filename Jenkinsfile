@@ -3,9 +3,14 @@
 
 pipeline {
   agent {
-    kubernetes {
-      yamlFile './_cri/KubernetesBuildPod.yaml'
-    }
+    kubernetes(
+      // Use shared function in `jenkins-shared-libs` to configure a custom Jenkins agent
+      // https://github.com/apptentive/jenkins-shared-libs/blob/master/vars/apptentiveAgent.groovy
+      apptentiveAgent(
+        yaml: readTrusted("_cri/KubernetesBuildPod.yaml"),
+        use_vault: true
+      )
+    )
   }
 
   options {
@@ -36,7 +41,7 @@ pipeline {
                 }
               }
             }
-            
+
             stage('test') {
               steps {
                 script {
@@ -53,7 +58,7 @@ pipeline {
         }
       }
     }
-    
+
     stage('deploy') {
       when {
         anyOf {
@@ -68,10 +73,21 @@ pipeline {
 
       steps {
         script {
+
+          // I was not sure how you wanted to consume the secret, so took a guess
+          //
+          // source the vault secrets as envvars; echo the envvar
+          // we want and capture as a groovy variable
+          GITHUB_TOKEN = sh(returnStdout: true, script:'''
+            set +x
+            . /vault/secrets/env.sh
+            echo -n "$GITHUB_TOKEN"
+          ''')
+
           gitCommit = apptentiveGetReleaseCommit()
           imageName = apptentiveDockerBuild('build', gitCommit)
           container('docker') {
-            sh "docker run ${imageName} ./gradlew :app:deploy"
+            sh "docker run  --env GITHUB_TOKEN=${GITHUB_TOKEN} --env BUILD_NUMBER=${BUILD_NUMBER} --env BRANCH_NAME=${BRANCH_NAME} ${imageName} ./gradlew :app:deploy"
           }
         }
       }
