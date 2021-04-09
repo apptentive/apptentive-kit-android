@@ -90,18 +90,18 @@ def getTagString(gitBranch, versionName, versionCode) {
 }
 
 task tag(type: Exec) {
-    dependsOn ':app:assembleRelease'
     workingDir '.'
         
     commandLine 'git', 'tag', gitTag
 }
 
+tasks.getByName(':app:githubRelease').mustRunAfter(tasks.getByName(':app:tag'))
+tasks.getByName(':app:githubRelease').mustRunAfter(tasks.getByName(':app:assembleRelease'))
+
 tasks.register('deploy') {
+    dependsOn ':app:assembleRelease'
     dependsOn ':app:tag'
-    
-    doLast {
-        tasks.getByName('githubRelease').execute()
-    }
+    dependsOn ':app:githubRelease'
 }
 
 github {
