@@ -95,13 +95,12 @@ task tag(type: Exec) {
     commandLine 'git', 'tag', gitTag
 }
 
-tasks.getByName(':app:githubRelease').mustRunAfter(tasks.getByName(':app:tag'))
-tasks.getByName(':app:githubRelease').mustRunAfter(tasks.getByName(':app:assembleRelease'))
-
 tasks.register('deploy') {
     dependsOn ':app:assembleRelease'
     dependsOn ':app:tag'
-    dependsOn ':app:githubRelease'
+    doLast {
+        tasks.getByName(':app:githubRelease').execute()
+    }
 }
 
 github {
