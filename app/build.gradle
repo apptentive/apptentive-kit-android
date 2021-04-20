@@ -95,13 +95,7 @@ task tag(type: Exec) {
     commandLine 'git', 'tag', gitTag
 }
 
-tasks.register('deploy') {
-    dependsOn ':app:assembleRelease'
-    dependsOn ':app:tag'
-    doLast {
-        tasks.getByName('githubRelease').execute()
-    }
-}
+tasks.getByName('githubRelease').mustRunAfter(tasks.getByName('assemble'))
 
 github {
     owner = 'apptentive'
