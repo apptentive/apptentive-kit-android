@@ -99,7 +99,7 @@ tasks.register('deploy') {
     dependsOn ':app:assembleRelease'
     dependsOn ':app:tag'
     doLast {
-        tasks.getByName(':app:githubRelease').execute()
+        tasks.getByName('githubRelease').execute()
     }
 }
 
