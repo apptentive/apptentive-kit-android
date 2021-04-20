@@ -102,7 +102,7 @@ github {
     repo = 'android-sdk'
     token = githubToken
     tagName = gitTag
-    targetCommitish = 'artifacts'
+    targetCommitish = gitBranch
     name = "v${gitTag}"
     body = """# Apptentive Android SDK
 Release notes go here.

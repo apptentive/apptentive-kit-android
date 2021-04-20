@@ -1,8 +1,0 @@
-plugins {
-  id "co.riiid.gradle" version "0.4.2"
-}
-
-def getVersion() {
-    "6.0.0"
-}
-

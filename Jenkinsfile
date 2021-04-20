@@ -73,11 +73,6 @@ pipeline {
 
       steps {
         script {
-
-          // I was not sure how you wanted to consume the secret, so took a guess
-          //
-          // source the vault secrets as envvars; echo the envvar
-          // we want and capture as a groovy variable
           GITHUB_TOKEN = sh(returnStdout: true, script:'''
             set +x
             . /vault/secrets/env.sh
