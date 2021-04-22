@@ -1,7 +1,18 @@
+plugins {
+  id "co.riiid.gradle"
+}
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
+
+// Set from Jenkins or Travis. Set by parent job and passed into template job.
+def theVersionCode = System.getenv("BUILD_NUMBER") as Integer ?: 100
+def theVersionName = extractSdkVersion()
+def githubToken = System.getenv("GITHUB_TOKEN") ?: "ABC123"
+def gitBranch = System.getenv("BRANCH_NAME") ?: "git branch --show-current".execute().text.trim()
+def gitTag = getTagString(gitBranch, theVersionName, theVersionCode)
 
 android {
     compileSdkVersion rootProject.compileSdkVersion
@@ -11,16 +22,29 @@ android {
         applicationId "apptentive.com.app"
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode theVersionCode
+        versionName theVersionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    
+    signingConfigs {
+        debug {
+            storeFile file("debug.keystore")
+        }
+        release {
+            storeFile file('release.keystore')
+            storePassword 'androidisbetter'
+            keyAlias 'release'
+            keyPassword 'androidisbetter'
+        }
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
@@ -30,7 +54,6 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-
 }
 
 dependencies {
@@ -51,3 +74,48 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:$junit_ext_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"
 }
+
+def extractSdkVersion() {
+    def text = file('../apptentive-feedback/src/main/java/apptentive/com/android/feedback/Constants.kt').text
+    def match = text =~ ~/SDK_VERSION\s*=\s*"(\d+\.\d+\.\d+)"/
+    return match[0][1]
+}
+
+def getTagString(gitBranch, versionName, versionCode) {
+    if (gitBranch == 'production') {
+        return versionName
+    } else {
+        return "${versionName}-${gitBranch}+${versionCode}"
+    }
+}
+
+task tag(type: Exec) {
+    workingDir '.'
+        
+    commandLine 'git', 'tag', gitTag
+}
+
+tasks.getByName('githubRelease').mustRunAfter(tasks.getByName('assemble'))
+
+github {
+    owner = 'apptentive'
+    repo = 'android-sdk'
+    token = githubToken
+    tagName = gitTag
+    targetCommitish = gitBranch
+    name = "v${gitTag}"
+    body = """# Apptentive Android SDK
+Release notes go here.
+"""
+    assets = [
+        'app/build/outputs/apk/release/app-release.apk',
+        'apptentive-core-ui/build/outputs/aar/apptentive-core-ui-release.aar',
+        'apptentive-core/build/outputs/aar/apptentive-core-release.aar',
+        'apptentive-enjoyment-dialog/build/outputs/aar/apptentive-enjoyment-dialog-release.aar',
+        'apptentive-feedback/build/outputs/aar/apptentive-feedback-release.aar',
+        'apptentive-navigate-to-link/build/outputs/aar/apptentive-navigate-to-link-release.aar',
+        'apptentive-notes/build/outputs/aar/apptentive-notes-release.aar',
+        'apptentive-survey/build/outputs/aar/apptentive-survey-release.aar',
+    ]
+}
+
