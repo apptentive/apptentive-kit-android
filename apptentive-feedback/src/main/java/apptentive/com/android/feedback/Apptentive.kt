@@ -31,9 +31,20 @@ object Apptentive {
     @Suppress("MemberVisibilityCanBePrivate")
     val registered @Synchronized get() = client != ApptentiveClient.NULL
 
-    @Synchronized
     @JvmStatic
-    fun register(application: Application, configuration: ApptentiveConfiguration) {
+    @JvmName("register")
+    @JvmOverloads
+    @Synchronized
+    fun _register(application: Application, configuration: ApptentiveConfiguration, callback: RegisterCallback? = null) {
+        // the above statement would not compile without force unwrapping on Kotlin 1.4.x
+        @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
+        val callbackFunc: ((RegisterResult) -> Unit)? =
+            if (callback != null) callback!!::onComplete else null
+        register(application, configuration, callbackFunc)
+    }
+
+    @Synchronized
+    fun register(application: Application, configuration: ApptentiveConfiguration, callback: ((result: RegisterResult) -> Unit)? = null) {
         if (registered) {
             Log.w(SYSTEM, "Apptentive SDK already registered")
             return
@@ -45,11 +56,23 @@ object Apptentive {
         DependencyProvider.register(AndroidExecutorFactoryProvider())
         DependencyProvider.register(AndroidFileSystemProvider(application.applicationContext, "apptentive.com.android.feedback"))
 
+        Log.i(SYSTEM, "Registering Apptentive Android SDK ${Constants.SDK_VERSION}");
+        Log.v(SYSTEM, "ApptentiveKey: ${configuration.apptentiveKey} ApptentiveSignature: ${configuration.apptentiveSignature}")
+
         // set log level
         Log.logLevel = configuration.logLevel
 
         stateExecutor = ExecutorQueue.createSerialQueue("SDK Queue")
         mainExecutor = ExecutorQueue.mainQueue
+
+        // wrap the callback
+        val callbackWrapper: ((RegisterResult) -> Unit)? = if (callback != null) {
+            {
+                mainExecutor.execute {
+                    callback.invoke(it)
+                }
+            }
+        } else null
 
         // TODO: build a better dependency injection solution and lift all the dependencies up
         client = ApptentiveDefaultClient(
@@ -62,7 +85,7 @@ object Apptentive {
             )
         ).apply {
             stateExecutor.execute {
-                start(application.applicationContext)
+                start(application.applicationContext, callbackWrapper)
             }
         }
     }

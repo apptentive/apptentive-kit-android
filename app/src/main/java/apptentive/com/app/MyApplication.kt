@@ -10,10 +10,10 @@ class MyApplication : Application() {
         super.onCreate()
 
         val configuration = ApptentiveConfiguration(
-            apptentiveKey = "ANDROID-ANDROID-DEV-c9c0b324114f",
-            apptentiveSignature = "98f5539e9310dc290394c68b76664e98",
-            logLevel = LogLevel.Verbose
+            "ANDROID-ANDROID-DEV-c9c0b324114f",
+            "98f5539e9310dc290394c68b76664e98"
         )
+        configuration.logLevel = LogLevel.Verbose
         Apptentive.register(this, configuration)
     }
 }

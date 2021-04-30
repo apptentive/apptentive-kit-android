@@ -32,6 +32,13 @@ class ConversationManagerTest : TestCase() {
             conversationService = MockConversationService(fetchResponse)
         )
 
+        var result: Result<Unit>? = null
+        conversationManager.fetchConversationToken {
+            result = it
+        }
+
+        assertThat(result).isEqualTo(Result.Success(Unit))
+
         val conversation: Conversation = conversationManager.activeConversation.value
         assertThat(conversation.conversationToken).isEqualTo(fetchResponse.token)
         assertThat(conversation.conversationId).isEqualTo(fetchResponse.id)

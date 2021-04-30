@@ -26,14 +26,19 @@ class ConversationManager(
         activeConversationSubject = BehaviorSubject(conversation)
         activeConversationSubject.observe(::saveConversation)
         activeConversationSubject.observe(::tryFetchEngagementManifest)
-
-        // fetch conversation token if necessary
-        if (!conversation.hasConversationToken) {
-            fetchConversationToken(conversation)
-        }
     }
 
-    private fun fetchConversationToken(conversation: Conversation) {
+    fun fetchConversationToken(callback: (result: Result<Unit>) -> Unit) {
+        val conversation = activeConversation.value
+
+        // if we have a conversation token - we're good
+        if (conversation.hasConversationToken) {
+            Log.v(CONVERSATION, "Conversation token already exists")
+            callback(Result.Success(Unit))
+            return
+        }
+
+        Log.v(CONVERSATION, "Fetching conversation token...")
         conversationService.fetchConversationToken(
             device = conversation.device,
             sdk = conversation.sdk,
@@ -41,29 +46,24 @@ class ConversationManager(
             person = conversation.person
         ) {
             when (it) {
-                is Result.Error -> Log.e(CONVERSATION, "Unable to fetch conversation")
+                is Result.Error -> {
+                    Log.e(CONVERSATION, "Unable to fetch conversation token: ${it.error}")
+                    callback(it)
+                }
                 is Result.Success -> {
+                    Log.v(CONVERSATION, "Conversation token fetched successfully")
+                    // update current conversation
                     val currentConversation = activeConversationSubject.value
-                    @Suppress("CascadeIf")
-                    if (currentConversation.localIdentifier != conversation.localIdentifier) {
-                        Log.d(
-                            CONVERSATION,
-                            "Conversation fetch token request was created for a conversation with local ID '${conversation.localIdentifier}' but active conversation has local ID '${currentConversation.localIdentifier}'"
+                    activeConversationSubject.value = currentConversation.copy(
+                        conversationToken = it.data.token,
+                        conversationId = it.data.id,
+                        person = currentConversation.person.copy(
+                            id = it.data.personId
                         )
-                    } else if (currentConversation.hasConversationToken) {
-                        Log.d(
-                            CONVERSATION,
-                            "Conversation fetch token request should only affect conversations without token but active conversation has token ${currentConversation.conversationToken}"
-                        )
-                    } else {
-                        activeConversationSubject.value = currentConversation.copy(
-                            conversationToken = it.data.token,
-                            conversationId = it.data.id,
-                            person = currentConversation.person.copy(
-                                id = it.data.personId
-                            )
-                        )
-                    }
+                    )
+
+                    // let the caller know fetching was successful
+                    callback(Result.Success(Unit))
                 }
             }
         }
@@ -74,6 +74,7 @@ class ConversationManager(
     private fun loadActiveConversation(): Conversation {
         val existingConversation = conversationRepository.loadConversation()
         if (existingConversation != null) {
+            Log.i(CONVERSATION, "Conversation already exists")
             return existingConversation
         }
 

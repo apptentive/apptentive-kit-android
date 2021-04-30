@@ -18,6 +18,7 @@ import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.feedback.payload.*
 import apptentive.com.android.feedback.platform.*
 import apptentive.com.android.network.HttpClient
+import apptentive.com.android.network.UnexpectedResponseException
 import apptentive.com.android.util.FileUtil
 import apptentive.com.android.util.Result
 import java.io.File
@@ -36,7 +37,7 @@ internal class ApptentiveDefaultClient(
     //region Initialization
 
     @WorkerThread
-    internal fun start(context: Context) {
+    internal fun start(context: Context, registerCallback: ((result: RegisterResult) -> Unit)?) {
         interactionModules = loadInteractionModules()
 
         val serialPayloadSender = SerialPayloadSender(
@@ -50,6 +51,24 @@ internal class ApptentiveDefaultClient(
             conversationRepository = createConversationRepository(context),
             conversationService = conversationService
         )
+        conversationManager.fetchConversationToken {
+            when (it) {
+                is Result.Error -> {
+                    when (val error = it.error) {
+                        is UnexpectedResponseException -> {
+                            val responseCode = error.statusCode
+                            val message = error.errorMessage
+                            registerCallback?.invoke(
+                                RegisterResult.Failure(
+                                    message ?: "Failed to fetch conversation token", responseCode
+                                )
+                            )
+                        }
+                        else -> registerCallback?.invoke(RegisterResult.Exception(it.error))
+                    }
+                }
+            }
+        }
         conversationManager.activeConversation.observe { conversation ->
             // FIXME: most of these values can be cached and only changed when the actual data changes
             engagement = DefaultEngagement(
@@ -71,6 +90,21 @@ internal class ApptentiveDefaultClient(
                         conversationToken = conversationToken
                     )
                 )
+            }
+        }
+
+        // add an observer to track SDK registration
+        if (registerCallback != null) {
+            var callbackInvoked = false // make sure the initialization callback only gets invoked once
+            conversationManager.activeConversation.observe { conversation ->
+                val conversationId = conversation.conversationId
+                val conversationToken = conversation.conversationToken
+                if (conversationId != null && conversationToken != null) {
+                    if (!callbackInvoked) {
+                        registerCallback.invoke(RegisterResult.Success)
+                        callbackInvoked = true
+                    }
+                }
             }
         }
 
