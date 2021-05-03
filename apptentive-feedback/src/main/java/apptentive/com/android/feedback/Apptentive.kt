@@ -56,11 +56,11 @@ object Apptentive {
         DependencyProvider.register(AndroidExecutorFactoryProvider())
         DependencyProvider.register(AndroidFileSystemProvider(application.applicationContext, "apptentive.com.android.feedback"))
 
-        Log.i(SYSTEM, "Registering Apptentive Android SDK ${Constants.SDK_VERSION}");
-        Log.v(SYSTEM, "ApptentiveKey: ${configuration.apptentiveKey} ApptentiveSignature: ${configuration.apptentiveSignature}")
-
         // set log level
         Log.logLevel = configuration.logLevel
+
+        Log.i(SYSTEM, "Registering Apptentive Android SDK ${Constants.SDK_VERSION}");
+        Log.v(SYSTEM, "ApptentiveKey: ${configuration.apptentiveKey} ApptentiveSignature: ${configuration.apptentiveSignature}")
 
         stateExecutor = ExecutorQueue.createSerialQueue("SDK Queue")
         mainExecutor = ExecutorQueue.mainQueue
