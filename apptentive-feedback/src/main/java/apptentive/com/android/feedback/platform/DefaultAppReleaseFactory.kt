@@ -16,7 +16,11 @@ class DefaultAppReleaseFactory(
             identifier = applicationInfo.packageName,
             versionCode = applicationInfo.versionCode,
             versionName = applicationInfo.versionName,
-            targetSdkVersion = applicationInfo.targetSdkVersion.toString()
+            targetSdkVersion = applicationInfo.targetSdkVersion.toString(),
+            debug = false,         // FIXME: set flag
+            inheritStyle = false,  // FIXME: set flag
+            overrideStyle = false, // FIXME: set flag
+            appStore = null        // FIXME: set value
         )
     }
 }

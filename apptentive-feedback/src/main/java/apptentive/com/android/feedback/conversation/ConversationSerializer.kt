@@ -95,11 +95,11 @@ internal object Serializers {
     val dateTimeSerializer: TypeSerializer<DateTime> by lazy {
         object : TypeSerializer<DateTime> {
             override fun encode(encoder: Encoder, value: DateTime) {
-                encoder.encodeLong(value.seconds)
+                encoder.encodeDouble(value.seconds)
             }
 
             override fun decode(decoder: Decoder): DateTime {
-                return DateTime(seconds = decoder.decodeLong())
+                return DateTime(seconds = decoder.decodeDouble())
             }
         }
     }
@@ -351,25 +351,24 @@ internal object Serializers {
     val engagementDataSerializer: TypeSerializer<EngagementData> by lazy {
         object : TypeSerializer<EngagementData> {
             override fun encode(encoder: Encoder, value: EngagementData) {
-                encodeEventData(encoder, value)
-                encodeInteractionData(encoder, value)
+                encodeEventData(encoder, value.events)
+                encodeInteractionData(encoder, value.interactions)
+                encodeVersionHistory(encoder, value.versionHistory)
             }
 
-            private fun encodeEventData(encoder: Encoder, obj: EngagementData) {
+            private fun encodeEventData(encoder: Encoder, events: EngagementRecords<Event>) =
                 encodeEngagementRecords(
                     encoder = encoder,
-                    obj = obj.events,
+                    obj = events,
                     keyEncoder = eventSerializer
                 )
-            }
 
-            private fun encodeInteractionData(encoder: Encoder, obj: EngagementData) {
+            private fun encodeInteractionData(encoder: Encoder, interactions: EngagementRecords<InteractionId>) =
                 encodeEngagementRecords(
                     encoder = encoder,
-                    obj = obj.interactions,
+                    obj = interactions,
                     keyEncoder = interactionIdSerializer
                 )
-            }
 
             private fun <Key : Any> encodeEngagementRecords(
                 encoder: Encoder,
@@ -383,10 +382,18 @@ internal object Serializers {
                 )
             }
 
+            private fun encodeVersionHistory(encoder: Encoder, versionHistory: VersionHistory) =
+                encoder.encodeList(versionHistory.items) { item ->
+                    encodeDouble(item.timestamp)
+                    encodeLong(item.versionCode)
+                    encodeString(item.versionName)
+                }
+
             override fun decode(decoder: Decoder): EngagementData {
                 return EngagementData(
                     events = decodeEventRecords(decoder),
-                    interactions = decodeInteractionRecords(decoder)
+                    interactions = decodeInteractionRecords(decoder),
+                    versionHistory = decodeVersionHistory(decoder)
                 )
             }
 
@@ -406,6 +413,16 @@ internal object Serializers {
                     keyDecoder = keyDecoder,
                     valueDecoder = engagementRecordSerializer
                 )
+            )
+
+            private fun decodeVersionHistory(decoder: Decoder) = VersionHistory(
+                items = decoder.decodeList {
+                    VersionHistoryItem(
+                        timestamp = decodeDouble(),
+                        versionCode = decodeLong(),
+                        versionName = decodeString()
+                    )
+                }
             )
         }
     }

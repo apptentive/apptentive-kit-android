@@ -161,3 +161,13 @@ fun <Key : Any, Value> Decoder.decodeMap(
 }
 
 //endregion
+
+inline fun <T> Encoder.encodeList(items: List<T>, callback: Encoder.(item: T)-> Unit) {
+    encodeInt(items.size)
+    items.forEach { callback(it) }
+}
+
+inline fun <T> Decoder.decodeList(callback: Decoder.() -> T): List<T> {
+    val size = decodeInt()
+    return List(size) { callback() }
+}

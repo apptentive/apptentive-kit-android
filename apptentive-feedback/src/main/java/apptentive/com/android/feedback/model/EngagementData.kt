@@ -8,7 +8,8 @@ import apptentive.com.android.feedback.utils.VersionName
 
 data class EngagementData(
     val events: EngagementRecords<Event> = EngagementRecords(),
-    val interactions: EngagementRecords<InteractionId> = EngagementRecords()
+    val interactions: EngagementRecords<InteractionId> = EngagementRecords(),
+    val versionHistory: VersionHistory = VersionHistory()
 ) {
     fun addInvoke(
         event: Event,

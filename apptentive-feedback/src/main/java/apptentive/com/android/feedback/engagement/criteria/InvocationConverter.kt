@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.engagement.criteria
 
 import apptentive.com.android.core.Converter
+import apptentive.com.android.feedback.engagement.criteria.ConditionalOperator.Companion.EQ
 import apptentive.com.android.feedback.model.InvocationData
 
 // FIXME: unit tests
@@ -49,7 +50,10 @@ object InvocationConverter : Converter<InvocationData, Invocation> {
                     )
                 }
             }
-            else -> TODO()
+            /* if the test is a single atom, which is shorthand for the equals operator */
+            else -> listOf(
+                ConditionalTest(ConditionalOperator.parse(EQ), field.convertValue(source))
+            )
         }
     }
 

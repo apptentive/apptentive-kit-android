@@ -39,7 +39,7 @@ class SerializersTest {
 
     @Test
     fun dateTimeSerializer() {
-        checkSerializer(Serializers.dateTimeSerializer, DateTime(1234567890))
+        checkSerializer(Serializers.dateTimeSerializer, DateTime(1234567890.0))
     }
 
     @Test
@@ -90,7 +90,7 @@ class SerializersTest {
             totalInvokes = 3,
             versionNameLookup = mutableMapOf("1.0.0" to 2L, "1.0.1" to 1L),
             versionCodeLookup = mutableMapOf(100L to 2L, 101L to 1L),
-            lastInvoked = DateTime(1234567890)
+            lastInvoked = DateTime(1234567890.0)
         )
         checkSerializer(Serializers.engagementRecordSerializer, record)
     }

@@ -356,7 +356,8 @@ fun Field.convertValue(value: Any?): Any? {
         Field.Type.DateTime -> {
             return when (converted) {
                 is DateTime -> converted
-                is Long -> DateTime(converted)
+                is Long -> DateTime(converted.toDouble())
+                is Double -> DateTime(converted)
                 else -> throw IllegalArgumentException("Illegal value for DateTime: $converted (${converted?.javaClass?.simpleName})")
             }
         }
@@ -378,7 +379,7 @@ private fun convertComplexValue(value: Any?): Any? {
                 return when (type) {
                     "datetime" -> {
                         val seconds = value["sec"] as Double
-                        DateTime(seconds.toLong())
+                        DateTime(seconds)
                     }
                     "version" -> {
                         val version = value["version"].toString()

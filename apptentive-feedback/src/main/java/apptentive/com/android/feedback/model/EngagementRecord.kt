@@ -8,7 +8,7 @@ data class EngagementRecord(
     private var totalInvokes: Long = 0,
     private val versionCodeLookup: MutableMap<VersionCode, Long> = mutableMapOf(),
     private val versionNameLookup: MutableMap<VersionName, Long> = mutableMapOf(),
-    private var lastInvoked: DateTime = DateTime(0)
+    private var lastInvoked: DateTime = DateTime(0.0)
 ) {
     val versionCodes: Map<VersionCode, Long> = versionCodeLookup
     val versionNames: Map<VersionName, Long> = versionNameLookup

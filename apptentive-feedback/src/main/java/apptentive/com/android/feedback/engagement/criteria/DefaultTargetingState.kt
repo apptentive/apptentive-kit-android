@@ -1,5 +1,7 @@
 package apptentive.com.android.feedback.engagement.criteria
 
+import apptentive.com.android.core.DefaultTimeSource
+import apptentive.com.android.core.TimeSource
 import apptentive.com.android.feedback.engagement.criteria.Field.*
 import apptentive.com.android.feedback.model.*
 
@@ -8,7 +10,8 @@ data class DefaultTargetingState(
     private val device: Device,
     private val sdk: SDK,
     private val appRelease: AppRelease,
-    private val engagementData: EngagementData
+    private val engagementData: EngagementData,
+    private val timeSource: TimeSource = DefaultTimeSource
 ) : TargetingState {
     override fun getValue(field: Field): Any? {
         return when (field) {
@@ -17,14 +20,14 @@ data class DefaultTargetingState(
 
             is sdk.version -> Version.tryParse(sdk.version)
 
-            is current_time -> DateTime.now()
+            is current_time -> DateTime(timeSource.getTimeSeconds())
 
-            is is_update.version_code -> TODO()
-            is is_update.version_name -> TODO()
+            is is_update.version_code -> engagementData.versionHistory.isUpdateForVersionCode()
+            is is_update.version_name -> engagementData.versionHistory.isUpdateForVersionName()
 
-            is time_at_install.total -> TODO()
-            is time_at_install.version_code -> TODO()
-            is time_at_install.version_name -> TODO()
+            is time_at_install.total -> engagementData.versionHistory.getTimeAtInstallTotal()
+            is time_at_install.version_code -> engagementData.versionHistory.getTimeAtInstallForVersionCode(appRelease.versionCode)
+            is time_at_install.version_name -> engagementData.versionHistory.getTimeAtInstallForVersionName(appRelease.versionName)
 
             is code_point.invokes.total -> engagementData.events.totalInvokes(field.event)
             is code_point.invokes.version_code -> engagementData.events.invokesForVersionCode(

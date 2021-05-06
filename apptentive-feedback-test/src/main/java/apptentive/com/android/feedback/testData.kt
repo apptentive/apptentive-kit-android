@@ -112,7 +112,7 @@ val mockEngagementData = EngagementData(
                     "1.0.0" to 2L,
                     "1.0.1" to 1L
                 ),
-                lastInvoked = DateTime(100)
+                lastInvoked = DateTime(100.0)
             ),
             Event.internal("event2") to EngagementRecord(
                 totalInvokes = 4,
@@ -126,7 +126,7 @@ val mockEngagementData = EngagementData(
                     "1.0.3" to 2L,
                     "1.0.4" to 1L
                 ),
-                lastInvoked = DateTime(200)
+                lastInvoked = DateTime(200.0)
             )
         )
     ),
@@ -142,7 +142,7 @@ val mockEngagementData = EngagementData(
                     "1.0.5" to 1L,
                     "1.0.6" to 2L
                 ),
-                lastInvoked = DateTime(300)
+                lastInvoked = DateTime(300.0)
             ),
             "222" to EngagementRecord(
                 totalInvokes = 5,
@@ -152,7 +152,21 @@ val mockEngagementData = EngagementData(
                 versionNameLookup = mutableMapOf(
                     "1.0.7" to 5L
                 ),
-                lastInvoked = DateTime(400)
+                lastInvoked = DateTime(400.0)
+            )
+        )
+    ),
+    versionHistory = VersionHistory(
+        items = listOf(
+            VersionHistoryItem(
+                timestamp = 1.0,
+                versionCode = 100100,
+                versionName = "1.0.0"
+            ),
+            VersionHistoryItem(
+                timestamp = 2.0,
+                versionCode = 200200,
+                versionName = "2.0.0"
             )
         )
     )
