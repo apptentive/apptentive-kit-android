@@ -6,6 +6,8 @@
 
 package com.apptentive.android.sdk.storage;
 
+import androidx.annotation.VisibleForTesting;
+
 import java.io.Serializable;
 
 
@@ -17,6 +19,21 @@ public class IntegrationConfig implements Serializable {
 	private IntegrationConfigItem amazonAwsSns;
 	private IntegrationConfigItem urbanAirship;
 	private IntegrationConfigItem parse;
+
+	public IntegrationConfig() {
+	}
+
+	@VisibleForTesting
+	public IntegrationConfig(IntegrationConfigItem apptentive,
+							 IntegrationConfigItem amazonAwsSns,
+							 IntegrationConfigItem urbanAirship,
+							 IntegrationConfigItem parse
+	) {
+		this.apptentive = apptentive;
+		this.amazonAwsSns = amazonAwsSns;
+		this.urbanAirship = urbanAirship;
+		this.parse = parse;
+	}
 
 
 	//region Getters & Setters

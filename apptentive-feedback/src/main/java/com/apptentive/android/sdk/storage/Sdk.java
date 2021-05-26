@@ -6,6 +6,8 @@
 
 package com.apptentive.android.sdk.storage;
 
+import androidx.annotation.VisibleForTesting;
+
 import java.io.Serializable;
 
 public class Sdk implements Serializable {
@@ -17,6 +19,28 @@ public class Sdk implements Serializable {
 	private String platform;
 	private String distribution;
 	private String distributionVersion;
+	
+	public Sdk() {} // for serialization
+
+	@VisibleForTesting
+	public Sdk(
+			String version,
+			String programmingLanguage,
+			String authorName,
+			String authorEmail,
+			String platform,
+			String distribution,
+			String distributionVersion
+	) {
+		this.version = version;
+		this.programmingLanguage = programmingLanguage;
+		this.authorName = authorName;
+		this.authorEmail = authorEmail;
+		this.platform = platform;
+		this.distribution = distribution;
+		this.distributionVersion = distributionVersion;
+		
+	} // for serialization
 
 	//region Getters & Setters
 

@@ -8,6 +8,7 @@ package com.apptentive.android.sdk.conversation;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 
 import com.apptentive.android.sdk.storage.AppRelease;
 import com.apptentive.android.sdk.storage.Device;
@@ -51,6 +52,49 @@ public class ConversationData implements Serializable {
 		this.appRelease = new AppRelease();
 		this.eventData = new EventData();
 		this.versionHistory = new VersionHistory();
+	}
+	
+	@VisibleForTesting
+	public ConversationData(
+			String localIdentifier,
+			String conversationToken,
+			String conversationId,
+			Device device,
+			Device lastSentDevice,
+			Person person,
+			Person lastSentPerson,
+			Sdk sdk,
+			AppRelease appRelease,
+			EventData eventData,
+			String lastSeenSdkVersion,
+			VersionHistory versionHistory,
+			boolean messageCenterFeatureUsed,
+			boolean messageCenterWhoCardPreviouslyDisplayed,
+			String messageCenterPendingMessage,
+			String messageCenterPendingAttachments,
+			String targets,
+			String interactions,
+			double interactionExpiration
+	) {
+		this.localIdentifier = localIdentifier;
+		this.conversationToken = conversationToken;
+		this.conversationId = conversationId;
+		this.device = device;
+		this.lastSentDevice = lastSentDevice;
+		this.person = person;
+		this.lastSentPerson = lastSentPerson;
+		this.sdk = sdk;
+		this.appRelease = appRelease;
+		this.eventData = eventData;
+		this.lastSeenSdkVersion = lastSeenSdkVersion;
+		this.versionHistory = versionHistory;
+		this.messageCenterFeatureUsed = messageCenterFeatureUsed;
+		this.messageCenterWhoCardPreviouslyDisplayed = messageCenterWhoCardPreviouslyDisplayed;
+		this.messageCenterPendingMessage = messageCenterPendingMessage;
+		this.messageCenterPendingAttachments = messageCenterPendingAttachments;
+		this.targets = targets;
+		this.interactions = interactions;
+		this.interactionExpiration = interactionExpiration;
 	}
 
 	//region Getters & Setters

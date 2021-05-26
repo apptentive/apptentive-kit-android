@@ -25,71 +25,10 @@ public class EventData implements Serializable {
 		interactions = new HashMap<String, EventRecord>();
 	}
 
-
-	public synchronized Long getEventCountTotal(String eventLabel) {
-		EventRecord eventRecord = events.get(eventLabel);
-		if (eventRecord == null) {
-			return 0L;
-		}
-		return eventRecord.getTotal();
+	public EventData(Map<String, EventRecord> events, Map<String, EventRecord> interactions) {
+		this.events = events;
+		this.interactions = interactions;
 	}
-
-	public synchronized Long getInteractionCountTotal(String interactionId) {
-		EventRecord eventRecord = interactions.get(interactionId);
-		if (eventRecord != null) {
-			return eventRecord.getTotal();
-		}
-		return 0L;
-	}
-
-	public synchronized Double getTimeOfLastEventInvocation(String eventLabel) {
-		EventRecord eventRecord = events.get(eventLabel);
-		if (eventRecord != null) {
-			return eventRecord.getLast();
-		}
-		return null;
-	}
-
-	public synchronized Double getTimeOfLastInteractionInvocation(String interactionId) {
-		EventRecord eventRecord = interactions.get(interactionId);
-		if (eventRecord != null) {
-			return eventRecord.getLast();
-		}
-		return null;
-	}
-
-	public synchronized Long getEventCountForVersionCode(String eventLabel, Integer versionCode) {
-		EventRecord eventRecord = events.get(eventLabel);
-		if (eventRecord != null) {
-			return eventRecord.getCountForVersionCode(versionCode);
-		}
-		return 0L;
-	}
-
-	public synchronized Long getInteractionCountForVersionCode(String interactionId, Integer versionCode) {
-		EventRecord eventRecord = interactions.get(interactionId);
-		if (eventRecord != null) {
-			return eventRecord.getCountForVersionCode(versionCode);
-		}
-		return 0L;
-	}
-
-	public synchronized Long getEventCountForVersionName(String eventLabel, String versionName) {
-		EventRecord eventRecord = events.get(eventLabel);
-		if (eventRecord != null) {
-			return eventRecord.getCountForVersionName(versionName);
-		}
-		return 0L;
-	}
-
-	public synchronized Long getInteractionCountForVersionName(String interactionId, String versionName) {
-		EventRecord eventRecord = interactions.get(interactionId);
-		if (eventRecord != null) {
-			return eventRecord.getCountForVersionName(versionName);
-		}
-		return 0L;
-	}
-
 
 	public synchronized String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -106,26 +45,12 @@ public class EventData implements Serializable {
 
 	//region Getters & Setters
 
-	/**
-	 * Used for migration only.
-	 */
-	public synchronized void setEvents(Map<String, EventRecord> events) {
-		this.events = events;
-
+	public Map<String, EventRecord> getEvents() {
+		return events;
 	}
 
-	/**
-	 * Used for migration only.
-	 */
-	public synchronized void setInteractions(Map<String, EventRecord> interactions) {
-		this.interactions = interactions;
-
-	}
-
-	public synchronized void clear() {
-		events.clear();
-		interactions.clear();
-
+	public Map<String, EventRecord> getInteractions() {
+		return interactions;
 	}
 
 	//endregion

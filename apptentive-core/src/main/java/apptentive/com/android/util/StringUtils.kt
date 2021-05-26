@@ -32,3 +32,9 @@ fun createStringTable(rows: List<Array<Any?>>): String {
     result.append("\n").append(line)
     return result.toString()
 }
+
+fun parseInt(value: String?) = try {
+    if (value != null) Integer.valueOf(value) else null
+} catch (e: Exception) {
+    null
+}

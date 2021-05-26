@@ -23,4 +23,11 @@ public class VersionHistory implements Serializable {
 		versionHistoryItems = new ArrayList<>();
 	}
 
+	public void setVersionHistoryItems(List<VersionHistoryItem> versionHistoryItems) {
+		this.versionHistoryItems = versionHistoryItems;
+	}
+
+	public List<VersionHistoryItem> getVersionHistoryItems() {
+		return versionHistoryItems;
+	}
 }

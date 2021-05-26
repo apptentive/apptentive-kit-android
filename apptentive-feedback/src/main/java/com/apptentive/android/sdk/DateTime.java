@@ -8,8 +8,6 @@ import java.io.Serializable;
 public class DateTime implements Serializable, Comparable<DateTime> {
     private static final long serialVersionUID = -7893194735115350118L;
 
-    public static final String KEY_TYPE = "_type";
-    public static final String TYPE = "datetime";
     public static final String SEC = "sec";
 
     private String sec;
@@ -28,18 +26,6 @@ public class DateTime implements Serializable, Comparable<DateTime> {
 
     public double getDateTime() {
         return Double.valueOf(sec);
-    }
-
-    public JSONObject toJSONObject() {
-        JSONObject ret = new JSONObject();
-        try {
-            ret.put(KEY_TYPE, TYPE);
-            ret.put(SEC, sec);
-        } catch (JSONException e) {
-            ApptentiveLog.e(e, "Error creating Apptentive.DateTime.");
-
-        }
-        return ret;
     }
 
     @Override

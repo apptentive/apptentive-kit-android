@@ -37,7 +37,30 @@ public class EventRecord implements Serializable {
 		return total;
 	}
 
-	//endregion
+	public Map<Integer, Long> getVersionCodes() {
+		return versionCodes;
+	}
+
+	public Map<String, Long> getVersionNames() {
+		return versionNames;
+	}
+
+	public void setLast(double last) {
+		this.last = last;
+	}
+
+	public void setTotal(long total) {
+		this.total = total;
+	}
+
+	public void setVersionCodes(Map<Integer, Long> versionCodes) {
+		this.versionCodes = versionCodes;
+	}
+
+	public void setVersionNames(Map<String, Long> versionNames) {
+		this.versionNames = versionNames;
+	}
+//endregion
 
 	/**
 	 * Initializes an event record or updates it with a subsequent event.

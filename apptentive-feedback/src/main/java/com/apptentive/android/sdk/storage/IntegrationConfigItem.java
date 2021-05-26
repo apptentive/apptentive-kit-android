@@ -15,6 +15,10 @@ public class IntegrationConfigItem implements Serializable {
 
 	private HashMap<String, String> contents = new HashMap<>();
 
+	public HashMap<String, String> getContents() {
+		return contents;
+	}
+
 	public IntegrationConfigItem() {
 	}
 

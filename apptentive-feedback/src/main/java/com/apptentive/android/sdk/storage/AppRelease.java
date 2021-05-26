@@ -6,6 +6,8 @@
 
 package com.apptentive.android.sdk.storage;
 
+import androidx.annotation.VisibleForTesting;
+
 import java.io.Serializable;
 
 public class AppRelease implements Serializable {
@@ -19,6 +21,30 @@ public class AppRelease implements Serializable {
 	private String type;
 	private int versionCode;
 	private String versionName;
+
+	public AppRelease() {
+	}
+
+	@VisibleForTesting
+	public AppRelease(String appStore,
+					  boolean debug,
+					  String identifier,
+					  boolean inheritStyle,
+					  boolean overrideStyle,
+					  String targetSdkVersion,
+					  String type,
+					  int versionCode,
+					  String versionName) {
+		this.appStore = appStore;
+		this.debug = debug;
+		this.identifier = identifier;
+		this.inheritStyle = inheritStyle;
+		this.overrideStyle = overrideStyle;
+		this.targetSdkVersion = targetSdkVersion;
+		this.type = type;
+		this.versionCode = versionCode;
+		this.versionName = versionName;
+	}
 
 	//region Getters & Setters
 
