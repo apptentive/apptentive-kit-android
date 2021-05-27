@@ -18,16 +18,14 @@ import com.apptentive.android.sdk.encryption.EncryptionFactory;
 import com.apptentive.android.sdk.serialization.ObjectSerialization;
 import com.apptentive.android.sdk.storage.SerializerException;
 import com.apptentive.android.sdk.util.StringUtils;
+import com.apptentive.android.sdk.util.Util;
 
 import java.io.File;
-import java.lang.ref.WeakReference;
 import java.util.List;
 
 import static com.apptentive.android.sdk.ApptentiveLog.hideIfSanitized;
 import static com.apptentive.android.sdk.ApptentiveLogTag.CONVERSATION;
 import static com.apptentive.android.sdk.conversation.ConversationState.ANONYMOUS;
-import static com.apptentive.android.sdk.conversation.ConversationState.ANONYMOUS_PENDING;
-import static com.apptentive.android.sdk.conversation.ConversationState.LEGACY_PENDING;
 import static com.apptentive.android.sdk.conversation.ConversationState.LOGGED_IN;
 import static com.apptentive.android.sdk.util.Constants.CONVERSATION_METADATA_FILE;
 import static com.apptentive.android.sdk.util.Constants.CONVERSATION_METADATA_FILE_LEGACY_V1;
@@ -41,9 +39,8 @@ import static com.apptentive.android.sdk.util.Constants.PAYLOAD_ENCRYPTION_KEY_T
  *   - Creating anonymous conversation.
  * </pre>
  */
-public class ConversationManager {
-
-	private final WeakReference<Context> contextRef;
+public class LegacyConversationManager {
+	private static final String CONVERSATIONS_DIR = "apptentive/conversations";
 
 	/**
 	 * A basic directory for storing conversation-related data.
@@ -55,28 +52,17 @@ public class ConversationManager {
 	 */
 	private final Encryption encryption;
 
-	/**
-	 * Current state of conversation metadata.
-	 */
-	private ConversationMetadata conversationMetadata;
-
-	private Conversation activeConversation;
-
-	public ConversationManager(@NonNull Context context, @NonNull File conversationsStorageDir, @NonNull Encryption encryption) {
+	public LegacyConversationManager(@NonNull Context context, @NonNull Encryption encryption) {
 		if (context == null) {
 			throw new IllegalArgumentException("Context is null");
 		}
 
-		if (conversationsStorageDir == null) {
-			throw new IllegalArgumentException("Conversation storage dir is null");
-		}
+		conversationsStorageDir = Util.getInternalDir(context, CONVERSATIONS_DIR);
 
 		if (encryption == null) {
 			throw new IllegalArgumentException("Encryption is null");
 		}
 
-		this.contextRef = new WeakReference<>(context.getApplicationContext());
-		this.conversationsStorageDir = conversationsStorageDir;
 		this.encryption = encryption;
 
 	}
@@ -87,7 +73,7 @@ public class ConversationManager {
 	 * Attempts to load an active conversation. Returns <code>false</code> if active conversation is
 	 * missing or cannot be loaded
 	 */
-	public boolean loadActiveConversation(Context context) {
+	public @Nullable ConversationData loadLegacyConversationData(Context context) {
 
 		if (context == null) {
 			throw new IllegalArgumentException("Context is null");
@@ -96,24 +82,24 @@ public class ConversationManager {
 		try {
 			// resolving metadata
 			ApptentiveLog.v(CONVERSATION, "Resolving metadata...");
-			conversationMetadata = resolveMetadata();
+			ConversationMetadata conversationMetadata = resolveMetadata();
 			if (ApptentiveLog.canLog(Level.VERBOSE)) {
 				printMetadata(conversationMetadata, "Loaded Metadata");
 			}
 
-			if (activeConversation != null) {
-				return true;
+			final Conversation conversation = loadActiveConversationGuarded(conversationMetadata);
+			if (conversation != null) {
+				return conversation.getConversationData();
 			}
 
 		} catch (Exception e) {
 			ApptentiveLog.e(CONVERSATION, e, "Exception while loading active conversation");
-
 		}
 
-		return false;
+		return null;
 	}
 
-	private @Nullable Conversation loadActiveConversationGuarded() throws ConversationLoadException {
+	private @Nullable Conversation loadActiveConversationGuarded(ConversationMetadata conversationMetadata) throws ConversationLoadException {
 		// try to load an active conversation from metadata first
 		try {
 			if (conversationMetadata.hasItems()) {

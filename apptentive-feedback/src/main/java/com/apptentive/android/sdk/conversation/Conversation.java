@@ -250,7 +250,7 @@ public class Conversation {
 
 	// this is a synchronization hack: both save/load conversation data are synchronized so we can't
 	// modify conversation data while it's being serialized/deserialized
-	private synchronized @NonNull ConversationData getConversationData() {
+	public synchronized @NonNull ConversationData getConversationData() {
 		return conversationData;
 	}
 

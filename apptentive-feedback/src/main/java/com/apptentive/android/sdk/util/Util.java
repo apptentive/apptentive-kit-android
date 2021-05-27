@@ -6,7 +6,12 @@
 
 package com.apptentive.android.sdk.util;
 
+import android.content.Context;
+
 import androidx.annotation.Nullable;
+
+import com.apptentive.android.sdk.ApptentiveLog;
+import com.apptentive.android.sdk.ApptentiveLogTag;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -20,10 +25,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.TimeZone;
 
+import static com.apptentive.android.sdk.ApptentiveLogTag.CONVERSATION;
+
 // TODO: this class does too much - split into smaller classes and clean up
 public class Util {
 	private static final String ENCRYPTED_FILENAME_SUFFIX = ".encrypted";
 
+	public static File getInternalDir(Context context, String path) {
+		File filesDir = context.getFilesDir();
+		return new File(filesDir, path);
+	}
 
 	public static void ensureClosed(Closeable stream) {
 		if (stream != null) {
