@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<map>
+    <string name="serverUrl">https://api.apptentive.com</string>
+    <string name="appConfiguration.json">{&quot;support_display_name&quot;:&quot;&quot;,&quot;support_display_email&quot;:&quot;&quot;,&quot;hide_branding&quot;:false,&quot;message_center&quot;:{&quot;title&quot;:&quot;Message Center&quot;,&quot;fg_poll&quot;:6,&quot;bg_poll&quot;:30,&quot;email_required&quot;:true,&quot;notification_popup&quot;:{&quot;enabled&quot;:false}},&quot;support_image_url&quot;:&quot;https:\/\/app-icons.apptentive.com\/521f9bba68e2758b6d00098d_1532033118.png&quot;,&quot;message_center_enabled&quot;:false,&quot;metrics_enabled&quot;:true,&quot;apptimize_integration&quot;:false,&quot;collect_ad_id&quot;:false,&quot;configuration_cache_expiration_millis&quot;:1622504171072}</string>
+</map>
