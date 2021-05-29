@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.IOException;
 
 import static com.apptentive.android.sdk.ApptentiveLog.hideIfSanitized;
-import static com.apptentive.android.sdk.util.Util.getEncryptedFilename;
 import static com.apptentive.android.sdk.util.Util.readNullableUTF;
 import static com.apptentive.android.sdk.util.Util.writeNullableUTF;
 
@@ -83,8 +82,8 @@ public class ConversationMetadataItem implements SerializableObject {
 		localConversationId = in.readUTF();
 		conversationId = readNullableUTF(in);
 		conversationToken = readNullableUTF(in);
-		dataFile = getEncryptedFilename(new File(in.readUTF()));
-		messagesFile = getEncryptedFilename(new File(in.readUTF()));
+		dataFile = new File(in.readUTF());
+		messagesFile = new File(in.readUTF());
 		conversationState = ConversationState.valueOf(in.readByte());
 		conversationEncryptionKey = readNullableUTF(in);
 		userId = readNullableUTF(in);

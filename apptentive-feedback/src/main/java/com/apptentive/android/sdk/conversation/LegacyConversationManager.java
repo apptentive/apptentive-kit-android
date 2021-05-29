@@ -176,7 +176,6 @@ public class LegacyConversationManager {
 	//region Metadata
 
 	private ConversationMetadata resolveMetadata() throws ConversationMetadataLoadException {
-
 		try {
 			// attempt to load the encrypted metadata file
 			File metaFile = new File(conversationsStorageDir, CONVERSATION_METADATA_FILE);
@@ -189,13 +188,7 @@ public class LegacyConversationManager {
 			metaFile = new File(conversationsStorageDir, CONVERSATION_METADATA_FILE_LEGACY_V1);
 			if (metaFile.exists()) {
 				ApptentiveLog.v(CONVERSATION, "Loading legacy v1 metadata file: %s", metaFile);
-				try {
-					return ObjectSerialization.deserialize(metaFile, ConversationMetadata.class);
-				} finally {
-					// we need to delete the legacy file to avoid the data being loaded next time
-					boolean fileDeleted = metaFile.delete();
-					ApptentiveLog.v(CONVERSATION, "Legacy metadata file deleted: %b", fileDeleted);
-				}
+				return ObjectSerialization.deserialize(metaFile, ConversationMetadata.class);
 			}
 
 			ApptentiveLog.v(CONVERSATION, "No metadata files");

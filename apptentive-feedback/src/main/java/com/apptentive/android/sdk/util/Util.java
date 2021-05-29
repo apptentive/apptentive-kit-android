@@ -10,9 +10,6 @@ import android.content.Context;
 
 import androidx.annotation.Nullable;
 
-import com.apptentive.android.sdk.ApptentiveLog;
-import com.apptentive.android.sdk.ApptentiveLogTag;
-
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.DataInput;
@@ -25,12 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.TimeZone;
 
-import static com.apptentive.android.sdk.ApptentiveLogTag.CONVERSATION;
-
-// TODO: this class does too much - split into smaller classes and clean up
 public class Util {
-	private static final String ENCRYPTED_FILENAME_SUFFIX = ".encrypted";
-
 	public static File getInternalDir(Context context, String path) {
 		File filesDir = context.getFilesDir();
 		return new File(filesDir, path);
@@ -104,11 +96,4 @@ public class Util {
 		boolean notNull = in.readBoolean();
 		return notNull ? in.readUTF() : null;
 	}
-
-
-	public static File getEncryptedFilename(File file) {
-		String filename = file.getName();
-		return filename.endsWith(ENCRYPTED_FILENAME_SUFFIX) ? file : new File(file.getParent(), filename + ENCRYPTED_FILENAME_SUFFIX);
-	}
-
 }
