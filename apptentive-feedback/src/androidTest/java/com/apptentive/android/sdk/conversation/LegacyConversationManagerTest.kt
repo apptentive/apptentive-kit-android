@@ -7,6 +7,7 @@ import com.apptentive.android.sdk.encryption.EncryptionFactory
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import java.io.File
 
 class LegacyConversationManagerTest {
     private val context = ApplicationProvider.getApplicationContext<Context>()
@@ -36,6 +37,31 @@ class LegacyConversationManagerTest {
     }
 
     private fun pushFiles(sdkVersion: String) {
-        TODO()
+        copyAsset(sdkVersion, context.dataDir)
     }
+
+    private fun copyAsset(path: String, dstDir: File) {
+        val list = context.assets.list(path)
+        if (list != null && list.isNotEmpty()) {
+            list.forEach { copyAsset("$path/$it", dstDir) }
+        } else {
+            val dst = File(dstDir, path.removePrefixPathComponent())
+            val parentDir = dst.parentFile
+            if (!parentDir.exists()) {
+                parentDir.mkdirs()
+            }
+            print("Copying $path -> $dst")
+
+            context.assets.open(path).use { input ->
+                dst.outputStream().use { output ->
+                    input.copyTo(output)
+                }
+            }
+        }
+    }
+}
+
+private fun String.removePrefixPathComponent(): String {
+    val tokens = split("/")
+    return tokens.subList(1, tokens.size).joinToString("/")
 }

@@ -8,8 +8,12 @@ object MigrationTestUtils {
         deleteFile(context.dataDir) // TODO: if this is not possible - delete specific directories
     }
 
-    private fun deleteFile(dataDir: File?) {
-        TODO("Implement me")
+    private fun deleteFile(file: File) {
+        if (file.isDirectory) {
+            file.listFiles().forEach { deleteFile(it) }
+        } else {
+            file.delete()
+        }
     }
 
     fun getInternalDir(context: Context, path: String, createIfNecessary: Boolean = false): File {
