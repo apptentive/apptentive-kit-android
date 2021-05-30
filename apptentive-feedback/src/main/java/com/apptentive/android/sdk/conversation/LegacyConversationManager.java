@@ -15,6 +15,7 @@ import com.apptentive.android.sdk.ApptentiveLog;
 import com.apptentive.android.sdk.Encryption;
 import com.apptentive.android.sdk.Level;
 import com.apptentive.android.sdk.encryption.EncryptionFactory;
+import com.apptentive.android.sdk.encryption.SecurityManager;
 import com.apptentive.android.sdk.serialization.ObjectSerialization;
 import com.apptentive.android.sdk.storage.SerializerException;
 import com.apptentive.android.sdk.util.StringUtils;
@@ -51,6 +52,10 @@ public class LegacyConversationManager {
 	 * An encryption for securing SDK files.
 	 */
 	private final Encryption encryption;
+
+	public LegacyConversationManager(@NonNull Context context) {
+		this(context, SecurityManager.getEncryption(context, null, false));
+	}
 
 	public LegacyConversationManager(@NonNull Context context, @NonNull Encryption encryption) {
 		if (context == null) {
