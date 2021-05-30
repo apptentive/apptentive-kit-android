@@ -33,17 +33,18 @@ class LegacyConversationManagerTest {
     }
 
     @Test
-    fun testMigrationFrom400() = testMigration("4.0.0", EncryptionFactory.NULL)
+    fun testMigrationFrom400() = testMigration("4.0.0")
 
     @Test
-    fun testMigrationFrom562() = testMigration("5.6.2", EncryptionFactory.NULL)
+    fun testMigrationFrom562() = testMigration("5.6.2")
 
     @Test
-    fun testMigrationFrom562LoggedInConversation() = testMigration("5.6.2-login", EncryptionFactory.NULL)
+    fun testMigrationFrom562LoggedInConversation() = testMigration("5.6.2-login")
 
-    private fun testMigration(path: String, encryption: Encryption) {
+    private fun testMigration(path: String) {
         pushFiles(path)
 
+        val encryption = EncryptionFactory.NULL // it's impossible to automatically test encrypted storage since KeyStore does not allow exporting keys
         val manager = LegacyConversationManager(context, encryption)
         val legacyData = manager.loadLegacyConversationData(context)
             ?: throw AssertionError("Unable to load legacy conversation")
