@@ -146,6 +146,115 @@ class LegacyConversationManagerTest {
                 engagementManifest = EngagementManifest()
             )
         }
+        if (sdkVersion == "5.6.2") {
+            return Conversation(
+                localIdentifier = "aaaea07c-f3d9-4554-8dca-180c217744a5",
+                conversationToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJ0eXBlIjoiYW5vbiIsImlzcyI6ImFwcHRlbnRpdmUiLCJzdWIiOiI2MGIyY2ZlZTZhNzk1NDZjMGQyODE4ZWMiLCJhcHBfaWQiOiI1MjFmOWJiYTY4ZTI3NThiNmQwMDA5OGQiLCJpYXQiOjE2MjIzMzEzNzR9.Oytihs3LJFsvo1fujmVRBMk4S95FxGQkwvUeDg6v4ZmXr_CL0mTVcytRf__5CU-yVRqzWE_QpumlaXVOtHbD-Q",
+                conversationId = "60b2cfee6a79546c0d2818ec",
+                device = Device(
+                    osName = "Android",
+                    osVersion = "9",
+                    osBuild = "5124027",
+                    osApiLevel = 28,
+                    manufacturer = "Google",
+                    model = "Android SDK built for x86_64",
+                    board = "goldfish_x86_64",
+                    product = "sdk_gphone_x86_64",
+                    brand = "google",
+                    cpu = "x86_64",
+                    device = "generic_x86_64",
+                    uuid = "cc736039c35ef28b",
+                    buildType = "user",
+                    buildId = "PSR1.180720.075",
+                    carrier = "Android",
+                    currentCarrier = "Android",
+                    networkType = "LTE",
+                    bootloaderVersion = "unknown",
+                    radioVersion = "1.0.0.0",
+                    localeCountryCode = "US",
+                    localeLanguageCode = "en",
+                    localeRaw = "en_US",
+                    utcOffset = -18000,
+                    advertiserId = null,
+                    customData = CustomData(
+                        content = mapOf(
+                            "device-int" to 20,
+                            "device-bool" to false,
+                            "device-str" to "device"
+                        )
+                    )
+                ),
+                person = Person(
+                    id = "60b2cfee6a79546c0d2818eb",
+                    email = "person@company.com",
+                    name = "First Second",
+                    customData = CustomData(
+                        content = mapOf(
+                            "person-int" to 10,
+                            "person-bool" to true,
+                            "person-str" to "person"
+                        )
+                    )
+                ),
+                sdk = SDK(
+                    version = "5.6.2",
+                    platform = "Android",
+                    distribution = "default",
+                    distributionVersion = "5.6.2"
+                ),
+                appRelease = AppRelease(
+                    type = "android",
+                    identifier = "apptentive.com.android.feedback.test",
+                    versionCode = 100000,
+                    versionName = "1.0.0",
+                    targetSdkVersion = "30",
+                    debug = true,
+                    inheritStyle = false,
+                    overrideStyle = false,
+                    appStore = null
+                ),
+                engagementData = EngagementData(
+                    events = EngagementRecords(
+                        records = mutableMapOf(
+                            Event.parse("com.apptentive#app#launch") to EngagementRecord(
+                                versionCode = 100000,
+                                versionName = "1.0.0",
+                                lastInvoked = DateTime(seconds = 1.622331369858E9)
+                            ),
+                            Event.parse("local#app#love_dialog_test") to EngagementRecord(
+                                versionCode = 100000,
+                                versionName = "1.0.0",
+                                lastInvoked = DateTime(seconds = 1.622331375906E9)
+                            ),
+                            Event.parse("com.apptentive#EnjoymentDialog#launch") to EngagementRecord(
+                                versionCode = 100000,
+                                versionName = "1.0.0",
+                                lastInvoked = DateTime(seconds = 1.622331376478E9)
+                            )
+                        )
+                    ),
+                    interactions = EngagementRecords(
+                        records = mutableMapOf(
+                            "55c94046a71b52ea570054d9" to EngagementRecord(
+                                versionCode = 100000,
+                                versionName = "1.0.0",
+                                lastInvoked = DateTime(seconds = 1.62233137605E9)
+                            )
+                        )
+                    ),
+                    versionHistory = VersionHistory(
+                        items = listOf(
+                            VersionHistoryItem(
+                                timestamp = 1.622331370573E9,
+                                versionCode = 100000,
+                                versionName = "1.0.0"
+                            )
+                        )
+                    )
+                ),
+                engagementManifest = EngagementManifest()
+            )
+        }
         else TODO("Implement me")
     }
 
