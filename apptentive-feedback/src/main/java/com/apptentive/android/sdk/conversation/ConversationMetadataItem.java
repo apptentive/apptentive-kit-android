@@ -9,7 +9,7 @@ import java.io.DataOutput;
 import java.io.File;
 import java.io.IOException;
 
-import static com.apptentive.android.sdk.ApptentiveLog.hideIfSanitized;
+import static apptentive.com.android.util.Log.hideIfSanitized;
 import static com.apptentive.android.sdk.util.Util.readNullableUTF;
 import static com.apptentive.android.sdk.util.Util.writeNullableUTF;
 

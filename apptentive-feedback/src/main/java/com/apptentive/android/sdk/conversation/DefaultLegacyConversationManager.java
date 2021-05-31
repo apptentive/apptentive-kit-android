@@ -11,9 +11,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.apptentive.android.sdk.ApptentiveLog;
 import com.apptentive.android.sdk.Encryption;
-import com.apptentive.android.sdk.Level;
 import com.apptentive.android.sdk.encryption.EncryptionFactory;
 import com.apptentive.android.sdk.encryption.SecurityManager;
 import com.apptentive.android.sdk.serialization.ObjectSerialization;
@@ -24,8 +22,11 @@ import com.apptentive.android.sdk.util.Util;
 import java.io.File;
 import java.util.List;
 
-import static com.apptentive.android.sdk.ApptentiveLog.hideIfSanitized;
-import static com.apptentive.android.sdk.ApptentiveLogTag.CONVERSATION;
+import apptentive.com.android.util.Log;
+import apptentive.com.android.util.LogLevel;
+
+import static apptentive.com.android.feedback.LogTags.MIGRATION;
+import static apptentive.com.android.util.Log.hideIfSanitized;
 import static com.apptentive.android.sdk.conversation.ConversationState.ANONYMOUS;
 import static com.apptentive.android.sdk.conversation.ConversationState.LOGGED_IN;
 import static com.apptentive.android.sdk.util.Constants.CONVERSATION_METADATA_FILE;
@@ -68,9 +69,9 @@ public class DefaultLegacyConversationManager implements LegacyConversationManag
 	public @Nullable ConversationData loadLegacyConversationData() {
 		try {
 			// resolving metadata
-			ApptentiveLog.v(CONVERSATION, "Resolving metadata...");
+			Log.v(MIGRATION, "Resolving metadata...");
 			ConversationMetadata conversationMetadata = resolveMetadata();
-			if (ApptentiveLog.canLog(Level.VERBOSE)) {
+			if (Log.canLog(LogLevel.Verbose)) {
 				printMetadata(conversationMetadata, "Loaded Metadata");
 			}
 
@@ -79,7 +80,7 @@ public class DefaultLegacyConversationManager implements LegacyConversationManag
 				return conversation.getConversationData();
 			}
 		} catch (Exception e) {
-			ApptentiveLog.e(CONVERSATION, e, "Exception while loading active conversation");
+			Log.e(MIGRATION, "Exception while loading active conversation", e);
 		}
 
 		return null;
@@ -92,7 +93,7 @@ public class DefaultLegacyConversationManager implements LegacyConversationManag
 				return loadConversationFromMetadata(conversationMetadata);
 			}
 		} catch (Exception e) {
-			ApptentiveLog.e(e, "Exception while loading conversation");
+			Log.e(MIGRATION, "Exception while loading conversation", e);
 
 			// do not re-create a conversation if the last loading was unsuccessful
 			throw new ConversationLoadException("Unable to load conversation", e);
@@ -113,19 +114,19 @@ public class DefaultLegacyConversationManager implements LegacyConversationManag
 		// if the user was logged in previously - we should have an active conversation
 		item = metadata.findItem(LOGGED_IN);
 		if (item != null) {
-			ApptentiveLog.i(CONVERSATION, "Loading 'logged-in' conversation...");
+			Log.i(MIGRATION, "Loading 'logged-in' conversation...");
 			return loadConversation(item);
 		}
 
 		// if no users were logged in previously - we might have an anonymous conversation
 		item = metadata.findItem(ANONYMOUS);
 		if (item != null) {
-			ApptentiveLog.i(CONVERSATION, "Loading 'anonymous' conversation...");
+			Log.i(MIGRATION, "Loading 'anonymous' conversation...");
 			return loadConversation(item);
 		}
 
 		// we only have LOGGED_OUT conversations
-		ApptentiveLog.i(CONVERSATION, "No active conversations to load: only 'logged-out' conversations available");
+		Log.i(MIGRATION, "No active conversations to load: only 'logged-out' conversations available");
 		return null;
 	}
 
@@ -166,20 +167,20 @@ public class DefaultLegacyConversationManager implements LegacyConversationManag
 			// attempt to load the encrypted metadata file
 			File metaFile = new File(conversationsStorageDir, CONVERSATION_METADATA_FILE);
 			if (metaFile.exists()) {
-				ApptentiveLog.v(CONVERSATION, "Loading metadata file: %s", metaFile);
+				Log.v(MIGRATION, "Loading metadata file: %s", metaFile);
 				return ObjectSerialization.deserialize(metaFile, ConversationMetadata.class, encryption);
 			}
 
 			// attempt to load the legacy metadata file
 			metaFile = new File(conversationsStorageDir, CONVERSATION_METADATA_FILE_LEGACY_V1);
 			if (metaFile.exists()) {
-				ApptentiveLog.v(CONVERSATION, "Loading legacy v1 metadata file: %s", metaFile);
+				Log.v(MIGRATION, "Loading legacy v1 metadata file: %s", metaFile);
 				return ObjectSerialization.deserialize(metaFile, ConversationMetadata.class);
 			}
 
-			ApptentiveLog.v(CONVERSATION, "No metadata files");
+			Log.v(MIGRATION, "No metadata files");
 		} catch (Exception e) {
-			ApptentiveLog.e(CONVERSATION, e, "Exception while loading conversation metadata");
+			Log.e(MIGRATION, "Exception while loading conversation metadata", e);
 
 			// if we fail to load the metadata - we would not create a new one - just throw an exception
 			throw new ConversationMetadataLoadException("Unable to load metadata", e);
@@ -195,7 +196,7 @@ public class DefaultLegacyConversationManager implements LegacyConversationManag
 	private void printMetadata(ConversationMetadata metadata, String title) {
 		List<ConversationMetadataItem> items = metadata.getItems();
 		if (items.isEmpty()) {
-			ApptentiveLog.v(CONVERSATION, "%s (%d item(s))", title, items.size());
+			Log.v(MIGRATION, "%s (%d item(s))", title, items.size());
 			return;
 		}
 
@@ -224,7 +225,7 @@ public class DefaultLegacyConversationManager implements LegacyConversationManag
 			};
 		}
 
-		ApptentiveLog.v(CONVERSATION, "%s (%d item(s))\n%s", title, items.size(), StringUtils.table(rows));
+		Log.v(MIGRATION, "%s (%d item(s))\n%s", title, items.size(), StringUtils.table(rows));
 	}
 
 	//endregion

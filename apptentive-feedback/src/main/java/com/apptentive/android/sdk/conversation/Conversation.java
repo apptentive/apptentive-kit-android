@@ -9,8 +9,6 @@ package com.apptentive.android.sdk.conversation;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.apptentive.android.sdk.ApptentiveLog;
-import com.apptentive.android.sdk.ApptentiveLogTag;
 import com.apptentive.android.sdk.Encryption;
 import com.apptentive.android.sdk.storage.AppRelease;
 import com.apptentive.android.sdk.storage.Device;
@@ -25,6 +23,10 @@ import com.apptentive.android.sdk.util.StringUtils;
 
 import java.io.File;
 
+import apptentive.com.android.feedback.LogTags;
+import apptentive.com.android.util.Log;
+
+import static apptentive.com.android.feedback.LogTags.*;
 import static com.apptentive.android.sdk.conversation.ConversationState.ANONYMOUS;
 import static com.apptentive.android.sdk.conversation.ConversationState.LOGGED_IN;
 
@@ -103,9 +105,9 @@ public class Conversation {
 		long start = System.currentTimeMillis();
 
 		FileSerializer serializer = new EncryptedFileSerializer(conversationDataFile, encryption);
-		ApptentiveLog.d(ApptentiveLogTag.CONVERSATION, "Loading conversation data...");
+		Log.d(CONVERSATION, "Loading conversation data...");
 		conversationData = (ConversationData) serializer.deserialize();
-		ApptentiveLog.d(ApptentiveLogTag.CONVERSATION, "Conversation data loaded (took %d ms)", System.currentTimeMillis() - start);
+		Log.d(CONVERSATION, "Conversation data loaded (took %d ms)", System.currentTimeMillis() - start);
 	}
 
 	//endregion

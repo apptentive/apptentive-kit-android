@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-import com.apptentive.android.sdk.ApptentiveLog;
 import com.apptentive.android.sdk.encryption.EncryptionKey;
 import com.apptentive.android.sdk.util.ObjectUtils;
 import com.apptentive.android.sdk.util.StringUtils;
@@ -39,7 +38,10 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.security.auth.x500.X500Principal;
 
-import static com.apptentive.android.sdk.ApptentiveLogTag.SECURITY;
+import apptentive.com.android.feedback.LogTags;
+import apptentive.com.android.util.Log;
+
+import static apptentive.com.android.feedback.LogTags.SECURITY;
 
 @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2) class KeyResolver18 implements KeyResolver {
 	private static final String DEFAULT_KEY_ALGORITHM = "AES";
@@ -143,12 +145,12 @@ import static com.apptentive.android.sdk.ApptentiveLogTag.SECURITY;
 	                                                                                  InvalidAlgorithmParameterException {
 		KeyPair existingWrapperKey = loadExistingWrapperKey(keyAlias);
 		if (existingWrapperKey != null) {
-			ApptentiveLog.v(SECURITY, "Loaded existing asymmetric wrapper key (alias: %s)", keyAlias);
+			Log.v(SECURITY, "Loaded existing asymmetric wrapper key (alias: %s)", keyAlias);
 			return existingWrapperKey;
 		}
 
 		KeyPair wrapperKey = generateWrapperKey(context, keyAlias);
-		ApptentiveLog.v(SECURITY, "Generated new asymmetric wrapper key (alias: %s)", keyAlias);
+		Log.v(SECURITY, "Generated new asymmetric wrapper key (alias: %s)", keyAlias);
 		return wrapperKey;
 	}
 

@@ -1,5 +1,7 @@
 package apptentive.com.android.util
 
+import java.util.*
+
 fun createStringTable(rows: List<Array<Any?>>): String {
     val columnSizes = IntArray(rows[0].size)
     for (row in rows) {
@@ -37,4 +39,10 @@ fun parseInt(value: String?) = try {
     if (value != null) Integer.valueOf(value) else null
 } catch (e: Exception) {
     null
+}
+
+fun tryFormat(format: String, vararg args: Any?) = try {
+    String.format(Locale.US, format, args)
+} catch (e: java.lang.Exception) {
+    format
 }
