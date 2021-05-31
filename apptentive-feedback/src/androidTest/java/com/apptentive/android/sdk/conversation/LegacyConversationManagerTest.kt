@@ -16,7 +16,6 @@ import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.model.VersionHistory
 import apptentive.com.android.feedback.model.VersionHistoryItem
-import com.apptentive.android.sdk.Encryption
 import com.apptentive.android.sdk.encryption.EncryptionFactory
 import org.junit.Assert
 import org.junit.Before
@@ -45,8 +44,8 @@ class LegacyConversationManagerTest {
         pushFiles(path)
 
         val encryption = EncryptionFactory.NULL // it's impossible to automatically test encrypted storage since KeyStore does not allow exporting keys
-        val manager = LegacyConversationManager(context, encryption)
-        val legacyData = manager.loadLegacyConversationData(context)
+        val manager = DefaultLegacyConversationManager(context, encryption)
+        val legacyData = manager.loadLegacyConversationData()
             ?: throw AssertionError("Unable to load legacy conversation")
 
         val expected = createExpectedConversation(path)
