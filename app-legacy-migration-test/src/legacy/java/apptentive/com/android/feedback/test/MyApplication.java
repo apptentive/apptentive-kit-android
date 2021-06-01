@@ -13,6 +13,7 @@ public class MyApplication extends Application {
 
         ApptentiveConfiguration configuration = new ApptentiveConfiguration("ANDROID-ANDROID-DEV-c9c0b324114f", "98f5539e9310dc290394c68b76664e98");
         configuration.setLogLevel(ApptentiveLog.Level.VERBOSE);
+        configuration.setShouldEncryptStorage(true);
         Apptentive.register(this, configuration);
     }
 }
