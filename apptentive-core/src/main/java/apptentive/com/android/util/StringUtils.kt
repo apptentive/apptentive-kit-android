@@ -42,7 +42,7 @@ fun parseInt(value: String?) = try {
 }
 
 fun tryFormat(format: String, vararg args: Any?) = try {
-    String.format(Locale.US, format, args)
+    String.format(Locale.US, format, *args)
 } catch (e: java.lang.Exception) {
     format
 }
