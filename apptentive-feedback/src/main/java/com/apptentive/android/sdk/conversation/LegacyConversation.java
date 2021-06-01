@@ -26,7 +26,7 @@ import apptentive.com.android.util.Log;
 
 import static apptentive.com.android.feedback.LogTags.*;
 
-public class Conversation {
+public class LegacyConversation {
 
 	/**
 	 * Conversation data for this class to manage
@@ -66,7 +66,7 @@ public class Conversation {
 	 * @param encryption               - encryption object for encrypting data, messages and logged-in payloads
 	 * @param payloadEncryptionKey     - hex key used for creating the encryption object for the logged-in conversation. Would be <code>null</code> for anonymous conversations
 	 */
-	public Conversation(File conversationDataFile, File conversationMessagesFile, @NonNull Encryption encryption, @Nullable String payloadEncryptionKey) {
+	public LegacyConversation(File conversationDataFile, File conversationMessagesFile, @NonNull Encryption encryption, @Nullable String payloadEncryptionKey) {
 		if (conversationDataFile == null) {
 			throw new IllegalArgumentException("Data file is null");
 		}

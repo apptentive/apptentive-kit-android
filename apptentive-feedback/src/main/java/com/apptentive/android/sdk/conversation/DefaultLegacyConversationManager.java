@@ -70,12 +70,12 @@ public class DefaultLegacyConversationManager implements LegacyConversationManag
 		try {
 			// resolving metadata
 			Log.v(MIGRATION, "Resolving metadata...");
-			ConversationMetadata conversationMetadata = resolveMetadata();
+			LegacyConversationMetadata conversationMetadata = resolveMetadata();
 			if (Log.canLog(LogLevel.Verbose)) {
 				printMetadata(conversationMetadata, "Loaded Metadata");
 			}
 
-			final Conversation conversation = loadActiveConversationGuarded(conversationMetadata);
+			final LegacyConversation conversation = loadActiveConversationGuarded(conversationMetadata);
 			if (conversation != null) {
 				return conversation.getConversationData();
 			}
@@ -86,7 +86,8 @@ public class DefaultLegacyConversationManager implements LegacyConversationManag
 		return null;
 	}
 
-	private @Nullable Conversation loadActiveConversationGuarded(ConversationMetadata conversationMetadata) throws ConversationLoadException {
+	private @Nullable
+	LegacyConversation loadActiveConversationGuarded(LegacyConversationMetadata conversationMetadata) throws ConversationLoadException {
 		// try to load an active conversation from metadata first
 		try {
 			if (conversationMetadata.hasItems()) {
@@ -107,9 +108,10 @@ public class DefaultLegacyConversationManager implements LegacyConversationManag
 	 *
 	 * @return <code>null</code> is only logged out conversations available
 	 */
-	private @Nullable Conversation loadConversationFromMetadata(ConversationMetadata metadata) throws SerializerException, ConversationLoadException {
+	private @Nullable
+	LegacyConversation loadConversationFromMetadata(LegacyConversationMetadata metadata) throws SerializerException, ConversationLoadException {
 		// we're going to scan metadata in attempt to find existing conversations
-		ConversationMetadataItem item;
+		LegacyConversationMetadataItem item;
 
 		// if the user was logged in previously - we should have an active conversation
 		item = metadata.findItem(LOGGED_IN);
@@ -131,7 +133,7 @@ public class DefaultLegacyConversationManager implements LegacyConversationManag
 	}
 
 
-	private Conversation loadConversation(ConversationMetadataItem item) throws SerializerException, ConversationLoadException {
+	private LegacyConversation loadConversation(LegacyConversationMetadataItem item) throws SerializerException, ConversationLoadException {
 
 		// logged-in conversations should use an encryption key which was received from the backend.
 		Encryption conversationEncryption = encryption;
@@ -145,7 +147,7 @@ public class DefaultLegacyConversationManager implements LegacyConversationManag
 		}
 
 		// TODO: use same serialization logic across the project
-		final Conversation conversation = new Conversation(item.getDataFile(), item.getMessagesFile(), conversationEncryption, payloadEncryptionKey);
+		final LegacyConversation conversation = new LegacyConversation(item.getDataFile(), item.getMessagesFile(), conversationEncryption, payloadEncryptionKey);
 		conversation.setState(item.getConversationState()); // set the state same as the item's state
 		conversation.setUserId(item.getUserId());
 		conversation.setConversationToken(item.getConversationToken()); // TODO: this would be overwritten by the next call
@@ -162,20 +164,20 @@ public class DefaultLegacyConversationManager implements LegacyConversationManag
 
 	//region Metadata
 
-	private ConversationMetadata resolveMetadata() throws ConversationMetadataLoadException {
+	private LegacyConversationMetadata resolveMetadata() throws ConversationMetadataLoadException {
 		try {
 			// attempt to load the encrypted metadata file
 			File metaFile = new File(conversationsStorageDir, CONVERSATION_METADATA_FILE);
 			if (metaFile.exists()) {
 				Log.v(MIGRATION, "Loading metadata file: %s", metaFile);
-				return ObjectSerialization.deserialize(metaFile, ConversationMetadata.class, encryption);
+				return ObjectSerialization.deserialize(metaFile, LegacyConversationMetadata.class, encryption);
 			}
 
 			// attempt to load the legacy metadata file
 			metaFile = new File(conversationsStorageDir, CONVERSATION_METADATA_FILE_LEGACY_V1);
 			if (metaFile.exists()) {
 				Log.v(MIGRATION, "Loading legacy v1 metadata file: %s", metaFile);
-				return ObjectSerialization.deserialize(metaFile, ConversationMetadata.class);
+				return ObjectSerialization.deserialize(metaFile, LegacyConversationMetadata.class);
 			}
 
 			Log.v(MIGRATION, "No metadata files");
@@ -186,15 +188,15 @@ public class DefaultLegacyConversationManager implements LegacyConversationManag
 			throw new ConversationMetadataLoadException("Unable to load metadata", e);
 		}
 
-		return new ConversationMetadata();
+		return new LegacyConversationMetadata();
 	}
 
 	//endregion
 
 	//region Debug
 
-	private void printMetadata(ConversationMetadata metadata, String title) {
-		List<ConversationMetadataItem> items = metadata.getItems();
+	private void printMetadata(LegacyConversationMetadata metadata, String title) {
+		List<LegacyConversationMetadataItem> items = metadata.getItems();
 		if (items.isEmpty()) {
 			Log.v(MIGRATION, "%s (%d item(s))", title, items.size());
 			return;
@@ -212,7 +214,7 @@ public class DefaultLegacyConversationManager implements LegacyConversationManag
 			"payloadEncryptionKey"
 		};
 		int index = 1;
-		for (ConversationMetadataItem item : items) {
+		for (LegacyConversationMetadataItem item : items) {
 			rows[index++] = new Object[]{
 				item.getConversationState(),
 				item.getLocalConversationId(),

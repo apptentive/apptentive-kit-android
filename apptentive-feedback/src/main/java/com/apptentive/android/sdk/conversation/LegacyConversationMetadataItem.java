@@ -16,7 +16,7 @@ import static com.apptentive.android.sdk.util.Util.writeNullableUTF;
 /**
  * A light weight representation of the conversation object stored on the disk.
  */
-public class ConversationMetadataItem implements SerializableObject {
+public class LegacyConversationMetadataItem implements SerializableObject {
 
 	/**
 	 * The state of the target conversation
@@ -59,7 +59,7 @@ public class ConversationMetadataItem implements SerializableObject {
 	 */
 	private @Nullable String userId;
 
-	public ConversationMetadataItem(String localConversationId, String conversationId, File dataFile, File messagesFile) {
+	public LegacyConversationMetadataItem(String localConversationId, String conversationId, File dataFile, File messagesFile) {
 		if (localConversationId == null) {
 			throw new IllegalArgumentException("Local conversation id is null");
 		}
@@ -78,7 +78,7 @@ public class ConversationMetadataItem implements SerializableObject {
 		this.messagesFile = messagesFile;
 	}
 
-	public ConversationMetadataItem(DataInput in) throws IOException {
+	public LegacyConversationMetadataItem(DataInput in) throws IOException {
 		localConversationId = in.readUTF();
 		conversationId = readNullableUTF(in);
 		conversationToken = readNullableUTF(in);
