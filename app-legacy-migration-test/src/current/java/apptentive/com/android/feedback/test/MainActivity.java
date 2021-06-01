@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.message_center).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                notImplemented("Login not supported yet");
+                notImplemented("Message center supported yet");
             }
         });
     }
