@@ -9,6 +9,11 @@ package com.apptentive.android.sdk.storage;
 import java.io.Serializable;
 import java.util.HashMap;
 
+/**
+ * Legacy integration config item representation.
+ * See: https://github.com/apptentive/apptentive-android/blob/master/apptentive/src/main/java/com/apptentive/android/sdk/storage/IntegrationConfigItem.java
+ * NOTE: THIS CLASS CAN'T BE RENAMED, MODIFIED, OR MOVED TO ANOTHER PACKAGE - OTHERWISE, JAVA SERIALIZABLE MECHANISM BREAKS!!!
+ */
 public class IntegrationConfigItem implements Serializable {
 	private static final long serialVersionUID = 3509802144209212980L;
 	private static final String KEY_TOKEN = "token";

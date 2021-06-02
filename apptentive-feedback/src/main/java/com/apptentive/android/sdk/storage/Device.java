@@ -12,8 +12,12 @@ import com.apptentive.android.sdk.util.StringUtils;
 
 import java.io.Serializable;
 
+/**
+ * Legacy device data representation.
+ * See: https://github.com/apptentive/apptentive-android/blob/master/apptentive/src/main/java/com/apptentive/android/sdk/storage/Device.java
+ * NOTE: THIS CLASS CAN'T BE RENAMED, MODIFIED, OR MOVED TO ANOTHER PACKAGE - OTHERWISE, JAVA SERIALIZABLE MECHANISM BREAKS!!!
+ */
 public class Device implements Serializable {
-
     private static final long serialVersionUID = 1L;
 
     private String uuid;
