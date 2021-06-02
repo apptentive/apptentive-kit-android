@@ -12,22 +12,22 @@ import java.util.List;
 /**
  * Class which represents all conversation entries stored on the disk
  */
-public class ConversationMetadata implements SerializableObject, Iterable<ConversationMetadataItem> {
+public class LegacyConversationMetadata implements SerializableObject, Iterable<LegacyConversationMetadataItem> {
 	private static final byte VERSION = 1;
 
-	private final List<ConversationMetadataItem> items;
+	private final List<LegacyConversationMetadataItem> items;
 
 	static {
 		hackR8();
 	}
 
-	public ConversationMetadata() {
+	public LegacyConversationMetadata() {
 		items = new ArrayList<>();
 	}
 
 	//region Serialization
 
-	public ConversationMetadata(DataInput in) throws IOException {
+	public LegacyConversationMetadata(DataInput in) throws IOException {
 		byte version = in.readByte();
 		if (version != VERSION) {
 			throw new IOException("Expected version " + VERSION + " but was " + version);
@@ -36,7 +36,7 @@ public class ConversationMetadata implements SerializableObject, Iterable<Conver
 		int count = in.readByte();
 		items = new ArrayList<>(count);
 		for (int i = 0; i < count; ++i) {
-			items.add(new ConversationMetadataItem(in));
+			items.add(new LegacyConversationMetadataItem(in));
 		}
 	}
 
@@ -53,17 +53,17 @@ public class ConversationMetadata implements SerializableObject, Iterable<Conver
 
 	//region Items
 
-	ConversationMetadataItem findItem(final ConversationState state) {
+	LegacyConversationMetadataItem findItem(final ConversationState state) {
 		return findItem(new Filter() {
 			@Override
-			public boolean accept(ConversationMetadataItem item) {
+			public boolean accept(LegacyConversationMetadataItem item) {
 				return state.equals(item.getConversationState());
 			}
 		});
 	}
 
-	ConversationMetadataItem findItem(Filter filter) {
-		for (ConversationMetadataItem item : items) {
+	LegacyConversationMetadataItem findItem(Filter filter) {
+		for (LegacyConversationMetadataItem item : items) {
 			if (filter.accept(item)) {
 				return item;
 			}
@@ -76,7 +76,7 @@ public class ConversationMetadata implements SerializableObject, Iterable<Conver
 	//region Iterable
 
 	@Override
-	public Iterator<ConversationMetadataItem> iterator() {
+	public Iterator<LegacyConversationMetadataItem> iterator() {
 		return items.iterator();
 	}
 
@@ -88,7 +88,7 @@ public class ConversationMetadata implements SerializableObject, Iterable<Conver
 		return items.size() > 0;
 	}
 
-	public List<ConversationMetadataItem> getItems() {
+	public List<LegacyConversationMetadataItem> getItems() {
 		return items;
 	}
 
@@ -97,7 +97,7 @@ public class ConversationMetadata implements SerializableObject, Iterable<Conver
 	//region Filter
 
 	public interface Filter {
-		boolean accept(ConversationMetadataItem item);
+		boolean accept(LegacyConversationMetadataItem item);
 	}
 
 	//endregion
@@ -114,7 +114,7 @@ public class ConversationMetadata implements SerializableObject, Iterable<Conver
 			if (System.currentTimeMillis() < 10000L) {
 				DataInput stream = null;
 				// touch the constructor and "use" the reference
-				ConversationMetadata c = new ConversationMetadata(stream);
+				LegacyConversationMetadata c = new LegacyConversationMetadata(stream);
 				System.out.println(c);
 			}
 		} catch (Exception ignored) {

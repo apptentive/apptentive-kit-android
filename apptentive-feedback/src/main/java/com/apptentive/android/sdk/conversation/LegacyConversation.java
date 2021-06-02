@@ -9,13 +9,10 @@ package com.apptentive.android.sdk.conversation;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.apptentive.android.sdk.ApptentiveLog;
-import com.apptentive.android.sdk.ApptentiveLogTag;
 import com.apptentive.android.sdk.Encryption;
 import com.apptentive.android.sdk.storage.AppRelease;
 import com.apptentive.android.sdk.storage.Device;
 import com.apptentive.android.sdk.storage.EncryptedFileSerializer;
-import com.apptentive.android.sdk.storage.EventData;
 import com.apptentive.android.sdk.storage.FileSerializer;
 import com.apptentive.android.sdk.storage.Person;
 import com.apptentive.android.sdk.storage.Sdk;
@@ -25,10 +22,11 @@ import com.apptentive.android.sdk.util.StringUtils;
 
 import java.io.File;
 
-import static com.apptentive.android.sdk.conversation.ConversationState.ANONYMOUS;
-import static com.apptentive.android.sdk.conversation.ConversationState.LOGGED_IN;
+import apptentive.com.android.util.Log;
 
-public class Conversation {
+import static apptentive.com.android.feedback.LogTags.*;
+
+public class LegacyConversation {
 
 	/**
 	 * Conversation data for this class to manage
@@ -58,19 +56,9 @@ public class Conversation {
 	private final File conversationDataFile;
 
 	/**
-	 * File which represents serialized messages data on the disk
-	 */
-	private final File conversationMessagesFile;
-
-	/**
 	 * Current conversation state
 	 */
 	private ConversationState state = ConversationState.UNDEFINED;
-
-	/**
-	 * Cached conversation state for better transition tracking
-	 */
-	private ConversationState prevState = ConversationState.UNDEFINED;
 
 	/**
 	 * @param conversationDataFile     - file for storing serialized conversation data
@@ -78,7 +66,7 @@ public class Conversation {
 	 * @param encryption               - encryption object for encrypting data, messages and logged-in payloads
 	 * @param payloadEncryptionKey     - hex key used for creating the encryption object for the logged-in conversation. Would be <code>null</code> for anonymous conversations
 	 */
-	public Conversation(File conversationDataFile, File conversationMessagesFile, @NonNull Encryption encryption, @Nullable String payloadEncryptionKey) {
+	public LegacyConversation(File conversationDataFile, File conversationMessagesFile, @NonNull Encryption encryption, @Nullable String payloadEncryptionKey) {
 		if (conversationDataFile == null) {
 			throw new IllegalArgumentException("Data file is null");
 		}
@@ -90,7 +78,6 @@ public class Conversation {
 		}
 
 		this.conversationDataFile = conversationDataFile;
-		this.conversationMessagesFile = conversationMessagesFile;
 		this.encryption = encryption;
 		this.payloadEncryptionKey = payloadEncryptionKey;
 
@@ -103,9 +90,9 @@ public class Conversation {
 		long start = System.currentTimeMillis();
 
 		FileSerializer serializer = new EncryptedFileSerializer(conversationDataFile, encryption);
-		ApptentiveLog.d(ApptentiveLogTag.CONVERSATION, "Loading conversation data...");
+		Log.d(MIGRATION, "Loading legacy conversation data...");
 		conversationData = (ConversationData) serializer.deserialize();
-		ApptentiveLog.d(ApptentiveLogTag.CONVERSATION, "Conversation data loaded (took %d ms)", System.currentTimeMillis() - start);
+		Log.d(MIGRATION, "Legacy conversation data loaded (took %d ms)", System.currentTimeMillis() - start);
 	}
 
 	//endregion
@@ -122,41 +109,7 @@ public class Conversation {
 
 	public void setState(ConversationState state) {
 		// TODO: check if state transition would make sense (for example you should not be able to move from 'logged' state to 'anonymous', etc.)
-		this.prevState = this.state;
 		this.state = state;
-	}
-
-	/**
-	 * Returns <code>true</code> if conversation is in the given state
-	 */
-	public boolean hasState(ConversationState s) {
-		return state.equals(s);
-	}
-
-	/**
-	 * Returns <code>true</code> if conversation is in one of the given states
-	 */
-	public boolean hasState(ConversationState... states) {
-		for (ConversationState s : states) {
-			if (s.equals(state)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Returns true if this conversation belongs to a logged-in user.
-	 */
-	public boolean isAuthenticated() {
-		return hasState(LOGGED_IN);
-	}
-
-	/**
-	 * Returns true if conversation is in "active" state (after receiving server response)
-	 */
-	public boolean hasActiveState() {
-		return hasState(ConversationState.LOGGED_IN, ANONYMOUS);
 	}
 
 	public String getConversationToken() {
@@ -183,20 +136,12 @@ public class Conversation {
 		getConversationData().setDevice(device);
 	}
 
-	public Device getLastSentDevice() {
-		return getConversationData().getLastSentDevice();
-	}
-
 	public Person getPerson() {
 		return getConversationData().getPerson();
 	}
 
 	public void setPerson(Person person) {
 		getConversationData().setPerson(person);
-	}
-
-	public Person getLastSentPerson() {
-		return getConversationData().getLastSentPerson();
 	}
 
 	public Sdk getSdk() {
@@ -215,15 +160,6 @@ public class Conversation {
 		getConversationData().setAppRelease(appRelease);
 	}
 
-	public EventData getEventData() {
-		return getConversationData().getEventData();
-	}
-
-
-	public String getLastSeenSdkVersion() {
-		return getConversationData().getLastSeenSdkVersion();
-	}
-
 	public VersionHistory getVersionHistory() {
 		return getConversationData().getVersionHistory();
 	}
@@ -240,26 +176,10 @@ public class Conversation {
 		getConversationData().setInteractions(interactions);
 	}
 
-	public double getInteractionExpiration() {
-		return getConversationData().getInteractionExpiration();
-	}
-
-	public @Nullable String getMParticleId() {
-		return getConversationData().getMParticleId();
-	}
-
 	// this is a synchronization hack: both save/load conversation data are synchronized so we can't
 	// modify conversation data while it's being serialized/deserialized
 	public synchronized @NonNull ConversationData getConversationData() {
 		return conversationData;
-	}
-
-	public synchronized File getConversationDataFile() {
-		return conversationDataFile;
-	}
-
-	public synchronized File getConversationMessagesFile() {
-		return conversationMessagesFile;
 	}
 
 	public void setEncryption(@NonNull Encryption encryption) {
@@ -269,16 +189,8 @@ public class Conversation {
 		this.encryption = encryption;
 	}
 
-	public void setPayloadEncryptionKey(@Nullable String payloadEncryptionKey) {
-		this.payloadEncryptionKey = payloadEncryptionKey;
-	}
-
 	public @NonNull Encryption getEncryption() {
 		return encryption;
-	}
-
-	public @Nullable String getPayloadEncryptionKey() {
-		return payloadEncryptionKey;
 	}
 
 	public String getUserId() {

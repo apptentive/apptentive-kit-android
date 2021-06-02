@@ -15,12 +15,18 @@ object Log {
     var logLevel: LogLevel = LogLevel.Info
     private val logger = DependencyProvider.of<Logger>()
 
-    fun v(tag: LogTag, message: String) = log(LogLevel.Verbose, tag, message)
-    fun d(tag: LogTag, message: String) = log(LogLevel.Debug, tag, message)
-    fun i(tag: LogTag, message: String) = log(LogLevel.Info, tag, message)
-    fun w(tag: LogTag, message: String) = log(LogLevel.Warning, tag, message)
-    fun e(tag: LogTag, message: String) = log(LogLevel.Error, tag, message)
-    fun e(tag: LogTag, message: String, e: Throwable) = log(LogLevel.Error, tag, message, e)
+    @JvmStatic fun v(tag: LogTag, message: String) = log(LogLevel.Verbose, tag, message)
+    @JvmStatic fun d(tag: LogTag, message: String) = log(LogLevel.Debug, tag, message)
+    @JvmStatic fun i(tag: LogTag, message: String) = log(LogLevel.Info, tag, message)
+    @JvmStatic fun w(tag: LogTag, message: String) = log(LogLevel.Warning, tag, message)
+    @JvmStatic fun e(tag: LogTag, message: String) = log(LogLevel.Error, tag, message)
+    @JvmStatic fun e(tag: LogTag, message: String, e: Throwable) = log(LogLevel.Error, tag, message, e)
+
+    // For legacy java code
+    @JvmStatic fun v(tag: LogTag, format: String, vararg args: Any?) = log(LogLevel.Verbose, tag, tryFormat(format, *args))
+    @JvmStatic fun d(tag: LogTag, format: String, vararg args: Any?) = log(LogLevel.Debug, tag, tryFormat(format, *args))
+    @JvmStatic fun w(tag: LogTag, format: String, vararg args: Any?) = log(LogLevel.Warning, tag, tryFormat(format, *args))
+    @JvmStatic fun e(tag: LogTag, e: Throwable, format: String, vararg args: Any?) = log(LogLevel.Error, tag, tryFormat(format, *args), e)
 
     private fun log(level: LogLevel, tag: LogTag, message: String, throwable: Throwable? = null) {
         if (!canLog(level)) {
@@ -53,9 +59,11 @@ object Log {
         }
     }
 
-    fun canLog(level: LogLevel): Boolean {
+    @JvmStatic fun canLog(level: LogLevel): Boolean {
         return level.ordinal >= logLevel.ordinal
     }
+
+    @JvmStatic fun hideIfSanitized(obj: Any?) = obj.toString()
 }
 
 data class LogTag(val name: String) {

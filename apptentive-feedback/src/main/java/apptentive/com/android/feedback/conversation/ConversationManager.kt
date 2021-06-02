@@ -3,6 +3,7 @@ package apptentive.com.android.feedback.conversation
 import androidx.annotation.WorkerThread
 import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.Observable
+import apptentive.com.android.core.Provider
 import apptentive.com.android.core.isInThePast
 import apptentive.com.android.feedback.CONVERSATION
 import apptentive.com.android.feedback.backend.ConversationService
@@ -13,10 +14,13 @@ import apptentive.com.android.feedback.model.EngagementData
 import apptentive.com.android.feedback.model.hasConversationToken
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.Result
+import com.apptentive.android.sdk.conversation.LegacyConversationManager
+import com.apptentive.android.sdk.conversation.toConversation
 
 class ConversationManager(
     private val conversationRepository: ConversationRepository,
-    private val conversationService: ConversationService
+    private val conversationService: ConversationService,
+    private val legacyConversationManagerProvider: Provider<LegacyConversationManager>
 ) {
     private val activeConversationSubject: BehaviorSubject<Conversation>
     val activeConversation: Observable<Conversation> get() = activeConversationSubject
@@ -72,10 +76,18 @@ class ConversationManager(
     @Throws(ConversationSerializationException::class)
     @WorkerThread
     private fun loadActiveConversation(): Conversation {
+        // load existing conversation
         val existingConversation = conversationRepository.loadConversation()
         if (existingConversation != null) {
-            Log.i(CONVERSATION, "Conversation already exists")
+            Log.i(CONVERSATION, "Loaded an existing conversation")
             return existingConversation
+        }
+
+        // attempt to migrate a legacy conversation
+        val legacyConversation = tryMigrateLegacyConversation()
+        if (legacyConversation != null) {
+            Log.i(CONVERSATION, "Migrated 'legacy' conversation")
+            return legacyConversation
         }
 
         // no active conversations: create a new one
@@ -151,4 +163,22 @@ class ConversationManager(
             )
         )
     }
+
+    //region Legacy Conversation
+
+    private fun tryMigrateLegacyConversation(): Conversation? {
+        try {
+            val legacyConversationManager = legacyConversationManagerProvider.get()
+            val legacyConversationData = legacyConversationManager.loadLegacyConversationData()
+            if (legacyConversationData != null) {
+                return legacyConversationData.toConversation()
+            }
+        } catch (e: Exception) {
+            Log.e(CONVERSATION,"Unable to migrate legacy conversation", e)
+        }
+
+        return null
+    }
+
+    //endregion
 }

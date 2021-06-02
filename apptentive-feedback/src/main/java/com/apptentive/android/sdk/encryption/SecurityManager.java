@@ -7,7 +7,6 @@ import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.apptentive.android.sdk.ApptentiveLog;
 import com.apptentive.android.sdk.Encryption;
 import com.apptentive.android.sdk.encryption.resolvers.KeyResolver;
 import com.apptentive.android.sdk.encryption.resolvers.KeyResolverFactory;
@@ -15,8 +14,10 @@ import com.apptentive.android.sdk.util.StringUtils;
 
 import java.util.UUID;
 
-import static com.apptentive.android.sdk.ApptentiveLog.hideIfSanitized;
-import static com.apptentive.android.sdk.ApptentiveLogTag.SECURITY;
+import apptentive.com.android.util.Log;
+
+import static apptentive.com.android.feedback.LogTags.SECURITY;
+import static apptentive.com.android.util.Log.hideIfSanitized;
 
 /**
  * Class responsible for managing the master encryption key (generation, storage and retrieval).
@@ -50,15 +51,15 @@ public final class SecurityManager {
 		// if the developer passes an encryption object - it would have precedence over anything else
 		if (encryption != null) {
 			if (!hasEncryptionInfo(context)) {
-				ApptentiveLog.i(SECURITY, "Using an external encryption for secure storage");
+				Log.i(SECURITY, "Using an external encryption for secure storage");
 				return EncryptionFactory.wrapNullSafe(encryption);
 			}
-			ApptentiveLog.w(SECURITY, "The client already has its storage encrypted and can't transit to a custom encryption implementation.");
+			Log.w(SECURITY, "The client already has its storage encrypted and can't transit to a custom encryption implementation.");
 		}
 
 		// get the name of the alias
 		KeyInfo keyInfo = resolveKeyInfo(context, shouldEncryptStorage);
-		ApptentiveLog.v(SECURITY, "Secret key info: %s", keyInfo);
+		Log.v(SECURITY, "Secret key info: %s", keyInfo);
 
 		// load or generate the key
 		EncryptionKey masterKey = resolveMasterKey(context, keyInfo);
@@ -97,7 +98,7 @@ public final class SecurityManager {
 				.putString(PREFS_KEY_ALIAS, keyAlias)
 				.putInt(PREFS_SDK_VERSION_CODE, versionCode)
 				.apply();
-			ApptentiveLog.v(SECURITY, "Generated new key info");
+			Log.v(SECURITY, "Generated new key info", new Object[]{});
 		}
 
 		return new KeyInfo(keyAlias, versionCode);
