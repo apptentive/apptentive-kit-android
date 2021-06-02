@@ -21,8 +21,11 @@ import com.apptentive.android.sdk.util.StringUtils;
 import java.io.Serializable;
 import java.util.UUID;
 
+/**
+ * A modified version of legacy conversation data class. Used for legacy SDK data migration.
+ * See: https://github.com/apptentive/apptentive-android/blob/master/apptentive/src/main/java/com/apptentive/android/sdk/conversation/ConversationData.java
+ */
 public class ConversationData implements Serializable {
-
 	private static final long serialVersionUID = 1L;
 	private String localIdentifier;
 	private String conversationToken;

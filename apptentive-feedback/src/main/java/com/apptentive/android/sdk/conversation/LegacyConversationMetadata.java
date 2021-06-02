@@ -10,7 +10,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Class which represents all conversation entries stored on the disk
+ * Represents a modified version of legacy [ConversationMetadata] class (read-only). Used in legacy data migration.
+ * See: https://github.com/apptentive/apptentive-android/blob/master/apptentive/src/main/java/com/apptentive/android/sdk/conversation/ConversationMetadata.java
  */
 public class LegacyConversationMetadata implements SerializableObject, Iterable<LegacyConversationMetadataItem> {
 	private static final byte VERSION = 1;

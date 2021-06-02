@@ -10,6 +10,7 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 
 import com.apptentive.android.sdk.Encryption;
 import com.apptentive.android.sdk.encryption.EncryptionFactory;
@@ -33,8 +34,12 @@ import static com.apptentive.android.sdk.util.Constants.CONVERSATION_METADATA_FI
 import static com.apptentive.android.sdk.util.Constants.CONVERSATION_METADATA_FILE_LEGACY_V1;
 import static com.apptentive.android.sdk.util.Constants.PAYLOAD_ENCRYPTION_KEY_TRANSFORMATION;
 
+/**
+ * Represents a modified version of legacy [ConversationManager] class (read-only). Used in legacy data migration.
+ * See: https://github.com/apptentive/apptentive-android/blob/master/apptentive/src/main/java/com/apptentive/android/sdk/conversation/ConversationManager.java
+ */
 public class DefaultLegacyConversationManager implements LegacyConversationManager {
-	private static final String CONVERSATIONS_DIR = "apptentive/conversations";
+	private static final String LEGACY_CONVERSATIONS_DIR = "apptentive/conversations";
 
 	/**
 	 * A basic directory for storing conversation-related data.
@@ -50,6 +55,7 @@ public class DefaultLegacyConversationManager implements LegacyConversationManag
 		this(context, SecurityManager.getEncryption(context, null, false));
 	}
 
+	@VisibleForTesting
 	public DefaultLegacyConversationManager(@NonNull Context context, @NonNull Encryption encryption) {
 		if (context == null) {
 			throw new IllegalArgumentException("Context is null");
@@ -59,8 +65,7 @@ public class DefaultLegacyConversationManager implements LegacyConversationManag
 		}
 
 		this.encryption = encryption;
-
-		conversationsStorageDir = Util.getInternalDir(context, CONVERSATIONS_DIR);
+		this.conversationsStorageDir = Util.getInternalDir(context, LEGACY_CONVERSATIONS_DIR);
 	}
 
 	//region Conversations

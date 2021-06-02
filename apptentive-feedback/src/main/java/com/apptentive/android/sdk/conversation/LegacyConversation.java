@@ -26,8 +26,11 @@ import apptentive.com.android.util.Log;
 
 import static apptentive.com.android.feedback.LogTags.*;
 
-public class LegacyConversation {
-
+/**
+ * Represents a modified version of legacy [Conversation] class (read-only). Used in legacy data migration.
+ * See: https://github.com/apptentive/apptentive-android/blob/master/apptentive/src/main/java/com/apptentive/android/sdk/conversation/Conversation.java
+ */
+class LegacyConversation {
 	/**
 	 * Conversation data for this class to manage
 	 */

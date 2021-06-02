@@ -14,7 +14,8 @@ import static com.apptentive.android.sdk.util.Util.readNullableUTF;
 import static com.apptentive.android.sdk.util.Util.writeNullableUTF;
 
 /**
- * A light weight representation of the conversation object stored on the disk.
+ * Represents a modified version of legacy [ConversationMetadataItem] class (read-only). Used in legacy data migration.
+ * See: https://github.com/apptentive/apptentive-android/blob/master/apptentive/src/main/java/com/apptentive/android/sdk/conversation/ConversationMetadataItem.java
  */
 public class LegacyConversationMetadataItem implements SerializableObject {
 
