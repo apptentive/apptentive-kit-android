@@ -15,6 +15,12 @@ android {
         consumerProguardFiles 'consumer-proguard-rules.pro'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        gradle.startParameter.taskNames.each {
+            if (it.contains("AndroidTest")) {
+                minSdkVersion 26 // we need this workaround in order to fix "com.android.tools.r8.a: MethodHandle.invoke and MethodHandle.invokeExact are only supported starting with Android O (--min-api 26)"
+            }
+        }
     }
 
     buildTypes {
