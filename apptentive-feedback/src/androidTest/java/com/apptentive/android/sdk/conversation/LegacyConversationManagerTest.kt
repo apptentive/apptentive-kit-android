@@ -2,6 +2,7 @@ package com.apptentive.android.sdk.conversation
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
+import apptentive.com.android.TestCase
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
 import apptentive.com.android.feedback.model.AppRelease
@@ -22,7 +23,7 @@ import org.junit.Before
 import org.junit.Test
 import java.io.File
 
-class LegacyConversationManagerTest {
+class LegacyConversationManagerTest : TestCase() {
     private val context = ApplicationProvider.getApplicationContext<Context>()
 
     @Before
