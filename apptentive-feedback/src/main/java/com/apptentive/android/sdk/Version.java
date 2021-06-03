@@ -32,7 +32,6 @@ import java.io.Serializable;
  */
 public class Version implements Serializable, Comparable<Version> {
     private static final long serialVersionUID = 1891878408603512644L;
-    public static final String KEY_TYPE = "_type";
     public static final String TYPE = "version";
 
     private String version;
@@ -58,16 +57,6 @@ public class Version implements Serializable, Comparable<Version> {
 
     public String getVersion() {
         return version;
-    }
-
-    public void toJsonObject() {
-        JSONObject ret = new JSONObject();
-        try {
-            ret.put(KEY_TYPE, TYPE);
-            ret.put(TYPE, version);
-        } catch (JSONException e) {
-            ApptentiveLog.e(e, "Error creating Apptentive.Version.");
-        }
     }
 
     @Override

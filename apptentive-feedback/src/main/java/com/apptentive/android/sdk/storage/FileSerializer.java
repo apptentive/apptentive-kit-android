@@ -18,7 +18,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class FileSerializer implements Serializer {
-
 	private final File file;
 
 	public FileSerializer(File file) {

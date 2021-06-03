@@ -3,6 +3,7 @@ package apptentive.com.android.feedback
 import android.content.Context
 import androidx.annotation.WorkerThread
 import apptentive.com.android.concurrent.Executors
+import apptentive.com.android.core.Provider
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.DefaultConversationService
 import apptentive.com.android.feedback.conversation.*
@@ -21,6 +22,8 @@ import apptentive.com.android.network.HttpClient
 import apptentive.com.android.network.UnexpectedResponseException
 import apptentive.com.android.util.FileUtil
 import apptentive.com.android.util.Result
+import com.apptentive.android.sdk.conversation.DefaultLegacyConversationManager
+import com.apptentive.android.sdk.conversation.LegacyConversationManager
 import java.io.File
 
 internal class ApptentiveDefaultClient(
@@ -49,7 +52,10 @@ internal class ApptentiveDefaultClient(
         val conversationService = createConversationService()
         conversationManager = ConversationManager(
             conversationRepository = createConversationRepository(context),
-            conversationService = conversationService
+            conversationService = conversationService,
+            legacyConversationManagerProvider = object : Provider<LegacyConversationManager> {
+                override fun get() = DefaultLegacyConversationManager(context)
+            }
         )
         conversationManager.fetchConversationToken {
             when (it) {

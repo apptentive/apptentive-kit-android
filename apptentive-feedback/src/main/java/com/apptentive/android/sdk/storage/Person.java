@@ -13,8 +13,12 @@ import com.apptentive.android.sdk.util.StringUtils;
 
 import java.io.Serializable;
 
+/**
+ * Legacy person data representation.
+ * See: https://github.com/apptentive/apptentive-android/blob/master/apptentive/src/main/java/com/apptentive/android/sdk/storage/Person.java
+ * NOTE: THIS CLASS CAN'T BE RENAMED, MODIFIED, OR MOVED TO ANOTHER PACKAGE - OTHERWISE, JAVA SERIALIZABLE MECHANISM BREAKS!!!
+ */
 public class Person implements Serializable {
-
     private static final long serialVersionUID = 1L;
 
     private String id;

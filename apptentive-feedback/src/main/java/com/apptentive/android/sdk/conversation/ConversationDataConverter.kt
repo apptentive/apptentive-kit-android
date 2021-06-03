@@ -24,6 +24,10 @@ typealias LegacyVersion = com.apptentive.android.sdk.Version
 typealias LegacyVersionHistoryItem = com.apptentive.android.sdk.storage.VersionHistoryItem
 
 
+/**
+ * Converts legacy SDK conversation data into the current [Conversation] data format.
+ * Used in legacy SDK data migration.
+ */
 fun LegacyConversationData.toConversation() = Conversation(
     localIdentifier = localIdentifier,
     conversationToken = conversationToken,

@@ -6,7 +6,11 @@
 
 package com.apptentive.android.sdk.conversation;
 
-public enum ConversationState {
+/**
+ * Represent legacy conversation state. Used in legacy data migration.
+ * See: https://github.com/apptentive/apptentive-android/blob/master/apptentive/src/main/java/com/apptentive/android/sdk/conversation/ConversationState.java
+ */
+enum ConversationState {
 	/**
 	 * Conversation state is not known
 	 */

@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.conversation
 
 import apptentive.com.android.TestCase
+import apptentive.com.android.core.Provider
 import apptentive.com.android.core.getTimeSeconds
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.ConversationCredentials
@@ -12,6 +13,8 @@ import apptentive.com.android.feedback.model.*
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadResponse
 import apptentive.com.android.util.Result
+import com.apptentive.android.sdk.conversation.ConversationData
+import com.apptentive.android.sdk.conversation.LegacyConversationManager
 import com.google.common.truth.Truth.assertThat
 import org.junit.Ignore
 import org.junit.Test
@@ -29,7 +32,10 @@ class ConversationManagerTest : TestCase() {
 
         val conversationManager = ConversationManager(
             conversationRepository = MockConversationRepository,
-            conversationService = MockConversationService(fetchResponse)
+            conversationService = MockConversationService(fetchResponse),
+            legacyConversationManagerProvider = object : Provider<LegacyConversationManager> {
+                override fun get() = MockLegacyConversationManager()
+            }
         )
 
         var result: Result<Unit>? = null
@@ -111,4 +117,9 @@ private class MockConversationService(
 
 }
 
+private class MockLegacyConversationManager(val result : ConversationData? = null) : LegacyConversationManager {
+    override fun loadLegacyConversationData(): ConversationData? {
+        return result
+    }
+}
 

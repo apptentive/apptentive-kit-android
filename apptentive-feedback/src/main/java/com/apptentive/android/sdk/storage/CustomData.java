@@ -10,8 +10,12 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Legacy custom data representation.
+ * See: https://github.com/apptentive/apptentive-android/blob/master/apptentive/src/main/java/com/apptentive/android/sdk/model/CustomData.java
+ * NOTE: THIS CLASS CAN'T BE RENAMED, MODIFIED, OR MOVED TO ANOTHER PACKAGE - OTHERWISE, JAVA SERIALIZABLE MECHANISM BREAKS!!!
+ */
 public class CustomData extends HashMap<String, Serializable> implements Serializable {
-
 	private static final long serialVersionUID = 1L;
 
 	//region Saving when modified
