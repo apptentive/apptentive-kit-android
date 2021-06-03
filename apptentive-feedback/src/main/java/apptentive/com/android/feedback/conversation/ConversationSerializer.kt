@@ -254,8 +254,8 @@ internal object Serializers {
             override fun encode(encoder: Encoder, value: SDK) {
                 encoder.encodeString(value.version)
                 encoder.encodeString(value.platform)
-                encoder.encodeString(value.distribution)
-                encoder.encodeString(value.distributionVersion)
+                encoder.encodeNullableString(value.distribution)
+                encoder.encodeNullableString(value.distributionVersion)
                 encoder.encodeNullableString(value.programmingLanguage)
                 encoder.encodeNullableString(value.authorName)
                 encoder.encodeNullableString(value.authorEmail)
@@ -265,8 +265,8 @@ internal object Serializers {
                 return SDK(
                     version = decoder.decodeString(),
                     platform = decoder.decodeString(),
-                    distribution = decoder.decodeString(),
-                    distributionVersion = decoder.decodeString(),
+                    distribution = decoder.decodeNullableString(),
+                    distributionVersion = decoder.decodeNullableString(),
                     programmingLanguage = decoder.decodeNullableString(),
                     authorName = decoder.decodeNullableString(),
                     authorEmail = decoder.decodeNullableString()
