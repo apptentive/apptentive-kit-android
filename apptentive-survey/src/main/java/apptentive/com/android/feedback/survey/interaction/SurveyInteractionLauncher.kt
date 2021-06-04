@@ -4,7 +4,7 @@ import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.platform.AndroidEngagementContext
-import apptentive.com.android.feedback.platform.AndroidInteractionLauncher
+import apptentive.com.android.feedback.platform.AndroidViewInteractionLauncher
 import apptentive.com.android.feedback.survey.R
 import apptentive.com.android.feedback.survey.SurveyActivity
 import apptentive.com.android.feedback.survey.model.SurveyModel
@@ -17,7 +17,7 @@ import apptentive.com.android.util.generateUUID
 // TODO: UI-tests
 class SurveyInteractionLauncher(
     private val questionConverter: SurveyQuestionConverter = DefaultSurveyQuestionConverter()
-) : AndroidInteractionLauncher<SurveyInteraction>() {
+) : AndroidViewInteractionLauncher<SurveyInteraction>() {
     override fun launchInteraction(
         context: AndroidEngagementContext,
         interaction: SurveyInteraction

@@ -5,13 +5,13 @@ import android.view.LayoutInflater
 import android.widget.TextView
 import androidx.appcompat.view.ContextThemeWrapper
 import apptentive.com.android.feedback.platform.AndroidEngagementContext
-import apptentive.com.android.feedback.platform.AndroidInteractionLauncher
+import apptentive.com.android.feedback.platform.AndroidViewInteractionLauncher
 import apptentive.com.android.ui.overrideTheme
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 // TODO: UI-tests
 internal class EnjoymentDialogInteractionLauncher :
-    AndroidInteractionLauncher<EnjoymentDialogInteraction>() {
+    AndroidViewInteractionLauncher<EnjoymentDialogInteraction>() {
     override fun launchInteraction(
         context: AndroidEngagementContext,
         interaction: EnjoymentDialogInteraction

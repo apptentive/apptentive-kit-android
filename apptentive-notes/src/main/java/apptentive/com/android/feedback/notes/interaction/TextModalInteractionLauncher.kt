@@ -5,10 +5,10 @@ import apptentive.com.android.feedback.notes.R
 import apptentive.com.android.feedback.notes.view.TextModalDialog
 import apptentive.com.android.feedback.notes.viewmodel.TextModalViewModel
 import apptentive.com.android.feedback.platform.AndroidEngagementContext
-import apptentive.com.android.feedback.platform.AndroidInteractionLauncher
+import apptentive.com.android.feedback.platform.AndroidViewInteractionLauncher
 import apptentive.com.android.ui.overrideTheme
 
-class TextModalInteractionLauncher : AndroidInteractionLauncher<TextModalInteraction>() {
+class TextModalInteractionLauncher : AndroidViewInteractionLauncher<TextModalInteraction>() {
     override fun launchInteraction(
         context: AndroidEngagementContext,
         interaction: TextModalInteraction
