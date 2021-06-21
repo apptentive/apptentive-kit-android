@@ -2,7 +2,6 @@ package apptentive.com.android.feedback.survey.viewmodel
 
 import android.view.View
 import android.widget.TextView
-import androidx.core.view.isVisible
 import apptentive.com.android.feedback.survey.R
 import apptentive.com.android.ui.ListViewAdapter
 import apptentive.com.android.ui.ListViewItem

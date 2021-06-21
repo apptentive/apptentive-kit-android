@@ -3,7 +3,21 @@ package apptentive.com.android.feedback
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
-import apptentive.com.android.feedback.model.*
+import apptentive.com.android.feedback.model.AppRelease
+import apptentive.com.android.feedback.model.Conversation
+import apptentive.com.android.feedback.model.CustomData
+import apptentive.com.android.feedback.model.Device
+import apptentive.com.android.feedback.model.EngagementData
+import apptentive.com.android.feedback.model.EngagementManifest
+import apptentive.com.android.feedback.model.EngagementRecord
+import apptentive.com.android.feedback.model.EngagementRecords
+import apptentive.com.android.feedback.model.IntegrationConfig
+import apptentive.com.android.feedback.model.IntegrationConfigItem
+import apptentive.com.android.feedback.model.InvocationData
+import apptentive.com.android.feedback.model.Person
+import apptentive.com.android.feedback.model.SDK
+import apptentive.com.android.feedback.model.VersionHistory
+import apptentive.com.android.feedback.model.VersionHistoryItem
 
 const val SDK_VERSION = "6.0.0"
 const val API_VERSION = 9

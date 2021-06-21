@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData
 import apptentive.com.android.concurrent.Executors
 import apptentive.com.android.core.LiveEvent
 import apptentive.com.android.core.asLiveData
-import apptentive.com.android.core.postIfChanged
 import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion
 import apptentive.com.android.feedback.survey.model.RangeQuestion
 import apptentive.com.android.feedback.survey.model.SingleLineQuestion

@@ -5,10 +5,24 @@ import android.content.Context
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.concurrent.ExecutorQueue
 import apptentive.com.android.concurrent.Executors
-import apptentive.com.android.core.*
+import apptentive.com.android.core.AndroidApplicationInfo
+import apptentive.com.android.core.AndroidExecutorFactoryProvider
+import apptentive.com.android.core.AndroidFileSystemProvider
+import apptentive.com.android.core.AndroidLoggerProvider
+import apptentive.com.android.core.ApplicationInfo
+import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.core.TimeInterval
+import apptentive.com.android.core.format
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
-import apptentive.com.android.network.*
+import apptentive.com.android.network.DefaultHttpClient
+import apptentive.com.android.network.DefaultHttpNetwork
+import apptentive.com.android.network.DefaultHttpRequestRetryPolicy
+import apptentive.com.android.network.HttpClient
+import apptentive.com.android.network.HttpLoggingInterceptor
+import apptentive.com.android.network.HttpNetworkResponse
+import apptentive.com.android.network.HttpRequest
+import apptentive.com.android.network.asString
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags
 import apptentive.com.android.util.LogTags.network
@@ -59,7 +73,7 @@ object Apptentive {
         // set log level
         Log.logLevel = configuration.logLevel
 
-        Log.i(SYSTEM, "Registering Apptentive Android SDK ${Constants.SDK_VERSION}");
+        Log.i(SYSTEM, "Registering Apptentive Android SDK ${Constants.SDK_VERSION}")
         Log.v(SYSTEM, "ApptentiveKey: ${configuration.apptentiveKey} ApptentiveSignature: ${configuration.apptentiveSignature}")
 
         stateExecutor = ExecutorQueue.createSerialQueue("SDK Queue")
@@ -91,7 +105,7 @@ object Apptentive {
     }
 
     private fun createHttpClient(context: Context): HttpClient {
-        val loggingInterceptor = object: HttpLoggingInterceptor {
+        val loggingInterceptor = object : HttpLoggingInterceptor {
             override fun intercept(request: HttpRequest<*>) {
                 Log.d(network, "--> ${request.method} ${request.url}")
                 Log.v(network, "Headers:\n${request.headers}")

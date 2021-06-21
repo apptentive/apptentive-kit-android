@@ -1,6 +1,6 @@
 package apptentive.com.android.core
 
-import java.util.*
+import java.util.TimeZone
 
 typealias Callback = () -> Unit
 

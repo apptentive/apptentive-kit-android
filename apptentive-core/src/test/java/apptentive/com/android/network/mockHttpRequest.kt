@@ -2,7 +2,6 @@ package apptentive.com.android.network
 
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.serialization.json.JsonConverter
-import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.io.OutputStream
 
@@ -155,7 +154,6 @@ internal inline fun <reified T : Any> createMockJsonRequest(
         userData = userData
     )
 }
-
 
 internal fun createNetworkResponses(vararg responses: HttpNetworkResponse): HttpNetworkResponseQueue {
     return HttpNetworkResponseQueue(responses)

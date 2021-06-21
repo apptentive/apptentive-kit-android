@@ -3,13 +3,19 @@ package apptentive.com.android.feedback.conversation
 import apptentive.com.android.TestCase
 import apptentive.com.android.core.Provider
 import apptentive.com.android.core.getTimeSeconds
-import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.ConversationCredentials
+import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.mockAppRelease
 import apptentive.com.android.feedback.mockDevice
 import apptentive.com.android.feedback.mockPerson
 import apptentive.com.android.feedback.mockSdk
-import apptentive.com.android.feedback.model.*
+import apptentive.com.android.feedback.model.AppRelease
+import apptentive.com.android.feedback.model.Conversation
+import apptentive.com.android.feedback.model.Device
+import apptentive.com.android.feedback.model.EngagementData
+import apptentive.com.android.feedback.model.EngagementManifest
+import apptentive.com.android.feedback.model.Person
+import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadResponse
 import apptentive.com.android.util.Result
@@ -114,12 +120,10 @@ private class MockConversationService(
     ) {
         TODO("Not yet implemented")
     }
-
 }
 
-private class MockLegacyConversationManager(val result : ConversationData? = null) : LegacyConversationManager {
+private class MockLegacyConversationManager(val result: ConversationData? = null) : LegacyConversationManager {
     override fun loadLegacyConversationData(): ConversationData? {
         return result
     }
 }
-

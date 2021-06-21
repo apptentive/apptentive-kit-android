@@ -1,6 +1,12 @@
 package apptentive.com.android.feedback.conversation
 
-import apptentive.com.android.feedback.model.*
+import apptentive.com.android.feedback.model.AppRelease
+import apptentive.com.android.feedback.model.Conversation
+import apptentive.com.android.feedback.model.Device
+import apptentive.com.android.feedback.model.EngagementData
+import apptentive.com.android.feedback.model.EngagementManifest
+import apptentive.com.android.feedback.model.Person
+import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.util.Factory
 import apptentive.com.android.util.generateUUID
 

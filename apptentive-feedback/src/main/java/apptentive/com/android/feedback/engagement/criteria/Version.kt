@@ -25,11 +25,11 @@ data class Version(
     override fun toString() = "$major.$minor.$patch"
 
     companion object {
-        fun tryParse(value: kotlin.String?): Version? {
+        fun tryParse(value: String?): Version? {
             return if (value != null) parse(value) else null
         }
 
-        fun parse(value: kotlin.String): Version {
+        fun parse(value: String): Version {
             val components = value.split(".")
             return Version(
                 major = components[0].toLong(),

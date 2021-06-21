@@ -2,11 +2,23 @@ package apptentive.com.android.feedback.backend
 
 import apptentive.com.android.core.getTimeSeconds
 import apptentive.com.android.feedback.CONVERSATION
-import apptentive.com.android.feedback.model.*
+import apptentive.com.android.feedback.model.AppRelease
+import apptentive.com.android.feedback.model.Device
+import apptentive.com.android.feedback.model.EngagementManifest
+import apptentive.com.android.feedback.model.Person
+import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadResponse
-import apptentive.com.android.network.*
+import apptentive.com.android.network.CacheControl
+import apptentive.com.android.network.HttpClient
+import apptentive.com.android.network.HttpHeaders
 import apptentive.com.android.network.HttpHeaders.Companion.CACHE_CONTROL
+import apptentive.com.android.network.HttpJsonResponseReader
+import apptentive.com.android.network.HttpMethod
+import apptentive.com.android.network.HttpNetworkResponse
+import apptentive.com.android.network.HttpRequest
+import apptentive.com.android.network.HttpResponseReader
+import apptentive.com.android.network.MutableHttpHeaders
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.Result
 

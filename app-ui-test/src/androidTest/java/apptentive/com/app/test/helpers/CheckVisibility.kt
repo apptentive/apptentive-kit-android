@@ -3,7 +3,9 @@ package apptentive.com.app.test.helpers
 import android.view.View
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.espresso.matcher.ViewMatchers.Visibility
+import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
+import androidx.test.espresso.matcher.ViewMatchers.withId
 
 fun checkVisibility(id: Int, visibility: Int) {
     onView(withId(id)).check(matches(withEffectiveVisibility(getVisibility(visibility))))

@@ -4,7 +4,19 @@ import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
 import apptentive.com.android.feedback.engagement.criteria.Version
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
-import apptentive.com.android.feedback.model.*
+import apptentive.com.android.feedback.model.AppRelease
+import apptentive.com.android.feedback.model.Conversation
+import apptentive.com.android.feedback.model.CustomData
+import apptentive.com.android.feedback.model.Device
+import apptentive.com.android.feedback.model.EngagementData
+import apptentive.com.android.feedback.model.EngagementRecord
+import apptentive.com.android.feedback.model.EngagementRecords
+import apptentive.com.android.feedback.model.IntegrationConfig
+import apptentive.com.android.feedback.model.IntegrationConfigItem
+import apptentive.com.android.feedback.model.Person
+import apptentive.com.android.feedback.model.SDK
+import apptentive.com.android.feedback.model.VersionHistory
+import apptentive.com.android.feedback.model.VersionHistoryItem
 import apptentive.com.android.util.parseInt
 import java.io.Serializable
 
@@ -22,7 +34,6 @@ typealias LegacyIntegrationConfigItem = com.apptentive.android.sdk.storage.Integ
 typealias LegacyDateTime = com.apptentive.android.sdk.DateTime
 typealias LegacyVersion = com.apptentive.android.sdk.Version
 typealias LegacyVersionHistoryItem = com.apptentive.android.sdk.storage.VersionHistoryItem
-
 
 /**
  * Converts legacy SDK conversation data into the current [Conversation] data format.
@@ -154,7 +165,6 @@ private fun LegacyEventRecord.toEngagementRecord(): EngagementRecord =
         versionNameLookup = versionNames,
         lastInvoked = last.toLatestDateTime()
     )
-
 
 fun Map<String, LegacyEventRecord>.toEngagementInteractionsRecords(): EngagementRecords<InteractionId> =
     EngagementRecords(

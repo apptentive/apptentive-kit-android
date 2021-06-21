@@ -277,11 +277,12 @@ class HttpClientTest : TestCase() {
         val responses = arrayOf(
             createNetworkResponse(statusCode = 500), // d'oh!
             createNetworkResponse(statusCode = 500), // d'oh!
-            createNetworkResponse(statusCode = 200)  // woo-hoo!
+            createNetworkResponse(statusCode = 200) // woo-hoo!
         )
 
         sendRequest(
-            client, createMockHttpRequest(
+            client,
+            createMockHttpRequest(
                 tag = "request",
                 responses = responses
             )

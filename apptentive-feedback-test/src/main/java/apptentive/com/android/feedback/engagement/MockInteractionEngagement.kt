@@ -3,7 +3,8 @@ package apptentive.com.android.feedback.engagement
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import java.lang.IllegalStateException
-import java.util.*
+import java.util.Queue
+import java.util.LinkedList
 
 class MockInteractionEngagement : InteractionEngagement {
     private val results: Queue<EngagementResult> = LinkedList()

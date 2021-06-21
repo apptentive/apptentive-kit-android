@@ -11,7 +11,7 @@ class SurveyHeaderListItem(val instructions: String) : SurveyListItem(
     type = Type.Header
 ) {
     override fun getChangePayloadMask(oldItem: ListViewItem): Int {
-        return 0; // this item never changes dynamically
+        return 0 // this item never changes dynamically
     }
 
     override fun equals(other: Any?): Boolean {

@@ -1,6 +1,10 @@
 package apptentive.com.android.feedback.engagement
 
-import apptentive.com.android.feedback.engagement.criteria.*
+import apptentive.com.android.feedback.engagement.criteria.CriteriaInteractionDataProvider
+import apptentive.com.android.feedback.engagement.criteria.Field
+import apptentive.com.android.feedback.engagement.criteria.Invocation
+import apptentive.com.android.feedback.engagement.criteria.InvocationProvider
+import apptentive.com.android.feedback.engagement.criteria.TargetingState
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
 import com.google.common.truth.Truth.assertThat
 import org.junit.Ignore
@@ -52,4 +56,3 @@ private object FailureTargetingState : TargetingState {
         throw AssertionError("Should never get here")
     }
 }
-

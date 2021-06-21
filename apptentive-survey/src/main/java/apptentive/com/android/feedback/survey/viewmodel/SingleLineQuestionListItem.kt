@@ -1,8 +1,12 @@
 package apptentive.com.android.feedback.survey.viewmodel
 
-import android.os.Build
-import android.view.Gravity.*
-import android.view.inputmethod.EditorInfo.*
+import android.view.Gravity.CENTER_VERTICAL
+import android.view.Gravity.START
+import android.view.Gravity.TOP
+import android.view.inputmethod.EditorInfo.IME_FLAG_NO_ENTER_ACTION
+import android.view.inputmethod.EditorInfo.TYPE_CLASS_TEXT
+import android.view.inputmethod.EditorInfo.TYPE_TEXT_FLAG_CAP_SENTENCES
+import android.view.inputmethod.EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE
 import android.widget.EditText
 import androidx.core.widget.doAfterTextChanged
 import apptentive.com.android.feedback.survey.R

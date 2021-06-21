@@ -1,8 +1,7 @@
 package apptentive.com.android.feedback.enjoyment
 
-import apptentive.com.android.feedback.engagement.interactions.InteractionTypeConverter
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
-
+import apptentive.com.android.feedback.engagement.interactions.InteractionTypeConverter
 import apptentive.com.android.util.getString
 import apptentive.com.android.util.optString
 

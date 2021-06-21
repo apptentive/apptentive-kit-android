@@ -65,5 +65,4 @@ class EventPayload(
 }
 
 // FIXME: figure it out
-class ExtendedData {
-}
+class ExtendedData

@@ -12,7 +12,6 @@ open class Observable<T>(private var _value: T) {
             notifyObservers(value)
         }
 
-
     @WorkerThread
     fun observe(observer: (T) -> Unit): Subscription {
         observers.add(observer)

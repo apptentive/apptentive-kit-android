@@ -2,8 +2,20 @@ package apptentive.com.android.feedback.engagement.criteria
 
 import apptentive.com.android.core.DefaultTimeSource
 import apptentive.com.android.core.TimeSource
-import apptentive.com.android.feedback.engagement.criteria.Field.*
-import apptentive.com.android.feedback.model.*
+import apptentive.com.android.feedback.engagement.criteria.Field.application
+import apptentive.com.android.feedback.engagement.criteria.Field.code_point
+import apptentive.com.android.feedback.engagement.criteria.Field.current_time
+import apptentive.com.android.feedback.engagement.criteria.Field.device
+import apptentive.com.android.feedback.engagement.criteria.Field.interactions
+import apptentive.com.android.feedback.engagement.criteria.Field.is_update
+import apptentive.com.android.feedback.engagement.criteria.Field.person
+import apptentive.com.android.feedback.engagement.criteria.Field.sdk
+import apptentive.com.android.feedback.engagement.criteria.Field.time_at_install
+import apptentive.com.android.feedback.model.AppRelease
+import apptentive.com.android.feedback.model.Device
+import apptentive.com.android.feedback.model.EngagementData
+import apptentive.com.android.feedback.model.Person
+import apptentive.com.android.feedback.model.SDK
 
 data class DefaultTargetingState(
     private val person: Person,

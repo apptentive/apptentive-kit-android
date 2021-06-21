@@ -60,4 +60,3 @@ class HttpJsonResponseReader<T>(private val type: Class<T>) : HttpResponseReader
         return JsonConverter.fromJson(json, type) as T
     }
 }
-

@@ -24,7 +24,7 @@ import java.io.File;
 
 import apptentive.com.android.util.Log;
 
-import static apptentive.com.android.feedback.LogTags.*;
+import static apptentive.com.android.feedback.LogTags.MIGRATION;
 
 /**
  * Represents a modified version of legacy [Conversation] class (read-only). Used in legacy data migration.

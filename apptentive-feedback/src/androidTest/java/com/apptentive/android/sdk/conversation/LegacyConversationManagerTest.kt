@@ -29,7 +29,7 @@ class LegacyConversationManagerTest : TestCase() {
     @Before
     fun before() {
         // clear up device storage
-        MigrationTestUtils.clearDeviceStorage(context);
+        MigrationTestUtils.clearDeviceStorage(context)
     }
 
     @Test
@@ -372,8 +372,7 @@ class LegacyConversationManagerTest : TestCase() {
                 ),
                 engagementManifest = EngagementManifest()
             )
-        }
-        else TODO("Implement me")
+        } else TODO("Implement me")
     }
 
     private fun pushFiles(sdkVersion: String) {

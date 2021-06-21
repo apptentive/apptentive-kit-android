@@ -139,14 +139,14 @@ class PayloadSQLiteHelper(context: Context) :
         private val COL_PAYLOAD_DATA = Column(index = 6, name = "data")
 
         private val SQL_QUERY_CREATE_TABLE = "CREATE TABLE $TABLE_NAME (" +
-                "$COL_PRIMARY_KEY INTEGER PRIMARY KEY, " +
-                "$COL_NONCE TEXT, " +
-                "$COL_TYPE TEXT, " +
-                "$COL_PATH TEXT, " +
-                "$COL_METHOD TEXT, " +
-                "$COL_MEDIA_TYPE TEXT, " +
-                "$COL_PAYLOAD_DATA BLOB" +
-                ")"
+            "$COL_PRIMARY_KEY INTEGER PRIMARY KEY, " +
+            "$COL_NONCE TEXT, " +
+            "$COL_TYPE TEXT, " +
+            "$COL_PATH TEXT, " +
+            "$COL_METHOD TEXT, " +
+            "$COL_MEDIA_TYPE TEXT, " +
+            "$COL_PAYLOAD_DATA BLOB" +
+            ")"
         private const val SQL_QUERY_DROP_TABLE = "DROP TABLE IF EXISTS $TABLE_NAME"
     }
 }

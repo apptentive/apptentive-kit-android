@@ -11,7 +11,8 @@ import android.telephony.TelephonyManager
 import androidx.core.content.ContextCompat
 import apptentive.com.android.feedback.SYSTEM
 import apptentive.com.android.util.Log
-import java.util.*
+import java.util.Locale
+import java.util.TimeZone
 
 internal object AndroidUtils {
     @SuppressLint("HardwareIds")
@@ -43,15 +44,15 @@ internal object AndroidUtils {
         "HSPAP", // 15
         "GSM", // 16
         "TD_SCDMA", // 17
-        "IWLAN",   // 18
-        "LTE_CA", //19
+        "IWLAN", // 18
+        "LTE_CA", // 19
         "5G" //  20
     )
 
     @SuppressLint("MissingPermission")
     fun getNetworkType(context: Context): String {
         var networkType = 0
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             networkType = getTelephonyManager(context).networkType
         } else if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
             networkType = getTelephonyManager(context).dataNetworkType

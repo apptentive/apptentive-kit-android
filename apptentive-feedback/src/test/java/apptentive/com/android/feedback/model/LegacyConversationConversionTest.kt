@@ -2,7 +2,19 @@ package apptentive.com.android.feedback.model
 
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
-import com.apptentive.android.sdk.conversation.*
+import com.apptentive.android.sdk.conversation.LegacyAppRelease
+import com.apptentive.android.sdk.conversation.LegacyConversationData
+import com.apptentive.android.sdk.conversation.LegacyCustomData
+import com.apptentive.android.sdk.conversation.LegacyDevice
+import com.apptentive.android.sdk.conversation.LegacyEventData
+import com.apptentive.android.sdk.conversation.LegacyEventRecord
+import com.apptentive.android.sdk.conversation.LegacyIntegrationConfig
+import com.apptentive.android.sdk.conversation.LegacyIntegrationConfigItem
+import com.apptentive.android.sdk.conversation.LegacyPerson
+import com.apptentive.android.sdk.conversation.LegacySdk
+import com.apptentive.android.sdk.conversation.LegacyVersionHistory
+import com.apptentive.android.sdk.conversation.LegacyVersionHistoryItem
+import com.apptentive.android.sdk.conversation.toConversation
 import com.google.common.truth.Truth
 import org.junit.Test
 
@@ -111,7 +123,6 @@ class LegacyConversationConversionTest {
                 )
             )
         )
-
     }
 
     private fun createAppRelease(): AppRelease {
@@ -360,7 +371,6 @@ class LegacyConversationConversionTest {
         )
         legacyEventRecordOne.last = DateTime(100.0).seconds
 
-
         val legacyEventRecordTwo = LegacyEventRecord()
         legacyEventRecordTwo.total = 4
         legacyEventRecordTwo.versionCodes = mutableMapOf(
@@ -374,7 +384,6 @@ class LegacyConversationConversionTest {
             "1.0.4" to 1L
         )
         legacyEventRecordTwo.last = DateTime(200.0).seconds
-
 
         return mapOf(
             Pair("local#app#event1", legacyEventRecordOne), Pair("com.apptentive#app#event2", legacyEventRecordTwo)
@@ -394,7 +403,6 @@ class LegacyConversationConversionTest {
         )
         legacyEventRecordOne.last = DateTime(300.0).seconds
 
-
         val legacyEventRecordTwo = LegacyEventRecord()
         legacyEventRecordTwo.total = 5
         legacyEventRecordTwo.versionCodes = mutableMapOf(
@@ -404,7 +412,6 @@ class LegacyConversationConversionTest {
             "1.0.7" to 5L
         )
         legacyEventRecordTwo.last = DateTime(400.0).seconds
-
 
         return mapOf(
             Pair("111", legacyEventRecordOne), Pair("222", legacyEventRecordTwo)
@@ -509,7 +516,7 @@ class LegacyConversationConversionTest {
         val localeRaw = "localeRaw-$id"
         val utcOffset = "0"
         val advertiserId = "advertiserId-$id"
-        val integrationConfig: LegacyIntegrationConfig? = createLegacyIntegrationConfig(id)
+        val integrationConfig: LegacyIntegrationConfig = createLegacyIntegrationConfig(id)
 
         return LegacyDevice(
             uuid,
@@ -541,7 +548,7 @@ class LegacyConversationConversionTest {
         )
     }
 
-    private fun createLegacyCustomData(id: Int): LegacyCustomData? {
+    private fun createLegacyCustomData(id: Int): LegacyCustomData {
         val legacyCustomData = LegacyCustomData()
         legacyCustomData["key-$id"] = "value-$id"
         return legacyCustomData
@@ -565,7 +572,6 @@ class LegacyConversationConversionTest {
         val legacyIntegrationConfigItem = LegacyIntegrationConfigItem()
         legacyIntegrationConfigItem.contents["parse_key-$id"] = "parse_value-$id"
         return legacyIntegrationConfigItem
-
     }
 
     private fun createLegacyIntegrationConfigItemForUrbanAirship(id: Int): LegacyIntegrationConfigItem {

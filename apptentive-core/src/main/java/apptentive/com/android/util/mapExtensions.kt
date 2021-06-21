@@ -18,7 +18,7 @@ fun Map<String, *>.getInt(key: String): Int {
     throw MissingKeyException(key)
 }
 
-fun Map<String, *>.optInt(key: String, defaultValue: Int = 0) : Int {
+fun Map<String, *>.optInt(key: String, defaultValue: Int = 0): Int {
     val value = this[key]
     if (value is Int) return value
     if (value is Double) return value.toInt()

@@ -7,6 +7,5 @@ class CriteriaInteractionResolverTest {
     @Test
     @Ignore
     fun test() {
-
     }
 }

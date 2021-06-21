@@ -4,8 +4,7 @@ import androidx.annotation.Keep
 import apptentive.com.android.util.Result
 
 @Keep
-class PayloadResponse {
-}
+class PayloadResponse
 
 interface PayloadRequestSender {
     fun sendPayloadRequest(

@@ -66,7 +66,7 @@ class ListViewAdapter : ListAdapter<ListViewItem, ListViewAdapter.ViewHolder<Lis
                 return oldItem.areContentsTheSame(newItem)
             }
 
-            override fun getChangePayload(oldItem: ListViewItem, newItem: ListViewItem): Any? {
+            override fun getChangePayload(oldItem: ListViewItem, newItem: ListViewItem): Any {
                 return oldItem.getChangePayloadMask(newItem)
             }
         }

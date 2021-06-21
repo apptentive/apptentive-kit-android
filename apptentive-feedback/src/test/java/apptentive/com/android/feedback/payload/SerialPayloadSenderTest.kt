@@ -84,4 +84,3 @@ class SerialPayloadSenderTest : TestCase() {
         label = "app#local#event"
     )
 }
-

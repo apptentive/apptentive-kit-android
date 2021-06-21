@@ -2,7 +2,15 @@ package apptentive.com.android.feedback.engagement.criteria
 
 import apptentive.com.android.TestCase
 import apptentive.com.android.feedback.engagement.Event
-import apptentive.com.android.feedback.engagement.criteria.Field.*
+import apptentive.com.android.feedback.engagement.criteria.Field.application
+import apptentive.com.android.feedback.engagement.criteria.Field.code_point
+import apptentive.com.android.feedback.engagement.criteria.Field.current_time
+import apptentive.com.android.feedback.engagement.criteria.Field.device
+import apptentive.com.android.feedback.engagement.criteria.Field.interactions
+import apptentive.com.android.feedback.engagement.criteria.Field.is_update
+import apptentive.com.android.feedback.engagement.criteria.Field.person
+import apptentive.com.android.feedback.engagement.criteria.Field.sdk
+import apptentive.com.android.feedback.engagement.criteria.Field.time_at_install
 import apptentive.com.android.feedback.mockAppRelease
 import apptentive.com.android.feedback.mockDevice
 import apptentive.com.android.feedback.mockPerson
@@ -62,47 +70,55 @@ class DefaultTargetingStateTest : TestCase() {
 
         // single item
         state = state.copy(
-            engagementData = EngagementData(versionHistory = VersionHistory(
-                items = listOf(
-                    VersionHistoryItem(timestamp = 1.0, versionCode = 100, versionName = "1.0.0")
+            engagementData = EngagementData(
+                versionHistory = VersionHistory(
+                    items = listOf(
+                        VersionHistoryItem(timestamp = 1.0, versionCode = 100, versionName = "1.0.0")
+                    )
                 )
-            ))
+            )
         )
         assertThat(state.getValue(is_update.version_code)).isEqualTo(false)
         assertThat(state.getValue(is_update.version_name)).isEqualTo(false)
 
         // single version code
         state = state.copy(
-            engagementData = EngagementData(versionHistory = VersionHistory(
-                items = listOf(
-                    VersionHistoryItem(timestamp = 1.0, versionCode = 100, versionName = "1.0.0"),
-                    VersionHistoryItem(timestamp = 2.0, versionCode = 100, versionName = "1.0.1")
+            engagementData = EngagementData(
+                versionHistory = VersionHistory(
+                    items = listOf(
+                        VersionHistoryItem(timestamp = 1.0, versionCode = 100, versionName = "1.0.0"),
+                        VersionHistoryItem(timestamp = 2.0, versionCode = 100, versionName = "1.0.1")
+                    )
                 )
-            ))
+            )
         )
         assertThat(state.getValue(is_update.version_code)).isEqualTo(false)
         assertThat(state.getValue(is_update.version_name)).isEqualTo(true)
 
         // single version name
         state = state.copy(
-            engagementData = EngagementData(versionHistory = VersionHistory(
-                items = listOf(
-                    VersionHistoryItem(timestamp = 1.0, versionCode = 100, versionName = "1.0.0"),
-                    VersionHistoryItem(timestamp = 2.0, versionCode = 101, versionName = "1.0.0")
+            engagementData = EngagementData(
+                versionHistory = VersionHistory(
+                    items = listOf(
+                        VersionHistoryItem(timestamp = 1.0, versionCode = 100, versionName = "1.0.0"),
+                        VersionHistoryItem(timestamp = 2.0, versionCode = 101, versionName = "1.0.0")
+                    )
                 )
-            ))
+            )
         )
         assertThat(state.getValue(is_update.version_code)).isEqualTo(true)
         assertThat(state.getValue(is_update.version_name)).isEqualTo(false)
 
         // multiple version names and codes
         state = state.copy(
-            engagementData = EngagementData(versionHistory = VersionHistory(
-                items = listOf(
-                    VersionHistoryItem(timestamp = 1.0, versionCode = 100, versionName = "1.0.0"),
-                    VersionHistoryItem(timestamp = 2.0, versionCode = 101, versionName = "1.0.1")
+            engagementData = EngagementData(
+                versionHistory = VersionHistory(
+                    items = listOf(
+                        VersionHistoryItem(timestamp = 1.0, versionCode = 100, versionName = "1.0.0"),
+                        VersionHistoryItem(timestamp = 2.0, versionCode = 101, versionName = "1.0.1")
+                    )
                 )
-            ))
+            )
         )
         assertThat(state.getValue(is_update.version_code)).isEqualTo(true)
         assertThat(state.getValue(is_update.version_name)).isEqualTo(true)
@@ -120,22 +136,26 @@ class DefaultTargetingStateTest : TestCase() {
 
         // single item
         state = state.copy(
-            engagementData = EngagementData(versionHistory = VersionHistory(
-                items = listOf(
-                    VersionHistoryItem(timestamp = 1.0, versionCode = 100, versionName = "1.0.0")
+            engagementData = EngagementData(
+                versionHistory = VersionHistory(
+                    items = listOf(
+                        VersionHistoryItem(timestamp = 1.0, versionCode = 100, versionName = "1.0.0")
+                    )
                 )
-            ))
+            )
         )
         assertThat(state.getValue(time_at_install.total)).isEqualTo(DateTime(1.0))
 
         // multiple items
         state = state.copy(
-            engagementData = EngagementData(versionHistory = VersionHistory(
-                items = listOf(
-                    VersionHistoryItem(timestamp = 1.0, versionCode = 100, versionName = "1.0.0"),
-                    VersionHistoryItem(timestamp = 2.0, versionCode = 200, versionName = "2.0.0")
+            engagementData = EngagementData(
+                versionHistory = VersionHistory(
+                    items = listOf(
+                        VersionHistoryItem(timestamp = 1.0, versionCode = 100, versionName = "1.0.0"),
+                        VersionHistoryItem(timestamp = 2.0, versionCode = 200, versionName = "2.0.0")
+                    )
                 )
-            ))
+            )
         )
         assertThat(state.getValue(time_at_install.total)).isEqualTo(DateTime(1.0))
     }
@@ -157,23 +177,27 @@ class DefaultTargetingStateTest : TestCase() {
 
         // single item
         state = state.copy(
-            engagementData = EngagementData(versionHistory = VersionHistory(
-                items = listOf(
-                    VersionHistoryItem(timestamp = 1.0, versionCode = 100, versionName = "1.0.0")
+            engagementData = EngagementData(
+                versionHistory = VersionHistory(
+                    items = listOf(
+                        VersionHistoryItem(timestamp = 1.0, versionCode = 100, versionName = "1.0.0")
+                    )
                 )
-            ))
+            )
         )
         assertThat(state.getValue(time_at_install.version_code)).isEqualTo(DateTime(1.0))
         assertThat(state.getValue(time_at_install.version_name)).isEqualTo(DateTime(1.0))
 
         // multiple items
         state = state.copy(
-            engagementData = EngagementData(versionHistory = VersionHistory(
-                items = listOf(
-                    VersionHistoryItem(timestamp = 1.0, versionCode = 100, versionName = "1.0.0"),
-                    VersionHistoryItem(timestamp = 2.0, versionCode = 200, versionName = "2.0.0")
+            engagementData = EngagementData(
+                versionHistory = VersionHistory(
+                    items = listOf(
+                        VersionHistoryItem(timestamp = 1.0, versionCode = 100, versionName = "1.0.0"),
+                        VersionHistoryItem(timestamp = 2.0, versionCode = 200, versionName = "2.0.0")
+                    )
                 )
-            ))
+            )
         )
         assertThat(state.getValue(time_at_install.version_code)).isEqualTo(DateTime(1.0))
         assertThat(state.getValue(time_at_install.version_name)).isEqualTo(DateTime(1.0))
@@ -378,4 +402,3 @@ class DefaultTargetingStateTest : TestCase() {
         assertThat(state.getValue(device.custom_data("device_key"))).isNull()
     }
 }
-

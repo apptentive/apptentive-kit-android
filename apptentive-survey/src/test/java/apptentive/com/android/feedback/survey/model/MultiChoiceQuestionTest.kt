@@ -1,6 +1,8 @@
 package apptentive.com.android.feedback.survey.model
 
-import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion.*
+import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion.Answer
+import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion.AnswerChoiceConfiguration
+import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion.ChoiceType
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 

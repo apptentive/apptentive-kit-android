@@ -4,7 +4,6 @@ import androidx.annotation.CallSuper
 import apptentive.com.android.feedback.survey.view.SurveyQuestionContainerView
 import apptentive.com.android.ui.ListViewAdapter
 import apptentive.com.android.ui.ListViewItem
-import apptentive.com.android.ui.ViewHolderFactory
 
 /**
  * Base class for representing question list item state

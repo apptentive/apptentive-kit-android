@@ -1,6 +1,6 @@
 package apptentive.com.android.util
 
-import java.util.*
+import java.util.Locale
 
 fun createStringTable(rows: List<Array<Any?>>): String {
     val columnSizes = IntArray(rows[0].size)

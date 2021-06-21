@@ -47,42 +47,42 @@ object BasicTypeSerializer : TypeSerializer<Any?> {
         when (value) {
             is Boolean -> {
                 encoder.encodeEnum(ValueType.TYPE_BOOLEAN)
-                encoder.encodeBoolean(value as Boolean)
+                encoder.encodeBoolean(value)
             }
             is Byte -> {
                 encoder.encodeEnum(ValueType.TYPE_BYTE)
-                encoder.encodeByte(value as Byte)
+                encoder.encodeByte(value)
             }
             is Short -> {
                 encoder.encodeEnum(ValueType.TYPE_SHORT)
-                encoder.encodeShort(value as Short)
+                encoder.encodeShort(value)
             }
             is Int -> {
                 encoder.encodeEnum(ValueType.TYPE_INT)
-                encoder.encodeInt(value as Int)
+                encoder.encodeInt(value)
             }
             is Long -> {
                 encoder.encodeEnum(ValueType.TYPE_LONG)
-                encoder.encodeLong(value as Long)
+                encoder.encodeLong(value)
             }
             is Float -> {
                 encoder.encodeEnum(ValueType.TYPE_FLOAT)
-                encoder.encodeFloat(value as Float)
+                encoder.encodeFloat(value)
             }
             is Double -> {
                 encoder.encodeEnum(ValueType.TYPE_DOUBLE)
-                encoder.encodeDouble(value as Double)
+                encoder.encodeDouble(value)
             }
             is Char -> {
                 encoder.encodeEnum(ValueType.TYPE_CHAR)
-                encoder.encodeChar(value as Char)
+                encoder.encodeChar(value)
             }
             is String -> {
                 encoder.encodeEnum(ValueType.TYPE_STRING)
-                encoder.encodeString(value as String)
+                encoder.encodeString(value)
             }
             null -> encoder.encodeEnum(ValueType.TYPE_NULL)
-            else -> throw NotImplementedError("Unsupported value type: ${value?.javaClass}")
+            else -> throw NotImplementedError("Unsupported value type: ${value.javaClass}")
         }
     }
 
@@ -162,7 +162,7 @@ fun <Key : Any, Value> Decoder.decodeMap(
 
 //endregion
 
-inline fun <T> Encoder.encodeList(items: List<T>, callback: Encoder.(item: T)-> Unit) {
+inline fun <T> Encoder.encodeList(items: List<T>, callback: Encoder.(item: T) -> Unit) {
     encodeInt(items.size)
     items.forEach { callback(it) }
 }

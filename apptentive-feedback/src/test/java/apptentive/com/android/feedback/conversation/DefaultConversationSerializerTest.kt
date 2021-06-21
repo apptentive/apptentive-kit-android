@@ -9,7 +9,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import java.io.File
-import java.util.*
+import java.util.UUID
 import kotlin.random.Random
 
 class DefaultConversationSerializerTest : TestCase() {
@@ -106,8 +106,7 @@ class DefaultConversationSerializerTest : TestCase() {
     }
 
     @Test
-    fun testCorruptedManifestData()
-    {
+    fun testCorruptedManifestData() {
         val manifestFile = createTempFile("manifest.json")
         val serializer = DefaultConversationSerializer(
             conversationFile = createTempFile("conversation.bin"),
@@ -132,5 +131,5 @@ class DefaultConversationSerializerTest : TestCase() {
         assertThat(actual).isEqualTo(expected)
     }
 
-    private fun createTempFile(name: String) = File(tempFolder.root, "${UUID.randomUUID()}-${name}")
+    private fun createTempFile(name: String) = File(tempFolder.root, "${UUID.randomUUID()}-$name")
 }

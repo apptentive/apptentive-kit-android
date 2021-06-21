@@ -67,4 +67,3 @@ class EnjoymentDialogViewModelTest : TestCase() {
             interactionId = interactionId
         )
 }
-

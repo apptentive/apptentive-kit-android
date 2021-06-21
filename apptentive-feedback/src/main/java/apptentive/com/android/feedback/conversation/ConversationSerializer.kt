@@ -6,8 +6,35 @@ import apptentive.com.android.feedback.conversation.Serializers.conversationSeri
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
-import apptentive.com.android.feedback.model.*
-import apptentive.com.android.serialization.*
+import apptentive.com.android.feedback.model.AppRelease
+import apptentive.com.android.feedback.model.Conversation
+import apptentive.com.android.feedback.model.CustomData
+import apptentive.com.android.feedback.model.Device
+import apptentive.com.android.feedback.model.EngagementData
+import apptentive.com.android.feedback.model.EngagementManifest
+import apptentive.com.android.feedback.model.EngagementRecord
+import apptentive.com.android.feedback.model.EngagementRecords
+import apptentive.com.android.feedback.model.IntegrationConfig
+import apptentive.com.android.feedback.model.IntegrationConfigItem
+import apptentive.com.android.feedback.model.Person
+import apptentive.com.android.feedback.model.SDK
+import apptentive.com.android.feedback.model.VersionHistory
+import apptentive.com.android.feedback.model.VersionHistoryItem
+import apptentive.com.android.serialization.BinaryDecoder
+import apptentive.com.android.serialization.BinaryEncoder
+import apptentive.com.android.serialization.Decoder
+import apptentive.com.android.serialization.Encoder
+import apptentive.com.android.serialization.LongSerializer
+import apptentive.com.android.serialization.StringSerializer
+import apptentive.com.android.serialization.TypeDecoder
+import apptentive.com.android.serialization.TypeEncoder
+import apptentive.com.android.serialization.TypeSerializer
+import apptentive.com.android.serialization.decodeList
+import apptentive.com.android.serialization.decodeMap
+import apptentive.com.android.serialization.decodeNullableString
+import apptentive.com.android.serialization.encodeList
+import apptentive.com.android.serialization.encodeMap
+import apptentive.com.android.serialization.encodeNullableString
 import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.util.Log
 import java.io.DataInputStream
@@ -330,8 +357,8 @@ internal object Serializers {
                         valueDecoder = LongSerializer
                     ),
                     versionNameLookup = decoder.decodeMap(
-                        keyDecoder =
-                        versionNameSerializer, valueDecoder = LongSerializer
+                        keyDecoder = versionNameSerializer,
+                        valueDecoder = LongSerializer
                     ),
                     lastInvoked = dateTimeSerializer.decode(decoder)
                 )

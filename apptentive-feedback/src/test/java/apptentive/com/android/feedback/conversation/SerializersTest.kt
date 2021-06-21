@@ -1,10 +1,18 @@
 package apptentive.com.android.feedback.conversation
 
-import apptentive.com.android.feedback.*
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
-import apptentive.com.android.feedback.model.*
+import apptentive.com.android.feedback.mockAppRelease
+import apptentive.com.android.feedback.mockDevice
+import apptentive.com.android.feedback.mockEngagementData
+import apptentive.com.android.feedback.mockPerson
+import apptentive.com.android.feedback.mockSdk
+import apptentive.com.android.feedback.model.Conversation
+import apptentive.com.android.feedback.model.CustomData
+import apptentive.com.android.feedback.model.EngagementData
+import apptentive.com.android.feedback.model.EngagementRecord
+import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
 import apptentive.com.android.serialization.BinaryDecoder
@@ -46,7 +54,8 @@ class SerializersTest {
     fun customDataSerializer() {
         checkSerializer(Serializers.customDataSerializer, CustomData())
         checkSerializer(
-            Serializers.customDataSerializer, CustomData(
+            Serializers.customDataSerializer,
+            CustomData(
                 content = mapOf(
                     "key1" to true,
                     "key2" to 10.toByte(),

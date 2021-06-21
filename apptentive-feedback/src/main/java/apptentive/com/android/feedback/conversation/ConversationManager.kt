@@ -174,7 +174,7 @@ class ConversationManager(
                 return legacyConversationData.toConversation()
             }
         } catch (e: Exception) {
-            Log.e(CONVERSATION,"Unable to migrate legacy conversation", e)
+            Log.e(CONVERSATION, "Unable to migrate legacy conversation", e)
         }
 
         return null

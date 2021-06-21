@@ -36,14 +36,16 @@ class PersistentPayloadQueue(
                 return
             }
 
-            val header = listOf(arrayOf<Any?>(
-                "nonce",
-                "type",
-                "path",
-                "method",
-                "mediaType",
-                "data"
-            ))
+            val header = listOf(
+                arrayOf<Any?>(
+                    "nonce",
+                    "type",
+                    "path",
+                    "method",
+                    "mediaType",
+                    "data"
+                )
+            )
             val rows = payloads.map { payload ->
                 arrayOf<Any?>(
                     payload.nonce,

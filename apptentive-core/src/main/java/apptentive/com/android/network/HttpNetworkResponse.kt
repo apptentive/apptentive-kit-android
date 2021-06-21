@@ -1,8 +1,6 @@
 package apptentive.com.android.network
 
 import apptentive.com.android.core.TimeInterval
-import java.io.Closeable
-import java.io.InputStream
 
 /**
  * A container to hold a generic response from [HttpNetwork]

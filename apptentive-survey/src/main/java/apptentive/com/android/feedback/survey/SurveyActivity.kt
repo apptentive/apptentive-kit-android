@@ -3,7 +3,6 @@ package apptentive.com.android.feedback.survey
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.MotionEvent
-import android.widget.Button
 import android.widget.EditText
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
@@ -13,10 +12,20 @@ import apptentive.com.android.feedback.survey.viewmodel.RangeQuestionListItem
 import apptentive.com.android.feedback.survey.viewmodel.SingleLineQuestionListItem
 import apptentive.com.android.feedback.survey.viewmodel.SurveyFooterListItem
 import apptentive.com.android.feedback.survey.viewmodel.SurveyHeaderListItem
-import apptentive.com.android.feedback.survey.viewmodel.SurveyListItem.Type.*
+import apptentive.com.android.feedback.survey.viewmodel.SurveyListItem.Type.Footer
+import apptentive.com.android.feedback.survey.viewmodel.SurveyListItem.Type.Header
+import apptentive.com.android.feedback.survey.viewmodel.SurveyListItem.Type.MultiChoiceQuestion
+import apptentive.com.android.feedback.survey.viewmodel.SurveyListItem.Type.RangeQuestion
+import apptentive.com.android.feedback.survey.viewmodel.SurveyListItem.Type.SingleLineQuestion
 import apptentive.com.android.feedback.survey.viewmodel.SurveyViewModel
 import apptentive.com.android.feedback.survey.viewmodel.register
-import apptentive.com.android.ui.*
+import apptentive.com.android.ui.ApptentiveViewModelActivity
+import apptentive.com.android.ui.DialogButton
+import apptentive.com.android.ui.LayoutViewHolderFactory
+import apptentive.com.android.ui.ListViewAdapter
+import apptentive.com.android.ui.hideSoftKeyboard
+import apptentive.com.android.ui.showConfirmationDialog
+import com.google.android.material.appbar.MaterialToolbar
 import kotlinx.android.synthetic.main.apptentive_activity_survey.*
 
 class SurveyActivity : ApptentiveViewModelActivity<SurveyViewModel>() {
