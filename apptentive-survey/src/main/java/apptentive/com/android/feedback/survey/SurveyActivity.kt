@@ -26,7 +26,6 @@ import apptentive.com.android.ui.ListViewAdapter
 import apptentive.com.android.ui.hideSoftKeyboard
 import apptentive.com.android.ui.showConfirmationDialog
 import com.google.android.material.appbar.MaterialToolbar
-import kotlinx.android.synthetic.main.apptentive_activity_survey.*
 
 class SurveyActivity : ApptentiveViewModelActivity<SurveyViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,6 +58,7 @@ class SurveyActivity : ApptentiveViewModelActivity<SurveyViewModel>() {
 
         supportActionBar?.hide()
 
+        val topAppBar = findViewById<MaterialToolbar>(R.id.topAppBar)
         topAppBar.title = viewModel.title
         topAppBar.setNavigationOnClickListener {
             viewModel.exit(showConfirmation = true)

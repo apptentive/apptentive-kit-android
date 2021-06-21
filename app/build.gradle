@@ -6,6 +6,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
+apply plugin: 'kotlin-kapt'
 
 // Set from Jenkins or Travis. Set by parent job and passed into template job.
 def theVersionCode = System.getenv("BUILD_NUMBER") as Integer ?: 100
@@ -53,6 +54,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+    buildFeatures {
+        dataBinding true
     }
 }
 
