@@ -30,13 +30,13 @@ pipeline {
       stages {
         stage('verification') {
           parallel {
-            stage('lint') {
+            stage('ktlint') {
               steps {
                 script {
                   gitCommit = apptentiveGetReleaseCommit()
                   imageName = apptentiveDockerBuild('build', gitCommit)
                   container('docker') {
-                    //sh "docker run ${imageName} ./gradlew lint"
+                    sh "docker run ${imageName} ./gradlew ktlintCheck"
                   }
                 }
               }
