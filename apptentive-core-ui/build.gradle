@@ -34,7 +34,6 @@ android {
 
 dependencies {
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.core:core-ktx:$ktx_version"
     implementation "androidx.activity:activity-ktx:1.2.0-beta01" // FIXME: use variable
     implementation "androidx.appcompat:appcompat:$support_library_version"

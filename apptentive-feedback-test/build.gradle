@@ -34,7 +34,6 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation project(':apptentive-core')
     implementation project(':apptentive-core-test')
     implementation project(':apptentive-feedback')

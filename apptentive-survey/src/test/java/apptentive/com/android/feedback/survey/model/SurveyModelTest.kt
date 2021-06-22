@@ -16,7 +16,9 @@ class SurveyModelTest : TestCase() {
             createSingleLineQuestion(id = "id_3")
         )
         model.questionsStream.observe {
-            it.forEach(::addResult)
+            it.forEach{ question ->
+                addResult(question)
+            }
         }
 
         // the update should be triggered immediately (since it's a behaviour subject)
@@ -32,7 +34,7 @@ class SurveyModelTest : TestCase() {
             answer = SingleLineQuestion.Answer("text")
         )
 
-        // should receive the udpate
+        // should receive the update
         assertResults(
             createSingleLineQuestion(id = "id_1"),
             createSingleLineQuestion(id = "id_2", answer = "text"),
