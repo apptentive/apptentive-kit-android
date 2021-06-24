@@ -7,6 +7,7 @@ import apptentive.com.android.feedback.survey.model.SingleLineQuestion
 import apptentive.com.android.feedback.survey.model.SurveyModel
 import apptentive.com.android.feedback.survey.model.SurveyQuestion
 import apptentive.com.android.feedback.survey.model.createSingleLineQuestion
+import org.junit.Assert.assertEquals
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
@@ -153,6 +154,18 @@ class SurveyViewModelTest : TestCase() {
     }
 
     @Test
+    fun testSurveyCancelConfirmationDisplayData() {
+        val viewModel = createViewModel(emptyList())
+
+        val expected = SurveyCancelConfirmationDisplay("Close survey?",
+            "All the changes will be lost",
+            "Back to survey",
+            "close"
+            )
+        assertEquals(expected, viewModel.surveyCancelConfirmationDisplay)
+    }
+
+    @Test
     fun testNoConfirmationWhenNothingChanged() {
         val viewModel = createViewModelForExitConfirmationTest()
 
@@ -265,7 +278,11 @@ class SurveyViewModelTest : TestCase() {
             requiredText = requiredText,
             validationError = validationError,
             showSuccessMessage = true,
-            successMessage = successMessage
+            successMessage = successMessage,
+            closeConfirmTitle = "Close survey?",
+            closeConfirmMessage = "All the changes will be lost",
+            closeConfirmCloseText = "close",
+            closeConfirmBackText = "Back to survey"
         )
         return SurveyViewModel(
             model = model,

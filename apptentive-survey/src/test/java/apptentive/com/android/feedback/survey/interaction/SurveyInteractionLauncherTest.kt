@@ -108,7 +108,11 @@ class SurveyInteractionLauncherTest : TestCase() {
             requiredText = "requiredText",
             validationError = null,
             showSuccessMessage = false,
-            successMessage = "successMessage"
+            successMessage = "successMessage",
+            closeConfirmTitle = "Close survey?",
+            closeConfirmMessage = "All the changes will be lost",
+            closeConfirmCloseText = "close",
+            closeConfirmBackText = "Back to survey"
         )
     }
 }

@@ -18,6 +18,10 @@ internal class SurveyInteractionTypeConverter : InteractionTypeConverter<SurveyI
             validationError = configuration.optString("validation_error"),
             showSuccessMessage = configuration.optBoolean("show_success_message"),
             successMessage = configuration.optString("success_message"),
+            closeConfirmTitle = configuration.optString("close_confirm_title"),
+            closeConfirmMessage = configuration.optString("close_confirm_message"),
+            closeConfirmCloseText = configuration.optString("close_confirm_close_text"),
+            closeConfirmBackText = configuration.optString("close_confirm_back_text"),
             isRequired = configuration.optBoolean("required"),
             questions = configuration.getList("questions").map {
                 @Suppress("UNCHECKED_CAST")

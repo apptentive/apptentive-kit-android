@@ -45,15 +45,16 @@ class SurveyActivity : ApptentiveViewModelActivity<SurveyViewModel>() {
         })
 
         viewModel.showConfirmation.observe(this, Observer {
-            showConfirmationDialog(
-                context = this,
-                title = getString(R.string.confirmation_dialog_title),
-                message = getString(R.string.confirmation_dialog_message),
-                positiveButton = DialogButton(getString(R.string.confirmation_dialog_back_to_survey)),
-                negativeButton = DialogButton(getString(R.string.close)) {
-                    viewModel.exit(showConfirmation = false)
-                }
-            )
+            with(viewModel.surveyCancelConfirmationDisplay) {
+                showConfirmationDialog(
+                    context = this@SurveyActivity,
+                    title = title ?: getString(R.string.confirmation_dialog_title),
+                    message = message ?: getString(R.string.confirmation_dialog_message),
+                    positiveButton = DialogButton(positiveButtonMessage ?: getString(R.string.confirmation_dialog_back_to_survey) ),
+                    negativeButton = DialogButton(negativeButtonMessage ?: getString(R.string.close)) {
+                        viewModel.exit(showConfirmation = false)
+                    })
+            }
         })
 
         supportActionBar?.hide()

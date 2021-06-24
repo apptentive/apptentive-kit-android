@@ -12,7 +12,11 @@ class SurveyModel(
     val requiredText: String?,
     val validationError: String?,
     val showSuccessMessage: Boolean,
-    val successMessage: String?
+    val successMessage: String?,
+    val closeConfirmTitle: String?,
+    val closeConfirmMessage: String?,
+    val closeConfirmCloseText: String?,
+    val closeConfirmBackText: String?
 ) {
     private val questionsSubject = QuestionListSubject(questions) // BehaviourSubject<List<SurveyQuestion<*>>>
     val questionsStream: Observable<List<SurveyQuestion<*>>> = questionsSubject

@@ -59,7 +59,11 @@ class SurveyInteractionLauncher(
         requiredText = interaction.requiredText,
         validationError = interaction.validationError,
         showSuccessMessage = interaction.showSuccessMessage,
-        successMessage = interaction.successMessage
+        successMessage = interaction.successMessage,
+        closeConfirmTitle = interaction.closeConfirmTitle,
+        closeConfirmMessage = interaction.closeConfirmMessage,
+        closeConfirmCloseText = interaction.closeConfirmCloseText,
+        closeConfirmBackText = interaction.closeConfirmBackText
     )
 
     @VisibleForTesting

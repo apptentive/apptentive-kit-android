@@ -111,6 +111,10 @@ class MainActivity : AppCompatActivity() {
                 validationError = "Please fix the errors in your responses",
                 showSuccessMessage = true,
                 successMessage = "Thank you for taking this survey!",
+                closeConfirmTitle = "Are you sure you want to close the survey?",
+                closeConfirmMessage = null,
+                closeConfirmCloseText = null,
+                closeConfirmBackText = null,
                 isRequired = false,
                 questions = listOf(
                     mapOf(

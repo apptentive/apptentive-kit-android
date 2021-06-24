@@ -55,6 +55,14 @@ class SurveyViewModel(
 
     val title = model.name
 
+    val surveyCancelConfirmationDisplay = with(model) {
+        SurveyCancelConfirmationDisplay(closeConfirmTitle,
+            closeConfirmMessage,
+            closeConfirmBackText,
+            closeConfirmCloseText
+        )
+    }
+
     //region Answers
 
     fun updateAnswer(id: String, value: String) {
@@ -217,4 +225,11 @@ class SurveyViewModel(
 data class SurveySubmitMessageState(
     val message: String,
     val isValid: Boolean
+)
+
+data class SurveyCancelConfirmationDisplay(
+    val title: String?,
+    val message: String?,
+    val positiveButtonMessage: String?,
+    val negativeButtonMessage: String?
 )
