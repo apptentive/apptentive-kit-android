@@ -1,8 +1,11 @@
 package apptentive.com.android.feedback.model.payloads
 
+import apptentive.com.android.feedback.model.SensitiveDataKey
 import apptentive.com.android.feedback.payload.MediaType
 import apptentive.com.android.feedback.payload.PayloadType
+import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.network.HttpMethod
+import apptentive.com.android.serialization.json.JsonConverter.toJsonObject
 import apptentive.com.android.util.generateUUID
 
 class EventPayload(
@@ -10,7 +13,7 @@ class EventPayload(
     val label: String,
     val interactionId: String? = null,
     val data: Map<String, Any?>? = null,
-    val customData: Map<String, Any?>? = null,
+    @SensitiveDataKey val customData: Map<String, Any?>? = null,
     val extendedData: List<ExtendedData>? = null
 ) : ConversationPayload(
     nonce = nonce
@@ -62,6 +65,10 @@ class EventPayload(
     }
 
     //endregion
+
+    override fun toString(): String {
+        return SensitiveDataUtils.logWithSanitizeCheck(javaClass, toJsonObject())
+    }
 }
 
 // FIXME: figure it out

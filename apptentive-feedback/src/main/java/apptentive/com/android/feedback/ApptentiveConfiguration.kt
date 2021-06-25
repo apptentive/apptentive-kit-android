@@ -18,6 +18,7 @@ data class ApptentiveConfiguration(
      * Sets logLevel, default is set to Info.
      */
     var logLevel: LogLevel = LogLevel.Info
+    var shouldSanitizeLogMessages: Boolean = true
 
     init {
         require(apptentiveKey.isNotEmpty()) { "apptentiveKey is null or empty" }

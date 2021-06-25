@@ -2,6 +2,7 @@ package apptentive.com.android.feedback.payload
 
 import android.content.Context
 import apptentive.com.android.feedback.PAYLOADS
+import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogLevel
 import apptentive.com.android.util.createStringTable
@@ -53,7 +54,7 @@ class PersistentPayloadQueue(
                     payload.path,
                     payload.method,
                     payload.mediaType,
-                    payload.data.toString(Charsets.UTF_8)
+                    SensitiveDataUtils.hideIfSanitized(payload.data.toString(Charsets.UTF_8))
                 )
             }
             Log.v(PAYLOADS, "$title (${payloads.size}):\n${createStringTable(header + rows)}")

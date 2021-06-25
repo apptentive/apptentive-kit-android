@@ -9,7 +9,8 @@ import java.io.DataOutput;
 import java.io.File;
 import java.io.IOException;
 
-import static apptentive.com.android.util.Log.hideIfSanitized;
+import apptentive.com.android.feedback.utils.SensitiveDataUtils;
+
 import static com.apptentive.android.sdk.util.Util.readNullableUTF;
 import static com.apptentive.android.sdk.util.Util.writeNullableUTF;
 
@@ -148,10 +149,10 @@ public class LegacyConversationMetadataItem implements SerializableObject {
 			       "conversationState=" + conversationState +
 			       ", localConversationId='" + localConversationId + '\'' +
 			       ", conversationId='" + conversationId + '\'' +
-			       ", conversationToken='" + hideIfSanitized(conversationToken) + '\'' +
+			       ", conversationToken='" + SensitiveDataUtils.hideIfSanitized(conversationToken) + '\'' +
 			       ", dataFile=" + dataFile +
 			       ", messagesFile=" + messagesFile +
-			       ", conversationEncryptionKey='" + hideIfSanitized(conversationEncryptionKey) + '\'' +
+			       ", conversationEncryptionKey='" + SensitiveDataUtils.hideIfSanitized(conversationEncryptionKey) + '\'' +
 			       ", userId='" + userId + '\'' +
 			       '}';
 	}

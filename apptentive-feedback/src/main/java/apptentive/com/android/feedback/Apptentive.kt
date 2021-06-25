@@ -15,6 +15,7 @@ import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.format
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
+import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.network.DefaultHttpClient
 import apptentive.com.android.network.DefaultHttpNetwork
 import apptentive.com.android.network.DefaultHttpRequestRetryPolicy
@@ -43,13 +44,18 @@ object Apptentive {
     //region Initialization
 
     @Suppress("MemberVisibilityCanBePrivate")
-    val registered @Synchronized get() = client != ApptentiveClient.NULL
+    val registered
+        @Synchronized get() = client != ApptentiveClient.NULL
 
     @JvmStatic
     @JvmName("register")
     @JvmOverloads
     @Synchronized
-    fun _register(application: Application, configuration: ApptentiveConfiguration, callback: RegisterCallback? = null) {
+    fun _register(
+        application: Application,
+        configuration: ApptentiveConfiguration,
+        callback: RegisterCallback? = null
+    ) {
         // the above statement would not compile without force unwrapping on Kotlin 1.4.x
         @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
         val callbackFunc: ((RegisterResult) -> Unit)? =
@@ -58,7 +64,11 @@ object Apptentive {
     }
 
     @Synchronized
-    fun register(application: Application, configuration: ApptentiveConfiguration, callback: ((result: RegisterResult) -> Unit)? = null) {
+    fun register(
+        application: Application,
+        configuration: ApptentiveConfiguration,
+        callback: ((result: RegisterResult) -> Unit)? = null
+    ) {
         if (registered) {
             Log.w(SYSTEM, "Apptentive SDK already registered")
             return
@@ -68,13 +78,22 @@ object Apptentive {
         DependencyProvider.register(AndroidLoggerProvider("Apptentive"))
         DependencyProvider.register<ApplicationInfo>(AndroidApplicationInfo(application.applicationContext))
         DependencyProvider.register(AndroidExecutorFactoryProvider())
-        DependencyProvider.register(AndroidFileSystemProvider(application.applicationContext, "apptentive.com.android.feedback"))
+        DependencyProvider.register(
+            AndroidFileSystemProvider(
+                application.applicationContext,
+                "apptentive.com.android.feedback"
+            )
+        )
 
         // set log level
         Log.logLevel = configuration.logLevel
+        SensitiveDataUtils.shouldSanitizeLogMessages = configuration.shouldSanitizeLogMessages
 
         Log.i(SYSTEM, "Registering Apptentive Android SDK ${Constants.SDK_VERSION}")
-        Log.v(SYSTEM, "ApptentiveKey: ${configuration.apptentiveKey} ApptentiveSignature: ${configuration.apptentiveSignature}")
+        Log.v(
+            SYSTEM,
+            "ApptentiveKey: ${configuration.apptentiveKey} ApptentiveSignature: ${configuration.apptentiveSignature}"
+        )
 
         stateExecutor = ExecutorQueue.createSerialQueue("SDK Queue")
         mainExecutor = ExecutorQueue.mainQueue
@@ -92,7 +111,7 @@ object Apptentive {
         client = ApptentiveDefaultClient(
             apptentiveKey = configuration.apptentiveKey,
             apptentiveSignature = configuration.apptentiveSignature,
-            httpClient = createHttpClient(application.applicationContext),
+            httpClient = createHttpClient(application.applicationContext, configuration),
             executors = Executors(
                 state = stateExecutor,
                 main = mainExecutor
@@ -104,23 +123,33 @@ object Apptentive {
         }
     }
 
-    private fun createHttpClient(context: Context): HttpClient {
+    private fun createHttpClient(
+        context: Context,
+        configuration: ApptentiveConfiguration
+    ): HttpClient {
         val loggingInterceptor = object : HttpLoggingInterceptor {
             override fun intercept(request: HttpRequest<*>) {
                 Log.d(network, "--> ${request.method} ${request.url}")
-                Log.v(network, "Headers:\n${request.headers}")
-                Log.v(network, "Request Body: ${request.requestBody?.asString()}")
+                if (!configuration.shouldSanitizeLogMessages) {
+                    Log.v(network, "Headers:\n${request.headers}")
+                    Log.v(network, "Request Body: ${request.requestBody?.asString()}")
+                }
             }
 
             override fun intercept(response: HttpNetworkResponse) {
                 val statusCode = response.statusCode
                 val statusMessage = response.statusMessage
                 Log.d(network, "<-- $statusCode $statusMessage (${response.duration.format()} sec)")
-                Log.v(network, "Response Body: ${response.asString()}")
+                if (!configuration.shouldSanitizeLogMessages) {
+                    Log.v(network, "Response Body: ${response.asString()}")
+                }
             }
 
             override fun retry(request: HttpRequest<*>, delay: TimeInterval) {
-                Log.d(network, "Retrying request ${request.method} ${request.url} in ${delay.format()} sec...")
+                Log.d(
+                    network,
+                    "Retrying request ${request.method} ${request.url} in ${delay.format()} sec..."
+                )
             }
         }
         return DefaultHttpClient(
@@ -138,7 +167,8 @@ object Apptentive {
     fun engage(context: Context, eventName: String, callback: EngagementCallback? = null) {
         // the above statement would not compile without force unwrapping on Kotlin 1.4.x
         @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
-        val callbackFunc: ((EngagementResult) -> Unit)? = if (callback != null) callback!!::onComplete else null
+        val callbackFunc: ((EngagementResult) -> Unit)? =
+            if (callback != null) callback!!::onComplete else null
         engage(context, eventName, callbackFunc)
     }
 

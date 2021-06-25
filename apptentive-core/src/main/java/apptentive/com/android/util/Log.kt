@@ -62,8 +62,6 @@ object Log {
     @JvmStatic fun canLog(level: LogLevel): Boolean {
         return level.ordinal >= logLevel.ordinal
     }
-
-    @JvmStatic fun hideIfSanitized(obj: Any?) = obj.toString()
 }
 
 data class LogTag(val name: String) {

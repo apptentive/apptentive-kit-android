@@ -18,6 +18,7 @@ import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.model.VersionHistory
 import apptentive.com.android.feedback.model.VersionHistoryItem
+import apptentive.com.android.feedback.model.payloads.EventPayload
 
 const val SDK_VERSION = "6.0.0"
 const val API_VERSION = 9
@@ -208,6 +209,18 @@ val mockEngagementManifest = EngagementManifest(
         )
     ),
     expiry = 1000.0
+)
+
+var mockEventPayload = EventPayload(
+    nonce = "nonce",
+    label = "label",
+    interactionId = "interactionId",
+    data = mapOf<String, Any>(
+        "key" to "value"
+    ),
+    customData = mapOf<String, Any>(
+        "custom_key" to "custom_value"
+    )
 )
 
 fun createMockConversation(

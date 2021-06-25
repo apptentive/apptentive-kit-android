@@ -23,11 +23,11 @@ import com.apptentive.android.sdk.util.Util;
 import java.io.File;
 import java.util.List;
 
+import apptentive.com.android.feedback.utils.SensitiveDataUtils;
 import apptentive.com.android.util.Log;
 import apptentive.com.android.util.LogLevel;
 
 import static apptentive.com.android.feedback.LogTags.MIGRATION;
-import static apptentive.com.android.util.Log.hideIfSanitized;
 import static com.apptentive.android.sdk.conversation.ConversationState.ANONYMOUS;
 import static com.apptentive.android.sdk.conversation.ConversationState.LOGGED_IN;
 import static com.apptentive.android.sdk.util.Constants.CONVERSATION_METADATA_FILE;
@@ -158,7 +158,7 @@ public class DefaultLegacyConversationManager implements LegacyConversationManag
 		conversation.setConversationToken(item.getConversationToken()); // TODO: this would be overwritten by the next call
 
 		conversation.loadConversationData();
-		
+
 		// check inconsistency
 		conversation.checkInternalConsistency();
 
@@ -221,14 +221,14 @@ public class DefaultLegacyConversationManager implements LegacyConversationManag
 		int index = 1;
 		for (LegacyConversationMetadataItem item : items) {
 			rows[index++] = new Object[]{
-				item.getConversationState(),
-				item.getLocalConversationId(),
-				item.getConversationId(),
-				item.getUserId(),
-				hideIfSanitized(item.getDataFile()),
-				hideIfSanitized(item.getMessagesFile()),
-				hideIfSanitized(item.getConversationToken()),
-				hideIfSanitized(item.getConversationEncryptionKey())
+				    item.getConversationState(),
+				    item.getLocalConversationId(),
+				    item.getConversationId(),
+				    item.getUserId(),
+					SensitiveDataUtils.hideIfSanitized(item.getDataFile()),
+					SensitiveDataUtils.hideIfSanitized(item.getMessagesFile()),
+					SensitiveDataUtils.hideIfSanitized(item.getConversationToken()),
+					SensitiveDataUtils.hideIfSanitized(item.getConversationEncryptionKey())
 			};
 		}
 

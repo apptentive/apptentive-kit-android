@@ -6,7 +6,7 @@ import org.junit.Rule
 
 open class TestCase {
     @get:Rule
-    val dependencyRule = DependencyProviderRule()
+    open val dependencyRule = DependencyProviderRule()
 
     private val results = mutableListOf<Any>()
 

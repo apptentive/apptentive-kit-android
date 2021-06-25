@@ -9,6 +9,7 @@ abstract class ConversationPayload(
     val clientCreatedAt: TimeInterval = getTimeSeconds(),
     val clientCreatedAtUtcOffset: Int = getUtcOffset()
 ) : Payload(nonce = nonce) {
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is ConversationPayload) return false

@@ -1,5 +1,8 @@
 package apptentive.com.android.feedback.model
 
+import apptentive.com.android.feedback.utils.SensitiveDataUtils
+import apptentive.com.android.serialization.json.JsonConverter.toJsonObject
+
 data class Device(
     val osName: String,
     val osVersion: String,
@@ -24,7 +27,11 @@ data class Device(
     val localeLanguageCode: String,
     val localeRaw: String,
     val utcOffset: Int,
-    val advertiserId: String? = null,
-    val customData: CustomData = CustomData(),
+    @SensitiveDataKey val advertiserId: String? = null,
+    @SensitiveDataKey val customData: CustomData = CustomData(),
     val integrationConfig: IntegrationConfig = IntegrationConfig()
-)
+) {
+    override fun toString(): String {
+        return SensitiveDataUtils.logWithSanitizeCheck(javaClass, toJsonObject())
+    }
+}

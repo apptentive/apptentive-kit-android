@@ -2,7 +2,9 @@ package com.apptentive.android.sdk.conversation
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
+import apptentive.com.android.DependencyProviderRule
 import apptentive.com.android.TestCase
+import apptentive.com.android.feedback.Constants
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
 import apptentive.com.android.feedback.model.AppRelease
@@ -17,17 +19,26 @@ import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.model.VersionHistory
 import apptentive.com.android.feedback.model.VersionHistoryItem
+import apptentive.com.android.feedback.utils.SensitiveDataUtils
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogLevel
 import com.apptentive.android.sdk.encryption.EncryptionFactory
-import org.junit.Assert
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import java.io.File
 
 class LegacyConversationManagerTest : TestCase() {
+    @get:Rule
+    override val dependencyRule = DependencyProviderRule(true)
     private val context = ApplicationProvider.getApplicationContext<Context>()
 
     @Before
     fun before() {
+        Log.logLevel = LogLevel.Verbose
         // clear up device storage
         MigrationTestUtils.clearDeviceStorage(context)
     }
@@ -36,12 +47,31 @@ class LegacyConversationManagerTest : TestCase() {
     fun testMigrationFrom400() = testMigration("4.0.0")
 
     @Test
+    fun testSensitiveDataToStringRedactedFrom400Migration() = testSensitiveDataRedactedToString("4.0.0")
+
+    @Test
+    fun testSensitiveDataValueNotRedactedFrom400Migration() = testActualValuesNotRedacted("4.0.0")
+
+    @Test
     fun testMigrationFrom562() = testMigration("5.6.2")
+
+    @Test
+    fun testSensitiveDataToStringRedactedFrom562Migration() = testSensitiveDataRedactedToString("5.6.2")
+
+    @Test
+    fun testSensitiveDataValueNotRedactedFrom562Migration() = testActualValuesNotRedacted("5.6.2")
 
     @Test
     fun testMigrationFrom562LoggedInConversation() = testMigration("5.6.2-login")
 
+    @Test
+    fun testSensitiveDataToStringRedactedFrom562LoggedInMigration() = testSensitiveDataRedactedToString("5.6.2-login")
+
+    @Test
+    fun testSensitiveDataValueNotRedactedFrom562LoggedInMigration() = testActualValuesNotRedacted("5.6.2-login")
+
     private fun testMigration(path: String) {
+        SensitiveDataUtils.shouldSanitizeLogMessages = false
         pushFiles(path)
 
         val encryption = EncryptionFactory.NULL // it's impossible to automatically test encrypted storage since KeyStore does not allow exporting keys
@@ -52,7 +82,67 @@ class LegacyConversationManagerTest : TestCase() {
         val expected = createExpectedConversation(path)
         val actual = legacyData.toConversation()
 
-        Assert.assertEquals(expected, actual)
+        assertEquals(expected, actual)
+    }
+
+    private fun testSensitiveDataRedactedToString(path: String) {
+        SensitiveDataUtils.shouldSanitizeLogMessages = true
+
+        pushFiles(path)
+
+        val encryption = EncryptionFactory.NULL // it's impossible to automatically test encrypted storage since KeyStore does not allow exporting keys
+        val manager = DefaultLegacyConversationManager(context, encryption)
+        val legacyData = manager.loadLegacyConversationData()
+            ?: throw AssertionError("Unable to load legacy conversation")
+
+        val actual = legacyData.toConversation()
+
+        val redactedItems = mutableListOf<Pair<String, String>>()
+
+        // Device redacted items
+        if (actual.device.advertiserId != null) redactedItems.add(Pair(actual.device.toString(), "advertiser_id"))
+        redactedItems.add(Pair(actual.device.toString(), "custom_data"))
+
+        // Person redacted items
+        if (actual.person.mParticleId != null) redactedItems.add(Pair(actual.person.toString(), "m_particle_id"))
+        redactedItems.add(Pair(actual.person.toString(), "custom_data"))
+
+        // SDK redacted items
+        if (actual.sdk.authorName != null) redactedItems.add(Pair(actual.sdk.toString(), "author_name"))
+        if (actual.sdk.authorEmail != null) redactedItems.add(Pair(actual.sdk.toString(), "author_email"))
+
+        redactedItems.forEach {
+            assertTrue(it.first.contains("\"${it.second}\":\"${Constants.REDACTED_DATA}\""))
+        }
+    }
+
+    private fun testActualValuesNotRedacted(path: String) {
+        SensitiveDataUtils.shouldSanitizeLogMessages = true
+
+        pushFiles(path)
+
+        val encryption = EncryptionFactory.NULL // it's impossible to automatically test encrypted storage since KeyStore does not allow exporting keys
+        val manager = DefaultLegacyConversationManager(context, encryption)
+        val legacyData = manager.loadLegacyConversationData()
+            ?: throw AssertionError("Unable to load legacy conversation")
+
+        val expected = createExpectedConversation(path)
+        val actual = legacyData.toConversation()
+
+        val expectedActualItems = listOf(
+            Pair(expected.device.advertiserId, actual.device.advertiserId),
+            Pair(expected.device.customData, actual.device.customData),
+            Pair(expected.person.mParticleId, actual.person.mParticleId),
+            Pair(expected.person.customData, actual.person.customData),
+            Pair(expected.sdk.authorName, actual.sdk.authorName),
+            Pair(expected.sdk.authorEmail, actual.sdk.authorEmail)
+        )
+
+        expectedActualItems.forEach {
+            assertNotEquals(Constants.REDACTED_DATA, it.first) // Sanity check
+            assertNotEquals(Constants.REDACTED_DATA, it.second) // Sanity check
+            assertEquals(it.first, it.second)
+        }
     }
 
     private fun createExpectedConversation(path: String): Conversation {

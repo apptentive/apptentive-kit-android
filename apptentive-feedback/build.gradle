@@ -48,6 +48,7 @@ dependencies {
     testImplementation "junit:junit:$junit_version"
     testImplementation "com.google.truth:truth:$truth_version"
     testImplementation "io.mockk:mockk:$mockk_version"
+    testImplementation 'org.json:json:20180813'
 
     androidTestImplementation project(':apptentive-core-test')
     androidTestImplementation project(':apptentive-feedback-test')

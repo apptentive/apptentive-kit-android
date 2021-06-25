@@ -3,6 +3,7 @@ package apptentive.com.android.serialization.json
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import org.json.JSONObject
 
 /**
  * Utility class for JSON serialization
@@ -63,4 +64,9 @@ object JsonConverter {
             throw JsonException(e)
         }
     }
+
+    /**
+     * @return a [JSONObject] representation of passed in object (usually a data class)
+     */
+    fun Any.toJsonObject() = JSONObject(toJson(this))
 }

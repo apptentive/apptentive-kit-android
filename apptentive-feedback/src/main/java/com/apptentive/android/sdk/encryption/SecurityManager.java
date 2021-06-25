@@ -14,10 +14,11 @@ import com.apptentive.android.sdk.util.StringUtils;
 
 import java.util.UUID;
 
+import apptentive.com.android.feedback.utils.SensitiveDataUtils;
 import apptentive.com.android.util.Log;
 
 import static apptentive.com.android.feedback.LogTags.SECURITY;
-import static apptentive.com.android.util.Log.hideIfSanitized;
+import static apptentive.com.android.feedback.utils.SensitiveDataUtils.hideIfSanitized;
 
 /**
  * Class responsible for managing the master encryption key (generation, storage and retrieval).
@@ -154,7 +155,7 @@ public final class SecurityManager {
 
 		@Override
 		public String toString() {
-			return StringUtils.format("KeyInfo: alias=%s versionCode=%d", hideIfSanitized(alias), versionCode);
+			return StringUtils.format("KeyInfo: alias=%s versionCode=%d", SensitiveDataUtils.hideIfSanitized(alias), versionCode);
 		}
 	}
 
