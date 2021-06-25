@@ -4,6 +4,7 @@ import android.graphics.Rect
 import android.os.Bundle
 import android.view.MotionEvent
 import android.widget.EditText
+import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import apptentive.com.android.feedback.survey.view.SurveyQuestionViewHolderFactory
@@ -60,7 +61,8 @@ class SurveyActivity : ApptentiveViewModelActivity<SurveyViewModel>() {
         supportActionBar?.hide()
 
         val topAppBar = findViewById<MaterialToolbar>(R.id.topAppBar)
-        topAppBar.title = viewModel.title
+        val title = findViewById<TextView>(R.id.apptentive_survey_title)
+        title.text = viewModel.title
         topAppBar.setNavigationOnClickListener {
             viewModel.exit(showConfirmation = true)
         }

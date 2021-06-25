@@ -18,4 +18,11 @@
     </style>
 
     <style name="Widget.Apptentive.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary" />
+
+    <style name="Theme.Apptentive.ToolbarTitle">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+        <item name="android:textAppearance">?attr/textAppearanceHeadline6</item>
+    </style>
+
 </resources>

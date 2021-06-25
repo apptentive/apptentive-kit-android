@@ -17,7 +17,15 @@
             style="@style/Widget.Apptentive.Toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:navigationIcon="@drawable/ic_baseline_close_24" />
+            app:navigationIcon="@drawable/ic_baseline_close_24">
+
+            <TextView
+                android:id="@+id/apptentive_survey_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Theme.Apptentive.ToolbarTitle" />
+
+        </com.google.android.material.appbar.MaterialToolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 
