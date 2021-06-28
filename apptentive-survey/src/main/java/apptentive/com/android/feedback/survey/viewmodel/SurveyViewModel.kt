@@ -18,11 +18,18 @@ import apptentive.com.android.ui.ApptentiveViewModel
 import java.lang.Thread.sleep
 
 typealias SurveySubmitCallback = (Map<String, SurveyQuestionAnswer>) -> Unit
+typealias SurveyCancelCallback = () -> Unit
+typealias SurveyCancelPartialCallback = () -> Unit
+typealias SurveyContinuePartialCallback = () -> Unit
+
 
 class SurveyViewModel(
     private val model: SurveyModel,
     private val executors: Executors,
     private val onSubmit: SurveySubmitCallback,
+    private val onCancel: SurveyCancelCallback,
+    private val onClose: SurveyCancelPartialCallback,
+    private val onBackToSurvey: SurveyContinuePartialCallback,
     questionListItemFactory: SurveyQuestionListItemFactory = DefaultSurveyQuestionListItemFactory()
 ) : ApptentiveViewModel() {
     /** LiveData which transforms a list of {SurveyQuestion} into a list of {SurveyQuestionListItem} */
@@ -146,12 +153,28 @@ class SurveyViewModel(
         }
     }
 
+    fun onBackToSurveyFromConfirmationDialog() {
+        onBackToSurvey.invoke()
+    }
+
     @MainThread
     fun exit(showConfirmation: Boolean) {
-        if (showConfirmation && (submitAttempted or anyQuestionWasAnswered)) {
-            showConfirmationEvent.postValue(true)
+        if (showConfirmation) {
+            //When the consumer uses the X button or the back button,
+            // try to show the confirmation dialog if user interacted with the survey
+            if (submitAttempted || anyQuestionWasAnswered) {
+                //user interacted
+                showConfirmationEvent.postValue(true)
+            } else {
+                // we don't need to show any confirmation as the customer
+                // didn't interact
+                exitEvent.postValue(true)
+                onCancel.invoke()
+            }
         } else {
+            // we are already in the confirmation dialog, so no need to show confirmation again
             exitEvent.postValue(true)
+            onClose.invoke()
         }
     }
 

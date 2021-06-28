@@ -3,6 +3,7 @@ package apptentive.com.android.feedback.survey.interaction
 import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.Event
+import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.feedback.platform.AndroidEngagementContext
 import apptentive.com.android.feedback.platform.AndroidViewInteractionLauncher
 import apptentive.com.android.feedback.survey.R
@@ -80,13 +81,35 @@ class SurveyInteractionLauncher(
 
             // engage 'submit' event
             context.engage(
-                event = Event.internal(EVENT_SUBMIT, interaction = "Survey"),
+                event = Event.internal(EVENT_SUBMIT, interaction = InteractionType.Survey),
+                interactionId = interactionId
+            )
+        },
+        onCancel = {
+            context.engage(
+                event = Event.internal(EVENT_CANCEL, interaction = InteractionType.Survey),
+                interactionId = interactionId
+            )
+        },
+        onClose = {
+            context.engage(
+                event = Event.internal(EVENT_CANCEL_PARTIAL, interaction = InteractionType.Survey),
+                interactionId = interactionId
+            )
+        },
+        onBackToSurvey = {
+            context.engage(
+                event = Event.internal(EVENT_CONTINUE_PARTIAL, interaction = InteractionType.Survey),
                 interactionId = interactionId
             )
         }
+
     )
 
     companion object {
         private const val EVENT_SUBMIT = "submit"
+        private const val EVENT_CANCEL = "cancel"
+        private const val EVENT_CANCEL_PARTIAL = "cancel_partial"
+        private const val EVENT_CONTINUE_PARTIAL = "continue_partial"
     }
 }

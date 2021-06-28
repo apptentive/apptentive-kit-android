@@ -82,6 +82,12 @@ class SurveyInteractionLauncherTest : TestCase() {
             EngageArgs(
                 event = Event.internal(name = "submit", interaction = "Survey"),
                 interactionId = "interaction_id"
+            ),
+
+            // "cancel partial" event
+            EngageArgs(
+                event = Event.internal(name = "cancel_partial", interaction = "Survey"),
+                interactionId = "interaction_id"
             )
         )
     }

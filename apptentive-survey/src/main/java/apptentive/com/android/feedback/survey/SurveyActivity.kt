@@ -51,7 +51,9 @@ class SurveyActivity : ApptentiveViewModelActivity<SurveyViewModel>() {
                     context = this@SurveyActivity,
                     title = title ?: getString(R.string.confirmation_dialog_title),
                     message = message ?: getString(R.string.confirmation_dialog_message),
-                    positiveButton = DialogButton(positiveButtonMessage ?: getString(R.string.confirmation_dialog_back_to_survey) ),
+                    positiveButton = DialogButton(positiveButtonMessage ?: getString(R.string.confirmation_dialog_back_to_survey) ) {
+                        viewModel.onBackToSurveyFromConfirmationDialog()
+                    },
                     negativeButton = DialogButton(negativeButtonMessage ?: getString(R.string.close)) {
                         viewModel.exit(showConfirmation = false)
                     })
