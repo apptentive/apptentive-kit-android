@@ -14,7 +14,7 @@
     </style>
 
     <style name="Theme.Apptentive.Dialog.Alert" parent="Theme.MaterialComponents.DayNight.Dialog.Alert">
-        <item name="android:background">@color/apptentive_color_background</item>
+        <item name="android:background">?android:attr/colorBackground</item>
     </style>
 
     <style name="Widget.Apptentive.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary" />
