@@ -2,10 +2,11 @@ package apptentive.com.android.feedback.survey.viewmodel
 
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import apptentive.com.android.feedback.survey.R
 import apptentive.com.android.ui.ListViewAdapter
 import apptentive.com.android.ui.ListViewItem
-import apptentive.com.android.ui.getThemeColor
 
 class SurveyFooterListItem(
     val buttonTitle: String?,
@@ -63,7 +64,7 @@ class SurveyFooterListItem(
         private val submitCallback: () -> Unit
     ) : ListViewAdapter.ViewHolder<SurveyFooterListItem>(itemView) {
         private val submitButton: TextView = itemView.findViewById(R.id.submit_button)
-        private val messageView: TextView = itemView.findViewById(R.id.success_error_message)
+        private val errorMessageView: TextView = itemView.findViewById(R.id.submit_error_message)
 
         init {
             submitButton.setOnClickListener {
@@ -86,13 +87,15 @@ class SurveyFooterListItem(
 
         private fun updateMessageState(messageState: SurveySubmitMessageState?) {
             if (messageState != null) {
-                messageView.text = messageState.message
-                val colorId =
-                    if (messageState.isValid) R.attr.colorOnBackground else R.attr.colorError
-                messageView.setTextColor(messageView.context.getThemeColor(colorId))
-                messageView.visibility = View.VISIBLE
-            } else {
-                messageView.visibility = View.INVISIBLE
+                if (messageState.isValid) {
+                    Toast.makeText(errorMessageView.context, messageState.message, LENGTH_SHORT).show()
+                } else {
+                    errorMessageView.text = messageState.message
+                    errorMessageView.visibility = View.VISIBLE
+                }
+            }
+            else {
+                errorMessageView.visibility = View.INVISIBLE
             }
         }
     }

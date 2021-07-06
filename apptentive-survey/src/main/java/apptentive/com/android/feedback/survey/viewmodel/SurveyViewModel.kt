@@ -129,7 +129,6 @@ class SurveyViewModel(
                             true
                         )
                     )
-                    sleep(1000)
                 }
 
                 // tell the activity to finish

@@ -10,16 +10,17 @@
         style="@style/Apptentive.Survey.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/margin_16dp"
-        android:layout_marginTop="@dimen/margin_16dp"/>
+        android:layout_marginTop="@dimen/margin_16dp"
+        android:layout_marginBottom="@dimen/margin_16dp" />
 
     <TextView
-        android:id="@+id/success_error_message"
+        android:id="@+id/submit_error_message"
         style="?attr/textAppearanceBody2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/margin_16dp"
         android:gravity="center"
-        android:maxLines="1" />
+        android:maxLines="1"
+        android:textColor="?attr/colorError" />
 
 </LinearLayout>

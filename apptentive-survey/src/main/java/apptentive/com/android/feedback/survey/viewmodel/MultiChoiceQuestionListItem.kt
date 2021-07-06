@@ -119,13 +119,8 @@ class MultiChoiceQuestionListItem(
                 compoundButton.text = choice.title
                 compoundButton.isChecked = choice.isChecked
 
-                compoundButton.setOnCheckedChangeListener { button, isChecked ->
-                    // only handle user-generated events
-                    // see: https://stackoverflow.com/a/41574200
-                    if (button.isPressed) {
-                        button.requestFocus()
-                        onSelectionChanged.invoke(questionId, choice.id, isChecked, null) // text wasn't changed
-                    }
+                compoundButton.setOnCheckedChangeListener { _, isChecked ->
+                    onSelectionChanged.invoke(questionId, choice.id, isChecked, null) // text wasn't changed
                 }
                 // button end
 
