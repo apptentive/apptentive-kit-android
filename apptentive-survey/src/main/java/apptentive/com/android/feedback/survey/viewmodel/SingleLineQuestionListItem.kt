@@ -7,11 +7,12 @@ import android.view.inputmethod.EditorInfo.IME_FLAG_NO_ENTER_ACTION
 import android.view.inputmethod.EditorInfo.TYPE_CLASS_TEXT
 import android.view.inputmethod.EditorInfo.TYPE_TEXT_FLAG_CAP_SENTENCES
 import android.view.inputmethod.EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE
-import android.widget.EditText
 import androidx.core.widget.doAfterTextChanged
 import apptentive.com.android.feedback.survey.R
+import apptentive.com.android.feedback.survey.utils.setTextBoxBackgroundFocusFix
 import apptentive.com.android.feedback.survey.view.SurveyQuestionContainerView
 import apptentive.com.android.ui.setInvalid
+import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
 /**
@@ -75,16 +76,10 @@ class SingleLineQuestionListItem(
     //region View Holder
     class ViewHolder(
         itemView: SurveyQuestionContainerView,
-        onTextChanged: (id: String, text: String) -> Unit
+        val onTextChanged: (id: String, text: String) -> Unit
     ) : SurveyQuestionListItem.ViewHolder<SingleLineQuestionListItem>(itemView) {
         private val answerTextInputLayout: TextInputLayout = itemView.findViewById(R.id.answer_text_input_layout)
-        private val answerEditText: EditText = itemView.findViewById(R.id.answer_text)
-
-        init {
-            answerEditText.doAfterTextChanged {
-                onTextChanged(questionId, it.toString())
-            }
-        }
+        private val answerEditText: TextInputEditText = itemView.findViewById(R.id.answer_text)
 
         override fun bindView(
             item: SingleLineQuestionListItem,
@@ -92,12 +87,7 @@ class SingleLineQuestionListItem(
         ) {
             super.bindView(item, position)
 
-            // hint
-            answerTextInputLayout.placeholderText = item.freeFormHint
-            answerTextInputLayout.contentDescription = item.freeFormHint
-
-            // accessibility
-            answerTextInputLayout.labelFor = R.id.answer_text
+            answerTextInputLayout.hint = item.freeFormHint
 
             // look-and-feel
             if (item.multiline) {
@@ -116,8 +106,14 @@ class SingleLineQuestionListItem(
                 answerEditText.maxLines = 5
             }
 
-            // text
             answerEditText.setText(item.text)
+            answerEditText.setTextBoxBackgroundFocusFix()
+            answerEditText.doAfterTextChanged {
+                when {
+                    answerEditText.hasFocus() && it.isNullOrEmpty() -> answerEditText.setText(" ") // Second part to the fix
+                    !it.isNullOrBlank() -> onTextChanged(questionId, it.toString())
+                }
+            }
         }
 
         override fun updateValidationError(errorMessage: String?) {

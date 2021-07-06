@@ -7,9 +7,11 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import apptentive.com.android.feedback.survey.R
 import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion
+import apptentive.com.android.feedback.survey.utils.setTextBoxBackgroundFocusFix
 import apptentive.com.android.feedback.survey.view.SurveyQuestionContainerView
 import apptentive.com.android.ui.ListViewItem
 import apptentive.com.android.ui.setInvalid
+import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
 /**
@@ -112,21 +114,10 @@ class MultiChoiceQuestionListItem(
 
                 val choiceView = layoutInflater.inflate(choiceLayoutRes, choiceContainer, false)
 
-                // set title
+                // button (checkbox or radio)
                 val compoundButton = choiceView.findViewById<CompoundButton>(R.id.checkbox)
                 compoundButton.text = choice.title
                 compoundButton.isChecked = choice.isChecked
-
-                // show/hide text input layout
-                val textInputLayout = choiceView.findViewById<TextInputLayout>(R.id.other_text_input_layout)
-                textInputLayout.isVisible = choice.isTextInputVisible
-
-                // update hint
-                textInputLayout.editText?.setText(choice.text)
-                textInputLayout.placeholderText = choice.hint
-                textInputLayout.editText?.doAfterTextChanged {
-                    onSelectionChanged.invoke(questionId, choice.id, true, it.toString())
-                }
 
                 compoundButton.setOnCheckedChangeListener { button, isChecked ->
                     // only handle user-generated events
@@ -136,6 +127,23 @@ class MultiChoiceQuestionListItem(
                         onSelectionChanged.invoke(questionId, choice.id, isChecked, null) // text wasn't changed
                     }
                 }
+                // button end
+
+                // text fields
+                val textInputLayout: TextInputLayout = choiceView.findViewById(R.id.other_text_input_layout)
+                val textInputEditText: TextInputEditText = choiceView.findViewById(R.id.other_edit_text)
+
+                textInputLayout.isVisible = choice.isTextInputVisible
+                textInputLayout.hint = choice.hint
+
+                textInputEditText.setTextBoxBackgroundFocusFix()
+                textInputEditText.doAfterTextChanged {
+                    when {
+                        textInputEditText.hasFocus() && it.isNullOrEmpty() -> textInputEditText.setText(" ")  // Second part to the fix
+                        !it.isNullOrBlank() -> onSelectionChanged.invoke(questionId, choice.id, true, it.toString())
+                    }
+                }
+                // text fields end
 
                 choiceContainer.addView(choiceView)
 

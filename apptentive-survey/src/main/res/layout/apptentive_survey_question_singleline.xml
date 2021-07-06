@@ -2,14 +2,12 @@
 <com.google.android.material.textfield.TextInputLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/answer_text_input_layout"
+    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:animateLayoutChanges="true"
     app:errorEnabled="true"
-    app:hintAnimationEnabled="false"
-    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-    app:errorIconDrawable="@null"
-    app:hintEnabled="false">
+    app:errorIconDrawable="@null">
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/answer_text"
