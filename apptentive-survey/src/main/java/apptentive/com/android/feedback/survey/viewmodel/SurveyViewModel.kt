@@ -146,8 +146,12 @@ class SurveyViewModel(
                     )
                 }
 
+                // get index of first invalid question (description puts header item before questions)
+                var firstInvalidQuestionIndex = model.getFirstInvalidRequiredQuestionIndex()
+                if (model.description != null) firstInvalidQuestionIndex++
+
                 // trigger scrolling to the first invalid question
-                firstInvalidQuestionIndexEvent.postValue(model.getFirstInvalidRequiredQuestionIndex())
+                firstInvalidQuestionIndexEvent.postValue(firstInvalidQuestionIndex)
             }
         }
     }

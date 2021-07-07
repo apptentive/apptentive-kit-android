@@ -3,19 +3,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:accessibilityHeading="true"
+    android:orientation="vertical"
+    tools:targetApi="p">
 
     <TextView
         android:id="@+id/survey_introduction"
         style="?attr/textAppearanceSubtitle1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_16dp"
-        android:layout_marginBottom="@dimen/margin_16dp"
         android:gravity="center"
+        android:paddingTop="@dimen/margin_16dp"
+        android:paddingBottom="@dimen/margin_12dp"
         android:textColor="?attr/colorOnBackground"
         android:textStyle="bold"
-        tools:text="Tell us about your experience!" />
-
+        tools:text="Tell us about your experience!"
+        tools:textColor="@null" />
 
 </LinearLayout>

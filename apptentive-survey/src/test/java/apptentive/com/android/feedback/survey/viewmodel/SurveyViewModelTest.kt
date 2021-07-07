@@ -75,7 +75,7 @@ class SurveyViewModelTest : TestCase() {
                 )
             ),
 
-            "Invalid question: 0" // first invalid question index
+            "Invalid question: 1" // first invalid question index (after header)
         )
 
         // update answer

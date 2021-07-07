@@ -105,10 +105,10 @@ class MainActivity : AppCompatActivity() {
             val interaction = SurveyInteraction(
                 id = "id",
                 description = "Tell us about your experience!",
-                name = "Please provide your feedback",
-                submitText = "Submit survey",
+                name = "All question types report",
+                submitText = "Submit",
                 requiredText = "Required",
-                validationError = "Please fix the errors in your responses",
+                validationError = "There are issues with your response.",
                 showSuccessMessage = true,
                 successMessage = "Thank you for taking this survey!",
                 closeConfirmTitle = "Are you sure you want to close the survey?",
@@ -118,29 +118,38 @@ class MainActivity : AppCompatActivity() {
                 isRequired = false,
                 questions = listOf(
                     mapOf(
-                        "id" to "question_1",
+                        "id" to "singleline_1",
                         "type" to "singleline",
-                        "value" to "Single line question 1",
-                        "error_message" to "Error message 1",
-                        "required" to true,
-                        "freeform_hint" to "Freeform hint 1",
+                        "value" to "Single line optional",
+                        "error_message" to "Error - There was a problem with your text answer.",
+                        "required" to false,
+                        "freeform_hint" to "Single line optional hint",
                         "multiline" to false
                     ),
                     mapOf(
-                        "id" to "question_2",
+                        "id" to "singleline_2",
                         "type" to "singleline",
-                        "value" to "Single line question 2",
-                        "error_message" to "Error message 2",
+                        "value" to "Single line not optional",
+                        "error_message" to "Error - There was a problem with your text answer.",
+                        "required" to true,
+                        "freeform_hint" to "Single line required hint",
+                        "multiline" to false
+                    ),
+                    mapOf(
+                        "id" to "singleline_3",
+                        "type" to "singleline",
+                        "value" to "Multi line optional",
+                        "error_message" to "Error - There was a problem with your text answer.",
                         "required" to false,
-                        "freeform_hint" to "Freeform hint 2",
+                        "freeform_hint" to "Single line multiline hint",
                         "multiline" to true
                     ),
                     mapOf(
-                        "id" to "question_3",
+                        "id" to "multichoice_1",
                         "type" to "multichoice",
-                        "value" to "Mulitchoice question 3",
-                        "error_message" to "Error message 3",
-                        "required" to true,
+                        "value" to "Single Select optional",
+                        "error_message" to "Error - There was a problem with your single-select answer.",
+                        "required" to false,
                         "instructions" to "select one",
                         "answer_choices" to listOf(
                             mapOf<String, Any?>(
@@ -152,43 +161,98 @@ class MainActivity : AppCompatActivity() {
                                 "id" to "choice_2",
                                 "value" to "Other",
                                 "type" to "select_other",
+                                "hint" to "Other Hint"
+                            )
+                        )
+                    ),
+                    mapOf(
+                        "id" to "multichoice_2",
+                        "type" to "multichoice",
+                        "value" to "Single Select not optional",
+                        "error_message" to "Error - There was a problem with your single-select answer.",
+                        "required" to true,
+                        "instructions" to "select one",
+                        "answer_choices" to listOf(
+                            mapOf<String, Any?>(
+                                "id" to "choice_1",
+                                "value" to "A",
+                                "type" to "select_option"
+                            ),
+                            mapOf<String, Any?>(
+                                "id" to "choice_2",
+                                "value" to "B",
+                                "type" to "select_other",
+                                "hint" to "B Hint"
+                            )
+                        )
+                    ),
+                    mapOf(
+                        "id" to "multiselect_1",
+                        "type" to "multiselect",
+                        "value" to "Multi Select optional",
+                        "error_message" to "Error - There was a problem with your multi-select answer.",
+                        "required" to false,
+                        "min_selections" to 0,
+                        "max_selections" to 2,
+                        "instructions" to "select all that apply",
+                        "answer_choices" to listOf(
+                            mapOf<String, Any?>(
+                                "id" to "choice_1",
+                                "value" to "Option 1",
+                                "type" to "select_option"
+                            ),
+                            mapOf<String, Any?>(
+                                "id" to "choice_2",
+                                "value" to "Other Option",
+                                "type" to "select_other",
                                 "hint" to "Hint"
                             )
                         )
                     ),
                     mapOf(
-                        "id" to "question_4",
+                        "id" to "multiselect_2",
                         "type" to "multiselect",
-                        "value" to "Multiselect question 4",
-                        "error_message" to "Error message 4",
+                        "value" to "Multi Select not optional",
+                        "error_message" to "Error - There was a problem with your multi-select answer.",
                         "required" to true,
                         "min_selections" to 1,
                         "max_selections" to 2,
-                        "instructions" to "select one",
+                        "instructions" to "select all that apply",
                         "answer_choices" to listOf(
                             mapOf<String, Any?>(
                                 "id" to "choice_1",
-                                "value" to "Title 1",
+                                "value" to "Option 1",
                                 "type" to "select_option"
                             ),
                             mapOf<String, Any?>(
                                 "id" to "choice_2",
-                                "value" to "Other",
+                                "value" to "Other Option",
                                 "type" to "select_other",
                                 "hint" to "Hint"
                             )
                         )
                     ),
                     mapOf(
-                        "id" to "question_5",
+                        "id" to "range_1",
                         "type" to "range",
-                        "value" to "How are you feeling about using this app?",
-                        "error_message" to "Error - There was a problem with your NPS answer.",
-                        "required" to true,
-                        "min" to 1,
+                        "value" to "Range optional",
+                        "error_message" to "Error - There was a problem with your range answer.",
+                        "required" to false,
+                        "min" to -5,
                         "max" to 5,
                         "min_label" to "Sad",
                         "max_label" to "Happy"
+                    ),
+                    mapOf(
+                        "id" to "range_2",
+                        "type" to "range",
+                        "value" to "NPS Range not optional",
+                        "error_message" to "Error - There was a problem with your NPS answer.",
+                        "required" to true,
+                        "min" to 0,
+                        "max" to 10,
+                        "min_label" to "Not Likely",
+                        "max_label" to "Extremely Likely"
                     )
                 )
             )

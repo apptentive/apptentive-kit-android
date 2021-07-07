@@ -1,12 +1,16 @@
 package apptentive.com.android.feedback.survey
 
 import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
 import android.view.MotionEvent
+import android.view.accessibility.AccessibilityEvent
 import android.widget.EditText
 import android.widget.TextView
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import apptentive.com.android.feedback.survey.view.SurveyQuestionViewHolderFactory
 import apptentive.com.android.feedback.survey.viewmodel.MultiChoiceQuestionListItem
 import apptentive.com.android.feedback.survey.viewmodel.RangeQuestionListItem
@@ -32,6 +36,7 @@ class SurveyActivity : ApptentiveViewModelActivity<SurveyViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.apptentive_activity_survey)
+        title = viewModel.title // So TalkBack announces the survey title
 
         val adapter = createAdapter()
         val recyclerView = findViewById<RecyclerView>(R.id.apptentive_survey_recycler_view)
@@ -39,6 +44,33 @@ class SurveyActivity : ApptentiveViewModelActivity<SurveyViewModel>() {
 
         viewModel.listItems.observe(this, Observer { items ->
             adapter.submitList(items)
+        })
+
+        viewModel.firstInvalidQuestionIndex.observe(this, Observer { firstErrorPosition ->
+            if (firstErrorPosition != -1) {
+
+                // Check if item is fully visible on screen before trying to scroll
+                val layoutManger = (recyclerView.layoutManager as LinearLayoutManager)
+                if (firstErrorPosition !in layoutManger.findFirstCompletelyVisibleItemPosition()..layoutManger.findLastCompletelyVisibleItemPosition()) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                                if (newState == SCROLL_STATE_IDLE) {
+                                    val errorView = layoutManger.findViewByPosition(firstErrorPosition)
+                                    errorView?.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
+                                    recyclerView.removeOnScrollListener(this)
+                                }
+                            }
+                        })
+                    }
+                    recyclerView.smoothScrollToPosition(firstErrorPosition)
+
+                } else {
+                    val errorView = layoutManger.findViewByPosition(firstErrorPosition)
+                    errorView?.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
+                }
+
+            }
         })
 
         viewModel.exitStream.observe(this, Observer {

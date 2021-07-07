@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.isVisible
 import apptentive.com.android.feedback.survey.R
@@ -17,6 +18,7 @@ class SurveyQuestionContainerView(
     attrs: AttributeSet?,
     defStyleAttr: Int
 ) : FrameLayout(context, attrs, defStyleAttr) {
+    private val titleInstructionsLayout: LinearLayout
     private val titleTextView: TextView
     private val instructionsTextView: TextView
     private val answerContainerView: ViewGroup // FIXME: change to ViewStub https://developer.android.com/training/improving-layouts/loading-ondemand
@@ -36,6 +38,8 @@ class SurveyQuestionContainerView(
             instructionsTextView.text = value
         }
 
+    var accessibilityDescription: String = ""
+
     // hold view initial text colors to restore later
     private val titleTextViewDefaultColor: ColorStateList
     private val instructionsTextViewDefaultColor: ColorStateList
@@ -50,6 +54,7 @@ class SurveyQuestionContainerView(
         val contentView = LayoutInflater.from(context)
             .inflate(R.layout.apptentive_survey_question_container, this, true)
 
+        titleInstructionsLayout = contentView.findViewById(R.id.question_title_instructions_layout)
         titleTextView = contentView.findViewById(R.id.question_title)
         instructionsTextView = contentView.findViewById(R.id.question_instructions)
         answerContainerView = contentView.findViewById(R.id.answer_container)
@@ -67,16 +72,22 @@ class SurveyQuestionContainerView(
         answerContainerView.addView(answerView)
     }
 
+    fun setQuestionContentDescription(cd: String) {
+        titleInstructionsLayout.contentDescription = cd
+    }
+
     fun setErrorMessage(errorMessage: String?) {
         if (errorMessage != null) {
             titleTextView.setTextColor(errorColor)
             instructionsTextView.setTextColor(errorColor)
             errorMessageView.visibility = View.VISIBLE
             errorMessageView.text = errorMessage
+            setQuestionContentDescription("$errorMessage. $accessibilityDescription")
         } else {
             titleTextView.setTextColor(titleTextViewDefaultColor)
             instructionsTextView.setTextColor(instructionsTextViewDefaultColor)
             errorMessageView.visibility = View.INVISIBLE
+            setQuestionContentDescription(accessibilityDescription)
         }
     }
 }

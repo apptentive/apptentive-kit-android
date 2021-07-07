@@ -17,13 +17,16 @@
             style="@style/Widget.Apptentive.Toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            app:navigationContentDescription="@string/close"
             app:navigationIcon="@drawable/ic_baseline_close_24">
 
             <TextView
                 android:id="@+id/apptentive_survey_title"
+                style="@style/Theme.Apptentive.ToolbarTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/Theme.Apptentive.ToolbarTitle" />
+                android:accessibilityHeading="true"
+                tools:targetApi="p" />
 
         </com.google.android.material.appbar.MaterialToolbar>
 
@@ -33,14 +36,8 @@
         android:id="@+id/apptentive_survey_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="@dimen/margin_16dp"
-        android:layout_marginEnd="@dimen/margin_16dp"
         android:layout_weight="1"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     <TextView
         android:id="@+id/bottomAppBar"

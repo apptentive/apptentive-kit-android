@@ -6,7 +6,7 @@
     <color name="color_secondary_variant">#018786</color>
     <color name="color_on_primary">#FFFFFF</color>
     <color name="color_on_background">#000000</color>
-    <color name="color_text_color_secondary">#ffffff</color>
+    <color name="color_text_color_secondary">#000000</color>
     <color name="color_error">#B00020</color>
     <color name="color_on_secondary">#000000</color>
     <color name="color_background">#FFFFFF</color>

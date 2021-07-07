@@ -12,4 +12,8 @@
     <string name="confirmation_dialog_message">You will lose your progress if you close this survey.</string>
     <string name="close">Close</string>
     <string name="confirmation_dialog_back_to_survey">Back to survey</string>
+    <string name="min_range_label_default">Lowest</string>
+    <string name="max_range_label_default">Highest</string>
+    <string name="slider_description_short">%1$s.</string>
+    <string name="slider_description">%1$s &amp; %2$s.</string>
 </resources>

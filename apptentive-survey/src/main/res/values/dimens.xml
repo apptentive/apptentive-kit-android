@@ -20,11 +20,14 @@
 
     <dimen name="apptentive_card_view_gap_vertical">4dp</dimen>
     <dimen name="apptentive_card_view_gap_horizontal">4dp</dimen>
-    <dimen name="margin_16dp">16dp</dimen>
-    <dimen name="margin_8dp">8dp</dimen>
-    <dimen name="margin_40dp">40dp</dimen>
+    <dimen name="margin_2dp">2dp</dimen>
     <dimen name="margin_4dp">4dp</dimen>
+    <dimen name="margin_6dp">6dp</dimen>
+    <dimen name="margin_8dp">8dp</dimen>
+    <dimen name="margin_12dp">12dp</dimen>
+    <dimen name="margin_16dp">16dp</dimen>
     <dimen name="margin_24dp">24dp</dimen>
+    <dimen name="margin_40dp">40dp</dimen>
     <dimen name="min_height_radio_checkbox_component">36dp</dimen>
     <dimen name="min_height_textfield_component">48dp</dimen>
     <dimen name="bottom_app_bar_height">36dp</dimen>

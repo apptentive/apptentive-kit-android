@@ -95,6 +95,11 @@ abstract class SurveyQuestionListItem(
             // instructions
             containerView.instructions = item.instructions
 
+            // accessibility description
+            val instructionDescription = if (!item.instructions.isNullOrBlank()) "${item.instructions}." else ""
+            containerView.accessibilityDescription = "${item.title}. $instructionDescription"
+            containerView.setQuestionContentDescription(containerView.accessibilityDescription)
+
             // validation error
             updateValidationError(item.validationError)
         }

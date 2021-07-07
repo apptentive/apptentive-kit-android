@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.survey.viewmodel
 
 import android.content.res.Resources
+import android.view.View
 import android.widget.TextView
 import apptentive.com.android.feedback.survey.R
 import apptentive.com.android.feedback.survey.view.SurveyQuestionContainerView
@@ -71,37 +72,49 @@ class RangeQuestionListItem(
         private val minLabel = itemView.findViewById<TextView>(R.id.minLabel)
         private val maxLabel = itemView.findViewById<TextView>(R.id.maxLabel)
 
-
         init {
             rangeSlider.addOnChangeListener { slider, value, fromUser ->
                 if (fromUser) {
                     onSelectionChanged(questionId, value.toInt())
+                    slider.contentDescription = getSliderContentDescription(true)
                 }
             }
         }
-        override fun bindView(
-            item: RangeQuestionListItem,
-            position: Int
-        ) {
+
+        override fun bindView(item: RangeQuestionListItem, position: Int) {
             super.bindView(item, position)
-            rangeSlider.valueFrom = item.min.toFloat()
-            rangeSlider.valueTo = item.max.toFloat()
-            rangeSlider.stepSize = 1.0F
-            if (item.selectedIndex != null) {
-                rangeSlider.value = item.selectedIndex.toFloat()
-            } else {
-                rangeSlider.value = item.min.toFloat()
-            }
+
             val res: Resources = itemView.resources
+
             minLabel.text = String.format(
                 res.getString(R.string.range_min_label),
                 item.min,
-                item.minLabel
+                item.minLabel ?: res.getString(R.string.min_range_label_default)
             )
             maxLabel.text = String.format(
                 res.getString(R.string.range_max_label),
                 item.max,
-                item.maxLabel
+                item.maxLabel ?: res.getString(R.string.max_range_label_default)
+            )
+
+            rangeSlider.valueFrom = item.min.toFloat()
+            rangeSlider.valueTo = item.max.toFloat()
+            rangeSlider.stepSize = 1.0F
+            if (item.selectedIndex != null) rangeSlider.value = item.selectedIndex.toFloat()
+            else rangeSlider.value = item.min.toFloat()
+
+            rangeSlider.contentDescription = getSliderContentDescription(false)
+        }
+
+        private fun getSliderContentDescription(shortVersion: Boolean): String {
+            return if (shortVersion) itemView.resources.getString(
+                R.string.slider_description_short,
+                rangeSlider.value.toInt().toString()
+            )
+            else itemView.resources.getString(
+                R.string.slider_description,
+                minLabel.text,
+                maxLabel.text
             )
         }
     }
