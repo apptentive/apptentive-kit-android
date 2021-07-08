@@ -15,8 +15,11 @@ class MyApplication : Application() {
         val configuration = ApptentiveConfiguration(
             "ANDROID-ANDROID-DEV-c9c0b324114f",
             "98f5539e9310dc290394c68b76664e98"
-        )
-        configuration.logLevel = LogLevel.Verbose
+        ).apply {
+            // Turning off shouldSanitizeLogMessages, so to get un-redacted logs
+            shouldSanitizeLogMessages = false
+            logLevel = LogLevel.Verbose
+        }
         Apptentive.register(this, configuration) {
             when (it) {
                 RegisterResult.Success -> Log.v(SYSTEM, "Registration successful")

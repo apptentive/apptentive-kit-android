@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.model
 
+import apptentive.com.android.feedback.model.payloads.PersonPayload
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.serialization.json.JsonConverter.toJsonObject
 
@@ -21,4 +22,19 @@ data class Person(
     override fun toString(): String {
         return SensitiveDataUtils.logWithSanitizeCheck(javaClass, toJsonObject())
     }
+
+    fun toPersonPayload(): PersonPayload = PersonPayload(
+        id = id,
+        email = email,
+        name = name,
+        facebookId = facebookId,
+        phoneNumber = phoneNumber,
+        street = street,
+        city = city,
+        zip = zip,
+        country = country,
+        birthday = birthday,
+        mParticleId = mParticleId,
+        customData = customData.content
+    )
 }

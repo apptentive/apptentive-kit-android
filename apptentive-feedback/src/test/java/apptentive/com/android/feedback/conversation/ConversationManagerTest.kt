@@ -11,6 +11,7 @@ import apptentive.com.android.feedback.mockPerson
 import apptentive.com.android.feedback.mockSdk
 import apptentive.com.android.feedback.model.AppRelease
 import apptentive.com.android.feedback.model.Conversation
+import apptentive.com.android.feedback.model.CustomData
 import apptentive.com.android.feedback.model.Device
 import apptentive.com.android.feedback.model.EngagementData
 import apptentive.com.android.feedback.model.EngagementManifest
@@ -22,6 +23,7 @@ import apptentive.com.android.util.Result
 import com.apptentive.android.sdk.conversation.ConversationData
 import com.apptentive.android.sdk.conversation.LegacyConversationManager
 import com.google.common.truth.Truth.assertThat
+import org.junit.Assert.assertEquals
 import org.junit.Ignore
 import org.junit.Test
 
@@ -36,13 +38,7 @@ class ConversationManagerTest : TestCase() {
             encryptionKey = "encryption_key"
         )
 
-        val conversationManager = ConversationManager(
-            conversationRepository = MockConversationRepository,
-            conversationService = MockConversationService(fetchResponse),
-            legacyConversationManagerProvider = object : Provider<LegacyConversationManager> {
-                override fun get() = MockLegacyConversationManager()
-            }
-        )
+        val conversationManager = createConversationManager(fetchResponse)
 
         var result: Result<Unit>? = null
         conversationManager.fetchConversationToken {
@@ -66,6 +62,67 @@ class ConversationManagerTest : TestCase() {
     @Ignore
     fun conversationDataMigration() {
     }
+
+    @Test
+    fun testPersonUpdate() {
+        val conversationManager = createConversationManager()
+        val customData = CustomData(content = mapOf("FirstKey" to "FirstValue", "SecondKey" to 2, "ThirdKey" to true))
+        val newPerson = conversationManager.getConversation().person.copy(
+            name = "name",
+            email = "email",
+            customData = customData
+        )
+        conversationManager.updatePerson(newPerson)
+        assertEquals("name", getUpdatedPerson(conversationManager).name)
+        assertEquals("email", getUpdatedPerson(conversationManager).email)
+        assertEquals(customData, getUpdatedPerson(conversationManager).customData)
+
+        // Remove a key from custom data
+        val updatedCustomData = CustomData(customData.content.minus("FirstKey"))
+        conversationManager.updatePerson(newPerson.copy(customData = updatedCustomData))
+        assertEquals(updatedCustomData, getUpdatedPerson(conversationManager).customData)
+    }
+
+    private fun getUpdatedPerson(conversationManager: ConversationManager) =
+        conversationManager.getConversation().person
+
+    private fun getUpdatedDevice(conversationManager: ConversationManager) =
+        conversationManager.getConversation().device
+
+    @Test
+    fun testDeviceUpdate() {
+        val conversationManager = createConversationManager()
+        val customData = CustomData(content = mapOf("FirstKey" to "FirstValue", "SecondKey" to 2, "ThirdKey" to false))
+        val newDevice = conversationManager.getConversation().device.copy(
+            customData = customData
+        )
+        conversationManager.updateDevice(newDevice)
+        assertEquals(customData, getUpdatedDevice(conversationManager).customData)
+
+        // Remove a key from custom data
+        val updatedCustomData = CustomData(customData.content.minus("FirstKey"))
+        conversationManager.updateDevice(newDevice.copy(customData = updatedCustomData))
+        assertEquals(updatedCustomData.content.size, getUpdatedDevice(conversationManager).customData.content.size)
+    }
+}
+
+private fun createConversationManager(
+    fetchResponse: ConversationCredentials =
+        ConversationCredentials(
+            id = "id",
+            deviceId = "device_id",
+            personId = "person_id",
+            token = "token",
+            encryptionKey = "encryption_key"
+        )
+): ConversationManager {
+    return ConversationManager(
+        conversationRepository = MockConversationRepository,
+        conversationService = MockConversationService(fetchResponse),
+        legacyConversationManagerProvider = object : Provider<LegacyConversationManager> {
+            override fun get() = MockLegacyConversationManager()
+        }
+    )
 }
 
 private object MockConversationRepository : ConversationRepository {

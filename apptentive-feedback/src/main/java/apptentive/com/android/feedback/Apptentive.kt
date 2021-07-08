@@ -209,4 +209,180 @@ object Apptentive {
     }
 
     //endregion
+
+    // region Person data updates
+
+    /**
+     * Sets the user's name. This name will be sent to the Apptentive server and displayed in conversations you have
+     * with this person. This name will be the definitive username for this user, unless one is provided directly by the
+     * user through an Apptentive UI. Calls to this method are idempotent. Calls to this method will overwrite any
+     * previously entered person's name.
+     *
+     * @param name The user's name.
+     */
+
+    @JvmStatic
+    fun setPersonName(name: String?) {
+        stateExecutor.execute {
+            name?.let { name ->
+                client.updatePerson(name = name)
+                if (name.isBlank()) {
+                    Log.d(PROFILE_DATA_UPDATE, "Empty/Blank strings are not supported for name")
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets the user's email address. This email address will be sent to the Apptentive server to allow out of app
+     * communication, and to help provide more context about this user. This email will be the definitive email address
+     * for this user, unless one is provided directly by the user through an Apptentive UI. Calls to this method are
+     * idempotent. Calls to this method will overwrite any previously entered email, so if you don't want to overwrite
+     * any previously entered email,
+     *
+     * @param email The user's email address.
+     */
+
+    @JvmStatic
+    fun setPersonEmail(email: String?) {
+        stateExecutor.execute {
+            email?.let { email ->
+                client.updatePerson(email = email)
+                if (email.isBlank()) {
+                    Log.d(PROFILE_DATA_UPDATE, "Empty/Blank strings are not supported for email")
+                }
+            }
+        }
+    }
+
+    /**
+     * Add a custom data String to the Person. Custom data will be sent to the server, is displayed
+     * in the Conversation view, and can be used in Interaction targeting.  Calls to this method are
+     * idempotent.
+     *
+     * @param key   The key to store the data under.
+     * @param value A String value.
+     */
+
+    @JvmStatic
+    fun addCustomPersonData(key: String?, value: String?) {
+        stateExecutor.execute {
+            if (key != null && value != null) {
+                client.updatePerson(customData = Pair(key, value))
+            }
+        }
+    }
+
+    /**
+     * Add a custom data Number to the Person. Custom data will be sent to the server, is displayed
+     * in the Conversation view, and can be used in Interaction targeting.  Calls to this method are
+     * idempotent.
+     *
+     * @param key   The key to store the data under.
+     * @param value A Number value.
+     */
+    @JvmStatic
+    fun addCustomPersonData(key: String?, value: Number?) {
+        stateExecutor.execute {
+            if (key != null && value != null) {
+                client.updatePerson(customData = Pair(key, value))
+            }
+        }
+    }
+
+    /**
+     * Add a custom data Boolean to the Person. Custom data will be sent to the server, is displayed
+     * in the Conversation view, and can be used in Interaction targeting.  Calls to this method are
+     * idempotent.
+     *
+     * @param key   The key to store the data under.
+     * @param value A Boolean value.
+     */
+    @JvmStatic
+    fun addCustomPersonData(key: String?, value: Boolean?) {
+        stateExecutor.execute {
+            if (key != null && value != null) {
+                client.updatePerson(customData = Pair(key, value))
+            }
+        }
+    }
+
+    /**
+     * Remove a piece of custom data from the Person. Calls to this method are idempotent.
+     *
+     * @param key The key to remove.
+     */
+    @JvmStatic
+    fun removeCustomPersonData(key: String?) {
+        stateExecutor.execute {
+            if (key != null) {
+                client.updatePerson(deleteKey = key)
+            }
+        }
+    }
+
+    /**
+     * Add a custom data String to the Device. Custom data will be sent to the server, is displayed
+     * in the Conversation view, and can be used in Interaction targeting.  Calls to this method are
+     * idempotent.
+     *
+     * @param key   The key to store the data under.
+     * @param value A String value.
+     */
+    @JvmStatic
+    fun addCustomDeviceData(key: String?, value: String?) {
+        stateExecutor.execute {
+            if (key != null && value != null) {
+                client.updateDevice(customData = Pair(key, value))
+            }
+        }
+    }
+
+    /**
+     * Add a custom data Number to the Device. Custom data will be sent to the server, is displayed
+     * in the Conversation view, and can be used in Interaction targeting.  Calls to this method are
+     * idempotent.
+     *
+     * @param key   The key to store the data under.
+     * @param value A Number value.
+     */
+    @JvmStatic
+    fun addCustomDeviceData(key: String?, value: Number?) {
+        stateExecutor.execute {
+            if (key != null && value != null) {
+                client.updateDevice(customData = Pair(key, value))
+            }
+        }
+    }
+
+    /**
+     * Add a custom data Boolean to the Device. Custom data will be sent to the server, is displayed
+     * in the Conversation view, and can be used in Interaction targeting.  Calls to this method are
+     * idempotent.
+     *
+     * @param key   The key to store the data under.
+     * @param value A Boolean value.
+     */
+    @JvmStatic
+    fun addCustomDeviceData(key: String?, value: Boolean?) {
+        stateExecutor.execute {
+            if (key != null && value != null) {
+                client.updateDevice(customData = Pair(key, value))
+            }
+        }
+    }
+
+    /**
+     * Remove a piece of custom data from the device. Calls to this method are idempotent.
+     *
+     * @param key The key to remove.
+     */
+    @JvmStatic
+    fun removeCustomDeviceData(key: String?) {
+        stateExecutor.execute {
+            if (key != null) {
+                client.updateDevice(deleteKey = key)
+            }
+        }
+    }
 }

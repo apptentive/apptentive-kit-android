@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.survey.model
 
 import androidx.annotation.Keep
+import apptentive.com.android.feedback.Constants.buildHttpPath
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
 import apptentive.com.android.feedback.model.payloads.ConversationPayload
 import apptentive.com.android.feedback.payload.MediaType
@@ -25,7 +26,7 @@ class SurveyResponsePayload(
 
     override fun getHttpMethod() = HttpMethod.POST
 
-    override fun getHttpPath() = "/conversations/:conversation_id/surveys/$id/responses"
+    override fun getHttpPath() = buildHttpPath("surveys/$id/responses")
 
     override fun getContentType() = MediaType.applicationJson
 

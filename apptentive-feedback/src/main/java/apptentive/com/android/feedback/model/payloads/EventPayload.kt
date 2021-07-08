@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.model.payloads
 
+import apptentive.com.android.feedback.Constants.buildHttpPath
 import apptentive.com.android.feedback.model.SensitiveDataKey
 import apptentive.com.android.feedback.payload.MediaType
 import apptentive.com.android.feedback.payload.PayloadType
@@ -32,7 +33,7 @@ class EventPayload(
 
     override fun getHttpMethod() = HttpMethod.POST
 
-    override fun getHttpPath() = "/conversations/:conversation_id/events"
+    override fun getHttpPath() = buildHttpPath("events")
 
     override fun getContentType() = MediaType.applicationJson
 

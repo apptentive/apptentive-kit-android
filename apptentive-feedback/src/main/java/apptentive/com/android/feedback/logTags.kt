@@ -13,3 +13,4 @@ import apptentive.com.android.util.LogTag
 @JvmField val DATABASE = LogTag("DATABASE")
 @JvmField val UTIL = LogTag("UTIL")
 @JvmField val SECURITY = LogTag("SECURITY")
+@JvmField val PROFILE_DATA_UPDATE = LogTag("PROFILE DATA UPDATE")

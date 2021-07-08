@@ -28,6 +28,7 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionDataCo
 import apptentive.com.android.feedback.engagement.interactions.InteractionLauncher
 import apptentive.com.android.feedback.engagement.interactions.InteractionModule
 import apptentive.com.android.feedback.model.Conversation
+import apptentive.com.android.feedback.model.CustomData
 import apptentive.com.android.feedback.model.payloads.EventPayload
 import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.feedback.payload.ConversationPayloadService
@@ -198,6 +199,51 @@ internal class ApptentiveDefaultClient(
 
     override fun engage(context: Context, event: Event): EngagementResult {
         return AndroidEngagementContext(context, engagement, payloadSender, executors).engage(event)
+    }
+
+    override fun updatePerson(
+        name: String?,
+        email: String?,
+        customData: Pair<String, Any?>?,
+        deleteKey: String?
+    ) {
+        val person = conversationManager.getConversation().person
+        val newPerson = when {
+            !name.isNullOrBlank() -> person.copy(name = name)
+            !email.isNullOrBlank() -> person.copy(email = email)
+            customData != null -> {
+                val newContent = person.customData.content.plus(customData)
+                person.copy(customData = CustomData(newContent))
+            }
+            !deleteKey.isNullOrBlank() -> {
+                val newContent = person.customData.content.minus(deleteKey)
+                person.copy(customData = CustomData(newContent))
+            }
+            else -> person
+        }
+        if (person != newPerson) {
+            conversationManager.updatePerson(newPerson)
+            payloadSender.sendPayload(newPerson.toPersonPayload())
+        }
+    }
+
+    override fun updateDevice(customData: Pair<String, Any?>?, deleteKey: String?) {
+        val device = conversationManager.getConversation().device
+        val newDevice = when {
+            customData != null -> {
+                val newContent = device.customData.content.plus(customData)
+                device.copy(customData = CustomData(newContent))
+            }
+            !deleteKey.isNullOrBlank() -> {
+                val newContent = device.customData.content.minus(deleteKey)
+                device.copy(customData = CustomData(newContent))
+            }
+            else -> device
+        }
+        if (device != newDevice) {
+            conversationManager.updateDevice(newDevice)
+            payloadSender.sendPayload(newDevice.toDevicePayload())
+        }
     }
 
     // FIXME: temporary code

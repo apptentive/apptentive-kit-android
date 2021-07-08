@@ -10,7 +10,9 @@ import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
 import apptentive.com.android.feedback.model.Conversation
+import apptentive.com.android.feedback.model.Device
 import apptentive.com.android.feedback.model.EngagementData
+import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.hasConversationToken
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.Result
@@ -72,6 +74,8 @@ class ConversationManager(
             }
         }
     }
+
+    fun getConversation() = activeConversation.value
 
     @Throws(ConversationSerializationException::class)
     @WorkerThread
@@ -142,6 +146,20 @@ class ConversationManager(
                 versionCode = conversation.appRelease.versionCode,
                 lastInvoked = DateTime.now()
             )
+        )
+    }
+
+    fun updatePerson(person: Person) {
+        val conversation = activeConversationSubject.value
+        activeConversationSubject.value = conversation.copy(
+            person = person
+        )
+    }
+
+    fun updateDevice(device: Device) {
+        val conversation = activeConversationSubject.value
+        activeConversationSubject.value = conversation.copy(
+            device = device
         )
     }
 
