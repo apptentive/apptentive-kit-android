@@ -209,13 +209,13 @@ internal class ApptentiveDefaultClient(
     ) {
         val person = conversationManager.getConversation().person
         val newPerson = when {
-            !name.isNullOrBlank() -> person.copy(name = name)
-            !email.isNullOrBlank() -> person.copy(email = email)
+            name != null -> person.copy(name = name)
+            email != null -> person.copy(email = email)
             customData != null -> {
                 val newContent = person.customData.content.plus(customData)
                 person.copy(customData = CustomData(newContent))
             }
-            !deleteKey.isNullOrBlank() -> {
+            deleteKey != null -> {
                 val newContent = person.customData.content.minus(deleteKey)
                 person.copy(customData = CustomData(newContent))
             }
@@ -234,7 +234,7 @@ internal class ApptentiveDefaultClient(
                 val newContent = device.customData.content.plus(customData)
                 device.copy(customData = CustomData(newContent))
             }
-            !deleteKey.isNullOrBlank() -> {
+            deleteKey != null -> {
                 val newContent = device.customData.content.minus(deleteKey)
                 device.copy(customData = CustomData(newContent))
             }
