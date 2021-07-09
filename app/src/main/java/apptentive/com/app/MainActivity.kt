@@ -1,5 +1,6 @@
 package apptentive.com.app
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -266,6 +267,11 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this, "Not engaged: $it", Toast.LENGTH_LONG).show()
                 }
             }
+        }
+
+        binding.dataButton.setOnClickListener {
+            val intent = Intent(this, DataActivity::class.java)
+            startActivity(intent)
         }
     }
 }

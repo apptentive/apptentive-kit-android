@@ -1,4 +1,21 @@
 <resources>
     <string name="app_name">My Application</string>
     <string name="hint_event_name">Event name</string>
+    <string name="engage">Engage</string>
+    <string name="love_dialog">Love Dialog</string>
+    <string name="survey">Survey</string>
+    <string name="note">Note</string>
+    <string name="data">Data</string>
+    <string name="night">Night</string>
+    <string name="custom_device_data">Custom Device Data</string>
+    <string name="value">Value…</string>
+    <string name="add">Add</string>
+    <string name="custom_person_data">Custom Person Data</string>
+    <string name="remove">Remove</string>
+    <string name="person_email">Person Email</string>
+    <string name="name">Name…</string>
+    <string name="set">Set</string>
+    <string name="key">Key…</string>
+    <string name="email">Email…</string>
+    <string name="person_name">Person Name</string>
 </resources>
