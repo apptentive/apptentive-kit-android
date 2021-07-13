@@ -131,6 +131,7 @@ class MultiChoiceQuestionListItem(
                 textInputLayout.isVisible = choice.isTextInputVisible
                 textInputLayout.hint = choice.hint
 
+                textInputEditText.setText(choice.text)
                 textInputEditText.setTextBoxBackgroundFocusFix()
                 textInputEditText.doAfterTextChanged {
                     when {
