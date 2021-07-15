@@ -29,8 +29,9 @@ class SurveyResponsePayloadTest {
                 "2" to RangeQuestion.Answer(selectedIndex = 5),
                 "3" to MultiChoiceQuestion.Answer(
                     choices = listOf(
-                        MultiChoiceQuestion.Answer.Choice(id = "choice_1"),
-                        MultiChoiceQuestion.Answer.Choice(id = "choice_2", value = "text")
+                        MultiChoiceQuestion.Answer.Choice(id = "choice_1", checked = true),
+                        MultiChoiceQuestion.Answer.Choice(id = "choice_2", checked = false),
+                        MultiChoiceQuestion.Answer.Choice(id = "choice_3", value = "text", checked = true)
                     )
                 )
             )
@@ -43,7 +44,7 @@ class SurveyResponsePayloadTest {
                     "'answers':{" +
                     "'1':[{'value':'answer'}]," +
                     "'2':[{'value':5}]," +
-                    "'3':[{'id':'choice_1'},{'id':'choice_2','value':'text'}]" +
+                    "'3':[{'id':'choice_1'},{'id':'choice_3','value':'text'}]" +
                     "}," +
                     "'client_created_at':1000.0," +
                     "'client_created_at_utc_offset':-18000," +

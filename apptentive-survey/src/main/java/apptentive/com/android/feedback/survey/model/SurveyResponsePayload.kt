@@ -45,7 +45,7 @@ class SurveyResponsePayload(
             when (answer) {
                 is SingleLineQuestion.Answer -> listOf(AnswerData(value = answer.value))
                 is RangeQuestion.Answer -> listOf(AnswerData(value = answer.selectedIndex))
-                is MultiChoiceQuestion.Answer -> answer.choices.map { AnswerData(it.id, it.value) }
+                is MultiChoiceQuestion.Answer -> answer.choices.mapNotNull { if (it.checked) AnswerData(it.id, it.value) else null }
                 else -> throw IllegalArgumentException("Unexpected type: ${answer::class.java}")
             }
     }

@@ -201,6 +201,11 @@ class MainActivity : AppCompatActivity() {
                             ),
                             mapOf<String, Any?>(
                                 "id" to "choice_2",
+                                "value" to "Option 2",
+                                "type" to "select_option"
+                            ),
+                            mapOf<String, Any?>(
+                                "id" to "choice_3",
                                 "value" to "Other Option",
                                 "type" to "select_other",
                                 "hint" to "Hint"
@@ -224,6 +229,11 @@ class MainActivity : AppCompatActivity() {
                             ),
                             mapOf<String, Any?>(
                                 "id" to "choice_2",
+                                "value" to "Option 2",
+                                "type" to "select_option",
+                            ),
+                            mapOf<String, Any?>(
+                                "id" to "choice_3",
                                 "value" to "Other Option",
                                 "type" to "select_other",
                                 "hint" to "Hint"
