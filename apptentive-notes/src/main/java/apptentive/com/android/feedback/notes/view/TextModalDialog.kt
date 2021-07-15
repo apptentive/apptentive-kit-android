@@ -62,6 +62,5 @@ class TextModalDialog(
         require(!dialog.isShowing) { "Dialog already showing" }
 
         dialog.show()
-        viewModel.launch()
     }
 }

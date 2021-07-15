@@ -29,12 +29,6 @@ class TextModalViewModel(
 
     var onDismiss: Callback? = null
 
-    fun launch() {
-        context.executors.state.execute {
-            engageCodePoint(CODE_POINT_LAUNCH)
-        }
-    }
-
     fun cancel() {
         context.executors.state.execute {
             engageCodePoint(CODE_POINT_CANCEL)
@@ -102,7 +96,6 @@ class TextModalViewModel(
         const val CODE_POINT_EVENT = "event"
         const val CODE_POINT_DISMISS = "dismiss"
         const val CODE_POINT_CANCEL = "cancel"
-        const val CODE_POINT_LAUNCH = "launch"
 
         private const val DATA_ACTION_ID = "action_id"
         private const val DATA_ACTION_LABEL = "label"

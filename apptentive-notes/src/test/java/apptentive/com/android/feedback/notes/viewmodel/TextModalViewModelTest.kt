@@ -40,26 +40,6 @@ class TextModalViewModelTest : TestCase() {
         )
     )
 
-    //region Launch
-
-    @Test
-    fun testLaunch() {
-        val viewModel = createViewModel()
-
-        // launch
-        viewModel.launch()
-
-        // check results
-        assertResults(
-            EngageArgs(
-                event = Event.internal("launch", "TextModal"),
-                interactionId = interactionId
-            )
-        )
-    }
-
-    //endregion
-
     //region Interaction
 
     @Test
