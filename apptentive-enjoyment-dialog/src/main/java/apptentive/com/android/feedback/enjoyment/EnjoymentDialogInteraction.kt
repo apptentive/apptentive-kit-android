@@ -9,4 +9,8 @@ internal class EnjoymentDialogInteraction(
     val yesText: String,
     val noText: String,
     val dismissText: String?
-) : Interaction(id = id, type = InteractionType.EnjoymentDialog)
+) : Interaction(id = id, type = InteractionType.EnjoymentDialog) {
+    override fun toString(): String {
+        return "${javaClass.simpleName}(id=$id, title=\"$title\", yesText=\"$yesText\", noText=\"$noText\")"
+    }
+}

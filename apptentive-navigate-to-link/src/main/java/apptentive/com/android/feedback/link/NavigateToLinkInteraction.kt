@@ -23,6 +23,10 @@ class NavigateToLinkInteraction(
         }
     }
 
+    override fun toString(): String {
+        return "${javaClass.simpleName}(id=$id, url=\"$url\", target=$target)"
+    }
+
     //region Equality
 
     override fun equals(other: Any?): Boolean {

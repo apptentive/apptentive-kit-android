@@ -53,6 +53,7 @@ class TextModalViewModel(
         when (action) {
             is TextModalInteraction.Action.Dismiss -> {
                 {
+                    Log.i(INTERACTIONS, "Note dismissed")
                     // engage event
                     val data = createEventData(action, index)
                     engageCodePoint(CODE_POINT_DISMISS, data)
@@ -60,11 +61,10 @@ class TextModalViewModel(
             }
             is TextModalInteraction.Action.Invoke -> {
                 {
+                    Log.i(INTERACTIONS, "Note action invoked")
+
                     // run invocation
                     val result = context.engage(action.invocations)
-                    if (result !is EngagementResult.Success) {
-                        Log.e(INTERACTIONS, "No runnable interactions") // TODO: better message
-                    }
 
                     // engage event
                     val data = createEventData(action, index, result)
@@ -73,14 +73,13 @@ class TextModalViewModel(
             }
             is TextModalInteraction.Action.Event -> {
                 {
+                    Log.i(INTERACTIONS, "Note event engaged")
+
                     // engage target event
                     val result = context.engage(
                         event = action.event,
                         interactionId = interaction.id
                     )
-                    if (result !is EngagementResult.Success) {
-                        Log.e(INTERACTIONS, "No runnable interactions") // TODO: better message
-                    }
 
                     // engage event
                     val data = createEventData(action, index, result)

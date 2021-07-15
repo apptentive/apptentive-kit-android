@@ -23,6 +23,10 @@ package com.apptentive.android.sdk.util;
 
 import java.util.Map;
 
+import apptentive.com.android.util.Log;
+
+import static apptentive.com.android.feedback.LogTags.UTIL;
+
 /**
  * A collection of useful string-related functions
  */
@@ -36,7 +40,7 @@ public final class StringUtils {
 			try {
 				return String.format(format, args);
 			} catch (Exception e) {
-				android.util.Log.e("Apptentive", "Error while formatting String: " + e.getMessage()); // TODO: better system logging
+				Log.e(UTIL, "Error while formatting String: " + e.getMessage(), e);
 			}
 		}
 

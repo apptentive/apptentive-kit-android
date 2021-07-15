@@ -1,11 +1,13 @@
 package apptentive.com.android.feedback.engagement
 
 import androidx.annotation.WorkerThread
+import apptentive.com.android.feedback.EVENT
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.criteria.Invocation
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionDataConverter
 import apptentive.com.android.feedback.model.payloads.ExtendedData
+import apptentive.com.android.util.Log
 
 typealias RecordEventCallback = (
     event: Event,
@@ -34,6 +36,8 @@ data class DefaultEngagement(
         customData: Map<String, Any?>?,
         extendedData: List<ExtendedData>?
     ): EngagementResult {
+        Log.i(EVENT, "Engaged event: $event")
+        Log.d(EVENT, "Engaged event interaction ID: $interactionId")
         recordEvent(event, interactionId, data, customData, extendedData)
 
         val interactionData = interactionDataProvider.getInteractionData(event)

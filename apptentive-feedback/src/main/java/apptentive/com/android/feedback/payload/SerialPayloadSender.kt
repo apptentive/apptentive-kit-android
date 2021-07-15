@@ -14,6 +14,7 @@ class SerialPayloadSender(
     private var payloadService: PayloadService? = null
 
     override fun sendPayload(payload: Payload) {
+        Log.v(PAYLOADS, "Adding Payload to queue: $payload")
         val payloadData = getPayloadData(payload)
         if (payloadData != null) {
             payloadQueue.enqueuePayload(payloadData)
@@ -118,7 +119,7 @@ class SerialPayloadSender(
         try {
             callback.invoke(Result.Success(payload))
         } catch (e: Exception) {
-            // FIXME: print error message
+            Log.e(PAYLOADS, "Payload sent successfully. Callback exception", e)
         }
     }
 
@@ -130,7 +131,7 @@ class SerialPayloadSender(
                 callback(Result.Error(PayloadSendException(payload, cause = error)))
             }
         } catch (e: Exception) {
-            // FIXME: print error message
+            Log.e(PAYLOADS, "Payload NOT sent with exception", e)
         }
     }
 }

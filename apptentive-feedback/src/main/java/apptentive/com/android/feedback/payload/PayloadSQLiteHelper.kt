@@ -6,7 +6,9 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.annotation.VisibleForTesting
+import apptentive.com.android.feedback.PAYLOADS
 import apptentive.com.android.network.HttpMethod
+import apptentive.com.android.util.Log
 
 // FIXME: provide a name for the helper (based on local conversation id)
 class PayloadSQLiteHelper(context: Context) :
@@ -22,6 +24,7 @@ class PayloadSQLiteHelper(context: Context) :
     }
 
     fun addPayload(payload: PayloadData) {
+        Log.v(PAYLOADS, "Saving payload body to: ${writableDatabase.path}")
         val values = ContentValues().apply {
             put(COL_NONCE, payload.nonce)
             put(COL_TYPE, payload.type.toString())
@@ -55,8 +58,8 @@ class PayloadSQLiteHelper(context: Context) :
                             try {
                                 return readPayload(cursor)
                             } catch (e: Exception) {
-                                // FIXME: error message
                                 val nonce = cursor.getString(COL_NONCE)
+                                Log.e(PAYLOADS, "Exception reading payload. Unable to send. Deleting.", e)
                                 deletePayload(db, nonce)
                             }
                         } else {

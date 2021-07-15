@@ -6,7 +6,7 @@ import android.os.Looper
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.toMilliseconds
 import apptentive.com.android.util.Log
-import apptentive.com.android.util.LogTags.core
+import apptentive.com.android.util.LogTags.CORE
 
 class SerialExecutorQueue : ExecutorQueue {
     private val handler: Handler
@@ -51,7 +51,7 @@ class SerialExecutorQueue : ExecutorQueue {
         try {
             task()
         } catch (e: Exception) {
-            Log.e(core, "Exception while dispatching task", e)
+            Log.e(CORE, "Exception while dispatching task", e)
         }
     }
 

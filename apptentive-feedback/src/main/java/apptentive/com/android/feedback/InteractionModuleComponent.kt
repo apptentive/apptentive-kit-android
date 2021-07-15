@@ -4,7 +4,7 @@ import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionModule
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.util.Log
-import apptentive.com.android.util.LogTags.core
+import apptentive.com.android.util.LogTags.CORE
 
 // TODO: should we load interaction modules lazily?
 class InteractionModuleComponent(
@@ -43,15 +43,15 @@ class InteractionModuleComponent(
             val moduleClass = Class.forName(className)
             return moduleClass.newInstance() as InteractionModule<*>
         } catch (e: ClassNotFoundException) {
-            Log.v(core, "Module not found: $className")
+            Log.v(CORE, "Module not found: $className")
         } catch (e: IllegalAccessException) {
-            Log.e(core, "Module class or its nullary constructor is not accessible: $className", e)
+            Log.e(CORE, "Module class or its nullary constructor is not accessible: $className", e)
         } catch (e: InstantiationException) {
-            Log.e(core, "Unable to instantiate module class: $className", e)
+            Log.e(CORE, "Unable to instantiate module class: $className", e)
         } catch (e: ExceptionInInitializerError) {
-            Log.e(core, "Exception while initializing module class: $className", e)
+            Log.e(CORE, "Exception while initializing module class: $className", e)
         } catch (e: Exception) {
-            Log.e(core, "Exception while loading module class: $className", e)
+            Log.e(CORE, "Exception while loading module class: $className", e)
         }
 
         return null

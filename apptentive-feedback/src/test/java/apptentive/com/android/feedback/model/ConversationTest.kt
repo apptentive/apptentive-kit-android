@@ -1,11 +1,12 @@
 package apptentive.com.android.feedback.model
 
+import apptentive.com.android.TestCase
 import apptentive.com.android.feedback.conversation.DefaultConversationSerializer
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import java.io.File
 
-class ConversationTest {
+class ConversationTest : TestCase() {
     @Test
     fun binaryFileSerialization() {
         val expected = Conversation(

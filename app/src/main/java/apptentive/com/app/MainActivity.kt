@@ -21,8 +21,6 @@ import apptentive.com.android.feedback.payload.PayloadSender
 import apptentive.com.android.feedback.platform.AndroidEngagementContext
 import apptentive.com.android.feedback.survey.interaction.SurveyInteraction
 import apptentive.com.android.feedback.survey.interaction.SurveyInteractionLauncher
-import apptentive.com.android.util.Log
-import apptentive.com.android.util.LogTags
 import apptentive.com.app.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -73,7 +71,6 @@ class MainActivity : AppCompatActivity() {
                         customData: Map<String, Any?>?,
                         extendedData: List<ExtendedData>?
                     ): EngagementResult {
-                        Log.i(LogTags.core, "Engaged event: $event")
                         return if (interactionId != null)
                             EngagementResult.Success(interactionId = interactionId) else
                             EngagementResult.Failure("No runnable interactions")

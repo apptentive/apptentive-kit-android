@@ -3,6 +3,7 @@ package apptentive.com.android.feedback
 
 import apptentive.com.android.util.LogTag
 
+@JvmField val EVENT = LogTag("EVENT")
 @JvmField val CONVERSATION = LogTag("CONVERSATION")
 @JvmField val FEEDBACK = LogTag("FEEDBACK")
 @JvmField val SYSTEM = LogTag("SYSTEM")

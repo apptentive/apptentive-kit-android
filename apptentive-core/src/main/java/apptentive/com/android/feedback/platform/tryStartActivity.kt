@@ -5,7 +5,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import apptentive.com.android.util.Log
-import apptentive.com.android.util.LogTags.core
+import apptentive.com.android.util.LogTags.CORE
 
 @SuppressLint("QueryPermissionsNeeded")
 fun Context.tryStartActivity(intent: Intent): Boolean {
@@ -16,9 +16,9 @@ fun Context.tryStartActivity(intent: Intent): Boolean {
             return true
         }
     } catch (e: ActivityNotFoundException) {
-        Log.e(core, "No activity found for intent: $intent", e)
+        Log.e(CORE, "No activity found for intent: $intent", e)
     } catch (e: Exception) {
-        Log.e(core, "Exception while starting activity for intent: $intent", e)
+        Log.e(CORE, "Exception while starting activity for intent: $intent", e)
     }
 
     return false

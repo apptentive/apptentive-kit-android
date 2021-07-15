@@ -36,11 +36,9 @@ object Log {
         val buffer = StringBuilder()
 
         // thread name
-        if (!logger.isMainQueue()) {
-            buffer.append('[')
-            buffer.append(Thread.currentThread().name)
-            buffer.append(']')
-        }
+        buffer.append('[')
+        buffer.append(if (logger.isMainQueue()) "Main Queue" else Thread.currentThread().name)
+        buffer.append(']')
 
         // tag
         buffer.append(" [")

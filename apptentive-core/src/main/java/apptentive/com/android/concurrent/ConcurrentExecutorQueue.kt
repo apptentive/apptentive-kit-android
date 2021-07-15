@@ -3,7 +3,7 @@ package apptentive.com.android.concurrent
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.toMilliseconds
 import apptentive.com.android.util.Log
-import apptentive.com.android.util.LogTags.core
+import apptentive.com.android.util.LogTags.CORE
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledThreadPoolExecutor
 import java.util.concurrent.TimeUnit
@@ -52,7 +52,7 @@ internal class ConcurrentExecutorQueue(name: String, maxConcurrentTasks: Int? = 
         try {
             task()
         } catch (e: Exception) {
-            Log.e(core, "Exception while dispatching task", e)
+            Log.e(CORE, "Exception while dispatching task", e)
         }
     }
 

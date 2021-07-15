@@ -58,10 +58,12 @@ internal class DefaultConversationSerializer(
     private var lastKnownManifestExpiry: TimeInterval = 0.0
 
     override fun saveConversation(conversation: Conversation) {
+        val start = System.currentTimeMillis()
         conversationFile.outputStream().use { stream ->
             val encoder = BinaryEncoder(DataOutputStream(stream))
             conversationSerializer.encode(encoder, conversation)
         }
+        Log.v(CONVERSATION, "Conversation data saved (took ${System.currentTimeMillis() - start} ms)")
 
         val newExpiry = conversation.engagementManifest.expiry
         if (lastKnownManifestExpiry != newExpiry) {

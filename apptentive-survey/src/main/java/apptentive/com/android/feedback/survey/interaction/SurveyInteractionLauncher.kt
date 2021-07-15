@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.survey.interaction
 
 import androidx.annotation.VisibleForTesting
+import apptentive.com.android.feedback.INTERACTIONS
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
@@ -13,6 +14,7 @@ import apptentive.com.android.feedback.survey.model.SurveyResponsePayload
 import apptentive.com.android.feedback.survey.viewmodel.SurveyViewModel
 import apptentive.com.android.ui.InteractionViewModelFactoryProvider
 import apptentive.com.android.ui.startViewModelActivity
+import apptentive.com.android.util.Log
 import apptentive.com.android.util.generateUUID
 
 // TODO: UI-tests
@@ -23,6 +25,9 @@ class SurveyInteractionLauncher(
         context: AndroidEngagementContext,
         interaction: SurveyInteraction
     ) {
+        Log.i(INTERACTIONS, "Survey interaction launched with title: ${interaction.name}")
+        Log.v(INTERACTIONS, "Survey interaction data: $interaction")
+
         val model = createSurveyModel(context, interaction)
 
         /*

@@ -11,22 +11,12 @@ class CriteriaInteractionDataProvider(
     private val state: TargetingState
 ) : InteractionDataProvider {
     override fun getInteractionData(event: Event): InteractionData? {
-        val invocations = invocationProvider.getInvocations(event)
-        if (invocations == null) {
-            // FIXME: log statement
-            return null
-        }
-
+        val invocations = invocationProvider.getInvocations(event) ?: return null
         return getInteractionData(invocations)
     }
 
     override fun getInteractionData(invocations: List<Invocation>): InteractionData? {
-        val interactionId = getInteractionId(invocations)
-        if (interactionId == null) {
-            // FIXME: log statement
-            return null
-        }
-
+        val interactionId = getInteractionId(invocations) ?: return null
         return interactions[interactionId]
     }
 

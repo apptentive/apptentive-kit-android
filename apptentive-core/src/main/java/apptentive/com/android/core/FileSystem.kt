@@ -3,7 +3,7 @@ package apptentive.com.android.core
 import android.content.Context
 import androidx.annotation.WorkerThread
 import apptentive.com.android.util.Log
-import apptentive.com.android.util.LogTags.core
+import apptentive.com.android.util.LogTags.CORE
 import java.io.File
 
 interface FileSystem {
@@ -29,7 +29,7 @@ private class AndroidFileSystem(
         if (!internalDir.exists() && createIfNecessary) {
             val succeed = internalDir.mkdirs()
             if (!succeed) {
-                Log.w(core, "Unable to create internal directory: $internalDir")
+                Log.w(CORE, "Unable to create internal directory: $internalDir")
             }
         }
         return internalDir

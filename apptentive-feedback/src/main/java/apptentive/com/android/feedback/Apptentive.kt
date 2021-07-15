@@ -26,14 +26,22 @@ import apptentive.com.android.network.HttpRequest
 import apptentive.com.android.network.asString
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags
-import apptentive.com.android.util.LogTags.network
+import apptentive.com.android.util.LogTags.NETWORK
 
 // TODO: better names for specific cases
 sealed class EngagementResult {
-    data class Success(val interactionId: InteractionId) : EngagementResult()
-    data class Failure(val description: String) : EngagementResult()
-    data class Error(val message: String) : EngagementResult()
-    data class Exception(val error: kotlin.Exception) : EngagementResult()
+    data class Success(val interactionId: InteractionId) : EngagementResult() {
+        init { Log.d(INTERACTIONS, "Interaction Engaged => interactionID: $interactionId") }
+    }
+    data class Failure(val description: String) : EngagementResult() {
+        init { Log.d(INTERACTIONS, "Interaction NOT Engaged => $description") }
+    }
+    data class Error(val message: String) : EngagementResult() {
+        init { Log.e(INTERACTIONS, "Interaction Engage Error => $message") }
+    }
+    data class Exception(val error: kotlin.Exception) : EngagementResult() {
+        init { Log.e(INTERACTIONS, "Interaction Engage Exception => ${error.message}", error) }
+    }
 }
 
 object Apptentive {
@@ -111,7 +119,7 @@ object Apptentive {
         client = ApptentiveDefaultClient(
             apptentiveKey = configuration.apptentiveKey,
             apptentiveSignature = configuration.apptentiveSignature,
-            httpClient = createHttpClient(application.applicationContext, configuration),
+            httpClient = createHttpClient(application.applicationContext),
             executors = Executors(
                 state = stateExecutor,
                 main = mainExecutor
@@ -123,31 +131,24 @@ object Apptentive {
         }
     }
 
-    private fun createHttpClient(
-        context: Context,
-        configuration: ApptentiveConfiguration
-    ): HttpClient {
+    private fun createHttpClient(context: Context): HttpClient {
         val loggingInterceptor = object : HttpLoggingInterceptor {
             override fun intercept(request: HttpRequest<*>) {
-                Log.d(network, "--> ${request.method} ${request.url}")
-                if (!configuration.shouldSanitizeLogMessages) {
-                    Log.v(network, "Headers:\n${request.headers}")
-                    Log.v(network, "Request Body: ${request.requestBody?.asString()}")
-                }
+                Log.d(NETWORK, "--> ${request.method} ${request.url}")
+                Log.v(NETWORK, "Headers:\n${SensitiveDataUtils.hideIfSanitized(request.headers)}")
+                Log.v(NETWORK, "Request Body: ${SensitiveDataUtils.hideIfSanitized(request.requestBody?.asString())}")
             }
 
             override fun intercept(response: HttpNetworkResponse) {
                 val statusCode = response.statusCode
                 val statusMessage = response.statusMessage
-                Log.d(network, "<-- $statusCode $statusMessage (${response.duration.format()} sec)")
-                if (!configuration.shouldSanitizeLogMessages) {
-                    Log.v(network, "Response Body: ${response.asString()}")
-                }
+                Log.d(NETWORK, "<-- $statusCode $statusMessage (${response.duration.format()} sec)")
+                Log.v(NETWORK, "Response Body: ${SensitiveDataUtils.hideIfSanitized(response.asString())}")
             }
 
             override fun retry(request: HttpRequest<*>, delay: TimeInterval) {
                 Log.d(
-                    network,
+                    NETWORK,
                     "Retrying request ${request.method} ${request.url} in ${delay.format()} sec..."
                 )
             }
@@ -203,7 +204,7 @@ object Apptentive {
             if (client != null) {
                 client.reset()
             } else {
-                Log.e(LogTags.core, "Unable to clear event: sdk is not initialized")
+                Log.e(LogTags.CORE, "Unable to clear event: sdk is not initialized")
             }
         }
     }

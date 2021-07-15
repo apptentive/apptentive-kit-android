@@ -190,7 +190,7 @@ class DefaultHttpClient(
         try {
             listener?.onRequestStart(this, request)
         } catch (e: Exception) {
-            Log.e(LogTags.network, "Exception while notifying request start listener", e)
+            Log.e(LogTags.NETWORK, "Exception while notifying request start listener", e)
         }
     }
 
@@ -199,7 +199,7 @@ class DefaultHttpClient(
         try {
             listener?.onRequestRetry(this, request)
         } catch (e: Exception) {
-            Log.e(LogTags.network, "Exception while notifying request retry listener", e)
+            Log.e(LogTags.NETWORK, "Exception while notifying request retry listener", e)
         }
     }
 
@@ -208,7 +208,7 @@ class DefaultHttpClient(
         try {
             listener?.onRequestComplete(this, request)
         } catch (e: Exception) {
-            Log.e(LogTags.network, "Exception while notifying request complete listener", e)
+            Log.e(LogTags.NETWORK, "Exception while notifying request complete listener", e)
         }
     }
 

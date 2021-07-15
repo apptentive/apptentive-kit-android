@@ -11,12 +11,20 @@ class TextModalInteraction(
     val body: String?,
     val actions: List<Action>
 ) : Interaction(id, InteractionType.TextModal) {
+    override fun toString(): String {
+        return "${javaClass.simpleName} (id=$id, title=\"$title\", body=\"$body\", actions=$actions)"
+    }
+
     sealed class Action(val id: String, val label: String) {
         class Invoke(
             id: String,
             label: String,
             val invocations: List<InvocationData>
         ) : Action(id, label) {
+            override fun toString(): String {
+                return "${javaClass.simpleName} (id=$id, label=\"$label\", invocations=$invocations)"
+            }
+
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is Invoke) return false

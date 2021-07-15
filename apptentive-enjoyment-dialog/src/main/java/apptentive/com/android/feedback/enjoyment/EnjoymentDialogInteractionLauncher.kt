@@ -4,9 +4,11 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.widget.TextView
 import androidx.appcompat.view.ContextThemeWrapper
+import apptentive.com.android.feedback.INTERACTIONS
 import apptentive.com.android.feedback.platform.AndroidEngagementContext
 import apptentive.com.android.feedback.platform.AndroidViewInteractionLauncher
 import apptentive.com.android.ui.overrideTheme
+import apptentive.com.android.util.Log
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 // TODO: UI-tests
@@ -16,6 +18,8 @@ internal class EnjoymentDialogInteractionLauncher :
         context: AndroidEngagementContext,
         interaction: EnjoymentDialogInteraction
     ) {
+        Log.i(INTERACTIONS, "Love Dialog interaction launched with title: ${interaction.title}")
+        Log.v(INTERACTIONS, "Love Dialog interaction data: $interaction")
         val viewModel = EnjoymentDialogViewModel(context, interaction)
 
         context.executors.main.execute {

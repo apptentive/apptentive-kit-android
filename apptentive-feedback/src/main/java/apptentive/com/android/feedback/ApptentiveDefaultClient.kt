@@ -46,6 +46,7 @@ import apptentive.com.android.feedback.platform.DefaultSDKFactory
 import apptentive.com.android.network.HttpClient
 import apptentive.com.android.network.UnexpectedResponseException
 import apptentive.com.android.util.FileUtil
+import apptentive.com.android.util.Log
 import apptentive.com.android.util.Result
 import com.apptentive.android.sdk.conversation.DefaultLegacyConversationManager
 import com.apptentive.android.sdk.conversation.LegacyConversationManager
@@ -101,6 +102,7 @@ internal class ApptentiveDefaultClient(
             }
         }
         conversationManager.activeConversation.observe { conversation ->
+            Log.v(CONVERSATION, "Conversation state changed: ", conversation)
             // FIXME: most of these values can be cached and only changed when the actual data changes
             engagement = DefaultEngagement(
                 interactionDataProvider = createInteractionDataProvider(conversation),

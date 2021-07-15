@@ -56,7 +56,7 @@ private fun Context.getAppThemeId(): Int? {
             return theme
         }
     } catch (e: Exception) {
-        Log.e(LogTags.core, "Unable to resolve application default theme", e)
+        Log.e(LogTags.CORE, "Unable to resolve application default theme", e)
     }
     return null
 }

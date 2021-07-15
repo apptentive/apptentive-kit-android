@@ -39,6 +39,24 @@ class SurveyInteraction(
     val questions: List<SurveyQuestionConfiguration>
 ) : Interaction(id, type = InteractionType.Survey) {
 
+    override fun toString(): String {
+        return javaClass.simpleName +
+                "(id=$id, " +
+                "name=\"$name\", " +
+                "description=\"$description\", " +
+                "submitText=\"$submitText\", " +
+                "requiredText=\"$requiredText\", " +
+                "validationError=\"$validationError\", " +
+                "showSuccessMessage=$showSuccessMessage, " +
+                "successMessage=\"$successMessage\", " +
+                "closeConfirmTitle=\"$closeConfirmTitle\", " +
+                "closeConfirmMessage=\"$closeConfirmMessage, " +
+                "closeConfirmCloseText=\"$closeConfirmCloseText\", " +
+                "closeConfirmBackText=\"$closeConfirmBackText\", " +
+                "isRequired=$isRequired, " +
+                "questions=$questions)"
+    }
+
     override fun equals(other: Any?): Boolean {
         return when {
             this === other -> true
