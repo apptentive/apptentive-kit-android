@@ -3,6 +3,8 @@ package apptentive.com.android.feedback.notes.view
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.TEXT_ALIGNMENT_CENTER
+import android.view.View.TEXT_ALIGNMENT_VIEW_END
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.MainThread
@@ -41,6 +43,7 @@ class TextModalDialog(
             viewModel.actions.forEach { action ->
                 val button = inflater.inflate(R.layout.apptentive_note_action, null) as TextView
                 button.text = action.title
+                button.textAlignment = if (viewModel.actions.size > 2) TEXT_ALIGNMENT_VIEW_END else TEXT_ALIGNMENT_CENTER
                 viewGroup.addView(button)
                 button.setOnClickListener {
                     action.invoke()

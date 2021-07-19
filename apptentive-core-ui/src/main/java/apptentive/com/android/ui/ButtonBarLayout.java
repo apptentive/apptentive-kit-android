@@ -26,6 +26,9 @@ public class ButtonBarLayout extends LinearLayout {
     /** Amount of the second button to "peek" above the fold when stacked. */
     private static final int PEEK_BUTTON_DP = 16;
 
+    /** Amount of buttons to show before stacked + 1 (first child is always a Space view) */
+    private static final int STACK_AFTER_COUNT = 3;
+
     /** Whether the current configuration allows stacking. */
     private boolean mAllowStacking;
 
@@ -57,7 +60,9 @@ public class ButtonBarLayout extends LinearLayout {
         final int widthSize = MeasureSpec.getSize(widthMeasureSpec);
 
         if (mAllowStacking) {
-            if (widthSize > mLastWidthSize && isStacked()) {
+            if (getChildCount() > STACK_AFTER_COUNT) {
+                setStacked(true);
+            } else if (widthSize > mLastWidthSize && isStacked()) {
                 // We're being measured wider this time, try un-stacking.
                 setStacked(false);
             }
