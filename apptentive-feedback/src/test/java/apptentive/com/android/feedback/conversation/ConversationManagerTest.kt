@@ -17,6 +17,7 @@ import apptentive.com.android.feedback.model.EngagementData
 import apptentive.com.android.feedback.model.EngagementManifest
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
+import apptentive.com.android.feedback.model.VersionHistory
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadResponse
 import apptentive.com.android.util.Result
@@ -24,6 +25,7 @@ import com.apptentive.android.sdk.conversation.ConversationData
 import com.apptentive.android.sdk.conversation.LegacyConversationManager
 import com.google.common.truth.Truth.assertThat
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Ignore
 import org.junit.Test
 
@@ -104,6 +106,31 @@ class ConversationManagerTest : TestCase() {
         conversationManager.updateDevice(newDevice.copy(customData = updatedCustomData))
         assertEquals(updatedCustomData.content.size, getUpdatedDevice(conversationManager).customData.content.size)
     }
+
+    @Test
+    fun testAppReleaseSDKUpdate() {
+        val conversationManager = createConversationManager()
+        conversationManager.updateAppReleaseSDK(
+            mockSdk,
+            mockAppRelease.copy(
+                versionName = "2.0.0"
+            ),
+            VersionHistory()
+        )
+        assertTrue(conversationManager.sdkAppReleaseUpdate.value)
+    }
+
+    @Test
+    fun testCheckForSDKAppReleaseUpdates() {
+        val conversationManager = createConversationManager()
+        conversationManager.checkForSDKAppReleaseUpdates(conversationManager.getConversation())
+        /* mockAppRelease & mockSDK has updates which sets the appReleaseChanged & sdkChanged to true
+        updateAppReleaseSDK() will be called and that sets sdkAppReleaseUpdate */
+        assertTrue(conversationManager.sdkAppReleaseUpdate.value)
+        assertEquals("Version name updated", conversationManager.getConversation().appRelease.versionName)
+        assertEquals("Version updated", conversationManager.getConversation().sdk.version)
+        assertEquals(true, conversationManager.isSDKAppReleaseCheckDone)
+    }
 }
 
 private fun createConversationManager(
@@ -145,6 +172,14 @@ private object MockConversationRepository : ConversationRepository {
     }
 
     override fun loadConversation(): Conversation? = conversation
+
+    override fun getCurrentAppRelease(): AppRelease = mockAppRelease.copy(
+        versionName = "Version name updated"
+    )
+
+    override fun getCurrentSdk(): SDK = mockSdk.copy(
+        version = "Version updated"
+    )
 }
 
 private class MockConversationService(

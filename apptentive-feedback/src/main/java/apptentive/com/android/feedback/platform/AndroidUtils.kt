@@ -108,5 +108,17 @@ internal object AndroidUtils {
     fun getLocaleRaw() = Locale.getDefault().toString()
     fun getUtcOffset() = TimeZone.getDefault().rawOffset / 1000
 
+    /**
+     * Converts the current time to a double representing seconds, instead of milliseconds. It will have millisecond
+     * precision as fractional seconds. This is the default time format used throughout the Apptentive SDK.
+     *
+     * @return A double representing the current time in seconds.
+     */
+    fun currentTimeSeconds(): Double {
+        val millis = System.currentTimeMillis()
+        val point = millis.toDouble()
+        return point / 1000
+    }
+
     //endregion
 }

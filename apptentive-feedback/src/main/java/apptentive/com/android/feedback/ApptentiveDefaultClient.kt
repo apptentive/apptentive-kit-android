@@ -29,6 +29,7 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionLaunch
 import apptentive.com.android.feedback.engagement.interactions.InteractionModule
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.CustomData
+import apptentive.com.android.feedback.model.payloads.AppReleaseAndSDKPayload
 import apptentive.com.android.feedback.model.payloads.EventPayload
 import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.feedback.payload.ConversationPayloadService
@@ -138,6 +139,16 @@ internal class ApptentiveDefaultClient(
                         callbackInvoked = true
                     }
                 }
+            }
+        }
+
+        // add an observer to track SDK & AppRelease changes
+        conversationManager.sdkAppReleaseUpdate.observe { appReleaseSDKUpdated ->
+            if (appReleaseSDKUpdated) {
+                val sdk = conversationManager.getConversation().sdk
+                val appRelease = conversationManager.getConversation().appRelease
+                val payload = AppReleaseAndSDKPayload.buildPayload(sdk = sdk, appRelease = appRelease)
+                payloadSender.sendPayload(payload)
             }
         }
 

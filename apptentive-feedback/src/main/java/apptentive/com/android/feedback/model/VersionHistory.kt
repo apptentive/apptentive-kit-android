@@ -16,19 +16,11 @@ data class VersionHistory(
         versionCode: VersionCode,
         versionName: VersionName
     ): VersionHistory {
-        // if an item exists - return same instance
-        if (items.any { it.versionCode == versionCode && it.versionName == versionName }) {
-            return this
-        }
-
-        val item = VersionHistoryItem(
-            timestamp = timestamp,
-            versionCode = versionCode,
-            versionName = versionName
-        )
-        return copy(
-            items = items.copyAndAdd(item)
-        )
+        // if an item exists - return the same instance
+        val versionHistoryItem = VersionHistoryItem(timestamp, versionCode, versionName)
+        val index = items.indexOf(versionHistoryItem)
+        return if (index != -1) this
+        else copy(items = items.copyAndAdd(versionHistoryItem))
     }
 
     fun getTimeAtInstallTotal(): DateTime {

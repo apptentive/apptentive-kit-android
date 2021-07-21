@@ -2,6 +2,7 @@ package apptentive.com.android.feedback.model
 
 import apptentive.com.android.feedback.engagement.criteria.DateTime
 import com.google.common.truth.Truth.assertThat
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -19,6 +20,15 @@ class VersionHistoryTest {
             versionName = "2.0.0"
         )
         assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun testUpdateVersionHistory() {
+        var versionHistory = VersionHistory()
+        versionHistory = versionHistory.updateVersionHistory(10.0, 100, "1.0.0")
+        versionHistory = versionHistory.updateVersionHistory(20.0, 200, "2.0.0")
+        versionHistory = versionHistory.updateVersionHistory(30.0, 100, "1.0.0")
+        assertEquals(3, versionHistory.items.size)
     }
 
     @Test

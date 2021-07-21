@@ -10,8 +10,7 @@ class PayloadTypeTest {
         val types = listOf(
             PayloadType.Person,
             PayloadType.Device,
-            PayloadType.AppRelease,
-            PayloadType.SDK,
+            PayloadType.AppReleaseAndSDK,
             PayloadType.Message,
             PayloadType.Event,
             PayloadType.SurveyResponse
@@ -19,8 +18,7 @@ class PayloadTypeTest {
         val values = listOf(
             "Person",
             "Device",
-            "AppRelease",
-            "SDK",
+            "AppReleaseAndSDK",
             "Message",
             "Event",
             "SurveyResponse"

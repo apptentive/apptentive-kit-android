@@ -37,8 +37,8 @@ class PayloadSQLiteHelperTest {
         )
         val actual2 = createPayload(
             nonce = "nonce-2",
-            type = PayloadType.AppRelease,
-            path = ":conversation_id/app_release",
+            type = PayloadType.Person,
+            path = ":conversation_id/person",
             method = HttpMethod.PUT,
             mediaType = MediaType.applicationJson,
             data = "payload-2"
@@ -71,8 +71,8 @@ class PayloadSQLiteHelperTest {
         )
         val actual2 = createPayload(
             nonce = "nonce-2",
-            type = PayloadType.AppRelease,
-            path = ":conversation_id/app_release",
+            type = PayloadType.Device,
+            path = ":conversation_id/device",
             method = HttpMethod.PUT,
             mediaType = MediaType.applicationJson,
             data = "payload-2"

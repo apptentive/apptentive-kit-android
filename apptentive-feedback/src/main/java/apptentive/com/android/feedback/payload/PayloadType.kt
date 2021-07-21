@@ -3,8 +3,7 @@ package apptentive.com.android.feedback.payload
 enum class PayloadType {
     Person,
     Device,
-    AppRelease,
-    SDK,
+    AppReleaseAndSDK,
     Message,
     Event,
     SurveyResponse;

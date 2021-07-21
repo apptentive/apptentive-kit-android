@@ -18,6 +18,10 @@ interface ConversationRepository {
 
     @Throws(ConversationSerializationException::class)
     fun loadConversation(): Conversation?
+
+    fun getCurrentAppRelease(): AppRelease
+
+    fun getCurrentSdk(): SDK
 }
 
 class DefaultConversationRepository(
@@ -47,4 +51,8 @@ class DefaultConversationRepository(
 
     @Throws(ConversationSerializationException::class)
     override fun loadConversation(): Conversation? = conversationSerializer.loadConversation()
+
+    override fun getCurrentAppRelease(): AppRelease = appReleaseFactory.create()
+
+    override fun getCurrentSdk(): SDK = sdkFactory.create()
 }

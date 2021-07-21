@@ -6,14 +6,21 @@ import apptentive.com.android.core.Observable
 import apptentive.com.android.core.Provider
 import apptentive.com.android.core.isInThePast
 import apptentive.com.android.feedback.CONVERSATION
+import apptentive.com.android.feedback.Constants
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
+import apptentive.com.android.feedback.model.AppRelease
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.Device
 import apptentive.com.android.feedback.model.EngagementData
 import apptentive.com.android.feedback.model.Person
+import apptentive.com.android.feedback.model.SDK
+import apptentive.com.android.feedback.model.VersionHistory
 import apptentive.com.android.feedback.model.hasConversationToken
+import apptentive.com.android.feedback.platform.AndroidUtils.currentTimeSeconds
+import apptentive.com.android.feedback.utils.VersionCode
+import apptentive.com.android.feedback.utils.VersionName
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.Result
 import com.apptentive.android.sdk.conversation.LegacyConversationManager
@@ -26,12 +33,17 @@ class ConversationManager(
 ) {
     private val activeConversationSubject: BehaviorSubject<Conversation>
     val activeConversation: Observable<Conversation> get() = activeConversationSubject
+    private val sdkAppReleaseUpdateSubject = BehaviorSubject(false)
+    val sdkAppReleaseUpdate: Observable<Boolean> get() = sdkAppReleaseUpdateSubject
+
+    var isSDKAppReleaseCheckDone = false
 
     init {
         val conversation = loadActiveConversation()
         activeConversationSubject = BehaviorSubject(conversation)
         activeConversationSubject.observe(::saveConversation)
         activeConversationSubject.observe(::tryFetchEngagementManifest)
+        activeConversation.observe(::checkForSDKAppReleaseUpdates)
     }
 
     fun fetchConversationToken(callback: (result: Result<Unit>) -> Unit) {
@@ -99,6 +111,52 @@ class ConversationManager(
         return conversationRepository.createConversation()
     }
 
+    fun checkForSDKAppReleaseUpdates(conversation: Conversation) {
+        // Check for SDK & AppRelease update once per session
+        if (isSDKAppReleaseCheckDone) return else isSDKAppReleaseCheckDone = true
+        Log.i(CONVERSATION, "Checking for SDK & AppRelease updates")
+        var appReleaseChanged = false
+        var sdkChanged = false
+
+        val lastVersionItemSeen = conversation.engagementData.versionHistory.getLastVersionSeen()
+        val lastVersionCode: VersionCode? = lastVersionItemSeen?.versionCode
+        val lastVersionName: VersionName? = lastVersionItemSeen?.versionName
+        val lastSeenSdkVersion: String = conversation.sdk.version
+
+        val currentAppRelease = conversationRepository.getCurrentAppRelease()
+        val currentSDK: SDK = conversationRepository.getCurrentSdk()
+        val currentVersionCode: VersionCode = currentAppRelease.versionCode
+        val currentVersionName: VersionName = currentAppRelease.versionName
+        val currentSdkVersion: String = Constants.SDK_VERSION
+
+        if (lastVersionItemSeen == null ||
+            currentVersionCode != lastVersionCode ||
+            currentVersionName != lastVersionName
+        ) {
+            Log.d(
+                CONVERSATION,
+                "Application version was changed: Name: $lastVersionName => $currentVersionName, " +
+                    "Code: $lastVersionCode => $currentVersionCode",
+            )
+            appReleaseChanged = true
+        }
+
+        if (lastSeenSdkVersion != currentSdkVersion) {
+            sdkChanged = true
+            Log.d(CONVERSATION, "SDK version was changed: $lastSeenSdkVersion => $currentSdkVersion")
+        }
+
+        if (appReleaseChanged || sdkChanged) {
+            sdkAppReleaseUpdateSubject.value = true
+            val versionHistory = conversation.engagementData.versionHistory.updateVersionHistory(
+                currentTimeSeconds(),
+                currentVersionCode,
+                currentVersionName
+            )
+            updateAppReleaseSDK(currentSDK, currentAppRelease, versionHistory)
+        }
+    }
+
     @WorkerThread
     private fun saveConversation(conversation: Conversation) {
         try {
@@ -160,6 +218,16 @@ class ConversationManager(
         val conversation = activeConversationSubject.value
         activeConversationSubject.value = conversation.copy(
             device = device
+        )
+    }
+
+    fun updateAppReleaseSDK(sdk: SDK, appRelease: AppRelease, versionHistory: VersionHistory) {
+        val conversation = activeConversationSubject.value
+        val engagementData = activeConversation.value.engagementData
+        activeConversationSubject.value = conversation.copy(
+            sdk = sdk,
+            appRelease = appRelease,
+            engagementData = engagementData.copy(versionHistory = versionHistory)
         )
     }
 
