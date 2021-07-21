@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">Apptentive</string>
     <string name="hint_event_name">Event name</string>
     <string name="engage">Engage</string>
     <string name="love_dialog">Love Dialog</string>
