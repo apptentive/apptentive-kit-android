@@ -23,21 +23,30 @@ import apptentive.com.android.feedback.survey.interaction.SurveyInteraction
 import apptentive.com.android.feedback.survey.interaction.SurveyInteractionLauncher
 import apptentive.com.app.databinding.ActivityMainBinding
 
+val EXTRA_NIGHT_MODE = "nightMode"
+val EXTRA_APPTENTIVE_THEME = "apptentiveTheme"
+
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 
         val prefs = getSharedPreferences("prefs", MODE_PRIVATE)
 
-        val night = prefs.getBoolean("night", false)
-        binding.nightSwitch.isChecked = night
-        delegate.localNightMode = if (night) MODE_NIGHT_YES else MODE_NIGHT_NO
+        val isNightMode = prefs.getBoolean(EXTRA_NIGHT_MODE, false)
+        delegate.localNightMode = if (isNightMode) MODE_NIGHT_YES else MODE_NIGHT_NO
 
+        val binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        binding.nightSwitch.isChecked = isNightMode
         binding.nightSwitch.setOnCheckedChangeListener { _, isChecked ->
             delegate.localNightMode = if (isChecked) MODE_NIGHT_YES else MODE_NIGHT_NO
-            prefs.edit().putBoolean("night", isChecked).apply()
+            prefs.edit().putBoolean(EXTRA_NIGHT_MODE, isChecked).apply()
+        }
+
+        binding.infoIcon.setOnClickListener {
+            val intent = Intent(this, DebugInfoActivity::class.java)
+            startActivity(intent)
         }
 
         binding.engageButton.setOnClickListener {

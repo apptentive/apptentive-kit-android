@@ -8,6 +8,19 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
+        <ImageButton
+            android:id="@+id/infoIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/debug_icon_margin"
+            android:layout_marginEnd="@dimen/debug_icon_margin"
+            android:background="?android:selectableItemBackgroundBorderless"
+            android:padding="16dp"
+            android:src="@drawable/ic_round_info_24"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="?colorPrimary" />
+
         <androidx.appcompat.widget.AppCompatAutoCompleteTextView
             android:id="@+id/event_name_edit_text"
             android:layout_width="200dp"
@@ -33,7 +46,7 @@
             android:id="@+id/love_dialog_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/button_spacing_top_margin"
             android:text="@string/love_dialog"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -43,7 +56,7 @@
             android:id="@+id/survey_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/button_spacing_top_margin"
             android:text="@string/survey"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -53,7 +66,7 @@
             android:id="@+id/notes_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/button_spacing_top_margin"
             android:text="@string/note"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -63,7 +76,7 @@
             android:id="@+id/data_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/button_spacing_top_margin"
             android:text="@string/data"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -77,7 +90,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

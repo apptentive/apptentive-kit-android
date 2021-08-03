@@ -24,6 +24,7 @@ android {
         targetSdkVersion rootProject.targetSdkVersion
         versionCode theVersionCode
         versionName theVersionName
+        multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -47,6 +48,9 @@ android {
             signingConfig signingConfigs.release
         }
     }
+    buildTypes.each {
+        it.buildConfigField "java.util.Date", "APP_BUILD_DATE", "new java.util.Date(" + System.currentTimeMillis() + "L)"
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -65,6 +69,7 @@ dependencies {
     implementation "androidx.core:core-ktx:$ktx_version"
     implementation "com.google.android.material:material:$material_design_version"
     implementation "androidx.constraintlayout:constraintlayout:$constraint_layout_version"
+    implementation "androidx.multidex:multidex:2.0.1"
     implementation project(':apptentive-core')
     implementation project(':apptentive-core-ui')
     implementation project(':apptentive-feedback')

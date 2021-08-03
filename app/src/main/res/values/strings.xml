@@ -7,6 +7,8 @@
     <string name="note">Note</string>
     <string name="data">Data</string>
     <string name="night">Night</string>
+
+    <!-- Custom Data -->
     <string name="custom_device_data">Custom Device Data</string>
     <string name="value">Value…</string>
     <string name="add">Add</string>
@@ -18,4 +20,32 @@
     <string name="key">Key…</string>
     <string name="email">Email…</string>
     <string name="person_name">Person Name</string>
+
+    <!-- Debug Screen Start -->
+    <string name="sdk_information">SDK Information:</string>
+    <string name="app_information">App Information:</string>
+    <string name="phone_information">Phone Information:</string>
+    <string name="sdk_version">SDK Version: %s</string>
+    <string name="build_date_time">Built: %s</string>
+
+    <!-- Styles -->
+    <string name="apptentive_theme">Apptentive Theme</string>
+    <string name="style_information">Style Information:</string>
+    <string name="theme_name">Theme Name</string>
+    <string name="colorPrimary">colorPrimary</string>
+    <string name="colorOnPrimary">colorOnPrimary</string>
+    <string name="colorPrimaryVariant">colorPrimaryVariant</string>
+    <string name="colorSecondary">colorSecondary</string>
+    <string name="colorSecondaryVariant">colorSecondaryVariant</string>
+    <string name="colorOnSecondary">colorOnSecondary</string>
+    <string name="android_colorBackground">android:colorBackground</string>
+    <string name="colorOnBackground">colorOnBackground</string>
+    <string name="android_textColorSecondary">android:textColorSecondary</string>
+    <string name="colorError">colorError</string>
+
+    <!-- Content Descriptions -->
+    <string name="cd_app_icon">App Icon</string>
+    <string name="cd_spacing_line">Spacing Line</string>
+
+    <!-- Debug Screen End -->
 </resources>

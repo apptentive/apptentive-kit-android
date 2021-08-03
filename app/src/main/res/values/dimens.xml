@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="margin_4dp">4dp</dimen>
+    <dimen name="app_icon_height_width">32dp</dimen>
+    <dimen name="screen_horizontal_margin">24dp</dimen>
+    <dimen name="section_top_margin">16dp</dimen>
+    <dimen name="item_top_margin">4dp</dimen>
+    <dimen name="spacer_height">2dp</dimen>
+    <dimen name="spacer_bottom_margin">4dp</dimen>
+    <dimen name="spacer_horizontal_margin">2dp</dimen>
+    <dimen name="debug_icon_margin">8dp</dimen>
+    <dimen name="button_spacing_top_margin">8dp</dimen>
+</resources>
