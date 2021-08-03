@@ -2,6 +2,7 @@ package apptentive.com.android.feedback.platform
 
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.Event
+import apptentive.com.android.feedback.engagement.InternalEvent
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionLauncher
 
@@ -13,7 +14,7 @@ abstract class AndroidViewInteractionLauncher<in T : Interaction> :
     AndroidInteractionLauncher<T>() {
     override fun launchInteraction(context: EngagementContext, interaction: T) {
         // every interaction which has a user interface must engage internal "launch" event before showing UI
-        context.engage(Event.internal("launch", interaction.type), interaction.id)
+        context.engage(Event.internal(InternalEvent.APP_LAUNCH.labelName, interaction.type), interaction.id)
 
         // create and display UI
         super.launchInteraction(context, interaction)

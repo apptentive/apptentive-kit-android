@@ -30,3 +30,8 @@ data class Event(val vendor: String, val interaction: String, val name: String) 
         }
     }
 }
+
+enum class InternalEvent(val labelName: String) {
+    APP_LAUNCH("launch"),
+    APP_EXIT("exit");
+}

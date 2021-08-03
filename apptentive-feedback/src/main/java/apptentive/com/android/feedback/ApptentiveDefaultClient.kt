@@ -2,6 +2,7 @@ package apptentive.com.android.feedback
 
 import android.content.Context
 import androidx.annotation.WorkerThread
+import androidx.lifecycle.ProcessLifecycleOwner
 import apptentive.com.android.concurrent.Executors
 import apptentive.com.android.core.Provider
 import apptentive.com.android.feedback.backend.ConversationService
@@ -27,6 +28,7 @@ import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionDataConverter
 import apptentive.com.android.feedback.engagement.interactions.InteractionLauncher
 import apptentive.com.android.feedback.engagement.interactions.InteractionModule
+import apptentive.com.android.feedback.lifecycle.ApptentiveLifecycleObserver
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.CustomData
 import apptentive.com.android.feedback.model.payloads.AppReleaseAndSDKPayload
@@ -152,8 +154,15 @@ internal class ApptentiveDefaultClient(
             }
         }
 
-        // FIXME: temporary code
-        engage(context, Event.internal("launch"))
+        executors.main.execute {
+            Log.i(LIFE_CYCLE_OBSERVER, "Observing App lifecycle")
+            ProcessLifecycleOwner.get().lifecycle.addObserver(
+                ApptentiveLifecycleObserver(
+                    this,
+                    context
+                )
+            )
+        }
     }
 
     private fun createConversationRepository(context: Context): ConversationRepository {

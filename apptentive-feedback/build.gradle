@@ -42,6 +42,9 @@ dependencies {
 
     implementation "androidx.appcompat:appcompat:$support_library_version"
     implementation project(':apptentive-core')
+    implementation "androidx.lifecycle:lifecycle-runtime:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+    annotationProcessor "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
 
     testImplementation project(':apptentive-core-test')
     testImplementation project(':apptentive-feedback-test')
