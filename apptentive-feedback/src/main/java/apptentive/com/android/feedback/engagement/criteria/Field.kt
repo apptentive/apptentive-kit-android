@@ -367,7 +367,7 @@ fun Field.convertValue(value: Any?): Any? {
                 else -> Version.tryParse(converted.toString())
             }
         }
-        Field.Type.Any -> true
+        Field.Type.Any -> converted as Any
     }
 }
 
