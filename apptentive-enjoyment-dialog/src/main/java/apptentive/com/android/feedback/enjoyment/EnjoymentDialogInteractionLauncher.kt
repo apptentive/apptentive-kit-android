@@ -1,8 +1,5 @@
 package apptentive.com.android.feedback.enjoyment
 
-import android.content.Context
-import android.view.LayoutInflater
-import android.widget.TextView
 import androidx.appcompat.view.ContextThemeWrapper
 import apptentive.com.android.feedback.INTERACTIONS
 import apptentive.com.android.feedback.platform.AndroidEngagementContext
@@ -23,36 +20,31 @@ internal class EnjoymentDialogInteractionLauncher :
         val viewModel = EnjoymentDialogViewModel(context, interaction)
 
         context.executors.main.execute {
-            val ctx: Context = ContextThemeWrapper(context.androidContext, R.style.Theme_Apptentive_Dialog_Alert).apply {
+            val ctx = ContextThemeWrapper(context.androidContext, R.style.Theme_Apptentive_Dialog_Alert).apply {
                 overrideTheme()
             }
 
             val dialog = MaterialAlertDialogBuilder(ctx).apply {
-                val contentView = LayoutInflater.from(ctx)
-                    .inflate(R.layout.apptentive_enjoyment_dialog, null)
-                setView(contentView)
+                setMessage(interaction.title)
 
-                val titleView = contentView.findViewById<TextView>(R.id.alertTitle)
-                titleView.text = interaction.title
-
-                val yesButton = contentView.findViewById<TextView>(R.id.positiveButton)
-                yesButton.text = interaction.yesText
-                yesButton.setOnClickListener {
+                setPositiveButton(interaction.yesText) { _, _ ->
+                    Log.i(INTERACTIONS, "Love dialog positive button pressed")
                     viewModel.onYesButton()
                 }
 
-                val noButton = contentView.findViewById<TextView>(R.id.negativeButton)
-                noButton.text = interaction.noText
-                noButton.setOnClickListener {
+                setNegativeButton(interaction.noText) { _, _ ->
+                    Log.i(INTERACTIONS, "Love dialog negative button pressed")
                     viewModel.onNoButton()
                 }
 
                 setOnCancelListener {
+                    Log.i(INTERACTIONS, "Love dialog cancelled")
                     viewModel.onCancel()
                 }
             }.show()
 
             viewModel.onDismiss = {
+                Log.i(INTERACTIONS, "Love dialog dismissed")
                 dialog.dismiss()
             }
         }

@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base Apptentive theme. -->
     <style name="Theme.Apptentive" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/apptentive_color_primary</item>
@@ -13,7 +13,7 @@
         <item name="colorError">@color/apptentive_color_error</item>
     </style>
 
-    <style name="Theme.Apptentive.Dialog.Alert" parent="Theme.MaterialComponents.DayNight.Dialog.Alert">
+    <style name="Theme.Apptentive.Dialog.Alert" parent="Theme.Apptentive">
         <item name="android:background">?android:attr/colorBackground</item>
     </style>
 

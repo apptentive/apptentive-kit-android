@@ -73,13 +73,13 @@ class SerialPayloadSender(
         }
 
         if (busySending) {
-            Log.w(PAYLOADS, "unable to send payload: another payload being sent")
+            Log.d(PAYLOADS, "unable to send payload: another payload being sent")
             return
         }
 
         val nextPayload = payloadQueue.nextUnsentPayload()
         if (nextPayload == null) {
-            Log.w(PAYLOADS, "unable to send payload: payload queue is empty")
+            Log.d(PAYLOADS, "unable to send payload: payload queue is empty")
             return
         }
 

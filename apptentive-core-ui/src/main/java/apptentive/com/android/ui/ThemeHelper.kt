@@ -3,6 +3,7 @@ package apptentive.com.android.ui
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
+import androidx.appcompat.view.ContextThemeWrapper
 import apptentive.com.android.R
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags
@@ -17,17 +18,39 @@ fun Context.overrideTheme() {
     }
 
     /* Step 2: Inherit app default theme */
+    applyAppTheme()
+
+    /* Step 3: Apply optional theme override specified in host app's style */
+    applyApptentiveThemeOverride()
+}
+
+/**
+ * Allows the usage of ContextThemeWrapper to overwrite base Apptentive theme values
+ */
+fun ContextThemeWrapper.overrideTheme() {
+    val contextTheme = themeResId
+
+    /* Step 1: Apply Apptentive default theme layer */
+    theme.applyStyle(R.style.Theme_Apptentive, true)
+
+    /* Step 2: Layer on ContextThemeWrapper's theme it was created with */
+    theme.applyStyle(contextTheme, true)
+
+    /* Step 3: Inherit app default theme */
+    applyAppTheme()
+
+    /* Step 4: Apply optional theme override specified in host app's style */
+    applyApptentiveThemeOverride()
+}
+
+private fun Context.applyAppTheme() {
     val appThemeId = getAppThemeId()
     if (appThemeId != null) {
         theme.applyStyle(appThemeId, true)
     }
+}
 
-    /* Step 3: Restore Apptentive UI window properties that may have been overridden in Step 2. This theme
-     * is to ensure Apptentive interaction has a modal feel-n-look.
-     */
-    // TODO: we don't have any specific things yet but when we do - they must be applied here
-
-    /* Step 4: Apply optional theme override specified in host app's style */
+private fun Context.applyApptentiveThemeOverride() {
     val themeOverrideResId: Int = resources.getIdentifier(
         "ApptentiveThemeOverride",
         "style", packageName
