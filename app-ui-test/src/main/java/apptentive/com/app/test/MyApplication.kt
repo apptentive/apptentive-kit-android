@@ -1,10 +1,10 @@
 package apptentive.com.app.test
 
-import android.app.Application
+import androidx.multidex.MultiDexApplication
 import apptentive.com.android.core.AndroidLoggerProvider
 import apptentive.com.android.core.DependencyProvider
 
-class MyApplication: Application() {
+class MyApplication:  MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
 
