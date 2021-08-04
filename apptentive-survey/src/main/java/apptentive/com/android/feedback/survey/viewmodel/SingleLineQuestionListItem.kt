@@ -109,10 +109,8 @@ class SingleLineQuestionListItem(
             answerEditText.setText(item.text)
             answerEditText.setTextBoxBackgroundFocusFix()
             answerEditText.doAfterTextChanged {
-                when {
-                    answerEditText.hasFocus() && it.isNullOrEmpty() -> answerEditText.setText(" ") // Second part to the fix
-                    !it.isNullOrBlank() -> onTextChanged(questionId, it.toString())
-                }
+                if (answerEditText.hasFocus() && it.isNullOrEmpty()) answerEditText.setText(" ")  // Second part to the fix
+                onTextChanged(questionId, it?.toString().orEmpty().trim())
             }
         }
 

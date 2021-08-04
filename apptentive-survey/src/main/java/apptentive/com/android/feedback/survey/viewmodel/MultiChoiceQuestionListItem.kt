@@ -134,10 +134,8 @@ class MultiChoiceQuestionListItem(
                 textInputEditText.setText(choice.text)
                 textInputEditText.setTextBoxBackgroundFocusFix()
                 textInputEditText.doAfterTextChanged {
-                    when {
-                        textInputEditText.hasFocus() && it.isNullOrEmpty() -> textInputEditText.setText(" ")  // Second part to the fix
-                        !it.isNullOrBlank() -> onSelectionChanged.invoke(questionId, choice.id, true, it.toString())
-                    }
+                    if (textInputEditText.hasFocus() && it.isNullOrEmpty()) textInputEditText.setText(" ")  // Second part to the fix
+                    onSelectionChanged.invoke(questionId, choice.id, true, it?.toString().orEmpty().trim())
                 }
                 // text fields end
 
