@@ -15,6 +15,7 @@
         android:id="@+id/other_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:imeOptions="actionDone"
         android:inputType="textMultiLine|textCapSentences"
         android:maxLines="4"
         android:minHeight="@dimen/min_height_radio_checkbox_component"

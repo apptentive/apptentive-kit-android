@@ -14,6 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/margin_4dp"
+        android:imeOptions="actionDone"
         android:minHeight="@dimen/min_height_textfield_component" />
 
 </com.google.android.material.textfield.TextInputLayout>

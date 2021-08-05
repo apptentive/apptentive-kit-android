@@ -3,7 +3,6 @@ package apptentive.com.android.feedback.survey.viewmodel
 import android.view.Gravity.CENTER_VERTICAL
 import android.view.Gravity.START
 import android.view.Gravity.TOP
-import android.view.inputmethod.EditorInfo.IME_FLAG_NO_ENTER_ACTION
 import android.view.inputmethod.EditorInfo.TYPE_CLASS_TEXT
 import android.view.inputmethod.EditorInfo.TYPE_TEXT_FLAG_CAP_SENTENCES
 import android.view.inputmethod.EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE
@@ -97,7 +96,6 @@ class SingleLineQuestionListItem(
                     TYPE_CLASS_TEXT or TYPE_TEXT_FLAG_CAP_SENTENCES or TYPE_TEXT_FLAG_MULTI_LINE
                 answerEditText.minLines = 4
                 answerEditText.maxLines = 8
-                answerEditText.imeOptions = IME_FLAG_NO_ENTER_ACTION
             } else {
                 answerTextInputLayout.gravity = CENTER_VERTICAL or START
                 answerEditText.gravity = CENTER_VERTICAL or START
