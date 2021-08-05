@@ -1,6 +1,8 @@
 package apptentive.com.app
 
 import android.content.Context
+import android.content.pm.PackageManager
+import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -113,15 +115,42 @@ class DebugInfoActivity : AppCompatActivity() {
 
     private fun setDeviceInfo(binding: ActivityDebugInfoBinding) {
         val device = getDevice()
+
+        // Display Info
         val displayMetrics = DisplayMetrics()
         val display = windowManager.defaultDisplay
         display.getMetrics(displayMetrics)
         val density = getDensityString(displayMetrics)
 
+        // Network Info
+        val cm = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetworkInfo = cm.activeNetworkInfo
+        val allNetworkInfo = cm.allNetworkInfo
+
+        // Internet / WiFi / Mobile Data Connection
+        val connectedToInternet = activeNetworkInfo?.isConnectedOrConnecting == true
+        var connectedToWiFi = false
+        var connectedToMobileData = false
+        for (ni in allNetworkInfo) {
+            if (ni.typeName.equals("WIFI") && ni.isConnected) connectedToWiFi = true
+            if (ni.typeName.equals("MOBILE") && ni.isConnected) connectedToMobileData = true
+        }
+
+        // Phone / Sim states
+        val deviceCanMakeCalls = packageManager.hasSystemFeature(PackageManager.FEATURE_TELEPHONY)
+        val simStateSlot1 = getSimState((getSystemService(TELEPHONY_SERVICE) as TelephonyManager).getSimState(0))
+        val simStateSlot2 = getSimState((getSystemService(TELEPHONY_SERVICE) as TelephonyManager).getSimState(1))
+
         val deviceItems = listOf(
             DebugItem("Operating System", "${device.osName} ${device.osVersion}"),
             DebugItem("OS API Level", device.osApiLevel.toString()),
             DebugItem("OS Build Version", device.osBuild),
+            DebugItem("Connected to Internet", connectedToInternet.toString()),
+            DebugItem("Connected by WiFi", connectedToWiFi.toString()),
+            DebugItem("Connected by Mobile Data", connectedToMobileData.toString()),
+            DebugItem("Device can make calls", deviceCanMakeCalls.toString()),
+            DebugItem("SIM state status slot 1", simStateSlot1),
+            DebugItem("SIM state status slot 2", simStateSlot2),
             DebugItem("Manufacturer", device.manufacturer),
             DebugItem("Model", device.model),
             DebugItem("Density Bucket", density),
@@ -161,6 +190,20 @@ class DebugInfoActivity : AppCompatActivity() {
         displayMetrics.densityDpi <= DisplayMetrics.DENSITY_TV -> "tvdpi"
         displayMetrics.densityDpi <= DisplayMetrics.DENSITY_DEVICE_STABLE -> "device_stable"
         else -> "Unknown"
+    }
+
+    private fun getSimState(simState: Int) = when (simState) {
+        TelephonyManager.SIM_STATE_UNKNOWN -> "UNKNOWN OR NO SLOT"
+        TelephonyManager.SIM_STATE_ABSENT -> "ABSENT"
+        TelephonyManager.SIM_STATE_PIN_REQUIRED -> "PIN REQUIRED"
+        TelephonyManager.SIM_STATE_PUK_REQUIRED -> "PUK REQUIRED"
+        TelephonyManager.SIM_STATE_NETWORK_LOCKED -> "NETWORK LOCKED"
+        TelephonyManager.SIM_STATE_READY -> "READY"
+        TelephonyManager.SIM_STATE_NOT_READY -> "NOT READY"
+        TelephonyManager.SIM_STATE_PERM_DISABLED -> "PERM DISABLED"
+        TelephonyManager.SIM_STATE_CARD_IO_ERROR -> "CARD IO ERROR"
+        TelephonyManager.SIM_STATE_CARD_RESTRICTED -> "CARD RESTRICTED"
+        else -> "LOADED OR PRESENT"
     }
 
     private fun getDevice() = Device(
