@@ -5,6 +5,12 @@ import apptentive.com.android.util.LogTag
 
 @JvmField val EVENT = LogTag("EVENT")
 @JvmField val CONVERSATION = LogTag("CONVERSATION")
+@JvmField val DEVICE = LogTag("DEVICE")
+@JvmField val PERSON = LogTag("PERSON")
+@JvmField val SDK = LogTag("SDK")
+@JvmField val APP_RELEASE = LogTag("APP_RELEASE")
+@JvmField val ENGAGEMENT_DATA = LogTag("ENGAGEMENT DATA")
+@JvmField val ENGAGEMENT_MANIFEST = LogTag("ENGAGEMENT MANIFEST")
 @JvmField val FEEDBACK = LogTag("FEEDBACK")
 @JvmField val SYSTEM = LogTag("SYSTEM")
 @JvmField val CRITERIA = LogTag("CRITERIA")

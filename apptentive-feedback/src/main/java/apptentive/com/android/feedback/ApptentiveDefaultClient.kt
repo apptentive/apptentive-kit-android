@@ -107,7 +107,7 @@ internal class ApptentiveDefaultClient(
         }
         conversationManager.activeConversation.observe { conversation ->
             if (Log.canLog(LogLevel.Verbose)) { // avoid unnecessary computations
-                Log.v(CONVERSATION, "Conversation state changed: $conversation")
+                conversation.logConversation()
             }
             // FIXME: most of these values can be cached and only changed when the actual data changes
             engagement = DefaultEngagement(
