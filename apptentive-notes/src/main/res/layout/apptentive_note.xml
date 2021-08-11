@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/apptentive_note"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="start|top"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
 
-    <include layout="@layout/apptentive_note_title" />
-
-    <include layout="@layout/apptentive_note_message" />
-
-    <include
-        layout="@layout/apptentive_note_actions"
+    <LinearLayout
+        android:id="@+id/apptentive_note"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:gravity="start|top"
+        android:orientation="vertical">
 
-</LinearLayout>
+        <include layout="@layout/apptentive_note_title" />
+
+        <include layout="@layout/apptentive_note_message" />
+
+        <include
+            layout="@layout/apptentive_note_actions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+</ScrollView>
