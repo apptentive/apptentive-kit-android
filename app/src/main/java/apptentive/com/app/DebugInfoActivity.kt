@@ -136,6 +136,8 @@ class DebugInfoActivity : AppCompatActivity() {
             if (ni.typeName.equals("MOBILE") && ni.isConnected) connectedToMobileData = true
         }
 
+        val isEmulator = isDeviceAnEmulator()
+
         // Phone / Sim states
         val deviceCanMakeCalls = packageManager.hasSystemFeature(PackageManager.FEATURE_TELEPHONY)
         val simStateSlot1 = getSimState((getSystemService(TELEPHONY_SERVICE) as TelephonyManager).getSimState(0))
@@ -145,19 +147,24 @@ class DebugInfoActivity : AppCompatActivity() {
             DebugItem("Operating System", "${device.osName} ${device.osVersion}"),
             DebugItem("OS API Level", device.osApiLevel.toString()),
             DebugItem("OS Build Version", device.osBuild),
+            DebugItem("Manufacturer", device.manufacturer),
+            DebugItem("Model", device.model),
+            DebugItem("Is Device an Emulator", isEmulator.toString()),
             DebugItem("Connected to Internet", connectedToInternet.toString()),
             DebugItem("Connected by WiFi", connectedToWiFi.toString()),
             DebugItem("Connected by Mobile Data", connectedToMobileData.toString()),
             DebugItem("Device can make calls", deviceCanMakeCalls.toString()),
             DebugItem("SIM state status slot 1", simStateSlot1),
             DebugItem("SIM state status slot 2", simStateSlot2),
-            DebugItem("Manufacturer", device.manufacturer),
-            DebugItem("Model", device.model),
             DebugItem("Density Bucket", density),
             DebugItem("Density Multiplier", displayMetrics.density.toString()),
             DebugItem("Density DPI", displayMetrics.densityDpi.toString()),
             DebugItem("Pixels", "${displayMetrics.widthPixels}w x ${displayMetrics.heightPixels}h"),
             DebugItem("Scaled Density", displayMetrics.scaledDensity.toString()),
+            DebugItem("Locale Country Code", device.localeCountryCode),
+            DebugItem("Locale Language Code", device.localeLanguageCode),
+            DebugItem("Locale Raw", device.localeRaw),
+            DebugItem("UTC Offset", device.utcOffset.toString()),
             DebugItem("Board", device.board),
             DebugItem("Product", device.product),
             DebugItem("Brand", device.brand),
@@ -170,15 +177,30 @@ class DebugInfoActivity : AppCompatActivity() {
             DebugItem("Current Carrier", device.currentCarrier.toString()),
             DebugItem("Boot Loader Version", device.bootloaderVersion.toString()),
             DebugItem("Radio Version", device.radioVersion.toString()),
-            DebugItem("Locale Country Code", device.localeCountryCode),
-            DebugItem("Locale Language Code", device.localeLanguageCode),
-            DebugItem("Locale Raw", device.localeRaw),
-            DebugItem("UTC Offset", device.utcOffset.toString()),
         )
 
         val adapter = DebugItemAdapter(deviceItems)
         binding.deviceRecycler.adapter = adapter
     }
+
+    // Is Device an Emulator (taken from https://github.com/flutter/plugins/blob/master/packages/device_info/device_info/android/src/main/java/io/flutter/plugins/deviceinfo/MethodCallHandlerImpl.java#L115-L131)
+    private fun isDeviceAnEmulator() =
+        (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic")) ||
+            Build.FINGERPRINT.startsWith("generic") ||
+            Build.FINGERPRINT.startsWith("unknown") ||
+            Build.HARDWARE.contains("goldfish") ||
+            Build.HARDWARE.contains("ranchu") ||
+            Build.MODEL.contains("google_sdk") ||
+            Build.MODEL.contains("Emulator") ||
+            Build.MODEL.contains("Android SDK built for x86") ||
+            Build.MANUFACTURER.contains("Genymotion") ||
+            Build.PRODUCT.contains("sdk_google") ||
+            Build.PRODUCT.contains("google_sdk") ||
+            Build.PRODUCT.contains("sdk") ||
+            Build.PRODUCT.contains("sdk_x86") ||
+            Build.PRODUCT.contains("vbox86p") ||
+            Build.PRODUCT.contains("emulator") ||
+            Build.PRODUCT.contains("simulator")
 
     private fun getDensityString(displayMetrics: DisplayMetrics) = when {
         displayMetrics.densityDpi <= DisplayMetrics.DENSITY_LOW -> "ldpi"
