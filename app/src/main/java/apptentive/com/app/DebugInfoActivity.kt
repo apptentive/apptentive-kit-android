@@ -208,7 +208,7 @@ class DebugInfoActivity : AppCompatActivity() {
 
     private fun getDevice() = Device(
         osName = "Android",
-        osVersion = Build.VERSION.RELEASE_OR_CODENAME,
+        osVersion = Build.VERSION.RELEASE,
         osBuild = Build.VERSION.INCREMENTAL,
         osApiLevel = Build.VERSION.SDK_INT,
         manufacturer = Build.MANUFACTURER,
