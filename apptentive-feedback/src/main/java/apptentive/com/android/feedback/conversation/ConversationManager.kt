@@ -29,7 +29,8 @@ import com.apptentive.android.sdk.conversation.toConversation
 class ConversationManager(
     private val conversationRepository: ConversationRepository,
     private val conversationService: ConversationService,
-    private val legacyConversationManagerProvider: Provider<LegacyConversationManager>
+    private val legacyConversationManagerProvider: Provider<LegacyConversationManager>,
+    private val isDebuggable: Boolean
 ) {
     private val activeConversationSubject: BehaviorSubject<Conversation>
     val activeConversation: Observable<Conversation> get() = activeConversationSubject
@@ -42,7 +43,6 @@ class ConversationManager(
         val conversation = loadActiveConversation()
         activeConversationSubject = BehaviorSubject(conversation)
         activeConversationSubject.observe(::saveConversation)
-        activeConversationSubject.observe(::tryFetchEngagementManifest)
         activeConversation.observe(::checkForSDKAppReleaseUpdates)
     }
 
@@ -167,31 +167,37 @@ class ConversationManager(
     }
 
     @WorkerThread
-    private fun tryFetchEngagementManifest(conversation: Conversation) {
+    fun tryFetchEngagementManifest() {
+        val conversation = activeConversationSubject.value
         val manifest = conversation.engagementManifest
-        if (!isInThePast(manifest.expiry)) {
-            Log.d(CONVERSATION, "Engagement manifest up to date")
-            return
-        }
 
-        val token = conversation.conversationToken
-        val id = conversation.conversationId
-        if (token != null && id != null) {
-            conversationService.fetchEngagementManifest(
-                conversationToken = token,
-                conversationId = id
-            ) {
-                when (it) {
-                    is Result.Success -> {
-                        activeConversationSubject.value = activeConversationSubject.value.copy(
-                            engagementManifest = it.data
-                        )
-                    }
-                    is Result.Error -> {
-                        Log.e(CONVERSATION, "Error while fetching engagement manifest", it.error)
+        if (isInThePast(manifest.expiry) || isDebuggable) {
+            Log.d(CONVERSATION, "Fetching engagement manifest")
+            val token = conversation.conversationToken
+            val id = conversation.conversationId
+            if (token != null && id != null) {
+                conversationService.fetchEngagementManifest(
+                    conversationToken = token,
+                    conversationId = id
+                ) {
+                    when (it) {
+                        is Result.Success -> {
+                            activeConversationSubject.value = activeConversationSubject.value.copy(
+                                engagementManifest = it.data
+                            )
+                        }
+                        is Result.Error -> {
+                            Log.e(
+                                CONVERSATION,
+                                "Error while fetching engagement manifest",
+                                it.error
+                            )
+                        }
                     }
                 }
             }
+        } else {
+            Log.d(CONVERSATION, "Engagement manifest up to date")
         }
     }
 

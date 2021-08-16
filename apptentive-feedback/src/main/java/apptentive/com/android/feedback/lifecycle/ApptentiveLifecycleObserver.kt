@@ -11,7 +11,7 @@ import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.InternalEvent
 import apptentive.com.android.util.Log
 
-internal class ApptentiveLifecycleObserver(val client: ApptentiveClient, val context: Context) : LifecycleObserver {
+internal class ApptentiveLifecycleObserver(val client: ApptentiveClient, val context: Context, val refreshManifest: () -> Unit) : LifecycleObserver {
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     @WorkerThread
     fun onBackground() {
@@ -24,5 +24,6 @@ internal class ApptentiveLifecycleObserver(val client: ApptentiveClient, val con
     fun onForeground() {
         Log.d(LIFE_CYCLE_OBSERVER, "App is in foreground")
         client.engage(context, Event.internal(InternalEvent.APP_LAUNCH.labelName))
+        refreshManifest()
     }
 }

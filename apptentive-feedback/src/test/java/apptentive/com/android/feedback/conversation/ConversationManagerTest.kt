@@ -2,6 +2,7 @@ package apptentive.com.android.feedback.conversation
 
 import apptentive.com.android.TestCase
 import apptentive.com.android.core.Provider
+import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.getTimeSeconds
 import apptentive.com.android.feedback.backend.ConversationCredentials
 import apptentive.com.android.feedback.backend.ConversationService
@@ -131,6 +132,30 @@ class ConversationManagerTest : TestCase() {
         assertEquals("Version updated", conversationManager.getConversation().sdk.version)
         assertEquals(true, conversationManager.isSDKAppReleaseCheckDone)
     }
+
+    @Test
+    fun testEngagementDataFetch() {
+        val fetchResponse: ConversationCredentials =
+            ConversationCredentials(
+                id = "id",
+                deviceId = "device_id",
+                personId = "person_id",
+                token = "token",
+                encryptionKey = "encryption_key"
+            )
+
+        val conversationManager = createConversationManager(
+            isDebuggable = true,
+            mockConversationService = MockConversationService(
+                fetchResponse,
+                testTimeInterval = 222.22
+            )
+        )
+        conversationManager.fetchConversationToken {}
+        assertEquals(0.0, conversationManager.getConversation().engagementManifest.expiry, 0.0)
+        conversationManager.tryFetchEngagementManifest()
+        assertEquals(222.22, conversationManager.getConversation().engagementManifest.expiry, 0.0)
+    }
 }
 
 private fun createConversationManager(
@@ -141,14 +166,17 @@ private fun createConversationManager(
             personId = "person_id",
             token = "token",
             encryptionKey = "encryption_key"
-        )
+        ),
+    isDebuggable: Boolean = false,
+    mockConversationService: MockConversationService = MockConversationService(fetchResponse)
 ): ConversationManager {
     return ConversationManager(
         conversationRepository = MockConversationRepository,
-        conversationService = MockConversationService(fetchResponse),
+        conversationService = mockConversationService,
         legacyConversationManagerProvider = object : Provider<LegacyConversationManager> {
             override fun get() = MockLegacyConversationManager()
-        }
+        },
+        isDebuggable
     )
 }
 
@@ -158,6 +186,8 @@ private object MockConversationRepository : ConversationRepository {
     override fun createConversation(): Conversation {
         return Conversation(
             localIdentifier = "localIdentifier",
+            conversationToken = null,
+            conversationId = null,
             device = mockDevice,
             person = mockPerson,
             sdk = mockSdk,
@@ -183,7 +213,8 @@ private object MockConversationRepository : ConversationRepository {
 }
 
 private class MockConversationService(
-    private val response: ConversationCredentials
+    private val response: ConversationCredentials,
+    private val testTimeInterval: TimeInterval? = null
 ) :
     ConversationService {
     override fun fetchConversationToken(
@@ -201,7 +232,7 @@ private class MockConversationService(
         conversationId: String,
         callback: (Result<EngagementManifest>) -> Unit
     ) {
-        callback(Result.Success(EngagementManifest(expiry = getTimeSeconds() + 1800)))
+        callback(Result.Success(EngagementManifest(expiry = testTimeInterval ?: getTimeSeconds() + 1800)))
     }
 
     override fun sendPayloadRequest(

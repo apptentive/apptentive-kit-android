@@ -46,6 +46,7 @@ import apptentive.com.android.feedback.platform.DefaultEngagementDataFactory
 import apptentive.com.android.feedback.platform.DefaultEngagementManifestFactory
 import apptentive.com.android.feedback.platform.DefaultPersonFactory
 import apptentive.com.android.feedback.platform.DefaultSDKFactory
+import apptentive.com.android.feedback.utils.RuntimeUtils
 import apptentive.com.android.network.HttpClient
 import apptentive.com.android.network.UnexpectedResponseException
 import apptentive.com.android.util.FileUtil
@@ -85,7 +86,8 @@ internal class ApptentiveDefaultClient(
             conversationService = conversationService,
             legacyConversationManagerProvider = object : Provider<LegacyConversationManager> {
                 override fun get() = DefaultLegacyConversationManager(context)
-            }
+            },
+            RuntimeUtils.getApplicationInfo(context).debuggable
         )
         conversationManager.fetchConversationToken {
             when (it) {
@@ -163,7 +165,7 @@ internal class ApptentiveDefaultClient(
                 ApptentiveLifecycleObserver(
                     this,
                     context
-                )
+                ) { conversationManager.tryFetchEngagementManifest() }
             )
         }
     }

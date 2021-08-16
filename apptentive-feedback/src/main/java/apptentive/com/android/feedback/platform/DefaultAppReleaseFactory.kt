@@ -17,7 +17,7 @@ class DefaultAppReleaseFactory(
             versionCode = applicationInfo.versionCode,
             versionName = applicationInfo.versionName,
             targetSdkVersion = applicationInfo.targetSdkVersion.toString(),
-            debug = false, // FIXME: set flag
+            debug = applicationInfo.debuggable,
             inheritStyle = false, // FIXME: set flag
             overrideStyle = false, // FIXME: set flag
             appStore = null // FIXME: set value
