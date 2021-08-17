@@ -15,6 +15,10 @@ class TextModalInteraction(
         return "${javaClass.simpleName} (id=$id, title=\"$title\", body=\"$body\", actions=$actions)"
     }
 
+    companion object {
+        const val TAG = "APPTENTIVE_NOTE_DIALOG"
+    }
+
     sealed class Action(val id: String, val label: String) {
         class Invoke(
             id: String,

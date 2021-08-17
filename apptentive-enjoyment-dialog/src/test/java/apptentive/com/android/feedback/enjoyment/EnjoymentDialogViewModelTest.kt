@@ -35,24 +35,20 @@ class EnjoymentDialogViewModelTest : TestCase() {
             context = context,
             interaction = interaction
         )
-        viewModel.onDismiss = { addResult("onDismiss") }
 
         viewModel.onYesButton()
         assertResults(
-            createCall(CODE_POINT_YES, interactionId = interactionId),
-            "onDismiss"
+            createCall(CODE_POINT_YES, interactionId = interactionId)
         )
 
         viewModel.onNoButton()
         assertResults(
-            createCall(CODE_POINT_NO, interactionId = interactionId),
-            "onDismiss"
+            createCall(CODE_POINT_NO, interactionId = interactionId)
         )
 
         viewModel.onDismissButton()
         assertResults(
-            createCall(CODE_POINT_DISMISS, interactionId = interactionId),
-            "onDismiss"
+            createCall(CODE_POINT_DISMISS, interactionId = interactionId)
         )
 
         viewModel.onCancel()

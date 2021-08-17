@@ -2,14 +2,15 @@ package apptentive.com.android.feedback.payload
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
+import apptentive.com.android.TestCase
 import apptentive.com.android.debug.Assert.assertEqual
 import apptentive.com.android.network.HttpMethod
-import junit.framework.Assert.assertNull
 import org.junit.After
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 
-class PayloadSQLiteHelperTest {
+class PayloadSQLiteHelperTest : TestCase() {
     private lateinit var dbHelper: PayloadSQLiteHelper
 
     private val context: Context get() = ApplicationProvider.getApplicationContext<Context>()

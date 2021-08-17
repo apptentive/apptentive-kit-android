@@ -3,5 +3,7 @@
     style="?attr/materialAlertDialogBodyTextStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="?attr/dialogPreferredPadding"
-    android:paddingRight="?attr/dialogPreferredPadding" />
+    android:paddingStart="?attr/dialogPreferredPadding"
+    android:paddingTop="@dimen/abc_dialog_padding_top_material"
+    android:paddingEnd="?attr/dialogPreferredPadding"
+    android:paddingBottom="@dimen/abc_dialog_title_divider_material" />

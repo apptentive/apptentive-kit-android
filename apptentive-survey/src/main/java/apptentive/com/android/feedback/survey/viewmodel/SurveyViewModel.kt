@@ -54,7 +54,7 @@ class SurveyViewModel(
     private val exitEvent = LiveEvent<Boolean>()
     val exitStream: LiveData<Boolean> = exitEvent
 
-    private val showConfirmationEvent = LiveEvent<Boolean>()
+    private val showConfirmationEvent = MutableLiveData<Boolean>()
     val showConfirmation: LiveData<Boolean> = showConfirmationEvent
 
     private var submitAttempted: Boolean = false

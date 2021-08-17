@@ -16,7 +16,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class TextModalDialogTest : AbstractActivityTest(createIntent()) {
+class TextModalDialogFragmentTest : AbstractActivityTest(createIntent()) {
     @Test
     fun testDismissNote() {
         openNote("simple.json")
@@ -62,10 +62,9 @@ class TextModalDialogTest : AbstractActivityTest(createIntent()) {
     fun testTitleAndNoBody() {
         openNote("title-and-no-body.json")
 
-        checkVisibility(R.id.apptentive_note_title, VISIBLE)
-        checkText(R.id.apptentive_note_title, "Title")
-
-        checkVisibility(R.id.apptentive_note_message, GONE)
+        checkVisibility(R.id.apptentive_note_title, GONE)
+        checkVisibility(R.id.apptentive_note_message, VISIBLE)
+        checkText(R.id.apptentive_note_message, "Title")
     }
 
     @Test

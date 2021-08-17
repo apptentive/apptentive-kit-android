@@ -47,7 +47,7 @@ dependencies {
     testImplementation project(':apptentive-core-test')
     testImplementation "junit:junit:$junit_version"
     testImplementation "com.google.truth:truth:$truth_version"
-    androidTestImplementation "androidx.test:runner:$test_runner_version"
+    androidTestImplementation "androidx.test:runner:$androidx_test_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"
 }
 repositories {
