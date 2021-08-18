@@ -46,7 +46,7 @@ class EnjoymentDialogViewModelTest : TestCase() {
             createCall(CODE_POINT_NO, interactionId = interactionId)
         )
 
-        viewModel.onDismissButton()
+        viewModel.onDismiss()
         assertResults(
             createCall(CODE_POINT_DISMISS, interactionId = interactionId)
         )

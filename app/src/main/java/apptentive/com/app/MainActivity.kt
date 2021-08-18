@@ -19,6 +19,8 @@ import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.feedback.model.payloads.Payload
 import apptentive.com.android.feedback.payload.PayloadSender
 import apptentive.com.android.feedback.platform.AndroidEngagementContext
+import apptentive.com.android.feedback.ratingdialog.RatingDialogInteraction
+import apptentive.com.android.feedback.ratingdialog.RatingDialogInteractionLauncher
 import apptentive.com.android.feedback.survey.interaction.SurveyInteraction
 import apptentive.com.android.feedback.survey.interaction.SurveyInteractionLauncher
 import apptentive.com.app.databinding.ActivityMainBinding
@@ -29,6 +31,48 @@ val EXTRA_APPTENTIVE_THEME = "apptentiveTheme"
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val executorFactory = DependencyProvider.of<ExecutorFactory>()
+
+        val context = AndroidEngagementContext(
+            androidContext = this,
+            engagement = object : Engagement {
+                override fun engage(
+                    context: EngagementContext,
+                    event: Event,
+                    interactionId: String?,
+                    data: Map<String, Any?>?,
+                    customData: Map<String, Any?>?,
+                    extendedData: List<ExtendedData>?
+                ): EngagementResult {
+                    return if (interactionId != null)
+                        EngagementResult.Success(interactionId = interactionId) else
+                        EngagementResult.Failure("No runnable interactions")
+                }
+
+                override fun engage(
+                    context: EngagementContext,
+                    invocations: List<Invocation>
+                ): EngagementResult {
+                    return EngagementResult.Failure("No runnable interactions")
+                }
+            },
+            payloadSender = object : PayloadSender {
+                override fun sendPayload(payload: Payload) {
+                    runOnUiThread {
+                        Toast.makeText(
+                            this@MainActivity,
+                            "Payload send: ${payload::class.java.simpleName}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            },
+            executors = Executors(
+                state = executorFactory.createSerialQueue("state"),
+                main = executorFactory.createMainQueue()
+            )
+        )
 
         val prefs = getSharedPreferences("prefs", MODE_PRIVATE)
 
@@ -68,46 +112,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.surveyButton.setOnClickListener {
-            val executorFactory = DependencyProvider.of<ExecutorFactory>()
-            val context = AndroidEngagementContext(
-                androidContext = this,
-                engagement = object : Engagement {
-                    override fun engage(
-                        context: EngagementContext,
-                        event: Event,
-                        interactionId: String?,
-                        data: Map<String, Any?>?,
-                        customData: Map<String, Any?>?,
-                        extendedData: List<ExtendedData>?
-                    ): EngagementResult {
-                        return if (interactionId != null)
-                            EngagementResult.Success(interactionId = interactionId) else
-                            EngagementResult.Failure("No runnable interactions")
-                    }
-
-                    override fun engage(
-                        context: EngagementContext,
-                        invocations: List<Invocation>
-                    ): EngagementResult {
-                        return EngagementResult.Failure("No runnable interactions")
-                    }
-                },
-                payloadSender = object : PayloadSender {
-                    override fun sendPayload(payload: Payload) {
-//                        runOnUiThread {
-//                            Toast.makeText(
-//                                ctx,
-//                                "Payload send: ${payload::class.java.simpleName}",
-//                                Toast.LENGTH_LONG
-//                            ).show()
-//                        }
-                    }
-                },
-                executors = Executors(
-                    state = executorFactory.createSerialQueue("state"),
-                    main = executorFactory.createMainQueue()
-                )
-            )
             val launcher = SurveyInteractionLauncher()
             val interaction = SurveyInteraction(
                 id = "id",
@@ -284,6 +288,35 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        binding.ratingButton.setOnClickListener {
+            val launcher = RatingDialogInteractionLauncher()
+            val interaction = RatingDialogInteraction(
+                id = "id",
+                title = "Share the love!",
+                body = "Thanks for being a loyal customer. Would you take 30 seconds and share your love in the app store?",
+                rateText = "Rate Android App",
+                remindText = "Remind me later",
+                declineText = "No thanks"
+            )
+            launcher.launchInteraction(context, interaction)
+        }
+
+        /**
+         * Alternatively, to get the API version, uncomment below.
+         * To make this work, you need to replace `result` in `ConditionalClause` with `true`.
+         * This is because the minimum wait time to show it is 1 day.
+         * Changing `result` to `true` will let it always show.
+         * @see apptentive.com.android.feedback.engagement.criteria.ConditionalClause.evaluate
+         */
+//        binding.ratingButton.setOnClickListener {
+//            Apptentive.reset()
+//            Apptentive.engage(this, "rating_event") {
+//                if (it !is EngagementResult.Success) {
+//                    Toast.makeText(this, "Not engaged: $it", Toast.LENGTH_LONG).show()
+//                }
+//            }
+//        }
 
         binding.dataButton.setOnClickListener {
             val intent = Intent(this, DataActivity::class.java)

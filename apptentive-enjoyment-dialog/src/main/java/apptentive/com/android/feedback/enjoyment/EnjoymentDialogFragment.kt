@@ -5,10 +5,8 @@ import android.content.DialogInterface
 import android.os.Bundle
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.fragment.app.DialogFragment
-import apptentive.com.android.feedback.INTERACTIONS
 import apptentive.com.android.feedback.platform.AndroidEngagementContext
 import apptentive.com.android.ui.overrideTheme
-import apptentive.com.android.util.Log
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class EnjoymentDialogFragment(
@@ -27,29 +25,22 @@ class EnjoymentDialogFragment(
         }
 
         return MaterialAlertDialogBuilder(ctx).apply {
-            val interaction = viewModel.interaction
+            setMessage(viewModel.title)
 
-            setMessage(interaction.title)
-
-            setPositiveButton(interaction.yesText) { _, _ ->
-                Log.i(INTERACTIONS, "Love dialog positive button pressed")
+            setPositiveButton(viewModel.yesText) { _, _ ->
                 viewModel.onYesButton()
             }
 
-            setNegativeButton(interaction.noText) { _, _ ->
-                Log.i(INTERACTIONS, "Love dialog negative button pressed")
+            setNegativeButton(viewModel.noText) { _, _ ->
                 viewModel.onNoButton()
             }
 
-            setOnCancelListener {
-                Log.i(INTERACTIONS, "Love dialog cancelled")
-                viewModel.onCancel()
-            }
+            setOnCancelListener { viewModel.onCancel() }
         }.create()
     }
 
     override fun onDismiss(dialog: DialogInterface) {
-        Log.i(INTERACTIONS, "Love dialog dismissed")
+        viewModel.onDismiss()
         super.onDismiss(dialog)
     }
 }

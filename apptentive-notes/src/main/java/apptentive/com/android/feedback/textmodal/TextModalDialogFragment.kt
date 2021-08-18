@@ -1,7 +1,6 @@
-package apptentive.com.android.feedback.notes.view
+package apptentive.com.android.feedback.textmodal
 
 import android.app.Dialog
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,9 +9,9 @@ import android.view.View.TEXT_ALIGNMENT_VIEW_END
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.view.ContextThemeWrapper
+import androidx.appcompat.widget.DialogTitle
 import androidx.fragment.app.DialogFragment
 import apptentive.com.android.feedback.notes.R
-import apptentive.com.android.feedback.notes.viewmodel.TextModalViewModel
 import apptentive.com.android.feedback.platform.AndroidEngagementContext
 import apptentive.com.android.ui.overrideTheme
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -37,7 +36,7 @@ class TextModalDialogFragment(
             val contentView = inflater.inflate(R.layout.apptentive_note, null)
             setView(contentView)
 
-            val titleView = contentView.findViewById<TextView>(R.id.apptentive_note_title)
+            val titleView = contentView.findViewById<DialogTitle>(R.id.apptentive_note_title)
             if (viewModel.title != null && viewModel.message != null) titleView.text = viewModel.title
             else titleView.visibility = View.GONE
 
@@ -55,7 +54,7 @@ class TextModalDialogFragment(
                 button.textAlignment =
                     if (viewModel.actions.size > 2) TEXT_ALIGNMENT_VIEW_END
                     else TEXT_ALIGNMENT_CENTER
-                
+
                 viewGroup.addView(button)
                 button.setOnClickListener {
                     action.invoke()
@@ -63,13 +62,8 @@ class TextModalDialogFragment(
             }
 
             setOnCancelListener {
-                viewModel.cancel()
+                viewModel.onCancel()
             }
         }.create()
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        dialog.dismiss()
-        super.onDismiss(dialog)
     }
 }

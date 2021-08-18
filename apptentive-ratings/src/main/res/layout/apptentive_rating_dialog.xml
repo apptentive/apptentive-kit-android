@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/apptentive_note"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="start|top"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.DialogTitle
+        android:id="@+id/apptentive_rate_title"
+        style="?attr/materialAlertDialogTitleTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="?attr/dialogPreferredPadding"
+        android:paddingTop="@dimen/abc_dialog_padding_top_material"
+        tools:text="Rating Title" />
+
+    <TextView
+        android:id="@+id/apptentive_rate_message"
+        style="?attr/materialAlertDialogBodyTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="?attr/dialogPreferredPadding"
+        android:paddingTop="@dimen/abc_dialog_padding_top_material"
+        android:paddingBottom="@dimen/abc_dialog_title_divider_material"
+        tools:text="Rating Message" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/apptentive_rate_button"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginHorizontal="@dimen/abc_dialog_title_divider_material"
+        android:layout_marginTop="@dimen/abc_dialog_title_divider_material"
+        android:textAlignment="viewEnd"
+        tools:text="RATE ANDROID DEMO APP"
+        tools:textColor="@color/apptentive_color_on_background" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/apptentive_remind_button"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginHorizontal="@dimen/abc_dialog_title_divider_material"
+        android:textAlignment="viewEnd"
+        tools:text="REMIND ME LATER"
+        tools:textColor="@color/apptentive_color_on_background" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/apptentive_decline_button"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginHorizontal="@dimen/abc_dialog_title_divider_material"
+        android:layout_marginBottom="@dimen/abc_dialog_title_divider_material"
+        android:textAlignment="viewEnd"
+        tools:text="NO THANKS"
+        tools:textColor="@color/apptentive_color_on_background" />
+
+</LinearLayout>

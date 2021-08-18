@@ -46,6 +46,7 @@
     <!-- Content Descriptions -->
     <string name="cd_app_icon">App Icon</string>
     <string name="cd_spacing_line">Spacing Line</string>
+    <string name="rating_dialog">Rating Dialog</string>
 
     <!-- Debug Screen End -->
 </resources>

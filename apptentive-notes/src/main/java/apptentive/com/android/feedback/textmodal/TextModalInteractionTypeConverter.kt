@@ -1,4 +1,4 @@
-package apptentive.com.android.feedback.notes.interaction
+package apptentive.com.android.feedback.textmodal
 
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionData

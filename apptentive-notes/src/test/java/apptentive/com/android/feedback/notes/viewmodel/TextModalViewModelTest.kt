@@ -9,7 +9,8 @@ import apptentive.com.android.feedback.engagement.InvocationCallback
 import apptentive.com.android.feedback.engagement.MockEngagementContext
 import apptentive.com.android.feedback.engagement.criteria.InvocationConverter
 import apptentive.com.android.feedback.model.InvocationData
-import apptentive.com.android.feedback.notes.interaction.TextModalInteraction
+import apptentive.com.android.feedback.textmodal.TextModalInteraction
+import apptentive.com.android.feedback.textmodal.TextModalViewModel
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
@@ -241,7 +242,7 @@ class TextModalViewModelTest : TestCase() {
         val viewModel = createViewModel()
 
         // invoke action
-        viewModel.cancel()
+        viewModel.onCancel()
 
         // check results
         assertResults(

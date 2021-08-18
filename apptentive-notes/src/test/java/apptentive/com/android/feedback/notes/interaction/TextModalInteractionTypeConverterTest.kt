@@ -3,6 +3,8 @@ package apptentive.com.android.feedback.notes.interaction
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
 import apptentive.com.android.feedback.model.InvocationData
+import apptentive.com.android.feedback.textmodal.TextModalInteraction
+import apptentive.com.android.feedback.textmodal.TextModalInteractionTypeConverter
 import apptentive.com.android.serialization.json.JsonConverter
 import com.google.common.truth.Truth
 import org.junit.Test

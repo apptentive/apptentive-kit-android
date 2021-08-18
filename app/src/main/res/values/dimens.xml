@@ -10,4 +10,5 @@
     <dimen name="spacer_horizontal_margin">2dp</dimen>
     <dimen name="debug_icon_margin">8dp</dimen>
     <dimen name="button_spacing_top_margin">8dp</dimen>
+    <dimen name="data_layout_top_margin">4dp</dimen>
 </resources>

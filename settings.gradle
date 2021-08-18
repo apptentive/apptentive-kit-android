@@ -1,6 +1,7 @@
 include ':apptentive-navigate-to-link'
 include ':app-ui-test'
 include ':apptentive-notes'
+include ':apptentive-ratings'
 include ':apptentive-feedback-test'
 include ':apptentive-core-ui'
 include ':apptentive-survey'

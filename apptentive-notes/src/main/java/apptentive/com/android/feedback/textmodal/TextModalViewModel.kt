@@ -1,11 +1,10 @@
-package apptentive.com.android.feedback.notes.viewmodel
+package apptentive.com.android.feedback.textmodal
 
 import apptentive.com.android.core.Callback
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.INTERACTIONS
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.Event
-import apptentive.com.android.feedback.notes.interaction.TextModalInteraction
 import apptentive.com.android.util.Log
 
 class TextModalViewModel(
@@ -29,7 +28,7 @@ class TextModalViewModel(
 
     var onDismiss: Callback? = null
 
-    fun cancel() {
+    fun onCancel() {
         context.executors.state.execute {
             engageCodePoint(CODE_POINT_CANCEL)
         }
