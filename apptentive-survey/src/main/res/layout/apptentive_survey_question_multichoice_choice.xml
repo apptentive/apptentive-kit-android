@@ -13,18 +13,17 @@
     android:animateLayoutChanges="true"
     android:orientation="vertical">
 
-    <RadioButton
+    <com.google.android.material.radiobutton.MaterialRadioButton
         android:id="@+id/checkbox"
-        style="?attr/textAppearanceBody2"
-        android:textColor="?attr/colorOnBackground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="start|center_vertical"
+        android:layout_marginHorizontal="@dimen/apptentive_checkbox_radiobutton_slider_margin"
         android:minHeight="@dimen/min_height_radio_checkbox_component"
+        android:paddingHorizontal="@dimen/margin_8dp"
         android:saveEnabled="false"
-        android:text=""
-        android:paddingStart="@dimen/margin_8dp"
-        tools:ignore="RtlSymmetry" />
+        android:textColor="?attr/colorOnBackground"
+        tools:text="Radio Button example"
+        tools:textColor="@color/apptentive_color_on_background" />
 
     <include layout="@layout/apptentive_survey_question_text_input" />
 </LinearLayout>

@@ -28,7 +28,8 @@
     <dimen name="margin_16dp">16dp</dimen>
     <dimen name="margin_24dp">24dp</dimen>
     <dimen name="margin_40dp">40dp</dimen>
-    <dimen name="min_height_radio_checkbox_component">36dp</dimen>
+    <dimen name="min_height_radio_checkbox_component">40dp</dimen>
+    <dimen name="apptentive_checkbox_radiobutton_slider_margin">11dp</dimen>
     <dimen name="min_height_textfield_component">48dp</dimen>
     <dimen name="bottom_app_bar_height">36dp</dimen>
 
