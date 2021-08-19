@@ -45,11 +45,7 @@ class LogicalOrClause(children: List<Clause>) : LogicalClause(children) {
 class LogicalNotClause(children: List<Clause>) : LogicalClause(children) {
     override val operator: String get() = "not"
 
-    init {
-        require(children.size == 1) { "Expected 1 child but was ${children.size}" }
-    }
-
     override fun evaluateLogicalClause(state: TargetingState, printer: IndentPrinter?): Boolean {
-        return !children.first().evaluate(state, printer)
+        return children.none { clause: Clause -> clause.evaluate(state, printer) }
     }
 }
