@@ -48,6 +48,22 @@ android {
             signingConfig signingConfigs.release
         }
     }
+
+    flavorDimensions 'default'
+
+    productFlavors {
+        dev {
+            applicationIdSuffix ".dev"
+            buildConfigField "String", "APPTENTIVE_KEY", "\"ANDROID-ANDROID-DEV-c9c0b324114f\""
+            buildConfigField "String", "APPTENTIVE_SIGNATURE", "\"98f5539e9310dc290394c68b76664e98\""
+        }
+        qa {
+            applicationIdSuffix ".qa"
+            buildConfigField "String", "APPTENTIVE_KEY", "\"ANDROID-ANDROID-QA-3c8ec6c92de4\""
+            buildConfigField "String", "APPTENTIVE_SIGNATURE", "\"c84ee194bdad6e9d0b7f100616819be2\""
+        }
+    }
+
     buildTypes.each {
         it.buildConfigField "java.util.Date", "APP_BUILD_DATE", "new java.util.Date(" + System.currentTimeMillis() + "L)"
     }
@@ -60,6 +76,7 @@ android {
     }
     buildFeatures {
         viewBinding true
+        dataBinding true
     }
 }
 
