@@ -32,6 +32,11 @@ data class Event(val vendor: String, val interaction: String, val name: String) 
 }
 
 enum class InternalEvent(val labelName: String) {
+    EVENT_REQUEST("request"),
+    EVENT_SHOWN("shown"),
+    EVENT_NOT_SHOWN("not_shown"),
+    EVENT_NOT_SUPPORTED("not_supported"),
+    EVENT_LAUNCH("launch"),
     APP_LAUNCH("launch"),
-    APP_EXIT("exit");
+    APP_EXIT("exit")
 }

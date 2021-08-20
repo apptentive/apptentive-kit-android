@@ -22,3 +22,4 @@ import apptentive.com.android.util.LogTag
 @JvmField val SECURITY = LogTag("SECURITY")
 @JvmField val PROFILE_DATA_UPDATE = LogTag("PROFILE DATA UPDATE")
 @JvmField val LIFE_CYCLE_OBSERVER = LogTag("LIFE CYCLE OBSERVER")
+@JvmField val IN_APP_REVIEW = LogTag("IN APP REVIEW")

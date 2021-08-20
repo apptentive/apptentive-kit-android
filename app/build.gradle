@@ -95,6 +95,7 @@ dependencies {
     implementation project(':apptentive-notes')
     implementation project(':apptentive-ratings')
     implementation project(':apptentive-navigate-to-link')
+    implementation project(':apptentive-in-app-review')
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation "androidx.test.ext:junit:$junit_ext_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"

@@ -9,19 +9,19 @@ data class InteractionType(private val name: String) {
         private const val UPGRADE_MESSAGE = "UpgradeMessage"
         private const val ENJOYMENT_DIALOG = "EnjoymentDialog"
         private const val RATING_DIALOG = "RatingDialog"
+        private const val MESSAGE_CENTER = "MessageCenter"
         private const val APP_STORE_RATING = "AppStoreRating"
-        private const val GOOGLE_IN_APP_RATING = "InAppRatingDialog"
+        private const val GOOGLE_IN_APP_REVIEW = "InAppRatingDialog"
         private const val SURVEY = "Survey"
         private const val TEXT_MODAL = "TextModal"
         private const val NAVIGATE_TO_LINK = "NavigateToLink"
-        private const val MESSAGE_CENTER = "MessageCenter"
 
         val UpgradeMessage = InteractionType(UPGRADE_MESSAGE)
         val EnjoymentDialog = InteractionType(ENJOYMENT_DIALOG)
         val RatingDialog = InteractionType(RATING_DIALOG)
-        val AppStoreRating = InteractionType(APP_STORE_RATING)
         val MessageCenter = InteractionType(MESSAGE_CENTER)
-        val GoogleInAppRating = InteractionType(GOOGLE_IN_APP_RATING)
+        val AppStoreRating = InteractionType(APP_STORE_RATING)
+        val GoogleInAppReview = InteractionType(GOOGLE_IN_APP_REVIEW)
         val Survey = InteractionType(SURVEY)
         val TextModal = InteractionType(TEXT_MODAL)
         val NavigateToLink = InteractionType(NAVIGATE_TO_LINK)
@@ -32,6 +32,7 @@ data class InteractionType(private val name: String) {
             RATING_DIALOG,
             MESSAGE_CENTER,
             APP_STORE_RATING,
+            GOOGLE_IN_APP_REVIEW,
             SURVEY,
             TEXT_MODAL,
             NAVIGATE_TO_LINK

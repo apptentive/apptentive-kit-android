@@ -22,7 +22,7 @@ object Log {
     @JvmStatic fun i(tag: LogTag, message: String) = log(LogLevel.Info, tag, message)
     @JvmStatic fun w(tag: LogTag, message: String) = log(LogLevel.Warning, tag, message)
     @JvmStatic fun e(tag: LogTag, message: String) = log(LogLevel.Error, tag, message)
-    @JvmStatic fun e(tag: LogTag, message: String, e: Throwable) = log(LogLevel.Error, tag, message, e)
+    @JvmStatic fun e(tag: LogTag, message: String, e: Throwable?) = log(LogLevel.Error, tag, message, e)
 
     // For legacy java code
     @JvmStatic fun v(tag: LogTag, format: String, vararg args: Any?) = log(LogLevel.Verbose, tag, tryFormat(format, *args))

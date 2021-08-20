@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.engagement
 
+import androidx.annotation.VisibleForTesting
 import apptentive.com.android.concurrent.Executors
 import apptentive.com.android.feedback.engagement.criteria.InvocationConverter
 import apptentive.com.android.feedback.model.InvocationData
@@ -38,4 +39,10 @@ open class EngagementContext(
     )
 
     fun sendPayload(payload: Payload) = payloadSender.sendPayload(payload)
+
+    @VisibleForTesting
+    fun getEngagement() = engagement
+
+    @VisibleForTesting
+    fun getPayloadSender() = payloadSender
 }
