@@ -78,24 +78,28 @@ class LogicalClauseTest {
     @Test
     fun evaluateLogicalNotClauseTest() {
         val passingNotTestCases: List<List<Clause>> = listOf(
-            listOf(falseClause),
-            listOf(falseClause, falseClause),
-            listOf(falseClause, falseClause, falseClause),
+            listOf(falseClause)
         )
 
         val failingNotTestCases = listOf(
-            listOf(trueClause),
-            listOf(trueClause, trueClause),
-            listOf(trueClause, falseClause),
-            listOf(falseClause, trueClause),
-            listOf(trueClause, trueClause, trueClause),
-            listOf(falseClause, trueClause, falseClause),
-            listOf(trueClause, falseClause, trueClause)
+            listOf(trueClause)
         )
 
         passingNotTestCases.forEach {
             assertTrue(LogicalNotClause(it).evaluate(targetingState, null))
         }
+
+        failingNotTestCases.forEach {
+            assertFalse(LogicalNotClause(it).evaluate(targetingState, null))
+        }
+    }
+
+    // Throws exception if more than one child in array
+    @Test(expected = IllegalArgumentException::class)
+    fun evaluateLogicalNotClauseMoreThanOneItemTest() {
+        val failingNotTestCases = listOf(
+            listOf(falseClause, falseClause)
+        )
 
         failingNotTestCases.forEach {
             assertFalse(LogicalNotClause(it).evaluate(targetingState, null))
