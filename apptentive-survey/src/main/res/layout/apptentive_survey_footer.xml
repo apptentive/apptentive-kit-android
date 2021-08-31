@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
     android:orientation="vertical">
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/submit_button"
-        style="@style/Apptentive.Survey.Button"
+        style="?apptentiveSurveyButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_16dp"
-        android:layout_marginBottom="@dimen/margin_16dp" />
+        android:layout_marginBottom="@dimen/margin_16dp"
+        tools:backgroundTint="@color/apptentive_color_primary"
+        tools:text="Submit"
+        tools:textColor="@color/apptentive_color_on_primary" />
 
     <TextView
         android:id="@+id/submit_error_message"
@@ -21,6 +25,8 @@
         android:layout_marginBottom="@dimen/margin_16dp"
         android:gravity="center"
         android:maxLines="1"
-        android:textColor="?attr/colorError" />
+        android:textColor="?attr/colorError"
+        tools:text="Error Text"
+        tools:textColor="@color/apptentive_color_error" />
 
 </LinearLayout>

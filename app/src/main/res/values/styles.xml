@@ -14,6 +14,17 @@
         <item name="colorOnBackground">@color/color_on_background</item>
         <item name="android:textColorSecondary">@color/color_text_color_secondary</item>
         <item name="colorError">@color/color_error</item>
+<!--        <item name="apptentiveSurveyButtonStyle">@style/Custom.MaterialButton</item>-->
+    </style>
+
+    <!--    <style name="ApptentiveThemeOverride">-->
+    <!--        <item name="apptentiveSurveyButtonStyle">@style/Custom.MaterialButton</item>-->
+    <!--    </style>-->
+
+    <style name="Custom.MaterialButton" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">?colorError</item>
+        <item name="fontFamily">@font/pacifico_regular</item>
+        <item name="cornerRadius">@dimen/margin_24dp</item>
     </style>
 
 </resources>
