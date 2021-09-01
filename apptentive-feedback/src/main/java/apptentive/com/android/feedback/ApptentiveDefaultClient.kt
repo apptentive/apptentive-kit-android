@@ -105,6 +105,7 @@ internal class ApptentiveDefaultClient(
                         else -> registerCallback?.invoke(RegisterResult.Exception(it.error))
                     }
                 }
+                is Result.Success -> conversationManager.tryFetchEngagementManifest()
             }
         }
         conversationManager.activeConversation.observe { conversation ->

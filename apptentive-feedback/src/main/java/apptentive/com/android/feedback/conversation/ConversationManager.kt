@@ -195,6 +195,12 @@ class ConversationManager(
                         }
                     }
                 }
+            } else {
+                Log.d(
+                    CONVERSATION,
+                    "Fetch engagement manifest is not called. " +
+                        "Conversation token is $token, conversation id is $id"
+                )
             }
         } else {
             Log.d(CONVERSATION, "Engagement manifest up to date")
