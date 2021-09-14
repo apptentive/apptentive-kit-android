@@ -223,7 +223,6 @@ class LegacyConversationConversionTest {
         val localeLanguageCode = "localeLanguageCode-$id"
         val localeRaw = "localeRaw-$id"
         val utcOffset = 0
-        val advertiserId = "advertiserId-$id"
         val customData: CustomData = createCustomData(id)
         val integrationConfig: IntegrationConfig = createIntegrationConfig(id)
 
@@ -251,7 +250,6 @@ class LegacyConversationConversionTest {
             localeLanguageCode,
             localeRaw,
             utcOffset,
-            advertiserId,
             customData,
             integrationConfig
         )
@@ -515,7 +513,6 @@ class LegacyConversationConversionTest {
         val localeLanguageCode = "localeLanguageCode-$id"
         val localeRaw = "localeRaw-$id"
         val utcOffset = "0"
-        val advertiserId = "advertiserId-$id"
         val integrationConfig: LegacyIntegrationConfig = createLegacyIntegrationConfig(id)
 
         return LegacyDevice(
@@ -543,7 +540,6 @@ class LegacyConversationConversionTest {
             localeLanguageCode,
             localeRaw,
             utcOffset,
-            advertiserId,
             integrationConfig
         )
     }

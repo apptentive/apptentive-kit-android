@@ -243,7 +243,6 @@ class DebugInfoActivity : AppCompatActivity() {
         uuid = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID),
         buildType = Build.TYPE,
         buildId = Build.ID,
-        advertiserId = null, // FIXME: collect advertiser id
         carrier = (getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager).simOperatorName,
         currentCarrier = (getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager).networkOperatorName,
         bootloaderVersion = Build::class.java.getField("BOOTLOADER").get(null) as String,

@@ -47,7 +47,6 @@ val mockDevice = Device(
     localeLanguageCode = "localeLanguageCode",
     localeRaw = "localeRaw",
     utcOffset = 18000,
-    advertiserId = "advertiserId",
     customData = CustomData(content = mapOf(Pair("key", "value"))),
     integrationConfig = IntegrationConfig(
         apptentive = IntegrationConfigItem(

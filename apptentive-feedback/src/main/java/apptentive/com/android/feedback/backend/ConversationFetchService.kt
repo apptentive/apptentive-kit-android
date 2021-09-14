@@ -63,7 +63,6 @@ private class DeviceRequestData(
     val localeLanguageCode: String,
     val localeRaw: String,
     val utcOffset: String,
-    val advertiserId: String?,
     val customData: Map<String, Any?>?,
     val integrationConfig: IntegrationConfigRequestData
 ) {
@@ -93,7 +92,6 @@ private class DeviceRequestData(
             localeLanguageCode = device.localeLanguageCode,
             localeRaw = device.localeRaw,
             utcOffset = device.utcOffset.toString(),
-            advertiserId = device.advertiserId,
             customData = device.customData.content,
             integrationConfig = IntegrationConfigRequestData.from(device.integrationConfig)
         )

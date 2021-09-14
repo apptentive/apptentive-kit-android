@@ -169,7 +169,6 @@ internal object Serializers {
                 encoder.encodeString(value.localeLanguageCode)
                 encoder.encodeString(value.localeRaw)
                 encoder.encodeInt(value.utcOffset)
-                encoder.encodeNullableString(value.advertiserId)
                 customDataSerializer.encode(encoder, value.customData)
                 encodeIntegrationConfigItem(encoder, value)
             }
@@ -220,7 +219,6 @@ internal object Serializers {
                     localeLanguageCode = decoder.decodeString(),
                     localeRaw = decoder.decodeString(),
                     utcOffset = decoder.decodeInt(),
-                    advertiserId = decoder.decodeNullableString(),
                     customData = customDataSerializer.decode(decoder),
                     integrationConfig = decodeIntegrationConfig(decoder)
                 )

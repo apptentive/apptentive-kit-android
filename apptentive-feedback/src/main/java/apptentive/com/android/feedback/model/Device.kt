@@ -28,7 +28,6 @@ data class Device(
     val localeLanguageCode: String,
     val localeRaw: String,
     val utcOffset: Int,
-    @SensitiveDataKey val advertiserId: String? = null,
     @SensitiveDataKey val customData: CustomData = CustomData(),
     val integrationConfig: IntegrationConfig = IntegrationConfig()
 ) {
@@ -60,7 +59,6 @@ data class Device(
         localeLanguageCode = localeLanguageCode,
         localeRaw = localeRaw,
         utcOffset = utcOffset,
-        advertiserId = advertiserId,
         customData = customData.content,
         integrationConfig = integrationConfig
     )

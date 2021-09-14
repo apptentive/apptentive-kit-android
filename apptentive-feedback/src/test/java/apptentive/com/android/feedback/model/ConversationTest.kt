@@ -37,7 +37,6 @@ class ConversationTest : TestCase() {
                 localeLanguageCode = "localeLanguageCode",
                 localeRaw = "localeRaw",
                 utcOffset = -8,
-                advertiserId = "advertiserId",
                 customData = CustomData(mapOf(Pair("key", "value"))),
                 integrationConfig = IntegrationConfig(
                     apptentive = IntegrationConfigItem(mapOf(Pair("key1", "value1"))),

@@ -100,7 +100,6 @@ class LegacyConversationManagerTest : TestCase() {
         val redactedItems = mutableListOf<Pair<String, String>>()
 
         // Device redacted items
-        if (actual.device.advertiserId != null) redactedItems.add(Pair(actual.device.toString(), "advertiser_id"))
         redactedItems.add(Pair(actual.device.toString(), "custom_data"))
 
         // Person redacted items
@@ -130,7 +129,6 @@ class LegacyConversationManagerTest : TestCase() {
         val actual = legacyData.toConversation()
 
         val expectedActualItems = listOf(
-            Pair(expected.device.advertiserId, actual.device.advertiserId),
             Pair(expected.device.customData, actual.device.customData),
             Pair(expected.person.mParticleId, actual.person.mParticleId),
             Pair(expected.person.customData, actual.person.customData),
@@ -175,7 +173,6 @@ class LegacyConversationManagerTest : TestCase() {
                     localeLanguageCode = "en",
                     localeRaw = "en_US",
                     utcOffset = -18000,
-                    advertiserId = null,
                     customData = CustomData(
                         content = mapOf(
                             "device-int" to 20,
@@ -269,7 +266,6 @@ class LegacyConversationManagerTest : TestCase() {
                     localeLanguageCode = "en",
                     localeRaw = "en_US",
                     utcOffset = -18000,
-                    advertiserId = null,
                     customData = CustomData(
                         content = mapOf(
                             "device-int" to 20,
@@ -378,7 +374,6 @@ class LegacyConversationManagerTest : TestCase() {
                     localeLanguageCode = "en",
                     localeRaw = "en_US",
                     utcOffset = -18000,
-                    advertiserId = null,
                     customData = CustomData(
                         content = mapOf(
                             "device-int" to 20,

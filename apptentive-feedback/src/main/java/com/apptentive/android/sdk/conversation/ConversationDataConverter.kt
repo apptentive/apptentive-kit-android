@@ -74,7 +74,6 @@ fun LegacyDevice.toLatestFormat() = Device(
     localeLanguageCode = localeLanguageCode,
     localeRaw = localeRaw,
     utcOffset = parseInt(utcOffset) ?: 0,
-    advertiserId = advertiserId,
     customData = customData.toLatestFormat(),
     integrationConfig = integrationConfig.toLatestFormat()
 )

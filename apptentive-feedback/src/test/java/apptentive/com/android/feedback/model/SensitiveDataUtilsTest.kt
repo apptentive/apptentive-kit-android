@@ -22,7 +22,6 @@ class SensitiveDataUtilsTest : TestCase() {
         assertTrue(mockSdk.toString().contains("\"author_name\":\"<REDACTED>\""))
         assertTrue(mockPerson.toString().contains("\"custom_data\":\"<REDACTED>\""))
         assertTrue(mockPerson.toString().contains("\"m_particle_id\":\"<REDACTED>\""))
-        assertTrue(mockDevice.toString().contains("\"advertiser_id\":\"<REDACTED>\""))
         assertTrue(mockDevice.toString().contains("\"custom_data\":\"<REDACTED>\""))
     }
 
@@ -33,7 +32,6 @@ class SensitiveDataUtilsTest : TestCase() {
         assertFalse(mockSdk.toString().contains("\"authorEmail\":\"<REDACTED>\",\"authorName\":\"<REDACTED>\","))
         assertFalse(mockPerson.toString().contains("\"customData\":\"<REDACTED>\""))
         assertFalse(mockPerson.toString().contains("\"mParticleId\":\"<REDACTED>\""))
-        assertFalse(mockDevice.toString().contains("\"advertiserId\":\"<REDACTED>\""))
         assertFalse(mockDevice.toString().contains("\"customData\":\"<REDACTED>\""))
     }
 

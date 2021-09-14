@@ -66,7 +66,6 @@ class DefaultConversationServiceTest : TestCase() {
                             "locale_language_code" to mockDevice.localeLanguageCode,
                             "locale_raw" to mockDevice.localeRaw,
                             "utc_offset" to mockDevice.utcOffset.toString(),
-                            "advertiser_id" to mockDevice.advertiserId,
                             "custom_data" to mapOf("key" to "value"),
                             "integration_config" to mapOf(
                                 "apptentive" to mapOf("apptentive_key" to "apptentive_value"),

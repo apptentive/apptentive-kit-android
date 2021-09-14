@@ -44,7 +44,6 @@ public class Device implements Serializable {
     private String localeLanguageCode;
     private String localeRaw;
     private String utcOffset;
-    private String advertiserId;
     private IntegrationConfig integrationConfig;
 
 
@@ -79,7 +78,6 @@ public class Device implements Serializable {
             String localeLanguageCode,
             String localeRaw,
             String utcOffset,
-            String advertiserId,
             IntegrationConfig integrationConfig
     ) {
         this.uuid = uuid;
@@ -106,7 +104,6 @@ public class Device implements Serializable {
         this.localeLanguageCode = localeLanguageCode;
         this.localeRaw = localeRaw;
         this.utcOffset = utcOffset;
-        this.advertiserId = advertiserId;
         this.integrationConfig = integrationConfig;
     }
 
@@ -140,7 +137,6 @@ public class Device implements Serializable {
         clone.localeLanguageCode = localeLanguageCode;
         clone.localeRaw = localeRaw;
         clone.utcOffset = utcOffset;
-        clone.advertiserId = advertiserId;
         if (integrationConfig != null) {
             clone.integrationConfig = integrationConfig.clone();
         }
@@ -313,10 +309,6 @@ public class Device implements Serializable {
         if (!StringUtils.equal(this.utcOffset, utcOffset)) {
             this.utcOffset = utcOffset;
         }
-    }
-
-    public String getAdvertiserId() {
-        return advertiserId;
     }
 
     public IntegrationConfig getIntegrationConfig() {

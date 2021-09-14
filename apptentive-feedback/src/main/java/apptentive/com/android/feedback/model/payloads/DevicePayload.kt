@@ -35,7 +35,6 @@ class DevicePayload(
     val localeLanguageCode: String,
     val localeRaw: String,
     val utcOffset: Int,
-    @SensitiveDataKey val advertiserId: String? = null,
     @SensitiveDataKey val customData: Map<String, Any?>? = null,
     val integrationConfig: IntegrationConfig = IntegrationConfig()
 ) : ConversationPayload(nonce) {
@@ -76,7 +75,6 @@ class DevicePayload(
                 localeLanguageCode != other.localeLanguageCode ||
                 localeRaw != other.localeRaw ||
                 utcOffset != other.utcOffset ||
-                advertiserId != other.advertiserId ||
                 customData != other.customData ||
                 integrationConfig != other.integrationConfig -> false
             else -> true
@@ -108,7 +106,6 @@ class DevicePayload(
         result = 31 * result + localeLanguageCode.hashCode()
         result = 31 * result + localeRaw.hashCode()
         result = 31 * result + utcOffset
-        result = 31 * result + (advertiserId?.hashCode() ?: 0)
         result = 31 * result + customData.hashCode()
         result = 31 * result + integrationConfig.hashCode()
         return result

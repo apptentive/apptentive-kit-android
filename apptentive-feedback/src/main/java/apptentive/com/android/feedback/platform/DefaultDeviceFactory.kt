@@ -26,7 +26,6 @@ class DefaultDeviceFactory(
             uuid = AndroidUtils.getAndroidID(context),
             buildType = Build.TYPE,
             buildId = Build.ID,
-            advertiserId = null, // FIXME: collect advertiser id
             carrier = AndroidUtils.getSimOperatorName(context),
             currentCarrier = AndroidUtils.getNetworkOperatorName(context),
             networkType = AndroidUtils.getNetworkType(context),
