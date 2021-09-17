@@ -1,6 +1,6 @@
 package apptentive.com.android.feedback.engagement.interactions
 
-data class InteractionType(private val name: String) {
+data class InteractionType(val name: String) {
     override fun toString(): String {
         return name
     }

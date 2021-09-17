@@ -16,6 +16,8 @@ import apptentive.com.android.core.format
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
+import apptentive.com.android.feedback.utils.ThrottleUtils
+import apptentive.com.android.feedback.utils.ThrottleUtils.SHARED_PREF_THROTTLE
 import apptentive.com.android.network.DefaultHttpClient
 import apptentive.com.android.network.DefaultHttpNetwork
 import apptentive.com.android.network.DefaultHttpRequestRetryPolicy
@@ -96,6 +98,9 @@ object Apptentive {
         // set log level
         Log.logLevel = configuration.logLevel
         SensitiveDataUtils.shouldSanitizeLogMessages = configuration.shouldSanitizeLogMessages
+        ThrottleUtils.ratingThrottleLength = configuration.ratingInteractionThrottleLength
+        ThrottleUtils.throttleSharedPrefs =
+            application.getSharedPreferences(SHARED_PREF_THROTTLE, Context.MODE_PRIVATE)
 
         Log.i(SYSTEM, "Registering Apptentive Android SDK ${Constants.SDK_VERSION}")
         Log.v(

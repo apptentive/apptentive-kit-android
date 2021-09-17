@@ -3,6 +3,7 @@ package apptentive.com.android.feedback.engagement
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionLauncher
+import apptentive.com.android.feedback.utils.ThrottleUtils
 
 interface InteractionEngagement {
     fun engage(context: EngagementContext, interaction: Interaction): EngagementResult
@@ -15,11 +16,14 @@ data class DefaultInteractionEngagement(
     override fun engage(context: EngagementContext, interaction: Interaction): EngagementResult {
         val interactionClass = interaction.javaClass
         val launcher = lookup[interactionClass]
-        if (launcher != null) {
-            launcher.launchInteraction(context, interaction)
-            return EngagementResult.Success(interactionId = interaction.id)
-        }
 
-        return EngagementResult.Error("Interaction launcher not found: ${interactionClass.name}") // TODO: better error description
+        return if (launcher != null) {
+            val shouldThrottleInteraction = ThrottleUtils.shouldThrottleInteraction(interaction)
+
+            if (!shouldThrottleInteraction) {
+                launcher.launchInteraction(context, interaction)
+                EngagementResult.Success(interactionId = interaction.id)
+            } else EngagementResult.Failure("${interaction.type.name} throttled.")
+        } else EngagementResult.Error("Interaction launcher not found: ${interactionClass.name}")
     }
 }
