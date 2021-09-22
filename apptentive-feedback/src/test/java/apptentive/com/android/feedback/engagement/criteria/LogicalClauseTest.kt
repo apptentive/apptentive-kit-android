@@ -1,14 +1,14 @@
 package apptentive.com.android.feedback.engagement.criteria
 
 import apptentive.com.android.feedback.utils.IndentPrinter
+import io.mockk.mockk
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import org.mockito.Mockito.mock
 
 class LogicalClauseTest {
 
-    private val targetingState: TargetingState = mock(TargetingState::class.java)
+    private val targetingState: TargetingState = mockk()
 
     private val trueClause = object : Clause {
         override fun evaluate(state: TargetingState, printer: IndentPrinter?): Boolean {

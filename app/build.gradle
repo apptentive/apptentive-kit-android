@@ -67,13 +67,6 @@ android {
     buildTypes.each {
         it.buildConfigField "java.util.Date", "APP_BUILD_DATE", "new java.util.Date(" + System.currentTimeMillis() + "L)"
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
     buildFeatures {
         viewBinding true
     }
@@ -81,11 +74,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "androidx.appcompat:appcompat:$support_library_version"
-    implementation "androidx.core:core-ktx:$ktx_version"
-    implementation "com.google.android.material:material:$material_design_version"
-    implementation "androidx.constraintlayout:constraintlayout:$constraint_layout_version"
-    implementation "androidx.multidex:multidex:2.0.1"
+
     implementation project(':apptentive-core')
     implementation project(':apptentive-core-ui')
     implementation project(':apptentive-feedback')
@@ -95,8 +84,15 @@ dependencies {
     implementation project(':apptentive-ratings')
     implementation project(':apptentive-navigate-to-link')
     implementation project(':apptentive-in-app-review')
-    testImplementation "junit:junit:$junit_version"
-    androidTestImplementation "androidx.test.ext:junit:$junit_ext_version"
+    implementation "androidx.appcompat:appcompat:$appcompat_library_version"
+    implementation "androidx.core:core-ktx:$core_ktx_version"
+    implementation "com.google.android.material:material:$material_design_version"
+    implementation "androidx.constraintlayout:constraintlayout:$constraint_layout_version"
+    implementation "androidx.multidex:multidex:2.0.1"
+
+    testImplementation "androidx.test:core:$androidx_test_version"
+
+    androidTestImplementation "androidx.test.ext:junit:$androidx_junit_ext_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"
 }
 

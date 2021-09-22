@@ -36,11 +36,11 @@
                 android:orientation="horizontal">
 
                 <Button
+                    android:id="@+id/add_custom_device_data_button"
                     style="@style/Widget.AppCompat.Button.Colored"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="2"
-                    android:onClick="addCustomDeviceData"
                     android:text="@string/add" />
 
                 <EditText
@@ -65,11 +65,11 @@
                 android:orientation="horizontal">
 
                 <Button
+                    android:id="@+id/remove_custom_device_data_button"
                     style="@style/Widget.AppCompat.Button.Colored"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="2"
-                    android:onClick="removeCustomDeviceData"
                     android:text="@string/remove" />
 
                 <EditText
@@ -100,11 +100,11 @@
                 android:orientation="horizontal">
 
                 <Button
+                    android:id="@+id/add_custom_person_data_button"
                     style="@style/Widget.AppCompat.Button.Colored"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="2"
-                    android:onClick="addCustomPersonData"
                     android:text="@string/add" />
 
                 <EditText
@@ -129,11 +129,11 @@
                 android:orientation="horizontal">
 
                 <Button
+                    android:id="@+id/remove_custom_person_data_button"
                     style="@style/Widget.AppCompat.Button.Colored"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="2"
-                    android:onClick="removeCustomPersonData"
                     android:text="@string/remove" />
 
                 <EditText
@@ -164,11 +164,11 @@
                 android:orientation="horizontal">
 
                 <Button
+                    android:id="@+id/set_person_email_button"
                     style="@style/Widget.AppCompat.Button.Colored"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="2"
-                    android:onClick="setPersonEmail"
                     android:text="@string/set" />
 
                 <EditText
@@ -195,11 +195,11 @@
                 android:orientation="horizontal">
 
                 <Button
+                    android:id="@+id/set_person_name_button"
                     style="@style/Widget.AppCompat.Button.Colored"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="2"
-                    android:onClick="setPersonName"
                     android:text="@string/set" />
 
                 <EditText

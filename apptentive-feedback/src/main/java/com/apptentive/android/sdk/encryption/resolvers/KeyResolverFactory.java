@@ -1,10 +1,12 @@
 package com.apptentive.android.sdk.encryption.resolvers;
 
+import android.annotation.SuppressLint;
 import android.os.Build;
 
 import androidx.annotation.NonNull;
 
 public class KeyResolverFactory {
+	@SuppressLint("NewApi")
 	public static @NonNull KeyResolver createKeyResolver(int versionCode) {
 		// Android API level 26 has a bug when symmetric key does not work. We use legacy approach instead.
 		// see: https://stackoverflow.com/questions/36015194/android-keystoreexception-unknown-error

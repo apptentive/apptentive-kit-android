@@ -9,8 +9,6 @@ android {
     defaultConfig {
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
         consumerProguardFiles 'consumer-proguard-rules.pro'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -28,38 +26,27 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
-    implementation "androidx.appcompat:appcompat:$support_library_version"
     implementation project(':apptentive-core')
-    implementation "androidx.lifecycle:lifecycle-runtime:$lifecycle_version"
-    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
-    annotationProcessor "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
+    implementation "androidx.appcompat:appcompat:$appcompat_library_version"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-process:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 
     testImplementation project(':apptentive-core-test')
     testImplementation project(':apptentive-feedback-test')
-    testImplementation "junit:junit:$junit_version"
+    testImplementation "androidx.test:core:$androidx_test_version"
     testImplementation "com.google.truth:truth:$truth_version"
     testImplementation "io.mockk:mockk:$mockk_version"
-    testImplementation 'org.json:json:20180813'
-    testImplementation 'org.mockito:mockito-core:2.19.0'
+    testImplementation "org.json:json:$json_version"
 
     androidTestImplementation project(':apptentive-core-test')
     androidTestImplementation project(':apptentive-feedback-test')
     androidTestImplementation "androidx.test:runner:$androidx_test_version"
     androidTestImplementation "androidx.test:core:$androidx_test_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"
-}
-repositories {
-    mavenCentral()
 }

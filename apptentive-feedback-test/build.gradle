@@ -10,8 +10,6 @@ android {
     defaultConfig {
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -23,12 +21,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
+    buildFeatures {
+        buildConfig = false
     }
 }
 
@@ -37,6 +31,7 @@ dependencies {
     implementation project(':apptentive-core')
     implementation project(':apptentive-core-test')
     implementation project(':apptentive-feedback')
-    implementation "junit:junit:$junit_version"
+    implementation "androidx.test:core:$androidx_test_version"
+    implementation "androidx.test:runner:$androidx_test_version"
     implementation "io.mockk:mockk:$mockk_version"
 }

@@ -4,14 +4,12 @@ plugins {
 }
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.3"
+    compileSdkVersion rootProject.compileSdkVersion
+    buildToolsVersion rootProject.buildToolsVersion
 
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion rootProject.minSdkVersion
+        targetSdkVersion rootProject.targetSdkVersion
 
         gradle.startParameter.taskNames.each {
             if (it.contains("AndroidTest")) {
@@ -29,34 +27,24 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
 }
 
 dependencies {
-    implementation "androidx.appcompat:appcompat:$support_library_version"
-    implementation "androidx.core:core-ktx:$ktx_version"
-
-    // Play Core library required for in-app review flow
-    implementation 'com.google.android.play:core:1.10.0'
-    // Play Services library required to check for GPS availability before showing in-app review
-    implementation 'com.google.android.gms:play-services-base:17.4.0'
-
     implementation project(':apptentive-core')
     implementation project(':apptentive-feedback')
     implementation project(':apptentive-core-ui')
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
+    implementation "androidx.appcompat:appcompat:$appcompat_library_version"
+    implementation "androidx.core:core-ktx:$core_ktx_version"
+    implementation "com.google.android.play:core:$play_core_version"
+    implementation "com.google.android.gms:play-services-base:$play_services_base_version"
+
     testImplementation project(':apptentive-core-test')
     testImplementation project(':apptentive-feedback-test')
-    testImplementation 'junit:junit:4.+'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-    androidTestImplementation 'androidx.test:core-ktx:1.4.0'
+    testImplementation "androidx.test:core:$androidx_test_version"
+    testImplementation "androidx.test.ext:junit:$androidx_junit_ext_version"
+
     androidTestImplementation project(':apptentive-core-test')
     androidTestImplementation project(':apptentive-feedback-test')
+    androidTestImplementation "androidx.test.ext:junit:$androidx_junit_ext_version"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"
 }

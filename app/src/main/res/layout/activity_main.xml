@@ -19,7 +19,8 @@
         android:src="@drawable/ic_round_info_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="?colorPrimary" />
+        app:tint="?colorPrimary"
+        tools:targetApi="lollipop" />
 
     <androidx.appcompat.widget.AppCompatAutoCompleteTextView
         android:id="@+id/event_name_edit_text"

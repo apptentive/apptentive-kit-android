@@ -10,8 +10,6 @@ android {
     defaultConfig {
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'consumer-rules.pro'
@@ -23,27 +21,23 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "androidx.appcompat:appcompat:$support_library_version"
-    implementation "androidx.core:core-ktx:$ktx_version"
-    implementation "com.google.android.material:material:$material_design_version"
+
     implementation project(':apptentive-core')
     implementation project(':apptentive-core-ui')
     implementation project(':apptentive-feedback')
+    implementation "androidx.appcompat:appcompat:$appcompat_library_version"
+    implementation "androidx.core:core-ktx:$core_ktx_version"
+    implementation "com.google.android.material:material:$material_design_version"
+
     testImplementation project(':apptentive-core-test')
     testImplementation project(':apptentive-feedback-test')
-    testImplementation "junit:junit:$junit_version"
+    testImplementation "androidx.test:core:$androidx_test_version"
     testImplementation "com.google.truth:truth:$truth_version"
-    androidTestImplementation "androidx.test.ext:junit:$junit_ext_version"
+
+    androidTestImplementation "androidx.test.ext:junit:$androidx_junit_ext_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"
 }

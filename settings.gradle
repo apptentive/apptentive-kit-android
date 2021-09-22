@@ -10,3 +10,5 @@ include ':app'
 include ':apptentive-enjoyment-dialog'
 include ':app-legacy-migration-test'
 include ':apptentive-in-app-review'
+
+rootProject.name = 'apptentive-sdk-ktx'

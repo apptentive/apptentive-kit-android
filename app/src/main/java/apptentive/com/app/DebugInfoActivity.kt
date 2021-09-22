@@ -1,5 +1,6 @@
 package apptentive.com.app
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
@@ -63,6 +64,7 @@ class DebugInfoActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("ResourceType")
     private fun setStyles(binding: ActivityDebugInfoBinding, isApptentiveTheme: Boolean) {
         binding.stylesLayout.themeNameText.text = resources.getResourceEntryName(if (isApptentiveTheme) R.style.Theme_Apptentive else R.style.AppTheme)
         binding.stylesLayout.colorPrimaryText.text = getString(getColorFromAttr(R.attr.colorPrimary))
@@ -105,7 +107,7 @@ class DebugInfoActivity : AppCompatActivity() {
             DebugItem("Version Code", appInfo.versionCode.toString()),
             DebugItem("Version Name", appInfo.versionName),
             DebugItem("Target SDK Version", appInfo.targetSdkVersion.toString()),
-            DebugItem("Min SDK Version", applicationInfo.minSdkVersion.toString()),
+            DebugItem("Min SDK Version", if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) applicationInfo.minSdkVersion.toString() else "NEED SDK N+"),
             DebugItem("Build Type", BuildConfig.BUILD_TYPE),
             DebugItem("Debuggable", appInfo.debuggable.toString()),
         )
@@ -140,8 +142,8 @@ class DebugInfoActivity : AppCompatActivity() {
 
         // Phone / Sim states
         val deviceCanMakeCalls = packageManager.hasSystemFeature(PackageManager.FEATURE_TELEPHONY)
-        val simStateSlot1 = getSimState((getSystemService(TELEPHONY_SERVICE) as TelephonyManager).getSimState(0))
-        val simStateSlot2 = getSimState((getSystemService(TELEPHONY_SERVICE) as TelephonyManager).getSimState(1))
+        val simStateSlot1 = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) getSimState((getSystemService(TELEPHONY_SERVICE) as TelephonyManager).getSimState(0)) else "NEED SDK O+"
+        val simStateSlot2 = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) getSimState((getSystemService(TELEPHONY_SERVICE) as TelephonyManager).getSimState(1)) else "NEED SDK O+"
 
         val deviceItems = listOf(
             DebugItem("Operating System", "${device.osName} ${device.osVersion}"),
