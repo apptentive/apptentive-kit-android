@@ -105,7 +105,8 @@ object Apptentive {
         Log.i(SYSTEM, "Registering Apptentive Android SDK ${Constants.SDK_VERSION}")
         Log.v(
             SYSTEM,
-            "ApptentiveKey: ${configuration.apptentiveKey} ApptentiveSignature: ${configuration.apptentiveSignature}"
+            "ApptentiveKey: ${SensitiveDataUtils.hideIfSanitized(configuration.apptentiveKey)} " +
+                "ApptentiveSignature: ${SensitiveDataUtils.hideIfSanitized(configuration.apptentiveSignature)}"
         )
 
         stateExecutor = ExecutorQueue.createSerialQueue("SDK Queue")
