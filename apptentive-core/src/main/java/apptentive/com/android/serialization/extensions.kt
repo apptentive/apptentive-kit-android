@@ -129,9 +129,9 @@ fun <Key : Any, Value> Encoder.encodeMap(
     valueEncoder: TypeEncoder<Value>
 ) {
     encodeInt(obj.size)
-    obj.forEach { pair ->
-        keyEncoder.encode(this, pair.key)
-        valueEncoder.encode(this, pair.value)
+    for ((key, value) in obj) {
+        keyEncoder.encode(this, key)
+        valueEncoder.encode(this, value)
     }
 }
 
@@ -164,7 +164,9 @@ fun <Key : Any, Value> Decoder.decodeMap(
 
 inline fun <T> Encoder.encodeList(items: List<T>, callback: Encoder.(item: T) -> Unit) {
     encodeInt(items.size)
-    items.forEach { callback(it) }
+    for (item in items) {
+        callback(item)
+    }
 }
 
 inline fun <T> Decoder.decodeList(callback: Decoder.() -> T): List<T> {

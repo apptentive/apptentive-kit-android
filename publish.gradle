@@ -1,0 +1,56 @@
+apply plugin: 'com.jfrog.artifactory'
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId project.groupId
+            version project.versionId
+            artifactId project.artifactId
+            artifact("$buildDir/outputs/aar/${project.artifactId}-release.aar")
+            //generate pom nodes for dependencies
+            pom.withXml {
+                def dependenciesNode = asNode().appendNode('dependencies')
+                configurations.implementation.allDependencies.each { dependency ->
+                    if (dependency.name != 'unspecified' && dependency.version != 'unspecified' && dependency.group != 'unspecified') {
+                        def dependencyNode = dependenciesNode.appendNode('dependency')
+                        dependencyNode.appendNode('groupId', dependency.group)
+                        dependencyNode.appendNode('artifactId', dependency.name)
+                        dependencyNode.appendNode('version', dependency.version)
+                        dependencyNode.appendNode('scope', 'compile')
+                    }
+                }
+            }
+        }
+    }
+}
+
+artifactory {
+    contextUrl = 'https://apptentive.jfrog.io/artifactory'
+
+    publish {
+        repository {
+            def artifactoryProperties = new Properties()
+            if (gradle.rootProject.file('local.properties').exists()) {
+                artifactoryProperties.load(project.rootProject.file('local.properties').newDataInputStream())
+            }
+            def repoUsername = artifactoryProperties['artifactory_username'] ? artifactoryProperties['artifactory_username']:""
+            def repoPassword = artifactoryProperties['artifactory_password'] ? artifactoryProperties['artifactory_password']:""
+
+            repoKey = 'InternalNewAndroidSDK'
+            username = repoUsername
+            password = repoPassword
+            maven = true
+        }
+        defaults {
+            publications('maven')
+            //TODO check if properties are needed
+            properties = ['qa.level': 'basic', 'dev.team' : 'core']
+            publishArtifacts = true
+            publishPom = true
+        }
+    }
+    clientConfig.setIncludeEnvVars(true)
+    clientConfig.setEnvVarsExcludePatterns('*password*,*secret*')
+    clientConfig.setEnvVarsIncludePatterns('*not-secret*')
+}

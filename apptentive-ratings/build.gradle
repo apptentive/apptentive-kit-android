@@ -41,3 +41,11 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:$androidx_junit_ext_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"
 }
+
+project.ext {
+    groupId = 'com.apptentive'
+    artifactId = 'apptentive-ratings'
+    versionId = '1.0.2'
+}
+
+apply from: '../publish.gradle'

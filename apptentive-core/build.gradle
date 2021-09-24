@@ -1,6 +1,8 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.artifactory'
 
 android {
     compileSdkVersion rootProject.compileSdkVersion
@@ -41,3 +43,11 @@ dependencies {
     androidTestImplementation "androidx.test:runner:$androidx_test_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"
 }
+
+project.ext {
+    groupId = 'com.apptentive'
+    artifactId = 'apptentive-core'
+    versionId = '1.0.2'
+}
+
+apply from: '../publish.gradle'
