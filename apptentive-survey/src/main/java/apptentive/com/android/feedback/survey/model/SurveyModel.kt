@@ -4,7 +4,7 @@ import androidx.annotation.WorkerThread
 import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.Observable
 
-class SurveyModel(
+internal class SurveyModel(
     questions: List<SurveyQuestion<*>>,
     val name: String?,
     val description: String?,

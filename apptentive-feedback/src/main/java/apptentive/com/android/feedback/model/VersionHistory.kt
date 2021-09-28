@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.model
 
+import androidx.annotation.VisibleForTesting
 import apptentive.com.android.core.DefaultTimeSource
 import apptentive.com.android.core.TimeSource
 import apptentive.com.android.feedback.engagement.criteria.DateTime
@@ -7,6 +8,7 @@ import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
 import apptentive.com.android.util.copyAndAdd
 
+@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 data class VersionHistory(
     internal val items: List<VersionHistoryItem> = emptyList(),
     private val timeSource: TimeSource = DefaultTimeSource

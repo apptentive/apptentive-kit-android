@@ -1,6 +1,6 @@
 package apptentive.com.android.feedback.payload
 
-open class PayloadSendException(
+internal open class PayloadSendException(
     val payload: PayloadData,
     detailMessage: String? = null,
     cause: Throwable? = null

@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.model.payloads
 
+import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.Constants.buildHttpPath
 import apptentive.com.android.feedback.model.IntegrationConfig
 import apptentive.com.android.feedback.model.SensitiveDataKey
@@ -10,6 +11,7 @@ import apptentive.com.android.network.HttpMethod
 import apptentive.com.android.serialization.json.JsonConverter.toJsonObject
 import apptentive.com.android.util.generateUUID
 
+@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 class DevicePayload(
     nonce: String = generateUUID(),
     val osName: String,

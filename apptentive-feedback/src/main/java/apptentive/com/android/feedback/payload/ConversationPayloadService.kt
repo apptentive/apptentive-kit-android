@@ -4,9 +4,9 @@ import androidx.annotation.Keep
 import apptentive.com.android.util.Result
 
 @Keep
-class PayloadResponse
+internal class PayloadResponse
 
-interface PayloadRequestSender {
+internal interface PayloadRequestSender {
     fun sendPayloadRequest(
         payload: PayloadData,
         conversationId: String,
@@ -15,7 +15,7 @@ interface PayloadRequestSender {
     )
 }
 
-class ConversationPayloadService(
+internal class ConversationPayloadService(
     private val requestSender: PayloadRequestSender,
     private val conversationId: String,
     private val conversationToken: String

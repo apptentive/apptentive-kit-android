@@ -1,7 +1,9 @@
 package apptentive.com.android.debug
 
+import androidx.annotation.VisibleForTesting
 import java.lang.AssertionError
 
+@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 object Assert {
     fun assertTrue(condition: Boolean, message: String? = null) {
         assertEqual(true, condition, message)

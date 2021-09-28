@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.survey.interaction
 
+import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion
 import apptentive.com.android.feedback.survey.model.RangeQuestion
 import apptentive.com.android.feedback.survey.model.SingleLineQuestion
@@ -10,6 +11,7 @@ import apptentive.com.android.util.optBoolean
 import apptentive.com.android.util.optInt
 import apptentive.com.android.util.optString
 
+@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 interface SurveyQuestionConverter {
     fun convert(config: SurveyQuestionConfiguration, requiredTextMessage: String): SurveyQuestion<*>
 }

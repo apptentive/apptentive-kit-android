@@ -8,7 +8,7 @@ import apptentive.com.android.core.toMilliseconds
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.CORE
 
-class SerialExecutorQueue : ExecutorQueue {
+internal class SerialExecutorQueue : ExecutorQueue {
     private val handler: Handler
     private val handlerThread: HandlerThread?
 

@@ -20,26 +20,26 @@ import apptentive.com.android.feedback.model.VersionHistoryItem
 import apptentive.com.android.util.parseInt
 import java.io.Serializable
 
-typealias LegacyConversationData = ConversationData
-typealias LegacyAppRelease = com.apptentive.android.sdk.storage.AppRelease
-typealias LegacyCustomData = com.apptentive.android.sdk.storage.CustomData
-typealias LegacyDevice = com.apptentive.android.sdk.storage.Device
-typealias LegacyEventData = com.apptentive.android.sdk.storage.EventData
-typealias LegacyEventRecord = com.apptentive.android.sdk.storage.EventRecord
-typealias LegacyIntegrationConfig = com.apptentive.android.sdk.storage.IntegrationConfig
-typealias LegacyPerson = com.apptentive.android.sdk.storage.Person
-typealias LegacySdk = com.apptentive.android.sdk.storage.Sdk
-typealias LegacyVersionHistory = com.apptentive.android.sdk.storage.VersionHistory
-typealias LegacyIntegrationConfigItem = com.apptentive.android.sdk.storage.IntegrationConfigItem
-typealias LegacyDateTime = com.apptentive.android.sdk.DateTime
-typealias LegacyVersion = com.apptentive.android.sdk.Version
-typealias LegacyVersionHistoryItem = com.apptentive.android.sdk.storage.VersionHistoryItem
+internal typealias LegacyConversationData = ConversationData
+internal typealias LegacyAppRelease = com.apptentive.android.sdk.storage.AppRelease
+internal typealias LegacyCustomData = com.apptentive.android.sdk.storage.CustomData
+internal typealias LegacyDevice = com.apptentive.android.sdk.storage.Device
+internal typealias LegacyEventData = com.apptentive.android.sdk.storage.EventData
+internal typealias LegacyEventRecord = com.apptentive.android.sdk.storage.EventRecord
+internal typealias LegacyIntegrationConfig = com.apptentive.android.sdk.storage.IntegrationConfig
+internal typealias LegacyPerson = com.apptentive.android.sdk.storage.Person
+internal typealias LegacySdk = com.apptentive.android.sdk.storage.Sdk
+internal typealias LegacyVersionHistory = com.apptentive.android.sdk.storage.VersionHistory
+internal typealias LegacyIntegrationConfigItem = com.apptentive.android.sdk.storage.IntegrationConfigItem
+internal typealias LegacyDateTime = com.apptentive.android.sdk.DateTime
+internal typealias LegacyVersion = com.apptentive.android.sdk.Version
+internal typealias LegacyVersionHistoryItem = com.apptentive.android.sdk.storage.VersionHistoryItem
 
 /**
  * Converts legacy SDK conversation data into the current [Conversation] data format.
  * Used in legacy SDK data migration.
  */
-fun LegacyConversationData.toConversation() = Conversation(
+internal fun LegacyConversationData.toConversation() = Conversation(
     localIdentifier = localIdentifier,
     conversationToken = conversationToken,
     conversationId = conversationId,
@@ -50,7 +50,7 @@ fun LegacyConversationData.toConversation() = Conversation(
     engagementData = eventData.toEngagementData(versionHistory)
 )
 
-fun LegacyDevice.toLatestFormat() = Device(
+internal fun LegacyDevice.toLatestFormat() = Device(
     osName = osName,
     osVersion = osVersion,
     osBuild = osBuild,
@@ -78,7 +78,7 @@ fun LegacyDevice.toLatestFormat() = Device(
     integrationConfig = integrationConfig.toLatestFormat()
 )
 
-fun LegacyPerson.toLatestFormat() = Person(
+internal fun LegacyPerson.toLatestFormat() = Person(
     id = id,
     email = email,
     name = name,
@@ -93,7 +93,7 @@ fun LegacyPerson.toLatestFormat() = Person(
     customData = customData.toLatestFormat()
 )
 
-fun LegacySdk.toLatestFormat() = SDK(
+internal fun LegacySdk.toLatestFormat() = SDK(
     version = version,
     platform = platform,
     distribution = distribution,
@@ -103,7 +103,7 @@ fun LegacySdk.toLatestFormat() = SDK(
     authorEmail = authorEmail
 )
 
-fun LegacyAppRelease.toLatestFormat() = AppRelease(
+internal fun LegacyAppRelease.toLatestFormat() = AppRelease(
     type = type,
     identifier = identifier,
     versionCode = versionCode.toLong(),
@@ -115,7 +115,7 @@ fun LegacyAppRelease.toLatestFormat() = AppRelease(
     appStore = appStore
 )
 
-fun LegacyCustomData.toLatestFormat() = CustomData(
+internal fun LegacyCustomData.toLatestFormat() = CustomData(
     content = mapValues(::transformCustomDataValues)
 )
 
@@ -132,7 +132,7 @@ private fun Double.toLatestDateTime(): DateTime = DateTime(seconds = this)
 
 private fun LegacyVersion.toLatestFormat() = Version.parse(value = version)
 
-fun LegacyIntegrationConfig.toLatestFormat(): IntegrationConfig = IntegrationConfig(
+internal fun LegacyIntegrationConfig.toLatestFormat(): IntegrationConfig = IntegrationConfig(
     apptentive = apptentive?.toLatestFormat(),
     amazonAwsSns = amazonAwsSns?.toLatestFormat(),
     urbanAirship = urbanAirship?.toLatestFormat(),
@@ -143,14 +143,14 @@ private fun LegacyIntegrationConfigItem.toLatestFormat() = IntegrationConfigItem
     contents = this.contents.mapValues { it.value }
 )
 
-fun LegacyEventData.toEngagementData(versionHistory: LegacyVersionHistory?) = EngagementData(
+internal fun LegacyEventData.toEngagementData(versionHistory: LegacyVersionHistory?) = EngagementData(
     events = events.toEngagementEventsRecords(),
     interactions = interactions.toEngagementInteractionsRecords(),
     versionHistory = versionHistory?.toLatestFormat()
         ?: VersionHistory()
 )
 
-fun Map<String, LegacyEventRecord>.toEngagementEventsRecords(): EngagementRecords<Event> =
+internal fun Map<String, LegacyEventRecord>.toEngagementEventsRecords(): EngagementRecords<Event> =
     EngagementRecords(
         records = this.entries
             .associate { Event.parse(it.key) to it.value.toEngagementRecord() }
@@ -165,14 +165,14 @@ private fun LegacyEventRecord.toEngagementRecord(): EngagementRecord =
         lastInvoked = last.toLatestDateTime()
     )
 
-fun Map<String, LegacyEventRecord>.toEngagementInteractionsRecords(): EngagementRecords<InteractionId> =
+internal fun Map<String, LegacyEventRecord>.toEngagementInteractionsRecords(): EngagementRecords<InteractionId> =
     EngagementRecords(
         records = this.entries
             .associate { it.key to it.value.toEngagementRecord() }
             .toMutableMap()
     )
 
-fun LegacyVersionHistory.toLatestFormat(): VersionHistory = VersionHistory(
+internal fun LegacyVersionHistory.toLatestFormat(): VersionHistory = VersionHistory(
     items = versionHistoryItems.map {
         it.toLatestFormat()
     }

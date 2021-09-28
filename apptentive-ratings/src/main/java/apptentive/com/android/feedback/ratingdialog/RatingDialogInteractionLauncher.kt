@@ -1,10 +1,12 @@
 package apptentive.com.android.feedback.ratingdialog
 
+import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.INTERACTIONS
 import apptentive.com.android.feedback.platform.AndroidEngagementContext
 import apptentive.com.android.feedback.platform.AndroidViewInteractionLauncher
 import apptentive.com.android.util.Log
 
+@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 class RatingDialogInteractionLauncher : AndroidViewInteractionLauncher<RatingDialogInteraction>() {
     override fun launchInteraction(
         context: AndroidEngagementContext,

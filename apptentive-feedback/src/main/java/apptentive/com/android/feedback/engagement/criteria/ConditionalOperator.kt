@@ -18,7 +18,7 @@ interface ConditionalOperator {
         internal const val BEFORE = "\$before"
         internal const val AFTER = "\$after"
 
-        fun parse(value: String): ConditionalOperator {
+        internal fun parse(value: String): ConditionalOperator {
             return when (value) {
                 EXISTS -> exists
                 NE -> ne

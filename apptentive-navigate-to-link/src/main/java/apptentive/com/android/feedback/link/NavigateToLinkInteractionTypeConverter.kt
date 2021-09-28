@@ -5,7 +5,7 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionTypeCo
 import apptentive.com.android.util.getString
 import apptentive.com.android.util.optString
 
-class NavigateToLinkInteractionTypeConverter : InteractionTypeConverter<NavigateToLinkInteraction> {
+internal class NavigateToLinkInteractionTypeConverter : InteractionTypeConverter<NavigateToLinkInteraction> {
     override fun convert(data: InteractionData) = NavigateToLinkInteraction(
         id = data.id,
         url = data.configuration.getString("url"),

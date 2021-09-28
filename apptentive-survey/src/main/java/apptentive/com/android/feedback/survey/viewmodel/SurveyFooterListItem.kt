@@ -8,7 +8,7 @@ import apptentive.com.android.feedback.survey.R
 import apptentive.com.android.ui.ListViewAdapter
 import apptentive.com.android.ui.ListViewItem
 
-class SurveyFooterListItem(
+internal class SurveyFooterListItem(
     val buttonTitle: String?,
     val messageState: SurveySubmitMessageState? = null
 ) : SurveyListItem(

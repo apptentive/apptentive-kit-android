@@ -1,10 +1,11 @@
 package apptentive.com.android.feedback.survey.interaction
 
+import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.feedback.survey.viewmodel.RangeQuestionListItem
 
-typealias SurveyQuestionConfiguration = Map<String, Any?>
+internal typealias SurveyQuestionConfiguration = Map<String, Any?>
 
 /**
  * @param id interaction id
@@ -22,6 +23,7 @@ typealias SurveyQuestionConfiguration = Map<String, Any?>
  * @param isRequired whether to allow the user to cancel the survey
  * @param questions list of questions
  */
+@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 class SurveyInteraction(
     id: String,
     val name: String?,

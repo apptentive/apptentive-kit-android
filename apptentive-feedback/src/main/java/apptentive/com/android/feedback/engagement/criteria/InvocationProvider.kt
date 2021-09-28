@@ -6,11 +6,11 @@ import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.model.InvocationData
 import apptentive.com.android.util.Log
 
-interface InvocationProvider {
+internal interface InvocationProvider {
     fun getInvocations(event: Event): List<Invocation>?
 }
 
-class CachedInvocationProvider(
+internal class CachedInvocationProvider(
     private val data: Map<String, List<InvocationData>>,
     private val converter: Converter<InvocationData, Invocation> // TODO: replace with a subclass
 ) : InvocationProvider {

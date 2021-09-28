@@ -16,7 +16,7 @@ import com.google.android.material.slider.Slider
  *                        answer or <code>null</code> if the answer is valid.
  * @param selectedIndex selected value (or <code>null</code> if nothing is selected)
  */
-class RangeQuestionListItem(
+internal class RangeQuestionListItem(
     id: String,
     title: String,
     val min: Int,

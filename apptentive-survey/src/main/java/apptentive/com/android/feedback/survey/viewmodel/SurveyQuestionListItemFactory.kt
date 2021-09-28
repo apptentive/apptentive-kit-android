@@ -5,7 +5,7 @@ import apptentive.com.android.feedback.survey.model.RangeQuestion
 import apptentive.com.android.feedback.survey.model.SurveyQuestion
 import apptentive.com.android.feedback.survey.model.SingleLineQuestion
 
-interface SurveyQuestionListItemFactory {
+internal interface SurveyQuestionListItemFactory {
     fun createListItem(question: SurveyQuestion<*>, showInvalid: Boolean): SurveyQuestionListItem
 }
 

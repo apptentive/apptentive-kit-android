@@ -1,9 +1,11 @@
 package apptentive.com.android.feedback.model
 
+import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.model.payloads.PersonPayload
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.serialization.json.JsonConverter.toJsonObject
 
+@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 data class Person(
     val id: String? = null,
     val email: String? = null,

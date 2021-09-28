@@ -5,7 +5,7 @@ import apptentive.com.android.feedback.model.payloads.Payload
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.Result
 
-class SerialPayloadSender(
+internal class SerialPayloadSender(
     private val payloadQueue: PayloadQueue,
     private val callback: (Result<PayloadData>) -> Unit
 ) : PayloadSender {

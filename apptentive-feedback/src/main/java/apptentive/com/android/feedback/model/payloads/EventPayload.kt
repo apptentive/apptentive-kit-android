@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.model.payloads
 
+import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.Constants.buildHttpPath
 import apptentive.com.android.feedback.model.SensitiveDataKey
 import apptentive.com.android.feedback.payload.MediaType
@@ -9,6 +10,7 @@ import apptentive.com.android.network.HttpMethod
 import apptentive.com.android.serialization.json.JsonConverter.toJsonObject
 import apptentive.com.android.util.generateUUID
 
+@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 class EventPayload(
     nonce: String = generateUUID(),
     val label: String,

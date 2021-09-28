@@ -3,7 +3,7 @@ package apptentive.com.android.util
 /**
  * A generic class that contains data and status about loading this data.
  */
-data class Resource<T>(
+internal data class Resource<T>(
     val status: Status,
     val data: T?,
     val message: String?

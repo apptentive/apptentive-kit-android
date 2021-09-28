@@ -2,7 +2,7 @@ package apptentive.com.android.feedback.engagement.criteria
 
 import apptentive.com.android.feedback.utils.IndentPrinter
 
-class ConditionalClause(
+internal class ConditionalClause(
     private val field: Field,
     private val tests: List<ConditionalTest>
 ) : Clause {

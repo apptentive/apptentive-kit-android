@@ -77,7 +77,7 @@ abstract class SurveyQuestionListItem(
 
     //endregion
 
-    abstract class ViewHolder<T : SurveyQuestionListItem>(
+    internal abstract class ViewHolder<T : SurveyQuestionListItem>(
         itemView: SurveyQuestionContainerView
     ) : ListViewAdapter.ViewHolder<T>(itemView) {
         private val containerView: SurveyQuestionContainerView = itemView

@@ -6,7 +6,7 @@ import apptentive.com.android.feedback.utils.RuntimeUtils
 import apptentive.com.android.util.Factory
 
 // TODO: rename to AndroidAppReleaseFactory
-class DefaultAppReleaseFactory(
+internal class DefaultAppReleaseFactory(
     private val context: Context
 ) : Factory<AppRelease> {
     override fun create(): AppRelease {

@@ -18,6 +18,7 @@ import apptentive.com.android.util.Log
 import apptentive.com.android.util.generateUUID
 
 // TODO: UI-tests
+@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 class SurveyInteractionLauncher(
     private val questionConverter: SurveyQuestionConverter = DefaultSurveyQuestionConverter()
 ) : AndroidViewInteractionLauncher<SurveyInteraction>() {

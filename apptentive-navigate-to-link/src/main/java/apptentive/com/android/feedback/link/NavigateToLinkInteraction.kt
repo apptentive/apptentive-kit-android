@@ -4,7 +4,7 @@ import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
 
-class NavigateToLinkInteraction(
+internal class NavigateToLinkInteraction(
     id: InteractionId,
     val url: String,
     val target: Target

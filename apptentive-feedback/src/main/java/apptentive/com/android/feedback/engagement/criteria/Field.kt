@@ -346,7 +346,7 @@ sealed class Field(val type: Type, val description: String) {
     }
 }
 
-fun Field.convertValue(value: Any?): Any? {
+internal fun Field.convertValue(value: Any?): Any? {
     val converted = convertComplexValue(value)
 
     return when (type) {

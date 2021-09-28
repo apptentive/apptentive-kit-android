@@ -21,7 +21,7 @@ abstract class Payload(val nonce: String) {
         return JsonConverter.toJson(this)
     }
 
-    fun toPayloadData() = PayloadData(
+    internal fun toPayloadData() = PayloadData(
         nonce = nonce,
         type = getPayloadType(),
         path = getHttpPath(),

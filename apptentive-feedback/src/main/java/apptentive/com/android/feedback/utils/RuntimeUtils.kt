@@ -22,8 +22,8 @@ object RuntimeUtils {
     }
 }
 
-typealias VersionCode = Long
-typealias VersionName = String
+internal typealias VersionCode = Long
+internal typealias VersionName = String
 
 data class ApplicationInfo(
     val packageName: String,

@@ -25,7 +25,7 @@ import com.google.android.material.textfield.TextInputLayout
  * @param freeFormHint hint text to be displayed if user provided no answer
  * @param multiline indicates if the answer field should occupy more than a single line
  */
-class SingleLineQuestionListItem(
+internal class SingleLineQuestionListItem(
     id: String,
     title: String,
     instructions: String? = null,

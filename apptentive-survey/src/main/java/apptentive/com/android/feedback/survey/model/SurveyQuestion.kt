@@ -1,5 +1,7 @@
 package apptentive.com.android.feedback.survey.model
 
+import androidx.annotation.VisibleForTesting
+
 /**
  * Model class to represent survey questions.
  * @param id a string that uniquely identifies the question when submitting a response to the API
@@ -9,6 +11,7 @@ package apptentive.com.android.feedback.survey.model
  * @param instructionsText the text to display as an optional instruction (for example, "Select one")
  * @param validationError a textual error message that is read by a screen reader when a question fails to validate
  */
+@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 abstract class SurveyQuestion<Answer : SurveyQuestionAnswer>(
     val id: String,
     val title: String,

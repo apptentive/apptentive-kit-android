@@ -5,7 +5,7 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionId
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.feedback.model.InvocationData
 
-class TextModalInteraction(
+internal class TextModalInteraction(
     id: InteractionId,
     val title: String?,
     val body: String?,

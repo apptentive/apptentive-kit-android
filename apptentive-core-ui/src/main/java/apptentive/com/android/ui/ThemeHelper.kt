@@ -8,7 +8,7 @@ import apptentive.com.android.R
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags
 
-fun Context.overrideTheme() {
+internal fun Context.overrideTheme() {
     /* Step 1: Apply Apptentive default theme layer.
 	 * If host activity is an activity, the base theme already has Apptentive defaults applied, so skip Step 1.
 	 * If parent activity is NOT an activity, first apply Apptentive defaults.

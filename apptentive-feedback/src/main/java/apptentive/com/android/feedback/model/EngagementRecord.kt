@@ -1,9 +1,11 @@
 package apptentive.com.android.feedback.model
 
+import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.engagement.criteria.DateTime
 import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
 
+@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 data class EngagementRecord(
     private var totalInvokes: Long = 0,
     private val versionCodeLookup: MutableMap<VersionCode, Long> = mutableMapOf(),

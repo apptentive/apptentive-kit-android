@@ -9,7 +9,7 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionDataCo
 import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.util.Log
 
-typealias RecordEventCallback = (
+internal typealias RecordEventCallback = (
     event: Event,
     interactionId: String?,
     data: Map<String, Any?>?,
@@ -17,10 +17,10 @@ typealias RecordEventCallback = (
     extendedData: List<ExtendedData>?
 ) -> Unit
 
-typealias RecordInteractionCallback = (interaction: Interaction) -> Unit
+internal typealias RecordInteractionCallback = (interaction: Interaction) -> Unit
 
 @Suppress("FoldInitializerAndIfToElvis")
-data class DefaultEngagement(
+internal data class DefaultEngagement(
     private val interactionDataProvider: InteractionDataProvider,
     private val interactionConverter: InteractionDataConverter,
     private val interactionEngagement: InteractionEngagement,

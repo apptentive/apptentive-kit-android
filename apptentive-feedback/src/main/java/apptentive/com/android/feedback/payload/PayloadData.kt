@@ -1,8 +1,10 @@
 package apptentive.com.android.feedback.payload
 
+import androidx.annotation.VisibleForTesting
 import apptentive.com.android.network.HttpMethod
 import apptentive.com.android.util.generateUUID
 
+@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 data class PayloadData(
     val nonce: String = generateUUID(),
     val type: PayloadType,

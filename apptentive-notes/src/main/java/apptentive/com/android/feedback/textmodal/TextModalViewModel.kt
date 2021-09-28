@@ -7,7 +7,7 @@ import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.util.Log
 
-class TextModalViewModel(
+internal class TextModalViewModel(
     private val context: EngagementContext,
     private val interaction: TextModalInteraction
 ) {

@@ -1,8 +1,11 @@
 package apptentive.com.android.feedback.engagement.interactions
 
+import androidx.annotation.VisibleForTesting
+
 /**
  * An object that converts raw interaction data to a concrete interaction class.
  */
+@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 interface InteractionDataConverter {
     fun convert(data: InteractionData): Interaction?
 }

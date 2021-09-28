@@ -6,7 +6,7 @@ import apptentive.com.android.feedback.survey.R
 import apptentive.com.android.ui.ListViewAdapter
 import apptentive.com.android.ui.ListViewItem
 
-class SurveyHeaderListItem(val instructions: String) : SurveyListItem(
+internal class SurveyHeaderListItem(val instructions: String) : SurveyListItem(
     id = "header",
     type = Type.Header
 ) {

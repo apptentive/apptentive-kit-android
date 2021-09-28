@@ -23,7 +23,7 @@ interface Engagement {
 /**
  * No-op engagement implementation.
  */
-class NullEngagement : Engagement {
+internal class NullEngagement : Engagement {
     override fun engage(
         context: EngagementContext,
         event: Event,

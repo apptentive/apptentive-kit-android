@@ -9,7 +9,7 @@ import apptentive.com.android.feedback.platform.AndroidEngagementContext
 import apptentive.com.android.ui.overrideTheme
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
-class EnjoymentDialogFragment(
+internal class EnjoymentDialogFragment(
     val context: AndroidEngagementContext,
     private val viewModel: EnjoymentDialogViewModel
 ) : DialogFragment() {

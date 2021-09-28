@@ -2,7 +2,7 @@ package apptentive.com.android.feedback.engagement.criteria
 
 import apptentive.com.android.feedback.utils.IndentPrinter
 
-abstract class LogicalClause(protected val children: List<Clause>) : Clause {
+internal abstract class LogicalClause(protected val children: List<Clause>) : Clause {
     protected abstract val operator: String
 
     override fun evaluate(state: TargetingState, printer: IndentPrinter?): Boolean {
@@ -24,7 +24,7 @@ abstract class LogicalClause(protected val children: List<Clause>) : Clause {
     protected open fun shouldPrint() = true
 }
 
-class LogicalAndClause(children: List<Clause>) : LogicalClause(children) {
+internal class LogicalAndClause(children: List<Clause>) : LogicalClause(children) {
     override val operator: String get() = "and"
 
     override fun evaluateLogicalClause(state: TargetingState, printer: IndentPrinter?): Boolean {
@@ -34,7 +34,7 @@ class LogicalAndClause(children: List<Clause>) : LogicalClause(children) {
     override fun shouldPrint() = children.size > 1
 }
 
-class LogicalOrClause(children: List<Clause>) : LogicalClause(children) {
+internal class LogicalOrClause(children: List<Clause>) : LogicalClause(children) {
     override val operator: String get() = "or"
 
     override fun evaluateLogicalClause(state: TargetingState, printer: IndentPrinter?): Boolean {
@@ -42,7 +42,7 @@ class LogicalOrClause(children: List<Clause>) : LogicalClause(children) {
     }
 }
 
-class LogicalNotClause(children: List<Clause>) : LogicalClause(children) {
+internal class LogicalNotClause(children: List<Clause>) : LogicalClause(children) {
     override val operator: String get() = "not"
 
     init {

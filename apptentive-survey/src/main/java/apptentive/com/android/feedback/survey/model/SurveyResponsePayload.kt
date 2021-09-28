@@ -10,7 +10,7 @@ import apptentive.com.android.network.HttpMethod
 import apptentive.com.android.util.generateUUID
 
 @Keep
-class SurveyResponsePayload(
+internal class SurveyResponsePayload(
     nonce: String = generateUUID(),
     val id: String,
     val answers: Map<String, List<AnswerData>>

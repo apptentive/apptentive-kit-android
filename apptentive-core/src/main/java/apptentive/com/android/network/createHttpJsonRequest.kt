@@ -7,7 +7,7 @@ import java.io.OutputStream
  * Helper function for creating JSON HTTP-requests.
  * @param requestObject optional object which would be converted to JSON POST-body.
  */
-inline fun <reified T> createHttpJsonRequest(
+internal inline fun <reified T> createHttpJsonRequest(
     method: HttpMethod,
     url: String,
     requestObject: Any? = null,
@@ -29,7 +29,7 @@ inline fun <reified T> createHttpJsonRequest(
  *
  * @param obj typed request object
  */
-class HttpJsonRequestBody(private val obj: Any) : HttpRequestBody {
+internal class HttpJsonRequestBody(private val obj: Any) : HttpRequestBody {
     override val contentType: String
         get() = "application/json"
 
@@ -40,7 +40,7 @@ class HttpJsonRequestBody(private val obj: Any) : HttpRequestBody {
 }
 
 /** Helper function for creating JSON HTTP-response reader */
-inline fun <reified T> createHttpJsonResponseReader(): HttpResponseReader<T> {
+internal inline fun <reified T> createHttpJsonResponseReader(): HttpResponseReader<T> {
     return HttpJsonResponseReader(T::class.java)
 }
 

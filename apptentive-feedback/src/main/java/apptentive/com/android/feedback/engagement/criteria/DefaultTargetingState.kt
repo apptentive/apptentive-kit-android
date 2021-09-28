@@ -17,7 +17,7 @@ import apptentive.com.android.feedback.model.EngagementData
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
 
-data class DefaultTargetingState(
+internal data class DefaultTargetingState(
     private val person: Person,
     private val device: Device,
     private val sdk: SDK,

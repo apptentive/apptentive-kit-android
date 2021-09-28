@@ -3,7 +3,7 @@ package apptentive.com.android.feedback.enjoyment
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
 
-class EnjoymentDialogInteraction(
+internal class EnjoymentDialogInteraction(
     id: String,
     val title: String,
     val yesText: String,

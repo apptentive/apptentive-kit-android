@@ -16,7 +16,7 @@ import apptentive.com.android.feedback.platform.AndroidEngagementContext
 import apptentive.com.android.ui.overrideTheme
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
-class TextModalDialogFragment(
+internal class TextModalDialogFragment(
     val context: AndroidEngagementContext,
     private val viewModel: TextModalViewModel
 ) : DialogFragment() {

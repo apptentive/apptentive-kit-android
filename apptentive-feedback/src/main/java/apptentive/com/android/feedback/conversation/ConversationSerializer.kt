@@ -42,7 +42,7 @@ import java.io.DataOutputStream
 import java.io.EOFException
 import java.io.File
 
-interface ConversationSerializer {
+internal interface ConversationSerializer {
     @Throws(ConversationSerializationException::class)
     fun loadConversation(): Conversation?
 

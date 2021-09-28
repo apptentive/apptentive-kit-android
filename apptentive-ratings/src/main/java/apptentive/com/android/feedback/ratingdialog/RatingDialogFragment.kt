@@ -13,7 +13,7 @@ import apptentive.com.android.feedback.ratings.R
 import apptentive.com.android.ui.overrideTheme
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
-class RatingDialogFragment(
+internal class RatingDialogFragment(
     val context: AndroidEngagementContext,
     private val viewModel: RatingDialogViewModel
 ) : DialogFragment() {

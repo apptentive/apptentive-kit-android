@@ -10,7 +10,7 @@ import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.util.Factory
 import apptentive.com.android.util.generateUUID
 
-interface ConversationRepository {
+internal interface ConversationRepository {
     fun createConversation(): Conversation
 
     @Throws(ConversationSerializationException::class)
@@ -24,7 +24,7 @@ interface ConversationRepository {
     fun getCurrentSdk(): SDK
 }
 
-class DefaultConversationRepository(
+internal class DefaultConversationRepository(
     private val conversationSerializer: ConversationSerializer,
     private val appReleaseFactory: Factory<AppRelease>,
     private val personFactory: Factory<Person>,

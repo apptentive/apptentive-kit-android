@@ -18,5 +18,5 @@ abstract class SurveyListItem(id: String, type: Type) : ListViewItem(id, type.or
     }
 }
 
-fun ListViewAdapter.register(type: SurveyListItem.Type, factory: ViewHolderFactory) =
+internal fun ListViewAdapter.register(type: SurveyListItem.Type, factory: ViewHolderFactory) =
     register(type.ordinal, factory)

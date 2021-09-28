@@ -5,7 +5,7 @@ import apptentive.com.android.feedback.engagement.InteractionDataProvider
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
 
-class CriteriaInteractionDataProvider(
+internal class CriteriaInteractionDataProvider(
     private val interactions: Map<InteractionId, InteractionData>,
     private val invocationProvider: InvocationProvider,
     private val state: TargetingState

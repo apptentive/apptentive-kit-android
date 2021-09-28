@@ -18,7 +18,7 @@ fun HttpRequestBody.asString(): String {
     return stream.toByteArray().toString(Charsets.UTF_8)
 }
 
-class BinaryRequestBody(
+internal class BinaryRequestBody(
     private val data: ByteArray,
     override val contentType: String
 ) : HttpRequestBody {

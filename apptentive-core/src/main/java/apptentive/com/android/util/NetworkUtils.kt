@@ -9,7 +9,7 @@ import android.net.NetworkInfo
 /**
  * Utility class for network related queries.
  */
-object NetworkUtils {
+internal object NetworkUtils {
     /**
      * Indicates whether network connectivity exists or is in the process
      * of being established.

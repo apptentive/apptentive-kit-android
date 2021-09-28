@@ -5,7 +5,7 @@ import apptentive.com.android.feedback.platform.AndroidEngagementContext
 import apptentive.com.android.feedback.platform.AndroidViewInteractionLauncher
 import apptentive.com.android.util.Log
 
-class AppStoreRatingInteractionLauncher : AndroidViewInteractionLauncher<AppStoreRatingInteraction>() {
+internal class AppStoreRatingInteractionLauncher : AndroidViewInteractionLauncher<AppStoreRatingInteraction>() {
     override fun launchInteraction(
         context: AndroidEngagementContext,
         interaction: AppStoreRatingInteraction

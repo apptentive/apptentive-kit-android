@@ -22,7 +22,7 @@ import com.google.android.material.textfield.TextInputEditText
  *  @see apptentive.com.android.feedback.survey.viewmodel.SingleLineQuestionListItem.ViewHolder.bindView
  *  @see apptentive.com.android.feedback.survey.viewmodel.MultiChoiceQuestionListItem.ViewHolder.bindView
  */
-fun TextInputEditText.setTextBoxBackgroundFocusFix() {
+internal fun TextInputEditText.setTextBoxBackgroundFocusFix() {
     setOnFocusChangeListener { _, hasFocus ->
         when {
             hasFocus && text.isNullOrEmpty() -> {

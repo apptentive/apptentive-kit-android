@@ -11,7 +11,7 @@ import apptentive.com.android.feedback.utils.VersionName
 import apptentive.com.android.util.Result
 import apptentive.com.android.util.generateUUID
 
-interface ConversationFetchService {
+internal interface ConversationFetchService {
     fun fetchConversationToken(
         device: Device,
         sdk: SDK,
@@ -178,7 +178,7 @@ private data class PersonRequestData(
 }
 
 @Keep
-data class ConversationCredentials(
+internal data class ConversationCredentials(
     val id: String,
     val deviceId: String,
     val personId: String,

@@ -7,7 +7,7 @@ import com.google.android.play.core.review.ReviewInfo
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.android.play.core.tasks.Task
 
-class GooglePlayReviewManager(private val activity: Activity) : InAppReviewManager {
+internal class GooglePlayReviewManager(private val activity: Activity) : InAppReviewManager {
     private val reviewManager = ReviewManagerFactory.create(activity)
 
     override fun isInAppReviewSupported(): Boolean = true

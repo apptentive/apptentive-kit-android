@@ -8,7 +8,7 @@ import apptentive.com.android.feedback.payload.PayloadType
 import apptentive.com.android.network.HttpMethod
 import apptentive.com.android.util.generateUUID
 
-class AppReleaseAndSDKPayload(
+internal class AppReleaseAndSDKPayload(
     nonce: String = generateUUID(),
     val sdkAuthorEmail: String? = null,
     val sdkAuthorName: String? = null,

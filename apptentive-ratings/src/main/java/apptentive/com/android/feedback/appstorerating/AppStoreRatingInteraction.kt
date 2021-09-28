@@ -4,7 +4,7 @@ import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
 
-class AppStoreRatingInteraction(
+internal class AppStoreRatingInteraction(
     id: InteractionId,
     val storeID: String?,
     val method: String?,

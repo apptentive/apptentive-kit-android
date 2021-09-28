@@ -1,5 +1,8 @@
 package apptentive.com.android.feedback.survey.model
 
+import androidx.annotation.VisibleForTesting
+
+@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 class MultiChoiceQuestion(
     id: String,
     title: String,
@@ -115,7 +118,7 @@ class MultiChoiceQuestion(
  * @param allowMultipleAnswers indicates if only one choice can be selected at all times
  * @param text optional text of "Select other" choices (or null if text wasn't changed)
  */
-fun MultiChoiceQuestion.Answer.update(
+internal fun MultiChoiceQuestion.Answer.update(
     choiceId: String,
     isChecked: Boolean,
     allowMultipleAnswers: Boolean,

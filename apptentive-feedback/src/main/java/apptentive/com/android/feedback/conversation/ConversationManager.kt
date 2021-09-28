@@ -26,7 +26,7 @@ import apptentive.com.android.util.Result
 import com.apptentive.android.sdk.conversation.LegacyConversationManager
 import com.apptentive.android.sdk.conversation.toConversation
 
-class ConversationManager(
+internal class ConversationManager(
     private val conversationRepository: ConversationRepository,
     private val conversationService: ConversationService,
     private val legacyConversationManagerProvider: Provider<LegacyConversationManager>,

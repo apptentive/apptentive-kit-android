@@ -5,7 +5,7 @@ import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.util.Log
 
-class RatingDialogViewModel(
+internal class RatingDialogViewModel(
     private val context: EngagementContext,
     private val interaction: RatingDialogInteraction
 ) {

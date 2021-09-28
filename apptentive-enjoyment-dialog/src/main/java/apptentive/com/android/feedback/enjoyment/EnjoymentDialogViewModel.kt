@@ -5,7 +5,7 @@ import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.util.Log
 
-data class EnjoymentDialogViewModel(
+internal data class EnjoymentDialogViewModel(
     private val context: EngagementContext,
     val interaction: EnjoymentDialogInteraction
 ) {

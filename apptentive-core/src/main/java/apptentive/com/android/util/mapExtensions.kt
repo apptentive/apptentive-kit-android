@@ -2,7 +2,7 @@ package apptentive.com.android.util
 
 // FIXME: unit tests
 
-class MissingKeyException(key: String) : RuntimeException("Missing key: $key")
+internal class MissingKeyException(key: String) : RuntimeException("Missing key: $key")
 
 @Throws(MissingKeyException::class)
 fun Map<String, *>.getString(key: String): String = optString(key) ?: throw MissingKeyException(key)
@@ -36,7 +36,7 @@ fun Map<String, *>.getMap(key: String): Map<String, *> =
     optMap(key) ?: throw MissingKeyException(key)
 
 @Suppress("UNCHECKED_CAST")
-fun Map<String, *>.optMap(key: String, defaultValue: Map<String, *>? = null) =
+internal fun Map<String, *>.optMap(key: String, defaultValue: Map<String, *>? = null) =
     this[key] as? Map<String, *> ?: defaultValue
 
 @Throws(MissingKeyException::class)
@@ -44,5 +44,5 @@ fun Map<String, *>.getList(key: String): List<*> =
     optList(key) ?: throw MissingKeyException(key)
 
 @Suppress("UNCHECKED_CAST")
-fun Map<String, *>.optList(key: String, defaultValue: List<*>? = null) =
+internal fun Map<String, *>.optList(key: String, defaultValue: List<*>? = null) =
     this[key] as? List<*> ?: defaultValue

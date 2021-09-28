@@ -22,7 +22,7 @@ import com.google.android.material.textfield.TextInputLayout
  * @param validationError contains validation error message in case if the question has an invalid
  *                        answer or <code>null</code> if the answer is valid.
  */
-class MultiChoiceQuestionListItem(
+internal class MultiChoiceQuestionListItem(
     id: String,
     title: String,
     val answerChoices: List<Answer>,

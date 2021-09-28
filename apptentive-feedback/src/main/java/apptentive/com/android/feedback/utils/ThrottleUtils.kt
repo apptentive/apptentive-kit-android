@@ -8,7 +8,7 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.util.Log
 import java.util.concurrent.TimeUnit
 
-object ThrottleUtils {
+internal object ThrottleUtils {
     internal const val SHARED_PREF_THROTTLE = "com.apptentive.sdk.throttle"
     internal var ratingThrottleLength: Long? = null
     internal var throttleSharedPrefs: SharedPreferences? = null

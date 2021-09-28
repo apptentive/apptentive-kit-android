@@ -9,7 +9,7 @@ import apptentive.com.android.util.getMap
 import apptentive.com.android.util.getString
 import apptentive.com.android.util.optString
 
-class TextModalInteractionTypeConverter : InteractionTypeConverter<TextModalInteraction> {
+internal class TextModalInteractionTypeConverter : InteractionTypeConverter<TextModalInteraction> {
     @Suppress("UNCHECKED_CAST")
     override fun convert(data: InteractionData) = TextModalInteraction(
         id = data.id,

@@ -13,7 +13,7 @@ import androidx.core.view.isVisible
 import apptentive.com.android.feedback.survey.R
 import apptentive.com.android.ui.getThemeColor
 
-class SurveyQuestionContainerView(
+internal class SurveyQuestionContainerView(
     context: Context,
     attrs: AttributeSet?,
     defStyleAttr: Int

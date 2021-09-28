@@ -5,7 +5,7 @@ import apptentive.com.android.feedback.platform.AndroidEngagementContext
 import apptentive.com.android.feedback.platform.AndroidInteractionLauncher
 import apptentive.com.android.util.Log
 
-class NavigateToLinkInteractionLauncher : AndroidInteractionLauncher<NavigateToLinkInteraction>() {
+internal class NavigateToLinkInteractionLauncher : AndroidInteractionLauncher<NavigateToLinkInteraction>() {
     override fun launchInteraction(
         context: AndroidEngagementContext,
         interaction: NavigateToLinkInteraction

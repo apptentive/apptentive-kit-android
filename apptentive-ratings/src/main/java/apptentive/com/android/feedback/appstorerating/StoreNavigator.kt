@@ -12,7 +12,7 @@ import apptentive.com.android.feedback.platform.AndroidEngagementContext
 import apptentive.com.android.util.Log
 
 
-object StoreNavigator {
+internal object StoreNavigator {
     fun navigate(
         context: AndroidEngagementContext,
         interaction: AppStoreRatingInteraction

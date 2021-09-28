@@ -1,15 +1,17 @@
 package apptentive.com.android.feedback.engagement
 
+import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionLauncher
 import apptentive.com.android.feedback.utils.ThrottleUtils
 
+@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 interface InteractionEngagement {
     fun engage(context: EngagementContext, interaction: Interaction): EngagementResult
 }
 
-data class DefaultInteractionEngagement(
+internal data class DefaultInteractionEngagement(
     private val lookup: Map<Class<Interaction>, InteractionLauncher<Interaction>>
 ) : InteractionEngagement {
     @Suppress("UNCHECKED_CAST")

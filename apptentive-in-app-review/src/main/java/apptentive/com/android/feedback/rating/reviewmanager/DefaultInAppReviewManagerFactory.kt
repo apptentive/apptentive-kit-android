@@ -10,7 +10,7 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.ConnectionResult.SUCCESS
 import com.google.android.gms.common.GoogleApiAvailability
 
-class DefaultInAppReviewManagerFactory : InAppReviewManagerFactory {
+internal class DefaultInAppReviewManagerFactory : InAppReviewManagerFactory {
 
     override fun createReviewManager(context: Context): InAppReviewManager {
         return try {

@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.survey.viewmodel
 
 import androidx.annotation.MainThread
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -17,13 +18,14 @@ import apptentive.com.android.feedback.survey.model.update
 import apptentive.com.android.ui.ApptentiveViewModel
 import java.lang.Thread.sleep
 
+
 typealias SurveySubmitCallback = (Map<String, SurveyQuestionAnswer>) -> Unit
-typealias SurveyCancelCallback = () -> Unit
-typealias SurveyCancelPartialCallback = () -> Unit
-typealias SurveyContinuePartialCallback = () -> Unit
+internal typealias SurveyCancelCallback = () -> Unit
+internal typealias SurveyCancelPartialCallback = () -> Unit
+internal typealias SurveyContinuePartialCallback = () -> Unit
 
 
-class SurveyViewModel(
+internal class SurveyViewModel(
     private val model: SurveyModel,
     private val executors: Executors,
     private val onSubmit: SurveySubmitCallback,
@@ -248,12 +250,12 @@ class SurveyViewModel(
     }
 }
 
-data class SurveySubmitMessageState(
+internal data class SurveySubmitMessageState(
     val message: String,
     val isValid: Boolean
 )
 
-data class SurveyCancelConfirmationDisplay(
+internal data class SurveyCancelConfirmationDisplay(
     val title: String?,
     val message: String?,
     val positiveButtonMessage: String?,

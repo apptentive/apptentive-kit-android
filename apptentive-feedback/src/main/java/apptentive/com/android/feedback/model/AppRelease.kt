@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.model
 
+import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
 
@@ -10,6 +11,7 @@ import apptentive.com.android.feedback.utils.VersionName
  * @param versionName - host application version name
  * @param targetSdkVersion - host application target sdk version
  */
+@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 data class AppRelease(
     val type: String,
     val identifier: String,

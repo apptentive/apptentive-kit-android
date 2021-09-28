@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.model
 
+import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.APP_RELEASE
 import apptentive.com.android.feedback.CONVERSATION
 import apptentive.com.android.feedback.DEVICE
@@ -11,6 +12,7 @@ import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.serialization.json.JsonConverter.toJsonObject
 import apptentive.com.android.util.Log
 
+@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 data class Conversation(
     val localIdentifier: String,
     @SensitiveDataKey val conversationToken: String? = null,
@@ -47,4 +49,4 @@ data class Conversation(
     }
 }
 
-val Conversation.hasConversationToken get() = this.conversationToken != null
+internal val Conversation.hasConversationToken get() = this.conversationToken != null

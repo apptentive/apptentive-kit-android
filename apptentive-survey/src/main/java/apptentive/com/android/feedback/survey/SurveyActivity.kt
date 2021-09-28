@@ -32,7 +32,7 @@ import apptentive.com.android.ui.hideSoftKeyboard
 import apptentive.com.android.ui.showConfirmationDialog
 import com.google.android.material.appbar.MaterialToolbar
 
-class SurveyActivity : ApptentiveViewModelActivity<SurveyViewModel>() {
+internal class SurveyActivity : ApptentiveViewModelActivity<SurveyViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.apptentive_activity_survey)

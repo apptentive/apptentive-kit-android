@@ -26,7 +26,7 @@ data class InteractionType(val name: String) {
         val TextModal = InteractionType(TEXT_MODAL)
         val NavigateToLink = InteractionType(NAVIGATE_TO_LINK)
 
-        fun names() = listOf(
+        internal fun names() = listOf(
             UPGRADE_MESSAGE,
             ENJOYMENT_DIALOG,
             RATING_DIALOG,

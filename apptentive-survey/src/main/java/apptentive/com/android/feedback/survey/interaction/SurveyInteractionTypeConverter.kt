@@ -1,11 +1,13 @@
 package apptentive.com.android.feedback.survey.interaction
 
+import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
 import apptentive.com.android.feedback.engagement.interactions.InteractionTypeConverter
 import apptentive.com.android.util.getList
 import apptentive.com.android.util.optBoolean
 import apptentive.com.android.util.optString
 
+@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 internal class SurveyInteractionTypeConverter : InteractionTypeConverter<SurveyInteraction> {
     override fun convert(data: InteractionData): SurveyInteraction {
         val configuration = data.configuration

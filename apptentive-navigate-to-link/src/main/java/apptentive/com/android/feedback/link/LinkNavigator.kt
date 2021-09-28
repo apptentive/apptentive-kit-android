@@ -8,7 +8,7 @@ import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.platform.AndroidEngagementContext
 
-object LinkNavigator {
+internal object LinkNavigator {
     @MainThread
     fun navigate(
         context: AndroidEngagementContext,
@@ -49,7 +49,7 @@ object LinkNavigator {
 }
 
 @VisibleForTesting
-fun NavigateToLinkInteraction.createIntent(): Intent {
+internal fun NavigateToLinkInteraction.createIntent(): Intent {
     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
     if (target == NavigateToLinkInteraction.Target.new) {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK

@@ -15,11 +15,11 @@ fun Decoder.decodeNullableString(): String? = if (decodeBoolean()) decodeString(
 
 //region Enum
 
-fun Encoder.encodeEnum(value: Enum<*>) {
+internal fun Encoder.encodeEnum(value: Enum<*>) {
     encodeInt(value.ordinal)
 }
 
-inline fun <reified T : Enum<T>> Decoder.decodeEnum(): T {
+internal inline fun <reified T : Enum<T>> Decoder.decodeEnum(): T {
     val ordinal = decodeInt()
     val values = enumValues<T>()
     return values[ordinal]
@@ -42,7 +42,7 @@ private enum class ValueType {
     TYPE_NULL
 }
 
-object BasicTypeSerializer : TypeSerializer<Any?> {
+internal object BasicTypeSerializer : TypeSerializer<Any?> {
     override fun encode(encoder: Encoder, value: Any?) {
         when (value) {
             is Boolean -> {

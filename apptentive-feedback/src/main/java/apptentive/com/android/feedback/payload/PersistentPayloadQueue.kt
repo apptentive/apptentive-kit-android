@@ -7,7 +7,7 @@ import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogLevel
 import apptentive.com.android.util.createStringTable
 
-class PersistentPayloadQueue(
+internal class PersistentPayloadQueue(
     private val dbHelper: PayloadSQLiteHelper
 ) : PayloadQueue {
     override fun enqueuePayload(payload: PayloadData) {

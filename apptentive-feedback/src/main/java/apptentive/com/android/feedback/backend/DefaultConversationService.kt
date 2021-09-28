@@ -22,7 +22,7 @@ import apptentive.com.android.network.MutableHttpHeaders
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.Result
 
-class DefaultConversationService(
+internal class DefaultConversationService(
     private val httpClient: HttpClient,
     apptentiveKey: String,
     apptentiveSignature: String,
