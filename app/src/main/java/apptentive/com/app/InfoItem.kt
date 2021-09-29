@@ -1,6 +1,6 @@
 package apptentive.com.app
 
-data class DebugItem(
+data class InfoItem(
     val name: String,
     val value: String
 )

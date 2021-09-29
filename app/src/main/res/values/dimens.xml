@@ -11,4 +11,17 @@
     <dimen name="debug_icon_margin">8dp</dimen>
     <dimen name="button_spacing_top_margin">8dp</dimen>
     <dimen name="data_layout_top_margin">4dp</dimen>
+    <dimen name="icon_padding">8dp</dimen>
+    <dimen name="icon_margin">8dp</dimen>
+    <dimen name="title_margin">16dp</dimen>
+    <dimen name="horizontal_spacing">30dp</dimen>
+    <dimen name="vertical_spacing">30dp</dimen>
+    <dimen name="event_margin">4dp</dimen>
+    <dimen name="event_button_top_margin">5dp</dimen>
+    <dimen name="button_min_height">56dp</dimen>
+    <dimen name="section_spacing_margin">16dp</dimen>
+    <dimen name="button_top_spacing_margin">2dp</dimen>
+    <dimen name="dropdown_min_height">56dp</dimen>
+    <dimen name="add_button_min_width">64dp</dimen>
+    <dimen name="remove_section_spacing">8dp</dimen>
 </resources>

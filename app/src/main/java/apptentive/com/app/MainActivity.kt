@@ -1,6 +1,7 @@
 package apptentive.com.app
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -21,60 +22,13 @@ import apptentive.com.android.feedback.payload.PayloadSender
 import apptentive.com.android.feedback.platform.AndroidEngagementContext
 import apptentive.com.android.feedback.ratingdialog.RatingDialogInteraction
 import apptentive.com.android.feedback.ratingdialog.RatingDialogInteractionLauncher
-import apptentive.com.android.feedback.survey.interaction.SurveyInteraction
-import apptentive.com.android.feedback.survey.interaction.SurveyInteractionLauncher
 import apptentive.com.app.databinding.ActivityMainBinding
-
-val EXTRA_NIGHT_MODE = "nightMode"
-val EXTRA_APPTENTIVE_THEME = "apptentiveTheme"
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val executorFactory = DependencyProvider.of<ExecutorFactory>()
-
-        val context = AndroidEngagementContext(
-            androidContext = this,
-            engagement = object : Engagement {
-                override fun engage(
-                    context: EngagementContext,
-                    event: Event,
-                    interactionId: String?,
-                    data: Map<String, Any?>?,
-                    customData: Map<String, Any?>?,
-                    extendedData: List<ExtendedData>?
-                ): EngagementResult {
-                    return if (interactionId != null)
-                        EngagementResult.Success(interactionId = interactionId) else
-                        EngagementResult.Failure("No runnable interactions")
-                }
-
-                override fun engage(
-                    context: EngagementContext,
-                    invocations: List<Invocation>
-                ): EngagementResult {
-                    return EngagementResult.Failure("No runnable interactions")
-                }
-            },
-            payloadSender = object : PayloadSender {
-                override fun sendPayload(payload: Payload) {
-                    runOnUiThread {
-                        Toast.makeText(
-                            this@MainActivity,
-                            "Payload send: ${payload::class.java.simpleName}",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                }
-            },
-            executors = Executors(
-                state = executorFactory.createSerialQueue("state"),
-                main = executorFactory.createMainQueue()
-            )
-        )
-
-        val prefs = getSharedPreferences("prefs", MODE_PRIVATE)
+        val prefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
 
         val isNightMode = prefs.getBoolean(EXTRA_NIGHT_MODE, false)
         delegate.localNightMode = if (isNightMode) MODE_NIGHT_YES else MODE_NIGHT_NO
@@ -88,208 +42,97 @@ class MainActivity : AppCompatActivity() {
             prefs.edit().putBoolean(EXTRA_NIGHT_MODE, isChecked).apply()
         }
 
+        val shouldSanitize = prefs.getBoolean(SHOULD_SANITIZE, false)
+        binding.sanitizeSwitch.isChecked = shouldSanitize
+        binding.sanitizeSwitch.setOnCheckedChangeListener { _, isChecked ->
+            prefs.edit().putBoolean(SHOULD_SANITIZE, isChecked).apply()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) finishAndRemoveTask()
+        }
+
         binding.infoIcon.setOnClickListener {
-            val intent = Intent(this, DebugInfoActivity::class.java)
+            val intent = Intent(this, InfoActivity::class.java)
             startActivity(intent)
         }
 
-        binding.engageButton.setOnClickListener {
-            val eventName = binding.eventNameEditText.text.toString().trim()
-            if (eventName.isEmpty()) {
-                Toast.makeText(this, "Empty event name", Toast.LENGTH_LONG).show()
+        binding.dataButton.setOnClickListener {
+            val intent = Intent(this, DataActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.engageEventButton.setOnClickListener {
+            val engageEvent = binding.eventTextEditText.text?.toString()?.trim()
+            if (!engageEvent.isNullOrEmpty()) {
+                Apptentive.engage(this, engageEvent) { handleResult(it) }
+                binding.eventTextLayout.isErrorEnabled = false
+                binding.eventTextLayout.error = ""
+                binding.eventTextEditText.setText("")
             } else {
-                Apptentive.engage(this, eventName)
+                binding.eventTextLayout.isErrorEnabled = true
+                binding.eventTextLayout.error = "No event entered"
             }
         }
 
         binding.loveDialogButton.setOnClickListener {
-            Apptentive.reset()
-            Apptentive.engage(this, "love_dialog_test") {
-                if (it !is EngagementResult.Success) {
-                    Toast.makeText(this, "Not engaged: $it", Toast.LENGTH_LONG).show()
-                }
-            }
+            Apptentive.engage(this, "love_dialog_event") { handleResult(it) }
         }
 
         binding.surveyButton.setOnClickListener {
-            val launcher = SurveyInteractionLauncher()
-            val interaction = SurveyInteraction(
-                id = "id",
-                description = "Tell us about your experience!",
-                name = "All question types report",
-                submitText = "Submit",
-                requiredText = "Required",
-                validationError = "There are issues with your response.",
-                showSuccessMessage = true,
-                successMessage = "Thank you for taking this survey!",
-                closeConfirmTitle = "Are you sure you want to close the survey?",
-                closeConfirmMessage = null,
-                closeConfirmCloseText = null,
-                closeConfirmBackText = null,
-                isRequired = false,
-                questions = listOf(
-                    mapOf(
-                        "id" to "singleline_1",
-                        "type" to "singleline",
-                        "value" to "Single line optional",
-                        "error_message" to "Error - There was a problem with your text answer.",
-                        "required" to false,
-                        "freeform_hint" to "Single line optional hint",
-                        "multiline" to false
-                    ),
-                    mapOf(
-                        "id" to "singleline_2",
-                        "type" to "singleline",
-                        "value" to "Single line not optional",
-                        "error_message" to "Error - There was a problem with your text answer.",
-                        "required" to true,
-                        "freeform_hint" to "Single line required hint",
-                        "multiline" to false
-                    ),
-                    mapOf(
-                        "id" to "singleline_3",
-                        "type" to "singleline",
-                        "value" to "Multi line optional",
-                        "error_message" to "Error - There was a problem with your text answer.",
-                        "required" to false,
-                        "freeform_hint" to "Single line multiline hint",
-                        "multiline" to true
-                    ),
-                    mapOf(
-                        "id" to "multichoice_1",
-                        "type" to "multichoice",
-                        "value" to "Single Select optional",
-                        "error_message" to "Error - There was a problem with your single-select answer.",
-                        "required" to false,
-                        "instructions" to "select one",
-                        "answer_choices" to listOf(
-                            mapOf<String, Any?>(
-                                "id" to "choice_1",
-                                "value" to "Title 1",
-                                "type" to "select_option"
-                            ),
-                            mapOf<String, Any?>(
-                                "id" to "choice_2",
-                                "value" to "Other",
-                                "type" to "select_other",
-                                "hint" to "Other Hint"
-                            )
-                        )
-                    ),
-                    mapOf(
-                        "id" to "multichoice_2",
-                        "type" to "multichoice",
-                        "value" to "Single Select not optional",
-                        "error_message" to "Error - There was a problem with your single-select answer.",
-                        "required" to true,
-                        "instructions" to "select one",
-                        "answer_choices" to listOf(
-                            mapOf<String, Any?>(
-                                "id" to "choice_1",
-                                "value" to "A",
-                                "type" to "select_option"
-                            ),
-                            mapOf<String, Any?>(
-                                "id" to "choice_2",
-                                "value" to "B",
-                                "type" to "select_other",
-                                "hint" to "B Hint"
-                            )
-                        )
-                    ),
-                    mapOf(
-                        "id" to "multiselect_1",
-                        "type" to "multiselect",
-                        "value" to "Multi Select optional",
-                        "error_message" to "Error - There was a problem with your multi-select answer.",
-                        "required" to false,
-                        "min_selections" to 0,
-                        "max_selections" to 2,
-                        "instructions" to "select all that apply",
-                        "answer_choices" to listOf(
-                            mapOf<String, Any?>(
-                                "id" to "choice_1",
-                                "value" to "Option 1",
-                                "type" to "select_option"
-                            ),
-                            mapOf<String, Any?>(
-                                "id" to "choice_2",
-                                "value" to "Option 2",
-                                "type" to "select_option"
-                            ),
-                            mapOf<String, Any?>(
-                                "id" to "choice_3",
-                                "value" to "Other Option",
-                                "type" to "select_other",
-                                "hint" to "Hint"
-                            )
-                        )
-                    ),
-                    mapOf(
-                        "id" to "multiselect_2",
-                        "type" to "multiselect",
-                        "value" to "Multi Select not optional",
-                        "error_message" to "Error - There was a problem with your multi-select answer.",
-                        "required" to true,
-                        "min_selections" to 1,
-                        "max_selections" to 2,
-                        "instructions" to "select all that apply",
-                        "answer_choices" to listOf(
-                            mapOf<String, Any?>(
-                                "id" to "choice_1",
-                                "value" to "Option 1",
-                                "type" to "select_option"
-                            ),
-                            mapOf<String, Any?>(
-                                "id" to "choice_2",
-                                "value" to "Option 2",
-                                "type" to "select_option",
-                            ),
-                            mapOf<String, Any?>(
-                                "id" to "choice_3",
-                                "value" to "Other Option",
-                                "type" to "select_other",
-                                "hint" to "Hint"
-                            )
-                        )
-                    ),
-                    mapOf(
-                        "id" to "range_1",
-                        "type" to "range",
-                        "value" to "Range optional",
-                        "error_message" to "Error - There was a problem with your range answer.",
-                        "required" to false,
-                        "min" to -5,
-                        "max" to 5,
-                        "min_label" to "Sad",
-                        "max_label" to "Happy"
-                    ),
-                    mapOf(
-                        "id" to "range_2",
-                        "type" to "range",
-                        "value" to "NPS Range not optional",
-                        "error_message" to "Error - There was a problem with your NPS answer.",
-                        "required" to true,
-                        "min" to 0,
-                        "max" to 10,
-                        "min_label" to "Not Likely",
-                        "max_label" to "Extremely Likely"
-                    )
+            Apptentive.engage(this, "survey_event") { handleResult(it) }
+        }
+
+        binding.noteButton.setOnClickListener {
+            Apptentive.engage(this, "note_event") { handleResult(it) }
+        }
+
+        /**
+         *  In-App Review needs to be tested in Internal Test Track
+         *
+         *  Apptentive Rating Dialog needs to be tested on Android OS < 5
+         *  TODO: Alternate app stores integration
+         **/
+        binding.ratingDialogButton.setOnClickListener {
+            val executorFactory = DependencyProvider.of<ExecutorFactory>()
+
+            val context = AndroidEngagementContext(
+                androidContext = this,
+                engagement = object : Engagement {
+                    override fun engage(
+                        context: EngagementContext,
+                        event: Event,
+                        interactionId: String?,
+                        data: Map<String, Any?>?,
+                        customData: Map<String, Any?>?,
+                        extendedData: List<ExtendedData>?
+                    ): EngagementResult {
+                        return if (interactionId != null)
+                            EngagementResult.Success(interactionId = interactionId) else
+                            EngagementResult.Failure("No runnable interactions")
+                    }
+
+                    override fun engage(
+                        context: EngagementContext,
+                        invocations: List<Invocation>
+                    ): EngagementResult {
+                        return EngagementResult.Failure("No runnable interactions")
+                    }
+                },
+                payloadSender = object : PayloadSender {
+                    override fun sendPayload(payload: Payload) {
+                        runOnUiThread {
+                            Toast.makeText(
+                                this@MainActivity,
+                                "Payload send: ${payload::class.java.simpleName}",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    }
+                },
+                executors = Executors(
+                    state = executorFactory.createSerialQueue("state"),
+                    main = executorFactory.createMainQueue()
                 )
             )
-            launcher.launchInteraction(context, interaction)
-        }
 
-        binding.notesButton.setOnClickListener {
-            Apptentive.reset()
-            Apptentive.engage(this, "note_event") {
-                if (it !is EngagementResult.Success) {
-                    Toast.makeText(this, "Not engaged: $it", Toast.LENGTH_LONG).show()
-                }
-            }
-        }
-
-        binding.ratingButton.setOnClickListener {
             val launcher = RatingDialogInteractionLauncher()
             val interaction = RatingDialogInteraction(
                 id = "id",
@@ -299,6 +142,7 @@ class MainActivity : AppCompatActivity() {
                 remindText = "Remind me later",
                 declineText = "No thanks"
             )
+
             launcher.launchInteraction(context, interaction)
         }
 
@@ -310,17 +154,17 @@ class MainActivity : AppCompatActivity() {
          * @see apptentive.com.android.feedback.engagement.criteria.ConditionalClause.evaluate
          */
 //        binding.ratingButton.setOnClickListener {
-//            Apptentive.reset()
-//            Apptentive.engage(this, "rating_event") {
-//                if (it !is EngagementResult.Success) {
-//                    Toast.makeText(this, "Not engaged: $it", Toast.LENGTH_LONG).show()
-//                }
-//            }
+//            Apptentive.engage(this, "app_review_event") { handleResult(it) }
 //        }
 
-        binding.dataButton.setOnClickListener {
-            val intent = Intent(this, DataActivity::class.java)
-            startActivity(intent)
+        binding.resetSDKStateButton.setOnClickListener {
+            Apptentive.reset()
+        }
+    }
+
+    private fun handleResult(it: EngagementResult) {
+        if (it !is EngagementResult.Success) {
+            Toast.makeText(this, "Not engaged: $it", Toast.LENGTH_LONG).show()
         }
     }
 }

@@ -3,14 +3,14 @@ package apptentive.com.app
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import apptentive.com.app.databinding.ItemDeviceBinding
+import apptentive.com.app.databinding.InfoItemBinding
 
-class DebugItemAdapter(private val debugItems: List<DebugItem>) : RecyclerView.Adapter<DebugItemAdapter.BindingViewHolder>() {
-    override fun getItemCount() = debugItems.size
-    private fun getItem(position: Int) = debugItems[position]
+class InfoItemAdapter(private val infoItems: List<InfoItem>) : RecyclerView.Adapter<InfoItemAdapter.BindingViewHolder>() {
+    override fun getItemCount() = infoItems.size
+    private fun getItem(position: Int) = infoItems[position]
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BindingViewHolder {
-        return BindingViewHolder(ItemDeviceBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        return BindingViewHolder(InfoItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     override fun onBindViewHolder(holder: BindingViewHolder, position: Int) {
@@ -21,5 +21,5 @@ class DebugItemAdapter(private val debugItems: List<DebugItem>) : RecyclerView.A
         }
     }
 
-    class BindingViewHolder(val binding: ItemDeviceBinding) : RecyclerView.ViewHolder(binding.root)
+    class BindingViewHolder(val binding: InfoItemBinding) : RecyclerView.ViewHolder(binding.root)
 }

@@ -43,10 +43,28 @@
     <string name="android_textColorSecondary">android:textColorSecondary</string>
     <string name="colorError">colorError</string>
 
-    <!-- Content Descriptions -->
     <string name="cd_app_icon">App Icon</string>
     <string name="cd_spacing_line">Spacing Line</string>
     <string name="rating_dialog">Rating Dialog</string>
+    <string name="internal_test">Internal Test</string>
+    <string name="info_button">Info button</string>
+    <string name="custom_data_button">Custom data button</string>
+    <string name="enter_event_to_engage">Enter event to engage</string>
+    <string name="no_event_entered">No event entered</string>
+    <string name="interactions">Interactions</string>
+    <string name="rating_dialog_message">*** UI Only ***\nLive Rating Dialog requires Android OS &lt; 5</string>
+    <string name="clear_app_data">Reset SDK Data</string>
+    <string name="clear_app_data_info">Clears the conversation and calls a \"launch\" event</string>
+    <string name="sanitize_logs">Sanitize Logs</string>
+    <string name="sanitize_logs_info">Determines if sensitive info should be logged.\nWill require manual opening of the app again.</string>
+    <string name="back_button">Back button</string>
+    <string name="select_data_type">Select data type</string>
+    <string name="custom_data">Custom Data</string>
+    <string name="string">String</string>
+    <string name="number">Number</string>
+    <string name="boolean_string">Boolean</string>
+    <string name="other_data">Other Data</string>
+    <string name="deep_link_successful">Deep Link Successful</string>
 
     <!-- Debug Screen End -->
 </resources>

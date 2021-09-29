@@ -1,5 +1,6 @@
 package apptentive.com.app
 
+import android.content.Context
 import androidx.multidex.MultiDexApplication
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveConfiguration
@@ -12,13 +13,16 @@ val configuration = ApptentiveConfiguration(
     BuildConfig.APPTENTIVE_KEY,
     BuildConfig.APPTENTIVE_SIGNATURE
 ).apply {
-    // Turning off shouldSanitizeLogMessages, so to get un-redacted logs
-    shouldSanitizeLogMessages = false
     logLevel = LogLevel.Verbose
 }
 
 class MyApplication : MultiDexApplication() {
+
     override fun onCreate() {
+        val prefs = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
+        // Turning off by default to get un-redacted logs
+        configuration.shouldSanitizeLogMessages = prefs.getBoolean(SHOULD_SANITIZE, false)
+
         super.onCreate()
         Apptentive.register(this, configuration) {
             when (it) {
