@@ -21,7 +21,6 @@ import apptentive.com.android.feedback.model.VersionHistoryItem
 import apptentive.com.android.feedback.model.payloads.EventPayload
 
 const val SDK_VERSION = "6.0.0"
-const val API_VERSION = 9
 
 val mockDevice = Device(
     osName = "Android",
