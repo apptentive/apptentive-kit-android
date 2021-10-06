@@ -147,14 +147,19 @@ class MainActivity : AppCompatActivity() {
         }
 
         /**
-         * Alternatively, to get the API version, uncomment below.
-         * To make this work, you need to replace `result` in `ConditionalClause` with `true`.
-         * This is because the minimum wait time to show it is 1 day.
-         * Changing `result` to `true` will let it always show.
+         * Alternatively, to get the real version from backend, follow the instruction below.
+         *
+         * 1. Uncomment the code below. (Starting at `binding.ratingDialogButton`) (CMD + /)
+         *
+         * 2. Reduce API_VERSION to 9 (10 and above enables In-App Review)
+         * @see apptentive.com.android.feedback.Constants.API_VERSION
+         *
+         * 3. Replace `result` in `ConditionalClause` with `true`.
+         * Changing `result` to `true` will bypass all criteria checks. Can still see in logs.
          * @see apptentive.com.android.feedback.engagement.criteria.ConditionalClause.evaluate
          */
-//        binding.ratingButton.setOnClickListener {
-//            Apptentive.engage(this, "app_review_event") { handleResult(it) }
+//        binding.ratingDialogButton.setOnClickListener {
+//            Apptentive.engage(this, "rating_dialog_event") { handleResult(it) }
 //        }
 
         binding.resetSDKStateButton.setOnClickListener {
