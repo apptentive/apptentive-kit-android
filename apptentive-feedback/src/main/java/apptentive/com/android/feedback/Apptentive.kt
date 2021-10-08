@@ -2,6 +2,7 @@ package apptentive.com.android.feedback
 
 import android.app.Application
 import android.content.Context
+import androidx.annotation.VisibleForTesting
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.concurrent.ExecutorQueue
 import apptentive.com.android.concurrent.Executors
@@ -15,6 +16,7 @@ import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.format
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
+import apptentive.com.android.feedback.utils.RuntimeUtils
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.feedback.utils.ThrottleUtils
 import apptentive.com.android.feedback.utils.ThrottleUtils.SHARED_PREF_THROTTLE
@@ -203,16 +205,20 @@ object Apptentive {
 
     //region Debug
 
-    // FIXME: extract to 'debug' module
-    fun reset() {
-        stateExecutor.execute {
-            val client = client as? ApptentiveDefaultClient
-            if (client != null) {
-                client.reset()
-            } else {
-                Log.e(LogTags.CORE, "Unable to clear event: sdk is not initialized")
+    /**
+     * *** DEBUG ONLY FUNCTION ***
+     * Clears the Conversation and records an internal "launch" event
+     * @see apptentive.com.android.feedback.ApptentiveDefaultClient.reset
+     */
+    @VisibleForTesting
+    fun reset(context: Context) {
+        if (RuntimeUtils.getApplicationInfo(context).debuggable) {
+            stateExecutor.execute {
+                val client = client as? ApptentiveDefaultClient
+                if (client != null) client.reset()
+                else Log.e(LogTags.CORE, "Unable to clear event: sdk is not initialized")
             }
-        }
+        } else throw IllegalStateException("Can only use reset method in Debug mode")
     }
 
     //endregion

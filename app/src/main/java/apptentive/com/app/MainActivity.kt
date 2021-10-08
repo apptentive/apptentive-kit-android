@@ -163,7 +163,7 @@ class MainActivity : AppCompatActivity() {
 //        }
 
         binding.resetSDKStateButton.setOnClickListener {
-            Apptentive.reset()
+            Apptentive.reset(this)
         }
     }
 
