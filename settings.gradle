@@ -1,14 +1,17 @@
-include ':apptentive-navigate-to-link'
-include ':app-ui-test'
-include ':apptentive-notes'
-include ':apptentive-ratings'
-include ':apptentive-feedback-test'
-include ':apptentive-core-ui'
-include ':apptentive-survey'
-include ':apptentive-core', ':apptentive-core-test', ':apptentive-feedback'
-include ':app'
-include ':apptentive-enjoyment-dialog'
-include ':app-legacy-migration-test'
-include ':apptentive-in-app-review'
+include ':app',
+        ':app-ui-test',
+        ':app-legacy-migration-test',
+        ':apptentive-example',
+        ':apptentive-core',
+        ':apptentive-core-test',
+        ':apptentive-core-ui',
+        ':apptentive-feedback',
+        ':apptentive-feedback-test',
+        ':apptentive-enjoyment-dialog',
+        ':apptentive-notes',
+        ':apptentive-navigate-to-link',
+        ':apptentive-ratings',
+        ':apptentive-in-app-review',
+        ':apptentive-survey'
 
 rootProject.name = 'apptentive-sdk-ktx'

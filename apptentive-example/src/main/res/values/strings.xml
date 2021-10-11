@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Apptentive Example</string>
+    <string name="interactions">Interactions</string>
+    <string name="love_dialog">Love Dialog</string>
+    <string name="note">Note</string>
+    <string name="survey">Survey</string>
+</resources>
