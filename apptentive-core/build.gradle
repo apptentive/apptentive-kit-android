@@ -13,6 +13,7 @@ android {
         targetSdkVersion rootProject.targetSdkVersion
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
@@ -47,7 +48,7 @@ dependencies {
 project.ext {
     groupId = 'com.apptentive'
     artifactId = 'apptentive-core'
-    versionId = '1.0.2'
+    versionId = '1.0.3'
 }
 
 apply from: '../publish.gradle'
