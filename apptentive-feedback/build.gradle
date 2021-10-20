@@ -54,7 +54,7 @@ dependencies {
 project.ext {
     groupId = 'com.apptentive'
     artifactId = 'apptentive-feedback'
-    versionId = '1.0.3'
+    versionId = '1.0.6'
 }
 
 apply from: '../publish.gradle'

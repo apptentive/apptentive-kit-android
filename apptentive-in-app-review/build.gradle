@@ -52,7 +52,7 @@ dependencies {
 project.ext {
     groupId = 'com.apptentive'
     artifactId = 'apptentive-in-app-review'
-    versionId = '1.0.3'
+    versionId = '1.0.6'
 }
 
 apply from: '../publish.gradle'

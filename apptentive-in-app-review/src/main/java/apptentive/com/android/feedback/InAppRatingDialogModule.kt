@@ -10,7 +10,7 @@ import apptentive.com.android.feedback.rating.interaction.InAppReviewInteraction
 import apptentive.com.android.feedback.rating.reviewmanager.DefaultInAppReviewManagerFactory
 
 @Keep
-internal class InAppReviewModule : InteractionModule<InAppReviewInteraction> {
+internal class InAppRatingDialogModule : InteractionModule<InAppReviewInteraction> {
     override val interactionClass = InAppReviewInteraction::class.java
 
     override fun provideInteractionLauncher(): InteractionLauncher<InAppReviewInteraction> {
