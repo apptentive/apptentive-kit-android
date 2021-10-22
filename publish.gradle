@@ -1,6 +1,11 @@
 apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
 
+task androidSourcesJar(type: Jar) {
+    getArchiveClassifier().set('sources')
+    from android.sourceSets.main.java.srcDirs
+}
+
 publishing {
     publications {
         maven(MavenPublication) {
@@ -8,6 +13,7 @@ publishing {
             version project.versionId
             artifactId project.artifactId
             artifact("$buildDir/outputs/aar/${project.artifactId}-release.aar")
+            artifact androidSourcesJar
             //generate pom nodes for dependencies
             pom.withXml {
                 def dependenciesNode = asNode().appendNode('dependencies')
