@@ -4,7 +4,6 @@ import androidx.annotation.VisibleForTesting
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.getTimeSeconds
 
-// FIXME: unit testing
 @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 data class DateTime(val seconds: TimeInterval) : Comparable<DateTime> {
     override fun compareTo(other: DateTime) = seconds.compareTo(other.seconds)

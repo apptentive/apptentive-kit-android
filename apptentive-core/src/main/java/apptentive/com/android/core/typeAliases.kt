@@ -6,7 +6,7 @@ typealias Callback = () -> Unit
 
 typealias TimeInterval = Double
 
-internal const val UNDEFINED: Int = -1 // FIXME: replace with nullable types
+internal const val UNDEFINED: Int = -1
 
 internal fun toMilliseconds(time: TimeInterval): Int = (time * 1000L).toInt()
 internal fun toSeconds(time: Long): TimeInterval = time * 0.001

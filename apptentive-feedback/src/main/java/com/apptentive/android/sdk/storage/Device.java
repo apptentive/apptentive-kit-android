@@ -108,7 +108,6 @@ public class Device implements Serializable {
     }
 
 
-    // TODO: unit tests
     public Device clone() {
         Device clone = new Device();
         clone.uuid = uuid;

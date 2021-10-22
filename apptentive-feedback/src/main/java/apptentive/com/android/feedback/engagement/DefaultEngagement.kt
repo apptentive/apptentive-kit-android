@@ -47,7 +47,7 @@ internal data class DefaultEngagement(
 
         val interaction = interactionConverter.convert(interactionData)
         if (interaction == null) {
-            return EngagementResult.Error("Unknown interaction type '${interactionData.type}' for event '${event.name}'") // TODO: more description error message
+            return EngagementResult.Error("Unknown interaction type '${interactionData.type}' for event '${event.name}'")
         }
 
         return engage(context, interaction)

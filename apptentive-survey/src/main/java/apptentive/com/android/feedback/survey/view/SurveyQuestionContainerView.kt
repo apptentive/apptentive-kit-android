@@ -21,7 +21,7 @@ internal class SurveyQuestionContainerView(
     private val titleInstructionsLayout: LinearLayout
     private val titleTextView: TextView
     private val instructionsTextView: TextView
-    private val answerContainerView: ViewGroup // FIXME: change to ViewStub https://developer.android.com/training/improving-layouts/loading-ondemand
+    private val answerContainerView: ViewGroup
     private val errorMessageView: TextView
 
     var title: CharSequence?

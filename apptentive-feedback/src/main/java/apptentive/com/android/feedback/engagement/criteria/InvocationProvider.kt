@@ -12,7 +12,7 @@ internal interface InvocationProvider {
 
 internal class CachedInvocationProvider(
     private val data: Map<String, List<InvocationData>>,
-    private val converter: Converter<InvocationData, Invocation> // TODO: replace with a subclass
+    private val converter: Converter<InvocationData, Invocation>
 ) : InvocationProvider {
     private val cache = mutableMapOf<Event, List<Invocation>>()
 

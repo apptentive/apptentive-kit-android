@@ -111,7 +111,6 @@ class LegacyConversation {
 	}
 
 	public void setState(ConversationState state) {
-		// TODO: check if state transition would make sense (for example you should not be able to move from 'logged' state to 'anonymous', etc.)
 		this.state = state;
 	}
 

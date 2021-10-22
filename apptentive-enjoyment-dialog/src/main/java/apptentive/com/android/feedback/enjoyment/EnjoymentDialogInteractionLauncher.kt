@@ -5,7 +5,6 @@ import apptentive.com.android.feedback.platform.AndroidEngagementContext
 import apptentive.com.android.feedback.platform.AndroidViewInteractionLauncher
 import apptentive.com.android.util.Log
 
-// TODO: UI-tests
 internal class EnjoymentDialogInteractionLauncher :
     AndroidViewInteractionLauncher<EnjoymentDialogInteraction>() {
     override fun launchInteraction(

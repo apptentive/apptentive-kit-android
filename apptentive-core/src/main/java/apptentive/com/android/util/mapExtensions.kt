@@ -1,7 +1,5 @@
 package apptentive.com.android.util
 
-// FIXME: unit tests
-
 internal class MissingKeyException(key: String) : RuntimeException("Missing key: $key")
 
 @Throws(MissingKeyException::class)

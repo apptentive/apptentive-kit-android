@@ -151,11 +151,10 @@ public class DefaultLegacyConversationManager implements LegacyConversationManag
 			conversationEncryption = createPayloadEncryption(payloadEncryptionKey);
 		}
 
-		// TODO: use same serialization logic across the project
 		final LegacyConversation conversation = new LegacyConversation(item.getDataFile(), item.getMessagesFile(), conversationEncryption, payloadEncryptionKey);
 		conversation.setState(item.getConversationState()); // set the state same as the item's state
 		conversation.setUserId(item.getUserId());
-		conversation.setConversationToken(item.getConversationToken()); // TODO: this would be overwritten by the next call
+		conversation.setConversationToken(item.getConversationToken());
 
 		conversation.loadConversationData();
 

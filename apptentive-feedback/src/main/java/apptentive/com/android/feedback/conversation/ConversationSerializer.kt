@@ -68,7 +68,7 @@ internal class DefaultConversationSerializer(
         val newExpiry = conversation.engagementManifest.expiry
         if (lastKnownManifestExpiry != newExpiry) {
             val json = JsonConverter.toJson(conversation.engagementManifest)
-            manifestFile.writeText(json) // TODO: use atomic file
+            manifestFile.writeText(json)
             lastKnownManifestExpiry = newExpiry
         }
     }
@@ -113,7 +113,6 @@ internal class DefaultConversationSerializer(
     }
 }
 
-// TODO: refactor this
 internal object Serializers {
     val versionCodeSerializer = LongSerializer
 

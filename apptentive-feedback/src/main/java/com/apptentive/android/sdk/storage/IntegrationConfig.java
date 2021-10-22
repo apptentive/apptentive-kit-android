@@ -92,7 +92,6 @@ public class IntegrationConfig implements Serializable {
 		return result;
 	}
 
-	// TODO: unit tests
 	public IntegrationConfig clone() {
 		IntegrationConfig clone = new IntegrationConfig();
 		clone.apptentive = apptentive != null ? apptentive.clone() : null;

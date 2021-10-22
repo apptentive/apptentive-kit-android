@@ -16,7 +16,7 @@ internal interface ApptentiveClient {
 
 private class ApptentiveNullClient : ApptentiveClient {
     override fun engage(context: Context, event: Event): EngagementResult {
-        return EngagementResult.Error("Apptentive SDK is not initialized") // TODO: better error message
+        return EngagementResult.Error("Apptentive SDK is not initialized")
     }
 
     override fun updatePerson(

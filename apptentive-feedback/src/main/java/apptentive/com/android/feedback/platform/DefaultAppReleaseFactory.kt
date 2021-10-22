@@ -5,7 +5,6 @@ import apptentive.com.android.feedback.model.AppRelease
 import apptentive.com.android.feedback.utils.RuntimeUtils
 import apptentive.com.android.util.Factory
 
-// TODO: rename to AndroidAppReleaseFactory
 internal class DefaultAppReleaseFactory(
     private val context: Context
 ) : Factory<AppRelease> {
@@ -18,9 +17,9 @@ internal class DefaultAppReleaseFactory(
             versionName = applicationInfo.versionName,
             targetSdkVersion = applicationInfo.targetSdkVersion.toString(),
             debug = applicationInfo.debuggable,
-            inheritStyle = false, // FIXME: set flag
-            overrideStyle = false, // FIXME: set flag
-            appStore = null // FIXME: set value
+            inheritStyle = false,
+            overrideStyle = false,
+            appStore = null
         )
     }
 }

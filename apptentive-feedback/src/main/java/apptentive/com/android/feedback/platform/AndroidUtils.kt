@@ -85,7 +85,7 @@ internal object AndroidUtils {
 
     fun getBootloaderVersion(): String? =
         try {
-            Build::class.java.getField("BOOTLOADER").get(null) as String // TODO: use util class
+            Build::class.java.getField("BOOTLOADER").get(null) as String
         } catch (e: Exception) {
             Log.e(SYSTEM, "Exception while resolving simOperatorName", e)
             null

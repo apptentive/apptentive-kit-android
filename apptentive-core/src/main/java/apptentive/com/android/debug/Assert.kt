@@ -19,6 +19,6 @@ object Assert {
     }
 
     private fun fail(message: String) {
-        throw AssertionError(message) // FIXME: add assertion implementation
+        throw AssertionError(message)
     }
 }

@@ -270,7 +270,7 @@ interface ConditionalOperator {
         }
 
         private fun toPrettyDate(value: Any?): String {
-            return value.toString() // FIXME: date formatting
+            return value.toString()
         }
     }
 }

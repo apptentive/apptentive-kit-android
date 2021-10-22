@@ -44,7 +44,6 @@ artifactory {
         }
         defaults {
             publications('maven')
-            //TODO check if properties are needed
             properties = ['qa.level': 'basic', 'dev.team' : 'core']
             publishArtifacts = true
             publishPom = true

@@ -104,7 +104,7 @@ internal class MultiChoiceQuestionListItem(
         ) {
             super.bindView(item, position)
 
-            choiceContainer.removeAllViews() // TODO: recycle views
+            choiceContainer.removeAllViews()
 
             val layoutInflater = LayoutInflater.from(itemView.context)
             cachedViews = item.answerChoices.map { choice ->

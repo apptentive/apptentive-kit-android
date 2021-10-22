@@ -47,7 +47,6 @@ public class IntegrationConfigItem implements Serializable {
 		return contents != null ? contents.hashCode() : 0;
 	}
 
-	// TODO: unit testing
 	public IntegrationConfigItem clone() {
 		IntegrationConfigItem clone = new IntegrationConfigItem();
 		clone.contents.putAll(contents);

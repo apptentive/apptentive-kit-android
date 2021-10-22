@@ -23,7 +23,6 @@ class EventPayload(
 ) {
     init {
         if (extendedData != null && extendedData.isNotEmpty()) {
-            TODO("Extended data not supported yet")
         }
     }
 
@@ -74,5 +73,4 @@ class EventPayload(
     }
 }
 
-// FIXME: figure it out
 class ExtendedData

@@ -9,7 +9,7 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionLaunch
  */
 abstract class AndroidInteractionLauncher<in T : Interaction> : InteractionLauncher<T> {
     override fun launchInteraction(context: EngagementContext, interaction: T) {
-        launchInteraction(context as AndroidEngagementContext, interaction) // TODO: type checking
+        launchInteraction(context as AndroidEngagementContext, interaction)
     }
 
     protected abstract fun launchInteraction(context: AndroidEngagementContext, interaction: T)

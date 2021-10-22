@@ -16,7 +16,7 @@ data class Person(
     val city: String? = null,
     val zip: String? = null,
     val country: String? = null,
-    val birthday: String? = null, // FIXME: make it Date
+    val birthday: String? = null,
     @SensitiveDataKey val mParticleId: String? = null,
     @SensitiveDataKey val customData: CustomData = CustomData()
 ) {

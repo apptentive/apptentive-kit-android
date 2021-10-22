@@ -10,7 +10,6 @@ import apptentive.com.android.feedback.PAYLOADS
 import apptentive.com.android.network.HttpMethod
 import apptentive.com.android.util.Log
 
-// FIXME: provide a name for the helper (based on local conversation id)
 internal class PayloadSQLiteHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 

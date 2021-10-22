@@ -32,7 +32,6 @@ import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags
 import apptentive.com.android.util.LogTags.NETWORK
 
-// TODO: better names for specific cases
 sealed class EngagementResult {
     data class Success(val interactionId: InteractionId) : EngagementResult() {
         init { Log.d(INTERACTIONS, "Interaction Engaged => interactionID: $interactionId") }
@@ -123,7 +122,6 @@ object Apptentive {
             }
         } else null
 
-        // TODO: build a better dependency injection solution and lift all the dependencies up
         client = ApptentiveDefaultClient(
             apptentiveKey = configuration.apptentiveKey,
             apptentiveSignature = configuration.apptentiveSignature,

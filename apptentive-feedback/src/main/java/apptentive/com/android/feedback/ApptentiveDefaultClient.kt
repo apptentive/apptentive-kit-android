@@ -112,7 +112,7 @@ internal class ApptentiveDefaultClient(
             if (Log.canLog(LogLevel.Verbose)) { // avoid unnecessary computations
                 conversation.logConversation()
             }
-            // FIXME: most of these values can be cached and only changed when the actual data changes
+
             engagement = DefaultEngagement(
                 interactionDataProvider = createInteractionDataProvider(conversation),
                 interactionConverter = interactionConverter,
@@ -172,7 +172,6 @@ internal class ApptentiveDefaultClient(
     }
 
     private fun createConversationRepository(context: Context): ConversationRepository {
-        // TODO: refactor this - replace with use cases
         return DefaultConversationRepository(
             conversationSerializer = createConversationSerializer(),
             appReleaseFactory = DefaultAppReleaseFactory(context),
@@ -274,14 +273,12 @@ internal class ApptentiveDefaultClient(
         }
     }
 
-    // FIXME: temporary code
     private val interactionLaunchersLookup: Map<Class<Interaction>, InteractionLauncher<Interaction>> by lazy {
         interactionModules.map { (_, module) ->
             Pair(module.interactionClass, module.provideInteractionLauncher())
         }.toMap()
     }
 
-    // FIXME: temporary code
     private val interactionConverter: InteractionDataConverter by lazy {
         DefaultInteractionDataConverter(
             lookup = interactionModules.mapValues { (_, module) ->
@@ -290,12 +287,10 @@ internal class ApptentiveDefaultClient(
         )
     }
 
-    // FIXME: temporary code
     private fun createInteractionEngagement(): InteractionEngagement {
         return DefaultInteractionEngagement(lookup = interactionLaunchersLookup)
     }
 
-    // FIXME: temporary code
     private fun loadInteractionModules(): Map<String, InteractionModule<Interaction>> {
         return InteractionModuleComponent.default().getModules()
     }
@@ -330,7 +325,6 @@ internal class ApptentiveDefaultClient(
 
     @WorkerThread
     private fun onPayloadSendFinish(result: Result<PayloadData>) {
-        // TODO: notify the rest of the sdk
     }
 
     //endregion

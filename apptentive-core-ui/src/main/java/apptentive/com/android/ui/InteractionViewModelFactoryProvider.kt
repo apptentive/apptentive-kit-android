@@ -11,7 +11,7 @@ object InteractionViewModelFactoryProvider {
     fun registerViewModelFactory(instanceId: String, factory: () -> ApptentiveViewModel) {
         val existingFactory = lookup[instanceId]
         if (existingFactory != null) {
-            // FIXME: log error or throw an exception
+
         }
         lookup[instanceId] = ViewModelFactory(factory) {
             unregisterViewModelFactory(instanceId)
@@ -22,7 +22,7 @@ object InteractionViewModelFactoryProvider {
     private fun unregisterViewModelFactory(instanceId: String) {
         val factory = lookup.remove(instanceId)
         if (factory == null) {
-            // FIXME: log error or throw an exception
+
         }
     }
 

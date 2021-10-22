@@ -39,7 +39,7 @@ public class EncryptedFileSerializer extends FileSerializer {
 			oos.writeObject(object);
 			final byte[] unencryptedBytes = bos.toByteArray();
 			final byte[] encryptedBytes = encryption.encrypt(unencryptedBytes);
-			stream.write(encryptedBytes); // TODO: should we write using a buffer?
+			stream.write(encryptedBytes);
 		} finally {
 			Util.ensureClosed(bos);
 			Util.ensureClosed(oos);

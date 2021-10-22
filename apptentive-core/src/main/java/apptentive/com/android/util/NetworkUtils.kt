@@ -15,7 +15,6 @@ internal object NetworkUtils {
      * of being established.
      */
     fun isNetworkConnected(context: Context): Boolean {
-        // FIXME: check ACCESS_NETWORK_STATE permission
         return getActiveNetwork(context)?.isConnectedOrConnecting == true
     }
 

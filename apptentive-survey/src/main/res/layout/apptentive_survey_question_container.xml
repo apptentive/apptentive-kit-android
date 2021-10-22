@@ -57,7 +57,6 @@
             android:layout_width="match_parent"
             android:layout_height="1dp" />
 
-        <!-- TODO: replace with ViewStub -->
         <LinearLayout
             android:id="@+id/answer_container"
             android:layout_width="match_parent"

@@ -15,7 +15,6 @@ internal class DefaultInAppReviewManagerFactory : InAppReviewManagerFactory {
     override fun createReviewManager(context: Context): InAppReviewManager {
         return try {
              when {
-                 //FIXME verify if this check is still needed
                 Build.VERSION.SDK_INT < MIN_ANDROID_API_VERSION_FOR_IN_APP_RATING -> {
                     Log.e(
                         IN_APP_REVIEW,
@@ -37,7 +36,6 @@ internal class DefaultInAppReviewManagerFactory : InAppReviewManagerFactory {
                     UnSupportedReviewManager()
                 }
                 else -> {
-                    //FIXME [PBI-2056] Don't assume as activity context
                     if (context is Activity) {
                         Log.d(IN_APP_REVIEW, "Initialized Google Play in-App review manager")
                         GooglePlayReviewManager(context)

@@ -56,7 +56,7 @@ internal class SerialPayloadSender(
             is PayloadRejectedException -> {
                 return true
             }
-            else -> false // FIXME: figure out an error resolution strategy
+            else -> false
         }
     }
 

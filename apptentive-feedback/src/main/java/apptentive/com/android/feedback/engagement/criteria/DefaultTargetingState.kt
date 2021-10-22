@@ -93,7 +93,7 @@ internal data class DefaultTargetingState(
             is device.utc_offset -> device.utcOffset
             is device.custom_data -> device.customData[field.key]
 
-            else -> null // TODO: throw an exception?
+            else -> null
         }
     }
 }
