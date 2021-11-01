@@ -2,10 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="apptentive.com.android.feedback.test">
 
-    <meta-data android:name="apptentive_log_level"
+    <meta-data
+        android:name="apptentive_log_level"
         android:value="VERY_VERBOSE" />
 
-    <meta-data android:name="apptentive_debug"
+    <meta-data
+        android:name="apptentive_debug"
         android:value="true" />
 
     <application
@@ -16,7 +18,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -48,7 +48,7 @@ dependencies {
 project.ext {
     groupId = 'com.apptentive'
     artifactId = 'apptentive-core'
-    versionId = '1.0.7'
+    versionId = '1.0.9'
 }
 
 apply from: '../publish.gradle'

@@ -43,7 +43,7 @@ dependencies {
 project.ext {
     groupId = 'com.apptentive'
     artifactId = 'apptentive-navigate-to-link'
-    versionId = '1.0.7'
+    versionId = '1.0.9'
 }
 
 apply from: '../publish.gradle'
