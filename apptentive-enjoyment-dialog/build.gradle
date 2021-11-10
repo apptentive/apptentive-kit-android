@@ -43,7 +43,7 @@ dependencies {
 project.ext {
     groupId = 'com.apptentive'
     artifactId = 'apptentive-enjoyment-dialog'
-    versionId = '1.0.9'
+    versionId = '1.0.12'
 }
 
 apply from: '../publish.gradle'
