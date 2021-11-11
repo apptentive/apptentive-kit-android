@@ -45,7 +45,6 @@ dependencies {
 project.ext {
     groupId = 'com.apptentive'
     artifactId = 'apptentive-notes'
-    versionId = '1.0.12'
 }
 
 apply from: '../publish.gradle'

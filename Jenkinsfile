@@ -48,7 +48,7 @@ pipeline {
                   gitCommit = apptentiveGetReleaseCommit()
                   imageName = apptentiveDockerBuild('build', gitCommit)
                   container('docker') {
-                    sh "docker run ${imageName} ./gradlew test"
+                    sh "docker run ${imageName} ./gradlew test --exclude-task :apptentive-sdk-kit:test"
                   }
                 }
               }

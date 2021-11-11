@@ -12,6 +12,7 @@ include ':app',
         ':apptentive-navigate-to-link',
         ':apptentive-ratings',
         ':apptentive-in-app-review',
-        ':apptentive-survey'
+        ':apptentive-survey',
+        ':apptentive-sdk-kit'
 
 rootProject.name = 'apptentive-sdk-ktx'
