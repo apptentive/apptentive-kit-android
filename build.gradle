@@ -64,7 +64,7 @@ buildscript {
     }
 
     project.ext {
-        versionId = '1.0.12'
+        versionId = '1.0.14'
     }
 
     repositories {
