@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.conversation
 
+import androidx.core.util.AtomicFile
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.feedback.CONVERSATION
 import apptentive.com.android.feedback.conversation.Serializers.conversationSerializer
@@ -59,10 +60,17 @@ internal class DefaultConversationSerializer(
 
     override fun saveConversation(conversation: Conversation) {
         val start = System.currentTimeMillis()
-        conversationFile.outputStream().use { stream ->
+        val atomicFile = AtomicFile(conversationFile)
+        val stream = atomicFile.startWrite()
+        try {
             val encoder = BinaryEncoder(DataOutputStream(stream))
             conversationSerializer.encode(encoder, conversation)
+            atomicFile.finishWrite(stream)
+        } catch (e: Exception) {
+            atomicFile.failWrite(stream)
+            throw ConversationSerializationException("Unable to save conversation", e)
         }
+
         Log.v(CONVERSATION, "Conversation data saved (took ${System.currentTimeMillis() - start} ms)")
 
         val newExpiry = conversation.engagementManifest.expiry
