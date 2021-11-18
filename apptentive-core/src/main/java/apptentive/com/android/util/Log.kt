@@ -35,10 +35,13 @@ object Log {
             return
         }
 
-        val getMessageWithTags = getMessageWithTags(message, tag)
+        val messagesWithTags = getMessagesWithTags(message, tag)
 
         // output
-        logger.log(level, getMessageWithTags)
+
+        messagesWithTags.forEach { messageWithTag ->
+            logger.log(level, messageWithTag)
+        }
 
         // throwable
         if (throwable != null) {
@@ -60,31 +63,32 @@ object Log {
      * e.g. [SDK Queue] [ENGAGEMENT MANIFEST] [1/21] EngagementManifest...
      *
      */
-    @VisibleForTesting fun getMessageWithTags(message: String, tag: LogTag) = buildString {
+    @VisibleForTesting
+    fun getMessagesWithTags(message: String, tag: LogTag): List<String> {
+        val messages = message.chunked(CHUNK_LOG_MESSAGE_LENGTH)
+
         // thread name
         val threadTag = "[${if (logger.isMainQueue()) "Main Queue" else Thread.currentThread().name}]"
 
         // tag name
         val logTag = " [${tag.name}]"
 
-        if (message.length > CHUNK_LOG_MESSAGE_LENGTH) {
-            val chunkedMessage = message.chunked(CHUNK_LOG_MESSAGE_LENGTH)
-            chunkedMessage.forEachIndexed { index, messageChunk ->
-                append(threadTag)
-                append(logTag)
+        return arrayListOf<String>().apply {
+            messages.forEachIndexed { index, message ->
+                add(
+                    buildString {
+                        append(threadTag)
+                        append(logTag)
 
-                // chunk index
-                val chunkIndex = "[${index + 1}/${chunkedMessage.size}]" // e.g. "[1/2]"
-                append(" $chunkIndex")
+                        if (messages.size > 1) {
+                            val chunkIndex = "[${index + 1}/${messages.size}]" // e.g. "[1/2]"
+                            append(" $chunkIndex")
+                        }
 
-                // message chunk
-                append(" $messageChunk")
-                if (index < message.length) appendLine()
+                        append(" $message")
+                    }
+                )
             }
-        } else {
-            append(threadTag)
-            append(logTag)
-            append(" $message")
         }
     }
 

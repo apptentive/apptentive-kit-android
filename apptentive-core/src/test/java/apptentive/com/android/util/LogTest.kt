@@ -36,10 +36,8 @@ class LogTest : TestCase() {
         )
 
         messageChunkTests.forEach {
-            val log = Log.getMessageWithTags(it.first, LogTag("tag"))
-            val chunkSizeChar = log[threadTag.length + logTagString.length + chunkTagStart.length]
-            val chunkSizeToInt = if (chunkSizeChar.isDigit()) chunkSizeChar.digitToInt() else 1
-            assertEquals(chunkSizeToInt, it.second)
+            val log = Log.getMessagesWithTags(it.first, LogTag("tag"))
+            assertEquals(log.size, it.second)
         }
     }
 }
