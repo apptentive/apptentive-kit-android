@@ -42,15 +42,13 @@ artifactory {
             }
             def repoUsername = artifactoryProperties['artifactory_username'] ? artifactoryProperties['artifactory_username']:""
             def repoPassword = artifactoryProperties['artifactory_password'] ? artifactoryProperties['artifactory_password']:""
-
-            repoKey = 'InternalNewAndroidSDK'
+            repoKey = project.hasProperty("REPO_KEY") ? project.getProperty("REPO_KEY") : "InternalNewAndroidSDK"
             username = repoUsername
             password = repoPassword
             maven = true
         }
         defaults {
             publications('maven')
-            properties = ['qa.level': 'basic', 'dev.team' : 'core']
             publishArtifacts = true
             publishPom = true
         }
@@ -59,3 +57,4 @@ artifactory {
     clientConfig.setEnvVarsExcludePatterns('*password*,*secret*')
     clientConfig.setEnvVarsIncludePatterns('*not-secret*')
 }
+
