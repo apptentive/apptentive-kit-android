@@ -5,7 +5,6 @@ import apptentive.com.android.feedback.APP_RELEASE
 import apptentive.com.android.feedback.CONVERSATION
 import apptentive.com.android.feedback.DEVICE
 import apptentive.com.android.feedback.ENGAGEMENT_DATA
-import apptentive.com.android.feedback.ENGAGEMENT_MANIFEST
 import apptentive.com.android.feedback.PERSON
 import apptentive.com.android.feedback.SDK
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
@@ -37,7 +36,6 @@ data class Conversation(
         Log.v(SDK, sdk.toString())
         Log.v(APP_RELEASE, appRelease.toString())
         Log.v(ENGAGEMENT_DATA, engagementData.toString())
-        Log.v(ENGAGEMENT_MANIFEST, engagementManifest.toString())
         Log.v(CONVERSATION, "\n$dashLine CONVERSATION STATE CHANGE END $dashLine")
     }
 

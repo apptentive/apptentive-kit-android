@@ -7,6 +7,7 @@ import apptentive.com.android.core.Provider
 import apptentive.com.android.core.isInThePast
 import apptentive.com.android.feedback.CONVERSATION
 import apptentive.com.android.feedback.Constants
+import apptentive.com.android.feedback.ENGAGEMENT_MANIFEST
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
@@ -182,6 +183,8 @@ internal class ConversationManager(
                 ) {
                     when (it) {
                         is Result.Success -> {
+                            Log.d(CONVERSATION, "Engagement manifest successfully fetched")
+                            Log.v(ENGAGEMENT_MANIFEST, it.data.toString())
                             activeConversationSubject.value = activeConversationSubject.value.copy(
                                 engagementManifest = it.data
                             )
