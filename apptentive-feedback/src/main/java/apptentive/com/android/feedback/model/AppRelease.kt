@@ -21,5 +21,6 @@ data class AppRelease(
     val debug: Boolean = false,
     val inheritStyle: Boolean = false,
     val overrideStyle: Boolean = false,
-    val appStore: String? = null
+    val appStore: String? = null,
+    val customAppStoreURL: String? = null
 )

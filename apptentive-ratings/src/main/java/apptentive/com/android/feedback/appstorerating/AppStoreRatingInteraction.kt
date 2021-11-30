@@ -9,6 +9,7 @@ internal class AppStoreRatingInteraction(
     val storeID: String?,
     val method: String?,
     val url: String?,
+    var customStoreURL: String?,
 ) : Interaction(id, InteractionType.AppStoreRating) {
     override fun toString(): String {
         return "${javaClass.simpleName} (id=$id, store_id=\"$storeID\", method=\"$method\", url=\"$url\")"

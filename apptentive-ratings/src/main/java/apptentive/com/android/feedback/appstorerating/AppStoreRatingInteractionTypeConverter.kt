@@ -10,6 +10,7 @@ internal class AppStoreRatingInteractionTypeConverter : InteractionTypeConverter
         id = data.id,
         storeID = data.configuration.optString("store_id"),
         method = data.configuration.optString("method"),
-        url = data.configuration.optString("url")
+        url = data.configuration.optString("url"),
+        customStoreURL = null,
     )
 }

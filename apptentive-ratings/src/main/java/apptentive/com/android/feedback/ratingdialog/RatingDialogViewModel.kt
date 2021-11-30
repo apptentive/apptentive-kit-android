@@ -27,10 +27,6 @@ internal class RatingDialogViewModel(
         Log.i(INTERACTIONS, "Rating Dialog decline button pressed")
         engageCodePoint(CODE_POINT_DECLINE)
     }
-    fun onDismiss() {
-        Log.i(INTERACTIONS, "Rating Dialog dismissed")
-        engageCodePoint(CODE_POINT_DISMISS)
-    }
     fun onCancel() {
         Log.i(INTERACTIONS, "Rating Dialog cancelled")
         engageCodePoint(CODE_POINT_CANCEL)

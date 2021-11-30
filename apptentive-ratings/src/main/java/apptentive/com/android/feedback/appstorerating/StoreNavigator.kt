@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.annotation.MainThread
 import androidx.annotation.VisibleForTesting
-import apptentive.com.android.feedback.Constants
 import apptentive.com.android.feedback.INTERACTIONS
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.Event
@@ -13,6 +12,7 @@ import apptentive.com.android.util.Log
 
 
 internal object StoreNavigator {
+    @MainThread
     fun navigate(
         context: AndroidEngagementContext,
         interaction: AppStoreRatingInteraction
@@ -22,7 +22,6 @@ internal object StoreNavigator {
     ) {
         context.tryStartActivity(
             appRatingIntent(
-                applicationPackageName = context.androidContext.packageName,
                 interaction = interaction
             )
         ) // this way we can use unit-tests
@@ -35,33 +34,21 @@ internal object StoreNavigator {
         interaction: AppStoreRatingInteraction,
         activityLauncher: () -> Boolean
     ) {
-        context.executors.state.execute {
-            val success = activityLauncher.invoke()
+        val success = activityLauncher.invoke()
+        if (success) Log.i(INTERACTIONS, "Store intent launch successful")
+        else Log.w(INTERACTIONS, "Store intent launch un-successful")
 
-            val data = mapOf(
-                KEY_URL to interaction.url,
-                KEY_TARGET to interaction.storeID,
-                KEY_SUCCESS to success
-            )
-            context.engage(
-                event = Event.internal(CODE_POINT_NAVIGATE, interaction.type),
-                interactionId = interaction.id,
-                data = data
-            )
+        context.executors.state.execute {
+            context.engage(Event.internal(OPEN_APP_STORE_URL, interaction.type))
         }
     }
 
     @VisibleForTesting
-    fun appRatingIntent(applicationPackageName: String, interaction: AppStoreRatingInteraction): Intent {
-        val URLStart = interaction.url ?: Constants.PLAY_STORE_URL
-        val appStoreID = interaction.storeID ?: applicationPackageName
-        val uri = Uri.parse("$URLStart$appStoreID")
+    fun appRatingIntent(interaction: AppStoreRatingInteraction): Intent {
+        val uri = Uri.parse(interaction.url ?: interaction.customStoreURL)
         Log.i(INTERACTIONS, "Opening app store for rating with URI: \"$uri\"")
         return Intent(Intent.ACTION_VIEW, uri)
     }
 
-    private const val KEY_URL = "url"
-    private const val KEY_TARGET = "target"
-    private const val KEY_SUCCESS = "success"
-    private const val CODE_POINT_NAVIGATE = "navigate"
+    private const val OPEN_APP_STORE_URL = "open_app_store_url"
 }

@@ -7,21 +7,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
-import apptentive.com.android.concurrent.Executors
-import apptentive.com.android.core.DependencyProvider
-import apptentive.com.android.core.ExecutorFactory
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.EngagementResult
-import apptentive.com.android.feedback.engagement.Engagement
-import apptentive.com.android.feedback.engagement.EngagementContext
-import apptentive.com.android.feedback.engagement.Event
-import apptentive.com.android.feedback.engagement.criteria.Invocation
-import apptentive.com.android.feedback.model.payloads.ExtendedData
-import apptentive.com.android.feedback.model.payloads.Payload
-import apptentive.com.android.feedback.payload.PayloadSender
-import apptentive.com.android.feedback.platform.AndroidEngagementContext
-import apptentive.com.android.feedback.ratingdialog.RatingDialogInteraction
-import apptentive.com.android.feedback.ratingdialog.RatingDialogInteractionLauncher
 import apptentive.com.app.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -84,83 +71,9 @@ class MainActivity : AppCompatActivity() {
             Apptentive.engage(this, "note_event") { handleResult(it) }
         }
 
-        /**
-         *  In-App Review needs to be tested in Internal Test Track
-         *
-         *  Apptentive Rating Dialog needs to be tested on Android OS < 5
-         *  TODO: Alternate app stores integration
-         **/
         binding.ratingDialogButton.setOnClickListener {
-            val executorFactory = DependencyProvider.of<ExecutorFactory>()
-
-            val context = AndroidEngagementContext(
-                androidContext = this,
-                engagement = object : Engagement {
-                    override fun engage(
-                        context: EngagementContext,
-                        event: Event,
-                        interactionId: String?,
-                        data: Map<String, Any?>?,
-                        customData: Map<String, Any?>?,
-                        extendedData: List<ExtendedData>?
-                    ): EngagementResult {
-                        return if (interactionId != null)
-                            EngagementResult.Success(interactionId = interactionId) else
-                            EngagementResult.Failure("No runnable interactions")
-                    }
-
-                    override fun engage(
-                        context: EngagementContext,
-                        invocations: List<Invocation>
-                    ): EngagementResult {
-                        return EngagementResult.Failure("No runnable interactions")
-                    }
-                },
-                payloadSender = object : PayloadSender {
-                    override fun sendPayload(payload: Payload) {
-                        runOnUiThread {
-                            Toast.makeText(
-                                this@MainActivity,
-                                "Payload send: ${payload::class.java.simpleName}",
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
-                    }
-                },
-                executors = Executors(
-                    state = executorFactory.createSerialQueue("state"),
-                    main = executorFactory.createMainQueue()
-                )
-            )
-
-            val launcher = RatingDialogInteractionLauncher()
-            val interaction = RatingDialogInteraction(
-                id = "id",
-                title = "Share the love!",
-                body = "Thanks for being a loyal customer. Would you take 30 seconds and share your love in the app store?",
-                rateText = "Rate Android App",
-                remindText = "Remind me later",
-                declineText = "No thanks"
-            )
-
-            launcher.launchInteraction(context, interaction)
+            Apptentive.engage(this, "rating_dialog_event") { handleResult(it) }
         }
-
-        /**
-         * Alternatively, to get the real version from backend, follow the instruction below.
-         *
-         * 1. Uncomment the code below. (Starting at `binding.ratingDialogButton`) (CMD + /)
-         *
-         * 2. Reduce API_VERSION to 9 (10 and above enables In-App Review)
-         * @see apptentive.com.android.feedback.Constants.API_VERSION
-         *
-         * 3. Replace `result` in `ConditionalClause` with `true`.
-         * Changing `result` to `true` will bypass all criteria checks. Can still see in logs.
-         * @see apptentive.com.android.feedback.engagement.criteria.ConditionalClause.evaluate
-         */
-//        binding.ratingDialogButton.setOnClickListener {
-//            Apptentive.engage(this, "rating_dialog_event") { handleResult(it) }
-//        }
 
         binding.resetSDKStateButton.setOnClickListener {
             Apptentive.reset(this)

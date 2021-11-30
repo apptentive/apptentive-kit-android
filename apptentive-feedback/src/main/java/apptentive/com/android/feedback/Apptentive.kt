@@ -96,12 +96,20 @@ object Apptentive {
             )
         )
 
-        // set log level
+        // Set log level
         Log.logLevel = configuration.logLevel
+
+        // Set message redaction
         SensitiveDataUtils.shouldSanitizeLogMessages = configuration.shouldSanitizeLogMessages
+
+        // Set rating throttle
         ThrottleUtils.ratingThrottleLength = configuration.ratingInteractionThrottleLength
         ThrottleUtils.throttleSharedPrefs =
             application.getSharedPreferences(SHARED_PREF_THROTTLE, Context.MODE_PRIVATE)
+
+        // Save alternate app store URL to be set later
+        application.getSharedPreferences(Constants.SHARED_PREF_CUSTOM_STORE_URL, Context.MODE_PRIVATE)
+            .edit().putString(Constants.SHARED_PREF_CUSTOM_STORE_URL_KEY, configuration.customAppStoreURL).apply()
 
         Log.i(SYSTEM, "Registering Apptentive Android SDK ${Constants.SDK_VERSION}")
         Log.v(

@@ -1,12 +1,10 @@
 package apptentive.com.android.feedback.ratingdialog
 
-import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
 
-@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
-class RatingDialogInteraction(
+internal class RatingDialogInteraction(
     id: InteractionId,
     val title: String?,
     val body: String?,

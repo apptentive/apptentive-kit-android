@@ -45,6 +45,28 @@ data class ApptentiveConfiguration(
      */
     var ratingInteractionThrottleLength = TimeUnit.DAYS.toMillis(7)
 
+    /**
+     * The URL that the user will be directed to using the Apptentive Rating Dialog.
+     *
+     * The main purpose of this configuration is to support alternate app stores.
+     * By supplying your custom app store URL here, the user will be directed to
+     * the provided URL when prompted to rate your app.
+     *
+     * Do NOT use if you wish to use Google In-App Review.
+     *
+     * When `null` (this is the default), the user will see the Google In-App Review and
+     * will be able to leave an app rating to the Play Store listing of the app.
+     *
+     * When set to a `String` URL, the SDK will ignore the Google In-App Review Interaction
+     * in favor of the Apptentive Rating Dialog Interaction, and will send the user to the
+     * specified URL if the user chooses to rate the app.
+     *
+     * Amazon App Store "Amazon Music" app example:
+     * Using package name - http://amazon.com/gp/mas/dl/android?p=com.amazon.mp3
+     * Using ASIN         - http://amazon.com/gp/mas/dl/android?asin=B004FRX0MY
+     */
+    var customAppStoreURL: String? = null
+
     init {
         require(apptentiveKey.isNotEmpty()) { "apptentiveKey is null or empty" }
         require(apptentiveSignature.isNotEmpty()) { "apptentiveSignature is null or empty" }

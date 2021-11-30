@@ -8,12 +8,15 @@ import apptentive.com.android.feedback.RegisterResult
 import apptentive.com.android.feedback.SYSTEM
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogLevel
+import java.util.concurrent.TimeUnit
 
 val configuration = ApptentiveConfiguration(
     BuildConfig.APPTENTIVE_KEY,
     BuildConfig.APPTENTIVE_SIGNATURE
 ).apply {
     logLevel = LogLevel.Verbose
+    customAppStoreURL = "https://play.google.com/store/apps/details?id=com.apptentive.dogfacts"
+    ratingInteractionThrottleLength = TimeUnit.SECONDS.toMillis(30)
 }
 
 class MyApplication : MultiDexApplication() {

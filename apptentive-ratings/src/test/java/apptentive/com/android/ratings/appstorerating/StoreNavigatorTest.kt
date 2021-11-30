@@ -12,29 +12,53 @@ import org.junit.Test
 
 class StoreNavigatorTest : TestCase() {
 
-    private val interaction = AppStoreRatingInteraction(
+    private val interactionWithProvidedURL = AppStoreRatingInteraction(
         id = "id",
-        storeID = "com.apptentive",
-        method = "amazon",
+        storeID = null,
+        method = null,
         url = "https://example.com",
+        customStoreURL = null
+    )
+
+    private val interactionWithCustomURL = AppStoreRatingInteraction(
+        id = "id",
+        storeID = null,
+        method = null,
+        url = null,
+        customStoreURL = "https://custom-example.com"
     )
 
     @Test
-    fun testSuccessfulNavigation() {
-        testNavigation(activityLaunched = true)
+    fun testSuccessfulProvidedNavigation() {
+        testNavigation(interaction = interactionWithProvidedURL, activityLaunched = true)
     }
 
     @Test
-    fun testFailedNavigation() {
-        testNavigation(activityLaunched = false)
+    fun testFailedProvidedNavigation() {
+        testNavigation(interaction = interactionWithProvidedURL, activityLaunched = false)
     }
 
     @Test
-    fun testNavigationWithTarget() {
-        testNavigation(activityLaunched = true)
+    fun testProvidedNavigationWithTarget() {
+        testNavigation(interaction = interactionWithProvidedURL, activityLaunched = true)
     }
 
-    private fun testNavigation(activityLaunched: Boolean, ) {
+    @Test
+    fun testSuccessfulCustomNavigation() {
+        testNavigation(interaction = interactionWithCustomURL, activityLaunched = true)
+    }
+
+    @Test
+    fun testFailedCustomNavigation() {
+        testNavigation(interaction = interactionWithCustomURL, activityLaunched = false)
+    }
+
+    @Test
+    fun testCustomNavigationWithTarget() {
+        testNavigation(interaction = interactionWithCustomURL, activityLaunched = true)
+    }
+
+    private fun testNavigation(interaction: AppStoreRatingInteraction, activityLaunched: Boolean) {
         val context = createEngagementContext()
         StoreNavigator.navigate(context, interaction) {
             activityLaunched
@@ -42,13 +66,7 @@ class StoreNavigatorTest : TestCase() {
 
         assertResults(
             EngageArgs(
-                event = Event.internal("navigate", InteractionType.AppStoreRating),
-                interactionId = "id",
-                data = mapOf(
-                    "url" to  interaction.url.orEmpty(),
-                    "target" to interaction.storeID.orEmpty(),
-                    "success" to activityLaunched
-                )
+                event = Event.internal("open_app_store_url", InteractionType.AppStoreRating)
             )
         )
     }

@@ -7,7 +7,8 @@ object Constants {
     const val REDACTED_DATA = "<REDACTED>"
     const val CONVERSATION_PATH = "/conversations/:conversation_id/"
     const val MIN_ANDROID_API_VERSION_FOR_IN_APP_RATING = 21
-    const val PLAY_STORE_URL = "https://play.google.com/store/apps/details?id="
+    const val SHARED_PREF_CUSTOM_STORE_URL = "com.apptentive.sdk.customstoreurl"
+    const val SHARED_PREF_CUSTOM_STORE_URL_KEY = "custom_store_url_key"
 
     fun buildHttpPath(path: String): String =
         CONVERSATION_PATH + path

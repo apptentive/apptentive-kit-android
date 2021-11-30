@@ -321,6 +321,7 @@ internal object Serializers {
                 encoder.encodeBoolean(value.inheritStyle)
                 encoder.encodeBoolean(value.overrideStyle)
                 encoder.encodeNullableString(value.appStore)
+                encoder.encodeNullableString(value.customAppStoreURL)
             }
 
             override fun decode(decoder: Decoder): AppRelease {
@@ -333,7 +334,8 @@ internal object Serializers {
                     debug = decoder.decodeBoolean(),
                     inheritStyle = decoder.decodeBoolean(),
                     overrideStyle = decoder.decodeBoolean(),
-                    appStore = decoder.decodeNullableString()
+                    appStore = decoder.decodeNullableString(),
+                    customAppStoreURL = decoder.decodeNullableString()
                 )
             }
         }

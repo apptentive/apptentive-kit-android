@@ -65,9 +65,4 @@ internal class RatingDialogFragment(
             }
         }.create()
     }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        viewModel.onDismiss()
-        super.onDismiss(dialog)
-    }
 }

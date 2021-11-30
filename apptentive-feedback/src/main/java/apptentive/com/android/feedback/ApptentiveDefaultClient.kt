@@ -28,6 +28,7 @@ import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionDataConverter
 import apptentive.com.android.feedback.engagement.interactions.InteractionLauncher
 import apptentive.com.android.feedback.engagement.interactions.InteractionModule
+import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.feedback.lifecycle.ApptentiveLifecycleObserver
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.CustomData
@@ -204,8 +205,15 @@ internal class ApptentiveDefaultClient(
     )
 
     private fun createInteractionDataProvider(conversation: Conversation): InteractionDataProvider {
+        val interactions = conversation.engagementManifest.interactions.map { it.id to it }.toMap()
+        val usingCustomStoreUrlSkipInAppReviewID = if (conversation.appRelease.customAppStoreURL != null) {
+            interactions.entries.find {
+                it.value.type == InteractionType.GoogleInAppReview.name
+            }?.key
+        } else null
+
         return CriteriaInteractionDataProvider(
-            interactions = conversation.engagementManifest.interactions.map { it.id to it }.toMap(),
+            interactions = interactions,
             invocationProvider = CachedInvocationProvider(
                 conversation.engagementManifest.targets,
                 InvocationConverter
@@ -216,7 +224,8 @@ internal class ApptentiveDefaultClient(
                 conversation.sdk,
                 conversation.appRelease,
                 conversation.engagementData
-            )
+            ),
+            usingCustomStoreUrlSkipInAppReviewID = usingCustomStoreUrlSkipInAppReviewID
         )
     }
 

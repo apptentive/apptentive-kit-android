@@ -38,7 +38,6 @@ class RatingDialogViewModelTest : TestCase() {
         viewModel.onRateButton()
         viewModel.onRemindButton()
         viewModel.onDeclineButton()
-        viewModel.onDismiss()
         viewModel.onCancel()
 
         val engageResults = listOf(
@@ -52,10 +51,6 @@ class RatingDialogViewModelTest : TestCase() {
             ),
             EngageArgs(
                 event = Event.internal("decline", "RatingDialog"),
-                interactionId = interactionId,
-            ),
-            EngageArgs(
-                event = Event.internal("dismiss", "RatingDialog"),
                 interactionId = interactionId,
             ),
             EngageArgs(

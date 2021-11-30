@@ -24,7 +24,8 @@ class CriteriaInteractionDataProviderTest {
         val provider = CriteriaInteractionDataProvider(
             interactions = interactions,
             invocationProvider = invocationProvider,
-            state = FailureTargetingState
+            state = FailureTargetingState,
+            usingCustomStoreUrlSkipInAppReviewID = null
         )
 
         val actual = provider.getInteractionData(Event.local("event"))

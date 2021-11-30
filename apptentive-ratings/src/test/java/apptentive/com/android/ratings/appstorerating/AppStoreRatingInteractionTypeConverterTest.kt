@@ -26,7 +26,8 @@ class AppStoreRatingInteractionTypeConverterTest {
             id = "id",
             storeID = "12345678",
             method = "magic",
-            url = "app.store.url"
+            url = "app.store.url",
+            customStoreURL = null
         )
 
         testConverter(json, expected)
@@ -47,7 +48,8 @@ class AppStoreRatingInteractionTypeConverterTest {
             id = "id",
             storeID = null,
             method = null,
-            url = null
+            url = null,
+            customStoreURL = null
         )
 
         testConverter(json, expected)
