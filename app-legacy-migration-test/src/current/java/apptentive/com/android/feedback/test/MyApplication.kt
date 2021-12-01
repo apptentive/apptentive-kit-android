@@ -1,12 +1,11 @@
 package apptentive.com.android.feedback.test
 
-import androidx.multidex.MultiDexApplication
+import android.app.Application
 import apptentive.com.android.feedback.Apptentive
-import apptentive.com.android.feedback.Apptentive._register
 import apptentive.com.android.feedback.ApptentiveConfiguration
 import apptentive.com.android.util.LogLevel
 
-class MyApplication : MultiDexApplication() {
+class MyApplication: Application() {
     override fun onCreate() {
         super.onCreate()
         val configuration = ApptentiveConfiguration(

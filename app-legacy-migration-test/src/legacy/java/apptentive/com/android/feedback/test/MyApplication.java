@@ -1,13 +1,11 @@
 package apptentive.com.android.feedback.test;
 
-
-import androidx.multidex.MultiDexApplication;
-
+import android.app.Application;
 import com.apptentive.android.sdk.Apptentive;
 import com.apptentive.android.sdk.ApptentiveConfiguration;
 import com.apptentive.android.sdk.ApptentiveLog;
 
-public class MyApplication extends MultiDexApplication {
+public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();

@@ -1,7 +1,7 @@
 package apptentive.com.app
 
+import android.app.Application
 import android.content.Context
-import androidx.multidex.MultiDexApplication
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveConfiguration
 import apptentive.com.android.feedback.RegisterResult
@@ -19,7 +19,7 @@ val configuration = ApptentiveConfiguration(
     ratingInteractionThrottleLength = TimeUnit.SECONDS.toMillis(30)
 }
 
-class MyApplication : MultiDexApplication() {
+class MyApplication : Application() {
 
     override fun onCreate() {
         val prefs = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)

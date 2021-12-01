@@ -13,7 +13,6 @@ android {
         targetSdkVersion rootProject.targetSdkVersion
         versionCode 100000
         versionName "1.0.0"
-        multiDexEnabled true
 
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
@@ -42,7 +41,6 @@ dependencies {
     implementation "androidx.core:core-ktx:$core_ktx_version"
     implementation "com.google.android.material:material:$material_design_version"
     implementation "androidx.constraintlayout:constraintlayout:$constraint_layout_version"
-    implementation "androidx.multidex:multidex:2.0.1"
 
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
 

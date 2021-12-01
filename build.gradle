@@ -6,7 +6,7 @@ buildscript {
 
         compileSdkVersion = 31
         buildToolsVersion = '30.0.3'
-        minSdkVersion = 19
+        minSdkVersion = 21
         targetSdkVersion = 31
 
 
@@ -64,7 +64,7 @@ buildscript {
     }
 
     project.ext {
-        versionId = '1.0.14'
+        versionId = '1.0.15'
     }
 
     repositories {

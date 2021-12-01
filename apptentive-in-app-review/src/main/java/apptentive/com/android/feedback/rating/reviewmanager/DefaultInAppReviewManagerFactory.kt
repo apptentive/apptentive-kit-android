@@ -2,8 +2,6 @@ package apptentive.com.android.feedback.rating.reviewmanager
 
 import android.app.Activity
 import android.content.Context
-import android.os.Build
-import apptentive.com.android.feedback.Constants.MIN_ANDROID_API_VERSION_FOR_IN_APP_RATING
 import apptentive.com.android.feedback.IN_APP_REVIEW
 import apptentive.com.android.util.Log
 import com.google.android.gms.common.ConnectionResult
@@ -15,13 +13,6 @@ internal class DefaultInAppReviewManagerFactory : InAppReviewManagerFactory {
     override fun createReviewManager(context: Context): InAppReviewManager {
         return try {
              when {
-                Build.VERSION.SDK_INT < MIN_ANDROID_API_VERSION_FOR_IN_APP_RATING -> {
-                    Log.e(
-                        IN_APP_REVIEW,
-                        "Unable to create InAppReviewManager: Android version is too low ${Build.VERSION.SDK_INT}"
-                    )
-                    UnSupportedReviewManager()
-                }
                 GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context) != SUCCESS -> {
                     Log.e(
                         IN_APP_REVIEW,
