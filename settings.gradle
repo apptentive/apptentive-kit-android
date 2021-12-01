@@ -1,5 +1,4 @@
-include ':app',
-        ':app-ui-test',
+include ':app-ui-test',
         ':app-legacy-migration-test',
         ':apptentive-example',
         ':apptentive-core',
