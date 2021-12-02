@@ -166,7 +166,7 @@
                 app:layout_constraintTop_toBottomOf="@id/rating_dialog_button" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/resetSDKStateButton"
+                android:id="@+id/clearAppDataButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/section_spacing_margin"
@@ -189,7 +189,7 @@
                 app:layout_constraintBottom_toTopOf="@id/sanitizeSwitch"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/resetSDKStateButton" />
+                app:layout_constraintTop_toBottomOf="@id/clearAppDataButton" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/sanitizeSwitch"

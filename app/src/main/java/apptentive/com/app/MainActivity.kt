@@ -1,5 +1,7 @@
 package apptentive.com.app
 
+import android.app.ActivityManager
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -75,8 +77,8 @@ class MainActivity : AppCompatActivity() {
             Apptentive.engage(this, "rating_dialog_event") { handleResult(it) }
         }
 
-        binding.resetSDKStateButton.setOnClickListener {
-            Apptentive.reset(this)
+        binding.clearAppDataButton.setOnClickListener {
+            (getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager).clearApplicationUserData()
         }
     }
 

@@ -53,8 +53,8 @@
     <string name="no_event_entered">No event entered</string>
     <string name="interactions">Interactions</string>
     <string name="rating_dialog_message">Shows the Apptentive Rating Dialog.\n\'Rate\' sends you to the customAppStoreURL set in ApptentiveConfiguration.</string>
-    <string name="clear_app_data">Reset SDK Data</string>
-    <string name="clear_app_data_info">Clears the conversation and calls a \"launch\" event</string>
+    <string name="clear_app_data">Clear App Data</string>
+    <string name="clear_app_data_info">Clears all of the app\'s data and closes the app.\nWill require manual opening of the app again.</string>
     <string name="sanitize_logs">Sanitize Logs</string>
     <string name="sanitize_logs_info">Determines if sensitive info should be logged.\nWill require manual opening of the app again.</string>
     <string name="back_button">Back button</string>
