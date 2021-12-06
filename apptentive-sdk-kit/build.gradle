@@ -22,20 +22,6 @@ android {
     }
 }
 
-repositories {
-    maven {
-        def artifactoryProperties = new Properties()
-        if (file('./local.properties').exists()) {
-            artifactoryProperties.load(file('./local.properties').newDataInputStream())
-        }
-        url "https://apptentive.jfrog.io/artifactory/InternalNewAndroidSDK"
-        credentials {
-            username = artifactoryProperties['artifactory_username'] ? artifactoryProperties['artifactory_username']:""
-            password = artifactoryProperties['artifactory_password'] ? artifactoryProperties['artifactory_password']:""
-        }
-    }
-}
-
 dependencies {
     implementation "com.apptentive:apptentive-core:$versionId"
     implementation "com.apptentive:apptentive-core-ui:$versionId"

@@ -15,4 +15,23 @@ include ':app',
         ':apptentive-survey',
         ':apptentive-sdk-kit'
 
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            def artifactoryProperties = new Properties()
+            if (file('./local.properties').exists()) {
+                artifactoryProperties.load(file('./local.properties').newDataInputStream())
+            }
+            url "https://apptentive.jfrog.io/artifactory/InternalNewAndroidSDK"
+            credentials {
+                username = artifactoryProperties['artifactory_username'] ? artifactoryProperties['artifactory_username']:""
+                password = artifactoryProperties['artifactory_password'] ? artifactoryProperties['artifactory_password']:""
+            }
+        }
+    }
+}
+
 rootProject.name = 'apptentive-sdk-ktx'

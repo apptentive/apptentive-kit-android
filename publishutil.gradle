@@ -1,6 +1,5 @@
-task assembleModules(type: GradleBuild) {
+task assembleApptentiveModules(type: GradleBuild) {
     buildName = "assembleApptentiveModules"
-    startParameter.projectProperties = project.gradle.startParameter.projectProperties
     tasks = ['apptentive-core:assembleRelease',
              'apptentive-core-ui:assembleRelease',
              'apptentive-feedback:assembleRelease',
@@ -9,11 +8,10 @@ task assembleModules(type: GradleBuild) {
              'apptentive-navigate-to-link:assembleRelease',
              'apptentive-notes:assembleRelease',
              'apptentive-ratings:assembleRelease',
-             'apptentive-survey:assembleRelease',
-             'apptentive-sdk-kit:assembleRelease']
+             'apptentive-survey:assembleRelease']
 }
 
-task publishModules(type: GradleBuild)  {
+task publishApptentiveModules(type: GradleBuild)  {
     buildName = "publishApptentiveModules"
     startParameter.projectProperties = project.gradle.startParameter.projectProperties
     tasks = ['apptentive-core:artifactoryPublish',
@@ -24,12 +22,19 @@ task publishModules(type: GradleBuild)  {
              'apptentive-navigate-to-link:artifactoryPublish',
              'apptentive-notes:artifactoryPublish',
              'apptentive-ratings:artifactoryPublish',
-             'apptentive-survey:artifactoryPublish',
-             'apptentive-sdk-kit:artifactoryPublish']
+             'apptentive-survey:artifactoryPublish']
+    dependsOn assembleApptentiveModules
+}
+
+task assembleApptentiveKit(type: GradleBuild) {
+    buildName = "assembleApptentiveKit"
+    tasks = ['apptentive-sdk-kit:assembleRelease']
+    dependsOn publishApptentiveModules
 }
 
 task publishApptentiveKit(type: GradleBuild) {
-    //forward projectProperties
+    buildName = "publishApptentiveKit"
     startParameter.projectProperties = project.gradle.startParameter.projectProperties
-    dependsOn assembleModules.finalizedBy(publishModules)
+    tasks = ['apptentive-sdk-kit:artifactoryPublish']
+    dependsOn assembleApptentiveKit
 }

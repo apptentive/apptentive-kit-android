@@ -64,7 +64,7 @@ buildscript {
     }
 
     project.ext {
-        versionId = '1.0.15'
+        versionId = '1.0.17'
     }
 
     repositories {
@@ -102,10 +102,6 @@ plugins {
 allprojects {
     apply plugin: 'com.jfrog.artifactory'
     apply plugin: 'maven-publish'
-    repositories {
-        mavenCentral()
-        google()
-    }
 }
 
 task clean(type: Delete) {
