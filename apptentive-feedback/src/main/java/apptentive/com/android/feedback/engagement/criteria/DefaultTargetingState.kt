@@ -68,7 +68,7 @@ internal data class DefaultTargetingState(
             is person.custom_data -> person.customData[field.key]
 
             is device.os_name -> device.osName
-            is device.os_version -> device.osVersion
+            is device.os_version -> Version.parse(device.osVersion)
             is device.os_build -> device.osBuild
             is device.manufacturer -> device.manufacturer
             is device.model -> device.model

@@ -297,7 +297,7 @@ class DefaultTargetingStateTest : TestCase() {
         val state = state.copy(
             device = mockDevice.copy(
                 osName = "device_os_name",
-                osVersion = "device_os_version",
+                osVersion = "12",
                 osBuild = "device_os_build",
                 osApiLevel = 30,
                 manufacturer = "device_manufacturer",
@@ -324,7 +324,7 @@ class DefaultTargetingStateTest : TestCase() {
         )
 
         assertThat(state.getValue(device.os_name)).isEqualTo("device_os_name")
-        assertThat(state.getValue(device.os_version)).isEqualTo("device_os_version")
+        assertThat(state.getValue(device.os_version)).isEqualTo(Version(12, 0, 0))
         assertThat(state.getValue(device.os_build)).isEqualTo("device_os_build")
         assertThat(state.getValue(device.manufacturer)).isEqualTo("device_manufacturer")
         assertThat(state.getValue(device.model)).isEqualTo("device_model")
@@ -355,7 +355,7 @@ class DefaultTargetingStateTest : TestCase() {
         val state = state.copy(
             device = Device(
                 osName = "device_os_name",
-                osVersion = "device_os_version",
+                osVersion = "12",
                 osBuild = "device_os_build",
                 osApiLevel = 30,
                 manufacturer = "device_manufacturer",
@@ -376,7 +376,7 @@ class DefaultTargetingStateTest : TestCase() {
         )
 
         assertThat(state.getValue(device.os_name)).isEqualTo("device_os_name")
-        assertThat(state.getValue(device.os_version)).isEqualTo("device_os_version")
+        assertThat(state.getValue(device.os_version)).isEqualTo(Version(12, 0, 0))
         assertThat(state.getValue(device.os_build)).isEqualTo("device_os_build")
         assertThat(state.getValue(device.manufacturer)).isEqualTo("device_manufacturer")
         assertThat(state.getValue(device.model)).isEqualTo("device_model")
