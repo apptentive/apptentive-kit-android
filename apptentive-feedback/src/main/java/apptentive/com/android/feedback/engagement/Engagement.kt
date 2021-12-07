@@ -32,13 +32,13 @@ internal class NullEngagement : Engagement {
         customData: Map<String, Any?>?,
         extendedData: List<ExtendedData>?
     ): EngagementResult {
-        return EngagementResult.Failure("Unable to engage event $event: SDK is not fully initialized")
+        return EngagementResult.Error("Unable to engage event $event: SDK is not fully initialized")
     }
 
     override fun engage(
         context: EngagementContext,
         invocations: List<Invocation>
     ): EngagementResult {
-        return EngagementResult.Failure("Unable to engage invocations: SDK is not fully initialized")
+        return EngagementResult.Error("Unable to engage invocations: SDK is not fully initialized")
     }
 }

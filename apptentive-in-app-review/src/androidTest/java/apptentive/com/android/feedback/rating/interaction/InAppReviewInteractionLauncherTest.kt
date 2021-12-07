@@ -33,7 +33,7 @@ class InAppReviewInteractionLauncherTest : TestCase() {
         launcher.launchInteraction(
             createEngagementContext(onEngage = {
                 addResult("engage ${it.event}")
-                EngagementResult.Success(it.interactionId as InteractionId)
+                EngagementResult.InteractionShown(it.interactionId as InteractionId)
             }),
             InAppReviewInteraction("58eebbf2127096704e0000d0")
         )
@@ -52,7 +52,7 @@ class InAppReviewInteractionLauncherTest : TestCase() {
         launcher.launchInteraction(
             createEngagementContext(onEngage = {
                 addResult("engage ${it.event}")
-                EngagementResult.Failure("Something went wrong")
+                EngagementResult.InteractionNotShown("Something went wrong")
             }),
             InAppReviewInteraction("58eebbf2127096704e0000d0")
         )
@@ -70,7 +70,7 @@ class InAppReviewInteractionLauncherTest : TestCase() {
         launcher.launchInteraction(
             createEngagementContext(context = appContext, onEngage = {
                 addResult("engage ${it.event}")
-                EngagementResult.Success(it.interactionId as InteractionId)
+                EngagementResult.InteractionShown(it.interactionId as InteractionId)
             }),
             InAppReviewInteraction("58eebbf2127096704e0000d0")
         )
@@ -99,7 +99,7 @@ class InAppReviewInteractionLauncherTest : TestCase() {
     ) = MockEngagementContext(
         onEngage = onEngage ?: { args ->
             addResult(args)
-            EngagementResult.Success(args.interactionId as InteractionId)
+            EngagementResult.InteractionShown(args.interactionId as InteractionId)
         },
         onSendPayload = onSendPayload ?: { payload ->
             addResult(payload.toJson())

@@ -42,7 +42,7 @@ internal data class DefaultEngagement(
 
         val interactionData = interactionDataProvider.getInteractionData(event)
         if (interactionData == null) {
-            return EngagementResult.Failure("No runnable interactions for event '${event.name}'")
+            return EngagementResult.InteractionNotShown("No runnable interactions for event '${event.name}'")
         }
 
         val interaction = interactionConverter.convert(interactionData)
@@ -59,7 +59,7 @@ internal data class DefaultEngagement(
     ): EngagementResult {
         val interactionData = interactionDataProvider.getInteractionData(invocations)
         if (interactionData == null) {
-            return EngagementResult.Failure("No runnable interactions")
+            return EngagementResult.InteractionNotShown("No runnable interactions")
         }
 
         val interaction = interactionConverter.convert(interactionData)
@@ -75,7 +75,7 @@ internal data class DefaultEngagement(
         interaction: Interaction
     ): EngagementResult {
         val result = interactionEngagement.engage(context, interaction)
-        if (result is EngagementResult.Success) {
+        if (result is EngagementResult.InteractionShown) {
             recordInteraction(interaction)
         }
 

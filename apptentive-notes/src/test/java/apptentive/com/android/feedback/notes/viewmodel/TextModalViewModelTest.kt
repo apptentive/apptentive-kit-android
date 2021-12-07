@@ -49,7 +49,7 @@ class TextModalViewModelTest : TestCase() {
         val viewModel = createViewModel(
             onInvoke = {
                 // trick it to think an interaction has been invoked
-                EngagementResult.Success(targetInteractionId)
+                EngagementResult.InteractionShown(targetInteractionId)
             }
         )
 
@@ -84,7 +84,7 @@ class TextModalViewModelTest : TestCase() {
         val viewModel = createViewModel(
             onInvoke = {
                 // no interactions to invoke
-                EngagementResult.Failure("No runnable interactions")
+                EngagementResult.InteractionNotShown("No runnable interactions")
             }
         )
 
@@ -126,8 +126,8 @@ class TextModalViewModelTest : TestCase() {
         val viewModel = createViewModel(
             onEngage = {
                 // trick it to think an interaction has been invoked
-                if (it.event.name == TARGET_EVENT) EngagementResult.Success(targetInteractionId)
-                else EngagementResult.Failure("No runnable interactions")
+                if (it.event.name == TARGET_EVENT) EngagementResult.InteractionShown(targetInteractionId)
+                else EngagementResult.InteractionNotShown("No runnable interactions")
             }
         )
 
@@ -167,7 +167,7 @@ class TextModalViewModelTest : TestCase() {
         val viewModel = createViewModel(
             onEngage = {
                 // no interactions to invoke
-                EngagementResult.Failure("No runnable interactions")
+                EngagementResult.InteractionNotShown("No runnable interactions")
             }
         )
 
@@ -279,13 +279,13 @@ class TextModalViewModelTest : TestCase() {
         onEngage = { args ->
             addResult(args)
             onEngage?.invoke(args)
-                ?: EngagementResult.Failure("No runnable interactions")
+                ?: EngagementResult.InteractionNotShown("No runnable interactions")
         },
         // record invocations for every engage call
         onInvoke = { invocations ->
             addResult(invocations)
             onInvoke?.invoke(invocations)
-                ?: EngagementResult.Failure("No runnable interactions")
+                ?: EngagementResult.InteractionNotShown("No runnable interactions")
         },
         // we don't expect payloads here
         onSendPayload = { payload ->

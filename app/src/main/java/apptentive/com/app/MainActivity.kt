@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleResult(it: EngagementResult) {
-        if (it !is EngagementResult.Success) {
+        if (it !is EngagementResult.InteractionShown) {
             Toast.makeText(this, "Not engaged: $it", Toast.LENGTH_LONG).show()
         }
     }

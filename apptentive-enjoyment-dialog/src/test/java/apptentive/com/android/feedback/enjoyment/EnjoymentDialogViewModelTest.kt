@@ -17,7 +17,7 @@ class EnjoymentDialogViewModelTest : TestCase() {
         val context = MockEngagementContext(
             onEngage = { args ->
                 addResult(args)
-                EngagementResult.Failure("No runnable interactions")
+                EngagementResult.InteractionNotShown("No runnable interactions")
             },
             onSendPayload = { payload ->
                 throw AssertionError("We didn't expect any payloads here but this one slipped though: $payload")

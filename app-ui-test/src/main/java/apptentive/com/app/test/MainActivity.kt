@@ -78,14 +78,14 @@ class MainActivity : AppCompatActivity() {
                     customData: Map<String, Any?>?,
                     extendedData: List<ExtendedData>?
                 ): EngagementResult {
-                    return EngagementResult.Failure("No runnable interactions")
+                    return EngagementResult.InteractionNotShown("No runnable interactions")
                 }
 
                 override fun engage(
                     context: EngagementContext,
                     invocations: List<Invocation>
                 ): EngagementResult {
-                    return EngagementResult.Failure("No runnable interactions")
+                    return EngagementResult.InteractionNotShown("No runnable interactions")
                 }
             },
             payloadSender = object : PayloadSender {

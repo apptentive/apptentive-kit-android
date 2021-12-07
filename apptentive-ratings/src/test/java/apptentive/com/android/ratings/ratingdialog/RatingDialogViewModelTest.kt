@@ -31,7 +31,7 @@ class RatingDialogViewModelTest : TestCase() {
         val viewModel = createViewModel(
             onInvoke = {
                 // trick it to think an interaction has been invoked
-                EngagementResult.Success(targetInteractionId)
+                EngagementResult.InteractionShown(targetInteractionId)
             }
         )
 
@@ -88,13 +88,13 @@ class RatingDialogViewModelTest : TestCase() {
         onEngage = { args ->
             addResult(args)
             onEngage?.invoke(args)
-                ?: EngagementResult.Failure("No runnable interactions")
+                ?: EngagementResult.InteractionNotShown("No runnable interactions")
         },
         // record invocations for every engage call
         onInvoke = { invocations ->
             addResult(invocations)
             onInvoke?.invoke(invocations)
-                ?: EngagementResult.Failure("No runnable interactions")
+                ?: EngagementResult.InteractionNotShown("No runnable interactions")
         },
         // we don't expect payloads here
         onSendPayload = { payload ->

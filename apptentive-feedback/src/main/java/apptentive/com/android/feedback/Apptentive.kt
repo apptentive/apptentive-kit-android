@@ -30,10 +30,10 @@ import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.NETWORK
 
 sealed class EngagementResult {
-    data class Success(val interactionId: InteractionId) : EngagementResult() {
+    data class InteractionShown(val interactionId: InteractionId) : EngagementResult() {
         init { Log.d(INTERACTIONS, "Interaction Engaged => interactionID: $interactionId") }
     }
-    data class Failure(val description: String) : EngagementResult() {
+    data class InteractionNotShown(val description: String) : EngagementResult() {
         init { Log.d(INTERACTIONS, "Interaction NOT Engaged => $description") }
     }
     data class Error(val message: String) : EngagementResult() {

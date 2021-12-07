@@ -29,10 +29,10 @@ class DefaultEngagementTest : TestCase() {
 
     @Test
     fun engageSuccessful() {
-        interactionEngagement.addResult(EngagementResult.Success(mockInteraction.id))
+        interactionEngagement.addResult(EngagementResult.InteractionShown(mockInteraction.id))
 
         val result = engagement.engage(MockEngagementContext(), mockEvent)
-        assertThat(result).isInstanceOf(EngagementResult.Success::class.java)
+        assertThat(result).isInstanceOf(EngagementResult.InteractionShown::class.java)
 
         assertResults(
             "Event: ${mockEvent.fullName}",
@@ -42,10 +42,10 @@ class DefaultEngagementTest : TestCase() {
 
     @Test
     fun engageUnsuccessful() {
-        interactionEngagement.addResult(EngagementResult.Failure("Something went wrong"))
+        interactionEngagement.addResult(EngagementResult.InteractionNotShown("Something went wrong"))
 
         val result = engagement.engage(MockEngagementContext(), mockEvent)
-        assertThat(result).isInstanceOf(EngagementResult.Failure::class.java)
+        assertThat(result).isInstanceOf(EngagementResult.InteractionNotShown::class.java)
 
         assertResults("Event: ${mockEvent.fullName}")
     }

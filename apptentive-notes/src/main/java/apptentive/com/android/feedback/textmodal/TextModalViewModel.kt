@@ -108,7 +108,7 @@ internal class TextModalViewModel(
         ): Map<String, Any?> {
             // we need to include a target interaction id (if any)
             if (engagementResult != null) {
-                val interactionId = (engagementResult as? EngagementResult.Success)?.interactionId
+                val interactionId = (engagementResult as? EngagementResult.InteractionShown)?.interactionId
                 return mapOf(
                     DATA_ACTION_ID to action.id,
                     DATA_ACTION_LABEL to action.label,

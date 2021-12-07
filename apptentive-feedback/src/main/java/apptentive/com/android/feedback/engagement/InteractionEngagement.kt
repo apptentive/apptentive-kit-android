@@ -24,8 +24,8 @@ internal data class DefaultInteractionEngagement(
 
             if (!shouldThrottleInteraction) {
                 launcher.launchInteraction(context, interaction)
-                EngagementResult.Success(interactionId = interaction.id)
-            } else EngagementResult.Failure("${interaction.type.name} throttled.")
+                EngagementResult.InteractionShown(interactionId = interaction.id)
+            } else EngagementResult.InteractionNotShown("${interaction.type.name} throttled.")
         } else EngagementResult.Error("Interaction launcher not found: ${interactionClass.name}")
     }
 }

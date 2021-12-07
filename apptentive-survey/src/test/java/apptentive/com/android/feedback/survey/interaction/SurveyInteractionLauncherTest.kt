@@ -98,7 +98,7 @@ class SurveyInteractionLauncherTest : TestCase() {
     ) = MockEngagementContext(
         onEngage = onEngage ?: { args ->
             addResult(args)
-            EngagementResult.Failure("No runnable interactions")
+            EngagementResult.InteractionNotShown("No runnable interactions")
         },
         onSendPayload = onSendPayload ?: { payload ->
             addResult(payload.toJson())

@@ -54,6 +54,6 @@ class LinkNavigatorTest : TestCase() {
     private fun createEngagementContext() = MockEngagementContext(
         onEngage = {
             addResult(it)
-            EngagementResult.Failure("No runnable interactions")
+            EngagementResult.InteractionNotShown("No runnable interactions")
         })
 }
