@@ -4,4 +4,5 @@
     <string name="love_dialog">Love Dialog</string>
     <string name="note">Note</string>
     <string name="survey">Survey</string>
+    <string name="rating">Rating</string>
 </resources>
