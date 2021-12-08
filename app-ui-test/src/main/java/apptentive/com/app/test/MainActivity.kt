@@ -1,11 +1,14 @@
 package apptentive.com.app.test
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.concurrent.Executors
+import apptentive.com.android.feedback.Apptentive
+import apptentive.com.android.feedback.ApptentiveActivityInfo
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.InteractionModuleComponent
 import apptentive.com.android.feedback.engagement.Engagement
@@ -21,10 +24,11 @@ import apptentive.com.android.feedback.payload.PayloadSender
 import apptentive.com.android.feedback.platform.AndroidEngagementContext
 import apptentive.com.android.serialization.json.JsonConverter
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        Apptentive.registerApptentiveActivityInfoCallback(this)
 
         val path = intent.getStringExtra(EXTRA_INTERACTIONS_PATH) ?: "interactions/notes"
         if (path != null) {
@@ -101,5 +105,9 @@ class MainActivity : AppCompatActivity() {
         override fun execute(task: () -> Unit) {
             task()
         }
+    }
+
+    override fun getApptentiveActivityInfo(): Activity {
+        return this
     }
 }

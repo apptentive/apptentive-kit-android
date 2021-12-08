@@ -46,10 +46,17 @@ sealed class EngagementResult {
 
 object Apptentive {
     private var client: ApptentiveClient = ApptentiveClient.NULL
+    private var activityInfoCallback: ApptentiveActivityInfo? = null
     private lateinit var stateExecutor: Executor
     private lateinit var mainExecutor: Executor
 
     //region Initialization
+
+    fun registerApptentiveActivityInfoCallback(apptentiveActivityInfo: ApptentiveActivityInfo) {
+        this.activityInfoCallback = apptentiveActivityInfo
+    }
+
+    internal fun getApptentiveActivityCallback() = activityInfoCallback
 
     @Suppress("MemberVisibilityCanBePrivate")
     val registered
@@ -176,15 +183,15 @@ object Apptentive {
     //endregion
     @JvmStatic
     @JvmOverloads
-    fun engage(context: Context, eventName: String, callback: EngagementCallback? = null) {
+    fun engage(eventName: String, callback: EngagementCallback? = null) {
         // the above statement would not compile without force unwrapping on Kotlin 1.4.x
         @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
         val callbackFunc: ((EngagementResult) -> Unit)? =
             if (callback != null) callback!!::onComplete else null
-        engage(context, eventName, callbackFunc)
+        engage(eventName, callbackFunc)
     }
 
-    fun engage(context: Context, eventName: String, callback: ((EngagementResult) -> Unit)?) {
+    private fun engage(eventName: String, callback: ((EngagementResult) -> Unit)?) {
         // user callback should be executed on the main thread
         val callbackWrapper: ((EngagementResult) -> Unit)? = if (callback != null) {
             {
@@ -198,7 +205,7 @@ object Apptentive {
         stateExecutor.execute {
             try {
                 val event = Event.local(eventName)
-                val result = client.engage(context, event)
+                val result = client.engage(event)
                 callbackWrapper?.invoke(result)
             } catch (e: Exception) {
                 callbackWrapper?.invoke(EngagementResult.Exception(error = e))

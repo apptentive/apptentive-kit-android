@@ -164,10 +164,7 @@ internal class ApptentiveDefaultClient(
         executors.main.execute {
             Log.i(LIFE_CYCLE_OBSERVER, "Observing App lifecycle")
             ProcessLifecycleOwner.get().lifecycle.addObserver(
-                ApptentiveLifecycleObserver(
-                    this,
-                    context
-                ) { conversationManager.tryFetchEngagementManifest() }
+                ApptentiveLifecycleObserver(this) { conversationManager.tryFetchEngagementManifest() }
             )
         }
     }
@@ -233,8 +230,14 @@ internal class ApptentiveDefaultClient(
 
     //region Engagement
 
-    override fun engage(context: Context, event: Event): EngagementResult {
-        return AndroidEngagementContext(context, engagement, payloadSender, executors).engage(event)
+    override fun engage(event: Event): EngagementResult {
+        val activity = requireNotNull(Apptentive.getApptentiveActivityCallback()) {
+            "Apptentive Activity Callback not registered. " +
+                "Extend ApptentiveActivity.kt, implement the getActivity() function, " +
+                "and call registerApptentiveActivityCallback(this) " +
+                "in your Activity's onCreate function."
+        }.getApptentiveActivityInfo()
+        return AndroidEngagementContext(activity, engagement, payloadSender, executors).engage(event)
     }
 
     override fun updatePerson(

@@ -8,6 +8,7 @@ import androidx.appcompat.view.ContextThemeWrapper
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import apptentive.com.android.concurrent.Executors
+import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.engagement.Engagement
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.payload.PayloadSender
@@ -29,7 +30,7 @@ class AndroidEngagementContext(
 
     fun tryStartActivity(intent: Intent) = androidContext.tryStartActivity(intent)
 
-    fun getFragmentManager(context: Context = androidContext): FragmentManager {
+    fun getFragmentManager(context: Context? = Apptentive.getApptentiveActivityCallback()?.getApptentiveActivityInfo()): FragmentManager {
         return when (context) {
             is AppCompatActivity, is FragmentActivity -> (context as FragmentActivity).supportFragmentManager
             is ContextThemeWrapper -> getFragmentManager(context.baseContext)
@@ -38,6 +39,7 @@ class AndroidEngagementContext(
                     "Must use an Activity context. " +
                     "Application context does not have a fragment manager."
             )
+            null -> throw Exception("Context is null")
             else -> throw Exception("Can't retrieve fragment manager. Unknown context type ${context.packageName}")
         }
     }

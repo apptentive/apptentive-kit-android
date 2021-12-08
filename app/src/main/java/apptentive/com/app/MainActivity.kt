@@ -1,5 +1,6 @@
 package apptentive.com.app
 
+import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
@@ -10,12 +11,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
 import apptentive.com.android.feedback.Apptentive
+import apptentive.com.android.feedback.ApptentiveActivityInfo
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.app.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Apptentive.registerApptentiveActivityInfoCallback(this)
 
         val prefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
 
@@ -51,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         binding.engageEventButton.setOnClickListener {
             val engageEvent = binding.eventTextEditText.text?.toString()?.trim()
             if (!engageEvent.isNullOrEmpty()) {
-                Apptentive.engage(this, engageEvent) { handleResult(it) }
+                Apptentive.engage(engageEvent) { handleResult(it) }
                 binding.eventTextLayout.isErrorEnabled = false
                 binding.eventTextLayout.error = ""
                 binding.eventTextEditText.setText("")
@@ -62,19 +66,19 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.loveDialogButton.setOnClickListener {
-            Apptentive.engage(this, "love_dialog_event") { handleResult(it) }
+            Apptentive.engage("love_dialog_event") { handleResult(it) }
         }
 
         binding.surveyButton.setOnClickListener {
-            Apptentive.engage(this, "survey_event") { handleResult(it) }
+            Apptentive.engage("survey_event") { handleResult(it) }
         }
 
         binding.noteButton.setOnClickListener {
-            Apptentive.engage(this, "note_event") { handleResult(it) }
+            Apptentive.engage("note_event") { handleResult(it) }
         }
 
         binding.ratingDialogButton.setOnClickListener {
-            Apptentive.engage(this, "rating_dialog_event") { handleResult(it) }
+            Apptentive.engage("rating_dialog_event") { handleResult(it) }
         }
 
         binding.clearAppDataButton.setOnClickListener {
@@ -86,5 +90,9 @@ class MainActivity : AppCompatActivity() {
         if (it !is EngagementResult.InteractionShown) {
             Toast.makeText(this, "Not engaged: $it", Toast.LENGTH_LONG).show()
         }
+    }
+
+    override fun getApptentiveActivityInfo(): Activity {
+        return this
     }
 }
