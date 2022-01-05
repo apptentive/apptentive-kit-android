@@ -107,7 +107,7 @@ class DataActivity : AppCompatActivity() {
             addCustomNumberButton.setOnClickListener {
                 val dataType = dataTypeDropdown.text?.toString()
                 val customNumberKey = addCustomNumberKeyEditText.text?.toString()?.trim()
-                val customNumberValue = addCustomNumberValueEditText.text?.toString()?.trim()?.toFloatOrNull()
+                val customNumberValue = addCustomNumberValueEditText.text?.toString()?.trim()?.toDoubleOrNull()
 
                 val hasError = checkHasError(
                     dataTypeLayout,

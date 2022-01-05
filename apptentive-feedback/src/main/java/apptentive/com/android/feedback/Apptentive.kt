@@ -288,7 +288,8 @@ object Apptentive {
     fun addCustomPersonData(key: String?, value: Number?) {
         stateExecutor.execute {
             if (key != null && value != null) {
-                client.updatePerson(customData = Pair(key, value))
+                val supportedTypeValue = if (value as Double % 1.0 == 0.0) value.toLong() else value
+                client.updatePerson(customData = Pair(key, supportedTypeValue))
             }
         }
     }
@@ -353,7 +354,8 @@ object Apptentive {
     fun addCustomDeviceData(key: String?, value: Number?) {
         stateExecutor.execute {
             if (key != null && value != null) {
-                client.updateDevice(customData = Pair(key, value))
+                val supportedTypeValue = if (value as Double % 1.0 == 0.0) value.toLong() else value
+                client.updateDevice(customData = Pair(key, supportedTypeValue))
             }
         }
     }

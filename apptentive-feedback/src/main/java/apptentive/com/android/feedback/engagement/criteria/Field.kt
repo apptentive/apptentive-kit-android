@@ -351,7 +351,7 @@ internal fun Field.convertValue(value: Any?): Any? {
 
     return when (type) {
         Field.Type.String -> converted as String
-        Field.Type.Number -> converted as Long
+        Field.Type.Number -> converted as Number
         Field.Type.Boolean -> converted as Boolean
         Field.Type.DateTime -> {
             return when (converted) {
@@ -390,7 +390,7 @@ private fun convertComplexValue(value: Any?): Any? {
             }
             throw IllegalArgumentException("Unexpected value: $value")
         }
-        is Double -> value.toLong() // every number in json parsed as double
+        is Double -> if (value % 1.0 == 0.0) value.toLong() else value // every number in json parsed as double
         else -> value // return as-is
     }
 }
