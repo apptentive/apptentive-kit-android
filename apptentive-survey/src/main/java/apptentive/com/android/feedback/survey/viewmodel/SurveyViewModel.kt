@@ -1,10 +1,10 @@
 package apptentive.com.android.feedback.survey.viewmodel
 
 import androidx.annotation.MainThread
-import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import apptentive.com.android.concurrent.Executors
 import apptentive.com.android.core.LiveEvent
 import apptentive.com.android.core.asLiveData
@@ -15,25 +15,36 @@ import apptentive.com.android.feedback.survey.model.SurveyModel
 import apptentive.com.android.feedback.survey.model.SurveyQuestion
 import apptentive.com.android.feedback.survey.model.SurveyQuestionAnswer
 import apptentive.com.android.feedback.survey.model.update
-import apptentive.com.android.ui.ApptentiveViewModel
-import java.lang.Thread.sleep
 
+/**
+ * ViewModel for Surveys
+ *
+ * SurveyViewModel class that is responsible for preparing and managing survey data
+ * for BaseSurveyActivity
+ *
+ * @property model [SurveyModel] data model that represents the survey
+ * @property executors [Executors] executes submitted runnable tasks.
+ *
+ *  Apptentive uses two executors
+ *
+ *    * state - For long running/ Async operations
+ *    * main  - UI related tasks
+ *
+ * @property onSubmit [SurveySubmitCallback] callback to be executed when survey is submitted
+ * @property onCancel [SurveyCancelCallback] callback to be executed when survey is cancelled
+ * @property onClose [SurveyCancelPartialCallback] callback to be executed when survey is closed
+ * @property onBackToSurvey [SurveyContinuePartialCallback] callback to be executed
+ * when survey is resumed through after an attempt to close
+ */
 
-typealias SurveySubmitCallback = (Map<String, SurveyQuestionAnswer>) -> Unit
-internal typealias SurveyCancelCallback = () -> Unit
-internal typealias SurveyCancelPartialCallback = () -> Unit
-internal typealias SurveyContinuePartialCallback = () -> Unit
-
-
-internal class SurveyViewModel(
+class SurveyViewModel(
     private val model: SurveyModel,
     private val executors: Executors,
     private val onSubmit: SurveySubmitCallback,
     private val onCancel: SurveyCancelCallback,
     private val onClose: SurveyCancelPartialCallback,
     private val onBackToSurvey: SurveyContinuePartialCallback,
-    questionListItemFactory: SurveyQuestionListItemFactory = DefaultSurveyQuestionListItemFactory()
-) : ApptentiveViewModel() {
+) : ViewModel() {
     /** LiveData which transforms a list of {SurveyQuestion} into a list of {SurveyQuestionListItem} */
     private val questionsStream: LiveData<List<SurveyQuestion<*>>> =
         model.questionsStream.asLiveData()
@@ -47,7 +58,7 @@ internal class SurveyViewModel(
 
     /** LiveData which holds the current list of SurveyQuestionListItem */
     val listItems: LiveData<List<SurveyListItem>> = createQuestionListLiveData(
-        questionListItemFactory = questionListItemFactory
+        questionListItemFactory = DefaultSurveyQuestionListItemFactory()
     )
 
     private val requiredTextEvent = LiveEvent<String?>()
@@ -255,9 +266,14 @@ internal data class SurveySubmitMessageState(
     val isValid: Boolean
 )
 
-internal data class SurveyCancelConfirmationDisplay(
+data class SurveyCancelConfirmationDisplay(
     val title: String?,
     val message: String?,
     val positiveButtonMessage: String?,
     val negativeButtonMessage: String?
 )
+
+typealias SurveySubmitCallback = (Map<String, SurveyQuestionAnswer>) -> Unit
+internal typealias SurveyCancelCallback = () -> Unit
+internal typealias SurveyCancelPartialCallback = () -> Unit
+internal typealias SurveyContinuePartialCallback = () -> Unit

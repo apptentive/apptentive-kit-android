@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.ProcessLifecycleOwner
 import apptentive.com.android.concurrent.Executors
+import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.Provider
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.DefaultConversationService
@@ -15,6 +16,7 @@ import apptentive.com.android.feedback.conversation.DefaultConversationSerialize
 import apptentive.com.android.feedback.engagement.DefaultEngagement
 import apptentive.com.android.feedback.engagement.DefaultInteractionEngagement
 import apptentive.com.android.feedback.engagement.Engagement
+import apptentive.com.android.feedback.engagement.EngagementContextFactoryProvider
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.InteractionDataProvider
 import apptentive.com.android.feedback.engagement.InteractionEngagement
@@ -121,6 +123,8 @@ internal class ApptentiveDefaultClient(
                 recordEvent = ::recordEvent,
                 recordInteraction = ::recordInteraction
             )
+
+            DependencyProvider.register(EngagementContextFactoryProvider(engagement, payloadSender, executors))
 
             // once we have received conversationId and conversationToken we can setup payload sender service
             val conversationId = conversation.conversationId

@@ -16,6 +16,7 @@ import apptentive.com.android.feedback.survey.model.SurveyQuestion
 import apptentive.com.android.feedback.survey.model.createMultiChoiceQuestion
 import apptentive.com.android.feedback.survey.model.createRangeQuestion
 import apptentive.com.android.feedback.survey.model.createSingleLineQuestion
+import apptentive.com.android.feedback.survey.utils.createSurveyViewModel
 import apptentive.com.android.toProperJson
 import org.junit.Rule
 import org.junit.Test
@@ -64,10 +65,10 @@ class SurveyInteractionLauncherTest : TestCase() {
                 )
             )
         )
-        val viewModel = SurveyInteractionLauncher().createSurveyViewModel(
+        val viewModel = createSurveyViewModel(
+            interactionId = "interaction_id",
             context = context,
-            model = model,
-            interactionId = "interaction_id"
+            surveyModel = model,
         )
 
         viewModel.submit()

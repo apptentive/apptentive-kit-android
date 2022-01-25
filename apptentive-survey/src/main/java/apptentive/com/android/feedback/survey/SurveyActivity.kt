@@ -22,9 +22,7 @@ import apptentive.com.android.feedback.survey.viewmodel.SurveyListItem.Type.Head
 import apptentive.com.android.feedback.survey.viewmodel.SurveyListItem.Type.MultiChoiceQuestion
 import apptentive.com.android.feedback.survey.viewmodel.SurveyListItem.Type.RangeQuestion
 import apptentive.com.android.feedback.survey.viewmodel.SurveyListItem.Type.SingleLineQuestion
-import apptentive.com.android.feedback.survey.viewmodel.SurveyViewModel
 import apptentive.com.android.feedback.survey.viewmodel.register
-import apptentive.com.android.ui.ApptentiveViewModelActivity
 import apptentive.com.android.ui.DialogButton
 import apptentive.com.android.ui.LayoutViewHolderFactory
 import apptentive.com.android.ui.ListViewAdapter
@@ -32,7 +30,7 @@ import apptentive.com.android.ui.hideSoftKeyboard
 import apptentive.com.android.ui.showConfirmationDialog
 import com.google.android.material.appbar.MaterialToolbar
 
-internal class SurveyActivity : ApptentiveViewModelActivity<SurveyViewModel>() {
+internal class SurveyActivity : BaseSurveyActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.apptentive_activity_survey)

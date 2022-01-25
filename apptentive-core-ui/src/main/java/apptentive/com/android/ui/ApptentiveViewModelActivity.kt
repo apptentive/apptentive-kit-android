@@ -4,26 +4,11 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.annotation.CallSuper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_UNSPECIFIED
 
-open class ApptentiveViewModelActivity<VM : ApptentiveViewModel> : ApptentiveActivity() {
-    // instance id must be passed with the intent when starting the activity and will be used to
-    // resolve an appropriate ViewModel factory
-    private val _viewModel: ApptentiveViewModel by viewModels {
-        val instanceId =
-            intent.getStringExtra(EXTRA_VIEW_MODEL_INSTANCE_ID) ?: throw IllegalArgumentException(
-                "Missing '$EXTRA_VIEW_MODEL_INSTANCE_ID' extra"
-            )
-        InteractionViewModelFactoryProvider.getViewModelFactory(instanceId)
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    protected val viewModel: VM
-        get() = _viewModel as VM
-
+open class ApptentiveViewModelActivity : ApptentiveActivity() {
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
         // set the local night mode to the same value as the parent context has
@@ -33,19 +18,15 @@ open class ApptentiveViewModelActivity<VM : ApptentiveViewModel> : ApptentiveAct
     }
 
     companion object {
-        const val EXTRA_VIEW_MODEL_INSTANCE_ID =
-            "apptentive.intent.extra.EXTRA_VIEW_MODEL_INSTANCE_ID"
         const val EXTRA_LOCAL_DARK_MODE =
             "apptentive.intent.extra.EXTRA_LOCAL_DARK_MODE"
     }
 }
 
-inline fun <reified T : ApptentiveViewModelActivity<*>> Context.startViewModelActivity(
-    instanceId: String,
+inline fun <reified T : ApptentiveViewModelActivity> Context.startViewModelActivity(
     extras: Bundle? = null
 ) {
     val intent = Intent(this, T::class.java)
-    intent.putExtra(ApptentiveViewModelActivity.EXTRA_VIEW_MODEL_INSTANCE_ID, instanceId)
     if (extras != null) {
         intent.putExtras(extras)
     }
