@@ -7,7 +7,6 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import apptentive.com.android.feedback.survey.R
 import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion
-import apptentive.com.android.feedback.survey.utils.setTextBoxBackgroundFocusFix
 import apptentive.com.android.feedback.survey.view.SurveyQuestionContainerView
 import apptentive.com.android.ui.ListViewItem
 import apptentive.com.android.ui.setInvalid
@@ -132,9 +131,7 @@ internal class MultiChoiceQuestionListItem(
                 textInputLayout.hint = choice.hint
 
                 textInputEditText.setText(choice.text)
-                textInputEditText.setTextBoxBackgroundFocusFix()
                 textInputEditText.doAfterTextChanged {
-                    if (textInputEditText.hasFocus() && it.isNullOrEmpty()) textInputEditText.setText(" ")  // Second part to the fix
                     onSelectionChanged.invoke(questionId, choice.id, true, it?.toString().orEmpty().trim())
                 }
                 // text fields end

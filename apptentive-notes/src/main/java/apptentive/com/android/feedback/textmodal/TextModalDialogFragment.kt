@@ -24,14 +24,7 @@ internal class TextModalDialogFragment(
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         retainInstance = true
 
-        val ctx = ContextThemeWrapper(
-            context.androidContext,
-            R.style.Theme_Apptentive_Dialog_Alert
-        ).apply {
-            overrideTheme()
-        }
-
-        return MaterialAlertDialogBuilder(ctx).apply {
+        return MaterialAlertDialogBuilder(context.androidContext).apply {
             val inflater = LayoutInflater.from(context)
             val contentView = inflater.inflate(R.layout.apptentive_note, null)
             setView(contentView)

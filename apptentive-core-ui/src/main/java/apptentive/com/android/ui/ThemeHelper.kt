@@ -8,19 +8,28 @@ import apptentive.com.android.R
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags
 
+/**
+ * Allows inheritance of app's theme
+ *
+ * Layers on themes on top of each other by importance.
+ * Later layers will override previous layers and take priority.
+ */
 internal fun Context.overrideTheme() {
-    /* Step 1: Apply Apptentive default theme layer.
-	 * If host activity is an activity, the base theme already has Apptentive defaults applied, so skip Step 1.
+    /* Layer 1: Apptentive default theme.
+	 * If host activity is an activity, the base theme already has Apptentive defaults applied, so skip layer 1.
 	 * If parent activity is NOT an activity, first apply Apptentive defaults.
 	 */
     if (this !is Activity) {
         theme.applyStyle(R.style.Theme_Apptentive, true)
     }
 
-    /* Step 2: Inherit app default theme */
+    /* Layer 2: App default theme */
     applyAppTheme()
 
-    /* Step 3: Apply optional theme override specified in host app's style */
+    /* Layer 3: Disable the problem style -> android:background */
+    theme.applyStyle(R.style.DisableAndroidBackgroundStyle, true)
+
+    /* Layer 4: Optional theme override specified in host app's style */
     applyApptentiveThemeOverride()
 }
 
@@ -30,16 +39,19 @@ internal fun Context.overrideTheme() {
 fun ContextThemeWrapper.overrideTheme() {
     val contextTheme = themeResId
 
-    /* Step 1: Apply Apptentive default theme layer */
+    /* Layer 1: Apptentive default theme */
     theme.applyStyle(R.style.Theme_Apptentive, true)
 
-    /* Step 2: Layer on ContextThemeWrapper's theme it was created with */
+    /* Layer 2: ContextThemeWrapper theme the wrapper was created with */
     theme.applyStyle(contextTheme, true)
 
-    /* Step 3: Inherit app default theme */
+    /* Layer 3: App default theme */
     applyAppTheme()
 
-    /* Step 4: Apply optional theme override specified in host app's style */
+    /* Layer 4: Disable the problem style -> android:background */
+    theme.applyStyle(R.style.DisableAndroidBackgroundStyle, true)
+
+    /* Layer 5: Optional theme override specified in host app's style */
     applyApptentiveThemeOverride()
 }
 

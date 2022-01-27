@@ -21,14 +21,7 @@ internal class RatingDialogFragment(
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         retainInstance = true
 
-        val ctx = ContextThemeWrapper(
-            context.androidContext,
-            R.style.Theme_Apptentive_Dialog_Alert
-        ).apply {
-            overrideTheme()
-        }
-
-        return MaterialAlertDialogBuilder(ctx).apply {
+        return MaterialAlertDialogBuilder(context.androidContext).apply {
             val inflater = LayoutInflater.from(context)
             val contentView = inflater.inflate(R.layout.apptentive_rating_dialog, null)
             setView(contentView)

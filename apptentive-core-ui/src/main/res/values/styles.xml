@@ -14,14 +14,15 @@
         <item name="apptentiveSurveyButtonStyle">@style/Widget.MaterialComponents.Button</item>
     </style>
 
-    <style name="Theme.Apptentive.Dialog.Alert" parent="Theme.Apptentive">
-        <item name="android:background">?android:attr/colorBackground</item>
+    <!-- This style has been a problem within our UI and will be disabled by default -->
+    <!-- Can be re-enabled by using ApptentiveThemeOverride -->
+    <style name="DisableAndroidBackgroundStyle">
+        <item name="android:background">@null</item>
     </style>
 
     <style name="Widget.Apptentive.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary" />
 
     <style name="Theme.Apptentive.ToolbarTitle">
-        <item name="android:background">@android:color/transparent</item>
         <item name="android:textColor">?attr/colorOnPrimary</item>
         <item name="android:textAppearance">?attr/textAppearanceHeadline6</item>
     </style>

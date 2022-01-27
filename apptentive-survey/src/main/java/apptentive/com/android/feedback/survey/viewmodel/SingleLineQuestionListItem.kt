@@ -8,7 +8,6 @@ import android.view.inputmethod.EditorInfo.TYPE_TEXT_FLAG_CAP_SENTENCES
 import android.view.inputmethod.EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE
 import androidx.core.widget.doAfterTextChanged
 import apptentive.com.android.feedback.survey.R
-import apptentive.com.android.feedback.survey.utils.setTextBoxBackgroundFocusFix
 import apptentive.com.android.feedback.survey.view.SurveyQuestionContainerView
 import apptentive.com.android.ui.setInvalid
 import com.google.android.material.textfield.TextInputEditText
@@ -105,9 +104,7 @@ internal class SingleLineQuestionListItem(
             }
 
             answerEditText.setText(item.text)
-            answerEditText.setTextBoxBackgroundFocusFix()
             answerEditText.doAfterTextChanged {
-                if (answerEditText.hasFocus() && it.isNullOrEmpty()) answerEditText.setText(" ")  // Second part to the fix
                 onTextChanged(questionId, it?.toString().orEmpty().trim())
             }
         }
