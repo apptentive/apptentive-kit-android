@@ -66,7 +66,7 @@ class DefaultHttpNetwork(
                 data = stream.readBytes(),
                 headers = responseHeaders,
                 duration = duration
-            )
+            ).also { stream.close() }
         } finally {
             connection.disconnect()
         }
