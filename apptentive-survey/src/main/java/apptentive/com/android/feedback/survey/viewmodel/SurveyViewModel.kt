@@ -170,7 +170,7 @@ class SurveyViewModel(
     }
 
     fun onBackToSurveyFromConfirmationDialog() {
-        onBackToSurvey.invoke()
+        executors.state.execute { onBackToSurvey.invoke() }
     }
 
     @MainThread
@@ -185,12 +185,12 @@ class SurveyViewModel(
                 // we don't need to show any confirmation as the customer
                 // didn't interact
                 exitEvent.postValue(true)
-                onCancel.invoke()
+                executors.state.execute { onCancel.invoke() }
             }
         } else {
             // we are already in the confirmation dialog, so no need to show confirmation again
             exitEvent.postValue(true)
-            onClose.invoke()
+            executors.state.execute { onClose.invoke() }
         }
     }
 

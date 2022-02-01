@@ -168,7 +168,9 @@ internal class ApptentiveDefaultClient(
         executors.main.execute {
             Log.i(LIFE_CYCLE_OBSERVER, "Observing App lifecycle")
             ProcessLifecycleOwner.get().lifecycle.addObserver(
-                ApptentiveLifecycleObserver(this) { conversationManager.tryFetchEngagementManifest() }
+                ApptentiveLifecycleObserver(this, executors.state) {
+                    conversationManager.tryFetchEngagementManifest()
+                }
             )
         }
     }
