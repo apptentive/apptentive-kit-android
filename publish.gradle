@@ -40,7 +40,9 @@ publishing {
             artifactId project.artifactId
             artifact("$buildDir/outputs/aar/${project.artifactId}-release.aar")
             artifact androidSourcesJar
-            artifact javadocJar
+            if(project.repoVersion == project.sonatypeVersion) {
+                artifact javadocJar
+            }
             //generate pom nodes for dependencies
             pom.withXml {
                 def dependenciesNode = asNode().appendNode('dependencies')

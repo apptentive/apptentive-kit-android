@@ -65,8 +65,8 @@ buildscript {
     }
 
     project.ext {
-        sonatypeVersion = '6.0.0-alpha01'
-        jfrogVersion = '6.0.0-alpha25'
+        sonatypeVersion = '6.0.0-private01'
+        jfrogVersion = '6.0.0-alpha01'
 
         // Change this depending on where you are publishing to
         repoVersion = sonatypeVersion
@@ -83,8 +83,8 @@ buildscript {
             mavenCentral()
             maven {
                 def artifactoryProperties = new Properties()
-                if (file('./local.properties').exists()) {
-                    artifactoryProperties.load(file('local.properties').newDataInputStream())
+                if (project.rootProject.file('local.properties').exists()) {
+                    artifactoryProperties.load(project.rootProject.file('local.properties').newDataInputStream())
                 }
                 url "https://apptentive.jfrog.io/artifactory/InternalNewAndroidSDK"
                 credentials {
@@ -134,7 +134,7 @@ nexusPublishing {
     repositories {
         sonatype {
             Properties sonatypeProperties = new Properties()
-            if (file('./local.properties').exists()) {
+            if (project.rootProject.file('local.properties').exists()) {
                 sonatypeProperties.load(project.rootProject.file('local.properties').newDataInputStream())
             }
             username = sonatypeProperties.getProperty('sonatypeUsername') ? sonatypeProperties['sonatypeUsername'] : ""
