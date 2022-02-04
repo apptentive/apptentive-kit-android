@@ -1,19 +1,46 @@
 apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
+apply plugin: 'signing'
+apply plugin: 'org.jetbrains.dokka'
+
+ext["signing.keyId"] = '' //ID of the GPG key pair, the last eight characters of its fingerprint
+ext["signing.password"] = '' //the passphrase of the keypair
+ext["signing.secretKeyRingFile"] = ''  //location to secring.gpg
+ext["sonatypeStagingProfileId"] = '' //sonatype staging profile id
+
+File secretPropsFile = project.rootProject.file('local.properties')
+if (secretPropsFile.exists()) {
+    // Read local.properties file first if it exists
+    Properties p = new Properties()
+    new FileInputStream(secretPropsFile).withCloseable { is -> p.load(is) }
+    p.each { name, value -> ext[name] = value }
+}
 
 task androidSourcesJar(type: Jar) {
     getArchiveClassifier().set('sources')
     from android.sourceSets.main.java.srcDirs
 }
 
+tasks.withType(dokkaHtmlPartial.getClass()).configureEach {
+    pluginsMapConfiguration.set(
+            ["org.jetbrains.dokka.base.DokkaBase": """{ "separateInheritedMembers": true}"""]
+    )
+}
+
+task javadocJar(type: Jar, dependsOn: dokkaJavadoc) {
+    archiveClassifier.set('javadoc')
+    from dokkaJavadoc.outputDirectory
+}
+
 publishing {
     publications {
         maven(MavenPublication) {
             groupId project.groupId
-            version project.versionId
+            version project.repoVersion
             artifactId project.artifactId
             artifact("$buildDir/outputs/aar/${project.artifactId}-release.aar")
             artifact androidSourcesJar
+            artifact javadocJar
             //generate pom nodes for dependencies
             pom.withXml {
                 def dependenciesNode = asNode().appendNode('dependencies')
@@ -27,8 +54,37 @@ publishing {
                     }
                 }
             }
+            pom {
+                name = project.artifactId
+                description = 'Apptentive Android SDK'
+                url = 'https://github.com/apptentive/apptentive-android-sdk'
+
+                licenses {
+                    license {
+                        name = 'BSD 3-Clause License'
+                        url = 'https://raw.githubusercontent.com/apptentive/apptentive-android-sdk/master/License.txt'
+                        distribution = 'repo'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'apptentive'
+                        name = 'Apptentive'
+                        url = "https://www.apptentive.com/"
+                    }
+                }
+                scm {
+                    url = 'https://github.com/apptentive/apptentive-android-sdk'
+                    connection = 'scm:git@github.com:apptentive/apptentive-android-sdk.git'
+                    developerConnection = 'scm:git@github.com:apptentive/apptentive-android-sdk.git'
+                }
+            }
         }
     }
+}
+
+signing {
+    sign publishing.publications
 }
 
 artifactory {
@@ -40,8 +96,8 @@ artifactory {
             if (gradle.rootProject.file('local.properties').exists()) {
                 artifactoryProperties.load(project.rootProject.file('local.properties').newDataInputStream())
             }
-            def repoUsername = artifactoryProperties['artifactory_username'] ? artifactoryProperties['artifactory_username']:""
-            def repoPassword = artifactoryProperties['artifactory_password'] ? artifactoryProperties['artifactory_password']:""
+            def repoUsername = artifactoryProperties['artifactory_username'] ? artifactoryProperties['artifactory_username'] : ""
+            def repoPassword = artifactoryProperties['artifactory_password'] ? artifactoryProperties['artifactory_password'] : ""
             repoKey = project.hasProperty("REPO_KEY") ? project.getProperty("REPO_KEY") : "InternalNewAndroidSDK"
             username = repoUsername
             password = repoPassword

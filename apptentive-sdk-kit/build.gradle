@@ -22,16 +22,20 @@ android {
     }
 }
 
+repositories {
+    mavenLocal()
+}
+
 dependencies {
-    implementation "com.apptentive:apptentive-core:$versionId"
-    implementation "com.apptentive:apptentive-core-ui:$versionId"
-    implementation "com.apptentive:apptentive-feedback:$versionId"
-    implementation "com.apptentive:apptentive-enjoyment-dialog:$versionId"
-    implementation "com.apptentive:apptentive-survey:$versionId"
-    implementation "com.apptentive:apptentive-notes:$versionId"
-    implementation "com.apptentive:apptentive-navigate-to-link:$versionId"
-    implementation "com.apptentive:apptentive-ratings:$versionId"
-    implementation "com.apptentive:apptentive-in-app-review:$versionId"
+    implementation "com.apptentive:apptentive-core:$repoVersion"
+    implementation "com.apptentive:apptentive-core-ui:$repoVersion"
+    implementation "com.apptentive:apptentive-feedback:$repoVersion"
+    implementation "com.apptentive:apptentive-enjoyment-dialog:$repoVersion"
+    implementation "com.apptentive:apptentive-survey:$repoVersion"
+    implementation "com.apptentive:apptentive-notes:$repoVersion"
+    implementation "com.apptentive:apptentive-navigate-to-link:$repoVersion"
+    implementation "com.apptentive:apptentive-ratings:$repoVersion"
+    implementation "com.apptentive:apptentive-in-app-review:$repoVersion"
 }
 
 project.ext {

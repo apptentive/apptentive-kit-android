@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base Apptentive theme. -->
     <style name="Theme.Apptentive" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/apptentive_color_primary</item>
