@@ -11,6 +11,7 @@ internal class TextModalInteraction(
     val body: String?,
     val actions: List<Action>
 ) : Interaction(id, InteractionType.TextModal) {
+
     override fun toString(): String {
         return "${javaClass.simpleName} (id=$id, title=\"$title\", body=\"$body\", actions=$actions)"
     }

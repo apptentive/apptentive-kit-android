@@ -1,27 +1,21 @@
 package apptentive.com.android.feedback.ratingdialog
 
 import android.app.Dialog
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.TextView
-import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.DialogTitle
 import androidx.fragment.app.DialogFragment
-import apptentive.com.android.feedback.platform.AndroidEngagementContext
+import androidx.fragment.app.viewModels
 import apptentive.com.android.feedback.ratings.R
-import apptentive.com.android.ui.overrideTheme
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
-internal class RatingDialogFragment(
-    val context: AndroidEngagementContext,
-    private val viewModel: RatingDialogViewModel
-) : DialogFragment() {
+internal class RatingDialogFragment : DialogFragment() {
+
+    private val viewModel by viewModels<RatingDialogViewModel>()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        retainInstance = true
-
-        return MaterialAlertDialogBuilder(context.androidContext).apply {
+        return MaterialAlertDialogBuilder(requireContext()).apply {
             val inflater = LayoutInflater.from(context)
             val contentView = inflater.inflate(R.layout.apptentive_rating_dialog, null)
             setView(contentView)

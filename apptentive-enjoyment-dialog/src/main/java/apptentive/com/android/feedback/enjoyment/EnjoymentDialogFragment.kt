@@ -4,18 +4,14 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
-import apptentive.com.android.feedback.platform.AndroidEngagementContext
+import androidx.fragment.app.viewModels
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
-internal class EnjoymentDialogFragment(
-    val context: AndroidEngagementContext,
-    private val viewModel: EnjoymentDialogViewModel
-) : DialogFragment() {
+internal class EnjoymentDialogFragment : DialogFragment() {
+    private val viewModel by viewModels<EnjoymentDialogViewModel>()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        retainInstance = true
-
-        return MaterialAlertDialogBuilder(context.androidContext).apply {
+        return MaterialAlertDialogBuilder(requireContext()).apply {
             setMessage(viewModel.title)
 
             setPositiveButton(viewModel.yesText) { _, _ ->

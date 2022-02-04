@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.enjoyment
 
+import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.INTERACTIONS
 import apptentive.com.android.feedback.platform.AndroidEngagementContext
 import apptentive.com.android.feedback.platform.AndroidViewInteractionLauncher
@@ -16,10 +17,11 @@ internal class EnjoymentDialogInteractionLauncher :
 
         context.executors.main.execute {
             try {
-                val fragmentManager = context.getFragmentManager()
-                val viewModel = EnjoymentDialogViewModel(context, interaction)
 
-                val enjoymentDialog = EnjoymentDialogFragment(context, viewModel)
+                DependencyProvider.register(EnjoymentDialogInteractionProvider(interaction))
+
+                val fragmentManager = context.getFragmentManager()
+                val enjoymentDialog = EnjoymentDialogFragment()
                 enjoymentDialog.show(fragmentManager, EnjoymentDialogInteraction.TAG)
             } catch (exception: Exception) {
                 Log.e(INTERACTIONS, "Could not start Love Dialog interaction", exception)

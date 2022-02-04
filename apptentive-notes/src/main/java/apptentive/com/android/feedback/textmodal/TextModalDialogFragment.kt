@@ -8,23 +8,18 @@ import android.view.View.TEXT_ALIGNMENT_CENTER
 import android.view.View.TEXT_ALIGNMENT_VIEW_END
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.DialogTitle
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import apptentive.com.android.feedback.notes.R
-import apptentive.com.android.feedback.platform.AndroidEngagementContext
-import apptentive.com.android.ui.overrideTheme
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
-internal class TextModalDialogFragment(
-    val context: AndroidEngagementContext,
-    private val viewModel: TextModalViewModel
-) : DialogFragment() {
+internal class TextModalDialogFragment : DialogFragment() {
+
+    private val viewModel by viewModels<TextModalViewModel>()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        retainInstance = true
-
-        return MaterialAlertDialogBuilder(context.androidContext).apply {
+        return MaterialAlertDialogBuilder(requireContext()).apply {
             val inflater = LayoutInflater.from(context)
             val contentView = inflater.inflate(R.layout.apptentive_note, null)
             setView(contentView)
@@ -41,6 +36,7 @@ internal class TextModalDialogFragment(
             }
 
             val viewGroup = contentView.findViewById<ViewGroup>(R.id.apptentive_note_button_bar)
+            viewModel.onDismiss = { this@TextModalDialogFragment.dismiss()}
             viewModel.actions.forEach { action ->
                 val button = inflater.inflate(R.layout.apptentive_note_action, null) as TextView
                 button.text = action.title

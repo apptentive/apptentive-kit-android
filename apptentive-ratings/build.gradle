@@ -31,6 +31,7 @@ dependencies {
     implementation project(':apptentive-feedback')
     implementation "androidx.appcompat:appcompat:$appcompat_library_version"
     implementation "androidx.core:core-ktx:$core_ktx_version"
+    implementation "androidx.fragment:fragment-ktx:$fragment_ktx_version"
     implementation "com.google.android.material:material:$material_design_version"
 
     testImplementation project(':apptentive-core-test')
