@@ -12,8 +12,7 @@ fun showConfirmationDialog(
     positiveButton: DialogButton? = null,
     negativeButton: DialogButton? = null,
     neutralButton: DialogButton? = null
-) {
-    MaterialAlertDialogBuilder(context).apply {
+) : MaterialAlertDialogBuilder = MaterialAlertDialogBuilder(context).apply {
         setTitle(title)
         setMessage(message)
         if (positiveButton != null) {
@@ -33,6 +32,4 @@ fun showConfirmationDialog(
                 neutralButton.action?.invoke()
             }
         }
-        show()
     }
-}

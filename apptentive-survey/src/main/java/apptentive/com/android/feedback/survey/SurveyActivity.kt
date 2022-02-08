@@ -7,6 +7,7 @@ import android.view.MotionEvent
 import android.view.accessibility.AccessibilityEvent
 import android.widget.EditText
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -29,8 +30,12 @@ import apptentive.com.android.ui.ListViewAdapter
 import apptentive.com.android.ui.hideSoftKeyboard
 import apptentive.com.android.ui.showConfirmationDialog
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 internal class SurveyActivity : BaseSurveyActivity() {
+
+    private var confirmationDialog: AlertDialog? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.apptentive_activity_survey)
@@ -78,7 +83,7 @@ internal class SurveyActivity : BaseSurveyActivity() {
         viewModel.showConfirmation.observe(this, Observer {
             if (it) {
                 with(viewModel.surveyCancelConfirmationDisplay) {
-                    showConfirmationDialog(
+                    confirmationDialog = showConfirmationDialog(
                         context = this@SurveyActivity,
                         title = title ?: getString(R.string.confirmation_dialog_title),
                         message = message ?: getString(R.string.confirmation_dialog_message),
@@ -87,7 +92,8 @@ internal class SurveyActivity : BaseSurveyActivity() {
                         },
                         negativeButton = DialogButton(negativeButtonMessage ?: getString(R.string.close)) {
                             viewModel.exit(showConfirmation = false)
-                        })
+                        }).create()
+                    confirmationDialog?.show()
                 }
             }
         })
@@ -104,6 +110,13 @@ internal class SurveyActivity : BaseSurveyActivity() {
 
     override fun onBackPressed() {
         viewModel.exit(showConfirmation = true)
+    }
+
+    override fun onDestroy() {
+        if (confirmationDialog?.isShowing == true) {
+            confirmationDialog?.dismiss()
+        }
+        super.onDestroy()
     }
 
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
