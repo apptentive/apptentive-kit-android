@@ -92,6 +92,8 @@ dependencies {
 
     androidTestImplementation "androidx.test.ext:junit:$androidx_junit_ext_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"
+
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
 }
 
 def extractSdkVersion() {
