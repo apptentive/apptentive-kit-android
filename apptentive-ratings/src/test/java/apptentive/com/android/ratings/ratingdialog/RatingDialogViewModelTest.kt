@@ -7,7 +7,7 @@ import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.EngageArgs
 import apptentive.com.android.feedback.engagement.EngagementCallback
 import apptentive.com.android.feedback.engagement.EngagementContext
-import apptentive.com.android.feedback.engagement.AndroidEngagementContextFactory
+import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.InvocationCallback
 import apptentive.com.android.feedback.engagement.MockEngagementContext
@@ -34,9 +34,9 @@ class RatingDialogViewModelTest : TestCase() {
     fun testInvokeInteractions() {
         val targetInteractionId = "target_id"
 
-        DependencyProvider.register(object : Provider<AndroidEngagementContextFactory> {
-            override fun get(): AndroidEngagementContextFactory {
-                return object : AndroidEngagementContextFactory {
+        DependencyProvider.register(object : Provider<EngagementContextFactory> {
+            override fun get(): EngagementContextFactory {
+                return object : EngagementContextFactory {
                     override fun engagementContext(): EngagementContext {
                         return createEngagementContext(
                             null,

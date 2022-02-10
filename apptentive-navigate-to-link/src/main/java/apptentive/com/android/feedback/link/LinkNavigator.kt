@@ -1,23 +1,25 @@
 package apptentive.com.android.feedback.link
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.annotation.MainThread
 import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.Event
-import apptentive.com.android.feedback.platform.AndroidEngagementContext
+import apptentive.com.android.feedback.platform.tryStartActivity
 
 internal object LinkNavigator {
     @MainThread
     fun navigate(
-        context: AndroidEngagementContext,
+        context: EngagementContext,
+        activityContext: Context,
         interaction: NavigateToLinkInteraction
     ) = navigate(
         context = context,
         interaction = interaction
     ) {
-        context.tryStartActivity(interaction.createIntent()) // this way we can use unit-tests
+        activityContext.tryStartActivity(interaction.createIntent()) // this way we can use unit-tests
     }
 
     @MainThread

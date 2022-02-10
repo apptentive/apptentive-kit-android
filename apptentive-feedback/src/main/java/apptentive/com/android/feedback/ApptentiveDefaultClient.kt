@@ -13,11 +13,11 @@ import apptentive.com.android.feedback.conversation.ConversationRepository
 import apptentive.com.android.feedback.conversation.ConversationSerializer
 import apptentive.com.android.feedback.conversation.DefaultConversationRepository
 import apptentive.com.android.feedback.conversation.DefaultConversationSerializer
-import apptentive.com.android.feedback.engagement.AndroidEngagementContextFactory
-import apptentive.com.android.feedback.engagement.AndroidEngagementContextProvider
 import apptentive.com.android.feedback.engagement.DefaultEngagement
 import apptentive.com.android.feedback.engagement.DefaultInteractionEngagement
 import apptentive.com.android.feedback.engagement.Engagement
+import apptentive.com.android.feedback.engagement.EngagementContextFactory
+import apptentive.com.android.feedback.engagement.EngagementContextProvider
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.InteractionDataProvider
 import apptentive.com.android.feedback.engagement.InteractionEngagement
@@ -235,16 +235,9 @@ internal class ApptentiveDefaultClient(
     //region Engagement
 
     override fun engage(event: Event): EngagementResult {
-        val activity = requireNotNull(Apptentive.getApptentiveActivityCallback()) {
-            "Apptentive Activity Callback not registered. " +
-                "Extend ApptentiveActivity.kt, implement the getActivity() function, " +
-                "and call registerApptentiveActivityCallback(this) " +
-                "in your Activity's onCreate function."
-        }.getApptentiveActivityInfo()
+        DependencyProvider.register(EngagementContextProvider(engagement, payloadSender, executors))
 
-        DependencyProvider.register(AndroidEngagementContextProvider(activity, engagement, payloadSender, executors))
-
-        return DependencyProvider.of<AndroidEngagementContextFactory>().engagementContext().engage(event)
+        return DependencyProvider.of<EngagementContextFactory>().engagementContext().engage(event)
     }
 
     override fun updatePerson(

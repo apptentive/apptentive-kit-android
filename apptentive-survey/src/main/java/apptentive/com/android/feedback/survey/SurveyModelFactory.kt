@@ -1,7 +1,7 @@
 package apptentive.com.android.feedback.survey
 
 import apptentive.com.android.core.Provider
-import apptentive.com.android.feedback.platform.AndroidEngagementContext
+import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.survey.interaction.DefaultSurveyQuestionConverter
 import apptentive.com.android.feedback.survey.interaction.SurveyInteraction
 import apptentive.com.android.feedback.survey.model.SurveyModel
@@ -10,14 +10,14 @@ internal interface SurveyModelFactory {
     fun getSurveyModel(): SurveyModel
 }
 
-internal class SurveyModelFactoryProvider(val context: AndroidEngagementContext,
+internal class SurveyModelFactoryProvider(val context: EngagementContext,
                                           val interaction: SurveyInteraction) : Provider<SurveyModelFactory> {
     override fun get(): SurveyModelFactory {
         return DefaultSurveyModelFactory(context, interaction)
     }
 }
 
-private class DefaultSurveyModelFactory(val context: AndroidEngagementContext,
+private class DefaultSurveyModelFactory(val engagementContext: EngagementContext,
                                         val interaction: SurveyInteraction) : SurveyModelFactory {
     override fun getSurveyModel(): SurveyModel {
         return SurveyModel(
@@ -25,7 +25,7 @@ private class DefaultSurveyModelFactory(val context: AndroidEngagementContext,
                 DefaultSurveyQuestionConverter().convert(
                     config = config,
                     requiredTextMessage = interaction.requiredText
-                        ?: context.getString(R.string.apptentive_required)
+                        ?: engagementContext.getActivityContext().getString(R.string.apptentive_required)
                 )
             },
             name = interaction.name,

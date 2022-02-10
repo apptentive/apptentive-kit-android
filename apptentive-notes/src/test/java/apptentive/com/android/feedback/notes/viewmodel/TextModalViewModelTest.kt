@@ -7,7 +7,7 @@ import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.EngageArgs
 import apptentive.com.android.feedback.engagement.EngagementCallback
 import apptentive.com.android.feedback.engagement.EngagementContext
-import apptentive.com.android.feedback.engagement.AndroidEngagementContextFactory
+import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.InvocationCallback
 import apptentive.com.android.feedback.engagement.MockEngagementContext
@@ -96,11 +96,10 @@ class TextModalViewModelTest : TestCase() {
     fun testInvokeMissingInteraction() {
         DependencyProvider.register(MockEngagementContextFactory {
             createEngagementContext(
-                null,
-                {
-                    EngagementResult.InteractionNotShown("No runnable interactions")
-                }
-            )
+                null
+            ) {
+                EngagementResult.InteractionNotShown("No runnable interactions")
+            }
         })
         val viewModel = createViewModel()
 
@@ -342,9 +341,9 @@ class TextModalViewModelTest : TestCase() {
     //endregion
 }
 
-class MockEngagementContextFactory(val getEngagementContext: () -> EngagementContext) : Provider<AndroidEngagementContextFactory> {
-    override fun get(): AndroidEngagementContextFactory {
-        return object : AndroidEngagementContextFactory {
+class MockEngagementContextFactory(val getEngagementContext: () -> EngagementContext) : Provider<EngagementContextFactory> {
+    override fun get(): EngagementContextFactory {
+        return object : EngagementContextFactory {
             override fun engagementContext(): EngagementContext {
                 return getEngagementContext()
             }

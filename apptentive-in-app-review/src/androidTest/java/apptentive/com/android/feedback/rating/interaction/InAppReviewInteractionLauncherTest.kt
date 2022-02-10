@@ -8,10 +8,10 @@ import apptentive.com.android.concurrent.Executors
 import apptentive.com.android.concurrent.ImmediateExecutor
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.EngagementCallback
+import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.MockEngagementContext
 import apptentive.com.android.feedback.engagement.PayloadSenderCallback
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
-import apptentive.com.android.feedback.platform.AndroidEngagementContext
 import apptentive.com.android.feedback.rating.reviewmanager.InAppReviewCallback
 import apptentive.com.android.feedback.rating.reviewmanager.InAppReviewManager
 import apptentive.com.android.feedback.rating.reviewmanager.InAppReviewManagerFactory
@@ -81,12 +81,11 @@ class InAppReviewInteractionLauncherTest : TestCase() {
         )
     }
 
-    private fun createEngagementContext(context: Context = appContext, onEngage: EngagementCallback?): AndroidEngagementContext {
+    private fun createEngagementContext(context: Context = appContext, onEngage: EngagementCallback?): EngagementContext {
         val mockEngagementContext = createMockEngagementContext(
             onEngage = onEngage
         )
-        return AndroidEngagementContext(
-            androidContext = context,
+        return EngagementContext(
             engagement = mockEngagementContext.getEngagement(),
             payloadSender = mockEngagementContext.getPayloadSender(),
             executors = Executors(ImmediateExecutor, ImmediateExecutor)

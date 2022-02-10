@@ -2,7 +2,7 @@ package apptentive.com.android.feedback.survey.utils
 
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.engagement.EngagementContext
-import apptentive.com.android.feedback.engagement.AndroidEngagementContextFactory
+import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.feedback.survey.SurveyModelFactory
@@ -24,7 +24,7 @@ internal fun createSurveyViewModel(
       they all will be independent
      */
     interactionId: String = generateUUID(),
-    context: EngagementContext = DependencyProvider.of<AndroidEngagementContextFactory>().engagementContext(),
+    context: EngagementContext = DependencyProvider.of<EngagementContextFactory>().engagementContext(),
     surveyModel: SurveyModel = DependencyProvider.of<SurveyModelFactory>().getSurveyModel(),
 ) = SurveyViewModel(
     model = surveyModel,

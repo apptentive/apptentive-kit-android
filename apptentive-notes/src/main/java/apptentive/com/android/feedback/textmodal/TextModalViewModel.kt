@@ -5,14 +5,14 @@ import apptentive.com.android.core.Callback
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.INTERACTIONS
-import apptentive.com.android.feedback.engagement.AndroidEngagementContextFactory
+import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.util.Log
 
 internal class TextModalViewModel : ViewModel()
 {
     val interaction = DependencyProvider.of<TextModalInteractionFactory>().getTextModalInteraction()
-    val context = DependencyProvider.of<AndroidEngagementContextFactory>().engagementContext()
+    val context = DependencyProvider.of<EngagementContextFactory>().engagementContext()
     val title = interaction.title
     val message = interaction.body
     val actions = interaction.actions.mapIndexed { index, action ->

@@ -21,7 +21,6 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionModule
 import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.feedback.model.payloads.Payload
 import apptentive.com.android.feedback.payload.PayloadSender
-import apptentive.com.android.feedback.platform.AndroidEngagementContext
 import apptentive.com.android.serialization.json.JsonConverter
 
 class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
@@ -72,7 +71,7 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
     }
 
     private val engagementContext: EngagementContext by lazy {
-        AndroidEngagementContext(
+        EngagementContext(
             engagement = object : Engagement {
                 override fun engage(
                     context: EngagementContext,
@@ -97,7 +96,6 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
                 }
             },
             executors = Executors(ImmediateExecutor, ImmediateExecutor),
-            androidContext = this
         )
     }
 

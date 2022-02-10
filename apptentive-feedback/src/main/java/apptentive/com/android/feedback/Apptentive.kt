@@ -56,7 +56,7 @@ object Apptentive {
         this.activityInfoCallback = apptentiveActivityInfo
     }
 
-    internal fun getApptentiveActivityCallback() = activityInfoCallback
+    fun getApptentiveActivityCallback() = activityInfoCallback
 
     @Suppress("MemberVisibilityCanBePrivate")
     val registered

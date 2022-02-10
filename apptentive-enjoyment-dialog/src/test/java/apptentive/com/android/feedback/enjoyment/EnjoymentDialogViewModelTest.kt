@@ -4,9 +4,9 @@ import apptentive.com.android.TestCase
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.Provider
 import apptentive.com.android.feedback.EngagementResult
-import apptentive.com.android.feedback.engagement.AndroidEngagementContextFactory
 import apptentive.com.android.feedback.engagement.EngageArgs
 import apptentive.com.android.feedback.engagement.EngagementContext
+import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.MockEngagementContext
 import apptentive.com.android.feedback.enjoyment.EnjoymentDialogViewModel.Companion.CODE_POINT_CANCEL
@@ -73,9 +73,9 @@ class EnjoymentDialogViewModelTest : TestCase() {
         )
 }
 
-class MockEngagementContextFactory(val getEngagementContext: () -> EngagementContext) : Provider<AndroidEngagementContextFactory> {
-    override fun get(): AndroidEngagementContextFactory {
-        return object : AndroidEngagementContextFactory {
+class MockEngagementContextFactory(val getEngagementContext: () -> EngagementContext) : Provider<EngagementContextFactory> {
+    override fun get(): EngagementContextFactory {
+        return object : EngagementContextFactory {
             override fun engagementContext(): EngagementContext {
                 return getEngagementContext()
             }

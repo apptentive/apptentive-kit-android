@@ -10,13 +10,12 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionLaunch
  * Represents any [InteractionLauncher] which requires Android [Context] object and has user interface.
  * It would automatically engage "launch" event when the interaction is launched.
  */
-abstract class AndroidViewInteractionLauncher<in T : Interaction> :
-    AndroidInteractionLauncher<T>() {
-    override fun launchInteraction(context: EngagementContext, interaction: T) {
+abstract class AndroidViewInteractionLauncher<in T : Interaction> : InteractionLauncher<T> {
+    override fun launchInteraction(engagementContext: EngagementContext, interaction: T) {
         // every interaction which has a user interface must engage internal "launch" event before showing UI
-        context.engage(Event.internal(InternalEvent.EVENT_LAUNCH.labelName, interaction.type), interaction.id)
-
-        // create and display UI
-        super.launchInteraction(context, interaction)
+        engagementContext.engage(
+            Event.internal(InternalEvent.EVENT_LAUNCH.labelName, interaction.type),
+            interaction.id
+        )
     }
 }

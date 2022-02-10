@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.appstorerating
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.annotation.MainThread
@@ -7,20 +8,21 @@ import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.INTERACTIONS
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.Event
-import apptentive.com.android.feedback.platform.AndroidEngagementContext
+import apptentive.com.android.feedback.platform.tryStartActivity
 import apptentive.com.android.util.Log
 
 
 internal object StoreNavigator {
     @MainThread
     fun navigate(
-        context: AndroidEngagementContext,
+        engagementContext: EngagementContext,
+        activityContext: Context,
         interaction: AppStoreRatingInteraction
     ) = navigate(
-        context = context,
+        context = engagementContext,
         interaction = interaction
     ) {
-        context.tryStartActivity(
+        activityContext.tryStartActivity(
             appRatingIntent(
                 interaction = interaction
             )
