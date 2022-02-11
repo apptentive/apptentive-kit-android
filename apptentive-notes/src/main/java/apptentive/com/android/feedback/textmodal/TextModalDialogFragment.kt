@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.textmodal
 
 import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +20,7 @@ internal class TextModalDialogFragment : DialogFragment() {
     private val viewModel by viewModels<TextModalViewModel>()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return MaterialAlertDialogBuilder(requireContext()).apply {
+        val dialog = MaterialAlertDialogBuilder(requireContext()).apply {
             val inflater = LayoutInflater.from(context)
             val contentView = inflater.inflate(R.layout.apptentive_note, null)
             setView(contentView)
@@ -49,10 +50,15 @@ internal class TextModalDialogFragment : DialogFragment() {
                     action.invoke()
                 }
             }
-
-            setOnCancelListener {
-                viewModel.onCancel()
-            }
         }.create()
+        return dialog.apply {
+            setCanceledOnTouchOutside(false)
+        }
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        viewModel.onCancel()
+        super.onCancel(dialog)
     }
 }
+

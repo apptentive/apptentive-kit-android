@@ -11,7 +11,7 @@ internal class EnjoymentDialogFragment : DialogFragment() {
     private val viewModel by viewModels<EnjoymentDialogViewModel>()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return MaterialAlertDialogBuilder(requireContext()).apply {
+        val dialog = MaterialAlertDialogBuilder(requireContext()).apply {
             setMessage(viewModel.title)
 
             setPositiveButton(viewModel.yesText) { _, _ ->
@@ -21,9 +21,15 @@ internal class EnjoymentDialogFragment : DialogFragment() {
             setNegativeButton(viewModel.noText) { _, _ ->
                 viewModel.onNoButton()
             }
-
-            setOnCancelListener { viewModel.onCancel() }
         }.create()
+        return dialog.apply {
+            setCanceledOnTouchOutside(false)
+        }
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        viewModel.onCancel()
+        super.onCancel(dialog)
     }
 
     override fun onDismiss(dialog: DialogInterface) {

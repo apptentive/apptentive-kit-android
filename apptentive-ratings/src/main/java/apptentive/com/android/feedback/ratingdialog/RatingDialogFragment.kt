@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.ratingdialog
 
 import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.TextView
@@ -15,7 +16,7 @@ internal class RatingDialogFragment : DialogFragment() {
     private val viewModel by viewModels<RatingDialogViewModel>()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return MaterialAlertDialogBuilder(requireContext()).apply {
+        val dialog = MaterialAlertDialogBuilder(requireContext()).apply {
             val inflater = LayoutInflater.from(context)
             val contentView = inflater.inflate(R.layout.apptentive_rating_dialog, null)
             setView(contentView)
@@ -46,10 +47,14 @@ internal class RatingDialogFragment : DialogFragment() {
                 viewModel.onDeclineButton()
                 dismiss()
             }
-
-            setOnCancelListener {
-                viewModel.onCancel()
-            }
         }.create()
+        return dialog.apply {
+            setCanceledOnTouchOutside(false)
+        }
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        viewModel.onCancel()
+        super.onCancel(dialog)
     }
 }
