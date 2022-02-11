@@ -19,8 +19,6 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Apptentive.registerApptentiveActivityInfoCallback(this)
-
         val prefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
 
         val isNightMode = prefs.getBoolean(EXTRA_NIGHT_MODE, false)
@@ -92,7 +90,17 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        Apptentive.registerApptentiveActivityInfoCallback(this)
+    }
+
     override fun getApptentiveActivityInfo(): Activity {
         return this
+    }
+
+    override fun onPause() {
+        Apptentive.unregisterApptentiveActivityInfoCallback()
+        super.onPause()
     }
 }

@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.engagement
 
+import android.app.Activity
 import android.content.Context
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
@@ -52,7 +53,7 @@ open class EngagementContext(
     @VisibleForTesting
     fun getPayloadSender() = payloadSender
 
-    fun getFragmentManager(context: Context? = Apptentive.getApptentiveActivityCallback()?.getApptentiveActivityInfo()): FragmentManager {
+    fun getFragmentManager(context: Context? = getActivityInfo()): FragmentManager {
         return when (context) {
             is AppCompatActivity, is FragmentActivity -> (context as FragmentActivity).supportFragmentManager
             is ContextThemeWrapper -> getFragmentManager(context.baseContext)
@@ -62,11 +63,14 @@ open class EngagementContext(
     }
 
     fun getActivityContext(): Context {
-        return requireNotNull(Apptentive.getApptentiveActivityCallback()) {
+        return requireNotNull(getActivityInfo()) {
             "Apptentive Activity Callback not registered. " +
                 "Extend ApptentiveActivity.kt, implement the getActivity() function, " +
                 "and call registerApptentiveActivityCallback(this) " +
                 "in your Activity's onCreate function."
-        }.getApptentiveActivityInfo()
+        }
     }
+
+    private fun getActivityInfo(): Activity? =
+        Apptentive.getApptentiveActivityCallback()?.getApptentiveActivityInfo()
 }

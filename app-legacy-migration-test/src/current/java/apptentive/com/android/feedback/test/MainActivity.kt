@@ -13,12 +13,16 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        Apptentive.registerApptentiveActivityInfoCallback(this)
         findViewById<View>(R.id.login).setOnClickListener { notImplemented("Login not supported yet") }
         findViewById<View>(R.id.engage).setOnClickListener {
             engage("love_dialog_test")
         }
         findViewById<View>(R.id.message_center).setOnClickListener { notImplemented("Message center supported yet") }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Apptentive.registerApptentiveActivityInfoCallback(this)
     }
 
     private fun notImplemented(message: String) {
@@ -27,5 +31,10 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
 
     override fun getApptentiveActivityInfo(): Activity {
         return this
+    }
+
+    override fun onPause() {
+        Apptentive.unregisterApptentiveActivityInfoCallback()
+        super.onPause()
     }
 }

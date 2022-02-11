@@ -27,8 +27,6 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        Apptentive.registerApptentiveActivityInfoCallback(this)
-
         val path = intent.getStringExtra(EXTRA_INTERACTIONS_PATH) ?: "interactions/notes"
         if (path != null) {
             val containerView = findViewById<ViewGroup>(R.id.interaction_buttons_container)
@@ -37,6 +35,11 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
                 containerView.addView(button)
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Apptentive.registerApptentiveActivityInfoCallback(this)
     }
 
     private fun createInteractionButton(filename: String, title: String) = Button(this).apply {
@@ -107,5 +110,10 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
 
     override fun getApptentiveActivityInfo(): Activity {
         return this
+    }
+
+    override fun onPause() {
+        Apptentive.unregisterApptentiveActivityInfoCallback()
+        super.onPause()
     }
 }

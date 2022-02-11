@@ -52,8 +52,24 @@ object Apptentive {
 
     //region Initialization
 
+    /**
+     * collects the [ApptentiveActivityInfo] reference which can be used to retrieve current activity context.
+     * The retrieved context is used in the apptentive interactions & it's UI elements.
+     *
+     * @param apptentiveActivityInfo
+     */
+
     fun registerApptentiveActivityInfoCallback(apptentiveActivityInfo: ApptentiveActivityInfo) {
+        Log.d(FEEDBACK, "Activity info callback is registered")
         this.activityInfoCallback = apptentiveActivityInfo
+    }
+
+    /**
+     * clears the [ApptentiveActivityInfo] reference
+     */
+    fun unregisterApptentiveActivityInfoCallback() {
+        Log.d(FEEDBACK, "Activity info callback is unregistered")
+        this.activityInfoCallback = null
     }
 
     fun getApptentiveActivityCallback() = activityInfoCallback
