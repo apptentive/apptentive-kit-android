@@ -41,7 +41,7 @@ internal class TextModalDialogFragment : DialogFragment() {
                 val button = inflater.inflate(R.layout.apptentive_note_action, null) as TextView
                 button.text = action.title
                 button.textAlignment =
-                    if (viewModel.actions.size > 2) TEXT_ALIGNMENT_VIEW_END
+                    if (viewModel.actions.size > 1) TEXT_ALIGNMENT_VIEW_END
                     else TEXT_ALIGNMENT_CENTER
 
                 viewGroup.addView(button)

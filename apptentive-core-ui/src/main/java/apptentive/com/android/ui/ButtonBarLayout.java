@@ -1,7 +1,5 @@
 package apptentive.com.android.ui;
 
-import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX;
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
@@ -11,7 +9,6 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RestrictTo;
 import androidx.appcompat.R;
 import androidx.core.view.ViewCompat;
 
@@ -27,7 +24,7 @@ public class ButtonBarLayout extends LinearLayout {
     private static final int PEEK_BUTTON_DP = 16;
 
     /** Amount of buttons to show before stacked + 1 (first child is always a Space view) */
-    private static final int STACK_AFTER_COUNT = 3;
+    private static final int STACK_AFTER_COUNT = 2;
 
     /** Whether the current configuration allows stacking. */
     private boolean mAllowStacking;
