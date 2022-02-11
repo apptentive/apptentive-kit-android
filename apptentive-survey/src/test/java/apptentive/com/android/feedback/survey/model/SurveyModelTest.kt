@@ -199,6 +199,7 @@ class SurveyModelTest : TestCase() {
     //endregion
 
     private fun createSurveyModel(vararg questions: SurveyQuestion<*>) = SurveyModel(
+        interactionId = "interaction_id",
         questions = questions.toList(),
         name = "name",
         description = "description",

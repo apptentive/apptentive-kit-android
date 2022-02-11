@@ -302,7 +302,7 @@ class SurveyViewModelTest : TestCase() {
         viewModel.exit(showConfirmation = false)
 
         // exit without confirmation dialog
-        assertResults("exit", "close")
+        assertResults("exit", "cancel_partial")
     }
 
     @Test
@@ -367,6 +367,7 @@ class SurveyViewModelTest : TestCase() {
         successMessage: String? = "successMessage"
     ): SurveyViewModel {
         val model = SurveyModel(
+            interactionId = "interaction_id",
             questions = questions,
             name = name,
             description = description,
@@ -389,6 +390,9 @@ class SurveyViewModelTest : TestCase() {
             },
             onCancel = {
                 addResult("cancel")
+            },
+            onCancelPartial = {
+                addResult("cancel_partial")
             },
             onClose = {
                 addResult("close")

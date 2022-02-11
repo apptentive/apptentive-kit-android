@@ -5,6 +5,7 @@ import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.Observable
 
 class SurveyModel(
+    val interactionId: String,
     questions: List<SurveyQuestion<*>>,
     val name: String?,
     val description: String?,

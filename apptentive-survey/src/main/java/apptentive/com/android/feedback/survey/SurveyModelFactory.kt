@@ -21,6 +21,7 @@ private class DefaultSurveyModelFactory(val engagementContext: EngagementContext
                                         val interaction: SurveyInteraction) : SurveyModelFactory {
     override fun getSurveyModel(): SurveyModel {
         return SurveyModel(
+            interactionId = interaction.id,
             questions = interaction.questions.map { config ->
                 DefaultSurveyQuestionConverter().convert(
                     config = config,

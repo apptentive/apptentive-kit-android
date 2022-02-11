@@ -32,7 +32,8 @@ import apptentive.com.android.feedback.survey.model.update
  *
  * @property onSubmit [SurveySubmitCallback] callback to be executed when survey is submitted
  * @property onCancel [SurveyCancelCallback] callback to be executed when survey is cancelled
- * @property onClose [SurveyCancelPartialCallback] callback to be executed when survey is closed
+ * @property onCancelPartial [SurveyCancelPartialCallback] callback to be executed when survey is cancelled when partially completed
+ * @property onClose [SurveyCloseCallback] callback to be executed when survey is closed
  * @property onBackToSurvey [SurveyContinuePartialCallback] callback to be executed
  * when survey is resumed through after an attempt to close
  */
@@ -42,7 +43,8 @@ class SurveyViewModel(
     private val executors: Executors,
     private val onSubmit: SurveySubmitCallback,
     private val onCancel: SurveyCancelCallback,
-    private val onClose: SurveyCancelPartialCallback,
+    private val onCancelPartial: SurveyCancelPartialCallback,
+    private val onClose: SurveyCloseCallback,
     private val onBackToSurvey: SurveyContinuePartialCallback,
 ) : ViewModel() {
     /** LiveData which transforms a list of {SurveyQuestion} into a list of {SurveyQuestionListItem} */
@@ -144,10 +146,7 @@ class SurveyViewModel(
                     )
                 }
 
-                // tell the activity to finish
-                executors.main.execute {
-                    exit(showConfirmation = false)
-                }
+                exit(showConfirmation = false, successfulSubmit = true)
             } else {
                 // trigger error message
                 if (!model.validationError.isNullOrBlank()) {
@@ -174,23 +173,25 @@ class SurveyViewModel(
     }
 
     @MainThread
-    fun exit(showConfirmation: Boolean) {
+    fun exit(showConfirmation: Boolean, successfulSubmit: Boolean = false) {
         if (showConfirmation) {
-            //When the consumer uses the X button or the back button,
-            // try to show the confirmation dialog if user interacted with the survey
+            // When the consumer uses the X button or the back button,
+            //  try to show the confirmation dialog if user interacted with the survey
             if (submitAttempted || anyQuestionWasAnswered) {
                 //user interacted
                 showConfirmationEvent.postValue(true)
             } else {
-                // we don't need to show any confirmation as the customer
-                // didn't interact
+                // we don't need to show any confirmation as the customer didn't interact
                 exitEvent.postValue(true)
                 executors.state.execute { onCancel.invoke() }
             }
         } else {
             // we are already in the confirmation dialog, so no need to show confirmation again
             exitEvent.postValue(true)
-            executors.state.execute { onClose.invoke() }
+            executors.state.execute {
+                if (successfulSubmit) onClose.invoke()
+                else onCancelPartial.invoke()
+            }
         }
     }
 
@@ -276,4 +277,5 @@ data class SurveyCancelConfirmationDisplay(
 typealias SurveySubmitCallback = (Map<String, SurveyQuestionAnswer>) -> Unit
 internal typealias SurveyCancelCallback = () -> Unit
 internal typealias SurveyCancelPartialCallback = () -> Unit
+internal typealias SurveyCloseCallback = () -> Unit
 internal typealias SurveyContinuePartialCallback = () -> Unit

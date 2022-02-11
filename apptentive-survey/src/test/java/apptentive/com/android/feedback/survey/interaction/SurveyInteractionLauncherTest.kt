@@ -66,7 +66,6 @@ class SurveyInteractionLauncherTest : TestCase() {
             )
         )
         val viewModel = createSurveyViewModel(
-            interactionId = "interaction_id",
             context = context,
             surveyModel = model,
         )
@@ -85,9 +84,9 @@ class SurveyInteractionLauncherTest : TestCase() {
                 interactionId = "interaction_id"
             ),
 
-            // "cancel partial" event
+            // "close" event
             EngageArgs(
-                event = Event.internal(name = "cancel_partial", interaction = "Survey"),
+                event = Event.internal(name = "close", interaction = "Survey"),
                 interactionId = "interaction_id"
             )
         )
@@ -108,6 +107,7 @@ class SurveyInteractionLauncherTest : TestCase() {
 
     private fun createSurveyModel(questions: List<SurveyQuestion<*>>? = null): SurveyModel {
         return SurveyModel(
+            interactionId = "interaction_id",
             questions = questions ?: emptyList(),
             name = "name",
             description = "description",
