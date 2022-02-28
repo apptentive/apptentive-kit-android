@@ -35,6 +35,7 @@ class LegacyConversationConversionTest {
         val person = createPerson(id = 2)
         val sdk = createSDK()
         val appRelease = createAppRelease()
+        val randomSampling = RandomSampling()
         val engagementData = createEngagementData()
 
         return Conversation(
@@ -45,6 +46,7 @@ class LegacyConversationConversionTest {
             person,
             sdk,
             appRelease,
+            randomSampling,
             engagementData
         )
     }

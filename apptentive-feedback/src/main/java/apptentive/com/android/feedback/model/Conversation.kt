@@ -6,6 +6,7 @@ import apptentive.com.android.feedback.CONVERSATION
 import apptentive.com.android.feedback.DEVICE
 import apptentive.com.android.feedback.ENGAGEMENT_DATA
 import apptentive.com.android.feedback.PERSON
+import apptentive.com.android.feedback.RANDOM_SAMPLING
 import apptentive.com.android.feedback.SDK
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.serialization.json.JsonConverter.toJsonObject
@@ -20,6 +21,7 @@ data class Conversation(
     val person: Person,
     val sdk: SDK,
     val appRelease: AppRelease,
+    val randomSampling: RandomSampling = RandomSampling(),
     val engagementData: EngagementData = EngagementData(),
     val engagementManifest: EngagementManifest = EngagementManifest()
 ) {
@@ -35,6 +37,7 @@ data class Conversation(
         Log.v(PERSON, person.toString())
         Log.v(SDK, sdk.toString())
         Log.v(APP_RELEASE, appRelease.toString())
+        Log.v(RANDOM_SAMPLING, randomSampling.toString())
         Log.v(ENGAGEMENT_DATA, engagementData.toString())
         Log.v(CONVERSATION, "\n$dashLine CONVERSATION STATE CHANGE END $dashLine")
     }

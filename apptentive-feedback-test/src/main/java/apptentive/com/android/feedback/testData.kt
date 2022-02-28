@@ -17,6 +17,7 @@ import apptentive.com.android.feedback.model.IntegrationConfig
 import apptentive.com.android.feedback.model.IntegrationConfigItem
 import apptentive.com.android.feedback.model.InvocationData
 import apptentive.com.android.feedback.model.Person
+import apptentive.com.android.feedback.model.RandomSampling
 import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.model.VersionHistory
 import apptentive.com.android.feedback.model.VersionHistoryItem
@@ -97,6 +98,14 @@ val mockAppRelease = AppRelease(
     inheritStyle = true,
     overrideStyle = false,
     appStore = "google"
+)
+
+val mockRandomSampling = RandomSampling(
+    percents = mutableMapOf(
+        "id1" to 0.1,
+        "id2" to 99.9,
+        "id3" to 50.0
+    )
 )
 
 val mockPerson = Person(
@@ -301,6 +310,7 @@ fun createMockConversation(
     person: Person? = null,
     sdk: SDK? = null,
     appRelease: AppRelease? = null,
+    randomSampling: RandomSampling? = null,
     engagementData: EngagementData? = null,
     engagementManifest: EngagementManifest? = null
 ) = Conversation(
@@ -311,6 +321,7 @@ fun createMockConversation(
     person = person ?: mockPerson,
     sdk = sdk ?: mockSdk,
     appRelease = appRelease ?: mockAppRelease,
+    randomSampling = randomSampling ?: mockRandomSampling,
     engagementData = engagementData ?: mockEngagementData,
     engagementManifest = engagementManifest ?: mockEngagementManifest
 )

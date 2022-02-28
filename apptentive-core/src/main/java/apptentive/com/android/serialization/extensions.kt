@@ -115,6 +115,12 @@ object LongSerializer : TypeSerializer<Long> {
     override fun decode(decoder: Decoder) = decoder.decodeLong()
 }
 
+object DoubleSerializer : TypeSerializer<Double> {
+    override fun encode(encoder: Encoder, value: Double) = encoder.encodeDouble(value)
+
+    override fun decode(decoder: Decoder) = decoder.decodeDouble()
+}
+
 fun <Value> Encoder.encodeSet(obj: Set<Value>, valueEncoder: TypeEncoder<Value>) {
     encodeInt(obj.size)
     for (value in obj) {
