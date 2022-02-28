@@ -31,6 +31,7 @@ import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionDataConverter
 import apptentive.com.android.feedback.engagement.interactions.InteractionLauncher
 import apptentive.com.android.feedback.engagement.interactions.InteractionModule
+import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.feedback.lifecycle.ApptentiveLifecycleObserver
 import apptentive.com.android.feedback.model.Conversation
@@ -121,7 +122,8 @@ internal class ApptentiveDefaultClient(
                 interactionConverter = interactionConverter,
                 interactionEngagement = createInteractionEngagement(),
                 recordEvent = ::recordEvent,
-                recordInteraction = ::recordInteraction
+                recordInteraction = ::recordInteraction,
+                recordInteractionResponses = ::recordInteractionResponses
             )
 
             // once we have received conversationId and conversationToken we can setup payload sender service
@@ -333,6 +335,11 @@ internal class ApptentiveDefaultClient(
     @WorkerThread
     private fun recordInteraction(interaction: Interaction) {
         conversationManager.recordInteraction(interaction.id)
+    }
+
+    @WorkerThread
+    private fun recordInteractionResponses(interactionResponses: Map<String, Set<InteractionResponse>>) {
+        conversationManager.recordInteractionResponses(interactionResponses)
     }
 
     @WorkerThread

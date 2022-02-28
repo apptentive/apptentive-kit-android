@@ -4,6 +4,7 @@ import apptentive.com.android.TestCase
 import apptentive.com.android.feedback.createMockConversation
 import apptentive.com.android.feedback.model.EngagementManifest
 import com.google.common.truth.Truth.assertThat
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Rule
 import org.junit.Test
@@ -39,7 +40,8 @@ class DefaultConversationSerializerTest : TestCase() {
         serializer.saveConversation(conversation)
 
         val actual = serializer.loadConversation()
-        assertThat(conversation).isEqualTo(actual)
+
+        assertEquals(conversation, actual)
     }
 
     @Test

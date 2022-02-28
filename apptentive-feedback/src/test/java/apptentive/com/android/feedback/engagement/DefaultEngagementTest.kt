@@ -3,6 +3,7 @@ package apptentive.com.android.feedback.engagement
 import apptentive.com.android.TestCase
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.interactions.Interaction
+import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
 import apptentive.com.android.feedback.engagement.interactions.MockInteractionDataConverter
 import apptentive.com.android.feedback.engagement.interactions.mockEvent
 import apptentive.com.android.feedback.engagement.interactions.mockInteraction
@@ -23,7 +24,8 @@ class DefaultEngagementTest : TestCase() {
             interactionConverter = MockInteractionDataConverter(),
             interactionEngagement = interactionEngagement,
             recordEvent = ::recordEvent,
-            recordInteraction = ::recordInteraction
+            recordInteraction = ::recordInteraction,
+            recordInteractionResponses = ::recordInteractionResponses
         )
     }
 
@@ -62,5 +64,9 @@ class DefaultEngagementTest : TestCase() {
 
     private fun recordInteraction(interaction: Interaction) {
         addResult("Interaction: ${interaction.id}")
+    }
+
+    private fun recordInteractionResponses(interactionResponses: Map<String, Set<InteractionResponse>>) {
+        addResult("Interaction Responses: $interactionResponses")
     }
 }

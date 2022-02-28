@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentManager
 import apptentive.com.android.concurrent.Executors
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.engagement.criteria.InvocationConverter
+import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
 import apptentive.com.android.feedback.model.InvocationData
 import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.feedback.model.payloads.Payload
@@ -30,14 +31,16 @@ open class EngagementContext(
         interactionId: String? = null,
         data: Map<String, Any?>? = null,
         customData: Map<String, Any?>? = null,
-        extendedData: List<ExtendedData>? = null
+        extendedData: List<ExtendedData>? = null,
+        interactionResponses: Map<String, Set<InteractionResponse>>? = null
     ) = engagement.engage(
         context = this,
         event = event,
         interactionId = interactionId,
         data = data,
         customData = customData,
-        extendedData = extendedData
+        extendedData = extendedData,
+        interactionResponses = interactionResponses
     )
 
     fun engage(invocations: List<InvocationData>) = engagement.engage(

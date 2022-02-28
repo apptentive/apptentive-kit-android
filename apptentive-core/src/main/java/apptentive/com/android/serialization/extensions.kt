@@ -115,6 +115,27 @@ object LongSerializer : TypeSerializer<Long> {
     override fun decode(decoder: Decoder) = decoder.decodeLong()
 }
 
+fun <Value> Encoder.encodeSet(obj: Set<Value>, valueEncoder: TypeEncoder<Value>) {
+    encodeInt(obj.size)
+    for (value in obj) {
+        valueEncoder.encode(this, value)
+    }
+}
+
+fun <Value> Decoder.decodeSet(valueDecoder: TypeDecoder<Value>): MutableSet<Value> {
+    val size = decodeInt()
+    if (size == 0) {
+        return mutableSetOf()
+    }
+
+    val set = mutableSetOf<Value>()
+    for (i in 0 until size) {
+        val value = valueDecoder.decode(this)
+        set.add(value)
+    }
+    return set
+}
+
 fun Encoder.encodeMap(obj: Map<String, Any?>) {
     encodeMap(
         obj = obj,

@@ -3,6 +3,8 @@ package apptentive.com.android.feedback
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
+import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
+import apptentive.com.android.feedback.engagement.interactions.InteractionResponseData
 import apptentive.com.android.feedback.model.AppRelease
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.CustomData
@@ -168,6 +170,76 @@ val mockEngagementData = EngagementData(
                 lastInvoked = DateTime(400.0)
             )
         )
+    ),
+    interactionResponses = mutableMapOf(
+        "id1" to InteractionResponseData(
+            responses = mutableSetOf(InteractionResponse.IdResponse("aaa111")),
+            record = EngagementRecord(
+                totalInvokes = 1,
+                versionCodeLookup = mutableMapOf(
+                    111L to 1L
+                ),
+                versionNameLookup = mutableMapOf(
+                    "1.1.1" to 1L
+                ),
+                lastInvoked = DateTime(100.0)
+            )
+        ),
+        "id2" to InteractionResponseData(
+            responses = mutableSetOf(InteractionResponse.LongResponse(222)),
+            record = EngagementRecord(
+                totalInvokes = 2,
+                versionCodeLookup = mutableMapOf(
+                    222L to 2L
+                ),
+                versionNameLookup = mutableMapOf(
+                    "2.2.2" to 2L
+                ),
+                lastInvoked = DateTime(200.0)
+            )
+        ),
+        "id3" to InteractionResponseData(
+            responses = mutableSetOf(InteractionResponse.StringResponse("333")),
+            record = EngagementRecord(
+                totalInvokes = 3,
+                versionCodeLookup = mutableMapOf(
+                    333L to 3L
+                ),
+                versionNameLookup = mutableMapOf(
+                    "3.3.3" to 3L
+                ),
+                lastInvoked = DateTime(300.0)
+            )
+        ),
+        "id4" to InteractionResponseData(
+            responses = mutableSetOf(InteractionResponse.OtherResponse("444", "ddd")),
+            record = EngagementRecord(
+                totalInvokes = 3,
+                versionCodeLookup = mutableMapOf(
+                    444L to 4L
+                ),
+                versionNameLookup = mutableMapOf(
+                    "4.4.4" to 4L
+                ),
+                lastInvoked = DateTime(400.0)
+            )
+        ),
+        "id5" to InteractionResponseData(
+            responses = mutableSetOf(
+                InteractionResponse.StringResponse("44444"),
+                InteractionResponse.OtherResponse("fffff", "66666")
+            ),
+            record = EngagementRecord(
+                totalInvokes = 4,
+                versionCodeLookup = mutableMapOf(
+                    444L to 4L
+                ),
+                versionNameLookup = mutableMapOf(
+                    "4.4.4" to 4L
+                ),
+                lastInvoked = DateTime(400.0)
+            )
+        ),
     ),
     versionHistory = VersionHistory(
         items = listOf(

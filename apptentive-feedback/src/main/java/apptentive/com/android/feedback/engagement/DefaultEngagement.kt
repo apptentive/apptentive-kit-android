@@ -6,6 +6,7 @@ import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.criteria.Invocation
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionDataConverter
+import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
 import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.util.Log
 
@@ -19,13 +20,16 @@ internal typealias RecordEventCallback = (
 
 internal typealias RecordInteractionCallback = (interaction: Interaction) -> Unit
 
+internal typealias RecordInteractionResponsesCallback = (Map<String, Set<InteractionResponse>>) -> Unit
+
 @Suppress("FoldInitializerAndIfToElvis")
 internal data class DefaultEngagement(
     private val interactionDataProvider: InteractionDataProvider,
     private val interactionConverter: InteractionDataConverter,
     private val interactionEngagement: InteractionEngagement,
     private val recordEvent: RecordEventCallback,
-    private val recordInteraction: RecordInteractionCallback
+    private val recordInteraction: RecordInteractionCallback,
+    private val recordInteractionResponses: RecordInteractionResponsesCallback
 ) : Engagement {
     @WorkerThread
     override fun engage(
@@ -34,11 +38,14 @@ internal data class DefaultEngagement(
         interactionId: String?,
         data: Map<String, Any?>?,
         customData: Map<String, Any?>?,
-        extendedData: List<ExtendedData>?
+        extendedData: List<ExtendedData>?,
+        interactionResponses: Map<String, Set<InteractionResponse>>?
     ): EngagementResult {
         Log.i(EVENT, "Engaged event: $event")
         Log.d(EVENT, "Engaged event interaction ID: $interactionId")
         recordEvent(event, interactionId, data, customData, extendedData)
+
+        if (interactionResponses != null) recordInteractionResponses(interactionResponses)
 
         val interactionData = interactionDataProvider.getInteractionData(event)
         if (interactionData == null) {

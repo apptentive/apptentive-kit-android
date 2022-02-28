@@ -11,6 +11,7 @@ import apptentive.com.android.feedback.ENGAGEMENT_MANIFEST
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
+import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
 import apptentive.com.android.feedback.model.AppRelease
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.Device
@@ -262,6 +263,23 @@ internal class ConversationManager(
                 versionCode = conversation.appRelease.versionCode,
                 lastInvoked = DateTime.now()
             )
+        )
+    }
+
+    fun recordInteractionResponses(interactionResponses: Map<String, Set<InteractionResponse>>) {
+        val conversation = activeConversationSubject.value
+        activeConversationSubject.value = conversation.copy(
+            engagementData = conversation.engagementData.apply {
+                interactionResponses.forEach { responses ->
+                    addInvoke(
+                        interactionId = responses.key,
+                        responses = responses.value,
+                        versionName = conversation.appRelease.versionName,
+                        versionCode = conversation.appRelease.versionCode,
+                        lastInvoked = DateTime.now()
+                    )
+                }
+            }
         )
     }
 

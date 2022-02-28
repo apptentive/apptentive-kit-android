@@ -4,6 +4,8 @@ import apptentive.com.android.concurrent.Executors
 import apptentive.com.android.concurrent.ImmediateExecutor
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.criteria.Invocation
+import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
+import apptentive.com.android.feedback.engagement.interactions.InteractionResponseData
 import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.feedback.model.payloads.Payload
 import apptentive.com.android.feedback.payload.MockPayloadSender
@@ -34,7 +36,8 @@ class MockEngagementContext(
             interactionId: String?,
             data: Map<String, Any?>?,
             customData: Map<String, Any?>?,
-            extendedData: List<ExtendedData>?
+            extendedData: List<ExtendedData>?,
+            interactionResponses: Map<String, Set<InteractionResponse>>?
         ): EngagementResult {
             return onEngage?.invoke(
                 EngageArgs(

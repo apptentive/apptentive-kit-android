@@ -18,6 +18,7 @@ import apptentive.com.android.feedback.engagement.criteria.Invocation
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
 import apptentive.com.android.feedback.engagement.interactions.InteractionModule
+import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
 import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.feedback.model.payloads.Payload
 import apptentive.com.android.feedback.payload.PayloadSender
@@ -82,7 +83,8 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
                     interactionId: String?,
                     data: Map<String, Any?>?,
                     customData: Map<String, Any?>?,
-                    extendedData: List<ExtendedData>?
+                    extendedData: List<ExtendedData>?,
+                    interactionResponses: Map<String, Set<InteractionResponse>>?
                 ): EngagementResult {
                     return EngagementResult.InteractionNotShown("No runnable interactions")
                 }

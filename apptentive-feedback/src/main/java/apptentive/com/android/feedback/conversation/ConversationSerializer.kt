@@ -7,6 +7,8 @@ import apptentive.com.android.feedback.conversation.Serializers.conversationSeri
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
+import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
+import apptentive.com.android.feedback.engagement.interactions.InteractionResponseData
 import apptentive.com.android.feedback.model.AppRelease
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.CustomData
@@ -33,9 +35,11 @@ import apptentive.com.android.serialization.TypeSerializer
 import apptentive.com.android.serialization.decodeList
 import apptentive.com.android.serialization.decodeMap
 import apptentive.com.android.serialization.decodeNullableString
+import apptentive.com.android.serialization.decodeSet
 import apptentive.com.android.serialization.encodeList
 import apptentive.com.android.serialization.encodeMap
 import apptentive.com.android.serialization.encodeNullableString
+import apptentive.com.android.serialization.encodeSet
 import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.util.Log
 import java.io.DataInputStream
@@ -384,11 +388,83 @@ internal object Serializers {
         }
     }
 
+    val interactionResponseDataSerializer: TypeSerializer<InteractionResponseData> by lazy {
+        object : TypeSerializer<InteractionResponseData> {
+            override fun encode(encoder: Encoder, value: InteractionResponseData) {
+                encoder.encodeSet(
+                    obj = value.responses,
+                    valueEncoder = interactionResponseSerializer
+                )
+                engagementRecordSerializer.encode(encoder, value.record)
+            }
+
+            override fun decode(decoder: Decoder): InteractionResponseData {
+                return InteractionResponseData(
+                    responses = decoder.decodeSet(interactionResponseSerializer),
+                    record = engagementRecordSerializer.decode(decoder)
+                )
+            }
+        }
+    }
+
+    val interactionResponseSerializer: TypeSerializer<InteractionResponse> by lazy {
+        object : TypeSerializer<InteractionResponse> {
+            override fun encode(encoder: Encoder, value: InteractionResponse) {
+                val responseName = value::class.java.name
+                encoder.encodeString(responseName)
+
+                when (responseName) {
+                    InteractionResponse.IdResponse::class.java.name -> {
+                        value as InteractionResponse.IdResponse
+                        encoder.encodeString(value.id)
+                    }
+                    InteractionResponse.LongResponse::class.java.name -> {
+                        value as InteractionResponse.LongResponse
+                        encoder.encodeLong(value.response)
+                    }
+                    InteractionResponse.StringResponse::class.java.name -> {
+                        value as InteractionResponse.StringResponse
+                        encoder.encodeString(value.response)
+                    }
+                    InteractionResponse.OtherResponse::class.java.name -> {
+                        value as InteractionResponse.OtherResponse
+                        encoder.encodeNullableString(value.id)
+                        encoder.encodeNullableString(value.response)
+                    }
+                }
+            }
+
+            override fun decode(decoder: Decoder): InteractionResponse {
+                val responseName = decoder.decodeString()
+
+                return when (responseName) {
+                    InteractionResponse.IdResponse::class.java.name -> {
+                        InteractionResponse.IdResponse(decoder.decodeString())
+                    }
+                    InteractionResponse.LongResponse::class.java.name -> {
+                        InteractionResponse.LongResponse(decoder.decodeLong())
+                    }
+                    InteractionResponse.StringResponse::class.java.name -> {
+                        InteractionResponse.StringResponse(decoder.decodeString())
+                    }
+                    InteractionResponse.OtherResponse::class.java.name -> {
+                        InteractionResponse.OtherResponse(
+                            id = decoder.decodeNullableString(),
+                            response = decoder.decodeNullableString()
+                        )
+                    }
+                    else -> throw java.lang.Exception("Unknown InteractionResponse type: $responseName")
+                }
+            }
+        }
+    }
+
     val engagementDataSerializer: TypeSerializer<EngagementData> by lazy {
         object : TypeSerializer<EngagementData> {
             override fun encode(encoder: Encoder, value: EngagementData) {
                 encodeEventData(encoder, value.events)
                 encodeInteractionData(encoder, value.interactions)
+                encodeInteractionResponsesData(encoder, value.interactionResponses)
                 encodeVersionHistory(encoder, value.versionHistory)
             }
 
@@ -405,6 +481,17 @@ internal object Serializers {
                     obj = interactions,
                     keyEncoder = interactionIdSerializer
                 )
+
+            private fun encodeInteractionResponsesData(
+                encoder: Encoder,
+                interactionResponses: Map<InteractionId, InteractionResponseData>
+            ) {
+                encoder.encodeMap(
+                    obj = interactionResponses,
+                    keyEncoder = interactionIdSerializer,
+                    valueEncoder = interactionResponseDataSerializer
+                )
+            }
 
             private fun <Key : Any> encodeEngagementRecords(
                 encoder: Encoder,
@@ -429,6 +516,7 @@ internal object Serializers {
                 return EngagementData(
                     events = decodeEventRecords(decoder),
                     interactions = decodeInteractionRecords(decoder),
+                    interactionResponses = decodeInteractionResponsesRecords(decoder),
                     versionHistory = decodeVersionHistory(decoder)
                 )
             }
@@ -439,6 +527,13 @@ internal object Serializers {
 
             private fun decodeInteractionRecords(decoder: Decoder): EngagementRecords<InteractionId> {
                 return decodeEngagementRecords(decoder, keyDecoder = interactionIdSerializer)
+            }
+
+            private fun decodeInteractionResponsesRecords(decoder: Decoder): MutableMap<InteractionId, InteractionResponseData> {
+                return decoder.decodeMap(
+                    keyDecoder = interactionIdSerializer,
+                    valueDecoder = interactionResponseDataSerializer
+                )
             }
 
             private fun <Key : Any> decodeEngagementRecords(
