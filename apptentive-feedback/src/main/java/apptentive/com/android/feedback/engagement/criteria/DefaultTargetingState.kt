@@ -92,7 +92,7 @@ internal data class DefaultTargetingState(
             is device.locale_language_code -> device.localeLanguageCode
             is device.locale_raw -> device.localeRaw
             is device.os_api_level -> device.osApiLevel
-            is device.utc_offset -> device.utcOffset
+            is device.utc_offset -> device.utcOffset.toLong()
             is device.custom_data -> device.customData[field.key]
 
             else -> null

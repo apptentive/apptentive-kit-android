@@ -1,5 +1,7 @@
 package apptentive.com.android.feedback.engagement.criteria
 
+import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
+
 interface ConditionalOperator {
     fun apply(first: Any?, second: Any?): Boolean
     fun description(description: String, first: Any?, second: Any?): String
@@ -61,6 +63,19 @@ interface ConditionalOperator {
                     if (first == null || second == null) {
                         return false
                     }
+                    if (first is Set<*>) {
+                        return first.none {
+                            when {
+                                it is InteractionResponse.IdResponse && second is String -> it.id.equals(second, ignoreCase = true)
+                                it is InteractionResponse.LongResponse && second is Long -> compare(it.response, second) == 0
+                                it is InteractionResponse.StringResponse && second is String -> it.response.equals(second, ignoreCase = true)
+                                it is InteractionResponse.OtherResponse && second is String -> {
+                                    it.id.equals(second, ignoreCase = true) || it.response.equals(second, ignoreCase = true)
+                                }
+                                else -> false
+                            }
+                        }
+                    }
                     if (first.javaClass != second.javaClass) {
                         return false
                     }
@@ -85,6 +100,19 @@ interface ConditionalOperator {
                     if (first == null || second == null) {
                         return false
                     }
+                    if (first is Set<*>) {
+                        return first.any {
+                            when {
+                                it is InteractionResponse.IdResponse && second is String -> it.id.equals(second, ignoreCase = true)
+                                it is InteractionResponse.LongResponse && second is Long -> compare(it.response, second) == 0
+                                it is InteractionResponse.StringResponse && second is String -> it.response.equals(second, ignoreCase = true)
+                                it is InteractionResponse.OtherResponse && second is String -> {
+                                    it.id.equals(second, ignoreCase = true) || it.response.equals(second, ignoreCase = true)
+                                }
+                                else -> false
+                            }
+                        }
+                    }
                     if (first.javaClass != second.javaClass) {
                         return false
                     }
@@ -106,6 +134,12 @@ interface ConditionalOperator {
                     if (first == null || second == null) {
                         return false
                     }
+                    if (first is Set<*> && second is Long) {
+                        return first.any {
+                            if (it is InteractionResponse.LongResponse) compare(it.response, second) < 0
+                            else false
+                        }
+                    }
                     if (first.javaClass != second.javaClass) {
                         return false
                     }
@@ -124,10 +158,15 @@ interface ConditionalOperator {
                     if (first == null || second == null) {
                         return false
                     }
+                    if (first is Set<*> && second is Long) {
+                        return first.any {
+                            if (it is InteractionResponse.LongResponse) compare(it.response, second) <= 0
+                            else false
+                        }
+                    }
                     if (first.javaClass != second.javaClass) {
                         return false
                     }
-
                     return compare(first, second) <= 0
                 }
 
@@ -142,6 +181,12 @@ interface ConditionalOperator {
                 override fun apply(first: Any?, second: Any?): Boolean {
                     if (first == null || second == null) {
                         return false
+                    }
+                    if (first is Set<*> && second is Long) {
+                        return first.any {
+                            if (it is InteractionResponse.LongResponse) compare(it.response, second) > 0
+                            else false
+                        }
                     }
                     if (first.javaClass != second.javaClass) {
                         return false
@@ -161,6 +206,12 @@ interface ConditionalOperator {
                     if (first == null || second == null) {
                         return false
                     }
+                    if (first is Set<*> && second is Long) {
+                        return first.any {
+                            if (it is InteractionResponse.LongResponse) compare(it.response, second) >= 0
+                            else false
+                        }
+                    }
                     if (first.javaClass != second.javaClass) {
                         return false
                     }
@@ -179,6 +230,15 @@ interface ConditionalOperator {
                     if (first == null || second == null) {
                         return false
                     }
+                    if (first is Set<*> && second is String) {
+                        return first.any {
+                            when (it) {
+                                is InteractionResponse.StringResponse -> it.response.contains(second, ignoreCase = true)
+                                is InteractionResponse.OtherResponse -> it.response?.contains(second, ignoreCase = true) == true
+                                else -> false
+                            }
+                        }
+                    }
                     if (first !is String || second !is String) {
                         return false
                     }
@@ -194,6 +254,15 @@ interface ConditionalOperator {
         private val starts_with: ConditionalOperator by lazy {
             object : ConditionalOperator {
                 override fun apply(first: Any?, second: Any?): Boolean {
+                    if (first is Set<*> && second is String) {
+                        return first.any {
+                            when (it) {
+                                is InteractionResponse.StringResponse -> it.response.startsWith(second, ignoreCase = true)
+                                is InteractionResponse.OtherResponse -> it.response?.startsWith(second, ignoreCase = true) == true
+                                else -> false
+                            }
+                        }
+                    }
                     if (first !is String || second !is String) {
                         return false
                     }
@@ -209,6 +278,15 @@ interface ConditionalOperator {
         private val ends_with: ConditionalOperator by lazy {
             object : ConditionalOperator {
                 override fun apply(first: Any?, second: Any?): Boolean {
+                    if (first is Set<*> && second is String) {
+                        return first.any {
+                            when (it) {
+                                is InteractionResponse.StringResponse -> it.response.endsWith(second, ignoreCase = true)
+                                is InteractionResponse.OtherResponse -> it.response?.endsWith(second, ignoreCase = true) == true
+                                else -> false
+                            }
+                        }
+                    }
                     if (first !is String || second !is String) {
                         return false
                     }
