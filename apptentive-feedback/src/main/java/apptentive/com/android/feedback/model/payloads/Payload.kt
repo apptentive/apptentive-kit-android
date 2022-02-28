@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.model.payloads
 
+import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.payload.MediaType
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadType
@@ -21,7 +22,8 @@ abstract class Payload(val nonce: String) {
         return JsonConverter.toJson(this)
     }
 
-    internal fun toPayloadData() = PayloadData(
+    @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+    fun toPayloadData() = PayloadData(
         nonce = nonce,
         type = getPayloadType(),
         path = getHttpPath(),
