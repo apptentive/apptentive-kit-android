@@ -7,6 +7,7 @@ import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.INTERACTIONS
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
+import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
 import apptentive.com.android.util.Log
 
 internal class TextModalViewModel : ViewModel()
@@ -36,11 +37,18 @@ internal class TextModalViewModel : ViewModel()
         }
     }
 
-    private fun engageCodePoint(codePoint: String, data: Map<String, Any?>? = null) {
+    private fun engageCodePoint(
+        codePoint: String,
+        data: Map<String, Any?>? = null,
+        actionId: String? = null
+    ) {
         context.engage(
             event = Event.internal(codePoint, interaction = "TextModal"),
             interactionId = interaction.id,
-            data = data
+            data = data,
+            interactionResponses = actionId?.let {
+                mapOf(interaction.id to setOf(InteractionResponse.IdResponse(it)))
+            }
         )
     }
 
@@ -51,7 +59,7 @@ internal class TextModalViewModel : ViewModel()
                     Log.i(INTERACTIONS, "Note dismissed")
                     // engage event
                     val data = createEventData(action, index)
-                    engageCodePoint(CODE_POINT_DISMISS, data)
+                    engageCodePoint(CODE_POINT_DISMISS, data, action.id)
                 }
             }
             is TextModalInteraction.Action.Invoke -> {
@@ -63,7 +71,7 @@ internal class TextModalViewModel : ViewModel()
 
                     // engage event
                     val data = createEventData(action, index, result)
-                    engageCodePoint(CODE_POINT_INTERACTION, data)
+                    engageCodePoint(CODE_POINT_INTERACTION, data, action.id)
                 }
             }
             is TextModalInteraction.Action.Event -> {
@@ -78,7 +86,7 @@ internal class TextModalViewModel : ViewModel()
 
                     // engage event
                     val data = createEventData(action, index, result)
-                    engageCodePoint(CODE_POINT_EVENT, data)
+                    engageCodePoint(CODE_POINT_EVENT, data, action.id)
                 }
             }
             else -> {
