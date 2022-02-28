@@ -75,19 +75,19 @@ class FieldTest : TestCase() {
     fun parseInteractions() {
         assertThat(parse("interactions/12345/invokes/total")).isEqualTo(interactions.invokes.total("12345"))
         assertThat(parse("interactions/12345/invokes/version_code")).isEqualTo(
-            interactions.invokes.version_code(
-                "12345"
-            )
+            interactions.invokes.version_code("12345")
         )
         assertThat(parse("interactions/12345/invokes/version_name")).isEqualTo(
-            interactions.invokes.version_name(
-                "12345"
-            )
+            interactions.invokes.version_name("12345")
         )
         assertThat(parse("interactions/12345/last_invoked_at/total")).isEqualTo(
-            interactions.last_invoked_at.total(
-                "12345"
-            )
+            interactions.last_invoked_at.total("12345")
+        )
+        assertThat(parse("interactions/12345/answers/id")).isEqualTo(
+            interactions.answers.id("12345")
+        )
+        assertThat(parse("interactions/12345/answers/value")).isEqualTo(
+            interactions.answers.value("12345")
         )
     }
 

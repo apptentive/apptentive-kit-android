@@ -62,6 +62,8 @@ internal data class DefaultTargetingState(
                 appRelease.versionName
             )
             is interactions.last_invoked_at.total -> engagementData.interactions.lastInvoke(field.interactionId)
+            is interactions.answers.id -> engagementData.interactionResponses[field.responseId]?.responses
+            is interactions.answers.value -> engagementData.interactionResponses[field.responseId]?.responses
 
             is person.name -> person.name
             is person.email -> person.email

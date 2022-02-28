@@ -11,6 +11,8 @@ import apptentive.com.android.feedback.engagement.criteria.Field.is_update
 import apptentive.com.android.feedback.engagement.criteria.Field.person
 import apptentive.com.android.feedback.engagement.criteria.Field.sdk
 import apptentive.com.android.feedback.engagement.criteria.Field.time_at_install
+import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
+import apptentive.com.android.feedback.engagement.interactions.InteractionResponseData
 import apptentive.com.android.feedback.mockAppRelease
 import apptentive.com.android.feedback.mockDevice
 import apptentive.com.android.feedback.mockPerson
@@ -23,6 +25,7 @@ import apptentive.com.android.feedback.model.VersionHistory
 import apptentive.com.android.feedback.model.VersionHistoryItem
 import apptentive.com.android.util.MockTimeSource
 import com.google.common.truth.Truth.assertThat
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class DefaultTargetingStateTest : TestCase() {
@@ -264,6 +267,41 @@ class DefaultTargetingStateTest : TestCase() {
         assertThat(state.getValue(interactions.invokes.version_name(interactionId))).isEqualTo(2)
 
         assertThat(state.getValue(interactions.last_invoked_at.total(interactionId))).isEqualTo(DateTime(30.0))
+    }
+
+    @Test
+    fun interactionResponses() {
+        val responseId1 = "abc123"
+        val responses1 = setOf(InteractionResponse.IdResponse("aaa111"))
+        val responseId2 = "aaaaaa"
+        val responses2 = setOf(InteractionResponse.LongResponse(111111))
+        val responseId3 = "fsq124"
+        val responses3 = setOf(InteractionResponse.StringResponse("abc123"))
+        val responseId4 = "aaa"
+        val responses4 = setOf(InteractionResponse.OtherResponse("aaa", "111"))
+        val responseId5 = "321cba"
+        val responses5 = setOf(
+            InteractionResponse.IdResponse("bbb222"),
+            InteractionResponse.OtherResponse("bbb", "222")
+        )
+        val state = state.copy(
+            engagementData = EngagementData(
+                interactionResponses = mutableMapOf(
+                    responseId1 to InteractionResponseData(responses1),
+                    responseId2 to InteractionResponseData(responses2),
+                    responseId3 to InteractionResponseData(responses3),
+                    responseId4 to InteractionResponseData(responses4),
+                    responseId5 to InteractionResponseData(responses5)
+                )
+            ),
+        )
+        assertEquals(responses1, state.getValue(interactions.answers.id(responseId1)))
+        assertEquals(responses2, state.getValue(interactions.answers.value(responseId2)))
+        assertEquals(responses3, state.getValue(interactions.answers.value(responseId3)))
+        assertEquals(responses4, state.getValue(interactions.answers.id(responseId4)))
+        assertEquals(responses4, state.getValue(interactions.answers.value(responseId4)))
+        assertEquals(responses5, state.getValue(interactions.answers.id(responseId5)))
+        assertEquals(responses5, state.getValue(interactions.answers.value(responseId5)))
     }
 
     @Test

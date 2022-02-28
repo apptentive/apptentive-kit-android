@@ -106,6 +106,17 @@ sealed class Field(val type: Type, val description: String) {
                 description = "last time interaction id '$interactionId' was invoked"
             )
         }
+
+        object answers {
+            data class id(val responseId: InteractionId) : Field(
+                type = Type.Any, // Can be String or Boolean
+                description = "answer id responseId:$responseId"
+            )
+            data class value(val responseId: InteractionId) : Field(
+                type = Type.Any, // Can be String, Boolean, or Long
+                description = "answer value responseId:$responseId"
+            )
+        }
     }
 
     object person {
@@ -299,6 +310,10 @@ sealed class Field(val type: Type, val description: String) {
                             "total" -> return interactions.last_invoked_at.total(
                                 interaction_instance_id
                             )
+                        }
+                        "answers" -> when (components[3]) {
+                            "id" -> return interactions.answers.id(interaction_instance_id)
+                            "value" -> return interactions.answers.value(interaction_instance_id)
                         }
                     }
                 }
