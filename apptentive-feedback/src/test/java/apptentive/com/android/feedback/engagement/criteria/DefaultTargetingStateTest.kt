@@ -9,6 +9,7 @@ import apptentive.com.android.feedback.engagement.criteria.Field.device
 import apptentive.com.android.feedback.engagement.criteria.Field.interactions
 import apptentive.com.android.feedback.engagement.criteria.Field.is_update
 import apptentive.com.android.feedback.engagement.criteria.Field.person
+import apptentive.com.android.feedback.engagement.criteria.Field.random
 import apptentive.com.android.feedback.engagement.criteria.Field.sdk
 import apptentive.com.android.feedback.engagement.criteria.Field.time_at_install
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
@@ -16,20 +17,23 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionRespon
 import apptentive.com.android.feedback.mockAppRelease
 import apptentive.com.android.feedback.mockDevice
 import apptentive.com.android.feedback.mockPerson
+import apptentive.com.android.feedback.mockRandomSampling
 import apptentive.com.android.feedback.mockSdk
 import apptentive.com.android.feedback.model.CustomData
 import apptentive.com.android.feedback.model.Device
 import apptentive.com.android.feedback.model.EngagementData
 import apptentive.com.android.feedback.model.Person
+import apptentive.com.android.feedback.model.RandomSampling
 import apptentive.com.android.feedback.model.VersionHistory
 import apptentive.com.android.feedback.model.VersionHistoryItem
 import apptentive.com.android.util.MockTimeSource
 import com.google.common.truth.Truth.assertThat
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class DefaultTargetingStateTest : TestCase() {
-    private val state = DefaultTargetingState(mockPerson, mockDevice, mockSdk, mockAppRelease, EngagementData())
+    private val state = DefaultTargetingState(mockPerson, mockDevice, mockSdk, mockAppRelease, mockRandomSampling, EngagementData())
 
     @Test
     fun application() {
@@ -438,5 +442,35 @@ class DefaultTargetingStateTest : TestCase() {
         assertThat(state.getValue(device.os_api_level)).isEqualTo(30)
         assertThat(state.getValue(device.utc_offset)).isEqualTo(18000)
         assertThat(state.getValue(device.custom_data("device_key"))).isNull()
+    }
+
+    @Test
+    fun randomSamplingWithId() {
+        val state = state.copy(
+            randomSampling = RandomSampling(
+                percents = mutableMapOf(
+                    "id1" to 0.1,
+                    "id2" to 99.9,
+                    "id3" to 50.0
+                )
+            )
+        )
+
+        assertEquals(0.1, state.getValue(random.percent_with_id("id1")))
+        assertEquals(99.9, state.getValue(random.percent_with_id("id2")))
+        assertEquals(50.0, state.getValue(random.percent_with_id("id3")))
+    }
+
+    @Test
+    fun randomSampling() {
+        val state = state.copy(
+            randomSampling = RandomSampling()
+        )
+
+        repeat(100) {
+            val randomValue = state.getValue(random.percent) as Double
+            assertTrue(randomValue < 100.0)
+            assertTrue(randomValue >= 0.0)
+        }
     }
 }

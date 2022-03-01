@@ -9,12 +9,14 @@ import apptentive.com.android.feedback.engagement.criteria.Field.device
 import apptentive.com.android.feedback.engagement.criteria.Field.interactions
 import apptentive.com.android.feedback.engagement.criteria.Field.is_update
 import apptentive.com.android.feedback.engagement.criteria.Field.person
+import apptentive.com.android.feedback.engagement.criteria.Field.random
 import apptentive.com.android.feedback.engagement.criteria.Field.sdk
 import apptentive.com.android.feedback.engagement.criteria.Field.time_at_install
 import apptentive.com.android.feedback.model.AppRelease
 import apptentive.com.android.feedback.model.Device
 import apptentive.com.android.feedback.model.EngagementData
 import apptentive.com.android.feedback.model.Person
+import apptentive.com.android.feedback.model.RandomSampling
 import apptentive.com.android.feedback.model.SDK
 
 internal data class DefaultTargetingState(
@@ -22,6 +24,7 @@ internal data class DefaultTargetingState(
     private val device: Device,
     private val sdk: SDK,
     private val appRelease: AppRelease,
+    private val randomSampling: RandomSampling,
     private val engagementData: EngagementData,
     private val timeSource: TimeSource = DefaultTimeSource
 ) : TargetingState {
@@ -94,6 +97,9 @@ internal data class DefaultTargetingState(
             is device.os_api_level -> device.osApiLevel
             is device.utc_offset -> device.utcOffset.toLong()
             is device.custom_data -> device.customData[field.key]
+
+            is random.percent -> randomSampling.getRandomValue()
+            is random.percent_with_id -> randomSampling.getOrPutRandomValue(field.randomPercentId)
 
             else -> null
         }

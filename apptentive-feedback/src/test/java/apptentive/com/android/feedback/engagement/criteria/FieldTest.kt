@@ -14,6 +14,7 @@ import apptentive.com.android.feedback.engagement.criteria.Field.sdk
 import apptentive.com.android.feedback.engagement.criteria.Field.time_at_install
 import apptentive.com.android.feedback.engagement.criteria.Field.unknown
 import com.google.common.truth.Truth.assertThat
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class FieldTest : TestCase() {
@@ -125,6 +126,16 @@ class FieldTest : TestCase() {
         assertThat(parse("device/os_api_level")).isEqualTo(device.os_api_level)
         assertThat(parse("device/utc_offset")).isEqualTo(device.utc_offset)
         assertThat(parse("device/custom_data/my_key")).isEqualTo(device.custom_data("my_key"))
+    }
+
+    @Test
+    fun parseRandomSamplingWithId() {
+        assertEquals(Field.random.percent_with_id("12345"), parse("random/12345/percent"))
+    }
+
+    @Test
+    fun parseRandomSampling() {
+        assertEquals(Field.random.percent, parse("random/percent"))
     }
 
     @Test

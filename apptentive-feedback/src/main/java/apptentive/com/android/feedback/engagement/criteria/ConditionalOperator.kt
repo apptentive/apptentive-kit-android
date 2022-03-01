@@ -41,14 +41,14 @@ interface ConditionalOperator {
         private val exists: ConditionalOperator by lazy {
             object : ConditionalOperator {
                 override fun apply(first: Any?, second: Any?): Boolean {
-                    if (second == null) {
-                        return false
+                    return when (second) {
+                        null -> false
+                        !is Boolean -> false
+                        else -> {
+                            val exists = first != null
+                            exists == second
+                        }
                     }
-                    if (second !is Boolean) {
-                        return false
-                    }
-                    val exists = first != null
-                    return exists == second
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
@@ -60,29 +60,26 @@ interface ConditionalOperator {
         private val ne: ConditionalOperator by lazy {
             object : ConditionalOperator {
                 override fun apply(first: Any?, second: Any?): Boolean {
-                    if (first == null || second == null) {
-                        return false
-                    }
-                    if (first is Set<*>) {
-                        return first.none {
-                            when {
-                                it is InteractionResponse.IdResponse && second is String -> it.id.equals(second, ignoreCase = true)
-                                it is InteractionResponse.LongResponse && second is Long -> compare(it.response, second) == 0
-                                it is InteractionResponse.StringResponse && second is String -> it.response.equals(second, ignoreCase = true)
-                                it is InteractionResponse.OtherResponse && second is String -> {
-                                    it.id.equals(second, ignoreCase = true) || it.response.equals(second, ignoreCase = true)
+                    return when {
+                        first == null || second == null -> false
+                        first is Number && second is Double -> compareNumbers(first, second) != 0
+                        first is Set<*> -> {
+                            first.none {
+                                when {
+                                    it is InteractionResponse.IdResponse && second is String -> it.id.equals(second, ignoreCase = true)
+                                    it is InteractionResponse.LongResponse && second is Double -> compareNumbers(it.response, second) == 0
+                                    it is InteractionResponse.StringResponse && second is String -> it.response.equals(second, ignoreCase = true)
+                                    it is InteractionResponse.OtherResponse && second is String -> {
+                                        it.id.equals(second, ignoreCase = true) || it.response.equals(second, ignoreCase = true)
+                                    }
+                                    else -> false
                                 }
-                                else -> false
                             }
                         }
+                        first.javaClass != second.javaClass -> false
+                        first is String && second is String -> !first.equals(second, ignoreCase = true)
+                        else -> compare(first, second) != 0
                     }
-                    if (first.javaClass != second.javaClass) {
-                        return false
-                    }
-                    if (first is String && second is String) {
-                        return !first.equals(second, ignoreCase = true)
-                    }
-                    return compare(first, second) != 0
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
@@ -94,32 +91,27 @@ interface ConditionalOperator {
         private val eq: ConditionalOperator by lazy {
             object : ConditionalOperator {
                 override fun apply(first: Any?, second: Any?): Boolean {
-                    if (first == null && second == null) {
-                        return true
-                    }
-                    if (first == null || second == null) {
-                        return false
-                    }
-                    if (first is Set<*>) {
-                        return first.any {
-                            when {
-                                it is InteractionResponse.IdResponse && second is String -> it.id.equals(second, ignoreCase = true)
-                                it is InteractionResponse.LongResponse && second is Long -> compare(it.response, second) == 0
-                                it is InteractionResponse.StringResponse && second is String -> it.response.equals(second, ignoreCase = true)
-                                it is InteractionResponse.OtherResponse && second is String -> {
-                                    it.id.equals(second, ignoreCase = true) || it.response.equals(second, ignoreCase = true)
+                    return when {
+                        first == null && second == null -> true
+                        first == null || second == null -> false
+                        first is Number && second is Double -> compareNumbers(first, second) == 0
+                        first is Set<*> -> {
+                            first.any {
+                                when {
+                                    it is InteractionResponse.IdResponse && second is String -> it.id.equals(second, ignoreCase = true)
+                                    it is InteractionResponse.LongResponse && second is Double -> compareNumbers(it.response, second) == 0
+                                    it is InteractionResponse.StringResponse && second is String -> it.response.equals(second, ignoreCase = true)
+                                    it is InteractionResponse.OtherResponse && second is String -> {
+                                        it.id.equals(second, ignoreCase = true) || it.response.equals(second, ignoreCase = true)
+                                    }
+                                    else -> false
                                 }
-                                else -> false
                             }
                         }
+                        first.javaClass != second.javaClass -> false
+                        first is String && second is String -> first.equals(second, ignoreCase = true)
+                        else -> compare(first, second) == 0
                     }
-                    if (first.javaClass != second.javaClass) {
-                        return false
-                    }
-                    if (first is String && second is String) {
-                        return first.equals(second, ignoreCase = true)
-                    }
-                    return compare(first, second) == 0
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
@@ -131,19 +123,18 @@ interface ConditionalOperator {
         private val lt: ConditionalOperator by lazy {
             object : ConditionalOperator {
                 override fun apply(first: Any?, second: Any?): Boolean {
-                    if (first == null || second == null) {
-                        return false
-                    }
-                    if (first is Set<*> && second is Long) {
-                        return first.any {
-                            if (it is InteractionResponse.LongResponse) compare(it.response, second) < 0
-                            else false
+                    return when {
+                        first == null || second == null -> false
+                        first is Number && second is Double -> compareNumbers(first, second) < 0
+                        first is Set<*> && second is Double -> {
+                            first.any {
+                                if (it is InteractionResponse.LongResponse) compareNumbers(it.response, second) < 0
+                                else false
+                            }
                         }
+                        first.javaClass != second.javaClass -> false
+                        else -> compare(first, second) < 0
                     }
-                    if (first.javaClass != second.javaClass) {
-                        return false
-                    }
-                    return compare(first, second) < 0
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
@@ -155,19 +146,18 @@ interface ConditionalOperator {
         private val lte: ConditionalOperator by lazy {
             object : ConditionalOperator {
                 override fun apply(first: Any?, second: Any?): Boolean {
-                    if (first == null || second == null) {
-                        return false
-                    }
-                    if (first is Set<*> && second is Long) {
-                        return first.any {
-                            if (it is InteractionResponse.LongResponse) compare(it.response, second) <= 0
-                            else false
+                    return when {
+                        first == null || second == null -> false
+                        first is Number && second is Double -> compareNumbers(first, second) <= 0
+                        first is Set<*> && second is Double -> {
+                            first.any {
+                                if (it is InteractionResponse.LongResponse) compareNumbers(it.response, second) <= 0
+                                else false
+                            }
                         }
+                        first.javaClass != second.javaClass -> false
+                        else -> compare(first, second) <= 0
                     }
-                    if (first.javaClass != second.javaClass) {
-                        return false
-                    }
-                    return compare(first, second) <= 0
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
@@ -179,19 +169,18 @@ interface ConditionalOperator {
         private val gt: ConditionalOperator by lazy {
             object : ConditionalOperator {
                 override fun apply(first: Any?, second: Any?): Boolean {
-                    if (first == null || second == null) {
-                        return false
-                    }
-                    if (first is Set<*> && second is Long) {
-                        return first.any {
-                            if (it is InteractionResponse.LongResponse) compare(it.response, second) > 0
-                            else false
+                    return when {
+                        first == null || second == null -> false
+                        first is Number && second is Double -> compareNumbers(first, second) > 0
+                        first is Set<*> && second is Double -> {
+                            first.any {
+                                if (it is InteractionResponse.LongResponse) compareNumbers(it.response, second) > 0
+                                else false
+                            }
                         }
+                        first.javaClass != second.javaClass -> false
+                        else -> compare(first, second) > 0
                     }
-                    if (first.javaClass != second.javaClass) {
-                        return false
-                    }
-                    return compare(first, second) > 0
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
@@ -203,19 +192,18 @@ interface ConditionalOperator {
         private val gte: ConditionalOperator by lazy {
             object : ConditionalOperator {
                 override fun apply(first: Any?, second: Any?): Boolean {
-                    if (first == null || second == null) {
-                        return false
-                    }
-                    if (first is Set<*> && second is Long) {
-                        return first.any {
-                            if (it is InteractionResponse.LongResponse) compare(it.response, second) >= 0
-                            else false
+                    return when {
+                        first == null || second == null -> false
+                        first is Number && second is Double -> compareNumbers(first, second) >= 0
+                        first is Set<*> && second is Double -> {
+                            first.any {
+                                if (it is InteractionResponse.LongResponse) compareNumbers(it.response, second) >= 0
+                                else false
+                            }
                         }
+                        first.javaClass != second.javaClass -> false
+                        else -> compare(first, second) >= 0
                     }
-                    if (first.javaClass != second.javaClass) {
-                        return false
-                    }
-                    return compare(first, second) >= 0
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
@@ -227,22 +215,20 @@ interface ConditionalOperator {
         private val contains: ConditionalOperator by lazy {
             object : ConditionalOperator {
                 override fun apply(first: Any?, second: Any?): Boolean {
-                    if (first == null || second == null) {
-                        return false
-                    }
-                    if (first is Set<*> && second is String) {
-                        return first.any {
-                            when (it) {
-                                is InteractionResponse.StringResponse -> it.response.contains(second, ignoreCase = true)
-                                is InteractionResponse.OtherResponse -> it.response?.contains(second, ignoreCase = true) == true
-                                else -> false
+                    return when {
+                        first == null || second == null -> false
+                        first is Set<*> && second is String -> {
+                            first.any {
+                                when (it) {
+                                    is InteractionResponse.StringResponse -> it.response.contains(second, ignoreCase = true)
+                                    is InteractionResponse.OtherResponse -> it.response?.contains(second, ignoreCase = true) == true
+                                    else -> false
+                                }
                             }
                         }
+                        first !is String || second !is String -> false
+                        else -> first.contains(second, ignoreCase = true)
                     }
-                    if (first !is String || second !is String) {
-                        return false
-                    }
-                    return first.contains(second, ignoreCase = true)
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
@@ -254,19 +240,19 @@ interface ConditionalOperator {
         private val starts_with: ConditionalOperator by lazy {
             object : ConditionalOperator {
                 override fun apply(first: Any?, second: Any?): Boolean {
-                    if (first is Set<*> && second is String) {
-                        return first.any {
-                            when (it) {
-                                is InteractionResponse.StringResponse -> it.response.startsWith(second, ignoreCase = true)
-                                is InteractionResponse.OtherResponse -> it.response?.startsWith(second, ignoreCase = true) == true
-                                else -> false
+                    return when {
+                        first is Set<*> && second is String -> {
+                            first.any {
+                                when (it) {
+                                    is InteractionResponse.StringResponse -> it.response.startsWith(second, ignoreCase = true)
+                                    is InteractionResponse.OtherResponse -> it.response?.startsWith(second, ignoreCase = true) == true
+                                    else -> false
+                                }
                             }
                         }
+                        first !is String || second !is String -> false
+                        else -> first.startsWith(second, ignoreCase = true)
                     }
-                    if (first !is String || second !is String) {
-                        return false
-                    }
-                    return first.startsWith(second, ignoreCase = true)
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
@@ -278,19 +264,19 @@ interface ConditionalOperator {
         private val ends_with: ConditionalOperator by lazy {
             object : ConditionalOperator {
                 override fun apply(first: Any?, second: Any?): Boolean {
-                    if (first is Set<*> && second is String) {
-                        return first.any {
-                            when (it) {
-                                is InteractionResponse.StringResponse -> it.response.endsWith(second, ignoreCase = true)
-                                is InteractionResponse.OtherResponse -> it.response?.endsWith(second, ignoreCase = true) == true
-                                else -> false
+                    return when {
+                        first is Set<*> && second is String -> {
+                            first.any {
+                                when (it) {
+                                    is InteractionResponse.StringResponse -> it.response.endsWith(second, ignoreCase = true)
+                                    is InteractionResponse.OtherResponse -> it.response?.endsWith(second, ignoreCase = true) == true
+                                    else -> false
+                                }
                             }
                         }
+                        first !is String || second !is String -> false
+                        else -> first.endsWith(second, ignoreCase = true)
                     }
-                    if (first !is String || second !is String) {
-                        return false
-                    }
-                    return first.endsWith(second, ignoreCase = true)
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
@@ -302,13 +288,11 @@ interface ConditionalOperator {
         private val before: ConditionalOperator by lazy {
             object : ConditionalOperator {
                 override fun apply(first: Any?, second: Any?): Boolean {
-                    if (first !is DateTime) {
-                        return false
+                    return when {
+                        first !is DateTime -> false
+                        second !is DateTime -> false
+                        else -> first < second
                     }
-                    if (second !is DateTime) {
-                        return false
-                    }
-                    return first < second
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
@@ -320,13 +304,11 @@ interface ConditionalOperator {
         private val after: ConditionalOperator by lazy {
             object : ConditionalOperator {
                 override fun apply(first: Any?, second: Any?): Boolean {
-                    if (first !is DateTime) {
-                        return false
+                    return when {
+                        first !is DateTime -> false
+                        second !is DateTime -> false
+                        else -> first > second
                     }
-                    if (second !is DateTime) {
-                        return false
-                    }
-                    return first > second
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
@@ -350,6 +332,25 @@ interface ConditionalOperator {
         private fun toPrettyDate(value: Any?): String {
             return value.toString()
         }
+    }
+}
+
+private fun compareNumbers(first: Number, second: Double): Int {
+    // Second (from backend) should always be a Double
+
+    return when (first) {
+        // Should only be one of these two
+        is Double -> first.compareTo(second)
+        is Long -> first.compareTo(second)
+
+        // Others just in case
+        is Int -> first.compareTo(second)
+        is Float -> first.compareTo(second)
+        is Short -> first.compareTo(second)
+        is Byte -> first.compareTo(second)
+
+        // Shouldn't happen
+        else -> 0
     }
 }
 

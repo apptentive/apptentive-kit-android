@@ -58,7 +58,7 @@ class ConditionalOperatorTest {
         assertFalse(op.apply(first = "value", second = null))
         assertFalse(op.apply(first = "value", second = 10))
         assertFalse(op.apply(first = responsesId, second = "aaa111"))
-        assertFalse(op.apply(first = responsesLong, second = 5L))
+        assertFalse(op.apply(first = responsesLong, second = 5.0))
         assertFalse(op.apply(first = responsesString, second = "123"))
         assertFalse(op.apply(first = responsesOther, second = "321"))
         assertFalse(op.apply(first = responsesOther, second = "cba"))
@@ -66,8 +66,12 @@ class ConditionalOperatorTest {
         assertFalse(op.apply(first = responsesGroup, second = "bbb222"))
         assertFalse(op.apply(first = responsesGroup, second = "ccc"))
         assertFalse(op.apply(first = responsesGroup, second = "333"))
+        assertTrue(op.apply(first = setOf<InteractionResponse>(), second = "aaa111"))
+        assertTrue(op.apply(first = setOf<InteractionResponse>(), second = "aa11"))
+        assertTrue(op.apply(first = setOf<InteractionResponse>(), second = 5.0))
+        assertTrue(op.apply(first = setOf<InteractionResponse>(), second = 4.0))
         assertTrue(op.apply(first = responsesId, second = "aa11"))
-        assertTrue(op.apply(first = responsesLong, second = 4L))
+        assertTrue(op.apply(first = responsesLong, second = 4.0))
         assertTrue(op.apply(first = responsesString, second = "321"))
         assertTrue(op.apply(first = responsesOther, second = "bca"))
         assertTrue(op.apply(first = responsesGroup, second = "aa11"))
@@ -86,7 +90,7 @@ class ConditionalOperatorTest {
         assertFalse(op.apply(first = null, second = "value"))
         assertFalse(op.apply(first = "value", second = null))
         assertTrue(op.apply(first = responsesId, second = "aaa111"))
-        assertTrue(op.apply(first = responsesLong, second = 5L))
+        assertTrue(op.apply(first = responsesLong, second = 5.0))
         assertTrue(op.apply(first = responsesString, second = "123"))
         assertTrue(op.apply(first = responsesOther, second = "cba"))
         assertTrue(op.apply(first = responsesOther, second = "321"))
@@ -94,8 +98,12 @@ class ConditionalOperatorTest {
         assertTrue(op.apply(first = responsesGroup, second = "bbb222"))
         assertTrue(op.apply(first = responsesGroup, second = "333"))
         assertTrue(op.apply(first = responsesGroup, second = "ccc"))
+        assertFalse(op.apply(first = setOf<InteractionResponse>(), second = "aaa111"))
+        assertFalse(op.apply(first = setOf<InteractionResponse>(), second = "aa11"))
+        assertFalse(op.apply(first = setOf<InteractionResponse>(), second = 5.0))
+        assertFalse(op.apply(first = setOf<InteractionResponse>(), second = 4.0))
         assertFalse(op.apply(first = responsesId, second = "aa11"))
-        assertFalse(op.apply(first = responsesLong, second = 6L))
+        assertFalse(op.apply(first = responsesLong, second = 6.0))
         assertFalse(op.apply(first = responsesString, second = "321"))
         assertFalse(op.apply(first = responsesOther, second = "abc"))
         assertFalse(op.apply(first = responsesOther, second = "231"))
@@ -113,9 +121,9 @@ class ConditionalOperatorTest {
         assertFalse(op.apply(first = null, second = 10))
         assertFalse(op.apply(first = 10, second = null))
         assertFalse(op.apply(first = 10, second = "10"))
-        assertTrue(op.apply(first = responsesLong, second = 6L))
-        assertFalse(op.apply(first = responsesLong, second = 5L))
-        assertFalse(op.apply(first = responsesLong, second = 4L))
+        assertTrue(op.apply(first = responsesLong, second = 6.0))
+        assertFalse(op.apply(first = responsesLong, second = 5.0))
+        assertFalse(op.apply(first = responsesLong, second = 4.0))
     }
 
     @Test
@@ -127,9 +135,9 @@ class ConditionalOperatorTest {
         assertFalse(op.apply(first = null, second = 10))
         assertFalse(op.apply(first = 10, second = null))
         assertFalse(op.apply(first = 10, second = "10"))
-        assertTrue(op.apply(first = responsesLong, second = 6L))
-        assertTrue(op.apply(first = responsesLong, second = 5L))
-        assertFalse(op.apply(first = responsesLong, second = 4L))
+        assertTrue(op.apply(first = responsesLong, second = 6.0))
+        assertTrue(op.apply(first = responsesLong, second = 5.0))
+        assertFalse(op.apply(first = responsesLong, second = 4.0))
     }
 
     @Test
@@ -141,9 +149,9 @@ class ConditionalOperatorTest {
         assertFalse(op.apply(first = null, second = 10))
         assertFalse(op.apply(first = 10, second = null))
         assertFalse(op.apply(first = 10, second = "10"))
-        assertTrue(op.apply(first = responsesLong, second = 4L))
-        assertFalse(op.apply(first = responsesLong, second = 5L))
-        assertFalse(op.apply(first = responsesLong, second = 6L))
+        assertTrue(op.apply(first = responsesLong, second = 4.0))
+        assertFalse(op.apply(first = responsesLong, second = 5.0))
+        assertFalse(op.apply(first = responsesLong, second = 6.0))
     }
 
     @Test
@@ -155,9 +163,9 @@ class ConditionalOperatorTest {
         assertFalse(op.apply(first = null, second = 10))
         assertFalse(op.apply(first = 10, second = null))
         assertFalse(op.apply(first = 10, second = "10"))
-        assertTrue(op.apply(first = responsesLong, second = 4L))
-        assertTrue(op.apply(first = responsesLong, second = 5L))
-        assertFalse(op.apply(first = responsesLong, second = 6L))
+        assertTrue(op.apply(first = responsesLong, second = 4.0))
+        assertTrue(op.apply(first = responsesLong, second = 5.0))
+        assertFalse(op.apply(first = responsesLong, second = 6.0))
     }
 
     @Test

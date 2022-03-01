@@ -257,6 +257,17 @@ sealed class Field(val type: Type, val description: String) {
         )
     }
 
+    object random {
+        object percent : Field(
+            type = Type.Number,
+            description = "random sample percentage"
+        )
+        data class percent_with_id(val randomPercentId: String) : Field(
+            type = Type.Number,
+            description = "random sample percentage for id: $randomPercentId"
+        )
+    }
+
     data class unknown(val path: String) : Field(Type.Any, "unknown path $path")
 
     companion object {
@@ -355,6 +366,13 @@ sealed class Field(val type: Type, val description: String) {
                         return device.custom_data(key)
                     }
                 }
+                "random" -> {
+                    if (components[1] == "percent") return random.percent
+                    else {
+                        val random_percent_id = components[1]
+                        if (components[2] == "percent") return random.percent_with_id(random_percent_id)
+                    }
+                }
             }
             return unknown(path)
         }
@@ -405,7 +423,6 @@ private fun convertComplexValue(value: Any?): Any? {
             }
             throw IllegalArgumentException("Unexpected value: $value")
         }
-        is Double -> if (value % 1.0 == 0.0) value.toLong() else value // every number in json parsed as double
         else -> value // return as-is
     }
 }

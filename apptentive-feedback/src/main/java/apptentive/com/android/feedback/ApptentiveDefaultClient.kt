@@ -226,6 +226,7 @@ internal class ApptentiveDefaultClient(
                 conversation.device,
                 conversation.sdk,
                 conversation.appRelease,
+                conversation.randomSampling,
                 conversation.engagementData
             ),
             usingCustomStoreUrlSkipInAppReviewID = usingCustomStoreUrlSkipInAppReviewID
