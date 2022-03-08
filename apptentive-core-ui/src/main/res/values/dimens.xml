@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Minor Interface Customization -->
+    <item name="apptentive_text_size_default" type="dimen">14sp</item>
+    <item name="apptentive_text_size_title" type="dimen">18sp</item>
+</resources>

@@ -12,4 +12,8 @@
     <color name="apptentive_color_error">#CF6679</color>
     <color name="apptentive_color_secondary_variant">#4589CD</color>
 
+    <!-- Minor Interface Customization -->
+    <color name="apptentive_dialog_background_color">#424242</color>
+    <color name="apptentive_color_text_title">#FFFFFF</color>
+    <color name="apptentive_color_text_default">#B3FFFFFF</color>
 </resources>

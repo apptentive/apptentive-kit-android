@@ -14,17 +14,85 @@
         <item name="colorOnBackground">@color/color_on_background</item>
         <item name="android:textColorSecondary">@color/color_text_color_secondary</item>
         <item name="colorError">@color/color_error</item>
-<!--        <item name="apptentiveSurveyButtonStyle">@style/Custom.MaterialButton</item>-->
     </style>
 
-    <!--    <style name="ApptentiveThemeOverride">-->
-    <!--        <item name="apptentiveSurveyButtonStyle">@style/Custom.MaterialButton</item>-->
-    <!--    </style>-->
+
+    <style name="ApptentiveThemeOverride">
+        <!-- Note Styles-->
+<!--        <item name="apptentiveNoteLayoutStyle">@style/Custom.Note.Layout</item>-->
+<!--        <item name="apptentiveNoteTitleWithMessageTextStyle">@style/Custom.Note.Title.WithMessage.Text</item>-->
+<!--        <item name="apptentiveNoteTitleNoMessageTextStyle">@style/Custom.Note.Title.NoMessage.Text</item>-->
+<!--        <item name="apptentiveNoteMessageTextStyle">@style/Custom.Note.Message.Text</item>-->
+<!--        <item name="apptentiveInteractionButtonStyle">@style/Custom.Note.Button</item>-->
+
+        <!-- Survey Styles-->
+<!--        <item name="apptentiveSurveySubmitButtonStyle">@style/Custom.MaterialButton</item>-->
+
+        <!-- Text Size -->
+<!--        <item name="apptentiveTextSizeTitle">30sp</item>-->
+<!--        <item name="apptentiveTextSizeTitleNoMessage">40sp</item>-->
+<!--        <item name="apptentiveTextSizeMessage">10sp</item>-->
+<!--        <item name="apptentiveTextSizeButtonBorderless">20sp</item>-->
+
+        <!-- Text Color -->
+<!--        <item name="apptentiveTextColorTitle">@color/color_primary</item>-->
+<!--        <item name="apptentiveTextColorTitleNoMessage">@color/color_primary</item>-->
+<!--        <item name="apptentiveTextColorMessage">@color/color_secondary</item>-->
+<!--        <item name="apptentiveInteractionButtonColorDefault">?colorPrimary</item>-->
+
+        <!-- Background Color -->
+<!--        <item name="apptentiveDialogBackground">@color/color_secondary</item>-->
+
+        <!-- Typeface -->
+<!--        <item name="apptentiveTypefaceDefault">@integer/apptentive_typeface_serif</item>-->
+
+<!--        <item name="apptentiveTypefaceTitle">?apptentiveTypefaceDefault</item>-->
+<!--        <item name="apptentiveTypefaceTitleNoMessage">?apptentiveTypefaceDefault</item>-->
+<!--        <item name="apptentiveTypefaceMessage">?apptentiveTypefaceDefault</item>-->
+<!--        <item name="apptentiveTypefaceButtonBorderless">?apptentiveTypefaceDefault</item>-->
+    </style>
+
 
     <style name="Custom.MaterialButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/color_primary</item>
         <item name="backgroundTint">?colorError</item>
         <item name="fontFamily">@font/pacifico_regular</item>
         <item name="cornerRadius">@dimen/margin_24dp</item>
+        <item name="strokeColor">@color/color_primary</item>
+        <item name="strokeWidth">4dp</item>
+    </style>
+
+    <style name="Custom"/>
+    <style name="Custom.Note"/>
+    <style name="Custom.Note.Layout">
+        <item name="android:background">@color/color_error</item>
+    </style>
+    <style name="Custom.Note.Title.WithMessage.Text" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
+        <item name="android:textColor">@color/color_on_primary</item>
+        <item name="android:fontFamily">@font/pacifico_regular</item>
+    </style>
+
+    <style name="Custom.Note.Title.NoMessage.Text" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textColor">@color/color_on_primary</item>
+        <item name="android:fontFamily">@font/pacifico_regular</item>
+        <item name="android:textSize">30sp</item>
+    </style>
+
+    <style name="Custom.Note.Message.Text" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textColor">@color/color_secondary</item>
+        <item name="android:fontFamily">@font/pacifico_regular</item>
+        <item name="android:textSize">8sp</item>
+    </style>
+
+    <style name="Custom.Note.Button" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textColor">@color/color_on_primary</item>
+        <item name="android:textSize">20sp</item>
+        <item name="backgroundTint">@color/color_primary</item>
+        <item name="fontFamily">@font/pacifico_regular</item>
+        <item name="cornerRadius">@dimen/margin_24dp</item>
+        <item name="strokeColor">@color/color_error</item>
+        <item name="strokeWidth">4dp</item>
     </style>
 
 </resources>

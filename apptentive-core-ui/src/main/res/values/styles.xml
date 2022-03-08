@@ -11,7 +11,39 @@
         <item name="colorOnBackground">@color/apptentive_color_on_background</item>
         <item name="android:textColorSecondary">@color/apptentive_color_text_color_secondary</item>
         <item name="colorError">@color/apptentive_color_error</item>
-        <item name="apptentiveSurveyButtonStyle">@style/Widget.MaterialComponents.Button</item>
+
+        <!-- Note Styles-->
+        <item name="apptentiveNoteLayoutStyle">@style/Apptentive.Note.Layout</item>
+        <item name="apptentiveNoteTitleWithMessageTextStyle">@style/Apptentive.TextAppearance.Title.WithMessage</item>
+        <item name="apptentiveNoteTitleNoMessageTextStyle">@style/Apptentive.TextAppearance.Title.NoMessage</item>
+        <item name="apptentiveNoteMessageTextStyle">@style/Apptentive.TextAppearance.Subhead.Secondary</item>
+        <item name="apptentiveInteractionButtonStyle">@style/Apptentive.Widget.Button.Borderless</item>
+
+        <!-- Survey Styles-->
+        <item name="apptentiveSurveySubmitButtonStyle">@style/Widget.MaterialComponents.Button</item>
+
+        <!-- Text Size -->
+        <item name="apptentiveTextSizeTitle">@dimen/apptentive_text_size_title</item>
+        <item name="apptentiveTextSizeTitleNoMessage">@dimen/apptentive_text_size_default</item>
+        <item name="apptentiveTextSizeMessage">@dimen/apptentive_text_size_default</item>
+        <item name="apptentiveTextSizeButtonBorderless">@dimen/apptentive_text_size_default</item>
+
+        <!-- Background Color -->
+        <item name="apptentiveDialogBackground">@color/apptentive_dialog_background_color</item>
+
+        <!-- Text Color -->
+        <item name="apptentiveTextColorTitle">@color/apptentive_color_text_title</item>
+        <item name="apptentiveTextColorTitleNoMessage">@color/apptentive_color_text_default</item>
+        <item name="apptentiveTextColorMessage">@color/apptentive_color_text_default</item>
+        <item name="apptentiveInteractionButtonColorDefault">?colorPrimary</item>
+
+        <!-- Typeface -->
+        <item name="apptentiveTypefaceDefault">@integer/apptentive_typeface_normal</item>
+
+        <item name="apptentiveTypefaceTitle">?apptentiveTypefaceDefault</item>
+        <item name="apptentiveTypefaceTitleNoMessage">?apptentiveTypefaceDefault</item>
+        <item name="apptentiveTypefaceMessage">?apptentiveTypefaceDefault</item>
+        <item name="apptentiveTypefaceButtonBorderless">?apptentiveTypefaceDefault</item>
     </style>
 
     <!-- This style has been a problem within our UI and will be disabled by default -->
@@ -25,6 +57,36 @@
     <style name="Theme.Apptentive.ToolbarTitle">
         <item name="android:textColor">?attr/colorOnPrimary</item>
         <item name="android:textAppearance">?attr/textAppearanceHeadline6</item>
+    </style>
+
+    <style name="Apptentive" />
+    <style name="Apptentive.Note" />
+    <style name="Apptentive.Note.Layout">
+        <item name="android:background">?apptentiveDialogBackground</item>
+    </style>
+
+    <style name="Apptentive.TextAppearance.Title.WithMessage" parent="Widget.MaterialComponents.TextView">
+        <item name="android:typeface">?attr/apptentiveTypefaceTitle</item>
+        <item name="android:textSize">?attr/apptentiveTextSizeTitle</item>
+        <item name="android:textColor">?attr/apptentiveTextColorTitle</item>
+    </style>
+
+    <style name="Apptentive.TextAppearance.Title.NoMessage" parent="Widget.MaterialComponents.TextView">
+        <item name="android:typeface">?attr/apptentiveTypefaceTitleNoMessage</item>
+        <item name="android:textSize">?attr/apptentiveTextSizeTitleNoMessage</item>
+        <item name="android:textColor">?attr/apptentiveTextColorTitleNoMessage</item>
+    </style>
+
+    <style name="Apptentive.TextAppearance.Subhead.Secondary" parent="Widget.MaterialComponents.TextView">
+        <item name="android:typeface">?attr/apptentiveTypefaceMessage</item>
+        <item name="android:textSize">?attr/apptentiveTextSizeMessage</item>
+        <item name="android:textColor">?attr/apptentiveTextColorMessage</item>
+    </style>
+
+    <style name="Apptentive.Widget.Button.Borderless" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:typeface">?attr/apptentiveTypefaceButtonBorderless</item>
+        <item name="android:textColor">?attr/apptentiveInteractionButtonColorDefault</item>
+        <item name="android:textSize">?attr/apptentiveTextSizeButtonBorderless</item>
     </style>
 
 </resources>

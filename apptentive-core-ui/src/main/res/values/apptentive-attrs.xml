@@ -1,9 +1,40 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright (c) 2016, Apptentive, Inc. All Rights Reserved.
-  ~ Please refer to the LICENSE file for the terms and conditions
-  ~ under which redistribution and use of this file is permitted.
-  -->
-
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="apptentiveSurveyButtonStyle" format="reference" />
+    <declare-styleable name="ApptentiveThemeTemplate">
+
+        <!-- Notes -->
+        <attr name="apptentiveNoteLayoutStyle" format="reference" />
+        <attr name="apptentiveNoteTitleWithMessageTextStyle" format="reference" />
+        <attr name="apptentiveNoteTitleNoMessageTextStyle" format="reference" />
+        <attr name="apptentiveNoteMessageTextStyle" format="reference" />
+        <attr name="apptentiveInteractionButtonStyle" format="reference"/>
+
+        <!-- Survey -->
+        <attr name="apptentiveSurveySubmitButtonStyle" format="reference" />
+
+        <!-- Text Size -->
+        <attr name="apptentiveTextSizeTitle" format="dimension|reference" />
+        <attr name="apptentiveTextSizeTitleNoMessage" format="dimension|reference" />
+        <attr name="apptentiveTextSizeMessage" format="dimension|reference" />
+        <attr name="apptentiveTextSizeButtonBorderless" format="dimension|reference" />
+
+        <!-- Text Color -->
+        <attr name="apptentiveTextColorTitle" format="color|reference"/>
+        <attr name="apptentiveTextColorTitleNoMessage" format="color|reference"/>
+        <attr name="apptentiveTextColorMessage" format="color|reference"/>
+        <attr name="apptentiveInteractionButtonColorDefault" format="color|reference"/>
+
+        <!-- Background Color -->
+        <attr name="apptentiveDialogBackground" format="color|reference" />
+
+        <!-- Typeface -->
+        <attr name="apptentiveTypefaceDefault" format="integer|reference"/>
+
+        <attr name="apptentiveTypefaceTitle" format="enum|reference" />
+        <attr name="apptentiveTypefaceTitleNoMessage" format="enum|reference" />
+        <attr name="apptentiveTypefaceMessage" format="enum|reference" />
+        <attr name="apptentiveTypefaceButtonBorderless" format="enum|reference" />
+
+    </declare-styleable>
+
 </resources>

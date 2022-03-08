@@ -1,56 +1,78 @@
 package apptentive.com.android.feedback.textmodal
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
-import android.view.View
-import android.view.View.TEXT_ALIGNMENT_CENTER
-import android.view.View.TEXT_ALIGNMENT_VIEW_END
-import android.view.ViewGroup
-import android.widget.TextView
-import androidx.appcompat.widget.DialogTitle
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.LinearLayout
+import androidx.appcompat.view.ContextThemeWrapper
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import apptentive.com.android.feedback.notes.R
+import apptentive.com.android.ui.overrideTheme
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textview.MaterialTextView
 
 internal class TextModalDialogFragment : DialogFragment() {
 
     private val viewModel by viewModels<TextModalViewModel>()
 
+    @SuppressLint("UseGetLayoutInflater", "InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = MaterialAlertDialogBuilder(requireContext()).apply {
-            val inflater = LayoutInflater.from(context)
+
+            val contextWrapper = ContextThemeWrapper(requireContext(), R.style.Theme_Apptentive).apply {
+                overrideTheme()
+            }
+            val inflater = LayoutInflater.from(contextWrapper)
             val contentView = inflater.inflate(R.layout.apptentive_note, null)
             setView(contentView)
 
-            val titleView = contentView.findViewById<DialogTitle>(R.id.apptentive_note_title)
-            if (viewModel.title != null && viewModel.message != null) titleView.text = viewModel.title
-            else titleView.visibility = View.GONE
+            val noteLayout = contentView.findViewById<LinearLayout>(R.id.apptentive_note)
 
-            val messageView = contentView.findViewById<TextView>(R.id.apptentive_note_message)
-            when {
-                viewModel.message != null -> messageView.text = viewModel.message
-                viewModel.title != null -> messageView.text = viewModel.title
-                else -> messageView.visibility = View.GONE
+            //region Title
+            val titleView = inflater.inflate(
+                if (viewModel.message != null) R.layout.apptentive_note_title_with_message
+                else R.layout.apptentive_note_title_no_message, null
+            ) as MaterialTextView
+            titleView.text = viewModel.title
+            noteLayout.addView(titleView)
+            //endregion
+
+            //region Message
+            if (viewModel.message != null) {
+                val messageView = inflater.inflate(R.layout.apptentive_note_message, null) as MaterialTextView
+                messageView.text = viewModel.message
+                noteLayout.addView(messageView)
             }
+            //endregion
 
-            val viewGroup = contentView.findViewById<ViewGroup>(R.id.apptentive_note_button_bar)
-            viewModel.onDismiss = { this@TextModalDialogFragment.dismiss()}
+            //region Actions
+            val buttonLayout = inflater.inflate(R.layout.apptentive_note_actions, null) as LinearLayout
+            noteLayout.addView(buttonLayout)
+
             viewModel.actions.forEach { action ->
-                val button = inflater.inflate(R.layout.apptentive_note_action, null) as TextView
-                button.text = action.title
-                button.textAlignment =
-                    if (viewModel.actions.size > 1) TEXT_ALIGNMENT_VIEW_END
-                    else TEXT_ALIGNMENT_CENTER
+                val button = inflater.inflate(R.layout.apptentive_note_action, null) as MaterialButton
 
-                viewGroup.addView(button)
+                button.layoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
+                    gravity = Gravity.END
+                }
+                button.text = action.title
+
+                buttonLayout.addView(button)
                 button.setOnClickListener {
                     action.invoke()
                 }
             }
+            //endregion
+
+            viewModel.onDismiss = { this@TextModalDialogFragment.dismiss() }
         }.create()
+
         return dialog.apply {
             setCanceledOnTouchOutside(false)
         }
