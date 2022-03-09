@@ -7,7 +7,6 @@
         <attr name="apptentiveNoteTitleWithMessageTextStyle" format="reference" />
         <attr name="apptentiveNoteTitleNoMessageTextStyle" format="reference" />
         <attr name="apptentiveNoteMessageTextStyle" format="reference" />
-        <attr name="apptentiveInteractionButtonStyle" format="reference"/>
 
         <!-- Survey -->
         <attr name="apptentiveSurveySubmitButtonStyle" format="reference" />
@@ -24,16 +23,21 @@
         <attr name="apptentiveTextColorMessage" format="color|reference"/>
         <attr name="apptentiveInteractionButtonColorDefault" format="color|reference"/>
 
-        <!-- Background Color -->
-        <attr name="apptentiveDialogBackground" format="color|reference" />
-
         <!-- Typeface -->
         <attr name="apptentiveTypefaceDefault" format="integer|reference"/>
-
         <attr name="apptentiveTypefaceTitle" format="enum|reference" />
         <attr name="apptentiveTypefaceTitleNoMessage" format="enum|reference" />
         <attr name="apptentiveTypefaceMessage" format="enum|reference" />
         <attr name="apptentiveTypefaceButtonBorderless" format="enum|reference" />
+
+        <!--- AlertDialog style -->
+        <attr name="apptentiveDialogTitleStyle" format="reference" />
+        <attr name="apptentiveInteractionButtonStyle" format="reference"/>
+        <attr name="apptentiveDialogBackground" format="color|reference" />
+
+        <!--- LoveDialog style -->
+        <attr name="apptentiveLoveDialogLayoutStyle" format="color|reference" />
+        <attr name="apptentiveLoveDialogTitleStyle" format="reference" />
 
     </declare-styleable>
 

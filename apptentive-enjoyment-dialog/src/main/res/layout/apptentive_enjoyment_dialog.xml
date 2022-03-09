@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?apptentiveLoveDialogLayoutStyle"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingHorizontal="8dp"
+    android:paddingTop="18dp"
+    android:paddingBottom="2dp">
+
+     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/title"
+        style="?apptentiveLoveDialogTitleStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:letterSpacing=".02"
+        android:minHeight="32dp"
+        android:paddingHorizontal="16dp"/>
+
+     <LinearLayout
+        android:id="@+id/button_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end">
+
+         <com.google.android.material.button.MaterialButton
+            android:id="@+id/no"
+            style="?apptentiveInteractionButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:maxWidth="160dp"
+            android:maxLines="1"
+            android:minWidth="64dp"/>
+
+         <com.google.android.material.button.MaterialButton
+            android:id="@+id/yes"
+            style="?apptentiveInteractionButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="160dp"
+            android:maxLines="1"
+            android:minWidth="64dp"/>
+
+    </LinearLayout>
+
+</LinearLayout>

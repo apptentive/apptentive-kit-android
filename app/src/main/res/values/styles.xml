@@ -23,7 +23,6 @@
 <!--        <item name="apptentiveNoteTitleWithMessageTextStyle">@style/Custom.Note.Title.WithMessage.Text</item>-->
 <!--        <item name="apptentiveNoteTitleNoMessageTextStyle">@style/Custom.Note.Title.NoMessage.Text</item>-->
 <!--        <item name="apptentiveNoteMessageTextStyle">@style/Custom.Note.Message.Text</item>-->
-<!--        <item name="apptentiveInteractionButtonStyle">@style/Custom.Note.Button</item>-->
 
         <!-- Survey Styles-->
 <!--        <item name="apptentiveSurveySubmitButtonStyle">@style/Custom.MaterialButton</item>-->
@@ -40,9 +39,6 @@
 <!--        <item name="apptentiveTextColorMessage">@color/color_secondary</item>-->
 <!--        <item name="apptentiveInteractionButtonColorDefault">?colorPrimary</item>-->
 
-        <!-- Background Color -->
-<!--        <item name="apptentiveDialogBackground">@color/color_secondary</item>-->
-
         <!-- Typeface -->
 <!--        <item name="apptentiveTypefaceDefault">@integer/apptentive_typeface_serif</item>-->
 
@@ -50,6 +46,14 @@
 <!--        <item name="apptentiveTypefaceTitleNoMessage">?apptentiveTypefaceDefault</item>-->
 <!--        <item name="apptentiveTypefaceMessage">?apptentiveTypefaceDefault</item>-->
 <!--        <item name="apptentiveTypefaceButtonBorderless">?apptentiveTypefaceDefault</item>-->
+
+        <!-- AlertDialog -->
+<!--        <item name="apptentiveInteractionButtonStyle">@style/Custom.Dialog.Button</item>-->
+<!--        <item name="apptentiveDialogBackground">@color/color_secondary</item>-->
+
+        <!-- LoveDialog -->
+<!--        <item name="apptentiveLoveDialogTitleStyle">@style/Custom.LoveDialog.Title</item>-->
+<!--        <item name="apptentiveDialogBackground">@color/color_secondary</item>-->
     </style>
 
 
@@ -64,17 +68,20 @@
     </style>
 
     <style name="Custom"/>
+
     <style name="Custom.Note"/>
+
     <style name="Custom.Note.Layout">
         <item name="android:background">@color/color_error</item>
     </style>
+
     <style name="Custom.Note.Title.WithMessage.Text" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
         <item name="android:textColor">@color/color_on_primary</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
     </style>
 
     <style name="Custom.Note.Title.NoMessage.Text" parent="Widget.MaterialComponents.TextView">
-        <item name="android:textColor">@color/color_on_primary</item>
+        <item name="android:textColor">@color/color_error</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">30sp</item>
     </style>
@@ -85,7 +92,9 @@
         <item name="android:textSize">8sp</item>
     </style>
 
-    <style name="Custom.Note.Button" parent="Widget.MaterialComponents.Button.OutlinedButton">
+    <style name="Custom.Dialog"/>
+
+    <style name="Custom.Dialog.Button" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="android:textColor">@color/color_on_primary</item>
         <item name="android:textSize">20sp</item>
         <item name="backgroundTint">@color/color_primary</item>
@@ -93,6 +102,24 @@
         <item name="cornerRadius">@dimen/margin_24dp</item>
         <item name="strokeColor">@color/color_error</item>
         <item name="strokeWidth">4dp</item>
+    </style>
+
+    <style name="Custom.Dialog.Title" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textColor">@color/color_error</item>
+        <item name="android:fontFamily">@font/pacifico_regular</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="Custom.LoveDialog"/>
+
+    <style name="Custom.LoveDialog.Layout">
+        <item name="android:background">@color/apptentive_color_error</item>
+    </style>
+
+    <style name="Custom.LoveDialog.Title" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textColor">@color/color_error</item>
+        <item name="android:fontFamily">@font/pacifico_regular</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
 </resources>

@@ -17,7 +17,6 @@
         <item name="apptentiveNoteTitleWithMessageTextStyle">@style/Apptentive.TextAppearance.Title.WithMessage</item>
         <item name="apptentiveNoteTitleNoMessageTextStyle">@style/Apptentive.TextAppearance.Title.NoMessage</item>
         <item name="apptentiveNoteMessageTextStyle">@style/Apptentive.TextAppearance.Subhead.Secondary</item>
-        <item name="apptentiveInteractionButtonStyle">@style/Apptentive.Widget.Button.Borderless</item>
 
         <!-- Survey Styles-->
         <item name="apptentiveSurveySubmitButtonStyle">@style/Widget.MaterialComponents.Button</item>
@@ -27,9 +26,6 @@
         <item name="apptentiveTextSizeTitleNoMessage">@dimen/apptentive_text_size_default</item>
         <item name="apptentiveTextSizeMessage">@dimen/apptentive_text_size_default</item>
         <item name="apptentiveTextSizeButtonBorderless">@dimen/apptentive_text_size_default</item>
-
-        <!-- Background Color -->
-        <item name="apptentiveDialogBackground">@color/apptentive_dialog_background_color</item>
 
         <!-- Text Color -->
         <item name="apptentiveTextColorTitle">@color/apptentive_color_text_title</item>
@@ -44,6 +40,14 @@
         <item name="apptentiveTypefaceTitleNoMessage">?apptentiveTypefaceDefault</item>
         <item name="apptentiveTypefaceMessage">?apptentiveTypefaceDefault</item>
         <item name="apptentiveTypefaceButtonBorderless">?apptentiveTypefaceDefault</item>
+
+        <!--- LoveDialog -->
+        <item name="apptentiveLoveDialogLayoutStyle">@style/Apptentive.LoveDialog.Layout</item>
+        <item name="apptentiveLoveDialogTitleStyle">@style/Apptentive.TextAppearance.Title.NoMessage</item>
+
+        <!--- AlertDialog general -->
+        <item name="apptentiveInteractionButtonStyle">@style/Apptentive.Widget.Button.Borderless</item>
+        <item name="apptentiveDialogBackground">@color/apptentive_dialog_background_color</item>
     </style>
 
     <!-- This style has been a problem within our UI and will be disabled by default -->
@@ -60,18 +64,28 @@
     </style>
 
     <style name="Apptentive" />
+
     <style name="Apptentive.Note" />
+
     <style name="Apptentive.Note.Layout">
         <item name="android:background">?apptentiveDialogBackground</item>
     </style>
 
-    <style name="Apptentive.TextAppearance.Title.WithMessage" parent="Widget.MaterialComponents.TextView">
+    <style name="Apptentive.LoveDialog" />
+
+    <style name="Apptentive.LoveDialog.Layout">
+        <item name="android:background">?apptentiveDialogBackground</item>
+    </style>
+
+    <style name="Apptentive.TextAppearance.Title" parent="Widget.MaterialComponents.TextView">
         <item name="android:typeface">?attr/apptentiveTypefaceTitle</item>
         <item name="android:textSize">?attr/apptentiveTextSizeTitle</item>
         <item name="android:textColor">?attr/apptentiveTextColorTitle</item>
     </style>
 
-    <style name="Apptentive.TextAppearance.Title.NoMessage" parent="Widget.MaterialComponents.TextView">
+    <style name="Apptentive.TextAppearance.Title.WithMessage" parent="Apptentive.TextAppearance.Title" />
+
+    <style name="Apptentive.TextAppearance.Title.NoMessage" parent="Apptentive.TextAppearance.Title">
         <item name="android:typeface">?attr/apptentiveTypefaceTitleNoMessage</item>
         <item name="android:textSize">?attr/apptentiveTextSizeTitleNoMessage</item>
         <item name="android:textColor">?attr/apptentiveTextColorTitleNoMessage</item>
@@ -83,6 +97,7 @@
         <item name="android:textColor">?attr/apptentiveTextColorMessage</item>
     </style>
 
+    <!-- Button style with no border but text, example: buttons on Enjoyment Prompt-->
     <style name="Apptentive.Widget.Button.Borderless" parent="Widget.MaterialComponents.Button.TextButton">
         <item name="android:typeface">?attr/apptentiveTypefaceButtonBorderless</item>
         <item name="android:textColor">?attr/apptentiveInteractionButtonColorDefault</item>
