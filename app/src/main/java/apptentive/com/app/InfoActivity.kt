@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.telephony.TelephonyManager
 import android.util.DisplayMetrics
 import android.util.TypedValue
@@ -22,6 +21,7 @@ import apptentive.com.app.databinding.ActivityDebugInfoBinding
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
+import java.util.UUID
 
 class InfoActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -243,7 +243,7 @@ class InfoActivity : AppCompatActivity() {
         brand = Build.BRAND,
         cpu = Build.CPU_ABI,
         device = Build.DEVICE,
-        uuid = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID),
+        uuid = UUID.randomUUID().toString(),
         buildType = Build.TYPE,
         buildId = Build.ID,
         carrier = (getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager).simOperatorName,

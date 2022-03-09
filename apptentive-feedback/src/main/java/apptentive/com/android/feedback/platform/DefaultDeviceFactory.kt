@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Build
 import apptentive.com.android.feedback.model.Device
 import apptentive.com.android.util.Factory
+import java.util.UUID
 
 internal class DefaultDeviceFactory(
     private val context: Context
@@ -22,7 +23,7 @@ internal class DefaultDeviceFactory(
             brand = Build.BRAND,
             cpu = Build.CPU_ABI,
             device = Build.DEVICE,
-            uuid = AndroidUtils.getAndroidID(context),
+            uuid = UUID.randomUUID().toString(),
             buildType = Build.TYPE,
             buildId = Build.ID,
             carrier = AndroidUtils.getSimOperatorName(context),
