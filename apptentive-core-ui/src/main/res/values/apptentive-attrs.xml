@@ -8,6 +8,11 @@
         <attr name="apptentiveNoteTitleNoMessageTextStyle" format="reference" />
         <attr name="apptentiveNoteMessageTextStyle" format="reference" />
 
+        <!-- Apptentive Rating Dialog -->
+        <attr name="apptentiveRatingDialogLayoutStyle" format="reference" />
+        <attr name="apptentiveRatingDialogTitleTextStyle" format="reference" />
+        <attr name="apptentiveRatingDialogMessageTextStyle" format="reference" />
+
         <!-- Survey -->
         <attr name="apptentiveSurveySubmitButtonStyle" format="reference" />
 

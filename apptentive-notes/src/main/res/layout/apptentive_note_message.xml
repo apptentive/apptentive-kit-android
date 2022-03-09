@@ -5,5 +5,5 @@
     style="?attr/apptentiveNoteMessageTextStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="48dp"
-    android:paddingHorizontal="16dp" />
+    android:minHeight="@dimen/apptentive_dialog_message_min_height"
+    android:paddingHorizontal="@dimen/apptentive_dialog_message_horizontal_padding" />

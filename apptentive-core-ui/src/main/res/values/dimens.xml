@@ -3,4 +3,8 @@
     <!-- Minor Interface Customization -->
     <item name="apptentive_text_size_default" type="dimen">14sp</item>
     <item name="apptentive_text_size_title" type="dimen">18sp</item>
+    <dimen name="apptentive_dialog_message_horizontal_padding">16dp</dimen>
+    <dimen name="apptentive_dialog_action_spacing">8dp</dimen>
+    <dimen name="apptentive_dialog_title_horizontal_padding">16dp</dimen>
+    <dimen name="apptentive_dialog_message_min_height">48dp</dimen>
 </resources>

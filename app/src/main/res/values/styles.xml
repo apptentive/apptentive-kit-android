@@ -24,6 +24,11 @@
 <!--        <item name="apptentiveNoteTitleNoMessageTextStyle">@style/Custom.Note.Title.NoMessage.Text</item>-->
 <!--        <item name="apptentiveNoteMessageTextStyle">@style/Custom.Note.Message.Text</item>-->
 
+        <!-- Apptentive Rating Dialog Styles-->
+<!--        <item name="apptentiveRatingDialogLayoutStyle">@style/Custom.RatingDialog.Layout</item>-->
+<!--        <item name="apptentiveRatingDialogTitleTextStyle">@style/Custom.RatingDialog.Title.Text</item>-->
+<!--        <item name="apptentiveRatingDialogMessageTextStyle">@style/Custom.RatingDialog.Message.Text</item>-->
+
         <!-- Survey Styles-->
 <!--        <item name="apptentiveSurveySubmitButtonStyle">@style/Custom.MaterialButton</item>-->
 
@@ -62,7 +67,7 @@
         <item name="android:textColor">@color/color_primary</item>
         <item name="backgroundTint">?colorError</item>
         <item name="fontFamily">@font/pacifico_regular</item>
-        <item name="cornerRadius">@dimen/margin_24dp</item>
+        <item name="cornerRadius">24dp</item>
         <item name="strokeColor">@color/color_primary</item>
         <item name="strokeWidth">4dp</item>
     </style>
@@ -92,6 +97,23 @@
         <item name="android:textSize">8sp</item>
     </style>
 
+    <style name="Custom.RatingDialog"/>
+
+    <style name="Custom.RatingDialog.Layout">
+        <item name="android:background">@color/color_error</item>
+    </style>
+
+    <style name="Custom.RatingDialog.Title.Text" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
+        <item name="android:textColor">@color/color_on_primary</item>
+        <item name="android:fontFamily">@font/pacifico_regular</item>
+    </style>
+
+    <style name="Custom.RatingDialog.Message.Text" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textColor">@color/color_secondary</item>
+        <item name="android:fontFamily">@font/pacifico_regular</item>
+        <item name="android:textSize">8sp</item>
+    </style>
+
     <style name="Custom.Dialog"/>
 
     <style name="Custom.Dialog.Button" parent="Widget.MaterialComponents.Button.OutlinedButton">
@@ -99,7 +121,7 @@
         <item name="android:textSize">20sp</item>
         <item name="backgroundTint">@color/color_primary</item>
         <item name="fontFamily">@font/pacifico_regular</item>
-        <item name="cornerRadius">@dimen/margin_24dp</item>
+        <item name="cornerRadius">24dp</item>
         <item name="strokeColor">@color/color_error</item>
         <item name="strokeWidth">4dp</item>
     </style>

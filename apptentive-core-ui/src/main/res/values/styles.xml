@@ -18,6 +18,11 @@
         <item name="apptentiveNoteTitleNoMessageTextStyle">@style/Apptentive.TextAppearance.Title.NoMessage</item>
         <item name="apptentiveNoteMessageTextStyle">@style/Apptentive.TextAppearance.Subhead.Secondary</item>
 
+        <!-- Apptentive Rating Dialog Styles-->
+        <item name="apptentiveRatingDialogLayoutStyle">@style/Apptentive.RatingDialog.Layout</item>
+        <item name="apptentiveRatingDialogTitleTextStyle">@style/Apptentive.TextAppearance.Title</item>
+        <item name="apptentiveRatingDialogMessageTextStyle">@style/Apptentive.TextAppearance.Subhead.Secondary</item>
+
         <!-- Survey Styles-->
         <item name="apptentiveSurveySubmitButtonStyle">@style/Widget.MaterialComponents.Button</item>
 
@@ -68,6 +73,12 @@
     <style name="Apptentive.Note" />
 
     <style name="Apptentive.Note.Layout">
+        <item name="android:background">?apptentiveDialogBackground</item>
+    </style>
+
+    <style name="Apptentive.RatingDialog" />
+
+    <style name="Apptentive.RatingDialog.Layout">
         <item name="android:background">?apptentiveDialogBackground</item>
     </style>
 
