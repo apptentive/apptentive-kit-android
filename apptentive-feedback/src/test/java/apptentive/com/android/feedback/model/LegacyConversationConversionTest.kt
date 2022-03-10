@@ -189,13 +189,6 @@ class LegacyConversationConversionTest {
             personId,
             email,
             name,
-            facebookId,
-            phoneNumber,
-            street,
-            city,
-            zip,
-            country,
-            birthday,
             mParticleId,
             customData
         )

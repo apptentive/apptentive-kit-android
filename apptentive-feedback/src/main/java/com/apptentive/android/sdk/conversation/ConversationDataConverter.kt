@@ -82,13 +82,6 @@ internal fun LegacyPerson.toLatestFormat() = Person(
     id = id,
     email = email,
     name = name,
-    facebookId = facebookId,
-    phoneNumber = phoneNumber,
-    street = street,
-    city = city,
-    zip = zip,
-    country = country,
-    birthday = birthday,
     mParticleId = mParticleId,
     customData = customData.toLatestFormat()
 )

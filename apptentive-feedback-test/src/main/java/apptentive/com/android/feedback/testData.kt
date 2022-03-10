@@ -112,13 +112,6 @@ val mockPerson = Person(
     id = "1234567890",
     email = "person@company.com",
     name = "First Last",
-    facebookId = "facebook",
-    phoneNumber = "555.555.5555",
-    street = "123 Fake St",
-    city = "Seattle",
-    zip = "98121",
-    country = "US",
-    birthday = "1/1/1970",
     mParticleId = "mparticle",
     customData = CustomData(content = mapOf("person_key" to "person_value"))
 )

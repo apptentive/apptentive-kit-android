@@ -259,13 +259,6 @@ internal object Serializers {
                 encoder.encodeNullableString(value.id)
                 encoder.encodeNullableString(value.email)
                 encoder.encodeNullableString(value.name)
-                encoder.encodeNullableString(value.facebookId)
-                encoder.encodeNullableString(value.phoneNumber)
-                encoder.encodeNullableString(value.street)
-                encoder.encodeNullableString(value.city)
-                encoder.encodeNullableString(value.zip)
-                encoder.encodeNullableString(value.country)
-                encoder.encodeNullableString(value.birthday)
                 encoder.encodeNullableString(value.mParticleId)
                 customDataSerializer.encode(encoder, value.customData)
             }
@@ -275,13 +268,6 @@ internal object Serializers {
                     id = decoder.decodeNullableString(),
                     email = decoder.decodeNullableString(),
                     name = decoder.decodeNullableString(),
-                    facebookId = decoder.decodeNullableString(),
-                    phoneNumber = decoder.decodeNullableString(),
-                    street = decoder.decodeNullableString(),
-                    city = decoder.decodeNullableString(),
-                    zip = decoder.decodeNullableString(),
-                    country = decoder.decodeNullableString(),
-                    birthday = decoder.decodeNullableString(),
                     mParticleId = decoder.decodeNullableString(),
                     customData = customDataSerializer.decode(decoder)
                 )

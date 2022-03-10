@@ -16,13 +16,6 @@ class PersonPayload(
     val id: String? = null,
     val email: String? = null,
     val name: String? = null,
-    val facebookId: String? = null,
-    val phoneNumber: String? = null,
-    val street: String? = null,
-    val city: String? = null,
-    val zip: String? = null,
-    val country: String? = null,
-    val birthday: String? = null,
     @SensitiveDataKey val mParticleId: String? = null,
     @SensitiveDataKey val customData: Map<String, Any?>? = null,
 ) : ConversationPayload(nonce) {
@@ -42,13 +35,6 @@ class PersonPayload(
                 id != other.id ||
                 email != other.email ||
                 name != other.name ||
-                facebookId != other.facebookId ||
-                phoneNumber != other.phoneNumber ||
-                street != other.street ||
-                city != other.city ||
-                zip != other.zip ||
-                country != other.country ||
-                birthday != other.birthday ||
                 mParticleId != other.mParticleId ||
                 customData != other.customData -> false
             else -> true
@@ -60,13 +46,6 @@ class PersonPayload(
         result = 31 * result + (id?.hashCode() ?: 0)
         result = 31 * result + (email?.hashCode() ?: 0)
         result = 31 * result + (name?.hashCode() ?: 0)
-        result = 31 * result + (facebookId?.hashCode() ?: 0)
-        result = 31 * result + (phoneNumber?.hashCode() ?: 0)
-        result = 31 * result + (street?.hashCode() ?: 0)
-        result = 31 * result + (city?.hashCode() ?: 0)
-        result = 31 * result + (zip?.hashCode() ?: 0)
-        result = 31 * result + (country?.hashCode() ?: 0)
-        result = 31 * result + (birthday?.hashCode() ?: 0)
         result = 31 * result + (mParticleId?.hashCode() ?: 0)
         result = 31 * result + customData.hashCode()
         return result

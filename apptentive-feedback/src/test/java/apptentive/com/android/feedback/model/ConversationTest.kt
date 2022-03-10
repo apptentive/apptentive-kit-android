@@ -49,13 +49,6 @@ class ConversationTest : TestCase() {
                 id = "id",
                 email = "email",
                 name = "name",
-                facebookId = "facebookId",
-                phoneNumber = "phoneNumber",
-                street = "street",
-                city = "city",
-                zip = "zip",
-                country = "country",
-                birthday = "birthday",
                 mParticleId = "mParticleId",
                 customData = CustomData(mapOf(Pair("key5", "value5")))
             ),
