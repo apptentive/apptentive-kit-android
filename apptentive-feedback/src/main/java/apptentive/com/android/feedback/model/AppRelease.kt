@@ -18,6 +18,7 @@ data class AppRelease(
     val versionCode: VersionCode,
     val versionName: VersionName,
     val targetSdkVersion: String,
+    val minSdkVersion: String,
     val debug: Boolean = false,
     val inheritStyle: Boolean = false,
     val overrideStyle: Boolean = false,

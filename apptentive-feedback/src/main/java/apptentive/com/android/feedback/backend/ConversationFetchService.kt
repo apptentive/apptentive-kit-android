@@ -132,6 +132,7 @@ private data class AppReleaseSdkRequestData(
     val inheritingStyles: Boolean,
     val overridingStyles: Boolean,
     val targetSdkVersion: String,
+    val minSdkVersion: String,
     val type: String,
     val versionCode: VersionCode,
     val versionName: VersionName
@@ -153,6 +154,7 @@ private data class AppReleaseSdkRequestData(
             inheritingStyles = appRelease.inheritStyle,
             overridingStyles = appRelease.overrideStyle,
             targetSdkVersion = appRelease.targetSdkVersion,
+            minSdkVersion = appRelease.minSdkVersion,
             type = appRelease.type,
             versionCode = appRelease.versionCode,
             versionName = appRelease.versionName

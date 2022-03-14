@@ -94,6 +94,7 @@ val mockAppRelease = AppRelease(
     versionName = "1.0.0",
     versionCode = 1,
     targetSdkVersion = "29",
+    minSdkVersion = "21",
     debug = true,
     inheritStyle = true,
     overrideStyle = false,

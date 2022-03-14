@@ -102,6 +102,7 @@ internal fun LegacyAppRelease.toLatestFormat() = AppRelease(
     versionCode = versionCode.toLong(),
     versionName = versionName,
     targetSdkVersion = targetSdkVersion,
+    minSdkVersion = "0",
     debug = isDebug,
     inheritStyle = isInheritStyle,
     overrideStyle = isOverrideStyle,

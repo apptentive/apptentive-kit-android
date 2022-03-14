@@ -309,6 +309,7 @@ internal object Serializers {
                 encoder.encodeLong(value.versionCode)
                 encoder.encodeString(value.versionName)
                 encoder.encodeString(value.targetSdkVersion)
+                encoder.encodeString(value.minSdkVersion)
                 encoder.encodeBoolean(value.debug)
                 encoder.encodeBoolean(value.inheritStyle)
                 encoder.encodeBoolean(value.overrideStyle)
@@ -323,6 +324,7 @@ internal object Serializers {
                     versionCode = decoder.decodeLong(),
                     versionName = decoder.decodeString(),
                     targetSdkVersion = decoder.decodeString(),
+                    minSdkVersion = decoder.decodeString(),
                     debug = decoder.decodeBoolean(),
                     inheritStyle = decoder.decodeBoolean(),
                     overrideStyle = decoder.decodeBoolean(),

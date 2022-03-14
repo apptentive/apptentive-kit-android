@@ -20,6 +20,7 @@ internal class DefaultAppReleaseFactory(
             versionCode = applicationInfo.versionCode,
             versionName = applicationInfo.versionName,
             targetSdkVersion = applicationInfo.targetSdkVersion.toString(),
+            minSdkVersion = applicationInfo.minSdkVersion.toString(),
             debug = applicationInfo.debuggable,
             inheritStyle = false,
             overrideStyle = false,

@@ -23,6 +23,7 @@ internal class AppReleaseAndSDKPayload(
     val inheritingStyles: Boolean,
     val overridingStyles: Boolean,
     val targetSdkVersion: String,
+    val minSdkVersion: String,
     val type: String,
     val versionCode: Int,
     val versionName: String
@@ -52,6 +53,7 @@ internal class AppReleaseAndSDKPayload(
                 inheritingStyles = appRelease.inheritStyle,
                 overridingStyles = appRelease.overrideStyle,
                 targetSdkVersion = appRelease.targetSdkVersion,
+                minSdkVersion = appRelease.minSdkVersion,
                 type = appRelease.type,
                 versionCode = appRelease.versionCode.toInt(),
                 versionName = appRelease.versionName
