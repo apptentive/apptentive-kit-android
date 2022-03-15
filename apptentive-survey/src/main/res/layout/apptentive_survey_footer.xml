@@ -7,25 +7,23 @@
     android:orientation="vertical">
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/submit_button"
+        android:id="@+id/apptentive_submit_button"
         style="?apptentiveSurveySubmitButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_16dp"
-        android:layout_marginBottom="@dimen/margin_16dp"
+        android:layout_marginVertical="@dimen/apptentive_submit_button_vertical_margin"
         tools:backgroundTint="@color/apptentive_color_primary"
         tools:text="Submit"
         tools:textColor="@color/apptentive_color_on_primary" />
 
-    <TextView
-        android:id="@+id/submit_error_message"
-        style="?attr/textAppearanceBody2"
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/apptentive_submit_error_message"
+        style="?apptentiveSurveySubmitErrorStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/margin_16dp"
+        android:layout_marginHorizontal="@dimen/apptentive_submit_error_message_margin"
+        android:layout_marginBottom="@dimen/apptentive_submit_error_message_margin"
         android:gravity="center"
-        android:maxLines="1"
-        android:textColor="?attr/colorError"
         tools:text="Error Text"
         tools:textColor="@color/apptentive_color_error" />
 

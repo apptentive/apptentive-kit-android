@@ -18,17 +18,25 @@
 
     <dimen name="apptentive_card_view_gap_vertical">4dp</dimen>
     <dimen name="apptentive_card_view_gap_horizontal">4dp</dimen>
-    <dimen name="margin_2dp">2dp</dimen>
-    <dimen name="margin_4dp">4dp</dimen>
-    <dimen name="margin_6dp">6dp</dimen>
-    <dimen name="margin_8dp">8dp</dimen>
-    <dimen name="margin_12dp">12dp</dimen>
-    <dimen name="margin_16dp">16dp</dimen>
-    <dimen name="margin_24dp">24dp</dimen>
-    <dimen name="margin_40dp">40dp</dimen>
-    <dimen name="min_height_radio_checkbox_component">40dp</dimen>
-    <dimen name="apptentive_checkbox_radiobutton_slider_margin">11dp</dimen>
-    <dimen name="min_height_textfield_component">48dp</dimen>
-    <dimen name="bottom_app_bar_height">36dp</dimen>
 
+    <!-- Survey-->
+    <dimen name="apptentive_survey_introduction_padding">16dp</dimen>
+    <dimen name="apptentive_question_layout_vertical_padding">12dp</dimen>
+    <dimen name="apptentive_question_title_bottom_margin">8dp</dimen>
+    <dimen name="apptentive_question_title_instructions_layout_horizontal_margin">16dp</dimen>
+    <dimen name="apptentive_question_instructions_bottom_margin">4dp</dimen>
+    <dimen name="apptentive_question_error_horizontal_margin">16dp</dimen>
+    <dimen name="apptentive_radio_checkbox_min_height">40dp</dimen>
+    <dimen name="apptentive_radio_checkbox_slider_margin">11dp</dimen>
+    <dimen name="apptentive_radio_checkbox_horizontal_padding">8dp</dimen>
+    <dimen name="apptentive_singleline_layout_horizontal_padding">16dp</dimen>
+    <dimen name="apptentive_singleline_edittext_bottom_padding">4dp</dimen>
+    <dimen name="apptentive_range_label_horizontal_padding">16dp</dimen>
+    <dimen name="apptentive_range_label_vertical_padding">2dp</dimen>
+    <dimen name="apptentive_other_text_field_min_height">48dp</dimen>
+    <dimen name="apptentive_other_text_field_start_padding">40dp</dimen>
+    <dimen name="apptentive_other_text_field_end_padding">16dp</dimen>
+    <dimen name="apptentive_bottom_app_bar_height">36dp</dimen>
+    <dimen name="apptentive_submit_button_vertical_margin">16dp</dimen>
+    <dimen name="apptentive_submit_error_message_margin">16dp</dimen>
 </resources>

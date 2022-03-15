@@ -25,17 +25,17 @@ internal class EnjoymentDialogFragment : DialogFragment() {
                 overrideTheme()
             }
             val enjoymentDialogView = LayoutInflater.from(ctx).inflate(R.layout.apptentive_enjoyment_dialog, null)
-            val messageView = enjoymentDialogView.findViewById<MaterialTextView>(R.id.title)
+            val messageView = enjoymentDialogView.findViewById<MaterialTextView>(R.id.apptentive_enjoyment_dialog_title)
             messageView.text = viewModel.title
 
-            val positiveButtonView = enjoymentDialogView.findViewById<MaterialButton>(R.id.yes)
+            val positiveButtonView = enjoymentDialogView.findViewById<MaterialButton>(R.id.apptentive_enjoyment_dialog_yes)
             positiveButtonView.text = viewModel.yesText
             positiveButtonView.setOnClickListener {
                 viewModel.onYesButton()
                 this@EnjoymentDialogFragment.dismiss()
             }
 
-            val negativeButtonView = enjoymentDialogView.findViewById<MaterialButton>(R.id.no)
+            val negativeButtonView = enjoymentDialogView.findViewById<MaterialButton>(R.id.apptentive_enjoyment_dialog_no)
             negativeButtonView.text = viewModel.noText
             negativeButtonView.setOnClickListener {
                 viewModel.onNoButton()

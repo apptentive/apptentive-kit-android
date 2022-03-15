@@ -15,7 +15,7 @@
         android:orientation="vertical">
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/apptentive_rate_title"
+            android:id="@+id/apptentive_rating_dialog_title"
             style="?apptentiveRatingDialogTitleTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -24,7 +24,7 @@
             tools:text="Rating Title" />
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/apptentive_rate_message"
+            android:id="@+id/apptentive_rating_dialog_message"
             style="?apptentiveRatingDialogMessageTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -33,8 +33,8 @@
             tools:text="Rating Message" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/apptentive_rate_button"
-            style="?apptentiveInteractionButtonStyle"
+            android:id="@+id/apptentive_rating_dialog_button"
+            style="?apptentiveDialogButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
@@ -45,8 +45,8 @@
             tools:textColor="@color/apptentive_color_on_background" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/apptentive_remind_button"
-            style="?apptentiveInteractionButtonStyle"
+            android:id="@+id/apptentive_rating_dialog_remind_button"
+            style="?apptentiveDialogButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
@@ -56,8 +56,8 @@
             tools:textColor="@color/apptentive_color_on_background" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/apptentive_decline_button"
-            style="?apptentiveInteractionButtonStyle"
+            android:id="@+id/apptentive_rating_dialog_decline_button"
+            style="?apptentiveDialogButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"

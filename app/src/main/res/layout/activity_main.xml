@@ -64,7 +64,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/horizontal_spacing"
-            android:paddingTop="@dimen/margin_16dp"
+            android:paddingTop="16dp"
             android:paddingBottom="@dimen/vertical_spacing">
 
             <com.google.android.material.textfield.TextInputLayout

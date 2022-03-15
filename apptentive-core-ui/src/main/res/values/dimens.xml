@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Minor Interface Customization -->
-    <item name="apptentive_text_size_default" type="dimen">14sp</item>
-    <item name="apptentive_text_size_title" type="dimen">18sp</item>
+    <dimen name="apptentive_text_size_default">14sp</dimen>
+    <dimen name="apptentive_text_size_dialog_title">18sp</dimen>
+    <dimen name="apptentive_text_size_survey_introduction">20sp</dimen>
+    <dimen name="apptentive_text_size_question_title">16sp</dimen>
+    <dimen name="apptentive_text_size_caption">12sp</dimen>
     <dimen name="apptentive_dialog_message_horizontal_padding">16dp</dimen>
     <dimen name="apptentive_dialog_action_spacing">8dp</dimen>
     <dimen name="apptentive_dialog_title_horizontal_padding">16dp</dimen>

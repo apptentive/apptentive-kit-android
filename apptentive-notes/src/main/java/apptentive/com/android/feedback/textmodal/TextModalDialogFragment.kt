@@ -32,7 +32,7 @@ internal class TextModalDialogFragment : DialogFragment() {
             val contentView = inflater.inflate(R.layout.apptentive_note, null)
             setView(contentView)
 
-            val noteLayout = contentView.findViewById<LinearLayout>(R.id.apptentive_note)
+            val noteLayout = contentView.findViewById<LinearLayout>(R.id.apptentive_note_layout)
 
             //region Title
             val titleView = inflater.inflate(

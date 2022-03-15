@@ -9,7 +9,7 @@
     android:paddingBottom="2dp">
 
     <LinearLayout
-        android:id="@+id/apptentive_note"
+        android:id="@+id/apptentive_note_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" />

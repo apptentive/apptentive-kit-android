@@ -12,47 +12,95 @@
         <item name="android:textColorSecondary">@color/apptentive_color_text_color_secondary</item>
         <item name="colorError">@color/apptentive_color_error</item>
 
-        <!-- Note Styles-->
+
+        <!-- Minor Interface Customization -->
+
+        <!-- General Alert Dialog Styles -->
+        <item name="apptentiveDialogButtonStyle">@style/Apptentive.Widget.Dialog.Button</item>
+        <item name="apptentiveDialogBackground">?colorSurface</item>
+
+        <!-- Love Dialog Styles -->
+        <item name="apptentiveLoveDialogLayoutStyle">@style/Apptentive.LoveDialog.Layout</item>
+        <item name="apptentiveLoveDialogTitleStyle">@style/Apptentive.TextAppearance.Dialog.Title.NoMessage</item>
+
+        <!-- Note Dialog Styles -->
         <item name="apptentiveNoteLayoutStyle">@style/Apptentive.Note.Layout</item>
-        <item name="apptentiveNoteTitleWithMessageTextStyle">@style/Apptentive.TextAppearance.Title.WithMessage</item>
-        <item name="apptentiveNoteTitleNoMessageTextStyle">@style/Apptentive.TextAppearance.Title.NoMessage</item>
-        <item name="apptentiveNoteMessageTextStyle">@style/Apptentive.TextAppearance.Subhead.Secondary</item>
+        <item name="apptentiveNoteTitleWithMessageTextStyle">@style/Apptentive.TextAppearance.Dialog.Title.WithMessage</item>
+        <item name="apptentiveNoteTitleNoMessageTextStyle">@style/Apptentive.TextAppearance.Dialog.Title.NoMessage</item>
+        <item name="apptentiveNoteMessageTextStyle">@style/Apptentive.TextAppearance.Dialog.Message</item>
 
-        <!-- Apptentive Rating Dialog Styles-->
+        <!-- Apptentive Rating Dialog Styles -->
         <item name="apptentiveRatingDialogLayoutStyle">@style/Apptentive.RatingDialog.Layout</item>
-        <item name="apptentiveRatingDialogTitleTextStyle">@style/Apptentive.TextAppearance.Title</item>
-        <item name="apptentiveRatingDialogMessageTextStyle">@style/Apptentive.TextAppearance.Subhead.Secondary</item>
+        <item name="apptentiveRatingDialogTitleTextStyle">@style/Apptentive.TextAppearance.Dialog.Title</item>
+        <item name="apptentiveRatingDialogMessageTextStyle">@style/Apptentive.TextAppearance.Dialog.Message</item>
 
-        <!-- Survey Styles-->
-        <item name="apptentiveSurveySubmitButtonStyle">@style/Widget.MaterialComponents.Button</item>
+        <!-- Survey Styles Start -->
+        <!-- Layout -->
+        <item name="apptentiveSurveyLayoutStyle">@style/Apptentive.Survey.Layout</item>
+
+        <!-- App Bars -->
+        <item name="apptentiveSurveyToolbarStyle">@style/Apptentive.Widget.Survey.Toolbar</item>
+        <item name="apptentiveSurveyBottomAppBarStyle">@style/Apptentive.Widget.Survey.BottomAppBar</item>
+
+        <!-- TextViews -->
+        <item name="apptentiveSurveyIntroductionStyle">@style/Apptentive.TextAppearance.Survey.Introduction</item>
+        <item name="apptentiveSurveyQuestionTitleStyle">@style/Apptentive.TextAppearance.Survey.Title.Question</item>
+        <item name="apptentiveSurveyQuestionInstructionsStyle">@style/Apptentive.TextAppearance.Survey.Caption.Instructions</item>
+        <item name="apptentiveSurveyQuestionErrorStyle">@style/Apptentive.TextAppearance.Survey.Caption.Error</item>
+        <item name="apptentiveSurveyRangeLabelStyle">@style/Apptentive.TextAppearance.Survey.Caption.RangeLabel</item>
+        <item name="apptentiveSurveyTermsAndConditionsStyle">@style/Apptentive.TextAppearance.Survey.Caption.TermsAndConditions</item>
+        <item name="apptentiveSurveySubmitErrorStyle">@style/Apptentive.TextAppearance.Survey.Error</item>
+
+        <!-- Widgets -->
+        <item name="apptentiveSurveyCheckBoxStyle">@style/Apptentive.Widget.Survey.CheckBox</item>
+        <item name="apptentiveSurveyRadioButtonStyle">@style/Apptentive.Widget.Survey.RadioButton</item>
+        <item name="apptentiveSurveyRangeStyle">@style/Apptentive.Widget.Survey.Range</item>
+        <item name="apptentiveSurveySingleLineLayoutStyle">@style/Apptentive.Widget.Survey.SingleLine.TextInputLayout</item>
+        <item name="apptentiveSurveySingleLineEditTextStyle">@style/Apptentive.Widget.Survey.SingleLine.EditText</item>
+        <item name="apptentiveSurveyOtherTextFieldLayoutStyle">@style/Apptentive.Widget.Survey.OtherTextField.TextInputLayout</item>
+        <item name="apptentiveSurveyOtherTextFieldEditTextStyle">@style/Apptentive.Widget.Survey.OtherTextField.EditText</item>
+        <item name="apptentiveSurveySubmitButtonStyle">@style/Apptentive.Widget.Survey.Button.Submit</item>
+        <item name="apptentiveSurveyButtonColorDefault">?colorPrimary</item>
+        <!-- Survey Styles End -->
 
         <!-- Text Size -->
-        <item name="apptentiveTextSizeTitle">@dimen/apptentive_text_size_title</item>
-        <item name="apptentiveTextSizeTitleNoMessage">@dimen/apptentive_text_size_default</item>
-        <item name="apptentiveTextSizeMessage">@dimen/apptentive_text_size_default</item>
+        <item name="apptentiveTextSizeDialogTitleWithMessage">@dimen/apptentive_text_size_dialog_title</item>
+        <item name="apptentiveTextSizeDialogTitleNoMessage">@dimen/apptentive_text_size_default</item>
+        <item name="apptentiveTextSizeSurveyQuestionTitle">@dimen/apptentive_text_size_question_title</item>
+        <item name="apptentiveTextSizeSurveyIntroduction">@dimen/apptentive_text_size_survey_introduction</item>
+        <item name="apptentiveTextSizeSubhead">@dimen/apptentive_text_size_default</item>
         <item name="apptentiveTextSizeButtonBorderless">@dimen/apptentive_text_size_default</item>
+        <item name="apptentiveTextSizeBody1">@dimen/apptentive_text_size_default</item>
+        <item name="apptentiveTextSizeCaption">@dimen/apptentive_text_size_caption</item>
+        <item name="apptentiveTextSizeButtonColored">@dimen/apptentive_text_size_default</item>
 
         <!-- Text Color -->
-        <item name="apptentiveTextColorTitle">@color/apptentive_color_text_title</item>
-        <item name="apptentiveTextColorTitleNoMessage">@color/apptentive_color_text_default</item>
-        <item name="apptentiveTextColorMessage">@color/apptentive_color_text_default</item>
-        <item name="apptentiveInteractionButtonColorDefault">?colorPrimary</item>
+        <!-- Surfaces (Dialogs) use colorSurface & colorOnSurface -->
+        <!-- Activities (Like Survey) use android:colorBackground and colorOnBackground -->
+        <!-- https://material.io/blog/android-material-theme-color -->
+        <item name="apptentiveTextColorDialogTitleWithMessage">?colorOnSurface</item>
+        <item name="apptentiveTextColorDialogTitleNoMessage">?colorOnSurface</item>
+        <item name="apptentiveTextColorTitle">?colorOnBackground</item>
+        <item name="apptentiveTextColorSubhead">?colorOnBackground</item>
+        <item name="apptentiveTextColorError">?colorError</item>
+        <item name="apptentiveTextColorSurveyRangeLabel">?colorOnBackground</item>
+        <item name="apptentiveTextColorSurveyTitle">?colorOnPrimary</item>
+        <item name="apptentiveTextColorSurveyIntroduction">?colorOnBackground</item>
+        <item name="apptentiveTextColorBody1">?colorOnBackground</item>
+        <item name="apptentiveTextColorSurveyQuestionInstructions">?colorOnBackground</item>
+        <item name="apptentiveTextColorSurveyTermsAndConditions">?colorOnPrimary</item>
 
         <!-- Typeface -->
         <item name="apptentiveTypefaceDefault">@integer/apptentive_typeface_normal</item>
-
+        <item name="apptentiveTypefaceDialogTitle">?apptentiveTypefaceDefault</item>
+        <item name="apptentiveTypefaceDialogTitleNoMessage">?apptentiveTypefaceDefault</item>
         <item name="apptentiveTypefaceTitle">?apptentiveTypefaceDefault</item>
-        <item name="apptentiveTypefaceTitleNoMessage">?apptentiveTypefaceDefault</item>
-        <item name="apptentiveTypefaceMessage">?apptentiveTypefaceDefault</item>
+        <item name="apptentiveTypefaceSurveyIntroduction">?apptentiveTypefaceDefault</item>
+        <item name="apptentiveTypefaceSubhead">?apptentiveTypefaceDefault</item>
         <item name="apptentiveTypefaceButtonBorderless">?apptentiveTypefaceDefault</item>
-
-        <!--- LoveDialog -->
-        <item name="apptentiveLoveDialogLayoutStyle">@style/Apptentive.LoveDialog.Layout</item>
-        <item name="apptentiveLoveDialogTitleStyle">@style/Apptentive.TextAppearance.Title.NoMessage</item>
-
-        <!--- AlertDialog general -->
-        <item name="apptentiveInteractionButtonStyle">@style/Apptentive.Widget.Button.Borderless</item>
-        <item name="apptentiveDialogBackground">@color/apptentive_dialog_background_color</item>
+        <item name="apptentiveTypefaceBody1">?apptentiveTypefaceDefault</item>
+        <item name="apptentiveTypefaceCaption">?apptentiveTypefaceDefault</item>
+        <item name="apptentiveTypefaceButtonColored">?apptentiveTypefaceDefault</item>
     </style>
 
     <!-- This style has been a problem within our UI and will be disabled by default -->
@@ -61,58 +109,202 @@
         <item name="android:background">@null</item>
     </style>
 
-    <style name="Widget.Apptentive.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary" />
+    <!-- Minor Interface Customization -->
 
-    <style name="Theme.Apptentive.ToolbarTitle">
-        <item name="android:textColor">?attr/colorOnPrimary</item>
-        <item name="android:textAppearance">?attr/textAppearanceHeadline6</item>
-    </style>
-
+    <!-- Interaction Layouts Start -->
     <style name="Apptentive" />
+
+    <style name="Apptentive.LoveDialog" />
+
+    <style name="Apptentive.LoveDialog.Layout">
+        <item name="android:colorBackground">?apptentiveDialogBackground</item>
+    </style>
 
     <style name="Apptentive.Note" />
 
     <style name="Apptentive.Note.Layout">
-        <item name="android:background">?apptentiveDialogBackground</item>
+        <item name="android:colorBackground">?apptentiveDialogBackground</item>
     </style>
 
     <style name="Apptentive.RatingDialog" />
 
     <style name="Apptentive.RatingDialog.Layout">
-        <item name="android:background">?apptentiveDialogBackground</item>
+        <item name="android:colorBackground">?apptentiveDialogBackground</item>
     </style>
 
-    <style name="Apptentive.LoveDialog" />
+    <style name="Apptentive.Survey" />
 
-    <style name="Apptentive.LoveDialog.Layout">
-        <item name="android:background">?apptentiveDialogBackground</item>
+    <style name="Apptentive.Survey.Layout">
+        <item name="android:colorBackground">?android:colorBackground</item>
+    </style>
+    <!-- Interaction Layouts End -->
+
+
+    <!-- Text Styles Start -->
+    <!-- Dialog Text Styles Start -->
+    <!-- https://material.io/components/dialogs/android -->
+    <style name="Apptentive.TextAppearance.Dialog.Title" parent="Widget.MaterialComponents.TextView">
+        <item name="android:typeface">?apptentiveTypefaceDialogTitle</item>
     </style>
 
-    <style name="Apptentive.TextAppearance.Title" parent="Widget.MaterialComponents.TextView">
-        <item name="android:typeface">?attr/apptentiveTypefaceTitle</item>
-        <item name="android:textSize">?attr/apptentiveTextSizeTitle</item>
-        <item name="android:textColor">?attr/apptentiveTextColorTitle</item>
+    <style name="Apptentive.TextAppearance.Dialog.Title.WithMessage" parent="Apptentive.TextAppearance.Dialog.Title">
+        <item name="android:textSize">?apptentiveTextSizeDialogTitleWithMessage</item>
+        <item name="android:textColor">?apptentiveTextColorDialogTitleWithMessage</item>
+        <item name="android:alpha">.87</item>
     </style>
 
-    <style name="Apptentive.TextAppearance.Title.WithMessage" parent="Apptentive.TextAppearance.Title" />
-
-    <style name="Apptentive.TextAppearance.Title.NoMessage" parent="Apptentive.TextAppearance.Title">
-        <item name="android:typeface">?attr/apptentiveTypefaceTitleNoMessage</item>
-        <item name="android:textSize">?attr/apptentiveTextSizeTitleNoMessage</item>
-        <item name="android:textColor">?attr/apptentiveTextColorTitleNoMessage</item>
+    <style name="Apptentive.TextAppearance.Dialog.Title.NoMessage" parent="Apptentive.TextAppearance.Dialog.Title">
+        <item name="android:textSize">?apptentiveTextSizeDialogTitleNoMessage</item>
+        <item name="android:textColor">?apptentiveTextColorDialogTitleNoMessage</item>
+        <item name="android:typeface">?apptentiveTypefaceDialogTitleNoMessage</item>
+        <item name="android:alpha">.6</item>
     </style>
 
-    <style name="Apptentive.TextAppearance.Subhead.Secondary" parent="Widget.MaterialComponents.TextView">
-        <item name="android:typeface">?attr/apptentiveTypefaceMessage</item>
-        <item name="android:textSize">?attr/apptentiveTextSizeMessage</item>
-        <item name="android:textColor">?attr/apptentiveTextColorMessage</item>
+    <style name="Apptentive.TextAppearance.Dialog.Message" parent="Widget.MaterialComponents.TextView">
+        <item name="android:alpha">.6</item>
+        <item name="android:textColor">?apptentiveTextColorSubhead</item>
+        <item name="android:typeface">?apptentiveTypefaceSubhead</item>
+        <item name="android:textSize">?apptentiveTextSizeSubhead</item>
+    </style>
+    <!-- Dialog Text Styles End -->
+
+    <!-- Survey Text Styles Start -->
+    <style name="Apptentive.TextAppearance.Survey.Introduction" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textColor">?apptentiveTextColorSurveyIntroduction</item>
+        <item name="android:textSize">?apptentiveTextSizeSurveyIntroduction</item>
+        <item name="android:typeface">?apptentiveTypefaceSurveyIntroduction</item>
+        <item name="android:textAppearance">?textAppearanceHeadline6</item>
     </style>
 
-    <!-- Button style with no border but text, example: buttons on Enjoyment Prompt-->
-    <style name="Apptentive.Widget.Button.Borderless" parent="Widget.MaterialComponents.Button.TextButton">
-        <item name="android:typeface">?attr/apptentiveTypefaceButtonBorderless</item>
-        <item name="android:textColor">?attr/apptentiveInteractionButtonColorDefault</item>
-        <item name="android:textSize">?attr/apptentiveTextSizeButtonBorderless</item>
+    <style name="Apptentive.TextAppearance.Survey.Title.Question" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textSize">?apptentiveTextSizeSurveyQuestionTitle</item>
+        <item name="android:textColor">?apptentiveTextColorTitle</item>
+        <item name="android:typeface">?apptentiveTypefaceTitle</item>
+        <item name="android:autoLink">all</item>
+        <item name="android:importantForAccessibility">no</item>
     </style>
+
+    <style name="Apptentive.TextAppearance.Survey.Caption" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textSize">?apptentiveTextSizeCaption</item>
+        <item name="android:typeface">?apptentiveTypefaceCaption</item>
+        <item name="android:textAppearance">@style/TextAppearance.MaterialComponents.Caption</item>
+    </style>
+
+    <style name="Apptentive.TextAppearance.Survey.Caption.RangeLabel" parent="Apptentive.TextAppearance.Survey.Caption">
+        <item name="android:alpha">.6</item>
+        <item name="android:textColor">?apptentiveTextColorSurveyRangeLabel</item>
+        <item name="android:focusable">true</item>
+    </style>
+
+    <style name="Apptentive.TextAppearance.Survey.Caption.Instructions" parent="Apptentive.TextAppearance.Survey.Caption">
+        <item name="android:alpha">.6</item>
+        <item name="android:textColor">?apptentiveTextColorSurveyQuestionInstructions</item>
+        <item name="android:importantForAccessibility">no</item>
+    </style>
+
+    <style name="Apptentive.TextAppearance.Survey.Caption.Error" parent="Apptentive.TextAppearance.Survey.Caption">
+        <item name="android:textColor">?apptentiveTextColorError</item>
+        <item name="android:importantForAccessibility">no</item>
+    </style>
+
+    <style name="Apptentive.TextAppearance.Survey.Caption.TermsAndConditions" parent="Apptentive.TextAppearance.Survey.Caption">
+        <item name="android:textColor">?apptentiveTextColorSurveyTermsAndConditions</item>
+    </style>
+
+    <style name="Apptentive.TextAppearance.Survey.Error" parent="Widget.MaterialComponents.TextView">
+        <item name="android:typeface">?apptentiveTypefaceBody1</item>
+        <item name="android:textSize">?apptentiveTextSizeBody1</item>
+        <item name="android:textColor">?apptentiveTextColorError</item>
+    </style>
+    <!-- Survey Text Styles End -->
+    <!-- Text Styles End -->
+
+
+    <!-- Widgets Start -->
+    <style name="Apptentive.Widget" />
+
+    <!-- Dialog Widgets Start -->
+    <!-- https://material.io/components/buttons/android#text-button -->
+    <style name="Apptentive.Widget.Dialog.Button" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:typeface">?apptentiveTypefaceButtonBorderless</item>
+        <item name="android:textSize">?apptentiveTextSizeButtonBorderless</item>
+    </style>
+    <!-- Dialog Widgets End -->
+
+    <!-- Survey Widgets Start -->
+    <style name="Apptentive.Widget.Survey" />
+
+    <!-- https://material.io/components/app-bars-top/android -->
+    <style name="Apptentive.Widget.Survey.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="android:colorBackground">?colorPrimary</item>
+        <item name="navigationIcon">@drawable/ic_baseline_close_24</item>
+        <item name="navigationContentDescription">@string/close</item>
+        <item name="titleTextColor">?apptentiveTextColorSurveyTitle</item>
+        <item name="titleTextAppearance">?textAppearanceHeadline6</item>
+    </style>
+
+    <!-- https://material.io/components/checkboxes/android -->
+    <style name="Apptentive.Widget.Survey.CheckBox" parent="Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="android:textColor">?apptentiveTextColorBody1</item>
+        <item name="android:typeface">?apptentiveTypefaceBody1</item>
+        <item name="android:textSize">?apptentiveTextSizeBody1</item>
+        <item name="android:buttonTint">@color/apptentive_mtrl_selection_control_button_tint</item>
+    </style>
+
+    <!-- https://material.io/components/radio-buttons/android -->
+    <style name="Apptentive.Widget.Survey.RadioButton" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="android:textColor">?apptentiveTextColorBody1</item>
+        <item name="android:typeface">?apptentiveTypefaceBody1</item>
+        <item name="android:textSize">?apptentiveTextSizeBody1</item>
+        <item name="android:buttonTint">@color/apptentive_mtrl_selection_control_button_tint</item>
+    </style>
+
+    <!-- https://material.io/components/sliders/android-->
+    <style name="Apptentive.Widget.Survey.Range" parent="Widget.MaterialComponents.Slider"/>
+
+    <!-- https://material.io/components/text-fields/android#outlined-text-field -->
+    <style name="Apptentive.Widget.Survey.SingleLine.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="errorEnabled">true</item>
+        <item name="errorIconDrawable">@null</item>
+        <item name="boxStrokeColor">@color/apptentive_mtrl_outlined_stroke_color</item>
+        <item name="android:textColorHint">@color/apptentive_mtrl_text_box_text_color</item>
+    </style>
+
+    <style name="Apptentive.Widget.Survey.SingleLine.EditText" parent="Widget.AppCompat.EditText">
+        <item name="android:imeOptions">actionDone</item>
+        <item name="android:textColor">?apptentiveTextColorBody1</item>
+        <item name="android:typeface">?apptentiveTypefaceBody1</item>
+        <item name="android:textSize">?apptentiveTextSizeBody1</item>
+    </style>
+
+    <!-- https://material.io/components/text-fields/android#outlined-text-field -->
+    <style name="Apptentive.Widget.Survey.OtherTextField.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="android:animateLayoutChanges">true</item>
+        <item name="errorEnabled">true</item>
+        <item name="errorIconDrawable">@null</item>
+    </style>
+
+    <style name="Apptentive.Widget.Survey.OtherTextField.EditText" parent="Widget.AppCompat.EditText">
+        <item name="android:imeOptions">actionDone</item>
+        <item name="android:typeface">?apptentiveTypefaceBody1</item>
+        <item name="android:textSize">?apptentiveTextSizeBody1</item>
+        <item name="android:inputType">textMultiLine|textCapSentences</item>
+        <item name="android:maxLines">4</item>
+        <item name="android:minLines">1</item>
+    </style>
+
+    <!-- https://material.io/components/buttons/android#contained-button -->
+    <style name="Apptentive.Widget.Survey.Button.Submit" parent="Widget.MaterialComponents.Button">
+        <item name="android:backgroundTint">?colorPrimary</item>
+        <item name="android:textColor">?colorOnPrimary</item>
+        <item name="android:typeface">?apptentiveTypefaceButtonColored</item>
+        <item name="android:textSize">?apptentiveTextSizeButtonColored</item>
+    </style>
+
+    <style name="Apptentive.Widget.Survey.BottomAppBar">
+        <item name="android:colorBackground">?colorPrimary</item>
+    </style>
+    <!-- Survey Widgets End -->
+    <!-- Widgets End -->
 
 </resources>

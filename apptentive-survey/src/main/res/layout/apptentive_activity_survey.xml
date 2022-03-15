@@ -13,39 +13,37 @@
         android:layout_height="wrap_content">
 
         <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/topAppBar"
-            style="@style/Widget.Apptentive.Toolbar"
+            android:id="@+id/apptentive_top_app_bar"
+            style="?apptentiveSurveyToolbarStyle"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:navigationContentDescription="@string/close"
-            app:navigationIcon="@drawable/ic_baseline_close_24">
-
-            <TextView
-                android:id="@+id/apptentive_survey_title"
-                style="@style/Theme.Apptentive.ToolbarTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:accessibilityHeading="true"
-                tools:targetApi="p" />
-
-        </com.google.android.material.appbar.MaterialToolbar>
+            android:layout_height="?actionBarSize"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/apptentive_survey_recycler_view"
+        style="?apptentiveSurveyLayoutStyle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:background="@null" />
 
-    <TextView
-        android:id="@+id/bottomAppBar"
-        style="?attr/textAppearanceCaption"
+    <LinearLayout
+        style="?apptentiveSurveyBottomAppBarStyle"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/bottom_app_bar_height"
-        android:layout_gravity="bottom"
-        android:background="?attr/colorPrimary"
-        android:textColor="?attr/colorOnPrimary" />
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/apptentive_bottom_app_bar_height">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/apptentive_terms_and_conditions"
+            style="?apptentiveSurveyTermsAndConditionsStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            tools:text="Terms and Conditions"
+            tools:textColor="@android:color/white" />
+
+    </LinearLayout>
 
 </LinearLayout>

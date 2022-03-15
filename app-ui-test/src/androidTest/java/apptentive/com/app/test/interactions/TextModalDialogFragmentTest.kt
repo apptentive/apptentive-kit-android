@@ -21,7 +21,7 @@ class TextModalDialogFragmentTest : AbstractActivityTest(createIntent()) {
     fun testDismissNote() {
         openNote("simple.json")
         clickButton(R.id.apptentive_note_action_button)
-        checkDoesNotExist(R.id.apptentive_note)
+        checkDoesNotExist(R.id.apptentive_note_layout)
     }
 
     @Test

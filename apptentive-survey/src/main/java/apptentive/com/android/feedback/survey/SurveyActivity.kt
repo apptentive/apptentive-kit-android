@@ -6,9 +6,7 @@ import android.os.Bundle
 import android.view.MotionEvent
 import android.view.accessibility.AccessibilityEvent
 import android.widget.EditText
-import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
@@ -30,7 +28,6 @@ import apptentive.com.android.ui.ListViewAdapter
 import apptentive.com.android.ui.hideSoftKeyboard
 import apptentive.com.android.ui.showConfirmationDialog
 import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 internal class SurveyActivity : BaseSurveyActivity() {
 
@@ -45,11 +42,11 @@ internal class SurveyActivity : BaseSurveyActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.apptentive_survey_recycler_view)
         recyclerView.adapter = adapter
 
-        viewModel.listItems.observe(this, Observer { items ->
+        viewModel.listItems.observe(this) { items ->
             adapter.submitList(items)
-        })
+        }
 
-        viewModel.firstInvalidQuestionIndex.observe(this, Observer { firstErrorPosition ->
+        viewModel.firstInvalidQuestionIndex.observe(this) { firstErrorPosition ->
             if (firstErrorPosition != -1) {
 
                 // Check if item is fully visible on screen before trying to scroll
@@ -72,15 +69,14 @@ internal class SurveyActivity : BaseSurveyActivity() {
                     val errorView = layoutManger.findViewByPosition(firstErrorPosition)
                     errorView?.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
                 }
-
             }
-        })
+        }
 
-        viewModel.exitStream.observe(this, Observer {
+        viewModel.exitStream.observe(this) {
             finish()
-        })
+        }
 
-        viewModel.showConfirmation.observe(this, Observer {
+        viewModel.showConfirmation.observe(this) {
             if (it) {
                 with(viewModel.surveyCancelConfirmationDisplay) {
                     confirmationDialog = showConfirmationDialog(
@@ -96,13 +92,12 @@ internal class SurveyActivity : BaseSurveyActivity() {
                     confirmationDialog?.show()
                 }
             }
-        })
+        }
 
         supportActionBar?.hide()
 
-        val topAppBar = findViewById<MaterialToolbar>(R.id.topAppBar)
-        val title = findViewById<TextView>(R.id.apptentive_survey_title)
-        title.text = viewModel.title
+        val topAppBar = findViewById<MaterialToolbar>(R.id.apptentive_top_app_bar)
+        topAppBar.title = viewModel.title
         topAppBar.setNavigationOnClickListener {
             viewModel.exit(showConfirmation = true)
         }

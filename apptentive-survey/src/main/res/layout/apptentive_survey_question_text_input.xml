@@ -1,25 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.textfield.TextInputLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/other_text_input_layout"
-    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+    android:id="@+id/apptentive_other_text_input_layout"
+    style="?attr/apptentiveSurveyOtherTextFieldLayoutStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="@dimen/margin_40dp"
-    android:layout_marginEnd="@dimen/margin_16dp"
-    android:animateLayoutChanges="true"
-    android:visibility="gone"
-    app:errorEnabled="true"
-    app:errorIconDrawable="@null">
+    android:layout_marginStart="@dimen/apptentive_other_text_field_start_padding"
+    android:layout_marginEnd="@dimen/apptentive_other_text_field_end_padding"
+    android:visibility="gone">
 
     <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/other_edit_text"
+        android:id="@+id/apptentive_other_edit_text"
+        style="?attr/apptentiveSurveyOtherTextFieldEditTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:imeOptions="actionDone"
-        android:inputType="textMultiLine|textCapSentences"
-        android:maxLines="4"
-        android:minHeight="@dimen/min_height_radio_checkbox_component"
-        android:minLines="1"
-        android:saveEnabled="false" />
+        android:minHeight="@dimen/apptentive_radio_checkbox_min_height" />
 </com.google.android.material.textfield.TextInputLayout>

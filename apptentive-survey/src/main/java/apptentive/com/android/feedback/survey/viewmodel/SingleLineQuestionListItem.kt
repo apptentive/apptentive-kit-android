@@ -76,8 +76,8 @@ internal class SingleLineQuestionListItem(
         itemView: SurveyQuestionContainerView,
         val onTextChanged: (id: String, text: String) -> Unit
     ) : SurveyQuestionListItem.ViewHolder<SingleLineQuestionListItem>(itemView) {
-        private val answerTextInputLayout: TextInputLayout = itemView.findViewById(R.id.answer_text_input_layout)
-        private val answerEditText: TextInputEditText = itemView.findViewById(R.id.answer_text)
+        private val answerTextInputLayout: TextInputLayout = itemView.findViewById(R.id.apptentive_answer_text_input_layout)
+        private val answerEditText: TextInputEditText = itemView.findViewById(R.id.apptentive_answer_text)
 
         override fun bindView(
             item: SingleLineQuestionListItem,

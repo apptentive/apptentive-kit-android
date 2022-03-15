@@ -29,27 +29,27 @@ internal class RatingDialogFragment : DialogFragment() {
             val contentView = inflater.inflate(R.layout.apptentive_rating_dialog, null)
             setView(contentView)
 
-            val titleView = contentView.findViewById<MaterialTextView>(R.id.apptentive_rate_title)
+            val titleView = contentView.findViewById<MaterialTextView>(R.id.apptentive_rating_dialog_title)
             titleView.text = viewModel.title.orEmpty()
 
-            val messageView = contentView.findViewById<MaterialTextView>(R.id.apptentive_rate_message)
+            val messageView = contentView.findViewById<MaterialTextView>(R.id.apptentive_rating_dialog_message)
             messageView.text = viewModel.message.orEmpty()
 
-            val rateButton = contentView.findViewById<MaterialButton>(R.id.apptentive_rate_button)
+            val rateButton = contentView.findViewById<MaterialButton>(R.id.apptentive_rating_dialog_button)
             rateButton.text = viewModel.rateText.orEmpty()
             rateButton.setOnClickListener {
                 viewModel.onRateButton()
                 dismiss()
             }
 
-            val remindButton = contentView.findViewById<MaterialButton>(R.id.apptentive_remind_button)
+            val remindButton = contentView.findViewById<MaterialButton>(R.id.apptentive_rating_dialog_remind_button)
             remindButton.text = viewModel.remindText.orEmpty()
             remindButton.setOnClickListener {
                 viewModel.onRemindButton()
                 dismiss()
             }
 
-            val declineButton = contentView.findViewById<MaterialButton>(R.id.apptentive_decline_button)
+            val declineButton = contentView.findViewById<MaterialButton>(R.id.apptentive_rating_dialog_decline_button)
             declineButton.text = viewModel.declineText.orEmpty()
             declineButton.setOnClickListener {
                 viewModel.onDeclineButton()

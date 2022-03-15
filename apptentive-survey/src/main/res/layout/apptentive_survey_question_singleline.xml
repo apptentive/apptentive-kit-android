@@ -1,21 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.textfield.TextInputLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/answer_text_input_layout"
-    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+    android:id="@+id/apptentive_answer_text_input_layout"
+    style="?attr/apptentiveSurveySingleLineLayoutStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:animateLayoutChanges="true"
-    android:paddingHorizontal="@dimen/margin_16dp"
-    app:errorEnabled="true"
-    app:errorIconDrawable="@null">
+    android:paddingHorizontal="@dimen/apptentive_singleline_layout_horizontal_padding">
 
     <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/answer_text"
+        android:id="@+id/apptentive_answer_text"
+        style="?attr/apptentiveSurveySingleLineEditTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/margin_4dp"
-        android:imeOptions="actionDone"
-        android:minHeight="@dimen/min_height_textfield_component" />
+        android:layout_marginBottom="@dimen/apptentive_singleline_edittext_bottom_padding"
+        android:minHeight="@dimen/apptentive_other_text_field_min_height" />
 
 </com.google.android.material.textfield.TextInputLayout>

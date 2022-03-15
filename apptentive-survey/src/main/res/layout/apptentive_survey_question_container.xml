@@ -1,23 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!--
-  ~ Copyright (c) 2016, Apptentive, Inc. All Rights Reserved.
-  ~ Please refer to the LICENSE file for the terms and conditions
-  ~ under which redistribution and use of this file is permitted.
-  -->
-
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/question_base"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@android:color/transparent">
+    android:layout_height="wrap_content">
 
     <LinearLayout
-        android:id="@+id/question_title_instructions_layout"
+        android:id="@+id/apptentive_question_title_instructions_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingVertical="@dimen/margin_12dp"
+        android:paddingVertical="@dimen/apptentive_question_layout_vertical_padding"
         android:accessibilityHeading="true"
         android:gravity="start"
         android:orientation="vertical"
@@ -26,29 +19,23 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/margin_16dp"
+            android:layout_marginHorizontal="@dimen/apptentive_question_title_instructions_layout_horizontal_margin"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/question_title"
-                style="?attr/textAppearanceBody1"
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/apptentive_question_title"
+                style="?attr/apptentiveSurveyQuestionTitleStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin_8dp"
-                android:autoLink="all"
-                android:importantForAccessibility="no"
-                android:textColor="?attr/colorOnBackground"
-                tools:text="Question Title"
-                tools:textColor="@null" />
+                android:layout_marginBottom="@dimen/apptentive_question_title_bottom_margin"
+                tools:text="Question Title" />
 
-            <TextView
-                android:id="@+id/question_instructions"
-                style="?attr/textAppearanceCaption"
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/apptentive_question_instructions"
+                style="?attr/apptentiveSurveyQuestionInstructionsStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin_4dp"
-                android:importantForAccessibility="no"
-                android:textColor="?android:attr/textColorSecondary"
+                android:layout_marginBottom="@dimen/apptentive_question_instructions_bottom_margin"
                 tools:text="@string/apptentive_required" />
 
         </LinearLayout>
@@ -58,21 +45,19 @@
             android:layout_height="1dp" />
 
         <LinearLayout
-            android:id="@+id/answer_container"
+            android:id="@+id/apptentive_answer_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <!-- Answer content goes here. -->
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/error_message"
-            style="?attr/textAppearanceCaption"
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/apptentive_question_error_message"
+            style="?attr/apptentiveSurveyQuestionErrorStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/margin_16dp"
-            android:importantForAccessibility="no"
-            android:textColor="?attr/colorError"
+            android:layout_marginHorizontal="@dimen/apptentive_question_error_horizontal_margin"
             tools:text="Error: This field cannot be empty"
             tools:textColor="@null" />
     </LinearLayout>

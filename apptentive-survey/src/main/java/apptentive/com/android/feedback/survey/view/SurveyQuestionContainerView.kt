@@ -5,13 +5,12 @@ import android.content.res.ColorStateList
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.core.view.isVisible
 import apptentive.com.android.feedback.survey.R
 import apptentive.com.android.ui.getThemeColor
+import com.google.android.material.textview.MaterialTextView
 
 internal class SurveyQuestionContainerView(
     context: Context,
@@ -19,10 +18,10 @@ internal class SurveyQuestionContainerView(
     defStyleAttr: Int
 ) : FrameLayout(context, attrs, defStyleAttr) {
     private val titleInstructionsLayout: LinearLayout
-    private val titleTextView: TextView
-    private val instructionsTextView: TextView
-    private val answerContainerView: ViewGroup
-    private val errorMessageView: TextView
+    private val titleTextView: MaterialTextView
+    private val instructionsTextView: MaterialTextView
+    private val answerContainerView: LinearLayout
+    private val errorMessageView: MaterialTextView
 
     var title: CharSequence?
         get() = titleTextView.text
@@ -54,11 +53,11 @@ internal class SurveyQuestionContainerView(
         val contentView = LayoutInflater.from(context)
             .inflate(R.layout.apptentive_survey_question_container, this, true)
 
-        titleInstructionsLayout = contentView.findViewById(R.id.question_title_instructions_layout)
-        titleTextView = contentView.findViewById(R.id.question_title)
-        instructionsTextView = contentView.findViewById(R.id.question_instructions)
-        answerContainerView = contentView.findViewById(R.id.answer_container)
-        errorMessageView = contentView.findViewById(R.id.error_message)
+        titleInstructionsLayout = contentView.findViewById(R.id.apptentive_question_title_instructions_layout)
+        titleTextView = contentView.findViewById(R.id.apptentive_question_title)
+        instructionsTextView = contentView.findViewById(R.id.apptentive_question_instructions)
+        answerContainerView = contentView.findViewById(R.id.apptentive_answer_container)
+        errorMessageView = contentView.findViewById(R.id.apptentive_question_error_message)
 
         titleTextViewDefaultColor = titleTextView.textColors
         instructionsTextViewDefaultColor = instructionsTextView.textColors

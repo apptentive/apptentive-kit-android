@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+    Stroke color overwrite to use colorOnBackground instead of colorOnSurface.
+
+    Material Color Guidelines defines colorOnSurface as used for "is used for “sheets” of material
+    (like cards and bottom sheets)"
+
+    @see https://material.io/blog/android-material-theme-color
+    @see https://github.com/material-components/material-components-android/blob/master/lib/java/com/google/android/material/textfield/res/color/mtrl_outlined_stroke_color.xml
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Focused -->
+    <item android:color="?attr/colorPrimary" android:state_focused="true"/>
+    <!-- Not Focused -->
+    <item android:alpha="0.38" android:color="?attr/colorOnBackground"/>
+    <!-- Hovered -->
+    <item android:alpha="0.87" android:color="?attr/colorOnBackground" android:state_hovered="true"/>
+</selector>
