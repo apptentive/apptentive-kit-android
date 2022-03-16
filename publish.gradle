@@ -59,12 +59,12 @@ publishing {
             pom {
                 name = project.artifactId
                 description = 'Apptentive Android SDK'
-                url = 'https://github.com/apptentive/apptentive-android-sdk'
+                url = 'https://github.com/apptentive/apptentive-kit-android'
 
                 licenses {
                     license {
                         name = 'BSD 3-Clause License'
-                        url = 'https://raw.githubusercontent.com/apptentive/apptentive-android-sdk/master/License.txt'
+                        url = 'https://raw.githubusercontent.com/apptentive/apptentive-kit-android/master/License.txt'
                         distribution = 'repo'
                     }
                 }
@@ -76,9 +76,9 @@ publishing {
                     }
                 }
                 scm {
-                    url = 'https://github.com/apptentive/apptentive-android-sdk'
-                    connection = 'scm:git@github.com:apptentive/apptentive-android-sdk.git'
-                    developerConnection = 'scm:git@github.com:apptentive/apptentive-android-sdk.git'
+                    url = 'https://github.com/apptentive/apptentive-kit-android'
+                    connection = 'scm:git@github.com:apptentive/apptentive-kit-android.git'
+                    developerConnection = 'scm:git@github.com:apptentive/apptentive-kit-android.git'
                 }
             }
         }

@@ -13,6 +13,6 @@ include ':app',
         ':apptentive-ratings',
         ':apptentive-in-app-review',
         ':apptentive-survey',
-        ':apptentive-sdk-kit'
+        ':apptentive-kit-android'
 
 rootProject.name = 'apptentive-sdk-ktx'

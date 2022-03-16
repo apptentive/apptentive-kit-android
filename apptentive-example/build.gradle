@@ -24,7 +24,7 @@ dependencies {
     /**
      * TODO Step 1: Uncomment the import line below.
      * TODO Step 2: Replace APPTENTIVE_VERSION with latest released version on GitHub
-     *  https://github.com/apptentive/apptentive-android-sdk
+     *  https://github.com/apptentive/apptentive-kit-android
      */
-//    implementation "com.apptentive:apptentive-sdk-kit:APPTENTIVE_VERSION"
+//    implementation "com.apptentive:apptentive-kit-android:APPTENTIVE_VERSION"
 }

@@ -51,7 +51,7 @@ dependencies {
 
 project.ext {
     groupId = 'com.apptentive'
-    artifactId = 'apptentive-sdk-kit'
+    artifactId = 'apptentive-kit-android'
 }
 
 apply from: '../publish.gradle'

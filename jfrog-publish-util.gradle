@@ -28,13 +28,13 @@ task jfrogPublishApptentiveModules(type: GradleBuild)  {
 
 task jfrogAssembleApptentiveKit(type: GradleBuild) {
     buildName = "jfrogAssembleApptentiveKit"
-    tasks = ['apptentive-sdk-kit:assembleRelease']
+    tasks = ['apptentive-kit-android:assembleRelease']
     dependsOn jfrogPublishApptentiveModules
 }
 
 task jfrogPublishApptentiveKit(type: GradleBuild) {
     buildName = "jfrogPublishApptentiveKit"
     startParameter.projectProperties = project.gradle.startParameter.projectProperties
-    tasks = ['apptentive-sdk-kit:artifactoryPublish']
+    tasks = ['apptentive-kit-android:artifactoryPublish']
     dependsOn jfrogAssembleApptentiveKit
 }

@@ -120,7 +120,7 @@ tasks.getByName('githubRelease').mustRunAfter(tasks.getByName('assemble'))
 
 github {
     owner = 'apptentive'
-    repo = 'android-sdk'
+    repo = 'apptentive-kit-android-private'
     token = githubToken
     tagName = gitTag
     targetCommitish = gitBranch
