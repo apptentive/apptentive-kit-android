@@ -43,6 +43,7 @@
         <item name="apptentiveSurveyBottomAppBarStyle">@style/Apptentive.Widget.Survey.BottomAppBar</item>
 
         <!-- TextViews -->
+        <item name="apptentiveSurveyTitleStyle">@style/Apptentive.TextAppearance.Survey.Title</item>
         <item name="apptentiveSurveyIntroductionStyle">@style/Apptentive.TextAppearance.Survey.Introduction</item>
         <item name="apptentiveSurveyQuestionTitleStyle">@style/Apptentive.TextAppearance.Survey.Title.Question</item>
         <item name="apptentiveSurveyQuestionInstructionsStyle">@style/Apptentive.TextAppearance.Survey.Caption.Instructions</item>
@@ -52,6 +53,7 @@
         <item name="apptentiveSurveySubmitErrorStyle">@style/Apptentive.TextAppearance.Survey.Error</item>
 
         <!-- Widgets -->
+        <item name="apptentiveSurveyHeaderImageStyle">@style/Apptentive.Widget.Survey.HeaderImage</item>
         <item name="apptentiveSurveyCheckBoxStyle">@style/Apptentive.Widget.Survey.CheckBox</item>
         <item name="apptentiveSurveyRadioButtonStyle">@style/Apptentive.Widget.Survey.RadioButton</item>
         <item name="apptentiveSurveyRangeStyle">@style/Apptentive.Widget.Survey.Range</item>
@@ -169,6 +171,11 @@
     <!-- Dialog Text Styles End -->
 
     <!-- Survey Text Styles Start -->
+    <style name="Apptentive.TextAppearance.Survey.Title" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textColor">?colorOnPrimary</item>
+        <item name="android:textAppearance">?textAppearanceHeadline6</item>
+    </style>
+
     <style name="Apptentive.TextAppearance.Survey.Introduction" parent="Widget.MaterialComponents.TextView">
         <item name="android:textColor">?apptentiveTextColorSurveyIntroduction</item>
         <item name="android:textSize">?apptentiveTextSizeSurveyIntroduction</item>
@@ -239,9 +246,9 @@
         <item name="android:colorBackground">?colorPrimary</item>
         <item name="navigationIcon">@drawable/ic_baseline_close_24</item>
         <item name="navigationContentDescription">@string/close</item>
-        <item name="titleTextColor">?apptentiveTextColorSurveyTitle</item>
-        <item name="titleTextAppearance">?textAppearanceHeadline6</item>
     </style>
+
+    <style name="Apptentive.Widget.Survey.HeaderImage"/>
 
     <!-- https://material.io/components/checkboxes/android -->
     <style name="Apptentive.Widget.Survey.CheckBox" parent="Widget.AppCompat.CompoundButton.CheckBox">

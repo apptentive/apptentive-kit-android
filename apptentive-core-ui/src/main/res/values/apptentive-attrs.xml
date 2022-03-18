@@ -30,6 +30,7 @@
         <attr name="apptentiveSurveyBottomAppBarStyle" format="reference"/>
 
         <!-- TextViews -->
+        <attr name="apptentiveSurveyTitleStyle" format="reference"/>
         <attr name="apptentiveSurveyIntroductionStyle" format="reference"/>
         <attr name="apptentiveSurveyQuestionTitleStyle" format="reference"/>
         <attr name="apptentiveSurveyQuestionInstructionsStyle" format="reference"/>
@@ -39,6 +40,7 @@
         <attr name="apptentiveSurveyTermsAndConditionsStyle" format="reference" />
 
         <!-- Widgets -->
+        <attr name="apptentiveSurveyHeaderImageStyle" format="reference"/>
         <attr name="apptentiveSurveyCheckBoxStyle" format="reference"/>
         <attr name="apptentiveSurveyRadioButtonStyle" format="reference"/>
         <attr name="apptentiveSurveyRangeStyle" format="reference"/>

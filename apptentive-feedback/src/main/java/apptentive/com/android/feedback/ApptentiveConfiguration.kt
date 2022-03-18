@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit
 /**
  * This class creates a new ApptentiveConfiguration object which is used to initialize the
  * Apptentive SDK.
- * @param apptentiveKey, The Apptentive Key that should be used when connecting to
+ * @param apptentiveKey The Apptentive Key that should be used when connecting to
  * the Apptentive API.
  * @param apptentiveSignature The Apptentive Signature that should be used when connecting to
  * the Apptentive API.
@@ -16,22 +16,25 @@ data class ApptentiveConfiguration(
     val apptentiveSignature: String
 ) {
     /**
-     * LogLevel is used to define what level of logs we will show in Logcat
+     * [LogLevel] is used to define what level of logs we will show in Logcat
      *
-     * @see LogLevel.Verbose - Any relevant info not shown in other log Levels
-     * @see LogLevel.Debug   - Processes with more technical information
-     * @see LogLevel.Info    - General processes and non-technical results
-     * @see LogLevel.Warning - Non-breaking / handled issues
-     * @see LogLevel.Error   - Breaking / unhandled issues (Throwables)
-     * @see Throwable
+     * [LogLevel.Verbose] - Any relevant info not shown in other log Levels
+     *
+     * [LogLevel.Debug]   - Processes with more technical information
+     *
+     * [LogLevel.Info]    - General processes and non-technical results
+     *
+     * [LogLevel.Warning] - Non-breaking / handled issues
+     *
+     * [LogLevel.Error]   - Breaking / unhandled issues ([Throwable])
      */
     var logLevel: LogLevel = LogLevel.Info
 
     /**
-     * Redacts sensitive information from being logged when set to true
+     * Redacts sensitive information from being logged when set to `true`
      *
-     * Data fields which have @SensitiveDataKey annotation will replace the logged data with
-     * @see Constants.REDACTED_DATA
+     * Data fields which have `@SensitiveDataKey` annotation will replace the logged data with
+     * [Constants.REDACTED_DATA]
      */
     var shouldSanitizeLogMessages: Boolean = true
 
@@ -40,8 +43,9 @@ data class ApptentiveConfiguration(
      * This is a safeguard on top of the criteria already set in the Apptentive Dashboard.
      * This applies to both Google In-App Review & Apptentive Rating Dialog interactions.
      *
-     * @see TimeUnit for conversion utils
-     * e.g. TimeUnit.DAYS.toMillis(30)
+     * Use [TimeUnit] for simple conversion utils
+     *
+     * Example: `TimeUnit.DAYS.toMillis(30)`
      */
     var ratingInteractionThrottleLength = TimeUnit.DAYS.toMillis(7)
 

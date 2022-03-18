@@ -45,6 +45,7 @@
 <!--        <item name="apptentiveSurveyBottomAppBarStyle">@style/Custom.Survey.BottomAppBar</item>-->
 
         <!-- TextViews -->
+<!--        <item name="apptentiveSurveyTitleStyle">@style/Custom.Survey.Title</item>-->
 <!--        <item name="apptentiveSurveyIntroductionStyle">@style/Custom.Survey.Introduction</item>-->
 <!--        <item name="apptentiveQuestionTitleStyle">@style/Custom.Survey.Question.Title</item>-->
 <!--        <item name="apptentiveQuestionInstructionsStyle">@style/Custom.Survey.Question.Caption.Instructions</item>-->
@@ -54,6 +55,7 @@
 <!--        <item name="apptentiveSurveyTermsAndConditionsStyle">@style/Custom.Survey.TermsAndConditions</item>-->
 
         <!-- Widgets -->
+<!--        <item name="apptentiveSurveyHeaderImageStyle">@style/Custom.Survey.HeaderImage</item>-->
 <!--        <item name="apptentiveCheckBoxStyle">@style/Custom.Survey.CheckBox</item>-->
 <!--        <item name="apptentiveRadioButtonStyle">@style/Custom.Survey.RadioButton</item>-->
 <!--        <item name="apptentiveRangeStyle">@style/Custom.Survey.Range</item>-->
@@ -169,6 +171,10 @@
     <!-- Dialog Text Styles End -->
 
     <!-- Survey Text Styles Start -->
+    <style name="Custom.Survey.Title" parent="Widget.MaterialComponents.TextView">
+        <item name="android:visibility">gone</item>
+    </style>
+
     <style name="Custom.Survey.Introduction" parent="Widget.MaterialComponents.TextView">
         <item name="android:textColor">@color/color_error</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
@@ -232,8 +238,14 @@
         <item name="navigationIcon">@drawable/ic_back_arrow</item>
         <item name="navigationContentDescription">Back</item>
         <item name="navigationIconTint">@color/color_error</item>
-        <item name="titleTextColor">@color/color_on_secondary</item>
-        <item name="titleTextAppearance">@style/TextAppearance.MaterialComponents.Headline4</item>
+    </style>
+
+    <style name="Custom.Survey.HeaderImage">
+        <item name="android:src">@drawable/example_logo</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_margin">2dp</item>
+        <item name="android:maxHeight">?actionBarSize</item>
+        <item name="android:adjustViewBounds">true</item>
     </style>
 
     <style name="Custom.Survey.CheckBox" parent="Widget.AppCompat.CompoundButton.CheckBox">

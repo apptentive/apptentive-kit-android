@@ -16,7 +16,25 @@
             android:id="@+id/apptentive_top_app_bar"
             style="?apptentiveSurveyToolbarStyle"
             android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"/>
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/apptentive_survey_title"
+                style="?apptentiveSurveyTitleStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:accessibilityHeading="true"
+                tools:targetApi="p"
+                tools:text="Survey Title" />
+
+            <ImageView
+                android:id="@+id/apptentive_survey_image_header"
+                style="?apptentiveSurveyHeaderImageStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/apptentive_survey_header_image" />
+
+        </com.google.android.material.appbar.MaterialToolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 

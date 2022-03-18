@@ -28,6 +28,7 @@ import apptentive.com.android.ui.ListViewAdapter
 import apptentive.com.android.ui.hideSoftKeyboard
 import apptentive.com.android.ui.showConfirmationDialog
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.textview.MaterialTextView
 
 internal class SurveyActivity : BaseSurveyActivity() {
 
@@ -97,10 +98,12 @@ internal class SurveyActivity : BaseSurveyActivity() {
         supportActionBar?.hide()
 
         val topAppBar = findViewById<MaterialToolbar>(R.id.apptentive_top_app_bar)
-        topAppBar.title = viewModel.title
         topAppBar.setNavigationOnClickListener {
             viewModel.exit(showConfirmation = true)
         }
+
+        val topAppBarTitle = findViewById<MaterialTextView>(R.id.apptentive_survey_title)
+        topAppBarTitle.text = viewModel.title
     }
 
     override fun onBackPressed() {
