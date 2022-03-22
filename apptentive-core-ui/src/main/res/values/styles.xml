@@ -21,17 +21,17 @@
 
         <!-- Love Dialog Styles -->
         <item name="apptentiveLoveDialogLayoutStyle">@style/Apptentive.LoveDialog.Layout</item>
-        <item name="apptentiveLoveDialogTitleStyle">@style/Apptentive.TextAppearance.Dialog.Title.NoMessage</item>
+        <item name="apptentiveLoveDialogTitleStyle">@style/Apptentive.TextAppearance.Dialog.TitleOrMessageOnly</item>
 
         <!-- Note Dialog Styles -->
         <item name="apptentiveNoteLayoutStyle">@style/Apptentive.Note.Layout</item>
         <item name="apptentiveNoteTitleWithMessageTextStyle">@style/Apptentive.TextAppearance.Dialog.Title.WithMessage</item>
-        <item name="apptentiveNoteTitleNoMessageTextStyle">@style/Apptentive.TextAppearance.Dialog.Title.NoMessage</item>
+        <item name="apptentiveNoteTitleOrMessageOnlyTextStyle">@style/Apptentive.TextAppearance.Dialog.TitleOrMessageOnly</item>
         <item name="apptentiveNoteMessageTextStyle">@style/Apptentive.TextAppearance.Dialog.Message</item>
 
         <!-- Apptentive Rating Dialog Styles -->
         <item name="apptentiveRatingDialogLayoutStyle">@style/Apptentive.RatingDialog.Layout</item>
-        <item name="apptentiveRatingDialogTitleTextStyle">@style/Apptentive.TextAppearance.Dialog.Title</item>
+        <item name="apptentiveRatingDialogTitleTextStyle">@style/Apptentive.TextAppearance.Dialog.Title.WithMessage</item>
         <item name="apptentiveRatingDialogMessageTextStyle">@style/Apptentive.TextAppearance.Dialog.Message</item>
 
         <!-- Survey Styles Start -->
@@ -155,18 +155,18 @@
         <item name="android:alpha">.87</item>
     </style>
 
-    <style name="Apptentive.TextAppearance.Dialog.Title.NoMessage" parent="Apptentive.TextAppearance.Dialog.Title">
-        <item name="android:textSize">?apptentiveTextSizeDialogTitleNoMessage</item>
-        <item name="android:textColor">?apptentiveTextColorDialogTitleNoMessage</item>
-        <item name="android:typeface">?apptentiveTypefaceDialogTitleNoMessage</item>
-        <item name="android:alpha">.6</item>
-    </style>
-
     <style name="Apptentive.TextAppearance.Dialog.Message" parent="Widget.MaterialComponents.TextView">
         <item name="android:alpha">.6</item>
         <item name="android:textColor">?apptentiveTextColorSubhead</item>
         <item name="android:typeface">?apptentiveTypefaceSubhead</item>
         <item name="android:textSize">?apptentiveTextSizeSubhead</item>
+    </style>
+
+    <style name="Apptentive.TextAppearance.Dialog.TitleOrMessageOnly" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textSize">?apptentiveTextSizeDialogTitleNoMessage</item>
+        <item name="android:textColor">?apptentiveTextColorDialogTitleNoMessage</item>
+        <item name="android:typeface">?apptentiveTypefaceDialogTitleNoMessage</item>
+        <item name="android:alpha">.6</item>
     </style>
     <!-- Dialog Text Styles End -->
 

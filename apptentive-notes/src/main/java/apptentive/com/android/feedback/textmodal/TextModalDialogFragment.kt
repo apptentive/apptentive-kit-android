@@ -34,22 +34,27 @@ internal class TextModalDialogFragment : DialogFragment() {
 
             val noteLayout = contentView.findViewById<LinearLayout>(R.id.apptentive_note_layout)
 
-            //region Title
-            val titleView = inflater.inflate(
-                if (viewModel.message != null) R.layout.apptentive_note_title_with_message
-                else R.layout.apptentive_note_title_no_message, null
-            ) as MaterialTextView
-            titleView.text = viewModel.title
-            noteLayout.addView(titleView)
-            //endregion
+            when {
+                /*
+                 * Material Design dialogs should always have supporting text (message).
+                 * Titles are optional.
+                 * https://material.io/components/dialogs
+                */
+                viewModel.title == null || viewModel.message == null -> {
+                    val titleView = inflater.inflate(R.layout.apptentive_note_title_or_message_only, null) as MaterialTextView
+                    titleView.text = if (viewModel.title != null) viewModel.title else viewModel.message
+                    noteLayout.addView(titleView)
+                }
+                else -> {
+                    val titleView = inflater.inflate(R.layout.apptentive_note_title, null) as MaterialTextView
+                    titleView.text = viewModel.title
+                    noteLayout.addView(titleView)
 
-            //region Message
-            if (viewModel.message != null) {
-                val messageView = inflater.inflate(R.layout.apptentive_note_message, null) as MaterialTextView
-                messageView.text = viewModel.message
-                noteLayout.addView(messageView)
+                    val messageView = inflater.inflate(R.layout.apptentive_note_message, null) as MaterialTextView
+                    messageView.text = viewModel.message
+                    noteLayout.addView(messageView)
+                }
             }
-            //endregion
 
             //region Actions
             val buttonLayout = inflater.inflate(R.layout.apptentive_note_actions, null) as LinearLayout

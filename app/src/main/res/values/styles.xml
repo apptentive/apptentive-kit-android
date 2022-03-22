@@ -28,7 +28,7 @@
         <!-- Note Styles-->
 <!--        <item name="apptentiveNoteLayoutStyle">@style/Custom.Note.Layout</item>-->
 <!--        <item name="apptentiveNoteTitleWithMessageTextStyle">@style/Custom.Note.Title.WithMessage.Text</item>-->
-<!--        <item name="apptentiveNoteTitleNoMessageTextStyle">@style/Custom.Note.Title.NoMessage.Text</item>-->
+<!--        <item name="apptentiveNoteTitleOrMessageOnlyTextStyle">@style/Custom.Note.TitleOrMessageOnly</item>-->
 <!--        <item name="apptentiveNoteMessageTextStyle">@style/Custom.Note.Message.Text</item>-->
 
         <!-- Apptentive Rating Dialog Styles-->
@@ -146,16 +146,16 @@
         <item name="android:fontFamily">@font/pacifico_regular</item>
     </style>
 
-    <style name="Custom.Note.Title.NoMessage.Text" parent="Widget.MaterialComponents.TextView">
-        <item name="android:textColor">@color/color_secondary</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textSize">30sp</item>
-    </style>
-
     <style name="Custom.Note.Message.Text" parent="Widget.MaterialComponents.TextView">
         <item name="android:textColor">@color/color_secondary</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">8sp</item>
+    </style>
+
+    <style name="Custom.Note.TitleOrMessageOnly" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textColor">@color/color_secondary</item>
+        <item name="android:fontFamily">@font/pacifico_regular</item>
+        <item name="android:textSize">30sp</item>
     </style>
 
     <style name="Custom.RatingDialog.Title.Text" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
