@@ -3,6 +3,7 @@ package apptentive.com.android.feedback.survey
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
 import android.view.MotionEvent
 import android.view.accessibility.AccessibilityEvent
 import android.widget.EditText
@@ -39,9 +40,23 @@ internal class SurveyActivity : BaseSurveyActivity() {
         setContentView(R.layout.apptentive_activity_survey)
         title = viewModel.title // So TalkBack announces the survey title
 
+        supportActionBar?.hide()
+
+        val topAppBar = findViewById<MaterialToolbar>(R.id.apptentive_top_app_bar)
+        topAppBar.setNavigationOnClickListener {
+            viewModel.exit(showConfirmation = true)
+        }
+
+        val topAppBarTitle = findViewById<MaterialTextView>(R.id.apptentive_survey_title)
+        topAppBarTitle.text = viewModel.title
+
         val adapter = createAdapter()
         val recyclerView = findViewById<RecyclerView>(R.id.apptentive_survey_recycler_view)
         recyclerView.adapter = adapter
+
+        val termsAndConditionsText = findViewById<MaterialTextView>(R.id.apptentive_terms_and_conditions)
+        termsAndConditionsText.movementMethod = LinkMovementMethod.getInstance()
+        termsAndConditionsText.text = viewModel.termsAndConditions
 
         viewModel.listItems.observe(this) { items ->
             adapter.submitList(items)
@@ -94,16 +109,6 @@ internal class SurveyActivity : BaseSurveyActivity() {
                 }
             }
         }
-
-        supportActionBar?.hide()
-
-        val topAppBar = findViewById<MaterialToolbar>(R.id.apptentive_top_app_bar)
-        topAppBar.setNavigationOnClickListener {
-            viewModel.exit(showConfirmation = true)
-        }
-
-        val topAppBarTitle = findViewById<MaterialTextView>(R.id.apptentive_survey_title)
-        topAppBarTitle.text = viewModel.title
     }
 
     override fun onBackPressed() {

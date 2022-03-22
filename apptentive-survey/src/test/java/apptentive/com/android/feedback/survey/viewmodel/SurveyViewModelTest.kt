@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.survey.viewmodel
 
+import android.text.SpannedString
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import apptentive.com.android.TestCase
 import apptentive.com.android.concurrent.mockExecutors
@@ -379,7 +380,8 @@ class SurveyViewModelTest : TestCase() {
             closeConfirmTitle = "Close survey?",
             closeConfirmMessage = "All the changes will be lost",
             closeConfirmCloseText = "close",
-            closeConfirmBackText = "Back to survey"
+            closeConfirmBackText = "Back to survey",
+            SpannedString("Terms & Conditions")
         )
         return SurveyViewModel(
             model = model,

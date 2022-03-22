@@ -39,8 +39,8 @@ private class DefaultSurveyModelFactory(val engagementContext: EngagementContext
             closeConfirmTitle = interaction.closeConfirmTitle,
             closeConfirmMessage = interaction.closeConfirmMessage,
             closeConfirmCloseText = interaction.closeConfirmCloseText,
-            closeConfirmBackText = interaction.closeConfirmBackText
+            closeConfirmBackText = interaction.closeConfirmBackText,
+            termsAndConditionsLinkText = interaction.termsAndConditions?.convertToLink()
         )
-
     }
 }

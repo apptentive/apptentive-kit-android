@@ -1,9 +1,11 @@
 package apptentive.com.android.feedback.survey.interaction
 
+import android.text.Spanned
 import androidx.annotation.VisibleForTesting
+import androidx.core.text.HtmlCompat
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
-import apptentive.com.android.feedback.survey.viewmodel.RangeQuestionListItem
+import apptentive.com.android.feedback.survey.interaction.SurveyInteraction.TermsAndConditions
 
 internal typealias SurveyQuestionConfiguration = Map<String, Any?>
 
@@ -22,6 +24,7 @@ internal typealias SurveyQuestionConfiguration = Map<String, Any?>
  * @param closeConfirmBackText the text displayed on the positive button of the survey cancellation confirmation dialog
  * @param isRequired whether to allow the user to cancel the survey
  * @param questions list of questions
+ * @param termsAndConditions [TermsAndConditions] data class that contains a label and link (set on dashboard)
  */
 @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 class SurveyInteraction(
@@ -38,8 +41,19 @@ class SurveyInteraction(
     val closeConfirmCloseText: String?,
     val closeConfirmBackText: String?,
     val isRequired: Boolean,
-    val questions: List<SurveyQuestionConfiguration>
+    val questions: List<SurveyQuestionConfiguration>,
+    val termsAndConditions: TermsAndConditions?
 ) : Interaction(id, type = InteractionType.Survey) {
+
+    data class TermsAndConditions(
+        val label: String?,
+        val link: String?
+    ) {
+        fun convertToLink(): Spanned {
+            val linkText = "<a href=$link>$label</a>"
+            return HtmlCompat.fromHtml(linkText, HtmlCompat.FROM_HTML_MODE_COMPACT)
+        }
+    }
 
     override fun toString(): String {
         return javaClass.simpleName +
@@ -56,7 +70,8 @@ class SurveyInteraction(
                 "closeConfirmCloseText=\"$closeConfirmCloseText\", " +
                 "closeConfirmBackText=\"$closeConfirmBackText\", " +
                 "isRequired=$isRequired, " +
-                "questions=$questions)"
+                "questions=$questions), " +
+                "termsAndConditions=$termsAndConditions"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -74,7 +89,8 @@ class SurveyInteraction(
                     closeConfirmMessage != other.closeConfirmMessage ||
                     closeConfirmBackText != other.closeConfirmBackText ||
                     isRequired != other.isRequired ||
-                    questions != other.questions -> false
+                    questions != other.questions ||
+                    termsAndConditions != other.termsAndConditions -> false
             else -> true
         }
     }
@@ -93,6 +109,7 @@ class SurveyInteraction(
         result = 31 * result + (closeConfirmBackText?.hashCode() ?: 0)
         result = 31 * result + isRequired.hashCode()
         result = 31 * result + questions.hashCode()
+        result = 31 * result + (termsAndConditions?.hashCode() ?: 0)
         return result
     }
 }

@@ -119,25 +119,25 @@
     <style name="Apptentive.LoveDialog" />
 
     <style name="Apptentive.LoveDialog.Layout">
-        <item name="android:colorBackground">?apptentiveDialogBackground</item>
+        <item name="android:background">?apptentiveDialogBackground</item>
     </style>
 
     <style name="Apptentive.Note" />
 
     <style name="Apptentive.Note.Layout">
-        <item name="android:colorBackground">?apptentiveDialogBackground</item>
+        <item name="android:background">?apptentiveDialogBackground</item>
     </style>
 
     <style name="Apptentive.RatingDialog" />
 
     <style name="Apptentive.RatingDialog.Layout">
-        <item name="android:colorBackground">?apptentiveDialogBackground</item>
+        <item name="android:background">?apptentiveDialogBackground</item>
     </style>
 
     <style name="Apptentive.Survey" />
 
     <style name="Apptentive.Survey.Layout">
-        <item name="android:colorBackground">?android:colorBackground</item>
+        <item name="android:background">?android:colorBackground</item>
     </style>
     <!-- Interaction Layouts End -->
 
@@ -215,7 +215,7 @@
     </style>
 
     <style name="Apptentive.TextAppearance.Survey.Caption.TermsAndConditions" parent="Apptentive.TextAppearance.Survey.Caption">
-        <item name="android:textColor">?apptentiveTextColorSurveyTermsAndConditions</item>
+        <item name="android:textColorLink">?apptentiveTextColorSurveyTermsAndConditions</item>
     </style>
 
     <style name="Apptentive.TextAppearance.Survey.Error" parent="Widget.MaterialComponents.TextView">
@@ -243,7 +243,6 @@
 
     <!-- https://material.io/components/app-bars-top/android -->
     <style name="Apptentive.Widget.Survey.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
-        <item name="android:colorBackground">?colorPrimary</item>
         <item name="navigationIcon">@drawable/ic_baseline_close_24</item>
         <item name="navigationContentDescription">@string/close</item>
     </style>
@@ -309,7 +308,7 @@
     </style>
 
     <style name="Apptentive.Widget.Survey.BottomAppBar">
-        <item name="android:colorBackground">?colorPrimary</item>
+        <item name="android:background">?colorPrimary</item>
     </style>
     <!-- Survey Widgets End -->
     <!-- Widgets End -->

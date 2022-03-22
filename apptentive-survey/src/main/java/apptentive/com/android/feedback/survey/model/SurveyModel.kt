@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.survey.model
 
+import android.text.Spanned
 import androidx.annotation.WorkerThread
 import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.Observable
@@ -17,7 +18,8 @@ class SurveyModel(
     val closeConfirmTitle: String?,
     val closeConfirmMessage: String?,
     val closeConfirmCloseText: String?,
-    val closeConfirmBackText: String?
+    val closeConfirmBackText: String?,
+    val termsAndConditionsLinkText: Spanned?
 ) {
     private val questionsSubject = QuestionListSubject(questions) // BehaviourSubject<List<SurveyQuestion<*>>>
     val questionsStream: Observable<List<SurveyQuestion<*>>> = questionsSubject

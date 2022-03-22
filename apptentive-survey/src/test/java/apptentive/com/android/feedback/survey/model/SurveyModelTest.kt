@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.survey.model
 
+import android.text.SpannedString
 import apptentive.com.android.TestCase
 import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion.ChoiceType
 import com.google.common.truth.Truth.assertThat
@@ -211,6 +212,7 @@ class SurveyModelTest : TestCase() {
         closeConfirmTitle = "Close survey?",
         closeConfirmMessage = "All the changes will be lost",
         closeConfirmCloseText = "close",
-        closeConfirmBackText = "Back to survey"
+        closeConfirmBackText = "Back to survey",
+        SpannedString("Terms & Conditions")
     )
 }

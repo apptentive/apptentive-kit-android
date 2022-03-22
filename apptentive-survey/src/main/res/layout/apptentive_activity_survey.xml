@@ -60,7 +60,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             tools:text="Terms and Conditions"
-            tools:textColor="@android:color/white" />
+            tools:textColor="?colorOnPrimary" />
 
     </LinearLayout>
 

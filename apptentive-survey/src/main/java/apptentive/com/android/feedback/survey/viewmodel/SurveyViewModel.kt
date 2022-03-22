@@ -76,6 +76,7 @@ class SurveyViewModel(
     private var anyQuestionWasAnswered: Boolean = false
 
     val title = model.name
+    val termsAndConditions = model.termsAndConditionsLinkText
 
     val surveyCancelConfirmationDisplay = with(model) {
         SurveyCancelConfirmationDisplay(closeConfirmTitle,

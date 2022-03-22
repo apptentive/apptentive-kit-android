@@ -23,7 +23,11 @@ class SurveyInteractionConverterTest: TestCase() {
                     "show_success_message":true,
                     "success_message":"success_message",
                     "required":true,
-                    "questions":[]
+                    "questions":[],
+                    "terms_and_conditions": {
+                        "label": "labelTest",
+                        "link": "linkTest"
+                    }
                 }
             }
         """
@@ -42,12 +46,13 @@ class SurveyInteractionConverterTest: TestCase() {
             closeConfirmCloseText = null,
             closeConfirmBackText = null,
             isRequired = true,
-            questions = emptyList()
+            questions = emptyList(),
+            termsAndConditions = SurveyInteraction.TermsAndConditions("labelTest", "linkTest")
         )
 
         val data = JsonConverter.fromJson<InteractionData>(jsonString.trimIndent())
         val actual = SurveyInteractionTypeConverter().convert(data)
 
-        assertEquals(expected, actual)
+        assertEquals(expected.toString(), actual.toString())
     }
 }

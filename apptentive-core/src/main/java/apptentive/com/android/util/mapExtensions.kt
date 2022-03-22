@@ -34,7 +34,7 @@ fun Map<String, *>.getMap(key: String): Map<String, *> =
     optMap(key) ?: throw MissingKeyException(key)
 
 @Suppress("UNCHECKED_CAST")
-internal fun Map<String, *>.optMap(key: String, defaultValue: Map<String, *>? = null) =
+fun Map<String, *>.optMap(key: String, defaultValue: Map<String, *>? = null) =
     this[key] as? Map<String, *> ?: defaultValue
 
 @Throws(MissingKeyException::class)
