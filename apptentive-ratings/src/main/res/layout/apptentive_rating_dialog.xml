@@ -42,7 +42,7 @@
             android:layout_marginTop="@dimen/apptentive_dialog_action_spacing"
             android:textAlignment="viewEnd"
             tools:text="RATE ANDROID DEMO APP"
-            tools:textColor="@color/apptentive_color_on_background" />
+            tools:textColor="@color/apptentive_color_on_surface" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/apptentive_rating_dialog_remind_button"
@@ -53,7 +53,7 @@
             android:layout_marginHorizontal="@dimen/apptentive_dialog_action_spacing"
             android:textAlignment="viewEnd"
             tools:text="REMIND ME LATER"
-            tools:textColor="@color/apptentive_color_on_background" />
+            tools:textColor="@color/apptentive_color_on_surface" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/apptentive_rating_dialog_decline_button"
@@ -65,7 +65,7 @@
             android:layout_marginBottom="@dimen/apptentive_dialog_action_spacing"
             android:textAlignment="viewEnd"
             tools:text="NO THANKS"
-            tools:textColor="@color/apptentive_color_on_background" />
+            tools:textColor="@color/apptentive_color_on_surface" />
 
     </LinearLayout>
 

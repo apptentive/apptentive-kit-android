@@ -9,6 +9,8 @@
         <item name="colorOnSecondary">@color/apptentive_color_on_secondary</item>
         <item name="android:colorBackground">@color/apptentive_color_background</item>
         <item name="colorOnBackground">@color/apptentive_color_on_background</item>
+        <item name="colorSurface">@color/apptentive_color_surface</item>
+        <item name="colorOnSurface">@color/apptentive_color_on_surface</item>
         <item name="android:textColorSecondary">@color/apptentive_color_text_color_secondary</item>
         <item name="colorError">@color/apptentive_color_error</item>
 
@@ -92,6 +94,10 @@
         <item name="apptentiveTextColorSurveyQuestionInstructions">?colorOnBackground</item>
         <item name="apptentiveTextColorSurveyTermsAndConditions">?colorOnPrimary</item>
 
+        <!-- Text Alpha -->
+        <item name="apptentiveHeaderAlpha">@dimen/apptentive_header_alpha</item>
+        <item name="apptentiveSubheaderAlpha">@dimen/apptentive_subheader_alpha</item>
+        
         <!-- Typeface -->
         <item name="apptentiveTypefaceDefault">@integer/apptentive_typeface_normal</item>
         <item name="apptentiveTypefaceDialogTitle">?apptentiveTypefaceDefault</item>
@@ -152,21 +158,21 @@
     <style name="Apptentive.TextAppearance.Dialog.Title.WithMessage" parent="Apptentive.TextAppearance.Dialog.Title">
         <item name="android:textSize">?apptentiveTextSizeDialogTitleWithMessage</item>
         <item name="android:textColor">?apptentiveTextColorDialogTitleWithMessage</item>
-        <item name="android:alpha">.87</item>
+        <item name="android:alpha">?apptentiveHeaderAlpha</item>
     </style>
-
+    
     <style name="Apptentive.TextAppearance.Dialog.Message" parent="Widget.MaterialComponents.TextView">
-        <item name="android:alpha">.6</item>
+        <item name="android:textSize">?apptentiveTextSizeSubhead</item>
         <item name="android:textColor">?apptentiveTextColorSubhead</item>
         <item name="android:typeface">?apptentiveTypefaceSubhead</item>
-        <item name="android:textSize">?apptentiveTextSizeSubhead</item>
+        <item name="android:alpha">?apptentiveSubheaderAlpha</item>
     </style>
 
     <style name="Apptentive.TextAppearance.Dialog.TitleOrMessageOnly" parent="Widget.MaterialComponents.TextView">
         <item name="android:textSize">?apptentiveTextSizeDialogTitleNoMessage</item>
         <item name="android:textColor">?apptentiveTextColorDialogTitleNoMessage</item>
         <item name="android:typeface">?apptentiveTypefaceDialogTitleNoMessage</item>
-        <item name="android:alpha">.6</item>
+        <item name="android:alpha">?apptentiveSubheaderAlpha</item>
     </style>
     <!-- Dialog Text Styles End -->
 
@@ -181,6 +187,7 @@
         <item name="android:textSize">?apptentiveTextSizeSurveyIntroduction</item>
         <item name="android:typeface">?apptentiveTypefaceSurveyIntroduction</item>
         <item name="android:textAppearance">?textAppearanceHeadline6</item>
+        <item name="android:alpha">?apptentiveHeaderAlpha</item>
     </style>
 
     <style name="Apptentive.TextAppearance.Survey.Title.Question" parent="Widget.MaterialComponents.TextView">
@@ -189,6 +196,7 @@
         <item name="android:typeface">?apptentiveTypefaceTitle</item>
         <item name="android:autoLink">all</item>
         <item name="android:importantForAccessibility">no</item>
+        <item name="android:alpha">?apptentiveHeaderAlpha</item>
     </style>
 
     <style name="Apptentive.TextAppearance.Survey.Caption" parent="Widget.MaterialComponents.TextView">
@@ -198,15 +206,15 @@
     </style>
 
     <style name="Apptentive.TextAppearance.Survey.Caption.RangeLabel" parent="Apptentive.TextAppearance.Survey.Caption">
-        <item name="android:alpha">.6</item>
         <item name="android:textColor">?apptentiveTextColorSurveyRangeLabel</item>
         <item name="android:focusable">true</item>
+        <item name="android:alpha">?apptentiveSubheaderAlpha</item>
     </style>
 
     <style name="Apptentive.TextAppearance.Survey.Caption.Instructions" parent="Apptentive.TextAppearance.Survey.Caption">
-        <item name="android:alpha">.6</item>
         <item name="android:textColor">?apptentiveTextColorSurveyQuestionInstructions</item>
         <item name="android:importantForAccessibility">no</item>
+        <item name="android:alpha">?apptentiveSubheaderAlpha</item>
     </style>
 
     <style name="Apptentive.TextAppearance.Survey.Caption.Error" parent="Apptentive.TextAppearance.Survey.Caption">
@@ -251,18 +259,20 @@
 
     <!-- https://material.io/components/checkboxes/android -->
     <style name="Apptentive.Widget.Survey.CheckBox" parent="Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="android:textSize">?apptentiveTextSizeBody1</item>
         <item name="android:textColor">?apptentiveTextColorBody1</item>
         <item name="android:typeface">?apptentiveTypefaceBody1</item>
-        <item name="android:textSize">?apptentiveTextSizeBody1</item>
         <item name="android:buttonTint">@color/apptentive_mtrl_selection_control_button_tint</item>
+        <item name="android:alpha">?apptentiveHeaderAlpha</item>
     </style>
 
     <!-- https://material.io/components/radio-buttons/android -->
     <style name="Apptentive.Widget.Survey.RadioButton" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="android:textSize">?apptentiveTextSizeBody1</item>
         <item name="android:textColor">?apptentiveTextColorBody1</item>
         <item name="android:typeface">?apptentiveTypefaceBody1</item>
-        <item name="android:textSize">?apptentiveTextSizeBody1</item>
         <item name="android:buttonTint">@color/apptentive_mtrl_selection_control_button_tint</item>
+        <item name="android:alpha">?apptentiveHeaderAlpha</item>
     </style>
 
     <!-- https://material.io/components/sliders/android-->

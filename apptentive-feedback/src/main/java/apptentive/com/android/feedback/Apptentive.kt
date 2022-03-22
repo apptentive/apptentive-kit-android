@@ -17,7 +17,6 @@ import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.feedback.utils.ThrottleUtils
-import apptentive.com.android.feedback.utils.ThrottleUtils.SHARED_PREF_THROTTLE
 import apptentive.com.android.network.DefaultHttpClient
 import apptentive.com.android.network.DefaultHttpNetwork
 import apptentive.com.android.network.DefaultHttpRequestRetryPolicy
@@ -26,6 +25,7 @@ import apptentive.com.android.network.HttpLoggingInterceptor
 import apptentive.com.android.network.HttpNetworkResponse
 import apptentive.com.android.network.HttpRequest
 import apptentive.com.android.network.asString
+import apptentive.com.android.platform.SharedPrefConstants
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.NETWORK
 
@@ -116,6 +116,10 @@ object Apptentive {
             )
         )
 
+        // Save host app theme usage
+        application.getSharedPreferences(SharedPrefConstants.USE_HOST_APP_THEME, Context.MODE_PRIVATE)
+            .edit().putBoolean(SharedPrefConstants.USE_HOST_APP_THEME_KEY, configuration.shouldInheritAppTheme).apply()
+
         // Set log level
         Log.logLevel = configuration.logLevel
 
@@ -125,11 +129,11 @@ object Apptentive {
         // Set rating throttle
         ThrottleUtils.ratingThrottleLength = configuration.ratingInteractionThrottleLength
         ThrottleUtils.throttleSharedPrefs =
-            application.getSharedPreferences(SHARED_PREF_THROTTLE, Context.MODE_PRIVATE)
+            application.getSharedPreferences(SharedPrefConstants.THROTTLE_UTILS, Context.MODE_PRIVATE)
 
         // Save alternate app store URL to be set later
-        application.getSharedPreferences(Constants.SHARED_PREF_CUSTOM_STORE_URL, Context.MODE_PRIVATE)
-            .edit().putString(Constants.SHARED_PREF_CUSTOM_STORE_URL_KEY, configuration.customAppStoreURL).apply()
+        application.getSharedPreferences(SharedPrefConstants.CUSTOM_STORE_URL, Context.MODE_PRIVATE)
+            .edit().putString(SharedPrefConstants.CUSTOM_STORE_URL_KEY, configuration.customAppStoreURL).apply()
 
         Log.i(SYSTEM, "Registering Apptentive Android SDK ${Constants.SDK_VERSION}")
         Log.v(

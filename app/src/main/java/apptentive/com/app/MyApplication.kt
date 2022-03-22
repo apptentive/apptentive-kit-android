@@ -14,6 +14,7 @@ val configuration = ApptentiveConfiguration(
     BuildConfig.APPTENTIVE_KEY,
     BuildConfig.APPTENTIVE_SIGNATURE
 ).apply {
+    shouldInheritAppTheme = false
     logLevel = LogLevel.Verbose
     customAppStoreURL = "https://play.google.com/store/apps/details?id=com.apptentive.dogfacts"
     ratingInteractionThrottleLength = TimeUnit.SECONDS.toMillis(30)

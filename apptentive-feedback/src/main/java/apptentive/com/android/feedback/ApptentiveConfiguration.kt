@@ -16,6 +16,19 @@ data class ApptentiveConfiguration(
     val apptentiveSignature: String
 ) {
     /**
+     * Determines if Apptentive Interactions will use the host app's theme or Apptentive's theme.
+     *
+     * If `true`, Apptentive Interactions will use the host app's theme and colors.
+     *
+     * If `false`, Apptentive Interactions will use the `Theme.Apptentive` theme and colors,
+     * set in the `styles.xml` file within the `apptentive-core-ui` package.
+     *
+     * `ApptentiveThemeOverride` will always take priority over all themes.
+     * See `ThemeHelper.kt` within the `apptentive-core-ui` package for more info.
+     */
+    var shouldInheritAppTheme: Boolean = true
+
+    /**
      * [LogLevel] is used to define what level of logs we will show in Logcat
      *
      * [LogLevel.Verbose] - Any relevant info not shown in other log Levels
@@ -31,7 +44,7 @@ data class ApptentiveConfiguration(
     var logLevel: LogLevel = LogLevel.Info
 
     /**
-     * Redacts sensitive information from being logged when set to `true`
+     * Redacts sensitive information from being logged when set to `true`.
      *
      * Data fields which have `@SensitiveDataKey` annotation will replace the logged data with
      * [Constants.REDACTED_DATA]

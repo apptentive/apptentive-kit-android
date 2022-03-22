@@ -10,4 +10,6 @@
     <dimen name="apptentive_dialog_action_spacing">8dp</dimen>
     <dimen name="apptentive_dialog_title_horizontal_padding">16dp</dimen>
     <dimen name="apptentive_dialog_message_min_height">48dp</dimen>
+    <dimen name="apptentive_header_alpha">0.87</dimen>
+    <dimen name="apptentive_subheader_alpha">0.60</dimen>
 </resources>

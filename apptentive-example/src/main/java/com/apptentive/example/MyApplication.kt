@@ -20,6 +20,7 @@ class MyApplication : Application() {
         ).apply {
             /**
              * Optional parameters:
+             * shouldInheritAppTheme           - Default is true
              * logLevel                        - Default is LogLevel.Info
              * shouldSanitizeLogMessages       - Default is true
              * ratingInteractionThrottleLength - Default is TimeUnit.DAYS.toMillis(7)

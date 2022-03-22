@@ -76,6 +76,10 @@
         <attr name="apptentiveTextColorSurveyQuestionInstructions" format="color|reference"/>
         <attr name="apptentiveTextColorSurveyTermsAndConditions" format="color|reference"/>
 
+        <!-- Text Alpha -->
+        <attr name="apptentiveHeaderAlpha" format="dimension|reference" />
+        <attr name="apptentiveSubheaderAlpha" format="dimension|reference" />
+
         <!-- Typeface -->
         <attr name="apptentiveTypefaceDefault" format="integer|reference"/>
         <attr name="apptentiveTypefaceDialogTitle" format="integer|reference" />

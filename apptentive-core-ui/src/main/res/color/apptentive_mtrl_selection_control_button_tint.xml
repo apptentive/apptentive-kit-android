@@ -14,7 +14,7 @@
     <!-- Checked -->
     <item android:color="?attr/colorSecondary" android:state_checked="true"/>
     <!-- Unchecked -->
-    <item android:alpha=".5" android:color="?attr/colorOnBackground" android:state_checked="false"/>
+    <item android:alpha="0.54" android:color="?attr/colorOnBackground" android:state_checked="false"/>
     <!-- Disabled -->
     <item android:alpha="@dimen/material_emphasis_disabled" android:color="?attr/colorOnBackground" android:state_enabled="false"/>
 </selector>
