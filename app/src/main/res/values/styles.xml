@@ -85,6 +85,7 @@
 <!--        <item name="apptentiveTextColorTitle">@color/color_secondary</item>-->
 <!--        <item name="apptentiveTextColorSubhead">@color/color_secondary</item>-->
 <!--        <item name="apptentiveTextColorError">@color/color_secondary</item>-->
+<!--        <item name="apptentiveTextColorDialogTextButton">@color/color_primary</item>-->
 <!--        <item name="apptentiveTextColorSurveyRangeLabel">@color/color_secondary</item>-->
 <!--        <item name="apptentiveTextColorSurveyTitle">@color/color_secondary</item>-->
 <!--        <item name="apptentiveTextColorSurveyIntroduction">@color/color_secondary</item>-->

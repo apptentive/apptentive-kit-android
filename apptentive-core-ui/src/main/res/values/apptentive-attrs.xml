@@ -70,6 +70,7 @@
         <attr name="apptentiveTextColorSubhead" format="color|reference"/>
         <attr name="apptentiveTextColorError" format="color|reference"/>
         <attr name="apptentiveTextColorBody1" format="color|reference"/>
+        <attr name="apptentiveTextColorDialogTextButton" format="color|reference"/>
         <attr name="apptentiveTextColorSurveyTitle" format="color|reference"/>
         <attr name="apptentiveTextColorSurveyIntroduction" format="color|reference"/>
         <attr name="apptentiveTextColorSurveyRangeLabel" format="color|reference"/>

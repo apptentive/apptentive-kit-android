@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Apptentive uses colorSecondary for widget colors
+
+    https://chromium.googlesource.com/android_tools/+/HEAD/sdk/extras/android/support/v7/appcompat/res/drawable/abc_text_cursor_material.xml
+-->
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <size android:height="2dp"
+        android:width="2dp"/>
+    <solid android:color="?attr/colorSecondary"/>
+</shape>

@@ -15,7 +15,8 @@
     Dialogs:
     - Dialog background color uses colorSurface
     - Dialog color on background (title and message text) uses colorOnSurface
-    - Dialog buttons text color uses colorPrimary
+    - Dialog buttons text color uses colorSecondary
+        - Override with apptentiveTextColorDialogTextButton
     - Dialog title has an alpha of .90 by default
         - Override with apptentiveHeaderAlpha
     - Dialog message has an alpha of .75 by default
@@ -126,6 +127,7 @@
 <!--        <item name="apptentiveTextColorTitle">@color/color_secondary</item>-->
 <!--        <item name="apptentiveTextColorSubhead">@color/color_secondary</item>-->
 <!--        <item name="apptentiveTextColorError">@color/color_secondary</item>-->
+<!--        <item name="apptentiveTextColorDialogTextButton">@color/color_primary</item>-->
 <!--        <item name="apptentiveTextColorSurveyRangeLabel">@color/color_secondary</item>-->
 <!--        <item name="apptentiveTextColorSurveyTitle">@color/color_secondary</item>-->
 <!--        <item name="apptentiveTextColorSurveyIntroduction">@color/color_secondary</item>-->
