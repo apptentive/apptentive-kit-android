@@ -1,27 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--
+    - Main Apptentive Styling item info
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/color_primary</item>
-        <item name="colorOnPrimary">@color/color_on_primary</item>
-        <item name="colorPrimaryVariant">@color/color_primary_variant</item>
-        <item name="colorSecondary">@color/color_secondary</item>
-        <item name="colorSecondaryVariant">@color/color_secondary_variant</item>
-        <item name="colorOnSecondary">@color/color_on_secondary</item>
-        <item name="android:colorBackground">@color/color_background</item>
-        <item name="colorOnBackground">@color/color_on_background</item>
-        <item name="colorSurface">@color/color_background</item>
-        <item name="colorOnSurface">@color/color_on_background</item>
-        <item name="android:textColorSecondary">@color/color_text_color_secondary</item>
-        <item name="colorError">@color/color_error</item>
-<!--        <item name="android:background">@color/color_background</item>-->
-    </style>
+    - Have a style named "ApptentiveThemeOverride" in your styles.xml file to override Apptentive styles
+    - Items defined in this style will ONLY affect Apptentive interactions
 
+    - We disable the android:background style for Apptentive interaction styling
+    - It causes some unexpected issues for some Views
+    - You can re-enable this within ApptentiveThemeOverride
+
+    - Material Color info: https://material.io/blog/android-material-theme-color
+
+    Dialogs:
+    - Dialog background color uses colorSurface
+    - Dialog color on background (title and message text) uses colorOnSurface
+    - Dialog buttons text color uses colorPrimary
+    - Dialog title has an alpha of .90 by default
+        - Override with apptentiveHeaderAlpha
+    - Dialog message has an alpha of .75 by default
+        - Override with apptentiveSubheaderAlpha
+
+    Surveys:
+    - Survey toolbar / bottom bar colors uses colorPrimary
+    - Survey toolbar / bottom bar text colors uses colorOnPrimary
+    - Survey background uses android:colorBackground
+    - Survey color on background (text & some widget colors) uses colorOnBackground
+    - Survey submit button color uses colorPrimary
+    - Survey submit button text color uses colorOnPrimary
+    - Survey description, question title, and radio/checkbox options have alphas of .90 by default
+        - Override with apptentiveHeaderAlpha
+        - Note that affects default text colors as well as error colors
+    - Question instructions, text box hints, and range labels have an alpha of .75 by default
+        - Override with apptentiveSubheaderAlpha
+        - Note that affects default text colors as well as error colors
+
+    Use Survey header image instead of title text:
+    - Set through styles apptentiveSurveyTitleStyle & apptentiveSurveyHeaderImageStyle
+    - Example (Good starting point):
 
     <style name="ApptentiveThemeOverride">
+        <item name="apptentiveSurveyTitleStyle">@style/Custom.Survey.Title</item>
+        <item name="apptentiveSurveyHeaderImageStyle">@style/Custom.Survey.HeaderImage</item>
+    </style>
+
+    <style name="Custom.Survey.Title" parent="Widget.MaterialComponents.TextView">
+        <item name="android:visibility">gone</item> <- So the title text doesn't show
+    </style>
+
+    <style name="Custom.Survey.HeaderImage">
+        <item name="android:src">@drawable/example_logo</item> <- Set your header image here
+        <item name="android:maxHeight">?actionBarSize</item> <- minHeight/maxHeight to size
+        <item name="android:adjustViewBounds">true</item> <- Helps with image resizing
+        <item name="android:layout_gravity">center</item> <- Image positioning
+        <item name="android:layout_margin">2dp</item> <- Image spacing
+    </style>
+    -->
+
+    <!-- Apptentive Minor Interface Customization ApptentiveThemeOverride examples -->
+    <style name="ApptentiveThemeOverride">
+
         <!-- General Alert Dialog Styles -->
 <!--        <item name="apptentiveDialogButtonStyle">@style/Custom.Dialog.Button</item>-->
-<!--        <item name="apptentiveDialogBackground">@color/color_secondary</item>-->
+<!--        <item name="apptentiveDialogBackground">?colorSecondary</item>-->
 
         <!-- Love Dialog Styles-->
 <!--        <item name="apptentiveLoveDialogLayoutStyle">@style/Custom.LoveDialog.Layout</item>-->
@@ -30,7 +71,7 @@
         <!-- Note Styles-->
 <!--        <item name="apptentiveNoteLayoutStyle">@style/Custom.Note.Layout</item>-->
 <!--        <item name="apptentiveNoteTitleWithMessageTextStyle">@style/Custom.Note.Title.WithMessage.Text</item>-->
-<!--        <item name="apptentiveNoteTitleOrMessageOnlyTextStyle">@style/Custom.Note.TitleOrMessageOnly</item>-->
+<!--        <item name="apptentiveNoteTitleNoMessageTextStyle@style/Custom.Note.TitleOrMessageOnly</item>-->
 <!--        <item name="apptentiveNoteMessageTextStyle">@style/Custom.Note.Message.Text</item>-->
 
         <!-- Apptentive Rating Dialog Styles-->
@@ -109,7 +150,8 @@
 <!--        <item name="apptentiveTypefaceButtonColored">@integer/apptentive_typeface_serif</item>-->
     </style>
 
-    <!-- Minor Interface Customization -->
+
+    <!-- Apptentive Minor Interface Customization Styles Examples -->
 
     <!-- Interaction Layouts Start -->
     <style name="Custom"/>
@@ -117,62 +159,63 @@
     <style name="Custom.LoveDialog"/>
 
     <style name="Custom.LoveDialog.Layout">
-        <item name="android:colorBackground">@color/apptentive_color_error</item>
+        <item name="android:colorBackground">?colorOnSecondary</item>
     </style>
 
     <style name="Custom.Note"/>
 
     <style name="Custom.Note.Layout">
-        <item name="android:colorBackground">@color/color_error</item>
+        <item name="android:colorBackground">?colorOnSecondary</item>
     </style>
 
     <style name="Custom.RatingDialog"/>
 
     <style name="Custom.RatingDialog.Layout">
-        <item name="android:colorBackground">@color/color_error</item>
+        <item name="android:colorBackground">?colorOnSecondary</item>
     </style>
 
     <style name="Custom.Survey"/>
 
     <style name="Custom.Survey.Layout">
-        <item name="android:colorBackground">@color/color_primary</item>
+        <item name="android:colorBackground">?colorOnSecondary</item>
     </style>
     <!-- Interaction Layouts End -->
 
     <!-- Text Styles Start -->
     <!-- Dialog Text Styles Start -->
     <style name="Custom.LoveDialog.Title" parent="Widget.MaterialComponents.TextView">
-        <item name="android:textColor">@color/color_error</item>
+        <item name="android:textColor">?colorSecondaryVariant</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">18sp</item>
     </style>
 
     <style name="Custom.Note.Title.WithMessage.Text" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
-        <item name="android:textColor">@color/color_on_primary</item>
+        <item name="android:textColor">?colorSecondaryVariant</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
     </style>
 
     <style name="Custom.Note.Message.Text" parent="Widget.MaterialComponents.TextView">
-        <item name="android:textColor">@color/color_secondary</item>
+        <item name="android:textColor">?colorSecondaryVariant</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textSize">8sp</item>
+        <item name="android:textSize">10sp</item>
     </style>
 
     <style name="Custom.Note.TitleOrMessageOnly" parent="Widget.MaterialComponents.TextView">
-        <item name="android:textColor">@color/color_secondary</item>
+        <item name="android:textColor">?colorSecondaryVariant</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textSize">30sp</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
     <style name="Custom.RatingDialog.Title.Text" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
-        <item name="android:textColor">@color/color_on_primary</item>
+        <item name="android:textColor">?colorSecondaryVariant</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
     <style name="Custom.RatingDialog.Message.Text" parent="Widget.MaterialComponents.TextView">
-        <item name="android:textColor">@color/color_secondary</item>
+        <item name="android:textColor">?colorSecondaryVariant</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textSize">8sp</item>
+        <item name="android:textSize">10sp</item>
     </style>
     <!-- Dialog Text Styles End -->
 
@@ -182,43 +225,43 @@
     </style>
 
     <style name="Custom.Survey.Introduction" parent="Widget.MaterialComponents.TextView">
-        <item name="android:textColor">@color/color_error</item>
+        <item name="android:textColor">?colorSecondaryVariant</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">18sp</item>
     </style>
 
     <style name="Custom.Survey.Question.Title" parent="Widget.MaterialComponents.TextView">
-        <item name="android:textColor">@color/color_error</item>
+        <item name="android:textColor">?colorSecondaryVariant</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">18sp</item>
     </style>
 
     <style name="Custom.Survey.Question.Caption.Instructions" parent="Widget.MaterialComponents.TextView">
-        <item name="android:textColor">@color/color_error</item>
+        <item name="android:textColor">?colorSecondaryVariant</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">18sp</item>
     </style>
 
     <style name="Custom.Survey.Question.Caption.Error" parent="Widget.MaterialComponents.TextView">
-        <item name="android:textColor">@color/color_error</item>
+        <item name="android:textColor">?colorSecondaryVariant</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">18sp</item>
     </style>
 
     <style name="Custom.Survey.Question.Caption.RangeLabel" parent="Widget.MaterialComponents.TextView">
-        <item name="android:textColor">@color/color_error</item>
+        <item name="android:textColor">?colorSecondaryVariant</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">18sp</item>
     </style>
 
     <style name="Custom.Survey.Error" parent="Widget.MaterialComponents.TextView">
-        <item name="android:textColor">@color/color_error</item>
+        <item name="android:textColor">?colorSecondaryVariant</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">18sp</item>
     </style>
 
     <style name="Custom.Survey.TermsAndConditions" parent="Widget.MaterialComponents.TextView">
-        <item name="android:textColor">@color/color_error</item>
+        <item name="android:textColor">?colorSecondaryVariant</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">18sp</item>
     </style>
@@ -228,22 +271,22 @@
     <!-- Widgets Start -->
     <!-- Dialog Widgets Start -->
     <style name="Custom.Dialog.Button" parent="Widget.MaterialComponents.Button.OutlinedButton">
-        <item name="android:textColor">@color/color_on_primary</item>
+        <item name="android:textColor">?colorSecondaryVariant</item>
         <item name="android:textSize">20sp</item>
-        <item name="android:backgroundTint">@color/color_primary</item>
+        <item name="android:backgroundTint">@color/purple_200</item>
         <item name="fontFamily">@font/pacifico_regular</item>
         <item name="cornerRadius">24dp</item>
-        <item name="strokeColor">@color/color_error</item>
-        <item name="strokeWidth">4dp</item>
     </style>
     <!-- Dialog Widgets End -->
 
     <!-- Survey Widgets Start -->
     <style name="Custom.Survey.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
-        <item name="android:colorBackground">@color/color_secondary</item>
+        <item name="android:colorBackground">?colorSecondary</item>
         <item name="navigationIcon">@drawable/ic_back_arrow</item>
         <item name="navigationContentDescription">Back</item>
-        <item name="navigationIconTint">@color/color_error</item>
+        <item name="navigationIconTint">?colorOnSecondary</item>
+        <item name="titleTextColor">?colorOnSecondary</item>
+        <item name="titleTextAppearance">@style/TextAppearance.MaterialComponents.Headline4</item>
     </style>
 
     <style name="Custom.Survey.HeaderImage">
@@ -255,67 +298,62 @@
     </style>
 
     <style name="Custom.Survey.CheckBox" parent="Widget.AppCompat.CompoundButton.CheckBox">
-        <item name="android:textColor">@color/color_error</item>
+        <item name="android:textColor">?colorSecondaryVariant</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">18sp</item>
-        <item name="android:buttonTint">@color/color_secondary</item>
+        <item name="android:buttonTint">?colorPrimaryVariant</item>
     </style>
 
     <style name="Custom.Survey.RadioButton" parent="Widget.AppCompat.CompoundButton.RadioButton">
-        <item name="android:textColor">@color/color_error</item>
+        <item name="android:textColor">?colorSecondaryVariant</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">18sp</item>
-        <item name="android:buttonTint">@color/color_secondary</item>
+        <item name="android:buttonTint">?colorPrimaryVariant</item>
     </style>
 
     <style name="Custom.Survey.Range" parent="Widget.MaterialComponents.Slider">
         <item name="labelBehavior">withinBounds</item>
-        <item name="haloColor">@color/color_error</item>
-        <item name="thumbColor">@color/color_error</item>
-        <item name="trackColorActive">@color/color_secondary</item>
-        <item name="trackColorInactive">@color/color_secondary</item>
-        <item name="tickColorActive">@color/color_primary</item>
-        <item name="tickColorInactive">@color/color_primary</item>
+        <item name="haloColor">?colorPrimaryVariant</item>
+        <item name="thumbColor">?colorPrimaryVariant</item>
+        <item name="trackColorActive">?colorPrimaryVariant</item>
+        <item name="trackColorInactive">?colorPrimaryVariant</item>
+        <item name="tickColorActive">?colorSecondary</item>
+        <item name="tickColorInactive">?colorSecondary</item>
     </style>
 
     <style name="Custom.Survey.SingleLine.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-        <item name="errorIconDrawable">@drawable/ic_round_info</item>
-        <item name="boxStrokeColor">@color/color_error</item>
-        <item name="android:textColorHint">@color/color_secondary</item>
+        <item name="boxStrokeColor">?colorSecondary</item>
+        <item name="android:textColorHint">?colorSecondary</item>
     </style>
 
     <style name="Custom.Survey.SingleLine.EditText" parent="Widget.AppCompat.EditText">
-        <item name="android:textColor">@color/color_error</item>
+        <item name="android:textColor">?colorSecondaryVariant</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">18sp</item>
     </style>
 
     <style name="Custom.Survey.OtherTextField.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-        <item name="errorIconDrawable">@drawable/ic_round_info</item>
-        <item name="boxStrokeColor">@color/color_error</item>
-        <item name="android:textColorHint">@color/color_secondary</item>
+        <item name="boxStrokeColor">?colorSecondary</item>
+        <item name="android:textColorHint">?colorSecondary</item>
     </style>
 
     <style name="Custom.Survey.OtherTextField.EditText" parent="Widget.AppCompat.EditText">
-        <item name="android:textColor">@color/color_error</item>
+        <item name="android:textColor">?colorSecondary</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">18sp</item>
     </style>
 
     <style name="Custom.Survey.Submit.Button" parent="Widget.MaterialComponents.Button">
-        <item name="android:textSize">20sp</item>
-        <item name="android:textColor">@color/color_primary</item>
-        <item name="android:backgroundTint">?colorError</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">?colorPrimary</item>
+        <item name="android:backgroundTint">?colorOnPrimary</item>
         <item name="fontFamily">@font/pacifico_regular</item>
         <item name="cornerRadius">24dp</item>
-        <item name="strokeColor">@color/color_primary</item>
-        <item name="strokeWidth">4dp</item>
     </style>
 
     <style name="Custom.Survey.BottomAppBar" parent="Widget.MaterialComponents.Toolbar.Primary">
-        <item name="android:colorBackground">@color/color_secondary</item>
+        <item name="android:colorBackground">?colorSecondary</item>
     </style>
     <!-- Survey Widgets End -->
     <!-- Widgets End -->
-
 </resources>

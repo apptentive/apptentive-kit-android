@@ -220,6 +220,7 @@
     <style name="Apptentive.TextAppearance.Survey.Caption.Error" parent="Apptentive.TextAppearance.Survey.Caption">
         <item name="android:textColor">?apptentiveTextColorError</item>
         <item name="android:importantForAccessibility">no</item>
+        <item name="android:alpha">?apptentiveHeaderAlpha</item>
     </style>
 
     <style name="Apptentive.TextAppearance.Survey.Caption.TermsAndConditions" parent="Apptentive.TextAppearance.Survey.Caption">

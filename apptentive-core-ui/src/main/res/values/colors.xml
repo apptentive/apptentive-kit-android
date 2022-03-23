@@ -7,9 +7,9 @@
     <color name="apptentive_color_on_primary">#FFFFFF</color>
     <color name="apptentive_color_on_primary_variant">#E1E1E1</color>
     <color name="apptentive_color_background">#FFFFFF</color>
-    <color name="apptentive_color_on_background">#000000</color>
+    <color name="apptentive_color_on_background">#2D2D2D</color>
     <color name="apptentive_color_surface">#FFFFFF</color>
-    <color name="apptentive_color_on_surface">#000000</color>
+    <color name="apptentive_color_on_surface">#2D2D2D</color>
     <color name="apptentive_color_text_color_secondary">#858585</color>
     <color name="apptentive_color_on_secondary">#FFFFFF</color>
     <color name="apptentive_color_error">#B00020</color>

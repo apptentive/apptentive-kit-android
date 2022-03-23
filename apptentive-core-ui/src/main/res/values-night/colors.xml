@@ -12,5 +12,5 @@
     <color name="apptentive_color_on_surface">#FFFFFF</color>
     <color name="apptentive_color_text_color_secondary">#C9C9C9</color>
     <color name="apptentive_color_on_secondary">#E1E1E1</color>
-    <color name="apptentive_color_error">#CF6679</color>
+    <color name="apptentive_color_error">#FF8A9F</color>
 </resources>

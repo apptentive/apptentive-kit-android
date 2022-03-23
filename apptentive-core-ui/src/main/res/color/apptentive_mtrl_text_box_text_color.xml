@@ -14,7 +14,7 @@
     <!-- Focused -->
     <item android:color="?attr/colorPrimary" android:state_focused="true"/>
     <!-- Not Focused -->
-    <item android:alpha="0.6" android:color="?attr/colorOnBackground"/>
+    <item android:alpha="0.60" android:color="?attr/colorOnBackground"/>
     <!-- Disabled -->
     <item android:alpha="@dimen/material_emphasis_disabled" android:color="?attr/colorOnBackground" android:state_enabled="false"/>
 </selector>
