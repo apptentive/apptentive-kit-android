@@ -18,7 +18,13 @@ internal class DefaultSurveyQuestionListItemFactory :
         showInvalid: Boolean
     ): SurveyQuestionListItem {
         val instructions = createInstructionText(question)
-        val validationError = if (showInvalid && question.isRequired && !question.hasValidAnswer) question.validationError else null
+        val validationError = when {
+            //Required & invalid & invalid answer
+            showInvalid && question.isRequired && !question.hasValidAnswer -> question.validationError
+            //Optional & answered & invalid
+            showInvalid && !question.canSubmitOptionalQuestion -> question.validationError
+            else -> null
+        }
         return when (question) {
             is SingleLineQuestion -> createSingleLineQuestionListItem(question, instructions, validationError)
             is RangeQuestion -> createRangeQuestionListItem(question, instructions, validationError)

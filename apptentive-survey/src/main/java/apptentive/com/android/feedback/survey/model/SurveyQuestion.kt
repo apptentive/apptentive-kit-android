@@ -21,10 +21,13 @@ abstract class SurveyQuestion<Answer : SurveyQuestionAnswer>(
     val validationError: String,
     var answer: Answer
 ) {
-    /** Returns <code>true</code> if the question has a valid answer. */
+    /** Returns `true` if the question has a valid answer. */
     val hasValidAnswer get() = isValidAnswer(answer)
 
-    /** Returns <code>true</code> if the question has a any answer. */
+    /** Returns `true` if the optional question has an answer & passes validation/left unanswered */
+    val canSubmitOptionalQuestion get() = validateOptionalQuestion(answer)
+
+    /** Returns `true` if the question has a any answer. */
     val hasAnswer get() = isAnswered(answer)
 
     /** Checks if the given answer is valid for this specific question */
@@ -32,6 +35,9 @@ abstract class SurveyQuestion<Answer : SurveyQuestionAnswer>(
 
     /** Checks if user provided any answer */
     protected abstract fun isAnswered(answer: Answer): Boolean
+
+    /** Validates optional question */
+    protected open fun validateOptionalQuestion(answer: Answer): Boolean = true
 
     //region Equality
 
