@@ -54,7 +54,7 @@
 
         <!-- Text Size -->
         <attr name="apptentiveTextSizeDialogTitleWithMessage" format="dimension|reference" />
-        <attr name="apptentiveTextSizeDialogTitleNoMessage" format="dimension|reference" />
+        <attr name="apptentiveTextSizeDialogTitleOrMessageOnly" format="dimension|reference" />
         <attr name="apptentiveTextSizeSurveyQuestionTitle" format="dimension|reference" />
         <attr name="apptentiveTextSizeSurveyIntroduction" format="dimension|reference" />
         <attr name="apptentiveTextSizeSubhead" format="dimension|reference" />
@@ -65,7 +65,7 @@
 
         <!-- Text Color -->
         <attr name="apptentiveTextColorDialogTitleWithMessage" format="color|reference"/>
-        <attr name="apptentiveTextColorDialogTitleNoMessage" format="color|reference"/>
+        <attr name="apptentiveTextColorDialogTitleOrMessageOnly" format="color|reference"/>
         <attr name="apptentiveTextColorTitle" format="color|reference"/>
         <attr name="apptentiveTextColorSubhead" format="color|reference"/>
         <attr name="apptentiveTextColorError" format="color|reference"/>
@@ -78,13 +78,13 @@
         <attr name="apptentiveTextColorSurveyTermsAndConditions" format="color|reference"/>
 
         <!-- Text Alpha -->
-        <attr name="apptentiveHeaderAlpha" format="dimension|reference" />
-        <attr name="apptentiveSubheaderAlpha" format="dimension|reference" />
+        <attr name="apptentiveHeaderAlpha" format="float|dimension|reference" />
+        <attr name="apptentiveSubheaderAlpha" format="float|dimension|reference" />
 
         <!-- Typeface -->
         <attr name="apptentiveTypefaceDefault" format="integer|reference"/>
         <attr name="apptentiveTypefaceDialogTitle" format="integer|reference" />
-        <attr name="apptentiveTypefaceDialogTitleNoMessage" format="integer|reference" />
+        <attr name="apptentiveTypefaceDialogTitleOrMessageOnly" format="integer|reference" />
         <attr name="apptentiveTypefaceTitle" format="integer|reference" />
         <attr name="apptentiveTypefaceSurveyIntroduction" format="integer|reference" />
         <attr name="apptentiveTypefaceSubhead" format="integer|reference" />

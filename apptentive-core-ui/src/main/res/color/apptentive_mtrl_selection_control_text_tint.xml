@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+    Apptentive theming uses an alpha on the text (to match other Interactions)
+    Using an alpha on the widget itself causes everything to have that alpha.
+-->
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:alpha="?attr/apptentiveHeaderAlpha" android:color="?attr/apptentiveTextColorBody1"/>
+</selector>

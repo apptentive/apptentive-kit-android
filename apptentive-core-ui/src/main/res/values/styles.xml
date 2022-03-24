@@ -13,6 +13,7 @@
         <item name="colorOnSurface">@color/apptentive_color_on_surface</item>
         <item name="android:textColorSecondary">@color/apptentive_color_text_color_secondary</item>
         <item name="colorError">@color/apptentive_color_error</item>
+        <item name="android:statusBarColor">@color/apptentive_color_primary</item>
 
 
         <!-- Minor Interface Customization -->
@@ -67,49 +68,63 @@
         <item name="apptentiveSurveyButtonColorDefault">?colorPrimary</item>
         <!-- Survey Styles End -->
 
-        <!-- Text Size -->
+        <!-- Text Size Start -->
+        <!-- Dialog -->
         <item name="apptentiveTextSizeDialogTitleWithMessage">@dimen/apptentive_text_size_dialog_title</item>
-        <item name="apptentiveTextSizeDialogTitleNoMessage">@dimen/apptentive_text_size_default</item>
+        <item name="apptentiveTextSizeDialogTitleOrMessageOnly">@dimen/apptentive_text_size_default</item>
+        <item name="apptentiveTextSizeButtonBorderless">@dimen/apptentive_text_size_default</item>
+        <item name="apptentiveTextSizeSubhead">@dimen/apptentive_text_size_default</item>
+
+        <!-- Survey -->
         <item name="apptentiveTextSizeSurveyQuestionTitle">@dimen/apptentive_text_size_question_title</item>
         <item name="apptentiveTextSizeSurveyIntroduction">@dimen/apptentive_text_size_survey_introduction</item>
-        <item name="apptentiveTextSizeSubhead">@dimen/apptentive_text_size_default</item>
-        <item name="apptentiveTextSizeButtonBorderless">@dimen/apptentive_text_size_default</item>
         <item name="apptentiveTextSizeBody1">@dimen/apptentive_text_size_default</item>
         <item name="apptentiveTextSizeCaption">@dimen/apptentive_text_size_caption</item>
         <item name="apptentiveTextSizeButtonColored">@dimen/apptentive_text_size_default</item>
+        <!-- Text Size End -->
 
-        <!-- Text Color -->
+        <!-- Text Color Start -->
         <!-- Surfaces (Dialogs) use colorSurface & colorOnSurface -->
         <!-- Activities (Like Survey) use android:colorBackground and colorOnBackground -->
         <!-- https://material.io/blog/android-material-theme-color -->
+
+        <!-- Dialog -->
         <item name="apptentiveTextColorDialogTitleWithMessage">?colorOnSurface</item>
-        <item name="apptentiveTextColorDialogTitleNoMessage">?colorOnSurface</item>
-        <item name="apptentiveTextColorTitle">?colorOnBackground</item>
+        <item name="apptentiveTextColorDialogTitleOrMessageOnly">?colorOnSurface</item>
         <item name="apptentiveTextColorSubhead">?colorOnBackground</item>
-        <item name="apptentiveTextColorError">?colorError</item>
         <item name="apptentiveTextColorDialogTextButton">?colorSecondary</item>
+
+        <!-- Survey -->
+        <item name="apptentiveTextColorTitle">?colorOnBackground</item>
+        <item name="apptentiveTextColorError">?colorError</item>
         <item name="apptentiveTextColorSurveyRangeLabel">?colorOnBackground</item>
         <item name="apptentiveTextColorSurveyTitle">?colorOnPrimary</item>
         <item name="apptentiveTextColorSurveyIntroduction">?colorOnBackground</item>
         <item name="apptentiveTextColorBody1">?colorOnBackground</item>
         <item name="apptentiveTextColorSurveyQuestionInstructions">?colorOnBackground</item>
         <item name="apptentiveTextColorSurveyTermsAndConditions">?colorOnPrimary</item>
+        <!-- Text Color End -->
 
         <!-- Text Alpha -->
         <item name="apptentiveHeaderAlpha">@dimen/apptentive_header_alpha</item>
         <item name="apptentiveSubheaderAlpha">@dimen/apptentive_subheader_alpha</item>
         
-        <!-- Typeface -->
+        <!-- Typeface Start -->
         <item name="apptentiveTypefaceDefault">@integer/apptentive_typeface_normal</item>
+
+        <!-- Dialog -->
         <item name="apptentiveTypefaceDialogTitle">?apptentiveTypefaceDefault</item>
-        <item name="apptentiveTypefaceDialogTitleNoMessage">?apptentiveTypefaceDefault</item>
+        <item name="apptentiveTypefaceDialogTitleOrMessageOnly">?apptentiveTypefaceDefault</item>
+        <item name="apptentiveTypefaceButtonBorderless">?apptentiveTypefaceDefault</item>
+
+        <!-- Survey -->
         <item name="apptentiveTypefaceTitle">?apptentiveTypefaceDefault</item>
         <item name="apptentiveTypefaceSurveyIntroduction">?apptentiveTypefaceDefault</item>
         <item name="apptentiveTypefaceSubhead">?apptentiveTypefaceDefault</item>
-        <item name="apptentiveTypefaceButtonBorderless">?apptentiveTypefaceDefault</item>
         <item name="apptentiveTypefaceBody1">?apptentiveTypefaceDefault</item>
         <item name="apptentiveTypefaceCaption">?apptentiveTypefaceDefault</item>
         <item name="apptentiveTypefaceButtonColored">?apptentiveTypefaceDefault</item>
+        <!-- Typeface End -->
     </style>
 
     <!-- This style has been a problem within our UI and will be disabled by default -->
@@ -170,16 +185,16 @@
     </style>
 
     <style name="Apptentive.TextAppearance.Dialog.TitleOrMessageOnly" parent="Widget.MaterialComponents.TextView">
-        <item name="android:textSize">?apptentiveTextSizeDialogTitleNoMessage</item>
-        <item name="android:textColor">?apptentiveTextColorDialogTitleNoMessage</item>
-        <item name="android:typeface">?apptentiveTypefaceDialogTitleNoMessage</item>
+        <item name="android:textSize">?attr/apptentiveTextSizeDialogTitleOrMessageOnly</item>
+        <item name="android:textColor">?attr/apptentiveTextColorDialogTitleOrMessageOnly</item>
+        <item name="android:typeface">?attr/apptentiveTypefaceDialogTitleOrMessageOnly</item>
         <item name="android:alpha">?apptentiveSubheaderAlpha</item>
     </style>
     <!-- Dialog Text Styles End -->
 
     <!-- Survey Text Styles Start -->
     <style name="Apptentive.TextAppearance.Survey.Title" parent="Widget.MaterialComponents.TextView">
-        <item name="android:textColor">?colorOnPrimary</item>
+        <item name="android:textColor">?apptentiveTextColorSurveyTitle</item>
         <item name="android:textAppearance">?textAppearanceHeadline6</item>
     </style>
 
@@ -232,6 +247,7 @@
         <item name="android:typeface">?apptentiveTypefaceBody1</item>
         <item name="android:textSize">?apptentiveTextSizeBody1</item>
         <item name="android:textColor">?apptentiveTextColorError</item>
+        <item name="android:alpha">?apptentiveHeaderAlpha</item>
     </style>
     <!-- Survey Text Styles End -->
     <!-- Text Styles End -->
@@ -246,6 +262,8 @@
         <item name="android:typeface">?apptentiveTypefaceButtonBorderless</item>
         <item name="android:textSize">?apptentiveTextSizeButtonBorderless</item>
         <item name="android:textColor">?apptentiveTextColorDialogTextButton</item>
+        <item name="backgroundTint">@color/apptentive_mtrl_btn_text_btn_bg_color_selector</item>
+        <item name="rippleColor">@color/apptentive_mtrl_btn_ripple_color</item>
     </style>
     <!-- Dialog Widgets End -->
 
@@ -263,19 +281,17 @@
     <!-- https://material.io/components/checkboxes/android -->
     <style name="Apptentive.Widget.Survey.CheckBox" parent="Widget.AppCompat.CompoundButton.CheckBox">
         <item name="android:textSize">?apptentiveTextSizeBody1</item>
-        <item name="android:textColor">?apptentiveTextColorBody1</item>
+        <item name="android:textColor">@color/apptentive_mtrl_selection_control_text_tint</item>
         <item name="android:typeface">?apptentiveTypefaceBody1</item>
         <item name="android:buttonTint">@color/apptentive_mtrl_selection_control_button_tint</item>
-        <item name="android:alpha">?apptentiveHeaderAlpha</item>
     </style>
 
     <!-- https://material.io/components/radio-buttons/android -->
     <style name="Apptentive.Widget.Survey.RadioButton" parent="Widget.AppCompat.CompoundButton.RadioButton">
         <item name="android:textSize">?apptentiveTextSizeBody1</item>
-        <item name="android:textColor">?apptentiveTextColorBody1</item>
+        <item name="android:textColor">@color/apptentive_mtrl_selection_control_text_tint</item>
         <item name="android:typeface">?apptentiveTypefaceBody1</item>
         <item name="android:buttonTint">@color/apptentive_mtrl_selection_control_button_tint</item>
-        <item name="android:alpha">?apptentiveHeaderAlpha</item>
     </style>
 
     <!-- https://material.io/components/sliders/android-->

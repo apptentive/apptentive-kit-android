@@ -14,14 +14,13 @@
         <item name="colorOnSurface">@color/color_on_background</item>
         <item name="android:textColorSecondary">@color/color_text_color_secondary</item>
         <item name="colorError">@color/color_error</item>
-<!--        <item name="android:background">@color/color_background</item>-->
     </style>
 
 
     <style name="ApptentiveThemeOverride">
         <!-- General Alert Dialog Styles -->
 <!--        <item name="apptentiveDialogButtonStyle">@style/Custom.Dialog.Button</item>-->
-<!--        <item name="apptentiveDialogBackground">@color/color_secondary</item>-->
+<!--        <item name="apptentiveDialogBackground">@color/color_primary</item>-->
 
         <!-- Love Dialog Styles-->
 <!--        <item name="apptentiveLoveDialogLayoutStyle">@style/Custom.LoveDialog.Layout</item>-->
@@ -49,65 +48,78 @@
         <!-- TextViews -->
 <!--        <item name="apptentiveSurveyTitleStyle">@style/Custom.Survey.Title</item>-->
 <!--        <item name="apptentiveSurveyIntroductionStyle">@style/Custom.Survey.Introduction</item>-->
-<!--        <item name="apptentiveQuestionTitleStyle">@style/Custom.Survey.Question.Title</item>-->
-<!--        <item name="apptentiveQuestionInstructionsStyle">@style/Custom.Survey.Question.Caption.Instructions</item>-->
-<!--        <item name="apptentiveQuestionErrorStyle">@style/Custom.Survey.Question.Caption.Error</item>-->
-<!--        <item name="apptentiveRangeLabelStyle">@style/Custom.Survey.Question.Caption.RangeLabel</item>-->
+<!--        <item name="apptentiveSurveyQuestionTitleStyle">@style/Custom.Survey.Question.Title</item>-->
+<!--        <item name="apptentiveSurveyQuestionInstructionsStyle">@style/Custom.Survey.Question.Caption.Instructions</item>-->
+<!--        <item name="apptentiveSurveyQuestionErrorStyle">@style/Custom.Survey.Question.Caption.Error</item>-->
+<!--        <item name="apptentiveSurveyRangeLabelStyle">@style/Custom.Survey.Question.Caption.RangeLabel</item>-->
 <!--        <item name="apptentiveSurveySubmitErrorStyle">@style/Custom.Survey.Error</item>-->
 <!--        <item name="apptentiveSurveyTermsAndConditionsStyle">@style/Custom.Survey.TermsAndConditions</item>-->
 
         <!-- Widgets -->
 <!--        <item name="apptentiveSurveyHeaderImageStyle">@style/Custom.Survey.HeaderImage</item>-->
-<!--        <item name="apptentiveCheckBoxStyle">@style/Custom.Survey.CheckBox</item>-->
-<!--        <item name="apptentiveRadioButtonStyle">@style/Custom.Survey.RadioButton</item>-->
-<!--        <item name="apptentiveRangeStyle">@style/Custom.Survey.Range</item>-->
-<!--        <item name="apptentiveSingleLineLayoutStyle">@style/Custom.Survey.SingleLine.TextInputLayout</item>-->
-<!--        <item name="apptentiveSingleLineEditTextStyle">@style/Custom.Survey.SingleLine.EditText</item>-->
-<!--        <item name="apptentiveOtherTextFieldLayoutStyle">@style/Custom.Survey.OtherTextField.TextInputLayout</item>-->
-<!--        <item name="apptentiveOtherTextFieldEditTextStyle">@style/Custom.Survey.OtherTextField.EditText</item>-->
+<!--        <item name="apptentiveSurveyCheckBoxStyle">@style/Custom.Survey.CheckBox</item>-->
+<!--        <item name="apptentiveSurveyRadioButtonStyle">@style/Custom.Survey.RadioButton</item>-->
+<!--        <item name="apptentiveSurveyRangeStyle">@style/Custom.Survey.Range</item>-->
+<!--        <item name="apptentiveSurveySingleLineLayoutStyle">@style/Custom.Survey.SingleLine.TextInputLayout</item>-->
+<!--        <item name="apptentiveSurveySingleLineEditTextStyle">@style/Custom.Survey.SingleLine.EditText</item>-->
+<!--        <item name="apptentiveSurveyOtherTextFieldLayoutStyle">@style/Custom.Survey.OtherTextField.TextInputLayout</item>-->
+<!--        <item name="apptentiveSurveyOtherTextFieldEditTextStyle">@style/Custom.Survey.OtherTextField.EditText</item>-->
 <!--        <item name="apptentiveSurveySubmitButtonStyle">@style/Custom.Survey.Submit.Button</item>-->
         <!-- Survey Styles End -->
 
-        <!-- Text Size -->
+        <!-- Text Size Start -->
+        <!-- Dialog -->
 <!--        <item name="apptentiveTextSizeDialogTitleWithMessage">30sp</item>-->
 <!--        <item name="apptentiveTextSizeDialogTitleNoMessage">30sp</item>-->
-<!--        <item name="apptentiveTextSizeSurveyQuestionTitle">30sp</item>-->
-<!--        <item name="apptentiveTextSizeSurveyIntroduction">30sp</item>-->
 <!--        <item name="apptentiveTextSizeSubhead">30sp</item>-->
 <!--        <item name="apptentiveTextSizeButtonBorderless">30sp</item>-->
+
+        <!-- Survey -->
+<!--        <item name="apptentiveTextSizeSurveyQuestionTitle">30sp</item>-->
+<!--        <item name="apptentiveTextSizeSurveyIntroduction">30sp</item>-->
 <!--        <item name="apptentiveTextSizeBody1">30sp</item>-->
 <!--        <item name="apptentiveTextSizeCaption">30sp</item>-->
 <!--        <item name="apptentiveTextSizeButtonColored">30sp</item>-->
+        <!-- Text Size End -->
 
-        <!-- Text Color -->
+        <!-- Text Color Start -->
+        <!-- Dialog -->
 <!--        <item name="apptentiveTextColorDialogTitleWithMessage">@color/color_secondary</item>-->
 <!--        <item name="apptentiveTextColorDialogTitleNoMessage">@color/color_secondary</item>-->
-<!--        <item name="apptentiveTextColorTitle">@color/color_secondary</item>-->
 <!--        <item name="apptentiveTextColorSubhead">@color/color_secondary</item>-->
-<!--        <item name="apptentiveTextColorError">@color/color_secondary</item>-->
 <!--        <item name="apptentiveTextColorDialogTextButton">@color/color_primary</item>-->
+
+        <!-- Survey -->
+<!--        <item name="apptentiveTextColorTitle">@color/color_secondary</item>-->
+<!--        <item name="apptentiveTextColorError">@color/color_secondary</item>-->
 <!--        <item name="apptentiveTextColorSurveyRangeLabel">@color/color_secondary</item>-->
 <!--        <item name="apptentiveTextColorSurveyTitle">@color/color_secondary</item>-->
 <!--        <item name="apptentiveTextColorSurveyIntroduction">@color/color_secondary</item>-->
 <!--        <item name="apptentiveTextColorBody1">@color/color_secondary</item>-->
 <!--        <item name="apptentiveTextColorSurveyQuestionInstructions">@color/color_secondary</item>-->
 <!--        <item name="apptentiveTextColorSurveyTermsAndConditions">@color/color_secondary</item>-->
+        <!-- Text Color End -->
 
         <!-- Text Alpha -->
-<!--        <item name="apptentiveHeaderAlpha">1.0</item>-->
-<!--        <item name="apptentiveSubheaderAlpha">.8</item>-->
+<!--        <item name="apptentiveHeaderAlpha">0.2</item>-->
+<!--        <item name="apptentiveSubheaderAlpha">1.0</item>-->
 
-        <!-- Typeface -->
-<!--        <item name="apptentiveTypefaceDefault">@integer/apptentive_typeface_serif</item>-->
+        <!-- Typeface Start -->
+<!--        <item name="apptentiveTypefaceDefault">@integer/apptentive_typeface_monospace</item>-->
+
+        <!-- Alert Dialog -->
 <!--        <item name="apptentiveTypefaceDialogTitle">@integer/apptentive_typeface_monospace</item>-->
 <!--        <item name="apptentiveTypefaceDialogTitleNoMessage">@integer/apptentive_typeface_monospace</item>-->
+<!--        <item name="apptentiveTypefaceButtonBorderless">@integer/apptentive_typeface_monospace</item>-->
+<!--        <item name="apptentiveTypefaceSubhead">@integer/apptentive_typeface_monospace</item>-->
+
+        <!-- Survey -->
 <!--        <item name="apptentiveTypefaceTitle">@integer/apptentive_typeface_monospace</item>-->
 <!--        <item name="apptentiveTypefaceSurveyIntroduction">@integer/apptentive_typeface_monospace</item>-->
-<!--        <item name="apptentiveTypefaceSubhead">@integer/apptentive_typeface_sans</item>-->
-<!--        <item name="apptentiveTypefaceButtonBorderless">@integer/apptentive_typeface_sans</item>-->
-<!--        <item name="apptentiveTypefaceBody1">@integer/apptentive_typeface_sans</item>-->
-<!--        <item name="apptentiveTypefaceCaption">@integer/apptentive_typeface_serif</item>-->
-<!--        <item name="apptentiveTypefaceButtonColored">@integer/apptentive_typeface_serif</item>-->
+<!--        <item name="apptentiveTypefaceBody1">@integer/apptentive_typeface_monospace</item>-->
+<!--        <item name="apptentiveTypefaceCaption">@integer/apptentive_typeface_monospace</item>-->
+<!--        <item name="apptentiveTypefaceButtonColored">@integer/apptentive_typeface_monospace</item>-->
+        <!-- Typeface End -->
     </style>
 
     <!-- Minor Interface Customization -->
@@ -118,25 +130,25 @@
     <style name="Custom.LoveDialog"/>
 
     <style name="Custom.LoveDialog.Layout">
-        <item name="android:colorBackground">@color/apptentive_color_error</item>
+        <item name="android:background">@color/apptentive_color_error</item>
     </style>
 
     <style name="Custom.Note"/>
 
     <style name="Custom.Note.Layout">
-        <item name="android:colorBackground">@color/color_error</item>
+        <item name="android:background">@color/color_error</item>
     </style>
 
     <style name="Custom.RatingDialog"/>
 
     <style name="Custom.RatingDialog.Layout">
-        <item name="android:colorBackground">@color/color_error</item>
+        <item name="android:background">@color/color_error</item>
     </style>
 
     <style name="Custom.Survey"/>
 
     <style name="Custom.Survey.Layout">
-        <item name="android:colorBackground">@color/color_primary</item>
+        <item name="android:background">@color/color_primary</item>
     </style>
     <!-- Interaction Layouts End -->
 
@@ -149,7 +161,7 @@
     </style>
 
     <style name="Custom.Note.Title.WithMessage.Text" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
-        <item name="android:textColor">@color/color_on_primary</item>
+        <item name="android:textColor">@color/color_primary</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
     </style>
 
@@ -166,7 +178,7 @@
     </style>
 
     <style name="Custom.RatingDialog.Title.Text" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
-        <item name="android:textColor">@color/color_on_primary</item>
+        <item name="android:textColor">@color/color_primary</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
     </style>
 
@@ -241,7 +253,7 @@
 
     <!-- Survey Widgets Start -->
     <style name="Custom.Survey.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
-        <item name="android:colorBackground">@color/color_secondary</item>
+        <item name="android:background">@color/color_secondary</item>
         <item name="navigationIcon">@drawable/ic_back_arrow</item>
         <item name="navigationContentDescription">Back</item>
         <item name="navigationIconTint">@color/color_error</item>
@@ -314,7 +326,7 @@
     </style>
 
     <style name="Custom.Survey.BottomAppBar" parent="Widget.MaterialComponents.Toolbar.Primary">
-        <item name="android:colorBackground">@color/color_secondary</item>
+        <item name="android:background">@color/color_secondary</item>
     </style>
     <!-- Survey Widgets End -->
     <!-- Widgets End -->
