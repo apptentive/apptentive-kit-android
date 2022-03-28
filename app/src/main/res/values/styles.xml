@@ -18,6 +18,9 @@
 
 
     <style name="ApptentiveThemeOverride">
+<!--        <item name="android:statusBarColor">@android:color/white</item>-->
+<!--        <item name="android:windowLightStatusBar">true</item>-->
+
         <!-- General Alert Dialog Styles -->
 <!--        <item name="apptentiveDialogButtonStyle">@style/Custom.Dialog.Button</item>-->
 <!--        <item name="apptentiveDialogBackground">@color/color_primary</item>-->
@@ -53,6 +56,7 @@
 <!--        <item name="apptentiveSurveyQuestionErrorStyle">@style/Custom.Survey.Question.Caption.Error</item>-->
 <!--        <item name="apptentiveSurveyRangeLabelStyle">@style/Custom.Survey.Question.Caption.RangeLabel</item>-->
 <!--        <item name="apptentiveSurveySubmitErrorStyle">@style/Custom.Survey.Error</item>-->
+<!--        <item name="apptentiveSurveyFootnoteStyle">@style/Custom.Survey.Footnote</item>-->
 <!--        <item name="apptentiveSurveyTermsAndConditionsStyle">@style/Custom.Survey.TermsAndConditions</item>-->
 
         <!-- Widgets -->
@@ -104,6 +108,9 @@
 <!--        <item name="apptentiveHeaderAlpha">0.2</item>-->
 <!--        <item name="apptentiveSubheaderAlpha">1.0</item>-->
 
+        <!-- Text Font -->
+<!--        <item name="apptentiveTextFontDefault">@font/montserrat</item>-->
+
         <!-- Typeface Start -->
 <!--        <item name="apptentiveTypefaceDefault">@integer/apptentive_typeface_monospace</item>-->
 
@@ -153,8 +160,13 @@
     <!-- Interaction Layouts End -->
 
     <!-- Text Styles Start -->
+    <style name="Custom.Text" parent="Widget.MaterialComponents.TextView">
+        <item name="android:fontFamily">?apptentiveTextFontDefault</item>
+        <item name="android:textColor">?colorOnBackground</item>
+    </style>
+
     <!-- Dialog Text Styles Start -->
-    <style name="Custom.LoveDialog.Title" parent="Widget.MaterialComponents.TextView">
+    <style name="Custom.LoveDialog.Title" parent="Custom.Text">
         <item name="android:textColor">@color/color_error</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">18sp</item>
@@ -165,13 +177,13 @@
         <item name="android:fontFamily">@font/pacifico_regular</item>
     </style>
 
-    <style name="Custom.Note.Message.Text" parent="Widget.MaterialComponents.TextView">
+    <style name="Custom.Note.Message.Text" parent="Custom.Text">
         <item name="android:textColor">@color/color_secondary</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">8sp</item>
     </style>
 
-    <style name="Custom.Note.TitleOrMessageOnly" parent="Widget.MaterialComponents.TextView">
+    <style name="Custom.Note.TitleOrMessageOnly" parent="Custom.Text">
         <item name="android:textColor">@color/color_secondary</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">30sp</item>
@@ -182,7 +194,7 @@
         <item name="android:fontFamily">@font/pacifico_regular</item>
     </style>
 
-    <style name="Custom.RatingDialog.Message.Text" parent="Widget.MaterialComponents.TextView">
+    <style name="Custom.RatingDialog.Message.Text" parent="Custom.Text">
         <item name="android:textColor">@color/color_secondary</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">8sp</item>
@@ -190,50 +202,55 @@
     <!-- Dialog Text Styles End -->
 
     <!-- Survey Text Styles Start -->
-    <style name="Custom.Survey.Title" parent="Widget.MaterialComponents.TextView">
+    <style name="Custom.Survey.Title" parent="Custom.Text">
         <item name="android:visibility">gone</item>
     </style>
 
-    <style name="Custom.Survey.Introduction" parent="Widget.MaterialComponents.TextView">
+    <style name="Custom.Survey.Introduction" parent="Custom.Text">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="Custom.Survey.Question.Title" parent="Custom.Text">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
+    <style name="Custom.Survey.Question.Caption.Instructions" parent="Custom.Text">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
+    <style name="Custom.Survey.Question.Caption.Error" parent="Custom.Text">
         <item name="android:textColor">@color/color_error</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">18sp</item>
     </style>
 
-    <style name="Custom.Survey.Question.Title" parent="Widget.MaterialComponents.TextView">
+    <style name="Custom.Survey.Question.Caption.RangeLabel" parent="Custom.Text">
         <item name="android:textColor">@color/color_error</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">18sp</item>
     </style>
 
-    <style name="Custom.Survey.Question.Caption.Instructions" parent="Widget.MaterialComponents.TextView">
+    <style name="Custom.Survey.Error" parent="Custom.Text">
         <item name="android:textColor">@color/color_error</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">18sp</item>
     </style>
 
-    <style name="Custom.Survey.Question.Caption.Error" parent="Widget.MaterialComponents.TextView">
-        <item name="android:textColor">@color/color_error</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textSize">18sp</item>
+    <style name="Custom.Survey.Footnote" parent="Custom.Text">
+        <item name="android:textSize">11sp</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">center</item>
+        <item name="android:text">Note: Our company policy for submission does not allow us to accept ideas or materials we have not specifically requested.</item>
     </style>
 
-    <style name="Custom.Survey.Question.Caption.RangeLabel" parent="Widget.MaterialComponents.TextView">
-        <item name="android:textColor">@color/color_error</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textSize">18sp</item>
-    </style>
-
-    <style name="Custom.Survey.Error" parent="Widget.MaterialComponents.TextView">
-        <item name="android:textColor">@color/color_error</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textSize">18sp</item>
-    </style>
-
-    <style name="Custom.Survey.TermsAndConditions" parent="Widget.MaterialComponents.TextView">
-        <item name="android:textColor">@color/color_error</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textSize">18sp</item>
+    <style name="Custom.Survey.TermsAndConditions" parent="Custom.Text">
+        <item name="android:textColorLink">?colorOnPrimary</item>
+        <item name="android:textColor">?colorOnPrimary</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:gravity">center</item>
     </style>
     <!-- Survey Text Styles End -->
     <!-- Text Styles End -->
@@ -253,10 +270,11 @@
 
     <!-- Survey Widgets Start -->
     <style name="Custom.Survey.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
-        <item name="android:background">@color/color_secondary</item>
-        <item name="navigationIcon">@drawable/ic_back_arrow</item>
-        <item name="navigationContentDescription">Back</item>
-        <item name="navigationIconTint">@color/color_error</item>
+        <item name="android:background">@drawable/disney_header</item>
+        <item name="layout_constraintHeight_max">224dp</item>
+        <item name="navigationIcon">@drawable/ic_baseline_close_24</item>
+        <item name="navigationContentDescription">Close</item>
+        <item name="navigationIconTint">@android:color/white</item>
     </style>
 
     <style name="Custom.Survey.HeaderImage">
@@ -268,17 +286,15 @@
     </style>
 
     <style name="Custom.Survey.CheckBox" parent="Widget.AppCompat.CompoundButton.CheckBox">
-        <item name="android:textColor">@color/color_error</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textSize">18sp</item>
-        <item name="android:buttonTint">@color/color_secondary</item>
+        <item name="android:textColor">#253B56</item>
+        <item name="android:fontFamily">?apptentiveTextFontDefault</item>
+        <item name="android:buttonTint">?colorSecondary</item>
     </style>
 
     <style name="Custom.Survey.RadioButton" parent="Widget.AppCompat.CompoundButton.RadioButton">
-        <item name="android:textColor">@color/color_error</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textSize">18sp</item>
-        <item name="android:buttonTint">@color/color_secondary</item>
+        <item name="android:textColor">#253B56</item>
+        <item name="android:fontFamily">?apptentiveTextFontDefault</item>
+        <item name="android:buttonTint">?colorSecondary</item>
     </style>
 
     <style name="Custom.Survey.Range" parent="Widget.MaterialComponents.Slider">
@@ -315,18 +331,23 @@
         <item name="android:textSize">18sp</item>
     </style>
 
-    <style name="Custom.Survey.Submit.Button" parent="Widget.MaterialComponents.Button">
-        <item name="android:textSize">20sp</item>
-        <item name="android:textColor">@color/color_primary</item>
-        <item name="android:backgroundTint">?colorError</item>
-        <item name="fontFamily">@font/pacifico_regular</item>
+    <style name="Custom.Survey.Submit.Button" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textSize">14sp</item>
+        <item name="strokeColor">?colorSecondary</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:minHeight">56dp</item>
+        <item name="android:minWidth">144dp</item>
+        <item name="android:textColor">?colorSecondary</item>
+        <item name="fontFamily">@font/montserrat</item>
         <item name="cornerRadius">24dp</item>
-        <item name="strokeColor">@color/color_primary</item>
-        <item name="strokeWidth">4dp</item>
     </style>
 
     <style name="Custom.Survey.BottomAppBar" parent="Widget.MaterialComponents.Toolbar.Primary">
-        <item name="android:background">@color/color_secondary</item>
+        <item name="android:background">?colorPrimary</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:minHeight">44dp</item>
     </style>
     <!-- Survey Widgets End -->
     <!-- Widgets End -->

@@ -37,6 +37,7 @@
         <attr name="apptentiveSurveyQuestionErrorStyle" format="reference"/>
         <attr name="apptentiveSurveyRangeLabelStyle" format="reference"/>
         <attr name="apptentiveSurveySubmitErrorStyle" format="reference" />
+        <attr name="apptentiveSurveyFootnoteStyle" format="reference" />
         <attr name="apptentiveSurveyTermsAndConditionsStyle" format="reference" />
 
         <!-- Widgets -->
@@ -80,6 +81,9 @@
         <!-- Text Alpha -->
         <attr name="apptentiveHeaderAlpha" format="float|dimension|reference" />
         <attr name="apptentiveSubheaderAlpha" format="float|dimension|reference" />
+
+        <!-- Text Alpha -->
+        <attr name="apptentiveTextFontDefault" format="reference"/>
 
         <!-- Typeface -->
         <attr name="apptentiveTypefaceDefault" format="integer|reference"/>

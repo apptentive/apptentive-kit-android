@@ -27,4 +27,15 @@
         tools:text="Error Text"
         tools:textColor="@color/apptentive_color_error" />
 
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/apptentive_footnote_text"
+        style="?apptentiveSurveyFootnoteStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/apptentive_submit_error_message_margin"
+        android:layout_marginBottom="@dimen/apptentive_submit_error_message_margin"
+        android:gravity="center"
+        tools:text="Footer text"
+        tools:textColor="@color/apptentive_color_on_background" />
+
 </LinearLayout>

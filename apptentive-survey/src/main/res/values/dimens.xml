@@ -36,7 +36,6 @@
     <dimen name="apptentive_other_text_field_min_height">48dp</dimen>
     <dimen name="apptentive_other_text_field_start_padding">40dp</dimen>
     <dimen name="apptentive_other_text_field_end_padding">16dp</dimen>
-    <dimen name="apptentive_bottom_app_bar_height">36dp</dimen>
     <dimen name="apptentive_submit_button_vertical_margin">16dp</dimen>
     <dimen name="apptentive_submit_error_message_margin">16dp</dimen>
 </resources>

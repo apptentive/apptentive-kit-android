@@ -12,4 +12,5 @@
     <dimen name="apptentive_dialog_message_min_height">48dp</dimen>
     <dimen name="apptentive_header_alpha">0.9</dimen>
     <dimen name="apptentive_subheader_alpha">0.75</dimen>
+    <dimen name="apptentive_bottom_app_bar_min_height">36dp</dimen>
 </resources>

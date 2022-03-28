@@ -12,29 +12,39 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/apptentive_top_app_bar"
-            style="?apptentiveSurveyToolbarStyle"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/apptentive_survey_title"
-                style="?apptentiveSurveyTitleStyle"
-                android:layout_width="wrap_content"
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/apptentive_top_app_bar"
+                style="?apptentiveSurveyToolbarStyle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:accessibilityHeading="true"
-                tools:targetApi="p"
-                tools:text="Survey Title" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:id="@+id/apptentive_survey_image_header"
-                style="?apptentiveSurveyHeaderImageStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/apptentive_survey_header_image" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/apptentive_survey_title"
+                    style="?apptentiveSurveyTitleStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:accessibilityHeading="true"
+                    tools:targetApi="p"
+                    tools:text="Survey Title" />
 
-        </com.google.android.material.appbar.MaterialToolbar>
+                <ImageView
+                    android:id="@+id/apptentive_survey_image_header"
+                    style="?apptentiveSurveyHeaderImageStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/apptentive_survey_header_image" />
+
+            </com.google.android.material.appbar.MaterialToolbar>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -50,15 +60,13 @@
     <LinearLayout
         style="?apptentiveSurveyBottomAppBarStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="@dimen/apptentive_bottom_app_bar_height">
+        android:layout_height="wrap_content">
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/apptentive_terms_and_conditions"
             style="?apptentiveSurveyTermsAndConditionsStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
             tools:text="Terms and Conditions"
             tools:textColor="?colorOnPrimary" />
 

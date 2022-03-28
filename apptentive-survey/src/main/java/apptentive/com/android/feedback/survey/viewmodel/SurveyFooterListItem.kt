@@ -96,7 +96,7 @@ internal class SurveyFooterListItem(
                 }
             }
             else {
-                errorMessageView.visibility = View.INVISIBLE
+                errorMessageView.visibility = View.GONE
             }
         }
     }

@@ -37,6 +37,8 @@
         - Note that affects default text colors as well as error colors
 
     Use Survey header image instead of title text:
+
+    - Small Header Example Start -
     - Set through styles apptentiveSurveyTitleStyle & apptentiveSurveyHeaderImageStyle
     - Example (Good starting point):
 
@@ -50,12 +52,35 @@
     </style>
 
     <style name="Custom.Survey.HeaderImage">
-        <item name="android:src">@drawable/example_logo</item> <- Set your header image here
+        <item name="android:src">@drawable/small_header_image</item> <- Set your header image here
         <item name="android:maxHeight">?actionBarSize</item> <- minHeight/maxHeight to size
         <item name="android:adjustViewBounds">true</item> <- Helps with image resizing
         <item name="android:layout_gravity">center</item> <- Image positioning
         <item name="android:layout_margin">2dp</item> <- Image spacing
     </style>
+    - Small Header Example End -
+
+    - Large Header Example Start -
+    - Set through styles apptentiveSurveyTitleStyle & apptentiveSurveyToolbarStyle
+    - Example (Good starting point):
+
+    <style name="ApptentiveThemeOverride">
+        <item name="apptentiveSurveyTitleStyle">@style/Custom.Survey.Title</item>
+        <item name="apptentiveSurveyToolbarStyle">@style/Custom.Survey.Toolbar</item>
+    </style>
+
+    <style name="Custom.Survey.Title" parent="Widget.MaterialComponents.TextView">
+        <item name="android:visibility">gone</item> <- So the title text doesn't show
+    </style>
+
+    <style name="Custom.Survey.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="android:background">@drawable/large_header_image</item> <- Set your header image here
+        <item name="layout_constraintHeight_max">224dp</item> <- minHeight/maxHeight to size
+        <item name="navigationIcon">@drawable/ic_baseline_close_24</item> <- Close navigation icon
+        <item name="navigationContentDescription">Close</item> <- Close navigation description
+        <item name="navigationIconTint">@android:color/white</item> <- Close navigation color
+    </style>
+    - Large Header Example End -
     -->
 
     <!-- Apptentive Minor Interface Customization ApptentiveThemeOverride examples -->
@@ -140,12 +165,16 @@
 <!--        <item name="apptentiveTextColorSurveyIntroduction">@color/color_secondary</item>-->
 <!--        <item name="apptentiveTextColorBody1">@color/color_secondary</item>-->
 <!--        <item name="apptentiveTextColorSurveyQuestionInstructions">@color/color_secondary</item>-->
+<!--        <item name="apptentiveSurveyFootnoteStyle">@style/Custom.Survey.Footnote</item>-->
 <!--        <item name="apptentiveTextColorSurveyTermsAndConditions">@color/color_secondary</item>-->
         <!-- Text Color End -->
 
         <!-- Text Alpha -->
 <!--        <item name="apptentiveHeaderAlpha">1.0</item>-->
 <!--        <item name="apptentiveSubheaderAlpha">0.8</item>-->
+
+        <!-- Text Font -->
+<!--        <item name="apptentiveTextFontDefault">@font/pacifico_regular</item>-->
 
         <!-- Typeface Start -->
 <!--        <item name="apptentiveTypefaceDefault">@integer/apptentive_typeface_monospace</item>-->
@@ -197,8 +226,13 @@
     <!-- Interaction Layouts End -->
 
     <!-- Text Styles Start -->
+    <style name="Custom.Text" parent="Widget.MaterialComponents.TextView">
+        <item name="android:fontFamily">@font/pacifico_regular</item>
+        <item name="android:textColor">?colorOnBackground</item>
+    </style>
+
     <!-- Dialog Text Styles Start -->
-    <style name="Custom.LoveDialog.Title" parent="Widget.MaterialComponents.TextView">
+    <style name="Custom.LoveDialog.Title" parent="Custom.Text">
         <item name="android:textColor">?colorSecondaryVariant</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">18sp</item>
@@ -209,13 +243,13 @@
         <item name="android:fontFamily">@font/pacifico_regular</item>
     </style>
 
-    <style name="Custom.Note.Message.Text" parent="Widget.MaterialComponents.TextView">
+    <style name="Custom.Note.Message.Text" parent="Custom.Text">
         <item name="android:textColor">?colorSecondaryVariant</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">10sp</item>
     </style>
 
-    <style name="Custom.Note.TitleOrMessageOnly" parent="Widget.MaterialComponents.TextView">
+    <style name="Custom.Note.TitleOrMessageOnly" parent="Custom.Text">
         <item name="android:textColor">?colorSecondaryVariant</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">18sp</item>
@@ -227,7 +261,7 @@
         <item name="android:textSize">18sp</item>
     </style>
 
-    <style name="Custom.RatingDialog.Message.Text" parent="Widget.MaterialComponents.TextView">
+    <style name="Custom.RatingDialog.Message.Text" parent="Custom.Text">
         <item name="android:textColor">?colorSecondaryVariant</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">10sp</item>
@@ -235,47 +269,55 @@
     <!-- Dialog Text Styles End -->
 
     <!-- Survey Text Styles Start -->
-    <style name="Custom.Survey.Title" parent="Widget.MaterialComponents.TextView">
+    <style name="Custom.Survey.Title" parent="Custom.Text">
         <item name="android:visibility">gone</item>
     </style>
 
-    <style name="Custom.Survey.Introduction" parent="Widget.MaterialComponents.TextView">
+    <style name="Custom.Survey.Introduction" parent="Custom.Text">
         <item name="android:textColor">?colorSecondaryVariant</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">18sp</item>
     </style>
 
-    <style name="Custom.Survey.Question.Title" parent="Widget.MaterialComponents.TextView">
+    <style name="Custom.Survey.Question.Title" parent="Custom.Text">
         <item name="android:textColor">?colorSecondaryVariant</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">18sp</item>
     </style>
 
-    <style name="Custom.Survey.Question.Caption.Instructions" parent="Widget.MaterialComponents.TextView">
+    <style name="Custom.Survey.Question.Caption.Instructions" parent="Custom.Text">
         <item name="android:textColor">?colorSecondaryVariant</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">18sp</item>
     </style>
 
-    <style name="Custom.Survey.Question.Caption.Error" parent="Widget.MaterialComponents.TextView">
+    <style name="Custom.Survey.Question.Caption.Error" parent="Custom.Text">
         <item name="android:textColor">?colorSecondaryVariant</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">18sp</item>
     </style>
 
-    <style name="Custom.Survey.Question.Caption.RangeLabel" parent="Widget.MaterialComponents.TextView">
+    <style name="Custom.Survey.Question.Caption.RangeLabel" parent="Custom.Text">
         <item name="android:textColor">?colorSecondaryVariant</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">18sp</item>
     </style>
 
-    <style name="Custom.Survey.Error" parent="Widget.MaterialComponents.TextView">
+    <style name="Custom.Survey.Error" parent="Custom.Text">
         <item name="android:textColor">?colorSecondaryVariant</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">18sp</item>
     </style>
 
-    <style name="Custom.Survey.TermsAndConditions" parent="Widget.MaterialComponents.TextView">
+
+    <style name="Custom.Survey.Footnote" parent="Custom.Text">
+        <item name="android:textSize">11sp</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">center</item>
+        <item name="android:text">Your footer text here.</item>
+    </style>
+
+    <style name="Custom.Survey.TermsAndConditions" parent="Custom.Text">
         <item name="android:textColor">?colorSecondaryVariant</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">18sp</item>
