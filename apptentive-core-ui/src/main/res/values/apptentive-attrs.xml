@@ -34,6 +34,17 @@
         <attr name="apptentiveRatingDialogButtonStyle" format="reference"/>
         <attr name="apptentiveRatingDialogMessageTextStyle" format="reference" />
 
+        <!-- Generic Dialog Styles -->
+        <!-- Currently used in: Survey Close Confirmation -->
+        <attr name="apptentiveGenericDialogLayoutStyle" format="reference" />
+        <attr name="apptentiveGenericDialogTitleTextStyle" format="reference" />
+        <attr name="apptentiveGenericDialogTitleImageStyle" format="reference" />
+        <attr name="apptentiveGenericDialogHeaderImageStyle" format="reference" />
+        <attr name="apptentiveGenericDialogMessageTextStyle" format="reference" />
+        <attr name="apptentiveGenericDialogButtonLayoutStyle" format="reference" />
+        <attr name="apptentiveGenericDialogPositiveButtonStyle" format="reference" />
+        <attr name="apptentiveGenericDialogNegativeButtonStyle" format="reference" />
+
         <!-- Survey Styles Start -->
         <!-- Layout -->
         <attr name="apptentiveSurveyLayoutStyle" format="reference"/>

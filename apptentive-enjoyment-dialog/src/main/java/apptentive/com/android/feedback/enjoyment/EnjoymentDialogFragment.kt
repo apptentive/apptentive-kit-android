@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.enjoyment
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
@@ -15,6 +16,7 @@ import com.google.android.material.textview.MaterialTextView
 internal class EnjoymentDialogFragment : DialogFragment() {
     private val viewModel by viewModels<EnjoymentDialogViewModel>()
 
+    @SuppressLint("UseGetLayoutInflater", "InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
         val dialog = MaterialAlertDialogBuilder(requireContext()).apply {

@@ -23,11 +23,10 @@ import apptentive.com.android.feedback.survey.viewmodel.SurveyListItem.Type.Mult
 import apptentive.com.android.feedback.survey.viewmodel.SurveyListItem.Type.RangeQuestion
 import apptentive.com.android.feedback.survey.viewmodel.SurveyListItem.Type.SingleLineQuestion
 import apptentive.com.android.feedback.survey.viewmodel.register
-import apptentive.com.android.ui.DialogButton
+import apptentive.com.android.ui.ApptentiveGenericDialog
 import apptentive.com.android.ui.LayoutViewHolderFactory
 import apptentive.com.android.ui.ListViewAdapter
 import apptentive.com.android.ui.hideSoftKeyboard
-import apptentive.com.android.ui.showConfirmationDialog
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.textview.MaterialTextView
 
@@ -95,16 +94,17 @@ internal class SurveyActivity : BaseSurveyActivity() {
         viewModel.showConfirmation.observe(this) {
             if (it) {
                 with(viewModel.surveyCancelConfirmationDisplay) {
-                    confirmationDialog = showConfirmationDialog(
+                    confirmationDialog = ApptentiveGenericDialog().getGenericDialog(
                         context = this@SurveyActivity,
                         title = title ?: getString(R.string.confirmation_dialog_title),
                         message = message ?: getString(R.string.confirmation_dialog_message),
-                        positiveButton = DialogButton(positiveButtonMessage ?: getString(R.string.confirmation_dialog_back_to_survey)) {
+                        positiveButton = ApptentiveGenericDialog.DialogButton(positiveButtonMessage ?: getString(R.string.confirmation_dialog_back_to_survey)) {
                             viewModel.onBackToSurveyFromConfirmationDialog()
                         },
-                        negativeButton = DialogButton(negativeButtonMessage ?: getString(R.string.close)) {
+                        negativeButton = ApptentiveGenericDialog.DialogButton(negativeButtonMessage ?: getString(R.string.close)) {
                             viewModel.exit(showConfirmation = false)
-                        }).create()
+                        })
+
                     confirmationDialog?.show()
                 }
             }

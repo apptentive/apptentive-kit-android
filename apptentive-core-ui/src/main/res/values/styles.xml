@@ -28,8 +28,8 @@
         <item name="apptentiveLoveDialogTitleStyle">@style/Apptentive.TextAppearance.Dialog.TitleOrMessageOnly</item>
         <item name="apptentiveLoveDialogTitleImageStyle"/>
         <item name="apptentiveLoveDialogButtonLayoutStyle">@style/Apptentive.Dialog.ButtonLayout</item>
-        <item name="apptentiveLoveDialogYesButtonStyle">@style/Apptentive.Widget.Dialog.Button.LoveDialog.Yes</item>
-        <item name="apptentiveLoveDialogNoButtonStyle">@style/Apptentive.Widget.Dialog.Button.LoveDialog.No</item>
+        <item name="apptentiveLoveDialogYesButtonStyle">@style/Apptentive.Widget.Dialog.Button.Dialog.Yes</item>
+        <item name="apptentiveLoveDialogNoButtonStyle">@style/Apptentive.Widget.Dialog.Button.Dialog.No</item>
 
         <!-- Note Dialog Styles -->
         <item name="apptentiveNoteLayoutStyle">@style/Apptentive.Dialog.Layout</item>
@@ -49,6 +49,17 @@
         <item name="apptentiveRatingDialogTitleImageStyle"/>
         <item name="apptentiveRatingDialogButtonStyle">@style/Apptentive.Widget.Dialog.Button.RatingDialog</item>
         <item name="apptentiveRatingDialogMessageTextStyle">@style/Apptentive.TextAppearance.Dialog.Message</item>
+
+        <!-- Generic Dialog Styles -->
+        <!-- Currently used in: Survey Close Confirmation -->
+        <item name="apptentiveGenericDialogLayoutStyle">@style/Apptentive.Dialog.Layout</item>
+        <item name="apptentiveGenericDialogHeaderImageStyle"/>
+        <item name="apptentiveGenericDialogTitleTextStyle">@style/Apptentive.TextAppearance.Dialog.Title.WithMessage</item>
+        <item name="apptentiveGenericDialogTitleImageStyle"/>
+        <item name="apptentiveGenericDialogMessageTextStyle">@style/Apptentive.TextAppearance.Dialog.Message</item>
+        <item name="apptentiveGenericDialogButtonLayoutStyle">@style/Apptentive.Dialog.ButtonLayout</item>
+        <item name="apptentiveGenericDialogPositiveButtonStyle">@style/Apptentive.Widget.Dialog.Button.Dialog.Yes</item>
+        <item name="apptentiveGenericDialogNegativeButtonStyle">@style/Apptentive.Widget.Dialog.Button.Dialog.No</item>
 
         <!-- Survey Styles Start -->
         <!-- Layout -->
@@ -191,12 +202,13 @@
     <!-- Dialog Text Styles Start -->
     <!-- https://material.io/components/dialogs/android -->
     <style name="Apptentive.TextAppearance.Dialog.Title" parent="Apptentive.TextAppearance">
-        <item name="android:typeface">?apptentiveTypefaceDialogTitle</item>
+        <item name="android:accessibilityHeading" tools:targetApi="p">true</item>
     </style>
 
     <style name="Apptentive.TextAppearance.Dialog.Title.WithMessage" parent="Apptentive.TextAppearance.Dialog.Title">
         <item name="android:textSize">?apptentiveTextSizeDialogTitleWithMessage</item>
         <item name="android:textColor">?apptentiveTextColorDialogTitleWithMessage</item>
+        <item name="android:typeface">?apptentiveTypefaceDialogTitle</item>
         <item name="android:alpha">?apptentiveHeaderAlpha</item>
         <item name="android:paddingStart">@dimen/apptentive_dialog_text_horizontal_padding</item>
         <item name="android:paddingEnd">@dimen/apptentive_dialog_text_horizontal_padding</item>
@@ -214,7 +226,7 @@
         <item name="android:minHeight">@dimen/apptentive_dialog_title_or_message_only_min_height</item>
     </style>
 
-    <style name="Apptentive.TextAppearance.Dialog.TitleOrMessageOnly" parent="Apptentive.TextAppearance">
+    <style name="Apptentive.TextAppearance.Dialog.TitleOrMessageOnly" parent="Apptentive.TextAppearance.Dialog.Title">
         <item name="android:textSize">?attr/apptentiveTextSizeDialogTitleOrMessageOnly</item>
         <item name="android:textColor">?attr/apptentiveTextColorDialogTitleOrMessageOnly</item>
         <item name="android:typeface">?attr/apptentiveTypefaceDialogTitleOrMessageOnly</item>
@@ -338,13 +350,13 @@
         <item name="android:layout_gravity">end|center_vertical</item>
     </style>
 
-    <style name="Apptentive.Widget.Dialog.Button.LoveDialog" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+    <style name="Apptentive.Widget.Dialog.Button.Dialog" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
         <item name="android:maxWidth">@dimen/apptentive_love_dialog_button_max_width</item>
     </style>
 
-    <style name="Apptentive.Widget.Dialog.Button.LoveDialog.Yes"/>
+    <style name="Apptentive.Widget.Dialog.Button.Dialog.Yes"/>
 
-    <style name="Apptentive.Widget.Dialog.Button.LoveDialog.No">
+    <style name="Apptentive.Widget.Dialog.Button.Dialog.No">
         <item name="android:layout_marginEnd">@dimen/apptentive_love_dialog_no_button_end_margin</item>
     </style>
 

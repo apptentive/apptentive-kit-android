@@ -183,6 +183,17 @@
 <!--        <item name="apptentiveRatingDialogButtonStyle">@style/Custom.Dialog.Button.RatingDialog</item>-->
 <!--        <item name="apptentiveRatingDialogMessageTextStyle">@style/Custom.RatingDialog.Message</item>-->
 
+        <!-- Generic Dialog Styles -->
+        <!-- Currently used in: Survey Close Confirmation -->
+<!--        <item name="apptentiveGenericDialogLayoutStyle">@style/Custom.Note.Layout</item>-->
+<!--        <item name="apptentiveGenericDialogHeaderImageStyle">@style/Custom.Note.HeaderImage</item>-->
+<!--        <item name="apptentiveGenericDialogTitleTextStyle">@style/Custom.Note.Title.WithMessage.Text</item>-->
+<!--        <item name="apptentiveGenericDialogTitleImageStyle">@style/Custom.Note.TitleImage</item>-->
+<!--        <item name="apptentiveGenericDialogMessageTextStyle">@style/Custom.Note.Message.Text</item>-->
+<!--        <item name="apptentiveGenericDialogButtonLayoutStyle">@style/Custom.Note.ButtonLayout</item>-->
+<!--        <item name="apptentiveGenericDialogPositiveButtonStyle">@style/Custom.Dialog.Button.Note</item>-->
+<!--        <item name="apptentiveGenericDialogNegativeButtonStyle">@style/Custom.Dialog.Button.Note</item>-->
+
         <!-- Survey Styles Start -->
         <!-- Layout -->
 <!--        <item name="apptentiveSurveyLayoutStyle">@style/Custom.Survey.Layout</item>-->
