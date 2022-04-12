@@ -3,43 +3,46 @@
     style="?apptentiveLoveDialogLayoutStyle"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingHorizontal="8dp"
-    android:paddingTop="18dp"
-    android:paddingBottom="2dp">
+    android:orientation="vertical">
 
-     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/apptentive_enjoyment_dialog_title"
-        style="?apptentiveLoveDialogTitleStyle"
+    <ImageView
+        style="?apptentiveLoveDialogHeaderImageStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:letterSpacing=".02"
-        android:minHeight="32dp"
-        android:paddingHorizontal="16dp"/>
+        android:layout_height="wrap_content" />
 
-     <LinearLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="end">
+        android:layout_height="wrap_content">
 
-         <com.google.android.material.button.MaterialButton
+        <ImageView
+            style="?apptentiveLoveDialogTitleImageStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/apptentive_enjoyment_dialog_title"
+            style="?apptentiveLoveDialogTitleStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="?apptentiveLoveDialogButtonLayoutStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/apptentive_enjoyment_dialog_no"
-            style="?apptentiveDialogButtonStyle"
+            style="?apptentiveLoveDialogNoButtonStyle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:maxWidth="160dp"
-            android:maxLines="1"
-            android:minWidth="64dp"/>
+            android:layout_height="wrap_content" />
 
-         <com.google.android.material.button.MaterialButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/apptentive_enjoyment_dialog_yes"
-            style="?apptentiveDialogButtonStyle"
+            style="?apptentiveLoveDialogYesButtonStyle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxWidth="160dp"
-            android:maxLines="1"
-            android:minWidth="64dp"/>
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 

@@ -10,6 +10,13 @@
     <dimen name="apptentive_dialog_action_spacing">8dp</dimen>
     <dimen name="apptentive_dialog_title_horizontal_padding">16dp</dimen>
     <dimen name="apptentive_dialog_message_min_height">48dp</dimen>
+    <dimen name="apptentive_dialog_horizontal_padding">8dp</dimen>
+    <dimen name="apptentive_dialog_top_padding">18dp</dimen>
+    <dimen name="apptentive_dialog_bottom_padding">2dp</dimen>
+    <dimen name="apptentive_dialog_title_letter_spacing">.02</dimen>
+    <dimen name="apptentive_dialog_title_min_height">32dp</dimen>
+    <dimen name="apptentive_love_dialog_button_max_width">160dp</dimen>
+    <dimen name="apptentive_love_dialog_no_button_end_margin">8dp</dimen>
     <dimen name="apptentive_header_alpha">0.9</dimen>
     <dimen name="apptentive_subheader_alpha">0.75</dimen>
     <dimen name="apptentive_bottom_app_bar_min_height">36dp</dimen>

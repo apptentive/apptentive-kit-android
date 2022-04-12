@@ -22,6 +22,64 @@
     - Dialog message has an alpha of .75 by default
         - Override with apptentiveSubheaderAlpha
 
+    Use Love Dialog header image:
+
+    - Love Dialog small title header image example start -
+    - This is positioned before the title text -
+    - Set through style apptentiveLoveDialogTitleImageStyle
+    <style name="Custom.LoveDialog.Title.Image">
+        <item name="android:src">@mipmap/ic_launcher</item> <- Your image (preferably app logo)
+        <item name="android:maxWidth">40dp</item> <- minWidth/maxWidth to size
+        <item name="android:maxHeight">40dp</item> <- minHeight/maxHeight to size
+        <item name="android:adjustViewBounds">true</item> <- Helps with image resizing
+    </style>
+    - Love Dialog small title header image example end -
+
+    - Love Dialog large header image example start -
+    - This is positioned above the title text -
+    - Set through styles apptentiveLoveDialogLayoutStyle & apptentiveLoveDialogHeaderImageStyle
+    <style name="Custom.LoveDialog.Layout"> <- Override the layout to remove preset paddings
+        <item name="android:background">?colorSurface</item> <- Background color of your dialog
+    </style>
+
+    <style name="Custom.LoveDialog.HeaderImage">
+        <item name="android:src">@drawable/header_image</item> <- Your image
+        <item name="android:layout_weight">1</item> <- Weight to make it the entire width of the dialog
+        <item name="android:adjustViewBounds">true</item> <- Helps with image resizing
+    </style>
+    - Love Dialog large header image example end -
+
+    - Love Dialog image buttons example start -
+        <style name="Custom.Dialog.Button.Yes.Disney" parent="Widget.MaterialComponents.Button.TextButton"> <- TextButton to remove borders
+        <item name="android:textSize">0sp</item> <- Get rid of the text
+        <item name="android:layout_weight">1</item> <- Let the buttons take up even space
+        <item name="android:layout_marginEnd">48dp</item> <- "Yes" is on the right, give it some layout space
+        <item name="android:layout_marginStart">24dp</item> <- Spacing from the "no" button
+        <item name="android:ambientShadowAlpha">0</item> <- Remove the button shadow color
+        <item name="icon">@drawable/yes_image</item> <- Your image for the "Yes" button
+        <item name="iconSize">80dp</item> <- Size of your image (use a 1:1 aspect ratio image)
+        <item name="iconTint">@null</item> <- Remove the tint layered on top
+        <item name="iconGravity">textTop</item> <- Helps with button alignment
+        <item name="iconPadding">0dp</item> <- Helps with precise padding around button
+        <item name="rippleColor">@null</item> <- Removes button ripple which can look strange with an image
+    </style>
+
+    <style name="Custom.Dialog.Button.No.Disney" parent="Widget.MaterialComponents.Button.TextButton"> <- TextButton to remove borders
+        <item name="android:textSize">0sp</item> <- Get rid of the text
+        <item name="android:layout_weight">1</item> <- Let the buttons take up even space
+        <item name="android:layout_marginEnd">24dp</item> <- Spacing from the "yes" button
+        <item name="android:layout_marginStart">48dp</item> <- "No" is on the left, give it some layout space
+        <item name="android:ambientShadowAlpha">0</item> <- Remove the button shadow color
+        <item name="icon">@drawable/no_image</item> <- Your image for the "No" button
+        <item name="iconSize">80dp</item> <- Size of your image (use a 1:1 aspect ratio image)
+        <item name="iconTint">@null</item> <- Remove the tint layered on top
+        <item name="iconGravity">textTop</item> <- Helps with button alignment
+        <item name="iconPadding">0dp</item> <- Helps with precise padding around button
+        <item name="rippleColor">@null</item> <- Removes button ripple which can look strange with an image
+    </style>
+    - Love Dialog image buttons example start -
+
+
     Surveys:
     - Survey toolbar / bottom bar colors uses colorPrimary
     - Survey toolbar / bottom bar text colors uses colorOnPrimary
@@ -37,7 +95,6 @@
         - Note that affects default text colors as well as error colors
 
     Use Survey header image instead of title text:
-
     - Small Header Example Start -
     - Set through styles apptentiveSurveyTitleStyle & apptentiveSurveyHeaderImageStyle
     - Example (Good starting point):

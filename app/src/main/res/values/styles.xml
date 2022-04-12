@@ -27,7 +27,16 @@
 
         <!-- Love Dialog Styles-->
 <!--        <item name="apptentiveLoveDialogLayoutStyle">@style/Custom.LoveDialog.Layout</item>-->
+<!--        <item name="apptentiveLoveDialogLayoutStyle">@style/Custom.LoveDialog.Layout.Disney</item>-->
 <!--        <item name="apptentiveLoveDialogTitleStyle">@style/Custom.LoveDialog.Title</item>-->
+<!--        <item name="apptentiveLoveDialogTitleStyle">@style/Custom.LoveDialog.Title.Disney</item>-->
+<!--        <item name="apptentiveLoveDialogTitleImageStyle">@style/Custom.LoveDialog.Title.Image</item>-->
+<!--        <item name="apptentiveLoveDialogHeaderImageStyle">@style/Custom.LoveDialog.HeaderImage.Disney</item>-->
+<!--        <item name="apptentiveLoveDialogButtonLayoutStyle"/>-->
+<!--        <item name="apptentiveLoveDialogYesButtonStyle">@style/Custom.Dialog.Button.Yes</item>-->
+<!--        <item name="apptentiveLoveDialogYesButtonStyle">@style/Custom.Dialog.Button.Yes.Disney</item>-->
+<!--        <item name="apptentiveLoveDialogNoButtonStyle">@style/Custom.Dialog.Button.No</item>-->
+<!--        <item name="apptentiveLoveDialogNoButtonStyle">@style/Custom.Dialog.Button.No.Disney</item>-->
 
         <!-- Note Styles-->
 <!--        <item name="apptentiveNoteLayoutStyle">@style/Custom.Note.Layout</item>-->
@@ -137,7 +146,19 @@
     <style name="Custom.LoveDialog"/>
 
     <style name="Custom.LoveDialog.Layout">
-        <item name="android:background">@color/apptentive_color_error</item>
+        <item name="android:background">?colorSurface</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingEnd">8dp</item>
+    </style>
+
+    <style name="Custom.LoveDialog.Layout.Disney">
+        <item name="android:background">?colorSurface</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:paddingStart">0dp</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingEnd">0dp</item>
     </style>
 
     <style name="Custom.Note"/>
@@ -167,9 +188,19 @@
 
     <!-- Dialog Text Styles Start -->
     <style name="Custom.LoveDialog.Title" parent="Custom.Text">
-        <item name="android:textColor">@color/color_error</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
         <item name="android:textSize">18sp</item>
+        <item name="android:layout_marginBottom">12dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_gravity">center_vertical</item>
+    </style>
+
+    <style name="Custom.LoveDialog.Title.Disney" parent="Custom.Text">
+        <item name="android:textSize">14sp</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:fontFamily">@font/montserrat</item>
     </style>
 
     <style name="Custom.Note.Title.WithMessage.Text" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
@@ -265,6 +296,75 @@
         <item name="cornerRadius">24dp</item>
         <item name="strokeColor">@color/color_error</item>
         <item name="strokeWidth">4dp</item>
+    </style>
+
+    <style name="Custom.Dialog.Button.Yes" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="cornerRadius">24dp</item>
+        <item name="android:backgroundTint">?colorSurface</item>
+        <item name="strokeColor">@color/color_secondary</item>
+        <item name="android:layout_marginEnd">56dp</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="android:textColor">@color/color_secondary</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+    <style name="Custom.Dialog.Button.No" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="cornerRadius">24dp</item>
+        <item name="strokeColor">@color/color_secondary</item>
+        <item name="android:backgroundTint">?colorSurface</item>
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:layout_marginStart">56dp</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textColor">@color/color_secondary</item>
+    </style>
+
+    <style name="Custom.Dialog.Button.Yes.Disney" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textSize">0sp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginEnd">48dp</item>
+        <item name="android:layout_marginStart">24dp</item>
+        <item name="android:ambientShadowAlpha">0</item>
+        <item name="icon">@drawable/disney_yes</item>
+        <item name="iconSize">80dp</item>
+        <item name="iconGravity">textTop</item>
+        <item name="iconPadding">0dp</item>
+        <item name="iconTint">@null</item>
+        <item name="rippleColor">@null</item>
+    </style>
+
+    <style name="Custom.Dialog.Button.No.Disney" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textSize">0sp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:ambientShadowAlpha">0</item>
+        <item name="android:layout_marginEnd">24dp</item>
+        <item name="android:layout_marginStart">48dp</item>
+        <item name="icon">@drawable/disney_no</item>
+        <item name="iconSize">80dp</item>
+        <item name="iconTint">@null</item>
+        <item name="iconGravity">textTop</item>
+        <item name="iconPadding">0dp</item>
+        <item name="rippleColor">@null</item>
+    </style>
+
+    <style name="Custom.LoveDialog.HeaderImage">
+        <item name="android:layout_weight">1</item>
+        <item name="android:adjustViewBounds">true</item>
+    </style>
+
+    <style name="Custom.LoveDialog.HeaderImage.Disney">
+        <item name="android:src">@drawable/disney_love_dialog_header</item>
+    </style>
+
+    <style name="Custom.LoveDialog.Title.Image">
+        <item name="android:src">@mipmap/ic_launcher</item>
+        <item name="android:maxWidth">40dp</item>
+        <item name="android:maxHeight">40dp</item>
+        <item name="android:minWidth">40dp</item>
+        <item name="android:minHeight">40dp</item>
+        <item name="android:adjustViewBounds">true</item>
     </style>
     <!-- Dialog Widgets End -->
 

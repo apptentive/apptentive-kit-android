@@ -8,7 +8,12 @@
 
         <!-- Love Dialog Styles -->
         <attr name="apptentiveLoveDialogLayoutStyle" format="color|reference" />
+        <attr name="apptentiveLoveDialogHeaderImageStyle" format="reference" />
         <attr name="apptentiveLoveDialogTitleStyle" format="reference" />
+        <attr name="apptentiveLoveDialogTitleImageStyle" format="reference" />
+        <attr name="apptentiveLoveDialogButtonLayoutStyle" format="reference" />
+        <attr name="apptentiveLoveDialogYesButtonStyle" format="reference" />
+        <attr name="apptentiveLoveDialogNoButtonStyle" format="reference" />
 
         <!-- Note Dialog Styles -->
         <attr name="apptentiveNoteLayoutStyle" format="reference" />
