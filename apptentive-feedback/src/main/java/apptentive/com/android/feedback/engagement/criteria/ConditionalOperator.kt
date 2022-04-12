@@ -280,7 +280,7 @@ interface ConditionalOperator {
                 }
 
                 override fun description(description: String, first: Any?, second: Any?): String {
-                    return "$description ('$first') starts with '$second'"
+                    return "$description ('$first') ends with '$second'"
                 }
             }
         }
