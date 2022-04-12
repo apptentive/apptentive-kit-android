@@ -22,32 +22,38 @@
     - Dialog message has an alpha of .75 by default
         - Override with apptentiveSubheaderAlpha
 
-    Use Love Dialog header image:
+    Use Dialog header image:
 
-    - Love Dialog small title header image example start -
+    - Dialog small title header image example start -
     - This is positioned before the title text -
-    - Set through style apptentiveLoveDialogTitleImageStyle
-    <style name="Custom.LoveDialog.Title.Image">
+    - Set through style apptentiveLoveDialogTitleImageStyle &
+        apptentiveNoteTitleWithMessageImageStyle &
+        apptentiveNoteTitleOrMessageOnlyImageStyle &
+        apptentiveRatingDialogTitleImageStyle -
+    <style name="Custom.Dialog.Title.Image">
         <item name="android:src">@mipmap/ic_launcher</item> <- Your image (preferably app logo)
         <item name="android:maxWidth">40dp</item> <- minWidth/maxWidth to size
         <item name="android:maxHeight">40dp</item> <- minHeight/maxHeight to size
         <item name="android:adjustViewBounds">true</item> <- Helps with image resizing
     </style>
-    - Love Dialog small title header image example end -
+    - Dialog small title header image example end -
 
-    - Love Dialog large header image example start -
+    - Dialog large header image example start -
     - This is positioned above the title text -
-    - Set through styles apptentiveLoveDialogLayoutStyle & apptentiveLoveDialogHeaderImageStyle
-    <style name="Custom.LoveDialog.Layout"> <- Override the layout to remove preset paddings
+    - Set through styles apptentiveLoveDialogLayoutStyle &
+        apptentiveLoveDialogHeaderImageStyle &
+        apptentiveNoteHeaderImageStyle &
+        apptentiveRatingDialogHeaderImageStyle -
+    <style name="Custom.Dialog.Layout"> <- Override the layout to remove preset paddings
         <item name="android:background">?colorSurface</item> <- Background color of your dialog
     </style>
 
-    <style name="Custom.LoveDialog.HeaderImage">
+    <style name="Custom.Dialog.HeaderImage">
         <item name="android:src">@drawable/header_image</item> <- Your image
         <item name="android:layout_weight">1</item> <- Weight to make it the entire width of the dialog
         <item name="android:adjustViewBounds">true</item> <- Helps with image resizing
     </style>
-    - Love Dialog large header image example end -
+    - Dialog large header image example end -
 
     - Love Dialog image buttons example start -
         <style name="Custom.Dialog.Button.Yes" parent="Widget.MaterialComponents.Button.TextButton"> <- TextButton to remove borders
@@ -152,12 +158,22 @@
         <!-- Love Dialog Styles-->
 <!--        <item name="apptentiveLoveDialogLayoutStyle">@style/Custom.LoveDialog.Layout</item>-->
 <!--        <item name="apptentiveLoveDialogTitleStyle">@style/Custom.LoveDialog.Title</item>-->
+<!--        <item name="apptentiveLoveDialogTitleImageStyle">@style/Custom.LoveDialog.Title.Image</item>-->
+<!--        <item name="apptentiveLoveDialogHeaderImageStyle">@style/Custom.LoveDialog.HeaderImage</item>-->
+<!--        <item name="apptentiveLoveDialogButtonLayoutStyle" />-->
+<!--        <item name="apptentiveLoveDialogYesButtonStyle">@style/Custom.Dialog.Button.LoveDialogYes</item>-->
+<!--        <item name="apptentiveLoveDialogNoButtonStyle">@style/Custom.Dialog.Button.LoveDialogNo</item>-->
 
         <!-- Note Styles-->
 <!--        <item name="apptentiveNoteLayoutStyle">@style/Custom.Note.Layout</item>-->
+<!--        <item name="apptentiveNoteHeaderImageStyle">@style/Custom.Note.HeaderImage</item>-->
 <!--        <item name="apptentiveNoteTitleWithMessageTextStyle">@style/Custom.Note.Title.WithMessage.Text</item>-->
-<!--        <item name="apptentiveNoteTitleNoMessageTextStyle@style/Custom.Note.TitleOrMessageOnly</item>-->
+<!--        <item name="apptentiveNoteTitleWithMessageImageStyle">@style/Custom.Note.TitleImage</item>-->
+<!--        <item name="apptentiveNoteTitleOrMessageOnlyTextStyle">@style/Custom.Note.TitleOrMessageOnly</item>-->
+<!--        <item name="apptentiveNoteTitleOrMessageOnlyImageStyle">@style/Custom.Note.TitleImage</item>-->
 <!--        <item name="apptentiveNoteMessageTextStyle">@style/Custom.Note.Message.Text</item>-->
+<!--        <item name="apptentiveNoteButtonLayoutStyle">@style/Custom.Note.ButtonLayout</item>-->
+<!--        <item name="apptentiveNoteButtonStyle">@style/Custom.Dialog.Button.Note</item>-->
 
         <!-- Apptentive Rating Dialog Styles-->
 <!--        <item name="apptentiveRatingDialogLayoutStyle">@style/Custom.RatingDialog.Layout</item>-->
@@ -265,13 +281,23 @@
     <style name="Custom.LoveDialog"/>
 
     <style name="Custom.LoveDialog.Layout">
-        <item name="android:colorBackground">?colorOnSecondary</item>
+        <item name="android:background">?colorSurface</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingEnd">8dp</item>
     </style>
 
     <style name="Custom.Note"/>
 
     <style name="Custom.Note.Layout">
-        <item name="android:colorBackground">?colorOnSecondary</item>
+<!--        <item name="android:background">@drawable/note_example_background</item>-->
+        <item name="android:paddingBottom">16dp</item>
+    </style>
+
+    <style name="Custom.Note.ButtonLayout">
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">center</item>
     </style>
 
     <style name="Custom.RatingDialog"/>
@@ -403,6 +429,108 @@
         <item name="android:backgroundTint">@color/purple_200</item>
         <item name="fontFamily">@font/pacifico_regular</item>
         <item name="cornerRadius">24dp</item>
+    </style>
+
+    <style name="Custom.Dialog.Button.LoveDialogYes" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="cornerRadius">24dp</item>
+        <item name="android:backgroundTint">?colorSurface</item>
+        <item name="strokeColor">?colorSecondary</item>
+        <item name="android:layout_marginEnd">56dp</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="android:textColor">?colorSecondary</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+    <style name="Custom.Dialog.Button.LoveDialogNo" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="cornerRadius">24dp</item>
+        <item name="strokeColor">?colorSecondary</item>
+        <item name="android:backgroundTint">?colorSurface</item>
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:layout_marginStart">56dp</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textColor">?colorSecondary</item>
+    </style>
+
+    <style name="Custom.Dialog.Button.Note" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:minWidth">312dp</item>
+        <item name="android:maxWidth">312dp</item>
+        <item name="android:textColor">?colorSurface</item>
+        <item name="android:fontFamily">@font/pacifico_regular</item>
+        <item name="strokeColor">?colorSurface</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="cornerRadius">30dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
+    <style name="Custom.Dialog.Button.RatingDialog" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:minWidth">312dp</item>
+        <item name="android:maxWidth">312dp</item>
+        <item name="android:textColor">?colorPrimary</item>
+        <item name="android:fontFamily">@font/pacifico_regular</item>
+        <item name="strokeColor">?colorPrimary</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
+    <style name="Custom.LoveDialog.HeaderImage">
+<!--        <item name="android:src">@drawable/header_example</item>-->
+        <item name="android:layout_weight">1</item>
+        <item name="android:adjustViewBounds">true</item>
+    </style>
+
+    <style name="Custom.Note.HeaderImage">
+<!--        <item name="android:src">@drawable/note_header_example</item>-->
+        <item name="android:paddingStart">-2dp</item>
+        <item name="android:paddingEnd">-2dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:adjustViewBounds">true</item>
+    </style>
+
+    <style name="Custom.RatingDialog.HeaderImage">
+<!--        <item name="android:src">@drawable/rating_header_example</item>-->
+        <item name="android:layout_weight">1</item>
+        <item name="android:adjustViewBounds">true</item>
+    </style>
+
+    <style name="Custom.LoveDialog.Title.Image">
+        <item name="android:src">@mipmap/ic_launcher</item>
+        <item name="android:maxWidth">40dp</item>
+        <item name="android:maxHeight">40dp</item>
+        <item name="android:minWidth">40dp</item>
+        <item name="android:minHeight">40dp</item>
+        <item name="android:adjustViewBounds">true</item>
+    </style>
+
+    <style name="Custom.Note.TitleImage">
+        <item name="android:src">@mipmap/ic_launcher</item>
+        <item name="android:maxWidth">40dp</item>
+        <item name="android:maxHeight">40dp</item>
+        <item name="android:minWidth">40dp</item>
+        <item name="android:minHeight">40dp</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:adjustViewBounds">true</item>
+    </style>
+
+    <style name="Custom.RatingDialog.TitleImage">
+        <item name="android:src">@mipmap/ic_launcher</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:maxWidth">64dp</item>
+        <item name="android:maxHeight">64dp</item>
+        <item name="android:minWidth">64dp</item>
+        <item name="android:minHeight">64dp</item>
+        <item name="android:adjustViewBounds">true</item>
     </style>
     <!-- Dialog Widgets End -->
 

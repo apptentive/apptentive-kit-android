@@ -10,6 +10,8 @@
     <color name="color_error">#B00020</color>
     <color name="color_on_secondary">#000000</color>
     <color name="color_background">#FFFFFF</color>
+    <color name="color_surface">#FFFFFF</color>
+    <color name="color_on_surface">#000000</color>
     <color name="color_on_primary_variant">#000000</color>
 
 </resources>

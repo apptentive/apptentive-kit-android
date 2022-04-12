@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.LinearLayout
@@ -41,14 +40,16 @@ internal class TextModalDialogFragment : DialogFragment() {
                  * https://material.io/components/dialogs
                 */
                 viewModel.title == null || viewModel.message == null -> {
-                    val titleView = inflater.inflate(R.layout.apptentive_note_title_or_message_only, null) as MaterialTextView
+                    val titleLayout = inflater.inflate(R.layout.apptentive_note_title_or_message_only, null) as LinearLayout
+                    val titleView = titleLayout.findViewById<MaterialTextView>(R.id.apptentive_note_title_or_message_only)
                     titleView.text = if (viewModel.title != null) viewModel.title else viewModel.message
-                    noteLayout.addView(titleView)
+                    noteLayout.addView(titleLayout)
                 }
                 else -> {
-                    val titleView = inflater.inflate(R.layout.apptentive_note_title, null) as MaterialTextView
+                    val titleLayout = inflater.inflate(R.layout.apptentive_note_title_with_message, null) as LinearLayout
+                    val titleView = titleLayout.findViewById<MaterialTextView>(R.id.apptentive_note_title_with_message)
                     titleView.text = viewModel.title
-                    noteLayout.addView(titleView)
+                    noteLayout.addView(titleLayout)
 
                     val messageView = inflater.inflate(R.layout.apptentive_note_message, null) as MaterialTextView
                     messageView.text = viewModel.message
@@ -63,9 +64,7 @@ internal class TextModalDialogFragment : DialogFragment() {
             viewModel.actions.forEach { action ->
                 val button = inflater.inflate(R.layout.apptentive_note_action, null) as MaterialButton
 
-                button.layoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
-                    gravity = Gravity.END
-                }
+                button.layoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
                 button.text = action.title
 
                 buttonLayout.addView(button)

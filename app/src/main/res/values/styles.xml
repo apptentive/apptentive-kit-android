@@ -10,8 +10,8 @@
         <item name="colorOnSecondary">@color/color_on_secondary</item>
         <item name="android:colorBackground">@color/color_background</item>
         <item name="colorOnBackground">@color/color_on_background</item>
-        <item name="colorSurface">@color/color_background</item>
-        <item name="colorOnSurface">@color/color_on_background</item>
+        <item name="colorSurface">@color/color_surface</item>
+        <item name="colorOnSurface">@color/color_on_surface</item>
         <item name="android:textColorSecondary">@color/color_text_color_secondary</item>
         <item name="colorError">@color/color_error</item>
     </style>
@@ -33,22 +33,27 @@
 <!--        <item name="apptentiveLoveDialogTitleImageStyle">@style/Custom.LoveDialog.Title.Image</item>-->
 <!--        <item name="apptentiveLoveDialogHeaderImageStyle">@style/Custom.LoveDialog.HeaderImage.Disney</item>-->
 <!--        <item name="apptentiveLoveDialogButtonLayoutStyle"/>-->
-<!--        <item name="apptentiveLoveDialogYesButtonStyle">@style/Custom.Dialog.Button.Yes</item>-->
-<!--        <item name="apptentiveLoveDialogYesButtonStyle">@style/Custom.Dialog.Button.Yes.Disney</item>-->
-<!--        <item name="apptentiveLoveDialogNoButtonStyle">@style/Custom.Dialog.Button.No</item>-->
-<!--        <item name="apptentiveLoveDialogNoButtonStyle">@style/Custom.Dialog.Button.No.Disney</item>-->
+<!--        <item name="apptentiveLoveDialogYesButtonStyle">@style/Custom.Dialog.Button.LoveDialogYes</item>-->
+<!--        <item name="apptentiveLoveDialogYesButtonStyle">@style/Custom.Dialog.Button.LoveDialogYes.Disney</item>-->
+<!--        <item name="apptentiveLoveDialogNoButtonStyle">@style/Custom.Dialog.Button.LoveDialogNo</item>-->
+<!--        <item name="apptentiveLoveDialogNoButtonStyle">@style/Custom.Dialog.Button.LoveDialogNo.Disney</item>-->
 
         <!-- Note Styles-->
 <!--        <item name="apptentiveNoteLayoutStyle">@style/Custom.Note.Layout</item>-->
+<!--        <item name="apptentiveNoteHeaderImageStyle">@style/Custom.Note.HeaderImage</item>-->
 <!--        <item name="apptentiveNoteTitleWithMessageTextStyle">@style/Custom.Note.Title.WithMessage.Text</item>-->
+<!--        <item name="apptentiveNoteTitleWithMessageImageStyle">@style/Custom.Note.TitleImage</item>-->
 <!--        <item name="apptentiveNoteTitleOrMessageOnlyTextStyle">@style/Custom.Note.TitleOrMessageOnly</item>-->
+<!--        <item name="apptentiveNoteTitleOrMessageOnlyImageStyle">@style/Custom.Note.TitleImage</item>-->
 <!--        <item name="apptentiveNoteMessageTextStyle">@style/Custom.Note.Message.Text</item>-->
+<!--        <item name="apptentiveNoteButtonLayoutStyle">@style/Custom.Note.ButtonLayout</item>-->
+<!--        <item name="apptentiveNoteButtonStyle">@style/Custom.Dialog.Button.Note</item>-->
 
         <!-- Apptentive Rating Dialog Styles-->
 <!--        <item name="apptentiveRatingDialogLayoutStyle">@style/Custom.RatingDialog.Layout</item>-->
 <!--        <item name="apptentiveRatingDialogHeaderImageStyle">@style/Custom.RatingDialog.HeaderImage</item>-->
 <!--        <item name="apptentiveRatingDialogTitleTextStyle">@style/Custom.RatingDialog.Title</item>-->
-<!--        <item name="apptentiveRatingDialogTitleImageStyle">@style/Custom.RatingDialog.Title.Image</item>-->
+<!--        <item name="apptentiveRatingDialogTitleImageStyle">@style/Custom.RatingDialog.TitleImage</item>-->
 <!--        <item name="apptentiveRatingDialogButtonStyle">@style/Custom.Dialog.Button.RatingDialog</item>-->
 <!--        <item name="apptentiveRatingDialogMessageTextStyle">@style/Custom.RatingDialog.Message</item>-->
 
@@ -103,7 +108,7 @@
 <!--        <item name="apptentiveTextColorDialogTitleWithMessage">@color/color_secondary</item>-->
 <!--        <item name="apptentiveTextColorDialogTitleNoMessage">@color/color_secondary</item>-->
 <!--        <item name="apptentiveTextColorSubhead">@color/color_secondary</item>-->
-<!--        <item name="apptentiveTextColorDialogTextButton">@color/color_primary</item>-->
+<!--        <item name="apptentiveTextColorDialogTextButton">@color/color_secondary</item>-->
 
         <!-- Survey -->
 <!--        <item name="apptentiveTextColorTitle">@color/color_secondary</item>-->
@@ -167,7 +172,13 @@
     <style name="Custom.Note"/>
 
     <style name="Custom.Note.Layout">
-        <item name="android:background">@color/color_error</item>
+        <item name="android:background">@drawable/note_example_background</item>
+        <item name="android:paddingBottom">16dp</item>
+    </style>
+
+    <style name="Custom.Note.ButtonLayout">
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">center</item>
     </style>
 
     <style name="Custom.RatingDialog"/>
@@ -207,25 +218,39 @@
         <item name="android:fontFamily">@font/montserrat</item>
     </style>
 
-    <style name="Custom.Note.Title.WithMessage.Text" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
-        <item name="android:textColor">@color/color_primary</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
+    <style name="Custom.Note.Title.WithMessage.Text" parent="Custom.Text">
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:textColor">?colorSurface</item>
+        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
     <style name="Custom.Note.Message.Text" parent="Custom.Text">
-        <item name="android:textColor">@color/color_secondary</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textSize">8sp</item>
+        <item name="android:textColor">?colorSurface</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="android:textSize">12sp</item>
     </style>
 
     <style name="Custom.Note.TitleOrMessageOnly" parent="Custom.Text">
-        <item name="android:textColor">@color/color_secondary</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textSize">30sp</item>
+        <item name="android:textColor">?colorSurface</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
     <style name="Custom.RatingDialog.Title" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
-        <item name="android:textColor">?colorOnSurface</item>
+        <item name="android:textColor">?colorPrimary</item>
         <item name="android:fontFamily">@font/montserrat</item>
         <item name="android:textSize">24sp</item>
         <item name="android:includeFontPadding">false</item>
@@ -235,7 +260,7 @@
     </style>
 
     <style name="Custom.RatingDialog.Message" parent="Custom.Text">
-        <item name="android:textColor">?colorOnSurface</item>
+        <item name="android:textColor">?colorPrimary</item>
         <item name="android:fontFamily">@font/montserrat</item>
         <item name="android:textSize">14sp</item>
         <item name="android:paddingBottom">8dp</item>
@@ -310,7 +335,7 @@
         <item name="strokeWidth">4dp</item>
     </style>
 
-    <style name="Custom.Dialog.Button.Yes" parent="Widget.MaterialComponents.Button.OutlinedButton">
+    <style name="Custom.Dialog.Button.LoveDialogYes" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="cornerRadius">24dp</item>
         <item name="android:backgroundTint">?colorSurface</item>
         <item name="strokeColor">@color/color_secondary</item>
@@ -322,7 +347,7 @@
         <item name="android:layout_weight">1</item>
     </style>
 
-    <style name="Custom.Dialog.Button.No" parent="Widget.MaterialComponents.Button.OutlinedButton">
+    <style name="Custom.Dialog.Button.LoveDialogNo" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="cornerRadius">24dp</item>
         <item name="strokeColor">@color/color_secondary</item>
         <item name="android:backgroundTint">?colorSurface</item>
@@ -333,7 +358,7 @@
         <item name="android:textColor">@color/color_secondary</item>
     </style>
 
-    <style name="Custom.Dialog.Button.Yes.Disney" parent="Widget.MaterialComponents.Button.TextButton">
+    <style name="Custom.Dialog.Button.LoveDialogYes.Disney" parent="Widget.MaterialComponents.Button.TextButton">
         <item name="android:textSize">0sp</item>
         <item name="android:layout_weight">1</item>
         <item name="android:layout_marginEnd">48dp</item>
@@ -347,7 +372,7 @@
         <item name="rippleColor">@null</item>
     </style>
 
-    <style name="Custom.Dialog.Button.No.Disney" parent="Widget.MaterialComponents.Button.TextButton">
+    <style name="Custom.Dialog.Button.LoveDialogNo.Disney" parent="Widget.MaterialComponents.Button.TextButton">
         <item name="android:textSize">0sp</item>
         <item name="android:layout_weight">1</item>
         <item name="android:ambientShadowAlpha">0</item>
@@ -361,9 +386,23 @@
         <item name="rippleColor">@null</item>
     </style>
 
+    <style name="Custom.Dialog.Button.Note" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:minWidth">312dp</item>
+        <item name="android:maxWidth">312dp</item>
+        <item name="android:textColor">?colorSurface</item>
+        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="strokeColor">?colorSurface</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="cornerRadius">30dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
     <style name="Custom.Dialog.Button.RatingDialog" parent="Widget.MaterialComponents.Button.OutlinedButton">
-        <item name="android:minWidth">280dp</item>
-        <item name="android:maxWidth">280dp</item>
+        <item name="android:minWidth">312dp</item>
+        <item name="android:maxWidth">312dp</item>
         <item name="android:textColor">@color/color_primary</item>
         <item name="android:fontFamily">@font/montserrat</item>
         <item name="strokeColor">@color/color_primary</item>
@@ -383,6 +422,14 @@
         <item name="android:src">@drawable/disney_love_dialog_header</item>
     </style>
 
+    <style name="Custom.Note.HeaderImage">
+        <item name="android:src">@drawable/note_example_header</item>
+        <item name="android:paddingStart">-2dp</item>
+        <item name="android:paddingEnd">-2dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:adjustViewBounds">true</item>
+    </style>
+
     <style name="Custom.RatingDialog.HeaderImage">
         <item name="android:src">@drawable/rating_header_example</item>
         <item name="android:layout_weight">1</item>
@@ -398,7 +445,20 @@
         <item name="android:adjustViewBounds">true</item>
     </style>
 
-    <style name="Custom.RatingDialog.Title.Image">
+    <style name="Custom.Note.TitleImage">
+        <item name="android:src">@mipmap/ic_launcher</item>
+        <item name="android:maxWidth">40dp</item>
+        <item name="android:maxHeight">40dp</item>
+        <item name="android:minWidth">40dp</item>
+        <item name="android:minHeight">40dp</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:adjustViewBounds">true</item>
+    </style>
+
+    <style name="Custom.RatingDialog.TitleImage">
         <item name="android:src">@mipmap/ic_launcher</item>
         <item name="android:paddingStart">16dp</item>
         <item name="android:maxWidth">64dp</item>

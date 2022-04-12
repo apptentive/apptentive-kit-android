@@ -23,22 +23,27 @@
         <item name="apptentiveDialogBackground">?colorSurface</item>
 
         <!-- Love Dialog Styles -->
-        <item name="apptentiveLoveDialogLayoutStyle">@style/Apptentive.LoveDialog.Layout</item>
+        <item name="apptentiveLoveDialogLayoutStyle">@style/Apptentive.Dialog.Layout</item>
         <item name="apptentiveLoveDialogHeaderImageStyle"/>
-        <item name="apptentiveLoveDialogTitleStyle">@style/Apptentive.TextAppearance.Dialog.TitleOrMessageOnly.LoveDialog</item>
+        <item name="apptentiveLoveDialogTitleStyle">@style/Apptentive.TextAppearance.Dialog.TitleOrMessageOnly</item>
         <item name="apptentiveLoveDialogTitleImageStyle"/>
-        <item name="apptentiveLoveDialogButtonLayoutStyle">@style/Apptentive.Widget.Dialog.Button.LoveDialog.Layout</item>
+        <item name="apptentiveLoveDialogButtonLayoutStyle">@style/Apptentive.Dialog.ButtonLayout</item>
         <item name="apptentiveLoveDialogYesButtonStyle">@style/Apptentive.Widget.Dialog.Button.LoveDialog.Yes</item>
         <item name="apptentiveLoveDialogNoButtonStyle">@style/Apptentive.Widget.Dialog.Button.LoveDialog.No</item>
 
         <!-- Note Dialog Styles -->
-        <item name="apptentiveNoteLayoutStyle">@style/Apptentive.Note.Layout</item>
+        <item name="apptentiveNoteLayoutStyle">@style/Apptentive.Dialog.Layout</item>
+        <item name="apptentiveNoteHeaderImageStyle"/>
         <item name="apptentiveNoteTitleWithMessageTextStyle">@style/Apptentive.TextAppearance.Dialog.Title.WithMessage</item>
+        <item name="apptentiveNoteTitleWithMessageImageStyle"/>
         <item name="apptentiveNoteTitleOrMessageOnlyTextStyle">@style/Apptentive.TextAppearance.Dialog.TitleOrMessageOnly.Note</item>
+        <item name="apptentiveNoteTitleOrMessageOnlyImageStyle"/>
         <item name="apptentiveNoteMessageTextStyle">@style/Apptentive.TextAppearance.Dialog.Message</item>
+        <item name="apptentiveNoteButtonLayoutStyle">@style/Apptentive.Dialog.ButtonLayout.Note</item>
+        <item name="apptentiveNoteButtonStyle">?apptentiveDialogButtonStyle</item>
 
         <!-- Apptentive Rating Dialog Styles -->
-        <item name="apptentiveRatingDialogLayoutStyle">@style/Apptentive.RatingDialog.Layout</item>
+        <item name="apptentiveRatingDialogLayoutStyle">@style/Apptentive.Dialog.Layout</item>
         <item name="apptentiveRatingDialogHeaderImageStyle"/>
         <item name="apptentiveRatingDialogTitleTextStyle">@style/Apptentive.TextAppearance.Dialog.Title.WithMessage</item>
         <item name="apptentiveRatingDialogTitleImageStyle"/>
@@ -150,9 +155,9 @@
     <!-- Interaction Layouts Start -->
     <style name="Apptentive" />
 
-    <style name="Apptentive.LoveDialog" />
+    <style name="Apptentive.Dialog" />
 
-    <style name="Apptentive.LoveDialog.Layout">
+    <style name="Apptentive.Dialog.Layout">
         <item name="android:background">?apptentiveDialogBackground</item>
         <item name="android:paddingStart">@dimen/apptentive_dialog_horizontal_padding</item>
         <item name="android:paddingEnd">@dimen/apptentive_dialog_horizontal_padding</item>
@@ -160,20 +165,12 @@
         <item name="android:paddingBottom">@dimen/apptentive_dialog_bottom_padding</item>
     </style>
 
-    <style name="Apptentive.Note" />
-
-    <style name="Apptentive.Note.Layout">
-        <item name="android:background">?apptentiveDialogBackground</item>
+    <style name="Apptentive.Dialog.ButtonLayout">
+        <item name="android:gravity">end</item>
     </style>
 
-    <style name="Apptentive.RatingDialog" />
-
-    <style name="Apptentive.RatingDialog.Layout">
-        <item name="android:background">?apptentiveDialogBackground</item>
-        <item name="android:paddingStart">@dimen/apptentive_dialog_horizontal_padding</item>
-        <item name="android:paddingEnd">@dimen/apptentive_dialog_horizontal_padding</item>
-        <item name="android:paddingTop">@dimen/apptentive_dialog_top_padding</item>
-        <item name="android:paddingBottom">@dimen/apptentive_rating_dialog_bottom_padding</item>
+    <style name="Apptentive.Dialog.ButtonLayout.Note">
+        <item name="android:orientation">vertical</item>
     </style>
 
     <style name="Apptentive.Survey" />
@@ -209,10 +206,10 @@
         <item name="android:textColor">?apptentiveTextColorSubhead</item>
         <item name="android:typeface">?apptentiveTypefaceSubhead</item>
         <item name="android:alpha">?apptentiveSubheaderAlpha</item>
-        <item name="android:minHeight">@dimen/apptentive_dialog_title_or_message_only_min_height</item>
         <item name="android:paddingStart">@dimen/apptentive_dialog_text_horizontal_padding</item>
         <item name="android:paddingEnd">@dimen/apptentive_dialog_text_horizontal_padding</item>
         <item name="android:paddingBottom">@dimen/apptentive_dialog_message_spacing</item>
+        <item name="android:minHeight">@dimen/apptentive_dialog_title_or_message_only_min_height</item>
     </style>
 
     <style name="Apptentive.TextAppearance.Dialog.TitleOrMessageOnly" parent="Apptentive.TextAppearance">
@@ -224,10 +221,6 @@
         <item name="android:paddingStart">@dimen/apptentive_dialog_text_horizontal_padding</item>
         <item name="android:paddingEnd">@dimen/apptentive_dialog_text_horizontal_padding</item>
         <item name="android:minHeight">@dimen/apptentive_dialog_title_or_message_only_min_height</item>
-    </style>
-
-    <style name="Apptentive.TextAppearance.Dialog.TitleOrMessageOnly.LoveDialog">
-        <item name="android:minHeight">@dimen/apptentive_dialog_title_min_height</item>
     </style>
 
     <style name="Apptentive.TextAppearance.Dialog.TitleOrMessageOnly.Note"/>
@@ -311,12 +304,9 @@
         <item name="android:typeface">?apptentiveTypefaceButtonBorderless</item>
         <item name="android:textSize">?apptentiveTextSizeButtonBorderless</item>
         <item name="android:textColor">?apptentiveTextColorDialogTextButton</item>
-        <item name="backgroundTint">@color/apptentive_mtrl_btn_text_btn_bg_color_selector</item>
+        <item name="backgroundTint">@color/apptentive_color_error</item>
         <item name="rippleColor">@color/apptentive_mtrl_btn_ripple_color</item>
-    </style>
-
-    <style name="Apptentive.Widget.Dialog.Button.LoveDialog.Layout">
-        <item name="android:gravity">end</item>
+        <item name="android:layout_gravity">end|center_vertical</item>
     </style>
 
     <style name="Apptentive.Widget.Dialog.Button.LoveDialog" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
