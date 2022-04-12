@@ -4,6 +4,4 @@
     android:id="@+id/apptentive_note_title_with_message"
     style="?apptentiveNoteTitleWithMessageTextStyle"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:paddingHorizontal="@dimen/apptentive_dialog_title_horizontal_padding"
-    android:paddingBottom="8dp" />
+    android:layout_height="wrap_content" />

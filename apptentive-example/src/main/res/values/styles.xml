@@ -50,7 +50,7 @@
     - Love Dialog large header image example end -
 
     - Love Dialog image buttons example start -
-        <style name="Custom.Dialog.Button.Yes.Disney" parent="Widget.MaterialComponents.Button.TextButton"> <- TextButton to remove borders
+        <style name="Custom.Dialog.Button.Yes" parent="Widget.MaterialComponents.Button.TextButton"> <- TextButton to remove borders
         <item name="android:textSize">0sp</item> <- Get rid of the text
         <item name="android:layout_weight">1</item> <- Let the buttons take up even space
         <item name="android:layout_marginEnd">48dp</item> <- "Yes" is on the right, give it some layout space
@@ -64,7 +64,7 @@
         <item name="rippleColor">@null</item> <- Removes button ripple which can look strange with an image
     </style>
 
-    <style name="Custom.Dialog.Button.No.Disney" parent="Widget.MaterialComponents.Button.TextButton"> <- TextButton to remove borders
+    <style name="Custom.Dialog.Button.No" parent="Widget.MaterialComponents.Button.TextButton"> <- TextButton to remove borders
         <item name="android:textSize">0sp</item> <- Get rid of the text
         <item name="android:layout_weight">1</item> <- Let the buttons take up even space
         <item name="android:layout_marginEnd">24dp</item> <- Spacing from the "yes" button
@@ -78,6 +78,8 @@
         <item name="rippleColor">@null</item> <- Removes button ripple which can look strange with an image
     </style>
     - Love Dialog image buttons example start -
+
+    Apptentive Rating Dialog:
 
 
     Surveys:
@@ -159,8 +161,11 @@
 
         <!-- Apptentive Rating Dialog Styles-->
 <!--        <item name="apptentiveRatingDialogLayoutStyle">@style/Custom.RatingDialog.Layout</item>-->
-<!--        <item name="apptentiveRatingDialogTitleTextStyle">@style/Custom.RatingDialog.Title.Text</item>-->
-<!--        <item name="apptentiveRatingDialogMessageTextStyle">@style/Custom.RatingDialog.Message.Text</item>-->
+<!--        <item name="apptentiveRatingDialogHeaderImageStyle">@style/Custom.RatingDialog.HeaderImage</item>-->
+<!--        <item name="apptentiveRatingDialogTitleTextStyle">@style/Custom.RatingDialog.Title</item>-->
+<!--        <item name="apptentiveRatingDialogTitleImageStyle">@style/Custom.RatingDialog.Title.Image</item>-->
+<!--        <item name="apptentiveRatingDialogButtonStyle">@style/Custom.Dialog.Button.RatingDialog</item>-->
+<!--        <item name="apptentiveRatingDialogMessageTextStyle">@style/Custom.RatingDialog.Message</item>-->
 
         <!-- Survey Styles Start -->
         <!-- Layout -->
@@ -272,7 +277,8 @@
     <style name="Custom.RatingDialog"/>
 
     <style name="Custom.RatingDialog.Layout">
-        <item name="android:colorBackground">?colorOnSecondary</item>
+        <item name="android:background">?colorSurface</item>
+        <item name="android:paddingBottom">16dp</item>
     </style>
 
     <style name="Custom.Survey"/>
@@ -312,16 +318,23 @@
         <item name="android:textSize">18sp</item>
     </style>
 
-    <style name="Custom.RatingDialog.Title.Text" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
-        <item name="android:textColor">?colorSecondaryVariant</item>
+    <style name="Custom.RatingDialog.Title" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
+        <item name="android:textColor">?colorOnSurface</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingEnd">16dp</item>
     </style>
 
-    <style name="Custom.RatingDialog.Message.Text" parent="Custom.Text">
-        <item name="android:textColor">?colorSecondaryVariant</item>
+    <style name="Custom.RatingDialog.Message" parent="Custom.Text">
+        <item name="android:textColor">?colorOnSurface</item>
         <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textSize">10sp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
     </style>
     <!-- Dialog Text Styles End -->
 

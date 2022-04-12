@@ -46,8 +46,11 @@
 
         <!-- Apptentive Rating Dialog Styles-->
 <!--        <item name="apptentiveRatingDialogLayoutStyle">@style/Custom.RatingDialog.Layout</item>-->
-<!--        <item name="apptentiveRatingDialogTitleTextStyle">@style/Custom.RatingDialog.Title.Text</item>-->
-<!--        <item name="apptentiveRatingDialogMessageTextStyle">@style/Custom.RatingDialog.Message.Text</item>-->
+<!--        <item name="apptentiveRatingDialogHeaderImageStyle">@style/Custom.RatingDialog.HeaderImage</item>-->
+<!--        <item name="apptentiveRatingDialogTitleTextStyle">@style/Custom.RatingDialog.Title</item>-->
+<!--        <item name="apptentiveRatingDialogTitleImageStyle">@style/Custom.RatingDialog.Title.Image</item>-->
+<!--        <item name="apptentiveRatingDialogButtonStyle">@style/Custom.Dialog.Button.RatingDialog</item>-->
+<!--        <item name="apptentiveRatingDialogMessageTextStyle">@style/Custom.RatingDialog.Message</item>-->
 
         <!-- Survey Styles Start -->
         <!-- Layout -->
@@ -170,7 +173,8 @@
     <style name="Custom.RatingDialog"/>
 
     <style name="Custom.RatingDialog.Layout">
-        <item name="android:background">@color/color_error</item>
+        <item name="android:background">?colorSurface</item>
+        <item name="android:paddingBottom">16dp</item>
     </style>
 
     <style name="Custom.Survey"/>
@@ -220,15 +224,23 @@
         <item name="android:textSize">30sp</item>
     </style>
 
-    <style name="Custom.RatingDialog.Title.Text" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
-        <item name="android:textColor">@color/color_primary</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
+    <style name="Custom.RatingDialog.Title" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
+        <item name="android:textColor">?colorOnSurface</item>
+        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingEnd">16dp</item>
     </style>
 
-    <style name="Custom.RatingDialog.Message.Text" parent="Custom.Text">
-        <item name="android:textColor">@color/color_secondary</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textSize">8sp</item>
+    <style name="Custom.RatingDialog.Message" parent="Custom.Text">
+        <item name="android:textColor">?colorOnSurface</item>
+        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
     </style>
     <!-- Dialog Text Styles End -->
 
@@ -349,6 +361,19 @@
         <item name="rippleColor">@null</item>
     </style>
 
+    <style name="Custom.Dialog.Button.RatingDialog" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:minWidth">280dp</item>
+        <item name="android:maxWidth">280dp</item>
+        <item name="android:textColor">@color/color_primary</item>
+        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="strokeColor">@color/color_primary</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
     <style name="Custom.LoveDialog.HeaderImage">
         <item name="android:layout_weight">1</item>
         <item name="android:adjustViewBounds">true</item>
@@ -358,12 +383,28 @@
         <item name="android:src">@drawable/disney_love_dialog_header</item>
     </style>
 
+    <style name="Custom.RatingDialog.HeaderImage">
+        <item name="android:src">@drawable/rating_header_example</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:adjustViewBounds">true</item>
+    </style>
+
     <style name="Custom.LoveDialog.Title.Image">
         <item name="android:src">@mipmap/ic_launcher</item>
         <item name="android:maxWidth">40dp</item>
         <item name="android:maxHeight">40dp</item>
         <item name="android:minWidth">40dp</item>
         <item name="android:minHeight">40dp</item>
+        <item name="android:adjustViewBounds">true</item>
+    </style>
+
+    <style name="Custom.RatingDialog.Title.Image">
+        <item name="android:src">@mipmap/ic_launcher</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:maxWidth">64dp</item>
+        <item name="android:maxHeight">64dp</item>
+        <item name="android:minWidth">64dp</item>
+        <item name="android:minHeight">64dp</item>
         <item name="android:adjustViewBounds">true</item>
     </style>
     <!-- Dialog Widgets End -->

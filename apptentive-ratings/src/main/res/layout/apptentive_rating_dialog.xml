@@ -4,66 +4,64 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="?apptentiveRatingDialogLayoutStyle"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingHorizontal="8dp"
-    android:paddingTop="18dp"
-    android:paddingBottom="2dp">
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/apptentive_rating_dialog_title"
-            style="?apptentiveRatingDialogTitleTextStyle"
+        <ImageView
+            style="?apptentiveRatingDialogHeaderImageStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="@dimen/apptentive_dialog_title_horizontal_padding"
-            android:paddingBottom="8dp"
-            tools:text="Rating Title" />
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                style="?apptentiveRatingDialogTitleImageStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/apptentive_rating_dialog_title"
+                style="?apptentiveRatingDialogTitleTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Rating Title" />
+
+        </LinearLayout>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/apptentive_rating_dialog_message"
             style="?apptentiveRatingDialogMessageTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="@dimen/apptentive_dialog_message_min_height"
-            android:paddingHorizontal="@dimen/apptentive_dialog_message_horizontal_padding"
             tools:text="Rating Message" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/apptentive_rating_dialog_button"
-            style="?apptentiveDialogButtonStyle"
+            style="?apptentiveRatingDialogButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginHorizontal="@dimen/apptentive_dialog_action_spacing"
-            android:layout_marginTop="@dimen/apptentive_dialog_action_spacing"
-            android:textAlignment="viewEnd"
             tools:text="RATE ANDROID DEMO APP"
             tools:textColor="@color/apptentive_color_on_surface" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/apptentive_rating_dialog_remind_button"
-            style="?apptentiveDialogButtonStyle"
+            style="?apptentiveRatingDialogButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginHorizontal="@dimen/apptentive_dialog_action_spacing"
-            android:textAlignment="viewEnd"
             tools:text="REMIND ME LATER"
             tools:textColor="@color/apptentive_color_on_surface" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/apptentive_rating_dialog_decline_button"
-            style="?apptentiveDialogButtonStyle"
+            style="?apptentiveRatingDialogButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginHorizontal="@dimen/apptentive_dialog_action_spacing"
-            android:layout_marginBottom="@dimen/apptentive_dialog_action_spacing"
-            android:textAlignment="viewEnd"
             tools:text="NO THANKS"
             tools:textColor="@color/apptentive_color_on_surface" />
 

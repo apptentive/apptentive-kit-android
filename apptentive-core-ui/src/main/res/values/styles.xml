@@ -24,6 +24,7 @@
 
         <!-- Love Dialog Styles -->
         <item name="apptentiveLoveDialogLayoutStyle">@style/Apptentive.LoveDialog.Layout</item>
+        <item name="apptentiveLoveDialogHeaderImageStyle"/>
         <item name="apptentiveLoveDialogTitleStyle">@style/Apptentive.TextAppearance.Dialog.TitleOrMessageOnly.LoveDialog</item>
         <item name="apptentiveLoveDialogTitleImageStyle"/>
         <item name="apptentiveLoveDialogButtonLayoutStyle">@style/Apptentive.Widget.Dialog.Button.LoveDialog.Layout</item>
@@ -38,7 +39,10 @@
 
         <!-- Apptentive Rating Dialog Styles -->
         <item name="apptentiveRatingDialogLayoutStyle">@style/Apptentive.RatingDialog.Layout</item>
+        <item name="apptentiveRatingDialogHeaderImageStyle"/>
         <item name="apptentiveRatingDialogTitleTextStyle">@style/Apptentive.TextAppearance.Dialog.Title.WithMessage</item>
+        <item name="apptentiveRatingDialogTitleImageStyle"/>
+        <item name="apptentiveRatingDialogButtonStyle">@style/Apptentive.Widget.Dialog.Button.RatingDialog</item>
         <item name="apptentiveRatingDialogMessageTextStyle">@style/Apptentive.TextAppearance.Dialog.Message</item>
 
         <!-- Survey Styles Start -->
@@ -61,7 +65,6 @@
         <item name="apptentiveSurveyFootnoteStyle">@style/Apptentive.TextAppearance.Survey.Footnote</item>
 
         <!-- Widgets -->
-        <item name="apptentiveLoveDialogHeaderImageStyle"/>
         <item name="apptentiveSurveyHeaderImageStyle">@style/Apptentive.Widget.Survey.HeaderImage</item>
         <item name="apptentiveSurveyCheckBoxStyle">@style/Apptentive.Widget.Survey.CheckBox</item>
         <item name="apptentiveSurveyRadioButtonStyle">@style/Apptentive.Widget.Survey.RadioButton</item>
@@ -167,6 +170,10 @@
 
     <style name="Apptentive.RatingDialog.Layout">
         <item name="android:background">?apptentiveDialogBackground</item>
+        <item name="android:paddingStart">@dimen/apptentive_dialog_horizontal_padding</item>
+        <item name="android:paddingEnd">@dimen/apptentive_dialog_horizontal_padding</item>
+        <item name="android:paddingTop">@dimen/apptentive_dialog_top_padding</item>
+        <item name="android:paddingBottom">@dimen/apptentive_rating_dialog_bottom_padding</item>
     </style>
 
     <style name="Apptentive.Survey" />
@@ -192,6 +199,9 @@
         <item name="android:textSize">?apptentiveTextSizeDialogTitleWithMessage</item>
         <item name="android:textColor">?apptentiveTextColorDialogTitleWithMessage</item>
         <item name="android:alpha">?apptentiveHeaderAlpha</item>
+        <item name="android:paddingStart">@dimen/apptentive_dialog_text_horizontal_padding</item>
+        <item name="android:paddingEnd">@dimen/apptentive_dialog_text_horizontal_padding</item>
+        <item name="android:paddingBottom">@dimen/apptentive_dialog_title_spacing</item>
     </style>
     
     <style name="Apptentive.TextAppearance.Dialog.Message" parent="Apptentive.TextAppearance">
@@ -199,6 +209,10 @@
         <item name="android:textColor">?apptentiveTextColorSubhead</item>
         <item name="android:typeface">?apptentiveTypefaceSubhead</item>
         <item name="android:alpha">?apptentiveSubheaderAlpha</item>
+        <item name="android:minHeight">@dimen/apptentive_dialog_title_or_message_only_min_height</item>
+        <item name="android:paddingStart">@dimen/apptentive_dialog_text_horizontal_padding</item>
+        <item name="android:paddingEnd">@dimen/apptentive_dialog_text_horizontal_padding</item>
+        <item name="android:paddingBottom">@dimen/apptentive_dialog_message_spacing</item>
     </style>
 
     <style name="Apptentive.TextAppearance.Dialog.TitleOrMessageOnly" parent="Apptentive.TextAppearance">
@@ -207,8 +221,9 @@
         <item name="android:typeface">?attr/apptentiveTypefaceDialogTitleOrMessageOnly</item>
         <item name="android:alpha">?apptentiveSubheaderAlpha</item>
         <item name="android:letterSpacing">@dimen/apptentive_dialog_title_letter_spacing</item>
-        <item name="android:paddingStart">@dimen/apptentive_dialog_title_horizontal_padding</item>
-        <item name="android:paddingEnd">@dimen/apptentive_dialog_title_horizontal_padding</item>
+        <item name="android:paddingStart">@dimen/apptentive_dialog_text_horizontal_padding</item>
+        <item name="android:paddingEnd">@dimen/apptentive_dialog_text_horizontal_padding</item>
+        <item name="android:minHeight">@dimen/apptentive_dialog_title_or_message_only_min_height</item>
     </style>
 
     <style name="Apptentive.TextAppearance.Dialog.TitleOrMessageOnly.LoveDialog">
@@ -312,6 +327,13 @@
 
     <style name="Apptentive.Widget.Dialog.Button.LoveDialog.No">
         <item name="android:layout_marginEnd">@dimen/apptentive_love_dialog_no_button_end_margin</item>
+    </style>
+
+    <style name="Apptentive.Widget.Dialog.Button.RatingDialog">
+        <item name="android:layout_marginStart">@dimen/apptentive_dialog_title_spacing</item>
+        <item name="android:layout_marginEnd">@dimen/apptentive_dialog_title_spacing</item>
+        <item name="android:layout_gravity">end</item>
+        <item name="android:textAlignment">viewEnd</item>
     </style>
     <!-- Dialog Widgets End -->
 
