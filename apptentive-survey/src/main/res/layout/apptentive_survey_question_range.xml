@@ -9,9 +9,7 @@
         android:id="@+id/apptentive_range_slider"
         style="?attr/apptentiveSurveyRangeStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginHorizontal="@dimen/apptentive_radio_checkbox_slider_margin" />
+        android:layout_height="wrap_content" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,10 +21,6 @@
             style="?attr/apptentiveSurveyRangeLabelStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:layout_weight="1"
-            android:paddingHorizontal="@dimen/apptentive_range_label_horizontal_padding"
-            android:paddingVertical="@dimen/apptentive_range_label_vertical_padding"
             tools:text="1 = hate it" />
 
         <com.google.android.material.textview.MaterialTextView
@@ -34,10 +28,6 @@
             style="?attr/apptentiveSurveyRangeLabelStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_weight="1"
-            android:paddingHorizontal="@dimen/apptentive_range_label_horizontal_padding"
-            android:paddingVertical="@dimen/apptentive_range_label_vertical_padding"
             android:textAlignment="viewEnd"
             tools:text="4 = love it" />
 

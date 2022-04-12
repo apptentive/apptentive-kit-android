@@ -3,15 +3,12 @@
     android:id="@+id/apptentive_answer_text_input_layout"
     style="?attr/apptentiveSurveySingleLineLayoutStyle"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingHorizontal="@dimen/apptentive_singleline_layout_horizontal_padding">
+    android:layout_height="wrap_content">
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/apptentive_answer_text"
         style="?attr/apptentiveSurveySingleLineEditTextStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/apptentive_singleline_edittext_bottom_padding"
-        android:minHeight="@dimen/apptentive_other_text_field_min_height" />
+        android:layout_height="wrap_content" />
 
 </com.google.android.material.textfield.TextInputLayout>

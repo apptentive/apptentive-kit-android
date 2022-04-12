@@ -4,14 +4,11 @@
     style="?attr/apptentiveSurveyOtherTextFieldLayoutStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="@dimen/apptentive_other_text_field_start_padding"
-    android:layout_marginEnd="@dimen/apptentive_other_text_field_end_padding"
     android:visibility="gone">
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/apptentive_other_edit_text"
         style="?attr/apptentiveSurveyOtherTextFieldEditTextStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="@dimen/apptentive_radio_checkbox_min_height" />
+        android:layout_height="wrap_content" />
 </com.google.android.material.textfield.TextInputLayout>

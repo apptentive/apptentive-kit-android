@@ -5,8 +5,4 @@
     style="?apptentiveSurveyIntroductionStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:accessibilityHeading="true"
-    android:padding="@dimen/apptentive_survey_introduction_padding"
-    android:textAlignment="center"
-    tools:targetApi="p"
     tools:text="Tell us about your experience!" />

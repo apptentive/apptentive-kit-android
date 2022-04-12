@@ -12,9 +12,6 @@
         style="?attr/apptentiveSurveyRadioButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/apptentive_radio_checkbox_slider_margin"
-        android:minHeight="@dimen/apptentive_radio_checkbox_min_height"
-        android:paddingHorizontal="@dimen/apptentive_radio_checkbox_horizontal_padding"
         tools:text="Radio Button example"
         tools:textColor="@color/apptentive_color_on_background" />
 

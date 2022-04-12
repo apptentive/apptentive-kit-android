@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base Apptentive theme. -->
     <style name="Theme.Apptentive" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/apptentive_color_primary</item>
@@ -177,6 +177,8 @@
 
     <style name="Apptentive.Survey.Layout">
         <item name="android:background">?android:colorBackground</item>
+        <item name="android:layout_weight">1</item>
+        <item name="layoutManager">androidx.recyclerview.widget.LinearLayoutManager</item>
     </style>
     <!-- Interaction Layouts End -->
 
@@ -230,6 +232,7 @@
     <style name="Apptentive.TextAppearance.Survey.Title" parent="Apptentive.TextAppearance">
         <item name="android:textColor">?apptentiveTextColorSurveyTitle</item>
         <item name="android:textAppearance">?textAppearanceHeadline6</item>
+        <item name="android:accessibilityHeading" tools:ignore="NewApi">true</item>
     </style>
 
     <style name="Apptentive.TextAppearance.Survey.Introduction" parent="Apptentive.TextAppearance">
@@ -238,6 +241,9 @@
         <item name="android:typeface">?apptentiveTypefaceSurveyIntroduction</item>
         <item name="android:textAppearance">?textAppearanceHeadline6</item>
         <item name="android:alpha">?apptentiveHeaderAlpha</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:accessibilityHeading" tools:ignore="NewApi">true</item>
+        <item name="android:padding">@dimen/apptentive_survey_introduction_padding</item>
     </style>
 
     <style name="Apptentive.TextAppearance.Survey.Title.Question" parent="Apptentive.TextAppearance">
@@ -247,6 +253,10 @@
         <item name="android:autoLink">all</item>
         <item name="android:importantForAccessibility">no</item>
         <item name="android:alpha">?apptentiveHeaderAlpha</item>
+        <item name="android:layout_marginTop">@dimen/apptentive_survey_question_title_top_margin</item>
+        <item name="android:layout_marginBottom">@dimen/apptentive_survey_question_title_bottom_margin</item>
+        <item name="android:layout_marginStart">@dimen/apptentive_activity_horizontal_margin_padding</item>
+        <item name="android:layout_marginEnd">@dimen/apptentive_activity_horizontal_margin_padding</item>
     </style>
 
     <style name="Apptentive.TextAppearance.Survey.Caption" parent="Apptentive.TextAppearance">
@@ -259,18 +269,29 @@
         <item name="android:textColor">?apptentiveTextColorSurveyRangeLabel</item>
         <item name="android:focusable">true</item>
         <item name="android:alpha">?apptentiveSubheaderAlpha</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:paddingTop">@dimen/apptentive_survey_range_label_vertical_padding</item>
+        <item name="android:paddingBottom">@dimen/apptentive_survey_range_label_vertical_padding</item>
+        <item name="android:paddingStart">@dimen/apptentive_activity_horizontal_margin_padding</item>
+        <item name="android:paddingEnd">@dimen/apptentive_activity_horizontal_margin_padding</item>
     </style>
 
     <style name="Apptentive.TextAppearance.Survey.Caption.Instructions" parent="Apptentive.TextAppearance.Survey.Caption">
         <item name="android:textColor">?apptentiveTextColorSurveyQuestionInstructions</item>
         <item name="android:importantForAccessibility">no</item>
         <item name="android:alpha">?apptentiveSubheaderAlpha</item>
+        <item name="android:layout_marginStart">@dimen/apptentive_activity_horizontal_margin_padding</item>
+        <item name="android:layout_marginEnd">@dimen/apptentive_activity_horizontal_margin_padding</item>
+        <item name="android:layout_marginBottom">@dimen/apptentive_survey_question_instructions_bottom_padding</item>
     </style>
 
     <style name="Apptentive.TextAppearance.Survey.Caption.Error" parent="Apptentive.TextAppearance.Survey.Caption">
         <item name="android:textColor">?apptentiveTextColorError</item>
         <item name="android:importantForAccessibility">no</item>
         <item name="android:alpha">?apptentiveHeaderAlpha</item>
+        <item name="android:layout_marginStart">@dimen/apptentive_activity_horizontal_margin_padding</item>
+        <item name="android:layout_marginEnd">@dimen/apptentive_activity_horizontal_margin_padding</item>
+        <item name="android:layout_marginBottom">@dimen/apptentive_survey_question_error_bottom_padding</item>
     </style>
 
     <style name="Apptentive.TextAppearance.Survey.Caption.TermsAndConditions" parent="Apptentive.TextAppearance.Survey.Caption">
@@ -283,6 +304,10 @@
         <item name="android:textSize">?apptentiveTextSizeBody1</item>
         <item name="android:textColor">?apptentiveTextColorError</item>
         <item name="android:alpha">?apptentiveHeaderAlpha</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:layout_marginStart">@dimen/apptentive_activity_horizontal_margin_padding</item>
+        <item name="android:layout_marginEnd">@dimen/apptentive_activity_horizontal_margin_padding</item>
+        <item name="android:layout_marginBottom">@dimen/apptentive_survey_footers_vertical_padding_margin</item>
     </style>
 
     <style name="Apptentive.TextAppearance.Survey.Footnote" parent="Apptentive.TextAppearance">
@@ -290,6 +315,10 @@
         <item name="android:textSize">?apptentiveTextSizeBody1</item>
         <item name="android:textColor">?apptentiveTextColorBody1</item>
         <item name="android:alpha">?apptentiveHeaderAlpha</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:layout_marginStart">@dimen/apptentive_activity_horizontal_margin_padding</item>
+        <item name="android:layout_marginEnd">@dimen/apptentive_activity_horizontal_margin_padding</item>
+        <item name="android:layout_marginBottom">@dimen/apptentive_survey_footers_vertical_padding_margin</item>
     </style>
     <!-- Survey Text Styles End -->
     <!-- Text Styles End -->
@@ -345,6 +374,11 @@
         <item name="android:fontFamily">?apptentiveTextFontDefault</item>
         <item name="android:typeface">?apptentiveTypefaceBody1</item>
         <item name="android:buttonTint">@color/apptentive_mtrl_selection_control_button_tint</item>
+        <item name="android:minHeight">@dimen/apptentive_survey_radio_checkbox_min_height</item>
+        <item name="android:layout_marginStart">@dimen/apptentive_survey_radio_checkbox_range_horizontal_margin</item>
+        <item name="android:layout_marginEnd">@dimen/apptentive_survey_radio_checkbox_range_horizontal_margin</item>
+        <item name="android:paddingStart">@dimen/apptentive_survey_radio_checkbox_horizontal_padding</item>
+        <item name="android:paddingEnd">@dimen/apptentive_survey_radio_checkbox_horizontal_padding</item>
     </style>
 
     <!-- https://material.io/components/radio-buttons/android -->
@@ -354,16 +388,24 @@
         <item name="android:fontFamily">?apptentiveTextFontDefault</item>
         <item name="android:typeface">?apptentiveTypefaceBody1</item>
         <item name="android:buttonTint">@color/apptentive_mtrl_selection_control_button_tint</item>
+        <item name="android:minHeight">@dimen/apptentive_survey_radio_checkbox_min_height</item>
+        <item name="android:layout_marginStart">@dimen/apptentive_survey_radio_checkbox_range_horizontal_margin</item>
+        <item name="android:layout_marginEnd">@dimen/apptentive_survey_radio_checkbox_range_horizontal_margin</item>
+        <item name="android:paddingStart">@dimen/apptentive_survey_radio_checkbox_horizontal_padding</item>
+        <item name="android:paddingEnd">@dimen/apptentive_survey_radio_checkbox_horizontal_padding</item>
     </style>
 
     <!-- https://material.io/components/sliders/android-->
     <style name="Apptentive.Widget.Survey.Range" parent="Widget.MaterialComponents.Slider">
+        <item name="android:layout_gravity">center</item>
         <item name="haloColor">@color/apptentive_mtrl_slider_halo_color</item>
         <item name="thumbColor">@color/apptentive_mtrl_slider_thumb_color</item>
         <item name="tickColorActive">@color/apptentive_mtrl_slider_active_tick_marks_color</item>
         <item name="tickColorInactive">@color/apptentive_mtrl_slider_inactive_tick_marks_color</item>
         <item name="trackColorActive">@color/apptentive_mtrl_slider_active_track_color</item>
         <item name="trackColorInactive">@color/apptentive_mtrl_slider_inactive_track_color</item>
+        <item name="android:layout_marginStart">@dimen/apptentive_survey_radio_checkbox_range_horizontal_margin</item>
+        <item name="android:layout_marginEnd">@dimen/apptentive_survey_radio_checkbox_range_horizontal_margin</item>
     </style>
 
     <!-- https://material.io/components/text-fields/android#outlined-text-field -->
@@ -373,6 +415,8 @@
         <item name="android:fontFamily">?apptentiveTextFontDefault</item>
         <item name="boxStrokeColor">@color/apptentive_mtrl_outlined_stroke_color</item>
         <item name="hintTextColor">@color/apptentive_mtrl_text_box_text_color</item>
+        <item name="android:paddingStart">@dimen/apptentive_activity_horizontal_margin_padding</item>
+        <item name="android:paddingEnd">@dimen/apptentive_activity_horizontal_margin_padding</item>
     </style>
 
     <style name="Apptentive.Widget.Survey.SingleLine.EditText" parent="Widget.AppCompat.EditText">
@@ -382,6 +426,7 @@
         <item name="android:typeface">?apptentiveTypefaceBody1</item>
         <item name="android:textSize">?apptentiveTextSizeBody1</item>
         <item name="android:textCursorDrawable">@drawable/apptentive_mtrl_text_cursor</item>
+        <item name="android:minHeight">@dimen/apptentive_survey_edit_text_min_height</item>
     </style>
 
     <!-- https://material.io/components/text-fields/android#outlined-text-field -->
@@ -392,6 +437,8 @@
         <item name="android:fontFamily">?apptentiveTextFontDefault</item>
         <item name="boxStrokeColor">@color/apptentive_mtrl_outlined_stroke_color</item>
         <item name="hintTextColor">@color/apptentive_mtrl_text_box_text_color</item>
+        <item name="android:layout_marginStart">@dimen/apptentive_survey_other_text_field_start_margin</item>
+        <item name="android:layout_marginEnd">@dimen/apptentive_activity_horizontal_margin_padding</item>
     </style>
 
     <style name="Apptentive.Widget.Survey.OtherTextField.EditText" parent="Widget.AppCompat.EditText">
@@ -403,6 +450,7 @@
         <item name="android:maxLines">4</item>
         <item name="android:minLines">1</item>
         <item name="android:textCursorDrawable">@drawable/apptentive_mtrl_text_cursor</item>
+        <item name="android:minHeight">@dimen/apptentive_survey_edit_text_min_height</item>
     </style>
 
     <!-- https://material.io/components/buttons/android#contained-button -->
@@ -412,6 +460,8 @@
         <item name="android:fontFamily">?apptentiveTextFontDefault</item>
         <item name="android:typeface">?apptentiveTypefaceButtonColored</item>
         <item name="android:textSize">?apptentiveTextSizeButtonColored</item>
+        <item name="android:layout_marginTop">@dimen/apptentive_survey_footers_vertical_padding_margin</item>
+        <item name="android:layout_marginBottom">@dimen/apptentive_survey_footers_vertical_padding_margin</item>
     </style>
 
     <style name="Apptentive.Widget.Survey.BottomAppBar">
