@@ -28,8 +28,8 @@
         <item name="apptentiveLoveDialogTitleStyle">@style/Apptentive.TextAppearance.Dialog.TitleOrMessageOnly</item>
         <item name="apptentiveLoveDialogTitleImageStyle"/>
         <item name="apptentiveLoveDialogButtonLayoutStyle">@style/Apptentive.Dialog.ButtonLayout</item>
-        <item name="apptentiveLoveDialogYesButtonStyle">@style/Apptentive.Widget.Dialog.Button.Dialog.Yes</item>
-        <item name="apptentiveLoveDialogNoButtonStyle">@style/Apptentive.Widget.Dialog.Button.Dialog.No</item>
+        <item name="apptentiveLoveDialogYesButtonStyle">@style/Apptentive.Widget.Dialog.Button.SideBySide.Yes</item>
+        <item name="apptentiveLoveDialogNoButtonStyle">@style/Apptentive.Widget.Dialog.Button.SideBySide.No</item>
 
         <!-- Note Dialog Styles -->
         <item name="apptentiveNoteLayoutStyle">@style/Apptentive.Dialog.Layout</item>
@@ -58,8 +58,8 @@
         <item name="apptentiveGenericDialogTitleImageStyle"/>
         <item name="apptentiveGenericDialogMessageTextStyle">@style/Apptentive.TextAppearance.Dialog.Message</item>
         <item name="apptentiveGenericDialogButtonLayoutStyle">@style/Apptentive.Dialog.ButtonLayout</item>
-        <item name="apptentiveGenericDialogPositiveButtonStyle">@style/Apptentive.Widget.Dialog.Button.Dialog.Yes</item>
-        <item name="apptentiveGenericDialogNegativeButtonStyle">@style/Apptentive.Widget.Dialog.Button.Dialog.No</item>
+        <item name="apptentiveGenericDialogPositiveButtonStyle">@style/Apptentive.Widget.Dialog.Button.SideBySide.Yes</item>
+        <item name="apptentiveGenericDialogNegativeButtonStyle">@style/Apptentive.Widget.Dialog.Button.SideBySide.No</item>
 
         <!-- Survey Styles Start -->
         <!-- Layout -->
@@ -345,18 +345,26 @@
         <item name="android:typeface">?apptentiveTypefaceButtonBorderless</item>
         <item name="android:textSize">?apptentiveTextSizeButtonBorderless</item>
         <item name="android:textColor">?apptentiveTextColorDialogTextButton</item>
-        <item name="backgroundTint">@color/apptentive_color_error</item>
+        <item name="backgroundTint">@color/apptentive_mtrl_btn_text_btn_bg_color_selector</item>
         <item name="rippleColor">@color/apptentive_mtrl_btn_ripple_color</item>
+    </style>
+
+    <style name="Apptentive.Widget.Dialog.Button.Stacked">
         <item name="android:layout_gravity">end|center_vertical</item>
     </style>
 
-    <style name="Apptentive.Widget.Dialog.Button.Dialog" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+    <style name="Apptentive.Widget.Dialog.Button.SideBySide" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:typeface">?apptentiveTypefaceButtonBorderless</item>
+        <item name="android:textSize">?apptentiveTextSizeButtonBorderless</item>
+        <item name="android:textColor">?apptentiveTextColorDialogTextButton</item>
+        <item name="backgroundTint">@color/apptentive_mtrl_btn_text_btn_bg_color_selector</item>
+        <item name="rippleColor">@color/apptentive_mtrl_btn_ripple_color</item>
         <item name="android:maxWidth">@dimen/apptentive_love_dialog_button_max_width</item>
     </style>
 
-    <style name="Apptentive.Widget.Dialog.Button.Dialog.Yes"/>
+    <style name="Apptentive.Widget.Dialog.Button.SideBySide.Yes"/>
 
-    <style name="Apptentive.Widget.Dialog.Button.Dialog.No">
+    <style name="Apptentive.Widget.Dialog.Button.SideBySide.No">
         <item name="android:layout_marginEnd">@dimen/apptentive_love_dialog_no_button_end_margin</item>
     </style>
 
