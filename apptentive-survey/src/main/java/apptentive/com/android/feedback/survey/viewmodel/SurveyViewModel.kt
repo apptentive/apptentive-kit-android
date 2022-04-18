@@ -275,7 +275,7 @@ data class SurveyCancelConfirmationDisplay(
     val negativeButtonMessage: String?
 )
 
-typealias SurveySubmitCallback = (Map<String, SurveyQuestionAnswer>) -> Unit
+internal typealias SurveySubmitCallback = (Map<String, SurveyQuestionAnswer>) -> Unit
 internal typealias SurveyCancelCallback = () -> Unit
 internal typealias SurveyCancelPartialCallback = () -> Unit
 internal typealias SurveyCloseCallback = () -> Unit

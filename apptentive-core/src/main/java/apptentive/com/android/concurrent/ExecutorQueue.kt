@@ -3,8 +3,10 @@ package apptentive.com.android.concurrent
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.ExecutorFactory
 import apptentive.com.android.core.TimeInterval
+import apptentive.com.android.util.InternalUseOnly
 
-abstract class ExecutorQueue(val name: String) : Executor {
+@InternalUseOnly
+abstract class ExecutorQueue(private val name: String) : Executor {
     abstract val isCurrent: Boolean
 
     override fun execute(task: () -> Unit) {

@@ -27,7 +27,7 @@ internal typealias SurveyQuestionConfiguration = Map<String, Any?>
  * @param termsAndConditions [TermsAndConditions] data class that contains a label and link (set on dashboard)
  */
 @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
-class SurveyInteraction(
+internal class SurveyInteraction(
     id: String,
     val name: String?,
     val description: String?,

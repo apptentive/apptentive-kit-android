@@ -54,4 +54,13 @@ project.ext {
     artifactId = 'apptentive-in-app-review'
 }
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        freeCompilerArgs += [
+                //'-Xexplicit-api=warning', // or '-Xexplicit-api=strict',
+                '-opt-in=apptentive.com.android.util.InternalUseOnly',
+        ]
+    }
+}
+
 apply from: '../publish.gradle'

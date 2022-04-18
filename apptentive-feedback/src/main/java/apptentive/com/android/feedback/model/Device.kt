@@ -1,11 +1,11 @@
 package apptentive.com.android.feedback.model
 
-import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.model.payloads.DevicePayload
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.serialization.json.JsonConverter.toJsonObject
+import apptentive.com.android.util.InternalUseOnly
 
-@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+@InternalUseOnly
 data class Device(
     val osName: String,
     val osVersion: String,
@@ -37,7 +37,7 @@ data class Device(
         return SensitiveDataUtils.logWithSanitizeCheck(javaClass, toJsonObject())
     }
 
-    fun toDevicePayload(): DevicePayload = DevicePayload(
+    internal fun toDevicePayload(): DevicePayload = DevicePayload(
         osName = osName,
         osVersion = osVersion,
         osBuild = osBuild,

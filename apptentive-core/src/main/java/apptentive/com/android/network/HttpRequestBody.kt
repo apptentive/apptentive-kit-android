@@ -1,9 +1,11 @@
 package apptentive.com.android.network
 
+import apptentive.com.android.util.InternalUseOnly
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
 
 /** Represent an HTTP-request body */
+@InternalUseOnly
 interface HttpRequestBody {
     /** HTTP-request content type */
     val contentType: String
@@ -12,6 +14,7 @@ interface HttpRequestBody {
     fun write(stream: OutputStream)
 }
 
+@InternalUseOnly
 fun HttpRequestBody.asString(): String {
     val stream = ByteArrayOutputStream()
     write(stream)

@@ -2,8 +2,8 @@ package apptentive.com.android.feedback.rating.reviewmanager
 
 import android.app.Activity
 import android.content.Context
-import apptentive.com.android.feedback.IN_APP_REVIEW
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.IN_APP_REVIEW
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.ConnectionResult.SUCCESS
 import com.google.android.gms.common.GoogleApiAvailability

@@ -12,7 +12,7 @@ import apptentive.com.android.util.optInt
 import apptentive.com.android.util.optString
 
 @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
-interface SurveyQuestionConverter {
+internal interface SurveyQuestionConverter {
     fun convert(config: SurveyQuestionConfiguration, requiredTextMessage: String): SurveyQuestion<*>
 }
 

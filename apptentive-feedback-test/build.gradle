@@ -35,3 +35,11 @@ dependencies {
     implementation "androidx.test:runner:$androidx_test_version"
     implementation "io.mockk:mockk:$mockk_version"
 }
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        freeCompilerArgs += [
+                '-opt-in=apptentive.com.android.util.InternalUseOnly',
+        ]
+    }
+}

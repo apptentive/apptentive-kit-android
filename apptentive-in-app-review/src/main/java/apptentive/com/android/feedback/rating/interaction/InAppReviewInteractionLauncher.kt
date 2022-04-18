@@ -1,6 +1,5 @@
 package apptentive.com.android.feedback.rating.interaction
 
-import apptentive.com.android.feedback.IN_APP_REVIEW
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.InternalEvent
@@ -8,6 +7,7 @@ import apptentive.com.android.feedback.platform.AndroidViewInteractionLauncher
 import apptentive.com.android.feedback.rating.reviewmanager.InAppReviewCallback
 import apptentive.com.android.feedback.rating.reviewmanager.InAppReviewManagerFactory
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.IN_APP_REVIEW
 
 private const val DATA_KEY_CAUSE = "cause"
 

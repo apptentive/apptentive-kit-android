@@ -1,8 +1,8 @@
 package apptentive.com.android.feedback.payload
 
-import apptentive.com.android.feedback.PAYLOADS
 import apptentive.com.android.feedback.model.payloads.Payload
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.PAYLOADS
 import apptentive.com.android.util.Result
 
 internal class SerialPayloadSender(

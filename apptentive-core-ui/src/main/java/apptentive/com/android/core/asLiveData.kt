@@ -1,7 +1,9 @@
 package apptentive.com.android.core
 
 import androidx.lifecycle.LiveData
+import apptentive.com.android.util.InternalUseOnly
 
+@InternalUseOnly
 fun <T> Observable<T>.asLiveData(): LiveData<T> = ObservableLiveData(this)
 
 private class ObservableLiveData<T>(private val target: Observable<T>) : LiveData<T>() {

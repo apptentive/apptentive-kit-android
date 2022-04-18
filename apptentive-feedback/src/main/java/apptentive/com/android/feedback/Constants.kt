@@ -1,5 +1,8 @@
 package apptentive.com.android.feedback
 
+import apptentive.com.android.util.InternalUseOnly
+
+@InternalUseOnly
 object Constants {
     const val SDK_VERSION = "6.0.0"
     const val API_VERSION = 11

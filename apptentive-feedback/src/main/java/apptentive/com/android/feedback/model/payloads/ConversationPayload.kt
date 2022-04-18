@@ -3,7 +3,9 @@ package apptentive.com.android.feedback.model.payloads
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.getTimeSeconds
 import apptentive.com.android.core.getUtcOffset
+import apptentive.com.android.util.InternalUseOnly
 
+@InternalUseOnly
 abstract class ConversationPayload(
     nonce: String,
     val clientCreatedAt: TimeInterval = getTimeSeconds(),

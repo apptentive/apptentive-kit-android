@@ -14,7 +14,7 @@ import apptentive.com.android.ui.ListViewItem
  *                        answer or <code>null</code> if the answer is valid.
  */
 
-abstract class SurveyQuestionListItem(
+internal abstract class SurveyQuestionListItem(
     id: String,
     type: Type,
     val title: String,

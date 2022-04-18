@@ -1,10 +1,10 @@
 package apptentive.com.android.feedback.model
 
-import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
+import apptentive.com.android.util.InternalUseOnly
 
-@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+@InternalUseOnly
 data class VersionHistoryItem(
     val timestamp: Double,
     val versionCode: VersionCode,

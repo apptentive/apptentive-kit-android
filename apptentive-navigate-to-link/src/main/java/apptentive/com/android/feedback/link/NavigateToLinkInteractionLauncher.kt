@@ -1,9 +1,9 @@
 package apptentive.com.android.feedback.link
 
-import apptentive.com.android.feedback.INTERACTIONS
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.interactions.InteractionLauncher
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.INTERACTIONS
 
 internal class NavigateToLinkInteractionLauncher : InteractionLauncher<NavigateToLinkInteraction> {
     override fun launchInteraction(

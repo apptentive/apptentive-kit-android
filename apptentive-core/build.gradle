@@ -48,4 +48,14 @@ project.ext {
     artifactId = 'apptentive-core'
 }
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+        freeCompilerArgs += [
+                //'-Xexplicit-api=warning', // or '-Xexplicit-api=strict'
+                '-opt-in=apptentive.com.android.util.InternalUseOnly',
+                '-opt-in=kotlin.RequiresOptIn',
+        ]
+    }
+}
+
 apply from: '../publish.gradle'

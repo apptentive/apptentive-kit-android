@@ -17,7 +17,7 @@ import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.model.VersionHistory
 import apptentive.com.android.feedback.model.VersionHistoryItem
-import apptentive.com.android.util.parseInt
+import apptentive.com.android.feedback.utils.parseInt
 import java.io.Serializable
 
 internal typealias LegacyConversationData = ConversationData

@@ -1,5 +1,6 @@
 package apptentive.com.android.network
 
+import apptentive.com.android.util.InternalUseOnly
 import java.net.URL
 
 /**
@@ -13,6 +14,7 @@ import java.net.URL
  * @param tag optional tag for request identification.
  * @param userData optional user data associated with the request.
  */
+@InternalUseOnly
 class HttpRequest<T> private constructor(
     val method: HttpMethod,
     val url: URL,
@@ -45,6 +47,7 @@ class HttpRequest<T> private constructor(
     /**
      * Builder class for creating [HttpRequest] instances.
      */
+    @InternalUseOnly
     data class Builder<T>(val url: URL) {
         private val headers = MutableHttpHeaders()
         private lateinit var reader: HttpResponseReader<T>

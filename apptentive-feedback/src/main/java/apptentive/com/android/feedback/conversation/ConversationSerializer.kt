@@ -2,7 +2,6 @@ package apptentive.com.android.feedback.conversation
 
 import androidx.core.util.AtomicFile
 import apptentive.com.android.core.TimeInterval
-import apptentive.com.android.feedback.CONVERSATION
 import apptentive.com.android.feedback.conversation.Serializers.conversationSerializer
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
@@ -44,6 +43,7 @@ import apptentive.com.android.serialization.encodeNullableString
 import apptentive.com.android.serialization.encodeSet
 import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.CONVERSATION
 import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.io.EOFException

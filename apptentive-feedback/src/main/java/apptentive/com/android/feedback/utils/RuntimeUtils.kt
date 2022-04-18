@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 
-object RuntimeUtils {
+internal object RuntimeUtils {
     @Suppress("DEPRECATION")
     fun getApplicationInfo(context: Context): ApplicationInfo {
         val packageManager = context.packageManager
@@ -34,7 +34,7 @@ object RuntimeUtils {
 internal typealias VersionCode = Long
 internal typealias VersionName = String
 
-data class ApplicationInfo(
+internal data class ApplicationInfo(
     val packageName: String,
     val versionName: VersionName,
     val versionCode: VersionCode,

@@ -1,10 +1,10 @@
 package apptentive.com.android.feedback.model
 
-import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.serialization.json.JsonConverter.toJsonObject
+import apptentive.com.android.util.InternalUseOnly
 
-@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+@InternalUseOnly
 data class SDK(
     val version: String,
     val platform: String,

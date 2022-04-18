@@ -5,7 +5,6 @@ import apptentive.com.android.concurrent.ImmediateExecutor
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.criteria.Invocation
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
-import apptentive.com.android.feedback.engagement.interactions.InteractionResponseData
 import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.feedback.model.payloads.Payload
 import apptentive.com.android.feedback.payload.MockPayloadSender

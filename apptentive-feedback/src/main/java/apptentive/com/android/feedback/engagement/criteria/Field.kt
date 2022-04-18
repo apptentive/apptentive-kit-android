@@ -2,10 +2,12 @@ package apptentive.com.android.feedback.engagement.criteria
 
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
-import apptentive.com.android.util.appVersionCode
-import apptentive.com.android.util.appVersionName
+import apptentive.com.android.feedback.utils.appVersionCode
+import apptentive.com.android.feedback.utils.appVersionName
+import apptentive.com.android.util.InternalUseOnly
 
 @Suppress("ClassName")
+@InternalUseOnly
 sealed class Field(val type: Type, val description: String) {
     enum class Type {
         String,

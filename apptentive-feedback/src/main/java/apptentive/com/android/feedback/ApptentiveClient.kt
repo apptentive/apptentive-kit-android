@@ -2,6 +2,7 @@ package apptentive.com.android.feedback
 
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.PROFILE_DATA_UPDATE
 
 internal interface ApptentiveClient {
     fun engage(event: Event): EngagementResult

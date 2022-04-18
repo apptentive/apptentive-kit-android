@@ -4,10 +4,12 @@ import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.criteria.Invocation
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
 import apptentive.com.android.feedback.model.payloads.ExtendedData
+import apptentive.com.android.util.InternalUseOnly
 
 /**
  * Represents an object responsible for engaging events in a specific context.
  */
+@InternalUseOnly
 interface Engagement {
     fun engage(
         context: EngagementContext,

@@ -7,8 +7,8 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.telephony.TelephonyManager
 import androidx.core.content.ContextCompat
-import apptentive.com.android.feedback.SYSTEM
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.SYSTEM
 import java.util.Locale
 import java.util.TimeZone
 

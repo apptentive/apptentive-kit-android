@@ -5,11 +5,11 @@ import android.content.Intent
 import android.net.Uri
 import androidx.annotation.MainThread
 import androidx.annotation.VisibleForTesting
-import apptentive.com.android.feedback.INTERACTIONS
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.platform.tryStartActivity
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.INTERACTIONS
 
 
 internal object StoreNavigator {

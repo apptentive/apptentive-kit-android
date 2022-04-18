@@ -1,5 +1,8 @@
 package apptentive.com.android.platform
 
+import apptentive.com.android.util.InternalUseOnly
+
+@InternalUseOnly
 object SharedPrefConstants {
     const val USE_HOST_APP_THEME = "com.apptentive.sdk.hostapptheme"
     const val USE_HOST_APP_THEME_KEY = "host_app_theme_key"

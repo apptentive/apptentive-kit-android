@@ -2,7 +2,7 @@ package apptentive.com.android.feedback.engagement.criteria
 
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
 
-interface ConditionalOperator {
+internal interface ConditionalOperator {
     fun apply(first: Any?, second: Any?): Boolean
     fun description(description: String, first: Any?, second: Any?): String
 

@@ -12,7 +12,7 @@ import apptentive.com.android.serialization.json.JsonConverter.toJsonObject
 import apptentive.com.android.util.generateUUID
 
 @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
-class DevicePayload(
+internal class DevicePayload(
     nonce: String = generateUUID(),
     val osName: String,
     val osVersion: String,

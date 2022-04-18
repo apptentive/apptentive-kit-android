@@ -49,3 +49,12 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:$androidx_junit_ext_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"
 }
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+        freeCompilerArgs += [
+               // '-Xexplicit-api=warning', // or '-Xexplicit-api=strict'
+                '-opt-in=apptentive.com.android.util.InternalUseOnly',
+        ]
+    }
+}

@@ -20,6 +20,7 @@ import androidx.collection.ArraySet
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
+import apptentive.com.android.util.InternalUseOnly
 
 /**
  * A class to handle single live events in Android MVVM architectural pattern to
@@ -27,6 +28,7 @@ import androidx.lifecycle.Observer
  * configuration changes again. Note that event will only be sent to active observers,
  * any observers that started observing after the emit won't be notified of the event.
  */
+@InternalUseOnly
 open class LiveEvent<T> : MediatorLiveData<T>() {
     private val observers = ArraySet<ObserverWrapper<in T>>()
 

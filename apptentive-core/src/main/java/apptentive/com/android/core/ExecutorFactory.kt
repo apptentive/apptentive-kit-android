@@ -4,13 +4,16 @@ import android.os.Looper
 import apptentive.com.android.concurrent.ConcurrentExecutorQueue
 import apptentive.com.android.concurrent.ExecutorQueue
 import apptentive.com.android.concurrent.SerialExecutorQueue
+import apptentive.com.android.util.InternalUseOnly
 
+@InternalUseOnly
 interface ExecutorFactory {
     fun createMainQueue(): ExecutorQueue
     fun createSerialQueue(name: String): ExecutorQueue
     fun createConcurrentQueue(name: String, maxConcurrentTasks: Int? = null): ExecutorQueue
 }
 
+@InternalUseOnly
 class AndroidExecutorFactoryProvider : Provider<ExecutorFactory> {
     private val factory: ExecutorFactory by lazy { AndroidExecutorFactory() }
     override fun get(): ExecutorFactory = factory

@@ -1,8 +1,8 @@
 package apptentive.com.android.feedback.rating.reviewmanager
 
 import android.app.Activity
-import apptentive.com.android.feedback.IN_APP_REVIEW
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.IN_APP_REVIEW
 import com.google.android.play.core.review.ReviewInfo
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.android.play.core.tasks.Task

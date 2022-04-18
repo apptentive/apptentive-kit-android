@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import androidx.appcompat.view.ContextThemeWrapper
 import apptentive.com.android.R
 import apptentive.com.android.platform.SharedPrefConstants
+import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags
 
@@ -40,6 +41,7 @@ internal fun Context.overrideTheme() {
 /**
  * Allows the usage of [ContextThemeWrapper] to overwrite base Apptentive theme values.
  */
+@InternalUseOnly
 fun ContextThemeWrapper.overrideTheme() {
     val contextTheme = themeResId
 

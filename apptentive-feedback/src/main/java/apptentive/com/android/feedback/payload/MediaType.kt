@@ -1,5 +1,8 @@
 package apptentive.com.android.feedback.payload
 
+import apptentive.com.android.util.InternalUseOnly
+
+@InternalUseOnly
 data class MediaType(
     val type: String,
     val subType: String

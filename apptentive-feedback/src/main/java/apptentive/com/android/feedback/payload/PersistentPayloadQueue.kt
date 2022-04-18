@@ -1,11 +1,11 @@
 package apptentive.com.android.feedback.payload
 
 import android.content.Context
-import apptentive.com.android.feedback.PAYLOADS
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
+import apptentive.com.android.feedback.utils.createStringTable
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogLevel
-import apptentive.com.android.util.createStringTable
+import apptentive.com.android.util.LogTags.PAYLOADS
 
 internal class PersistentPayloadQueue(
     private val dbHelper: PayloadSQLiteHelper

@@ -1,6 +1,5 @@
 package apptentive.com.android.feedback.model
 
-import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
@@ -8,8 +7,9 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionRespon
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponseData
 import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
+import apptentive.com.android.util.InternalUseOnly
 
-@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+@InternalUseOnly
 data class EngagementData(
     val events: EngagementRecords<Event> = EngagementRecords(),
     val interactions: EngagementRecords<InteractionId> = EngagementRecords(),

@@ -5,9 +5,9 @@ import android.content.Context
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveConfiguration
 import apptentive.com.android.feedback.RegisterResult
-import apptentive.com.android.feedback.SYSTEM
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogLevel
+import apptentive.com.android.util.LogTags.SYSTEM
 import java.util.concurrent.TimeUnit
 
 val configuration = ApptentiveConfiguration(

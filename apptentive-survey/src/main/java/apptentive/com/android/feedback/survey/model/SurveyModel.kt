@@ -4,7 +4,9 @@ import android.text.Spanned
 import androidx.annotation.WorkerThread
 import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.Observable
+import apptentive.com.android.util.InternalUseOnly
 
+@InternalUseOnly
 class SurveyModel(
     val interactionId: String,
     questions: List<SurveyQuestion<*>>,

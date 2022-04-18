@@ -21,11 +21,11 @@
 
 package com.apptentive.android.sdk.util;
 
+import static apptentive.com.android.util.LogTags.UTIL;
+
 import java.util.Map;
 
 import apptentive.com.android.util.Log;
-
-import static apptentive.com.android.feedback.LogTags.UTIL;
 
 /**
  * A collection of useful string-related functions

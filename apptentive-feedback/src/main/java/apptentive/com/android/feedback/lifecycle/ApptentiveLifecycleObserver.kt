@@ -5,10 +5,10 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.feedback.ApptentiveClient
-import apptentive.com.android.feedback.LIFE_CYCLE_OBSERVER
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.InternalEvent
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.LIFE_CYCLE_OBSERVER
 
 internal class ApptentiveLifecycleObserver(
     val client: ApptentiveClient,

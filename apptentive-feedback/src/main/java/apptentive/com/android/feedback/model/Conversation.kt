@@ -1,18 +1,18 @@
 package apptentive.com.android.feedback.model
 
-import androidx.annotation.VisibleForTesting
-import apptentive.com.android.feedback.APP_RELEASE
-import apptentive.com.android.feedback.CONVERSATION
-import apptentive.com.android.feedback.DEVICE
-import apptentive.com.android.feedback.ENGAGEMENT_DATA
-import apptentive.com.android.feedback.PERSON
-import apptentive.com.android.feedback.RANDOM_SAMPLING
-import apptentive.com.android.feedback.SDK
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.serialization.json.JsonConverter.toJsonObject
+import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.APP_RELEASE
+import apptentive.com.android.util.LogTags.CONVERSATION
+import apptentive.com.android.util.LogTags.DEVICE
+import apptentive.com.android.util.LogTags.ENGAGEMENT_DATA
+import apptentive.com.android.util.LogTags.PERSON
+import apptentive.com.android.util.LogTags.RANDOM_SAMPLING
+import apptentive.com.android.util.LogTags.SDK
 
-@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+@InternalUseOnly
 data class Conversation(
     val localIdentifier: String,
     @SensitiveDataKey val conversationToken: String? = null,

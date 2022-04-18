@@ -1,11 +1,11 @@
 package apptentive.com.android.feedback.model
 
-import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.model.payloads.PersonPayload
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.serialization.json.JsonConverter.toJsonObject
+import apptentive.com.android.util.InternalUseOnly
 
-@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+@InternalUseOnly
 data class Person(
     val id: String? = null,
     val email: String? = null,
@@ -18,7 +18,7 @@ data class Person(
         return SensitiveDataUtils.logWithSanitizeCheck(javaClass, toJsonObject())
     }
 
-    fun toPersonPayload(): PersonPayload = PersonPayload(
+    internal fun toPersonPayload(): PersonPayload = PersonPayload(
         id = id,
         email = email,
         name = name,

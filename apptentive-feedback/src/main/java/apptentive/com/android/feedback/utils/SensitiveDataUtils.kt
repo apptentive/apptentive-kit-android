@@ -40,14 +40,13 @@ internal object SensitiveDataUtils {
 
     private fun getSanitizedClasses(cls: Class<Any>): List<String> {
         return sanitizedClasses.getOrPut(
-            cls.simpleName,
-            {
-                cls.declaredFields.mapNotNull {
-                    if (it.isAnnotationPresent(SensitiveDataKey::class.java)) it.name.toSnakeCase()
-                    else null
-                }
+            cls.simpleName
+        ) {
+            cls.declaredFields.mapNotNull {
+                if (it.isAnnotationPresent(SensitiveDataKey::class.java)) it.name.toSnakeCase()
+                else null
             }
-        )
+        }
     }
 
     /**
@@ -61,7 +60,7 @@ internal object SensitiveDataUtils {
      * @see apptentive.com.android.serialization.json.JsonConverter.gson
      */
     @VisibleForTesting
-    fun String.toSnakeCase(): String {
+    internal fun String.toSnakeCase(): String {
         val humps = "(?<=.)(?=\\p{Upper})".toRegex()
         return replace(humps, "_").toLowerCase()
     }

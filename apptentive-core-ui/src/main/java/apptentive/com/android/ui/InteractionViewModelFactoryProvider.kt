@@ -2,8 +2,9 @@ package apptentive.com.android.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import apptentive.com.android.core.Callback
+import apptentive.com.android.util.InternalUseOnly
 
+@InternalUseOnly
 class ViewModelFactory(
     private val factory: () -> ViewModel,
 ) : ViewModelProvider.Factory {

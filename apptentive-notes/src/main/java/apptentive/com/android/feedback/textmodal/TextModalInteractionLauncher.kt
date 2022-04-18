@@ -1,10 +1,10 @@
 package apptentive.com.android.feedback.textmodal
 
 import apptentive.com.android.core.DependencyProvider
-import apptentive.com.android.feedback.INTERACTIONS
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.platform.AndroidViewInteractionLauncher
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.INTERACTIONS
 
 internal class TextModalInteractionLauncher : AndroidViewInteractionLauncher<TextModalInteraction>() {
     override fun launchInteraction(

@@ -1,7 +1,9 @@
 package apptentive.com.android.serialization
 
+import apptentive.com.android.util.InternalUseOnly
 import java.io.DataInput
 
+@InternalUseOnly
 class BinaryDecoder(private val input: DataInput) : Decoder {
     override fun decodeBoolean(): Boolean = input.readByte().toInt() != 0
     override fun decodeByte(): Byte = input.readByte()

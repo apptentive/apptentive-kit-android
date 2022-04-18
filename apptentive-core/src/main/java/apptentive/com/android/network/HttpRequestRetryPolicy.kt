@@ -1,10 +1,12 @@
 package apptentive.com.android.network
 
 import apptentive.com.android.core.TimeInterval
+import apptentive.com.android.util.InternalUseOnly
 
 /**
  * Retry policy for HTTP-request.
  */
+@InternalUseOnly
 interface HttpRequestRetryPolicy {
     /**
      * Determines if request should be retried.

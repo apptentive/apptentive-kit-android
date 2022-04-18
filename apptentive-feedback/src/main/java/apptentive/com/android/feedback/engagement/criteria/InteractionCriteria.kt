@@ -1,9 +1,11 @@
 package apptentive.com.android.feedback.engagement.criteria
 
-import apptentive.com.android.feedback.INTERACTIONS
 import apptentive.com.android.feedback.utils.IndentBufferedPrinter
+import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.INTERACTIONS
 
+@InternalUseOnly
 interface InteractionCriteria {
     fun isMet(state: TargetingState, verbose: Boolean = false): Boolean
 }

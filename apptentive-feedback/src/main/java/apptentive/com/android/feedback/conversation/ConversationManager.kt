@@ -5,9 +5,7 @@ import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.Observable
 import apptentive.com.android.core.Provider
 import apptentive.com.android.core.isInThePast
-import apptentive.com.android.feedback.CONVERSATION
 import apptentive.com.android.feedback.Constants
-import apptentive.com.android.feedback.ENGAGEMENT_MANIFEST
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
@@ -24,6 +22,8 @@ import apptentive.com.android.feedback.platform.AndroidUtils.currentTimeSeconds
 import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.CONVERSATION
+import apptentive.com.android.util.LogTags.ENGAGEMENT_MANIFEST
 import apptentive.com.android.util.Result
 import com.apptentive.android.sdk.conversation.LegacyConversationManager
 import com.apptentive.android.sdk.conversation.toConversation

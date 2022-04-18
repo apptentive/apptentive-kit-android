@@ -7,7 +7,9 @@ import android.os.Bundle
 import androidx.annotation.CallSuper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_UNSPECIFIED
+import apptentive.com.android.util.InternalUseOnly
 
+@InternalUseOnly
 open class ApptentiveViewModelActivity : ApptentiveActivity() {
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,6 +25,7 @@ open class ApptentiveViewModelActivity : ApptentiveActivity() {
     }
 }
 
+@InternalUseOnly
 inline fun <reified T : ApptentiveViewModelActivity> Context.startViewModelActivity(
     extras: Bundle? = null
 ) {

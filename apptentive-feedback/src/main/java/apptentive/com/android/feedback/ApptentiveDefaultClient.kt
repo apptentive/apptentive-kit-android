@@ -50,12 +50,13 @@ import apptentive.com.android.feedback.platform.DefaultEngagementDataFactory
 import apptentive.com.android.feedback.platform.DefaultEngagementManifestFactory
 import apptentive.com.android.feedback.platform.DefaultPersonFactory
 import apptentive.com.android.feedback.platform.DefaultSDKFactory
+import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.RuntimeUtils
 import apptentive.com.android.network.HttpClient
 import apptentive.com.android.network.UnexpectedResponseException
-import apptentive.com.android.util.FileUtil
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogLevel
+import apptentive.com.android.util.LogTags.LIFE_CYCLE_OBSERVER
 import apptentive.com.android.util.Result
 import com.apptentive.android.sdk.conversation.DefaultLegacyConversationManager
 import com.apptentive.android.sdk.conversation.LegacyConversationManager

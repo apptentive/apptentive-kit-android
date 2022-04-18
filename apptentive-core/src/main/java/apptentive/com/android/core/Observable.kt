@@ -1,7 +1,9 @@
 package apptentive.com.android.core
 
 import androidx.annotation.WorkerThread
+import apptentive.com.android.util.InternalUseOnly
 
+@InternalUseOnly
 open class Observable<T>(private var _value: T) {
     private val observers = mutableListOf<(T) -> Unit>()
 
@@ -42,6 +44,7 @@ open class Observable<T>(private var _value: T) {
     }
 }
 
+@InternalUseOnly
 interface Subscription {
     fun unsubscribe()
 }

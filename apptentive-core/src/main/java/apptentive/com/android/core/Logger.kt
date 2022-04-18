@@ -1,6 +1,7 @@
 package apptentive.com.android.core
 
 import android.os.Looper
+import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.LogLevel
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -10,6 +11,7 @@ import java.io.StringWriter
  * • writing exception stacktrace
  * • checking if this log statement belongs to the main thread
  */
+@InternalUseOnly
 interface Logger {
     fun log(logLevel: LogLevel, message: String)
     fun log(logLevel: LogLevel, throwable: Throwable)
@@ -17,6 +19,7 @@ interface Logger {
 }
 
 /** Provider-class for a platform-specific logger implementation */
+@InternalUseOnly
 class AndroidLoggerProvider(tag: String) : Provider<Logger> {
     private val logger by lazy { AndroidLogger(tag) }
 

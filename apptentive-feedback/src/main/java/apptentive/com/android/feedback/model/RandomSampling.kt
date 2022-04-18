@@ -1,8 +1,10 @@
 package apptentive.com.android.feedback.model
 
 import apptentive.com.android.core.BuildConfig
+import apptentive.com.android.util.InternalUseOnly
 import kotlin.random.Random
 
+@InternalUseOnly
 data class RandomSampling(
     val percents: MutableMap<String, Double> = mutableMapOf(),
 ) {

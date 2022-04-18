@@ -3,11 +3,12 @@ package apptentive.com.android.ui
 import android.util.SparseArray
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.util.set
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import apptentive.com.android.util.InternalUseOnly
 
+@InternalUseOnly
 class ListViewAdapter : ListAdapter<ListViewItem, ListViewAdapter.ViewHolder<ListViewItem>>(DIFF) {
     private val viewHolderFactoryLookup = SparseArray<ViewHolderFactory>()
 

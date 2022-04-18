@@ -7,7 +7,6 @@ import apptentive.com.android.concurrent.ExecutorQueue
 import apptentive.com.android.concurrent.Executors
 import apptentive.com.android.core.AndroidApplicationInfo
 import apptentive.com.android.core.AndroidExecutorFactoryProvider
-import apptentive.com.android.core.AndroidFileSystemProvider
 import apptentive.com.android.core.AndroidLoggerProvider
 import apptentive.com.android.core.ApplicationInfo
 import apptentive.com.android.core.DependencyProvider
@@ -15,6 +14,7 @@ import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.format
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
+import apptentive.com.android.feedback.platform.AndroidFileSystemProvider
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.feedback.utils.ThrottleUtils
 import apptentive.com.android.network.DefaultHttpClient
@@ -27,7 +27,11 @@ import apptentive.com.android.network.HttpRequest
 import apptentive.com.android.network.asString
 import apptentive.com.android.platform.SharedPrefConstants
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.FEEDBACK
+import apptentive.com.android.util.LogTags.INTERACTIONS
 import apptentive.com.android.util.LogTags.NETWORK
+import apptentive.com.android.util.LogTags.PROFILE_DATA_UPDATE
+import apptentive.com.android.util.LogTags.SYSTEM
 
 sealed class EngagementResult {
     data class InteractionShown(val interactionId: InteractionId) : EngagementResult() {
@@ -59,6 +63,7 @@ object Apptentive {
      * @param apptentiveActivityInfo
      */
 
+    @JvmStatic
     fun registerApptentiveActivityInfoCallback(apptentiveActivityInfo: ApptentiveActivityInfo) {
         Log.d(FEEDBACK, "Activity info callback is registered")
         this.activityInfoCallback = apptentiveActivityInfo
@@ -67,12 +72,13 @@ object Apptentive {
     /**
      * clears the [ApptentiveActivityInfo] reference
      */
+    @JvmStatic
     fun unregisterApptentiveActivityInfoCallback() {
         Log.d(FEEDBACK, "Activity info callback is unregistered")
         this.activityInfoCallback = null
     }
 
-    fun getApptentiveActivityCallback() = activityInfoCallback
+    fun getApptentiveActivityCallback(): ApptentiveActivityInfo? = activityInfoCallback
 
     @Suppress("MemberVisibilityCanBePrivate")
     val registered

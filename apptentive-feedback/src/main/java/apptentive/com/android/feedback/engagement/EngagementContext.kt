@@ -15,12 +15,14 @@ import apptentive.com.android.feedback.model.InvocationData
 import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.feedback.model.payloads.Payload
 import apptentive.com.android.feedback.payload.PayloadSender
+import apptentive.com.android.util.InternalUseOnly
 
 /**
  * Wrapper class around [Engagement] object.
  * Allows capturing platform specific context (e.g. [android.content.Context]) before making an
  * actual engagement call.
  */
+@InternalUseOnly
 open class EngagementContext(
     private val engagement: Engagement,
     private val payloadSender: PayloadSender,

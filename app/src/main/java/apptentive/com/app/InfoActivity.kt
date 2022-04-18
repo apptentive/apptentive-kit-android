@@ -15,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import apptentive.com.android.feedback.Constants
 import apptentive.com.android.feedback.model.Device
-import apptentive.com.android.feedback.utils.RuntimeUtils
 import apptentive.com.android.util.Log
 import apptentive.com.app.databinding.ActivityDebugInfoBinding
 import java.text.SimpleDateFormat
@@ -48,7 +47,7 @@ class InfoActivity : AppCompatActivity() {
 
         setStyles(binding, isApptentiveTheme)
         setSDKInfo(binding)
-        setAppInfo(binding)
+        // setAppInfo(binding)
         setDeviceInfo(binding)
 
         binding.themeSwitch.isChecked = isApptentiveTheme
@@ -100,7 +99,7 @@ class InfoActivity : AppCompatActivity() {
         binding.sdkRecycler.adapter = adapter
     }
 
-    private fun setAppInfo(binding: ActivityDebugInfoBinding) {
+/*    private fun setAppInfo(binding: ActivityDebugInfoBinding) {
         val appInfo = RuntimeUtils.getApplicationInfo(this)
         val deviceItems = listOf(
             InfoItem("Label", getString(applicationInfo.labelRes)),
@@ -114,7 +113,7 @@ class InfoActivity : AppCompatActivity() {
         )
         val adapter = InfoItemAdapter(deviceItems)
         binding.appRecycler.adapter = adapter
-    }
+    }*/
 
     private fun setDeviceInfo(binding: ActivityDebugInfoBinding) {
         val device = getDevice()

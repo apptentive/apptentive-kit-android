@@ -11,7 +11,7 @@ import apptentive.com.android.serialization.json.JsonConverter.toJsonObject
 import apptentive.com.android.util.generateUUID
 
 @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
-class PersonPayload(
+internal class PersonPayload(
     nonce: String = generateUUID(),
     val id: String? = null,
     val email: String? = null,

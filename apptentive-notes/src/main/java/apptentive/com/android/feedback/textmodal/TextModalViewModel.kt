@@ -4,11 +4,11 @@ import androidx.lifecycle.ViewModel
 import apptentive.com.android.core.Callback
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.EngagementResult
-import apptentive.com.android.feedback.INTERACTIONS
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.INTERACTIONS
 
 internal class TextModalViewModel : ViewModel()
 {

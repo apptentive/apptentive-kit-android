@@ -1,11 +1,13 @@
-package apptentive.com.android.util
+package apptentive.com.android.feedback.utils
 
 import androidx.annotation.WorkerThread
 import apptentive.com.android.core.DependencyProvider
-import apptentive.com.android.core.FileSystem
+import apptentive.com.android.feedback.platform.FileSystem
+import apptentive.com.android.util.InternalUseOnly
 import java.io.File
 
-object FileUtil {
+@InternalUseOnly
+internal object FileUtil {
     private val fileSystem: FileSystem by lazy {
         DependencyProvider.of<FileSystem>()
     }
