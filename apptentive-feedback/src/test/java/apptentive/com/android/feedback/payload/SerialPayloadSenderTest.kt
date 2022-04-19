@@ -35,7 +35,7 @@ class SerialPayloadSenderTest : TestCase() {
         val service = MockPayloadService {
             when (it.nonce) {
                 "payload-2" -> Result.Error(
-                    error = PayloadRejectedException(it)
+                    error = PayloadSendException(it)
                 )
                 else -> Result.Success(it)
             }
@@ -48,13 +48,12 @@ class SerialPayloadSenderTest : TestCase() {
             payloadQueue = MockPayloadQueue(),
             callback = ::payloadCallback
         )
+
+        sender.setPayloadService(service)
+
         sender.sendPayload(payload1)
         sender.sendPayload(payload2)
         sender.sendPayload(payload3)
-
-        assertResults()
-
-        sender.setPayloadService(service)
 
         assertResults(
             "success: ${payload1.nonce}",

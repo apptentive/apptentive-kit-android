@@ -53,10 +53,15 @@ internal class SerialPayloadSender(
 
     private fun shouldDeletePayload(error: Throwable): Boolean {
         return when (error) {
-            is PayloadRejectedException -> {
-                return true
+            is PayloadSendException -> {
+                Log.d(PAYLOADS, "Payload failed to send... deleting")
+                true
             }
-            else -> false
+            else -> {
+                // Still delete, but it's for an unexpected reason
+                Log.e(PAYLOADS, "Unknown payload exception... deleting", error)
+                true
+            }
         }
     }
 

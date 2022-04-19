@@ -346,6 +346,10 @@ internal class ApptentiveDefaultClient(
 
     @WorkerThread
     private fun onPayloadSendFinish(result: Result<PayloadData>) {
+        when (result) {
+            is Result.Success -> Log.d(PAYLOADS, "Payload of type \'${result.data.type}\' successfully sent")
+            is Result.Error -> Log.e(PAYLOADS, "Payload failed to send: ${result.error.cause?.message}")
+        }
     }
 
     //endregion
