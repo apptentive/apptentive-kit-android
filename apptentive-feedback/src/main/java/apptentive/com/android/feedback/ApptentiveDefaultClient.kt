@@ -57,6 +57,7 @@ import apptentive.com.android.network.UnexpectedResponseException
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogLevel
 import apptentive.com.android.util.LogTags.LIFE_CYCLE_OBSERVER
+import apptentive.com.android.util.LogTags.PAYLOADS
 import apptentive.com.android.util.Result
 import com.apptentive.android.sdk.conversation.DefaultLegacyConversationManager
 import com.apptentive.android.sdk.conversation.LegacyConversationManager
