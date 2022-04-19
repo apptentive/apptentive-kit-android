@@ -46,6 +46,13 @@ class DefaultTargetingStateTest : TestCase() {
 
         assertThat(state.getValue(application.version_code)).isEqualTo(100000)
         assertThat(state.getValue(application.version_name)).isEqualTo(Version.parse("1.0.0"))
+
+        val stateBeta = state.copy(
+            appRelease = mockAppRelease.copy(
+                versionName = "1.0.beta01"
+            )
+        )
+        assertThat(stateBeta.getValue(application.version_name)).isEqualTo(Version.parse("1.0.beta01"))
     }
 
     @Test
@@ -56,6 +63,13 @@ class DefaultTargetingStateTest : TestCase() {
             )
         )
         assertThat(state.getValue(sdk.version)).isEqualTo(Version.parse("6.5.4"))
+
+        val stateAlpha = state.copy(
+            sdk = mockSdk.copy(
+                version = "6.5.4.0-alpha01"
+            )
+        )
+        assertThat(stateAlpha.getValue(sdk.version)).isEqualTo(Version.parse("6.5.4.0-alpha01"))
     }
 
     @Test
@@ -366,7 +380,7 @@ class DefaultTargetingStateTest : TestCase() {
         )
 
         assertThat(state.getValue(device.os_name)).isEqualTo("device_os_name")
-        assertThat(state.getValue(device.os_version)).isEqualTo(Version(12, 0, 0))
+        assertThat(state.getValue(device.os_version)).isEqualTo(Version(12, 0, 0, 0))
         assertThat(state.getValue(device.os_build)).isEqualTo("device_os_build")
         assertThat(state.getValue(device.manufacturer)).isEqualTo("device_manufacturer")
         assertThat(state.getValue(device.model)).isEqualTo("device_model")
@@ -418,7 +432,7 @@ class DefaultTargetingStateTest : TestCase() {
         )
 
         assertThat(state.getValue(device.os_name)).isEqualTo("device_os_name")
-        assertThat(state.getValue(device.os_version)).isEqualTo(Version(12, 0, 0))
+        assertThat(state.getValue(device.os_version)).isEqualTo(Version(12, 0, 0, 0))
         assertThat(state.getValue(device.os_build)).isEqualTo("device_os_build")
         assertThat(state.getValue(device.manufacturer)).isEqualTo("device_manufacturer")
         assertThat(state.getValue(device.model)).isEqualTo("device_model")

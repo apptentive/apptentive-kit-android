@@ -31,9 +31,9 @@ internal data class DefaultTargetingState(
     override fun getValue(field: Field): Any? {
         return when (field) {
             is application.version_code -> appRelease.versionCode
-            is application.version_name -> Version.tryParse(appRelease.versionName)
+            is application.version_name -> Version.parse(appRelease.versionName)
 
-            is sdk.version -> Version.tryParse(sdk.version)
+            is sdk.version -> Version.parse(sdk.version)
 
             is current_time -> DateTime(timeSource.getTimeSeconds())
 

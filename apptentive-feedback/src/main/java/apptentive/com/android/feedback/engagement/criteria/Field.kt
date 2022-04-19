@@ -399,7 +399,7 @@ internal fun Field.convertValue(value: Any?): Any? {
         Field.Type.Version -> {
             return when (converted) {
                 is Version -> converted
-                else -> Version.tryParse(converted.toString())
+                else -> Version.parse(converted.toString())
             }
         }
         Field.Type.Any -> converted as Any

@@ -113,7 +113,7 @@ internal fun LegacyCustomData.toLatestFormat() = CustomData(
     content = mapValues(::transformCustomDataValues)
 )
 
-private fun transformCustomDataValues(it: Map.Entry<String, Serializable>): Any =
+private fun transformCustomDataValues(it: Map.Entry<String, Serializable>): Any? =
     when (val value = it.value) {
         is LegacyDateTime -> value.toLatestFormat()
         is LegacyVersion -> value.toLatestFormat()

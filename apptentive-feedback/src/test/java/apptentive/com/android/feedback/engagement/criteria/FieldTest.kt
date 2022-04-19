@@ -149,7 +149,7 @@ class FieldTest : TestCase() {
         assertThat(parse("device/custom_data/my_key").convertValue("String") is Any)
         assertThat(parse("person/custom_data/my_key").convertValue(500) is Any)
         // Declared types
-        assertThat(parse("device/radio_version").convertValue(Version(30, 19, 20)) is Version)
+        assertThat(parse("device/radio_version").convertValue(Version(30, 19, 20, 0)) is Version)
         assertThat(parse("interactions/12345/invokes/total").convertValue(20.25) is Number)
         assertThat(parse("interactions/12345/invokes/total").convertValue(20.25) !is String)
     }
