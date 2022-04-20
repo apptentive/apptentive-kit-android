@@ -1,7 +1,6 @@
 package apptentive.com.app
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.os.Build
@@ -14,13 +13,9 @@ import androidx.annotation.ColorRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import apptentive.com.android.feedback.Constants
-import apptentive.com.android.feedback.model.Device
-import apptentive.com.android.util.Log
 import apptentive.com.app.databinding.ActivityDebugInfoBinding
 import java.text.SimpleDateFormat
 import java.util.Locale
-import java.util.TimeZone
-import java.util.UUID
 
 class InfoActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,12 +37,11 @@ class InfoActivity : AppCompatActivity() {
         binding.appIcon.setImageResource(applicationInfo.icon)
         val sdf = SimpleDateFormat(BUILD_TIME_FORMAT, Locale.US)
         val buildDateTime = sdf.format(BuildConfig.APP_BUILD_DATE)
-        binding.appVersionText.text = getString(R.string.sdk_version, Constants.SDK_VERSION)
         binding.buildDateTimeText.text = getString(R.string.build_date_time, buildDateTime)
 
         setStyles(binding, isApptentiveTheme)
         setSDKInfo(binding)
-        // setAppInfo(binding)
+        setAppInfo(binding)
         setDeviceInfo(binding)
 
         binding.themeSwitch.isChecked = isApptentiveTheme
@@ -89,7 +83,7 @@ class InfoActivity : AppCompatActivity() {
         val deviceItems = listOf(
             InfoItem("Key", configuration.apptentiveKey),
             InfoItem("Signature", configuration.apptentiveSignature),
-            InfoItem("Log Level", Log.logLevel.name),
+            InfoItem("Log Level", configuration.logLevel.name),
             InfoItem("Sanitize Sensitive Logs", configuration.shouldSanitizeLogMessages.toString()),
             InfoItem("API Version", Constants.API_VERSION.toString()),
             InfoItem("SDK Version", Constants.SDK_VERSION),
@@ -99,24 +93,32 @@ class InfoActivity : AppCompatActivity() {
         binding.sdkRecycler.adapter = adapter
     }
 
-/*    private fun setAppInfo(binding: ActivityDebugInfoBinding) {
-        val appInfo = RuntimeUtils.getApplicationInfo(this)
+    private fun setAppInfo(binding: ActivityDebugInfoBinding) {
+        val packageInfo = packageManager.getPackageInfo(packageName, 0)
+        val ai = packageInfo.applicationInfo
+        val debuggable =
+            ai != null && ai.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE != 0
+        val targetSdkVersion = ai?.targetSdkVersion ?: 0
+        val minSdkVersion: String =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) ai.minSdkVersion.toString()
+            else "NEED SDK N+"
+
         val deviceItems = listOf(
             InfoItem("Label", getString(applicationInfo.labelRes)),
-            InfoItem("Package Name", appInfo.packageName),
-            InfoItem("Version Code", appInfo.versionCode.toString()),
-            InfoItem("Version Name", appInfo.versionName),
-            InfoItem("Target SDK Version", appInfo.targetSdkVersion.toString()),
-            InfoItem("Min SDK Version", if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) applicationInfo.minSdkVersion.toString() else "NEED SDK N+"),
+            InfoItem("Package Name", packageName),
+            InfoItem("Version Code", packageInfo.versionCode.toString()),
+            InfoItem("Version Name", packageInfo.versionName),
+            InfoItem("Target SDK Version", targetSdkVersion.toString()),
+            InfoItem("Min SDK Version", minSdkVersion),
             InfoItem("Build Type", BuildConfig.BUILD_TYPE),
-            InfoItem("Debuggable", appInfo.debuggable.toString()),
+            InfoItem("Debuggable", debuggable.toString()),
         )
         val adapter = InfoItemAdapter(deviceItems)
         binding.appRecycler.adapter = adapter
-    }*/
+    }
 
     private fun setDeviceInfo(binding: ActivityDebugInfoBinding) {
-        val device = getDevice()
+        val device = getDevice(this)
 
         // Display Info
         val displayMetrics = DisplayMetrics()
@@ -229,29 +231,4 @@ class InfoActivity : AppCompatActivity() {
         TelephonyManager.SIM_STATE_CARD_RESTRICTED -> "CARD RESTRICTED"
         else -> "LOADED OR PRESENT"
     }
-
-    private fun getDevice() = Device(
-        osName = "Android",
-        osVersion = Build.VERSION.RELEASE,
-        osBuild = Build.VERSION.INCREMENTAL,
-        osApiLevel = Build.VERSION.SDK_INT,
-        manufacturer = Build.MANUFACTURER,
-        model = Build.MODEL,
-        board = Build.BOARD,
-        product = Build.PRODUCT,
-        brand = Build.BRAND,
-        cpu = Build.CPU_ABI,
-        device = Build.DEVICE,
-        uuid = UUID.randomUUID().toString(),
-        buildType = Build.TYPE,
-        buildId = Build.ID,
-        carrier = (getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager).simOperatorName,
-        currentCarrier = (getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager).networkOperatorName,
-        bootloaderVersion = Build::class.java.getField("BOOTLOADER").get(null) as String,
-        radioVersion = Build.getRadioVersion(),
-        localeCountryCode = Locale.getDefault().country,
-        localeLanguageCode = Locale.getDefault().language,
-        localeRaw = Locale.getDefault().toString(),
-        utcOffset = TimeZone.getDefault().rawOffset / 1000
-    )
 }

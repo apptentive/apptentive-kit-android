@@ -2,12 +2,11 @@ package apptentive.com.app
 
 import android.app.Application
 import android.content.Context
+import android.util.Log
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveConfiguration
 import apptentive.com.android.feedback.RegisterResult
-import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogLevel
-import apptentive.com.android.util.LogTags.SYSTEM
 import java.util.concurrent.TimeUnit
 
 val configuration = ApptentiveConfiguration(
@@ -30,13 +29,13 @@ class MyApplication : Application() {
         super.onCreate()
         Apptentive.register(this, configuration) {
             when (it) {
-                RegisterResult.Success -> Log.v(SYSTEM, "Registration successful")
+                RegisterResult.Success -> Log.v("SYSTEM", "Registration successful")
                 is RegisterResult.Failure -> Log.d(
-                    SYSTEM,
+                    "SYSTEM",
                     "Registration failed with response code: ${it.responseCode} and error message: ${it.message}"
                 )
                 is RegisterResult.Exception -> Log.e(
-                    SYSTEM,
+                    "SYSTEM",
                     "Registration failed with exception: ${it.error}"
                 )
             }
