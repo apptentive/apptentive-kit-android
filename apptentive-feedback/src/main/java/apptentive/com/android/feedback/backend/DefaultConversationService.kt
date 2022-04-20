@@ -2,6 +2,7 @@ package apptentive.com.android.feedback.backend
 
 import apptentive.com.android.core.getTimeSeconds
 import apptentive.com.android.feedback.model.AppRelease
+import apptentive.com.android.feedback.model.Configuration
 import apptentive.com.android.feedback.model.Device
 import apptentive.com.android.feedback.model.EngagementManifest
 import apptentive.com.android.feedback.model.Person
@@ -71,6 +72,22 @@ internal class DefaultConversationService(
         sendRequest(request, callback)
     }
 
+    override fun fetchConfiguration(
+        conversationToken: String,
+        conversationId: String,
+        callback: (Result<Configuration>) -> Unit
+    ) {
+        val request = createJsonRequest(
+            method = HttpMethod.GET,
+            path = "conversations/$conversationId/configuration",
+            headers = MutableHttpHeaders().apply {
+                this["Authorization"] = "Bearer $conversationToken"
+            },
+            responseReader = ConfigurationReader
+        )
+        sendRequest(request, callback)
+    }
+
     override fun sendPayloadRequest(
         payload: PayloadData,
         conversationId: String,
@@ -129,6 +146,25 @@ private object EngagementManifestReader :
         val cacheControl = parseCacheControl(response.headers[CACHE_CONTROL]?.value)
         val manifest = HttpJsonResponseReader(EngagementManifest::class.java).read(response)
         return manifest.copy(expiry = getTimeSeconds() + cacheControl.maxAgeSeconds)
+    }
+
+    private fun parseCacheControl(value: String?): CacheControl {
+        if (value != null) {
+            try {
+                return CacheControl.parse(value)
+            } catch (e: Exception) {
+                Log.e(CONVERSATION, "Unable to parse cache control value: $value", e)
+            }
+        }
+        return CacheControl()
+    }
+}
+
+private object ConfigurationReader : HttpResponseReader<Configuration> {
+    override fun read(response: HttpNetworkResponse): Configuration {
+        val cacheControl = parseCacheControl(response.headers[CACHE_CONTROL]?.value)
+        val configuration = HttpJsonResponseReader(Configuration::class.java).read(response)
+        return configuration.copy(expiry = getTimeSeconds() + cacheControl.maxAgeSeconds)
     }
 
     private fun parseCacheControl(value: String?): CacheControl {

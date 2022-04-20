@@ -111,7 +111,10 @@ internal class ApptentiveDefaultClient(
                         else -> registerCallback?.invoke(RegisterResult.Exception(it.error))
                     }
                 }
-                is Result.Success -> conversationManager.tryFetchEngagementManifest()
+                is Result.Success -> {
+                    conversationManager.tryFetchEngagementManifest()
+                    conversationManager.tryFetchAppConfiguration()
+                }
             }
         }
         conversationManager.activeConversation.observe { conversation ->
@@ -172,6 +175,7 @@ internal class ApptentiveDefaultClient(
             ProcessLifecycleOwner.get().lifecycle.addObserver(
                 ApptentiveLifecycleObserver(this, executors.state) {
                     conversationManager.tryFetchEngagementManifest()
+                    conversationManager.tryFetchAppConfiguration()
                 }
             )
         }

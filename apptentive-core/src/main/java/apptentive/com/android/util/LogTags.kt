@@ -15,6 +15,7 @@ object LogTags {
     val ENGAGEMENT_DATA = LogTag("ENGAGEMENT DATA")
     val ENGAGEMENT_MANIFEST = LogTag("ENGAGEMENT MANIFEST")
     val FEEDBACK = LogTag("FEEDBACK")
+    val CONFIGURATION = LogTag("CONFIGURATION")
     val SYSTEM = LogTag("SYSTEM")
     val CRITERIA = LogTag("CRITERIA")
     val PAYLOADS = LogTag("PAYLOADS")

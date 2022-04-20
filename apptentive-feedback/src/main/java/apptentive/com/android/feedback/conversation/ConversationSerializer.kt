@@ -9,6 +9,7 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionId
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponseData
 import apptentive.com.android.feedback.model.AppRelease
+import apptentive.com.android.feedback.model.Configuration
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.CustomData
 import apptentive.com.android.feedback.model.Device
@@ -335,6 +336,38 @@ internal object Serializers {
         }
     }
 
+    val configurationSerializer: TypeSerializer<Configuration> by lazy {
+        object : TypeSerializer<Configuration> {
+            override fun encode(encoder: Encoder, value: Configuration) {
+                encoder.encodeDouble(value.expiry)
+                messageCenterConfigurationSerializer.encode(encoder, value.messageCenter)
+            }
+
+            override fun decode(decoder: Decoder): Configuration {
+                return Configuration(
+                    expiry = decoder.decodeDouble(),
+                    messageCenter = messageCenterConfigurationSerializer.decode(decoder)
+                )
+            }
+        }
+    }
+
+    val messageCenterConfigurationSerializer: TypeSerializer<Configuration.MessageCenter> by lazy {
+        object : TypeSerializer<Configuration.MessageCenter> {
+            override fun encode(encoder: Encoder, value: Configuration.MessageCenter) {
+                encoder.encodeDouble(value.fgPoll)
+                encoder.encodeDouble(value.bgPoll)
+            }
+
+            override fun decode(decoder: Decoder): Configuration.MessageCenter {
+                return Configuration.MessageCenter(
+                    fgPoll = decoder.decodeDouble(),
+                    bgPoll = decoder.decodeDouble()
+                )
+            }
+        }
+    }
+
     val randomSamplingSerializer: TypeSerializer<RandomSampling> by lazy {
         object : TypeSerializer<RandomSampling> {
             override fun encode(encoder: Encoder, value: RandomSampling) {
@@ -579,6 +612,7 @@ internal object Serializers {
                 personSerializer.encode(encoder, value.person)
                 sdkSerializer.encode(encoder, value.sdk)
                 appReleaseSerializer.encode(encoder, value.appRelease)
+                configurationSerializer.encode(encoder, value.configuration)
                 randomSamplingSerializer.encode(encoder, value.randomSampling)
                 engagementDataSerializer.encode(encoder, value.engagementData)
             }
@@ -592,6 +626,7 @@ internal object Serializers {
                     person = personSerializer.decode(decoder),
                     sdk = sdkSerializer.decode(decoder),
                     appRelease = appReleaseSerializer.decode(decoder),
+                    configuration = configurationSerializer.decode(decoder),
                     randomSampling = randomSamplingSerializer.decode(decoder),
                     engagementManifest = EngagementManifest(), // EngagementManifest is serialized separately
                     engagementData = engagementDataSerializer.decode(decoder)

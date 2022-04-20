@@ -22,6 +22,7 @@ import apptentive.com.android.feedback.platform.AndroidUtils.currentTimeSeconds
 import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.CONFIGURATION
 import apptentive.com.android.util.LogTags.CONVERSATION
 import apptentive.com.android.util.LogTags.ENGAGEMENT_MANIFEST
 import apptentive.com.android.util.Result
@@ -208,6 +209,45 @@ internal class ConversationManager(
             }
         } else {
             Log.d(CONVERSATION, "Engagement manifest up to date")
+        }
+    }
+
+    @WorkerThread
+    fun tryFetchAppConfiguration() {
+        val conversation = activeConversationSubject.value
+        val configuration = conversation.configuration
+
+        if (isInThePast(configuration.expiry) || isDebuggable) {
+            Log.d(CONVERSATION, "Fetching configuration")
+            val token = conversation.conversationToken
+            val id = conversation.conversationId
+            if (token != null && id != null) {
+                conversationService.fetchConfiguration(
+                    conversationToken = token,
+                    conversationId = id
+                ) {
+                    when (it) {
+                        is Result.Success -> {
+                            Log.d(CONVERSATION, "Configuration successfully fetched")
+                            Log.v(CONFIGURATION, it.data.toString())
+                            activeConversationSubject.value = activeConversationSubject.value.copy(
+                                configuration = it.data
+                            )
+                        }
+                        is Result.Error -> {
+                            Log.e(CONVERSATION, "Error while fetching configuration", it.error)
+                        }
+                    }
+                }
+            } else {
+                Log.d(
+                    CONVERSATION,
+                    "Fetch configuration is not called. " +
+                        "Conversation token is $token, conversation id is $id"
+                )
+            }
+        } else {
+            Log.d(CONVERSATION, "Configuration up to date")
         }
     }
 

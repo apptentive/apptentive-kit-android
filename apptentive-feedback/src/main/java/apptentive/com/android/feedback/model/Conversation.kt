@@ -5,6 +5,7 @@ import apptentive.com.android.serialization.json.JsonConverter.toJsonObject
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.APP_RELEASE
+import apptentive.com.android.util.LogTags.CONFIGURATION
 import apptentive.com.android.util.LogTags.CONVERSATION
 import apptentive.com.android.util.LogTags.DEVICE
 import apptentive.com.android.util.LogTags.ENGAGEMENT_DATA
@@ -21,6 +22,7 @@ data class Conversation(
     val person: Person,
     val sdk: SDK,
     val appRelease: AppRelease,
+    val configuration: Configuration = Configuration(),
     val randomSampling: RandomSampling = RandomSampling(),
     val engagementData: EngagementData = EngagementData(),
     val engagementManifest: EngagementManifest = EngagementManifest()
@@ -37,6 +39,7 @@ data class Conversation(
         Log.v(PERSON, person.toString())
         Log.v(SDK, sdk.toString())
         Log.v(APP_RELEASE, appRelease.toString())
+        Log.v(CONFIGURATION, configuration.toString())
         Log.v(RANDOM_SAMPLING, randomSampling.toString())
         Log.v(ENGAGEMENT_DATA, engagementData.toString())
         Log.v(CONVERSATION, "\n$dashLine CONVERSATION STATE CHANGE END $dashLine")
