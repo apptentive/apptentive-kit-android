@@ -262,8 +262,21 @@
 <!--        <item name="apptentiveHeaderAlpha">1.0</item>-->
 <!--        <item name="apptentiveSubheaderAlpha">0.8</item>-->
 
-        <!-- Text Font -->
-<!--        <item name="apptentiveTextFontDefault">@font/pacifico_regular</item>-->
+        <!-- Font Family Start -->
+<!--        <item name="apptentiveFontFamilyDefault">@font/montserrat</item>-->
+<!--        <item name="apptentiveFontFamilyMediumDefault">@font/montserrat</item>-->
+<!--        <item name="apptentiveFontFamilySubhead">@font/montserrat</item>-->
+
+        <!-- Dialog Only -->
+<!--        <item name="apptentiveFontFamilyTitle">@font/montserrat</item>-->
+<!--        <item name="apptentiveFontFamilyButtonBorderless">@font/montserrat</item>-->
+
+        <!-- Survey Only -->
+<!--        <item name="apptentiveFontFamilyToolbar">@font/montserrat</item>-->
+<!--        <item name="apptentiveFontFamilyBody1">@font/montserrat</item>-->
+<!--        <item name="apptentiveFontFamilyCaption">@font/montserrat</item>-->
+<!--        <item name="apptentiveFontFamilyButtonColored">@font/montserrat</item>-->
+        <!-- Font Family End -->
 
         <!-- Typeface Start -->
 <!--        <item name="apptentiveTypefaceDefault">@integer/apptentive_typeface_monospace</item>-->

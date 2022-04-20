@@ -106,13 +106,22 @@
         <attr name="apptentiveHeaderAlpha" format="float|dimension|reference" />
         <attr name="apptentiveSubheaderAlpha" format="float|dimension|reference" />
 
-        <!-- Text Alpha -->
-        <attr name="apptentiveTextFontDefault" format="reference"/>
+        <!-- Text Font Family -->
+        <attr name="apptentiveFontFamilyDefault" format="reference"/>
+        <attr name="apptentiveFontFamilyMediumDefault" format="reference"/>
+        <attr name="apptentiveFontFamilyToolbar" format="reference"/>
+        <attr name="apptentiveFontFamilyTitle" format="reference"/>
+        <attr name="apptentiveFontFamilySubhead" format="reference"/>
+        <attr name="apptentiveFontFamilyBody1" format="reference"/>
+        <attr name="apptentiveFontFamilyCaption" format="reference"/>
+        <attr name="apptentiveFontFamilyButtonBorderless" format="reference"/>
+        <attr name="apptentiveFontFamilyButtonColored" format="reference"/>
 
         <!-- Typeface -->
         <attr name="apptentiveTypefaceDefault" format="integer|reference"/>
         <attr name="apptentiveTypefaceDialogTitle" format="integer|reference" />
         <attr name="apptentiveTypefaceDialogTitleOrMessageOnly" format="integer|reference" />
+        <attr name="apptentiveTypefaceToolbar" format="integer|reference" />
         <attr name="apptentiveTypefaceTitle" format="integer|reference" />
         <attr name="apptentiveTypefaceSurveyIntroduction" format="integer|reference" />
         <attr name="apptentiveTypefaceSubhead" format="integer|reference" />

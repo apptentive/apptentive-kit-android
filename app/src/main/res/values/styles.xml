@@ -136,8 +136,21 @@
 <!--        <item name="apptentiveHeaderAlpha">0.2</item>-->
 <!--        <item name="apptentiveSubheaderAlpha">1.0</item>-->
 
-        <!-- Text Font -->
-<!--        <item name="apptentiveTextFontDefault">@font/montserrat</item>-->
+        <!-- Font Family Start -->
+<!--        <item name="apptentiveFontFamilyDefault">@font/montserrat</item>-->
+<!--        <item name="apptentiveFontFamilyMediumDefault">@font/montserrat</item>-->
+<!--        <item name="apptentiveFontFamilySubhead">@font/montserrat</item>-->
+
+        <!-- Dialog Only -->
+<!--        <item name="apptentiveFontFamilyTitle">@font/montserrat</item>-->
+<!--        <item name="apptentiveFontFamilyButtonBorderless">@font/montserrat</item>-->
+
+        <!-- Survey Only -->
+<!--        <item name="apptentiveFontFamilyToolbar">@font/montserrat</item>-->
+<!--        <item name="apptentiveFontFamilyBody1">@font/montserrat</item>-->
+<!--        <item name="apptentiveFontFamilyCaption">@font/montserrat</item>-->
+<!--        <item name="apptentiveFontFamilyButtonColored">@font/montserrat</item>-->
+        <!-- Font Family End -->
 
         <!-- Typeface Start -->
 <!--        <item name="apptentiveTypefaceDefault">@integer/apptentive_typeface_monospace</item>-->
@@ -208,7 +221,7 @@
 
     <!-- Text Styles Start -->
     <style name="Custom.Text" parent="Widget.MaterialComponents.TextView">
-        <item name="android:fontFamily">?apptentiveTextFontDefault</item>
+        <item name="android:fontFamily">?apptentiveFontFamilyDefault</item>
         <item name="android:textColor">?colorOnBackground</item>
     </style>
 
@@ -499,13 +512,13 @@
 
     <style name="Custom.Survey.CheckBox" parent="Widget.AppCompat.CompoundButton.CheckBox">
         <item name="android:textColor">#253B56</item>
-        <item name="android:fontFamily">?apptentiveTextFontDefault</item>
+        <item name="android:fontFamily">?apptentiveFontFamilyDefault</item>
         <item name="android:buttonTint">?colorSecondary</item>
     </style>
 
     <style name="Custom.Survey.RadioButton" parent="Widget.AppCompat.CompoundButton.RadioButton">
         <item name="android:textColor">#253B56</item>
-        <item name="android:fontFamily">?apptentiveTextFontDefault</item>
+        <item name="android:fontFamily">?apptentiveFontFamilyDefault</item>
         <item name="android:buttonTint">?colorSecondary</item>
     </style>
 
