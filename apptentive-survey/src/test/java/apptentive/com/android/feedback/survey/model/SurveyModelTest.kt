@@ -17,7 +17,7 @@ class SurveyModelTest : TestCase() {
             createSingleLineQuestion(id = "id_3")
         )
         model.questionsStream.observe {
-            it.forEach{ question ->
+            it.forEach { question ->
                 addResult(question)
             }
         }

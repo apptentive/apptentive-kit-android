@@ -55,5 +55,6 @@ class LinkNavigatorTest : TestCase() {
         onEngage = {
             addResult(it)
             EngagementResult.InteractionNotShown("No runnable interactions")
-        })
+        }
+    )
 }

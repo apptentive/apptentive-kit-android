@@ -79,7 +79,6 @@ internal class SurveyActivity : BaseSurveyActivity() {
                         })
                     }
                     recyclerView.smoothScrollToPosition(firstErrorPosition)
-
                 } else {
                     val errorView = layoutManger.findViewByPosition(firstErrorPosition)
                     errorView?.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
@@ -103,7 +102,8 @@ internal class SurveyActivity : BaseSurveyActivity() {
                         },
                         negativeButton = ApptentiveGenericDialog.DialogButton(negativeButtonMessage ?: getString(R.string.close)) {
                             viewModel.exit(showConfirmation = false)
-                        })
+                        }
+                    )
 
                     confirmationDialog?.show()
                 }

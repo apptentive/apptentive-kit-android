@@ -165,7 +165,7 @@ internal class MultiChoiceQuestionListItem(
         }
 
         private fun updateSelection(item: MultiChoiceQuestionListItem) {
-            item.answerChoices.forEachIndexed { index, choice->
+            item.answerChoices.forEachIndexed { index, choice ->
                 cachedViews[index].compoundButton.isChecked = choice.isChecked
                 cachedViews[index].textInputLayout.isVisible = choice.isTextInputVisible
             }

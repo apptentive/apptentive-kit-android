@@ -121,18 +121,18 @@ class MultiChoiceQuestionTest {
             )
         )
 
-        //no answers
+        // no answers
         assertThat(question.hasValidAnswer).isFalse()
 
         assertThat(question.canSubmitOptionalQuestion).isTrue()
 
-        //update answer
+        // update answer
         question.updateAnswerChoice(choiceId = "choice_1", isChecked = true)
 
-        //valid
+        // valid
         assertThat(question.hasValidAnswer).isFalse()
 
-        //Can not submit survey with one question answered. Checks lower boundary of the minimum selection
+        // Can not submit survey with one question answered. Checks lower boundary of the minimum selection
         assertThat(question.canSubmitOptionalQuestion).isFalse()
 
         assertThat(question.choices).isEqualTo(
@@ -145,16 +145,16 @@ class MultiChoiceQuestionTest {
             )
         )
 
-        //Update answer, check another option
+        // Update answer, check another option
         question.updateAnswerChoice(choiceId = "choice_2", isChecked = true)
 
-        //valid
+        // valid
         assertThat(question.hasValidAnswer).isTrue()
 
-        //Can submit the Survey, as it satisfies the minSelection
+        // Can submit the Survey, as it satisfies the minSelection
         assertThat(question.canSubmitOptionalQuestion).isTrue()
 
-        //Update answer, check all the 5 options
+        // Update answer, check all the 5 options
         question.updateAnswerChoice(choiceId = "choice_3", isChecked = true)
         question.updateAnswerChoice(choiceId = "choice_4", isChecked = true)
         question.updateAnswerChoice(choiceId = "choice_5", isChecked = true)
@@ -169,10 +169,10 @@ class MultiChoiceQuestionTest {
             )
         )
 
-        //Has valid answer
+        // Has valid answer
         assertThat(question.hasValidAnswer).isFalse()
 
-        //Invalid optional multi select question. Validates upper bound/max selection
+        // Invalid optional multi select question. Validates upper bound/max selection
         assertThat(question.canSubmitOptionalQuestion).isFalse()
     }
 

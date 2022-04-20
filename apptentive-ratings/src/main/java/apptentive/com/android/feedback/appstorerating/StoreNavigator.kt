@@ -11,7 +11,6 @@ import apptentive.com.android.feedback.platform.tryStartActivity
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.INTERACTIONS
 
-
 internal object StoreNavigator {
     @MainThread
     fun navigate(

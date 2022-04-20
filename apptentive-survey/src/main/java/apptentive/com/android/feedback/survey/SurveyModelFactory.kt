@@ -10,15 +10,19 @@ internal interface SurveyModelFactory {
     fun getSurveyModel(): SurveyModel
 }
 
-internal class SurveyModelFactoryProvider(val context: EngagementContext,
-                                          val interaction: SurveyInteraction) : Provider<SurveyModelFactory> {
+internal class SurveyModelFactoryProvider(
+    val context: EngagementContext,
+    val interaction: SurveyInteraction
+) : Provider<SurveyModelFactory> {
     override fun get(): SurveyModelFactory {
         return DefaultSurveyModelFactory(context, interaction)
     }
 }
 
-private class DefaultSurveyModelFactory(val engagementContext: EngagementContext,
-                                        val interaction: SurveyInteraction) : SurveyModelFactory {
+private class DefaultSurveyModelFactory(
+    val engagementContext: EngagementContext,
+    val interaction: SurveyInteraction
+) : SurveyModelFactory {
     override fun getSurveyModel(): SurveyModel {
         return SurveyModel(
             interactionId = interaction.id,

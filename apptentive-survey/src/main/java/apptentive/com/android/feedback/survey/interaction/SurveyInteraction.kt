@@ -57,40 +57,40 @@ internal class SurveyInteraction(
 
     override fun toString(): String {
         return javaClass.simpleName +
-                "(id=$id, " +
-                "name=\"$name\", " +
-                "description=\"$description\", " +
-                "submitText=\"$submitText\", " +
-                "requiredText=\"$requiredText\", " +
-                "validationError=\"$validationError\", " +
-                "showSuccessMessage=$showSuccessMessage, " +
-                "successMessage=\"$successMessage\", " +
-                "closeConfirmTitle=\"$closeConfirmTitle\", " +
-                "closeConfirmMessage=\"$closeConfirmMessage, " +
-                "closeConfirmCloseText=\"$closeConfirmCloseText\", " +
-                "closeConfirmBackText=\"$closeConfirmBackText\", " +
-                "isRequired=$isRequired, " +
-                "questions=$questions), " +
-                "termsAndConditions=$termsAndConditions"
+            "(id=$id, " +
+            "name=\"$name\", " +
+            "description=\"$description\", " +
+            "submitText=\"$submitText\", " +
+            "requiredText=\"$requiredText\", " +
+            "validationError=\"$validationError\", " +
+            "showSuccessMessage=$showSuccessMessage, " +
+            "successMessage=\"$successMessage\", " +
+            "closeConfirmTitle=\"$closeConfirmTitle\", " +
+            "closeConfirmMessage=\"$closeConfirmMessage, " +
+            "closeConfirmCloseText=\"$closeConfirmCloseText\", " +
+            "closeConfirmBackText=\"$closeConfirmBackText\", " +
+            "isRequired=$isRequired, " +
+            "questions=$questions), " +
+            "termsAndConditions=$termsAndConditions"
     }
 
     override fun equals(other: Any?): Boolean {
         return when {
             this === other -> true
             other !is SurveyInteraction ||
-                    name != other.name ||
-                    description != other.description ||
-                    submitText != other.submitText ||
-                    requiredText != other.requiredText ||
-                    validationError != other.validationError ||
-                    showSuccessMessage != other.showSuccessMessage ||
-                    successMessage != other.successMessage ||
-                    closeConfirmTitle != other.closeConfirmTitle ||
-                    closeConfirmMessage != other.closeConfirmMessage ||
-                    closeConfirmBackText != other.closeConfirmBackText ||
-                    isRequired != other.isRequired ||
-                    questions != other.questions ||
-                    termsAndConditions != other.termsAndConditions -> false
+                name != other.name ||
+                description != other.description ||
+                submitText != other.submitText ||
+                requiredText != other.requiredText ||
+                validationError != other.validationError ||
+                showSuccessMessage != other.showSuccessMessage ||
+                successMessage != other.successMessage ||
+                closeConfirmTitle != other.closeConfirmTitle ||
+                closeConfirmMessage != other.closeConfirmMessage ||
+                closeConfirmBackText != other.closeConfirmBackText ||
+                isRequired != other.isRequired ||
+                questions != other.questions ||
+                termsAndConditions != other.termsAndConditions -> false
             else -> true
         }
     }

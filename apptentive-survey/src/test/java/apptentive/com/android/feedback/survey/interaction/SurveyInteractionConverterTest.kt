@@ -6,7 +6,7 @@ import apptentive.com.android.serialization.json.JsonConverter
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class SurveyInteractionConverterTest: TestCase() {
+class SurveyInteractionConverterTest : TestCase() {
     @Test
     fun `SurveyInteractionTypeConverter sets null default value for the missing json attributes`() {
         val jsonString = """

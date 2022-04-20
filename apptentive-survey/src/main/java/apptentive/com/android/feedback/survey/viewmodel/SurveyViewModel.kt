@@ -79,7 +79,8 @@ class SurveyViewModel(
     val termsAndConditions = model.termsAndConditionsLinkText
 
     val surveyCancelConfirmationDisplay = with(model) {
-        SurveyCancelConfirmationDisplay(closeConfirmTitle,
+        SurveyCancelConfirmationDisplay(
+            closeConfirmTitle,
             closeConfirmMessage,
             closeConfirmBackText,
             closeConfirmCloseText
@@ -132,10 +133,11 @@ class SurveyViewModel(
 
         updateModel {
             if (model.allRequiredAnswersAreValid) {
-                onSubmit(model.questions
-                    .filter { it.hasValidAnswer } // filter out questions with invalid answers
-                    .map { it.id to it.answer } // map question id to its answer
-                    .toMap()
+                onSubmit(
+                    model.questions
+                        .filter { it.hasValidAnswer } // filter out questions with invalid answers
+                        .map { it.id to it.answer } // map question id to its answer
+                        .toMap()
                 )
 
                 if (!model.successMessage.isNullOrBlank()) {
@@ -179,7 +181,7 @@ class SurveyViewModel(
             // When the consumer uses the X button or the back button,
             //  try to show the confirmation dialog if user interacted with the survey
             if (submitAttempted || anyQuestionWasAnswered) {
-                //user interacted
+                // user interacted
                 showConfirmationEvent.postValue(true)
             } else {
                 // we don't need to show any confirmation as the customer didn't interact
@@ -241,7 +243,7 @@ class SurveyViewModel(
                 // 2. model provides a validation error
                 // 3. at least one of the required questions is not answered
                 val messageState: SurveySubmitMessageState? = if (submitAttempted && model.validationError != null && !model.allRequiredAnswersAreValid) {
-                    SurveySubmitMessageState(model.validationError,false)
+                    SurveySubmitMessageState(model.validationError, false)
                 } else {
                     null
                 }

@@ -40,7 +40,8 @@ class SurveyModel(
     @WorkerThread
     fun <T : SurveyQuestion<*>> getQuestion(questionId: String): T {
         val question = questions.find { question ->
-            question.id == questionId } ?: throw IllegalArgumentException("Question not found: $questionId")
+            question.id == questionId
+        } ?: throw IllegalArgumentException("Question not found: $questionId")
 
         @Suppress("UNCHECKED_CAST")
         return question as T

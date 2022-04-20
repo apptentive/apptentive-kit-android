@@ -1,9 +1,9 @@
 package apptentive.com.android.feedback.appstorerating
 
 import android.content.Context
-import apptentive.com.android.platform.SharedPrefConstants
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.interactions.InteractionLauncher
+import apptentive.com.android.platform.SharedPrefConstants
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.INTERACTIONS
 

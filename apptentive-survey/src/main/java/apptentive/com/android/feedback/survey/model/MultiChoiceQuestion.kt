@@ -93,7 +93,7 @@ internal class MultiChoiceQuestion(
             ?: throw IllegalArgumentException("Unknown choice id: ${choice.id}")
 
         return config.type == ChoiceType.select_option ||
-                config.type == ChoiceType.select_other && !choice.value.isNullOrBlank()
+            config.type == ChoiceType.select_other && !choice.value.isNullOrBlank()
     }
 
     //region Equality

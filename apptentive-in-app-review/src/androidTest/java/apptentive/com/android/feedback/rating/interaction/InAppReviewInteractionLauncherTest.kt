@@ -25,7 +25,6 @@ class InAppReviewInteractionLauncherTest : TestCase() {
     // Context of the app under test.
     private var appContext = InstrumentationRegistry.getInstrumentation().targetContext
 
-
     @Test
     fun testInAppReviewNotSupported() {
         val launcher: InAppReviewInteractionLauncher =
@@ -43,7 +42,6 @@ class InAppReviewInteractionLauncherTest : TestCase() {
             "engage com.apptentive#InAppRatingDialog#not_supported"
         )
     }
-
 
     @Test
     fun testInAppReviewFailed() {
@@ -135,5 +133,3 @@ class MockInAppReviewManagerFactory(private val manager: InAppReviewManager) :
     InAppReviewManagerFactory {
     override fun createReviewManager(context: Context): InAppReviewManager = manager
 }
-
-

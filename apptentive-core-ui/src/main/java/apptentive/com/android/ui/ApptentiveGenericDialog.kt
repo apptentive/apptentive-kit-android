@@ -11,7 +11,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textview.MaterialTextView
 
-class ApptentiveGenericDialog: DialogFragment() {
+class ApptentiveGenericDialog : DialogFragment() {
 
     data class DialogButton(val title: String, val action: (() -> Unit))
 

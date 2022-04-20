@@ -94,8 +94,7 @@ internal class SurveyFooterListItem(
                     errorMessageView.text = messageState.message
                     errorMessageView.visibility = View.VISIBLE
                 }
-            }
-            else {
+            } else {
                 errorMessageView.visibility = View.GONE
             }
         }

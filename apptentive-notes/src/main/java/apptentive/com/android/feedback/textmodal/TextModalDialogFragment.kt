@@ -87,4 +87,3 @@ internal class TextModalDialogFragment : DialogFragment() {
         super.onCancel(dialog)
     }
 }
-

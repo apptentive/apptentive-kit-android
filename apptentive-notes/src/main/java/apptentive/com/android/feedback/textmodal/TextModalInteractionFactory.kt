@@ -2,7 +2,6 @@ package apptentive.com.android.feedback.textmodal
 
 import apptentive.com.android.core.Provider
 
-
 internal interface TextModalInteractionFactory {
     fun getTextModalInteraction(): TextModalInteraction
 }

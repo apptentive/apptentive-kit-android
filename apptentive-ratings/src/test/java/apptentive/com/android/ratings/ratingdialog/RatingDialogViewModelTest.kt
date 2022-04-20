@@ -55,7 +55,7 @@ class RatingDialogViewModelTest : TestCase() {
         viewModel.onCancel()
 
         val engageResults = listOf(
-             EngageArgs(
+            EngageArgs(
                 event = Event.internal("rate", "RatingDialog"),
                 interactionId = interactionId,
             ),

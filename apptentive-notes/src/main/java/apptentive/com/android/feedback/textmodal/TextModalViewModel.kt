@@ -10,8 +10,7 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionRespon
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.INTERACTIONS
 
-internal class TextModalViewModel : ViewModel()
-{
+internal class TextModalViewModel : ViewModel() {
     val interaction = DependencyProvider.of<TextModalInteractionFactory>().getTextModalInteraction()
     val context = DependencyProvider.of<EngagementContextFactory>().engagementContext()
     val title = interaction.title

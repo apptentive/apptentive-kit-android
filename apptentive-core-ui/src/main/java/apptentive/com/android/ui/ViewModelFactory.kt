@@ -14,4 +14,3 @@ class ViewModelFactory(
         return viewModel as T
     }
 }
-

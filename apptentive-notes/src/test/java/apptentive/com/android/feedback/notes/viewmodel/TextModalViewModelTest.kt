@@ -57,12 +57,14 @@ class TextModalViewModelTest : TestCase() {
     @Test
     fun testInvokeInteraction() {
         val targetInteractionId = "target_id"
-        DependencyProvider.register(MockEngagementContextFactory {
-            createEngagementContext(
-                null,
-                { EngagementResult.InteractionShown(targetInteractionId) }
-            )
-        })
+        DependencyProvider.register(
+            MockEngagementContextFactory {
+                createEngagementContext(
+                    null,
+                    { EngagementResult.InteractionShown(targetInteractionId) }
+                )
+            }
+        )
 
         val viewModel = createViewModel()
 
@@ -94,13 +96,15 @@ class TextModalViewModelTest : TestCase() {
 
     @Test
     fun testInvokeMissingInteraction() {
-        DependencyProvider.register(MockEngagementContextFactory {
-            createEngagementContext(
-                null
-            ) {
-                EngagementResult.InteractionNotShown("No runnable interactions")
+        DependencyProvider.register(
+            MockEngagementContextFactory {
+                createEngagementContext(
+                    null
+                ) {
+                    EngagementResult.InteractionNotShown("No runnable interactions")
+                }
             }
-        })
+        )
         val viewModel = createViewModel()
 
         // check action title
@@ -139,16 +143,18 @@ class TextModalViewModelTest : TestCase() {
         // NOTE: this is not supported on the backend yet!!!
         val targetInteractionId = "target_id"
 
-        DependencyProvider.register(MockEngagementContextFactory {
-            createEngagementContext(
-                {
-                    // trick it to think an interaction has been invoked
-                    if (it.event.name == TARGET_EVENT) EngagementResult.InteractionShown(targetInteractionId)
-                    else EngagementResult.InteractionNotShown("No runnable interactions")
-                },
-                null
-            )
-        })
+        DependencyProvider.register(
+            MockEngagementContextFactory {
+                createEngagementContext(
+                    {
+                        // trick it to think an interaction has been invoked
+                        if (it.event.name == TARGET_EVENT) EngagementResult.InteractionShown(targetInteractionId)
+                        else EngagementResult.InteractionNotShown("No runnable interactions")
+                    },
+                    null
+                )
+            }
+        )
 
         val viewModel = createViewModel()
 
@@ -186,15 +192,17 @@ class TextModalViewModelTest : TestCase() {
     fun testMissingEventAction() {
         // NOTE: this is not supported on the backend yet!!!
 
-        DependencyProvider.register(MockEngagementContextFactory {
-            createEngagementContext(
-                {
-                    // no interactions to invoke
-                    EngagementResult.InteractionNotShown("No runnable interactions")
-                },
-                null
-            )
-        })
+        DependencyProvider.register(
+            MockEngagementContextFactory {
+                createEngagementContext(
+                    {
+                        // no interactions to invoke
+                        EngagementResult.InteractionNotShown("No runnable interactions")
+                    },
+                    null
+                )
+            }
+        )
 
         val viewModel = createViewModel()
 
@@ -234,9 +242,11 @@ class TextModalViewModelTest : TestCase() {
 
     @Test
     fun testDismissAction() {
-        DependencyProvider.register(MockEngagementContextFactory {
-            createEngagementContext(null, null)
-        })
+        DependencyProvider.register(
+            MockEngagementContextFactory {
+                createEngagementContext(null, null)
+            }
+        )
         val viewModel = createViewModel()
 
         // check action title
@@ -269,9 +279,11 @@ class TextModalViewModelTest : TestCase() {
 
     @Test
     fun testCancel() {
-        DependencyProvider.register(MockEngagementContextFactory {
-            createEngagementContext(null, null)
-        })
+        DependencyProvider.register(
+            MockEngagementContextFactory {
+                createEngagementContext(null, null)
+            }
+        )
         val viewModel = createViewModel()
 
         // invoke action

@@ -12,17 +12,17 @@ internal class DefaultInAppReviewManagerFactory : InAppReviewManagerFactory {
 
     override fun createReviewManager(context: Context): InAppReviewManager {
         return try {
-             when {
+            when {
                 GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context) != SUCCESS -> {
                     Log.e(
                         IN_APP_REVIEW,
                         "Unable to create InAppReviewManager: Google Play Services not available" +
-                                " ${
-                                    getStatusMessage(
-                                        GoogleApiAvailability.getInstance()
-                                            .isGooglePlayServicesAvailable(context)
-                                    )
-                                }"
+                            " ${
+                            getStatusMessage(
+                                GoogleApiAvailability.getInstance()
+                                    .isGooglePlayServicesAvailable(context)
+                            )
+                            }"
                     )
                     UnSupportedReviewManager()
                 }
@@ -34,14 +34,12 @@ internal class DefaultInAppReviewManagerFactory : InAppReviewManagerFactory {
                         Log.d(IN_APP_REVIEW, "Failed to launch in-app review flow: make sure you pass Activity object into your Apptentive.engage() calls.")
                         UnSupportedReviewManager()
                     }
-
                 }
             }
         } catch (exception: Exception) {
-            Log.e(IN_APP_REVIEW,"Unable to create Google Play in-App review manager", exception)
+            Log.e(IN_APP_REVIEW, "Unable to create Google Play in-App review manager", exception)
             UnSupportedReviewManager()
         }
-
     }
 
     private fun getStatusMessage(result: Int): String? {

@@ -14,7 +14,7 @@ internal class RatingDialogInteraction(
 ) : Interaction(id, InteractionType.RatingDialog) {
     override fun toString(): String {
         return "${javaClass.simpleName} (id=$id, title=\"$title\", body=\"$body\", " +
-                "rate_text=\"$rateText\", remind_text=\"$remindText\", decline_text=\"$declineText\")"
+            "rate_text=\"$rateText\", remind_text=\"$remindText\", decline_text=\"$declineText\")"
     }
 
     companion object {
