@@ -145,7 +145,11 @@ class DefaultHttpClient(
 
         // give up
         val errorMessage = networkResponse.data.toString(Charsets.UTF_8)
-        throw UnexpectedResponseException(statusCode, statusMessage, errorMessage)
+
+        when (statusCode) {
+            in 400..499 -> throw SendErrorException(statusCode, statusMessage, errorMessage)
+            else -> throw UnexpectedResponseException(statusCode, statusMessage, errorMessage)
+        }
     }
 
     //endregion

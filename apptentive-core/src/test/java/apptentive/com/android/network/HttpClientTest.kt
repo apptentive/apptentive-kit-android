@@ -174,7 +174,7 @@ class HttpClientTest : TestCase() {
         assertResults(
             "request start",
             "request complete",
-            "request failed: 401 (Unauthorized)"
+            "request exception: Send error: 401 (Unauthorized)"
         )
 
         dispatchRequests()
