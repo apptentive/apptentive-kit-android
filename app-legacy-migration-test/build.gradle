@@ -44,7 +44,7 @@ dependencies {
 
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
-    legacyImplementation 'com.apptentive:apptentive-android:5.8.0'
+    legacyImplementation 'com.apptentive:apptentive-android:5.8.3'
 
     currentImplementation project(':apptentive-core')
     currentImplementation project(':apptentive-core-ui')
