@@ -7,9 +7,9 @@
 -->
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:alpha="0.12" android:color="?attr/apptentiveTextColorDialogTextButton" android:state_pressed="true"/>
-    <item android:alpha="0.20" android:color="?attr/apptentiveTextColorDialogTextButton" android:state_focused="true" android:state_hovered="true"/>
-    <item android:alpha="0.20" android:color="?attr/apptentiveTextColorDialogTextButton" android:state_focused="true"/>
-    <item android:alpha="0.20" android:color="?attr/apptentiveTextColorDialogTextButton" android:state_hovered="true"/>
-    <item android:alpha="0.00" android:color="?attr/apptentiveTextColorDialogTextButton"/>
+    <item android:alpha="0.12" android:color="?attr/apptentiveTextColorButtonBorderless" android:state_pressed="true"/>
+    <item android:alpha="0.20" android:color="?attr/apptentiveTextColorButtonBorderless" android:state_focused="true" android:state_hovered="true"/>
+    <item android:alpha="0.20" android:color="?attr/apptentiveTextColorButtonBorderless" android:state_focused="true"/>
+    <item android:alpha="0.20" android:color="?attr/apptentiveTextColorButtonBorderless" android:state_hovered="true"/>
+    <item android:alpha="0.00" android:color="?attr/apptentiveTextColorButtonBorderless"/>
 </selector>

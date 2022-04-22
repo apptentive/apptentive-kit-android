@@ -40,14 +40,14 @@
         <item name="apptentiveNoteTitleOrMessageOnlyImageStyle"/>
         <item name="apptentiveNoteMessageTextStyle">@style/Apptentive.TextAppearance.Message.Dialog</item>
         <item name="apptentiveNoteButtonLayoutStyle">@style/Apptentive.Dialog.ButtonLayout.Note</item>
-        <item name="apptentiveNoteButtonStyle">?apptentiveDialogButtonStyle</item>
+        <item name="apptentiveNoteButtonStyle">@style/Apptentive.Widget.Dialog.Button.Stacked</item>
 
         <!-- Apptentive Rating Dialog Styles -->
         <item name="apptentiveRatingDialogLayoutStyle">@style/Apptentive.Dialog.Layout</item>
         <item name="apptentiveRatingDialogHeaderImageStyle"/>
         <item name="apptentiveRatingDialogTitleTextStyle">@style/Apptentive.TextAppearance.Title.Dialog.WithMessage</item>
         <item name="apptentiveRatingDialogTitleImageStyle"/>
-        <item name="apptentiveRatingDialogButtonStyle">@style/Apptentive.Widget.Dialog.Button.RatingDialog</item>
+        <item name="apptentiveRatingDialogButtonStyle">@style/Apptentive.Widget.Dialog.Button.Stacked.RatingDialog</item>
         <item name="apptentiveRatingDialogMessageTextStyle">@style/Apptentive.TextAppearance.Message.Dialog</item>
 
         <!-- Generic Dialog Styles -->
@@ -117,7 +117,7 @@
         <item name="apptentiveTextColorDialogTitleWithMessage">?colorOnSurface</item>
         <item name="apptentiveTextColorDialogTitleOrMessageOnly">?colorOnSurface</item>
         <item name="apptentiveTextColorSubhead">?colorOnBackground</item>
-        <item name="apptentiveTextColorDialogTextButton">?colorSecondary</item>
+        <item name="apptentiveTextColorButtonBorderless">?colorSecondary</item>
 
         <!-- Survey -->
         <item name="apptentiveTextColorTitle">?colorOnBackground</item>
@@ -371,20 +371,21 @@
     <style name="Apptentive.Widget.Dialog.Button" parent="Widget.MaterialComponents.Button.TextButton">
         <item name="android:typeface">?apptentiveTypefaceButtonBorderless</item>
         <item name="android:textSize">?apptentiveTextSizeButtonBorderless</item>
-        <item name="android:textColor">?apptentiveTextColorDialogTextButton</item>
+        <item name="android:textColor">?apptentiveTextColorButtonBorderless</item>
         <item name="android:fontFamily">?apptentiveFontFamilyButtonBorderless</item>
         <item name="backgroundTint">@color/apptentive_mtrl_btn_text_btn_bg_color_selector</item>
         <item name="rippleColor">@color/apptentive_mtrl_btn_ripple_color</item>
     </style>
 
     <style name="Apptentive.Widget.Dialog.Button.Stacked">
+        <item name="android:textAlignment">viewEnd</item>
         <item name="android:layout_gravity">end|center_vertical</item>
     </style>
 
     <style name="Apptentive.Widget.Dialog.Button.SideBySide" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
         <item name="android:typeface">?apptentiveTypefaceButtonBorderless</item>
         <item name="android:textSize">?apptentiveTextSizeButtonBorderless</item>
-        <item name="android:textColor">?apptentiveTextColorDialogTextButton</item>
+        <item name="android:textColor">?apptentiveTextColorButtonBorderless</item>
         <item name="android:fontFamily">?apptentiveFontFamilyButtonBorderless</item>
         <item name="backgroundTint">@color/apptentive_mtrl_btn_text_btn_bg_color_selector</item>
         <item name="rippleColor">@color/apptentive_mtrl_btn_ripple_color</item>
@@ -397,11 +398,9 @@
         <item name="android:layout_marginEnd">@dimen/apptentive_love_dialog_no_button_end_margin</item>
     </style>
 
-    <style name="Apptentive.Widget.Dialog.Button.RatingDialog">
+    <style name="Apptentive.Widget.Dialog.Button.Stacked.RatingDialog">
         <item name="android:layout_marginStart">@dimen/apptentive_dialog_title_spacing</item>
         <item name="android:layout_marginEnd">@dimen/apptentive_dialog_title_spacing</item>
-        <item name="android:layout_gravity">end</item>
-        <item name="android:textAlignment">viewEnd</item>
     </style>
     <!-- Dialog Widgets End -->
 

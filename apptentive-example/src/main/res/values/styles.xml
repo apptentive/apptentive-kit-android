@@ -179,7 +179,7 @@
 <!--        <item name="apptentiveRatingDialogLayoutStyle">@style/Custom.RatingDialog.Layout</item>-->
 <!--        <item name="apptentiveRatingDialogHeaderImageStyle">@style/Custom.RatingDialog.HeaderImage</item>-->
 <!--        <item name="apptentiveRatingDialogTitleTextStyle">@style/Custom.RatingDialog.Title</item>-->
-<!--        <item name="apptentiveRatingDialogTitleImageStyle">@style/Custom.RatingDialog.Title.Image</item>-->
+<!--        <item name="apptentiveRatingDialogTitleImageStyle">@style/Custom.RatingDialog.TitleImage</item>-->
 <!--        <item name="apptentiveRatingDialogButtonStyle">@style/Custom.Dialog.Button.RatingDialog</item>-->
 <!--        <item name="apptentiveRatingDialogMessageTextStyle">@style/Custom.RatingDialog.Message</item>-->
 
