@@ -19,8 +19,8 @@
     <dimen name="apptentive_dialog_top_padding">18dp</dimen>
     <dimen name="apptentive_dialog_bottom_padding">2dp</dimen>
     <dimen name="apptentive_dialog_title_letter_spacing">.02</dimen>
-    <dimen name="apptentive_love_dialog_button_max_width">160dp</dimen>
-    <dimen name="apptentive_love_dialog_no_button_end_margin">8dp</dimen>
+    <dimen name="apptentive_side_by_side_button_max_width">160dp</dimen>
+    <dimen name="apptentive_side_by_side_negative_button_end_margin">8dp</dimen>
     <dimen name="apptentive_rating_dialog_bottom_padding">2dp</dimen>
 
     <!-- Activities -->

@@ -261,6 +261,7 @@
     <!-- Survey Text Styles Start -->
     <style name="Apptentive.TextAppearance.Title.Survey">
         <item name="android:textColor">?apptentiveTextColorSurveyTitle</item>
+        <item name="android:typeface">?apptentiveTypefaceToolbar</item>
         <item name="android:textAppearance">?textAppearanceHeadline6</item>
         <item name="android:fontFamily">?apptentiveFontFamilyToolbar</item>
         <item name="android:accessibilityHeading" tools:ignore="NewApi">true</item>
@@ -389,13 +390,13 @@
         <item name="android:fontFamily">?apptentiveFontFamilyButtonBorderless</item>
         <item name="backgroundTint">@color/apptentive_mtrl_btn_text_btn_bg_color_selector</item>
         <item name="rippleColor">@color/apptentive_mtrl_btn_ripple_color</item>
-        <item name="android:maxWidth">@dimen/apptentive_love_dialog_button_max_width</item>
+        <item name="android:maxWidth">@dimen/apptentive_side_by_side_button_max_width</item>
     </style>
 
     <style name="Apptentive.Widget.Dialog.Button.SideBySide.Yes"/>
 
     <style name="Apptentive.Widget.Dialog.Button.SideBySide.No">
-        <item name="android:layout_marginEnd">@dimen/apptentive_love_dialog_no_button_end_margin</item>
+        <item name="android:layout_marginEnd">@dimen/apptentive_side_by_side_negative_button_end_margin</item>
     </style>
 
     <style name="Apptentive.Widget.Dialog.Button.Stacked.RatingDialog">
