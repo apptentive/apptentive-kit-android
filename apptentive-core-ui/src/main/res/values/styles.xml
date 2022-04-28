@@ -419,10 +419,10 @@
     <!-- https://material.io/components/checkboxes/android -->
     <style name="Apptentive.Widget.Survey.CheckBox" parent="Widget.AppCompat.CompoundButton.CheckBox">
         <item name="android:textSize">?apptentiveTextSizeBody1</item>
-        <item name="android:textColor">@color/apptentive_mtrl_selection_control_text_tint</item>
+        <item name="android:textColor">?apptentiveTextColorBody1</item>
         <item name="android:fontFamily">?apptentiveFontFamilyBody1</item>
         <item name="android:typeface">?apptentiveTypefaceBody1</item>
-        <item name="android:buttonTint">@color/apptentive_mtrl_selection_control_button_tint</item>
+        <item name="buttonTint">@color/apptentive_mtrl_selection_control_button_tint</item>
         <item name="android:minHeight">@dimen/apptentive_survey_radio_checkbox_min_height</item>
         <item name="android:layout_marginStart">@dimen/apptentive_survey_radio_checkbox_range_horizontal_margin</item>
         <item name="android:layout_marginEnd">@dimen/apptentive_survey_radio_checkbox_range_horizontal_margin</item>
@@ -433,10 +433,10 @@
     <!-- https://material.io/components/radio-buttons/android -->
     <style name="Apptentive.Widget.Survey.RadioButton" parent="Widget.AppCompat.CompoundButton.RadioButton">
         <item name="android:textSize">?apptentiveTextSizeBody1</item>
-        <item name="android:textColor">@color/apptentive_mtrl_selection_control_text_tint</item>
+        <item name="android:textColor">?apptentiveTextColorBody1</item>
         <item name="android:fontFamily">?apptentiveFontFamilyBody1</item>
         <item name="android:typeface">?apptentiveTypefaceBody1</item>
-        <item name="android:buttonTint">@color/apptentive_mtrl_selection_control_button_tint</item>
+        <item name="buttonTint">@color/apptentive_mtrl_selection_control_button_tint</item>
         <item name="android:minHeight">@dimen/apptentive_survey_radio_checkbox_min_height</item>
         <item name="android:layout_marginStart">@dimen/apptentive_survey_radio_checkbox_range_horizontal_margin</item>
         <item name="android:layout_marginEnd">@dimen/apptentive_survey_radio_checkbox_range_horizontal_margin</item>
