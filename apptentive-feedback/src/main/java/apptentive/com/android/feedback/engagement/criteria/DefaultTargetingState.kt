@@ -30,6 +30,7 @@ internal data class DefaultTargetingState(
 ) : TargetingState {
     override fun getValue(field: Field): Any? {
         return when (field) {
+            is application.build_type -> appRelease.debug
             is application.version_code -> appRelease.versionCode
             is application.version_name -> Version.parse(appRelease.versionName)
 

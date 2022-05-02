@@ -19,6 +19,7 @@ sealed class Field(val type: Type, val description: String) {
     }
 
     object application {
+        object build_type : Field(type = Type.Boolean, description = "application build type")
         object version_code : Field(type = Type.Number, description = "application versionCode")
         object version_name : Field(type = Type.Version, description = "application versionName")
     }
@@ -278,6 +279,7 @@ sealed class Field(val type: Type, val description: String) {
             val components = path.split("/")
             when (components[0]) {
                 "application" -> when (components[1]) {
+                    "debug", "release" -> return application.build_type
                     "version_code" -> return application.version_code
                     "version_name" -> return application.version_name
                 }
