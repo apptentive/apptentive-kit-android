@@ -314,7 +314,7 @@ object Apptentive {
     fun addCustomPersonData(key: String?, value: Number?) {
         stateExecutor.execute {
             if (key != null && value != null) {
-                client.updatePerson(customData = Pair(key, value.toDouble()))
+                client.updatePerson(customData = Pair(key, value.toString().toDouble()))
             }
         }
     }
@@ -379,7 +379,7 @@ object Apptentive {
     fun addCustomDeviceData(key: String?, value: Number?) {
         stateExecutor.execute {
             if (key != null && value != null) {
-                client.updateDevice(customData = Pair(key, value.toDouble()))
+                client.updateDevice(customData = Pair(key, value.toString().toDouble()))
             }
         }
     }

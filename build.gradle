@@ -69,7 +69,7 @@ buildscript {
         jfrogVersion = '6.0.0-private06'
 
         // Change this depending on where you are publishing to
-        repoVersion = sonatypeVersion
+        repoVersion = jfrogVersion
     }
 
     repositories {
