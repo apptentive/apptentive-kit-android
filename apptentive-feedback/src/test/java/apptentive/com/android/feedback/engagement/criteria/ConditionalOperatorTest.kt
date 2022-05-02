@@ -15,7 +15,6 @@ import apptentive.com.android.feedback.engagement.criteria.ConditionalOperator.C
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
-import org.junit.Ignore
 import org.junit.Test
 
 class ConditionalOperatorTest {
@@ -224,14 +223,24 @@ class ConditionalOperatorTest {
     }
 
     @Test
-    @Ignore
     fun beforeDate() {
         val op = ConditionalOperator.parse(BEFORE)
+
+        assertTrue(op.apply(DateTime(1.0), DateTime(2.0)))
+        assertTrue(op.apply(DateTime(19999999.0), DateTime(20000000.0)))
+
+        assertFalse(op.apply(DateTime(2.0), DateTime(1.0)))
+        assertFalse(op.apply(DateTime(20000000.0), DateTime(19999999.0)))
     }
 
     @Test
-    @Ignore
     fun afterDate() {
         val op = ConditionalOperator.parse(AFTER)
+
+        assertTrue(op.apply(DateTime(2.0), DateTime(1.0)))
+        assertTrue(op.apply(DateTime(20000000.0), DateTime(19999999.0)))
+
+        assertFalse(op.apply(DateTime(1.0), DateTime(2.0)))
+        assertFalse(op.apply(DateTime(19999999.0), DateTime(20000000.0)))
     }
 }

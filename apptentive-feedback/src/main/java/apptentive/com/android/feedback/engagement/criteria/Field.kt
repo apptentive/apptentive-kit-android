@@ -393,8 +393,7 @@ internal fun Field.convertValue(value: Any?): Any? {
         Field.Type.DateTime -> {
             return when (converted) {
                 is DateTime -> converted
-                is Long -> DateTime(converted.toDouble())
-                is Double -> DateTime(converted)
+                is Double -> DateTime(DateTime.now().seconds + converted)
                 else -> throw IllegalArgumentException("Illegal value for DateTime: $converted (${converted?.javaClass?.simpleName})")
             }
         }

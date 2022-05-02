@@ -1,6 +1,9 @@
 package apptentive.com.android.feedback.engagement.criteria
 
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 internal interface ConditionalOperator {
     fun apply(first: Any?, second: Any?): Boolean
@@ -330,7 +333,10 @@ internal interface ConditionalOperator {
         }
 
         private fun toPrettyDate(value: Any?): String {
-            return value.toString()
+            return if (value is DateTime) {
+                val dateFormat = SimpleDateFormat("yyyy-dd-MM HH:mm:ss:SSS", Locale.US)
+                dateFormat.format(Date(value.seconds.toLong() * 1000))
+            } else value.toString()
         }
     }
 }
