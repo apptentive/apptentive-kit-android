@@ -97,7 +97,87 @@ class MultiChoiceQuestionTest {
     }
 
     @Test
-    fun testMultiSelect() {
+    fun testOptionalMultiSelectWithResponseRange() {
+        val question = createMultiChoiceQuestion(
+            required = false,
+            allowMultipleAnswers = true,
+            minSelections = 2,
+            maxSelections = 4,
+            answerChoiceConfigs = listOf(
+                AnswerChoiceConfiguration(ChoiceType.select_option, "choice_1", "Choice 1"),
+                AnswerChoiceConfiguration(ChoiceType.select_option, "choice_2", "Choice 2"),
+                AnswerChoiceConfiguration(ChoiceType.select_option, "choice_3", "Choice 3"),
+                AnswerChoiceConfiguration(ChoiceType.select_option, "choice_4", "Choice 4"),
+                AnswerChoiceConfiguration(ChoiceType.select_option, "choice_5", "Choice 5")
+            )
+        )
+        assertThat(question.choices).isEqualTo(
+            listOf(
+                Answer.Choice(id = "choice_1"),
+                Answer.Choice(id = "choice_2"),
+                Answer.Choice(id = "choice_3"),
+                Answer.Choice(id = "choice_4"),
+                Answer.Choice(id = "choice_5")
+            )
+        )
+
+        // no answers
+        assertThat(question.hasValidAnswer).isFalse()
+
+        assertThat(question.canSubmitOptionalQuestion).isTrue()
+
+        // update answer
+        question.updateAnswerChoice(choiceId = "choice_1", isChecked = true)
+
+        // valid
+        assertThat(question.hasValidAnswer).isFalse()
+
+        // Can not submit survey with one question answered. Checks lower boundary of the minimum selection
+        assertThat(question.canSubmitOptionalQuestion).isFalse()
+
+        assertThat(question.choices).isEqualTo(
+            listOf(
+                Answer.Choice(id = "choice_1", checked = true),
+                Answer.Choice(id = "choice_2"),
+                Answer.Choice(id = "choice_3"),
+                Answer.Choice(id = "choice_4"),
+                Answer.Choice(id = "choice_5")
+            )
+        )
+
+        // Update answer, check another option
+        question.updateAnswerChoice(choiceId = "choice_2", isChecked = true)
+
+        // valid
+        assertThat(question.hasValidAnswer).isTrue()
+
+        // Can submit the Survey, as it satisfies the minSelection
+        assertThat(question.canSubmitOptionalQuestion).isTrue()
+
+        // Update answer, check all the 5 options
+        question.updateAnswerChoice(choiceId = "choice_3", isChecked = true)
+        question.updateAnswerChoice(choiceId = "choice_4", isChecked = true)
+        question.updateAnswerChoice(choiceId = "choice_5", isChecked = true)
+
+        assertThat(question.choices).isEqualTo(
+            listOf(
+                Answer.Choice(id = "choice_1", checked = true),
+                Answer.Choice(id = "choice_2", checked = true),
+                Answer.Choice(id = "choice_3", checked = true),
+                Answer.Choice(id = "choice_4", checked = true),
+                Answer.Choice(id = "choice_5", checked = true)
+            )
+        )
+
+        // Has valid answer
+        assertThat(question.hasValidAnswer).isFalse()
+
+        // Invalid optional multi select question. Validates upper bound/max selection
+        assertThat(question.canSubmitOptionalQuestion).isFalse()
+    }
+
+    @Test
+    fun testRequiredMultiSelect() {
         val question = createMultiChoiceQuestion(
             required = true,
             allowMultipleAnswers = true,

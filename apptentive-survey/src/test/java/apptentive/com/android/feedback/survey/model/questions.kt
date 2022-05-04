@@ -1,6 +1,6 @@
 package apptentive.com.android.feedback.survey.model
 
-fun createSingleLineQuestion(
+internal fun createSingleLineQuestion(
     id: String? = null,
     title: String? = null,
     errorMessage: String? = null,
@@ -22,7 +22,7 @@ fun createSingleLineQuestion(
     answer = if (answer != null) SingleLineQuestion.Answer(answer) else null
 )
 
-fun createRangeQuestion(
+internal fun createRangeQuestion(
     id: String? = null,
     title: String? = null,
     errorMessage: String? = null,
@@ -48,7 +48,7 @@ fun createRangeQuestion(
     answer = if (selectedIndex != null) RangeQuestion.Answer(selectedIndex) else null
 )
 
-fun createMultiChoiceQuestion(
+internal fun createMultiChoiceQuestion(
     id: String? = null,
     title: String? = null,
     errorMessage: String? = null,

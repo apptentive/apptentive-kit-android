@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.survey.viewmodel
 
+import android.text.SpannedString
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import apptentive.com.android.TestCase
 import apptentive.com.android.concurrent.mockExecutors
@@ -232,17 +233,18 @@ class SurveyViewModelTest : TestCase() {
     fun testSurveyCancelConfirmationDisplayData() {
         val viewModel = createViewModel(emptyList())
 
-        val expected = SurveyCancelConfirmationDisplay("Close survey?",
+        val expected = SurveyCancelConfirmationDisplay(
+            "Close survey?",
             "All the changes will be lost",
             "Back to survey",
             "close"
-            )
+        )
         assertEquals(expected, viewModel.surveyCancelConfirmationDisplay)
     }
 
     @Test
     fun testNoConfirmationDialogShowsWhenNothingChanged() {
-        //Testing the scenario:
+        // Testing the scenario:
         // When the consumer uses the X button or the back button to close the survey (without having
         // responded to any questions), send a `cancel` event.
         val viewModel = createViewModelForExitConfirmationTest()
@@ -256,8 +258,8 @@ class SurveyViewModelTest : TestCase() {
 
     @Test
     fun testConfirmationDialogShowsAfterSubmitAttempt() {
-        //Testing the scenario:
-        //When the consumer attempts to submit survey, show confirmation dialog
+        // Testing the scenario:
+        // When the consumer attempts to submit survey, show confirmation dialog
         val viewModel = createViewModelForExitConfirmationTest()
 
         // attempt to submit the survey
@@ -272,8 +274,8 @@ class SurveyViewModelTest : TestCase() {
 
     @Test
     fun testConfirmationDialogShowsAfterQuestionAnswered() {
-        //Testing the scenario:
-        //When the consumer attempts to respond to a question, show confirmation dialog
+        // Testing the scenario:
+        // When the consumer attempts to respond to a question, show confirmation dialog
         val viewModel = createViewModelForExitConfirmationTest()
 
         // answer the question
@@ -288,7 +290,7 @@ class SurveyViewModelTest : TestCase() {
 
     @Test
     fun testExitWithoutConfirmation() {
-        //Testing the scenario:
+        // Testing the scenario:
         // When the consumer is presented with the close confirmation view, send `cancel_partial` if they tap the Close button
         val viewModel = createViewModelForExitConfirmationTest()
 
@@ -302,13 +304,13 @@ class SurveyViewModelTest : TestCase() {
         viewModel.exit(showConfirmation = false)
 
         // exit without confirmation dialog
-        assertResults("exit", "close")
+        assertResults("exit", "cancel_partial")
     }
 
     @Test
     fun testBackToSurveyIsClickedInConfirmationDialog() {
-        //Testing the scenario:
-        //When the consumer is presented with the close confirmation view, send `continue_partial` if they tap the Back to Survey button
+        // Testing the scenario:
+        // When the consumer is presented with the close confirmation view, send `continue_partial` if they tap the Back to Survey button
         val viewModel = createViewModelForExitConfirmationTest()
 
         // attempt to click on back to survey in confirmation dialog
@@ -330,12 +332,12 @@ class SurveyViewModelTest : TestCase() {
         )
 
         viewModel.exitStream.observeForever {
-            //to close survey activity
+            // to close survey activity
             addResult("exit")
         }
 
         viewModel.showConfirmation.observeForever {
-            //to show confirmation dialog
+            // to show confirmation dialog
             addResult("confirmation")
         }
         return viewModel
@@ -367,6 +369,7 @@ class SurveyViewModelTest : TestCase() {
         successMessage: String? = "successMessage"
     ): SurveyViewModel {
         val model = SurveyModel(
+            interactionId = "interaction_id",
             questions = questions,
             name = name,
             description = description,
@@ -378,7 +381,8 @@ class SurveyViewModelTest : TestCase() {
             closeConfirmTitle = "Close survey?",
             closeConfirmMessage = "All the changes will be lost",
             closeConfirmCloseText = "close",
-            closeConfirmBackText = "Back to survey"
+            closeConfirmBackText = "Back to survey",
+            SpannedString("Terms & Conditions")
         )
         return SurveyViewModel(
             model = model,
@@ -389,6 +393,9 @@ class SurveyViewModelTest : TestCase() {
             },
             onCancel = {
                 addResult("cancel")
+            },
+            onCancelPartial = {
+                addResult("cancel_partial")
             },
             onClose = {
                 addResult("close")

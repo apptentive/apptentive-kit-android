@@ -11,6 +11,7 @@ import apptentive.com.android.feedback.mockDevice
 import apptentive.com.android.feedback.mockPerson
 import apptentive.com.android.feedback.mockSdk
 import apptentive.com.android.feedback.model.AppRelease
+import apptentive.com.android.feedback.model.Configuration
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.CustomData
 import apptentive.com.android.feedback.model.Device
@@ -233,6 +234,14 @@ private class MockConversationService(
         callback: (Result<EngagementManifest>) -> Unit
     ) {
         callback(Result.Success(EngagementManifest(expiry = testTimeInterval ?: getTimeSeconds() + 1800)))
+    }
+
+    override fun fetchConfiguration(
+        conversationToken: String,
+        conversationId: String,
+        callback: (Result<Configuration>) -> Unit
+    ) {
+        callback(Result.Success(Configuration(expiry = testTimeInterval ?: getTimeSeconds() + 1800)))
     }
 
     override fun sendPayloadRequest(

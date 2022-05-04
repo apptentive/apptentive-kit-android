@@ -2,4 +2,10 @@
 <resources>
     <integer name="match_parent">-1</integer>
     <integer name="wrap_content">-2</integer>
+
+    <!-- Minor Interface Customization -->
+    <integer name="apptentive_typeface_normal">0</integer>
+    <integer name="apptentive_typeface_sans">1</integer>
+    <integer name="apptentive_typeface_serif">2</integer>
+    <integer name="apptentive_typeface_monospace">3</integer>
 </resources>

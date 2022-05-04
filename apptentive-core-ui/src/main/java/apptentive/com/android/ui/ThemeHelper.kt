@@ -5,42 +5,73 @@ import android.content.Context
 import android.content.pm.PackageManager
 import androidx.appcompat.view.ContextThemeWrapper
 import apptentive.com.android.R
+import apptentive.com.android.platform.SharedPrefConstants
+import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags
 
+/**
+ * Allows inheritance of the Apptentive theme, the host app's theme, and ApptentiveThemeOverride.
+ *
+ * Layers on themes on top of each other by importance.
+ * Later layers will override previous layers and take priority.
+ */
 internal fun Context.overrideTheme() {
-    /* Step 1: Apply Apptentive default theme layer.
-	 * If host activity is an activity, the base theme already has Apptentive defaults applied, so skip Step 1.
+    /* Layer 1: Apptentive default theme.
+	 * If host activity is an activity, the base theme already has Apptentive defaults applied, so skip layer 1.
 	 * If parent activity is NOT an activity, first apply Apptentive defaults.
 	 */
     if (this !is Activity) {
         theme.applyStyle(R.style.Theme_Apptentive, true)
     }
 
-    /* Step 2: Inherit app default theme */
-    applyAppTheme()
+    /* Layer 2: App default theme if shouldApplyAppTheme is true */
+    if (getShouldApplyAppTheme()) applyAppTheme()
 
-    /* Step 3: Apply optional theme override specified in host app's style */
+    /* Layer 3: Disable the problem style -> android:background.
+     * Use android:colorBackground for setting background color of Activities.
+     * Use colorSurface for setting background color of Dialogs.
+     */
+    theme.applyStyle(R.style.DisableAndroidBackgroundStyle, true)
+
+    /* Layer 4: Optional theme override specified in host app's style */
     applyApptentiveThemeOverride()
 }
 
 /**
- * Allows the usage of ContextThemeWrapper to overwrite base Apptentive theme values
+ * Allows the usage of [ContextThemeWrapper] to overwrite base Apptentive theme values.
  */
+@InternalUseOnly
 fun ContextThemeWrapper.overrideTheme() {
     val contextTheme = themeResId
 
-    /* Step 1: Apply Apptentive default theme layer */
+    /* Layer 1: Apptentive default theme */
     theme.applyStyle(R.style.Theme_Apptentive, true)
 
-    /* Step 2: Layer on ContextThemeWrapper's theme it was created with */
+    /* Layer 2: ContextThemeWrapper theme the wrapper was created with */
     theme.applyStyle(contextTheme, true)
 
-    /* Step 3: Inherit app default theme */
-    applyAppTheme()
+    /* Layer 3: App default theme if shouldApplyAppTheme is true */
+    if (getShouldApplyAppTheme()) applyAppTheme()
 
-    /* Step 4: Apply optional theme override specified in host app's style */
+    /* Layer 4: Disable the problem style -> android:background.
+     * Use android:colorBackground for setting background color of Activities.
+     * Use colorSurface for setting background color of Dialogs.
+     */
+    theme.applyStyle(R.style.DisableAndroidBackgroundStyle, true)
+
+    /* Layer 5: Optional theme override specified in host app's style */
     applyApptentiveThemeOverride()
+}
+
+/**
+ * Retrieves `shouldApplyAppTheme`, a `Boolean` config option set within `ApptentiveConfiguration`.
+ *
+ * Default is `true` (inherit the host app's theme).
+ */
+private fun Context.getShouldApplyAppTheme(): Boolean {
+    return getSharedPreferences(SharedPrefConstants.USE_HOST_APP_THEME, Context.MODE_PRIVATE)
+        .getBoolean(SharedPrefConstants.USE_HOST_APP_THEME_KEY, true)
 }
 
 private fun Context.applyAppTheme() {
@@ -50,20 +81,10 @@ private fun Context.applyAppTheme() {
     }
 }
 
-private fun Context.applyApptentiveThemeOverride() {
-    val themeOverrideResId: Int = resources.getIdentifier(
-        "ApptentiveThemeOverride",
-        "style", packageName
-    )
-    if (themeOverrideResId != 0) {
-        theme.applyStyle(themeOverrideResId, true)
-    }
-}
-
 /**
  * A style resource identifier (in the package's resources) of the
  * default visual theme of the application. From the "theme" attribute
- * or, if not set, null.
+ * or, if not set, `null`.
  */
 private fun Context.getAppThemeId(): Int? {
     try {
@@ -82,4 +103,14 @@ private fun Context.getAppThemeId(): Int? {
         Log.e(LogTags.CORE, "Unable to resolve application default theme", e)
     }
     return null
+}
+
+private fun Context.applyApptentiveThemeOverride() {
+    val themeOverrideResId: Int = resources.getIdentifier(
+        "ApptentiveThemeOverride",
+        "style", packageName
+    )
+    if (themeOverrideResId != 0) {
+        theme.applyStyle(themeOverrideResId, true)
+    }
 }

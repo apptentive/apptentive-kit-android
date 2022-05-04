@@ -6,9 +6,9 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.annotation.VisibleForTesting
-import apptentive.com.android.feedback.PAYLOADS
 import apptentive.com.android.network.HttpMethod
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.PAYLOADS
 
 internal class PayloadSQLiteHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {

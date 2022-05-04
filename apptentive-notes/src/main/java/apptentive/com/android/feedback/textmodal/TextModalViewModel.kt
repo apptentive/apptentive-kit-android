@@ -1,16 +1,18 @@
 package apptentive.com.android.feedback.textmodal
 
+import androidx.lifecycle.ViewModel
 import apptentive.com.android.core.Callback
+import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.EngagementResult
-import apptentive.com.android.feedback.INTERACTIONS
-import apptentive.com.android.feedback.engagement.EngagementContext
+import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
+import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.INTERACTIONS
 
-internal class TextModalViewModel(
-    private val context: EngagementContext,
-    private val interaction: TextModalInteraction
-) {
+internal class TextModalViewModel : ViewModel() {
+    val interaction = DependencyProvider.of<TextModalInteractionFactory>().getTextModalInteraction()
+    val context = DependencyProvider.of<EngagementContextFactory>().engagementContext()
     val title = interaction.title
     val message = interaction.body
     val actions = interaction.actions.mapIndexed { index, action ->
@@ -34,11 +36,18 @@ internal class TextModalViewModel(
         }
     }
 
-    private fun engageCodePoint(codePoint: String, data: Map<String, Any?>? = null) {
+    private fun engageCodePoint(
+        codePoint: String,
+        data: Map<String, Any?>? = null,
+        actionId: String? = null
+    ) {
         context.engage(
             event = Event.internal(codePoint, interaction = "TextModal"),
             interactionId = interaction.id,
-            data = data
+            data = data,
+            interactionResponses = actionId?.let {
+                mapOf(interaction.id to setOf(InteractionResponse.IdResponse(it)))
+            }
         )
     }
 
@@ -49,7 +58,7 @@ internal class TextModalViewModel(
                     Log.i(INTERACTIONS, "Note dismissed")
                     // engage event
                     val data = createEventData(action, index)
-                    engageCodePoint(CODE_POINT_DISMISS, data)
+                    engageCodePoint(CODE_POINT_DISMISS, data, action.id)
                 }
             }
             is TextModalInteraction.Action.Invoke -> {
@@ -61,7 +70,7 @@ internal class TextModalViewModel(
 
                     // engage event
                     val data = createEventData(action, index, result)
-                    engageCodePoint(CODE_POINT_INTERACTION, data)
+                    engageCodePoint(CODE_POINT_INTERACTION, data, action.id)
                 }
             }
             is TextModalInteraction.Action.Event -> {
@@ -76,7 +85,7 @@ internal class TextModalViewModel(
 
                     // engage event
                     val data = createEventData(action, index, result)
-                    engageCodePoint(CODE_POINT_EVENT, data)
+                    engageCodePoint(CODE_POINT_EVENT, data, action.id)
                 }
             }
             else -> {
@@ -108,7 +117,7 @@ internal class TextModalViewModel(
         ): Map<String, Any?> {
             // we need to include a target interaction id (if any)
             if (engagementResult != null) {
-                val interactionId = (engagementResult as? EngagementResult.Success)?.interactionId
+                val interactionId = (engagementResult as? EngagementResult.InteractionShown)?.interactionId
                 return mapOf(
                     DATA_ACTION_ID to action.id,
                     DATA_ACTION_LABEL to action.label,

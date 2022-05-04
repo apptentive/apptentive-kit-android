@@ -14,6 +14,7 @@ import apptentive.com.android.feedback.engagement.criteria.Field.sdk
 import apptentive.com.android.feedback.engagement.criteria.Field.time_at_install
 import apptentive.com.android.feedback.engagement.criteria.Field.unknown
 import com.google.common.truth.Truth.assertThat
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class FieldTest : TestCase() {
@@ -75,19 +76,19 @@ class FieldTest : TestCase() {
     fun parseInteractions() {
         assertThat(parse("interactions/12345/invokes/total")).isEqualTo(interactions.invokes.total("12345"))
         assertThat(parse("interactions/12345/invokes/version_code")).isEqualTo(
-            interactions.invokes.version_code(
-                "12345"
-            )
+            interactions.invokes.version_code("12345")
         )
         assertThat(parse("interactions/12345/invokes/version_name")).isEqualTo(
-            interactions.invokes.version_name(
-                "12345"
-            )
+            interactions.invokes.version_name("12345")
         )
         assertThat(parse("interactions/12345/last_invoked_at/total")).isEqualTo(
-            interactions.last_invoked_at.total(
-                "12345"
-            )
+            interactions.last_invoked_at.total("12345")
+        )
+        assertThat(parse("interactions/12345/answers/id")).isEqualTo(
+            interactions.answers.id("12345")
+        )
+        assertThat(parse("interactions/12345/answers/value")).isEqualTo(
+            interactions.answers.value("12345")
         )
     }
 
@@ -128,6 +129,16 @@ class FieldTest : TestCase() {
     }
 
     @Test
+    fun parseRandomSamplingWithId() {
+        assertEquals(Field.random.percent_with_id("12345"), parse("random/12345/percent"))
+    }
+
+    @Test
+    fun parseRandomSampling() {
+        assertEquals(Field.random.percent, parse("random/percent"))
+    }
+
+    @Test
     fun parseUnknown() {
         assertThat(parse("fake/code/point")).isEqualTo(unknown("fake/code/point"))
     }
@@ -138,7 +149,7 @@ class FieldTest : TestCase() {
         assertThat(parse("device/custom_data/my_key").convertValue("String") is Any)
         assertThat(parse("person/custom_data/my_key").convertValue(500) is Any)
         // Declared types
-        assertThat(parse("device/radio_version").convertValue(Version(30, 19, 20)) is Version)
+        assertThat(parse("device/radio_version").convertValue(Version(30, 19, 20, 0)) is Version)
         assertThat(parse("interactions/12345/invokes/total").convertValue(20.25) is Number)
         assertThat(parse("interactions/12345/invokes/total").convertValue(20.25) !is String)
     }

@@ -1,11 +1,14 @@
 package apptentive.com.android.feedback.model.payloads
 
+import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.payload.MediaType
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadType
 import apptentive.com.android.network.HttpMethod
 import apptentive.com.android.serialization.json.JsonConverter
+import apptentive.com.android.util.InternalUseOnly
 
+@InternalUseOnly
 abstract class Payload(val nonce: String) {
     protected abstract fun getPayloadType(): PayloadType
     protected abstract fun getJsonContainer(): String?
@@ -21,6 +24,7 @@ abstract class Payload(val nonce: String) {
         return JsonConverter.toJson(this)
     }
 
+    @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
     internal fun toPayloadData() = PayloadData(
         nonce = nonce,
         type = getPayloadType(),

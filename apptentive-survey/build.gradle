@@ -1,5 +1,8 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'org.jlleitschuh.gradle.ktlint'
+}
 
 android {
     compileSdkVersion rootProject.compileSdkVersion
@@ -29,6 +32,7 @@ dependencies {
     implementation project(':apptentive-feedback')
     implementation "androidx.appcompat:appcompat:$appcompat_library_version"
     implementation "androidx.core:core-ktx:$core_ktx_version"
+    implementation "androidx.activity:activity-ktx:$activity_ktx_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$livedata_ktx_version"
     implementation "com.google.android.material:material:$material_design_version"
     implementation "androidx.constraintlayout:constraintlayout:$constraint_layout_version"
@@ -45,6 +49,15 @@ dependencies {
 project.ext {
     groupId = 'com.apptentive'
     artifactId = 'apptentive-survey'
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        freeCompilerArgs += [
+                //'-Xexplicit-api=warning', // or '-Xexplicit-api=strict'
+                '-opt-in=apptentive.com.android.util.InternalUseOnly',
+        ]
+    }
 }
 
 apply from: '../publish.gradle'

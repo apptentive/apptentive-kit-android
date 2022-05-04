@@ -3,7 +3,7 @@ package apptentive.com.android.feedback.survey.model
 import androidx.annotation.VisibleForTesting
 
 @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
-class SingleLineQuestion(
+internal class SingleLineQuestion(
     id: String,
     title: String,
     validationError: String,

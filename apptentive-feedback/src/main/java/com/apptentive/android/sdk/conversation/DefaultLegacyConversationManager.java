@@ -27,12 +27,12 @@ import apptentive.com.android.feedback.utils.SensitiveDataUtils;
 import apptentive.com.android.util.Log;
 import apptentive.com.android.util.LogLevel;
 
-import static apptentive.com.android.feedback.LogTags.MIGRATION;
 import static com.apptentive.android.sdk.conversation.ConversationState.ANONYMOUS;
 import static com.apptentive.android.sdk.conversation.ConversationState.LOGGED_IN;
 import static com.apptentive.android.sdk.util.Constants.CONVERSATION_METADATA_FILE;
 import static com.apptentive.android.sdk.util.Constants.CONVERSATION_METADATA_FILE_LEGACY_V1;
 import static com.apptentive.android.sdk.util.Constants.PAYLOAD_ENCRYPTION_KEY_TRANSFORMATION;
+import static apptentive.com.android.util.LogTags.MIGRATION;
 
 /**
  * Represents a modified version of legacy [ConversationManager] class (read-only). Used in legacy data migration.

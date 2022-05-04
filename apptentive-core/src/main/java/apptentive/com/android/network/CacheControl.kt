@@ -1,5 +1,8 @@
 package apptentive.com.android.network
 
+import apptentive.com.android.util.InternalUseOnly
+
+@InternalUseOnly
 data class CacheControl(
     val maxAgeSeconds: Int = -1
 ) {

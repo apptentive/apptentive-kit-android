@@ -1,10 +1,10 @@
 package apptentive.com.android.feedback.survey.viewmodel
 
 import androidx.annotation.MainThread
-import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import apptentive.com.android.concurrent.Executors
 import apptentive.com.android.core.LiveEvent
 import apptentive.com.android.core.asLiveData
@@ -15,25 +15,38 @@ import apptentive.com.android.feedback.survey.model.SurveyModel
 import apptentive.com.android.feedback.survey.model.SurveyQuestion
 import apptentive.com.android.feedback.survey.model.SurveyQuestionAnswer
 import apptentive.com.android.feedback.survey.model.update
-import apptentive.com.android.ui.ApptentiveViewModel
-import java.lang.Thread.sleep
 
+/**
+ * ViewModel for Surveys
+ *
+ * SurveyViewModel class that is responsible for preparing and managing survey data
+ * for BaseSurveyActivity
+ *
+ * @property model [SurveyModel] data model that represents the survey
+ * @property executors [Executors] executes submitted runnable tasks.
+ *
+ *  Apptentive uses two executors
+ *
+ *    * state - For long running/ Async operations
+ *    * main  - UI related tasks
+ *
+ * @property onSubmit [SurveySubmitCallback] callback to be executed when survey is submitted
+ * @property onCancel [SurveyCancelCallback] callback to be executed when survey is cancelled
+ * @property onCancelPartial [SurveyCancelPartialCallback] callback to be executed when survey is cancelled when partially completed
+ * @property onClose [SurveyCloseCallback] callback to be executed when survey is closed
+ * @property onBackToSurvey [SurveyContinuePartialCallback] callback to be executed
+ * when survey is resumed through after an attempt to close
+ */
 
-typealias SurveySubmitCallback = (Map<String, SurveyQuestionAnswer>) -> Unit
-internal typealias SurveyCancelCallback = () -> Unit
-internal typealias SurveyCancelPartialCallback = () -> Unit
-internal typealias SurveyContinuePartialCallback = () -> Unit
-
-
-internal class SurveyViewModel(
+class SurveyViewModel(
     private val model: SurveyModel,
     private val executors: Executors,
     private val onSubmit: SurveySubmitCallback,
     private val onCancel: SurveyCancelCallback,
-    private val onClose: SurveyCancelPartialCallback,
+    private val onCancelPartial: SurveyCancelPartialCallback,
+    private val onClose: SurveyCloseCallback,
     private val onBackToSurvey: SurveyContinuePartialCallback,
-    questionListItemFactory: SurveyQuestionListItemFactory = DefaultSurveyQuestionListItemFactory()
-) : ApptentiveViewModel() {
+) : ViewModel() {
     /** LiveData which transforms a list of {SurveyQuestion} into a list of {SurveyQuestionListItem} */
     private val questionsStream: LiveData<List<SurveyQuestion<*>>> =
         model.questionsStream.asLiveData()
@@ -47,7 +60,7 @@ internal class SurveyViewModel(
 
     /** LiveData which holds the current list of SurveyQuestionListItem */
     val listItems: LiveData<List<SurveyListItem>> = createQuestionListLiveData(
-        questionListItemFactory = questionListItemFactory
+        questionListItemFactory = DefaultSurveyQuestionListItemFactory()
     )
 
     private val requiredTextEvent = LiveEvent<String?>()
@@ -63,9 +76,11 @@ internal class SurveyViewModel(
     private var anyQuestionWasAnswered: Boolean = false
 
     val title = model.name
+    val termsAndConditions = model.termsAndConditionsLinkText
 
     val surveyCancelConfirmationDisplay = with(model) {
-        SurveyCancelConfirmationDisplay(closeConfirmTitle,
+        SurveyCancelConfirmationDisplay(
+            closeConfirmTitle,
             closeConfirmMessage,
             closeConfirmBackText,
             closeConfirmCloseText
@@ -118,10 +133,11 @@ internal class SurveyViewModel(
 
         updateModel {
             if (model.allRequiredAnswersAreValid) {
-                onSubmit(model.questions
-                    .filter { it.hasValidAnswer } // filter out questions with invalid answers
-                    .map { it.id to it.answer } // map question id to its answer
-                    .toMap()
+                onSubmit(
+                    model.questions
+                        .filter { it.hasValidAnswer } // filter out questions with invalid answers
+                        .map { it.id to it.answer } // map question id to its answer
+                        .toMap()
                 )
 
                 if (!model.successMessage.isNullOrBlank()) {
@@ -133,10 +149,7 @@ internal class SurveyViewModel(
                     )
                 }
 
-                // tell the activity to finish
-                executors.main.execute {
-                    exit(showConfirmation = false)
-                }
+                exit(showConfirmation = false, successfulSubmit = true)
             } else {
                 // trigger error message
                 if (!model.validationError.isNullOrBlank()) {
@@ -159,27 +172,29 @@ internal class SurveyViewModel(
     }
 
     fun onBackToSurveyFromConfirmationDialog() {
-        onBackToSurvey.invoke()
+        executors.state.execute { onBackToSurvey.invoke() }
     }
 
     @MainThread
-    fun exit(showConfirmation: Boolean) {
+    fun exit(showConfirmation: Boolean, successfulSubmit: Boolean = false) {
         if (showConfirmation) {
-            //When the consumer uses the X button or the back button,
-            // try to show the confirmation dialog if user interacted with the survey
+            // When the consumer uses the X button or the back button,
+            //  try to show the confirmation dialog if user interacted with the survey
             if (submitAttempted || anyQuestionWasAnswered) {
-                //user interacted
+                // user interacted
                 showConfirmationEvent.postValue(true)
             } else {
-                // we don't need to show any confirmation as the customer
-                // didn't interact
+                // we don't need to show any confirmation as the customer didn't interact
                 exitEvent.postValue(true)
-                onCancel.invoke()
+                executors.state.execute { onCancel.invoke() }
             }
         } else {
             // we are already in the confirmation dialog, so no need to show confirmation again
             exitEvent.postValue(true)
-            onClose.invoke()
+            executors.state.execute {
+                if (successfulSubmit) onClose.invoke()
+                else onCancelPartial.invoke()
+            }
         }
     }
 
@@ -228,7 +243,7 @@ internal class SurveyViewModel(
                 // 2. model provides a validation error
                 // 3. at least one of the required questions is not answered
                 val messageState: SurveySubmitMessageState? = if (submitAttempted && model.validationError != null && !model.allRequiredAnswersAreValid) {
-                    SurveySubmitMessageState(model.validationError,false)
+                    SurveySubmitMessageState(model.validationError, false)
                 } else {
                     null
                 }
@@ -255,9 +270,15 @@ internal data class SurveySubmitMessageState(
     val isValid: Boolean
 )
 
-internal data class SurveyCancelConfirmationDisplay(
+data class SurveyCancelConfirmationDisplay(
     val title: String?,
     val message: String?,
     val positiveButtonMessage: String?,
     val negativeButtonMessage: String?
 )
+
+internal typealias SurveySubmitCallback = (Map<String, SurveyQuestionAnswer>) -> Unit
+internal typealias SurveyCancelCallback = () -> Unit
+internal typealias SurveyCancelPartialCallback = () -> Unit
+internal typealias SurveyCloseCallback = () -> Unit
+internal typealias SurveyContinuePartialCallback = () -> Unit

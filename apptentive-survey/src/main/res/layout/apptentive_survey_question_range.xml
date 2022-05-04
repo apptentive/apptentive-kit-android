@@ -1,49 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <com.google.android.material.slider.Slider
-        android:id="@+id/range_slider"
+        android:id="@+id/apptentive_range_slider"
+        style="?attr/apptentiveSurveyRangeStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginHorizontal="@dimen/apptentive_checkbox_radiobutton_slider_margin"
-        app:labelBehavior="withinBounds" />
+        android:layout_height="wrap_content" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/minLabel"
-            style="?attr/textAppearanceCaption"
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/apptentive_min_label"
+            style="?attr/apptentiveSurveyRangeLabelStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:layout_weight="1"
-            android:focusable="true"
-            android:paddingHorizontal="@dimen/margin_16dp"
-            android:paddingVertical="@dimen/margin_2dp"
-            android:textColor="?android:attr/textColorSecondary"
             tools:text="1 = hate it" />
 
-        <TextView
-            android:id="@+id/maxLabel"
-            style="?attr/textAppearanceCaption"
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/apptentive_max_label"
+            style="?attr/apptentiveSurveyRangeLabelStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_weight="1"
-            android:focusable="true"
-            android:paddingHorizontal="@dimen/margin_16dp"
-            android:paddingVertical="@dimen/margin_2dp"
             android:textAlignment="viewEnd"
-            android:textColor="?android:attr/textColorSecondary"
             tools:text="4 = love it" />
 
     </LinearLayout>

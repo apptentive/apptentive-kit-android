@@ -1,14 +1,16 @@
 package apptentive.com.android.feedback.ratingdialog
 
-import apptentive.com.android.feedback.INTERACTIONS
-import apptentive.com.android.feedback.engagement.EngagementContext
+import androidx.lifecycle.ViewModel
+import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.INTERACTIONS
 
-internal class RatingDialogViewModel(
-    private val context: EngagementContext,
-    private val interaction: RatingDialogInteraction
-) {
+internal class RatingDialogViewModel : ViewModel() {
+    private val context = DependencyProvider.of<EngagementContextFactory>().engagementContext()
+    private val interaction = DependencyProvider.of<RatingDialogInteractionFactory>().getRatingDialogInteraction()
+
     val title = interaction.title
     val message = interaction.body
     val rateText = interaction.rateText

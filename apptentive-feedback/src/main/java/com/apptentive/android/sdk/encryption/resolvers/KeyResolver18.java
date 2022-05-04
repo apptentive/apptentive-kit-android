@@ -1,5 +1,7 @@
 package com.apptentive.android.sdk.encryption.resolvers;
 
+import static apptentive.com.android.util.LogTags.SECURITY;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -37,11 +39,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.security.auth.x500.X500Principal;
-
-import apptentive.com.android.feedback.LogTags;
 import apptentive.com.android.util.Log;
-
-import static apptentive.com.android.feedback.LogTags.SECURITY;
 
 @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2) class KeyResolver18 implements KeyResolver {
 	private static final String DEFAULT_KEY_ALGORITHM = "AES";

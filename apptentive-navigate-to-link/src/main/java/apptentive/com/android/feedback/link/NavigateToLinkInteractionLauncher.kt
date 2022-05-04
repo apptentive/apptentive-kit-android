@@ -1,19 +1,19 @@
 package apptentive.com.android.feedback.link
 
-import apptentive.com.android.feedback.INTERACTIONS
-import apptentive.com.android.feedback.platform.AndroidEngagementContext
-import apptentive.com.android.feedback.platform.AndroidInteractionLauncher
+import apptentive.com.android.feedback.engagement.EngagementContext
+import apptentive.com.android.feedback.engagement.interactions.InteractionLauncher
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.INTERACTIONS
 
-internal class NavigateToLinkInteractionLauncher : AndroidInteractionLauncher<NavigateToLinkInteraction>() {
+internal class NavigateToLinkInteractionLauncher : InteractionLauncher<NavigateToLinkInteraction> {
     override fun launchInteraction(
-        context: AndroidEngagementContext,
+        engagementContext: EngagementContext,
         interaction: NavigateToLinkInteraction
     ) {
-        context.executors.main.execute {
+        engagementContext.executors.main.execute {
             Log.i(INTERACTIONS, "Navigation attempt to URL/Deep Link: ${interaction.url}")
             Log.v(INTERACTIONS, "Navigate to URL/Deep Link interaction data: $interaction")
-            LinkNavigator.navigate(context, interaction)
+            LinkNavigator.navigate(engagementContext, engagementContext.getActivityContext(), interaction)
         }
     }
 }

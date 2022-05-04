@@ -2,14 +2,13 @@ package apptentive.com.android.feedback.utils
 
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
-import apptentive.com.android.feedback.INTERACTIONS
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.INTERACTIONS
 import java.util.concurrent.TimeUnit
 
 internal object ThrottleUtils {
-    internal const val SHARED_PREF_THROTTLE = "com.apptentive.sdk.throttle"
     internal var ratingThrottleLength: Long? = null
     internal var throttleSharedPrefs: SharedPreferences? = null
 

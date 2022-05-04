@@ -1,8 +1,8 @@
 package apptentive.com.android.feedback.model
 
-import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
+import apptentive.com.android.util.InternalUseOnly
 
 /**
  * @param type - always set to "android"
@@ -11,13 +11,14 @@ import apptentive.com.android.feedback.utils.VersionName
  * @param versionName - host application version name
  * @param targetSdkVersion - host application target sdk version
  */
-@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+@InternalUseOnly
 data class AppRelease(
     val type: String,
     val identifier: String,
     val versionCode: VersionCode,
     val versionName: VersionName,
     val targetSdkVersion: String,
+    val minSdkVersion: String,
     val debug: Boolean = false,
     val inheritStyle: Boolean = false,
     val overrideStyle: Boolean = false,

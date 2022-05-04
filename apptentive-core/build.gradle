@@ -1,8 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
-apply plugin: 'maven-publish'
-apply plugin: 'com.jfrog.artifactory'
 
 android {
     compileSdkVersion rootProject.compileSdkVersion
@@ -23,7 +21,7 @@ android {
         }
     }
 
-    lintOptions {
+    lint {
         warningsAsErrors true
         abortOnError true
     }
@@ -48,6 +46,16 @@ dependencies {
 project.ext {
     groupId = 'com.apptentive'
     artifactId = 'apptentive-core'
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+        freeCompilerArgs += [
+                //'-Xexplicit-api=warning', // or '-Xexplicit-api=strict'
+                '-opt-in=apptentive.com.android.util.InternalUseOnly',
+                '-opt-in=kotlin.RequiresOptIn',
+        ]
+    }
 }
 
 apply from: '../publish.gradle'

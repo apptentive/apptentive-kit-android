@@ -3,6 +3,7 @@ package apptentive.com.android.network
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.concurrent.ExecutorQueue
 import apptentive.com.android.core.UNDEFINED
+import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags
 import apptentive.com.android.util.Result
@@ -10,6 +11,7 @@ import apptentive.com.android.util.Result
 /**
  * Represents an abstract async HTTP-request dispatcher.
  */
+@InternalUseOnly
 interface HttpClient {
     /**
      * Sends HTTP-request asynchronously.
@@ -31,6 +33,7 @@ interface HttpClient {
  * @param [retryPolicy] default retry policy for HTTP-request with no custom policy.
  * @param [listener] optional [HttpClientListener] for tracking status of the requests.
  */
+@InternalUseOnly
 class DefaultHttpClient(
     private val network: HttpNetwork,
     private val networkQueue: ExecutorQueue,
@@ -142,7 +145,11 @@ class DefaultHttpClient(
 
         // give up
         val errorMessage = networkResponse.data.toString(Charsets.UTF_8)
-        throw UnexpectedResponseException(statusCode, statusMessage, errorMessage)
+
+        when (statusCode) {
+            in 400..499 -> throw SendErrorException(statusCode, statusMessage, errorMessage)
+            else -> throw UnexpectedResponseException(statusCode, statusMessage, errorMessage)
+        }
     }
 
     //endregion
@@ -218,6 +225,7 @@ class DefaultHttpClient(
 /**
  * A callback interface for request lifecycle events.
  */
+@InternalUseOnly
 interface HttpClientListener {
     /**
      * Invoked after request was enqueued.

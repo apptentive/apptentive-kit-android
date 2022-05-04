@@ -1,10 +1,14 @@
 package apptentive.com.android.feedback.survey.model
 
+import android.text.Spanned
 import androidx.annotation.WorkerThread
 import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.Observable
+import apptentive.com.android.util.InternalUseOnly
 
-internal class SurveyModel(
+@InternalUseOnly
+class SurveyModel(
+    val interactionId: String,
     questions: List<SurveyQuestion<*>>,
     val name: String?,
     val description: String?,
@@ -16,7 +20,8 @@ internal class SurveyModel(
     val closeConfirmTitle: String?,
     val closeConfirmMessage: String?,
     val closeConfirmCloseText: String?,
-    val closeConfirmBackText: String?
+    val closeConfirmBackText: String?,
+    val termsAndConditionsLinkText: Spanned?
 ) {
     private val questionsSubject = QuestionListSubject(questions) // BehaviourSubject<List<SurveyQuestion<*>>>
     val questionsStream: Observable<List<SurveyQuestion<*>>> = questionsSubject
@@ -35,15 +40,17 @@ internal class SurveyModel(
     @WorkerThread
     fun <T : SurveyQuestion<*>> getQuestion(questionId: String): T {
         val question = questions.find { question ->
-            question.id == questionId } ?: throw IllegalArgumentException("Question not found: $questionId")
+            question.id == questionId
+        } ?: throw IllegalArgumentException("Question not found: $questionId")
 
         @Suppress("UNCHECKED_CAST")
         return question as T
     }
 
-    /** Returns the index of the first REQUIRED invalid question (or -1 if all required questions are valid) */
+    /** Returns the index of the first REQUIRED invalid question/NOT REQUIRED but cannot submit
+     *  (or -1 if all required questions are valid) */
     fun getFirstInvalidRequiredQuestionIndex(): Int {
-        return questions.indexOfFirst { it.isRequired && !it.hasValidAnswer }
+        return questions.indexOfFirst { (it.isRequired && !it.hasValidAnswer) || !it.canSubmitOptionalQuestion }
     }
 }
 

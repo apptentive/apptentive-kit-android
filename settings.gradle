@@ -1,6 +1,4 @@
-include ':app-ui-test',
-        ':app-legacy-migration-test',
-        ':apptentive-example',
+include ':apptentive-example',
         ':apptentive-core',
         ':apptentive-core-test',
         ':apptentive-core-ui',
@@ -12,6 +10,7 @@ include ':app-ui-test',
         ':apptentive-ratings',
         ':apptentive-in-app-review',
         ':apptentive-survey',
-        ':apptentive-sdk-kit'
+        ':apptentive-kit-android',
+
 
 rootProject.name = 'apptentive-sdk-ktx'

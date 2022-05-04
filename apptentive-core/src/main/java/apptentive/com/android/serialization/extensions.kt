@@ -1,7 +1,10 @@
 package apptentive.com.android.serialization
 
+import apptentive.com.android.util.InternalUseOnly
+
 //region Nullable String
 
+@InternalUseOnly
 fun Encoder.encodeNullableString(value: String?) {
     encodeBoolean(value != null)
     if (value != null) {
@@ -9,6 +12,7 @@ fun Encoder.encodeNullableString(value: String?) {
     }
 }
 
+@InternalUseOnly
 fun Decoder.decodeNullableString(): String? = if (decodeBoolean()) decodeString() else null
 
 //endregion
@@ -103,18 +107,51 @@ internal object BasicTypeSerializer : TypeSerializer<Any?> {
     }
 }
 
+@InternalUseOnly
 object StringSerializer : TypeSerializer<String> {
     override fun encode(encoder: Encoder, value: String) = encoder.encodeString(value)
 
     override fun decode(decoder: Decoder) = decoder.decodeString()
 }
 
+@InternalUseOnly
 object LongSerializer : TypeSerializer<Long> {
     override fun encode(encoder: Encoder, value: Long) = encoder.encodeLong(value)
 
     override fun decode(decoder: Decoder) = decoder.decodeLong()
 }
 
+@InternalUseOnly
+object DoubleSerializer : TypeSerializer<Double> {
+    override fun encode(encoder: Encoder, value: Double) = encoder.encodeDouble(value)
+
+    override fun decode(decoder: Decoder) = decoder.decodeDouble()
+}
+
+@InternalUseOnly
+fun <Value> Encoder.encodeSet(obj: Set<Value>, valueEncoder: TypeEncoder<Value>) {
+    encodeInt(obj.size)
+    for (value in obj) {
+        valueEncoder.encode(this, value)
+    }
+}
+
+@InternalUseOnly
+fun <Value> Decoder.decodeSet(valueDecoder: TypeDecoder<Value>): MutableSet<Value> {
+    val size = decodeInt()
+    if (size == 0) {
+        return mutableSetOf()
+    }
+
+    val set = mutableSetOf<Value>()
+    for (i in 0 until size) {
+        val value = valueDecoder.decode(this)
+        set.add(value)
+    }
+    return set
+}
+
+@InternalUseOnly
 fun Encoder.encodeMap(obj: Map<String, Any?>) {
     encodeMap(
         obj = obj,
@@ -123,6 +160,7 @@ fun Encoder.encodeMap(obj: Map<String, Any?>) {
     )
 }
 
+@InternalUseOnly
 fun <Key : Any, Value> Encoder.encodeMap(
     obj: Map<Key, Value>,
     keyEncoder: TypeEncoder<Key>,
@@ -135,6 +173,7 @@ fun <Key : Any, Value> Encoder.encodeMap(
     }
 }
 
+@InternalUseOnly
 fun Decoder.decodeMap(): Map<String, Any?> {
     return decodeMap(
         keyDecoder = StringSerializer,
@@ -142,6 +181,7 @@ fun Decoder.decodeMap(): Map<String, Any?> {
     )
 }
 
+@InternalUseOnly
 fun <Key : Any, Value> Decoder.decodeMap(
     keyDecoder: TypeDecoder<Key>,
     valueDecoder: TypeDecoder<Value>
@@ -162,6 +202,7 @@ fun <Key : Any, Value> Decoder.decodeMap(
 
 //endregion
 
+@InternalUseOnly
 inline fun <T> Encoder.encodeList(items: List<T>, callback: Encoder.(item: T) -> Unit) {
     encodeInt(items.size)
     for (item in items) {
@@ -169,6 +210,7 @@ inline fun <T> Encoder.encodeList(items: List<T>, callback: Encoder.(item: T) ->
     }
 }
 
+@InternalUseOnly
 inline fun <T> Decoder.decodeList(callback: Decoder.() -> T): List<T> {
     val size = decodeInt()
     return List(size) { callback() }

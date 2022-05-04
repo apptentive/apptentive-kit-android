@@ -1,16 +1,16 @@
 package apptentive.com.android.feedback.engagement.interactions
 
-import androidx.annotation.VisibleForTesting
+import apptentive.com.android.util.InternalUseOnly
 
 /**
  * An object that converts raw interaction data to a concrete interaction class.
  */
-@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+@InternalUseOnly
 interface InteractionDataConverter {
     fun convert(data: InteractionData): Interaction?
 }
 
-data class DefaultInteractionDataConverter(
+internal data class DefaultInteractionDataConverter(
     private val lookup: Map<String, InteractionTypeConverter<*>>
 ) : InteractionDataConverter {
     override fun convert(data: InteractionData): Interaction? {

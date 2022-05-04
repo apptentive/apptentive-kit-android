@@ -5,19 +5,15 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import android.provider.Settings.Secure.ANDROID_ID
-import android.provider.Settings.Secure.getString
 import android.telephony.TelephonyManager
 import androidx.core.content.ContextCompat
-import apptentive.com.android.feedback.SYSTEM
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.SYSTEM
 import java.util.Locale
 import java.util.TimeZone
 
 internal object AndroidUtils {
     @SuppressLint("HardwareIds")
-    fun getAndroidID(context: Context): String = getString(context.contentResolver, ANDROID_ID)
-
     //region Telephony
 
     /**

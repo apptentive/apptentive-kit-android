@@ -1,12 +1,13 @@
 package apptentive.com.android.feedback.survey.viewmodel
 
 import android.view.View
-import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import apptentive.com.android.feedback.survey.R
 import apptentive.com.android.ui.ListViewAdapter
 import apptentive.com.android.ui.ListViewItem
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.textview.MaterialTextView
 
 internal class SurveyFooterListItem(
     val buttonTitle: String?,
@@ -63,8 +64,8 @@ internal class SurveyFooterListItem(
         itemView: View,
         private val submitCallback: () -> Unit
     ) : ListViewAdapter.ViewHolder<SurveyFooterListItem>(itemView) {
-        private val submitButton: TextView = itemView.findViewById(R.id.submit_button)
-        private val errorMessageView: TextView = itemView.findViewById(R.id.submit_error_message)
+        private val submitButton = itemView.findViewById<MaterialButton>(R.id.apptentive_submit_button)
+        private val errorMessageView = itemView.findViewById<MaterialTextView>(R.id.apptentive_submit_error_message)
 
         init {
             submitButton.setOnClickListener {
@@ -93,9 +94,8 @@ internal class SurveyFooterListItem(
                     errorMessageView.text = messageState.message
                     errorMessageView.visibility = View.VISIBLE
                 }
-            }
-            else {
-                errorMessageView.visibility = View.INVISIBLE
+            } else {
+                errorMessageView.visibility = View.GONE
             }
         }
     }

@@ -1,68 +1,68 @@
 package apptentive.com.android.feedback.ratingdialog
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.widget.TextView
 import androidx.appcompat.view.ContextThemeWrapper
-import androidx.appcompat.widget.DialogTitle
 import androidx.fragment.app.DialogFragment
-import apptentive.com.android.feedback.platform.AndroidEngagementContext
+import androidx.fragment.app.viewModels
 import apptentive.com.android.feedback.ratings.R
 import apptentive.com.android.ui.overrideTheme
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textview.MaterialTextView
 
-internal class RatingDialogFragment(
-    val context: AndroidEngagementContext,
-    private val viewModel: RatingDialogViewModel
-) : DialogFragment() {
+internal class RatingDialogFragment : DialogFragment() {
 
+    private val viewModel by viewModels<RatingDialogViewModel>()
+
+    @SuppressLint("UseGetLayoutInflater", "InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        retainInstance = true
+        val dialog = MaterialAlertDialogBuilder(requireContext()).apply {
 
-        val ctx = ContextThemeWrapper(
-            context.androidContext,
-            R.style.Theme_Apptentive_Dialog_Alert
-        ).apply {
-            overrideTheme()
-        }
-
-        return MaterialAlertDialogBuilder(ctx).apply {
-            val inflater = LayoutInflater.from(context)
+            val contextWrapper = ContextThemeWrapper(requireContext(), R.style.Theme_Apptentive).apply {
+                overrideTheme()
+            }
+            val inflater = LayoutInflater.from(contextWrapper)
             val contentView = inflater.inflate(R.layout.apptentive_rating_dialog, null)
             setView(contentView)
 
-            val titleView = contentView.findViewById<DialogTitle>(R.id.apptentive_rate_title)
+            val titleView = contentView.findViewById<MaterialTextView>(R.id.apptentive_rating_dialog_title)
             titleView.text = viewModel.title.orEmpty()
 
-            val messageView = contentView.findViewById<TextView>(R.id.apptentive_rate_message)
+            val messageView = contentView.findViewById<MaterialTextView>(R.id.apptentive_rating_dialog_message)
             messageView.text = viewModel.message.orEmpty()
 
-            val rateButton = contentView.findViewById<TextView>(R.id.apptentive_rate_button)
+            val rateButton = contentView.findViewById<MaterialButton>(R.id.apptentive_rating_dialog_button)
             rateButton.text = viewModel.rateText.orEmpty()
             rateButton.setOnClickListener {
                 viewModel.onRateButton()
                 dismiss()
             }
 
-            val remindButton = contentView.findViewById<TextView>(R.id.apptentive_remind_button)
+            val remindButton = contentView.findViewById<MaterialButton>(R.id.apptentive_rating_dialog_remind_button)
             remindButton.text = viewModel.remindText.orEmpty()
             remindButton.setOnClickListener {
                 viewModel.onRemindButton()
                 dismiss()
             }
 
-            val declineButton = contentView.findViewById<TextView>(R.id.apptentive_decline_button)
+            val declineButton = contentView.findViewById<MaterialButton>(R.id.apptentive_rating_dialog_decline_button)
             declineButton.text = viewModel.declineText.orEmpty()
             declineButton.setOnClickListener {
                 viewModel.onDeclineButton()
                 dismiss()
             }
-
-            setOnCancelListener {
-                viewModel.onCancel()
-            }
         }.create()
+        return dialog.apply {
+            setCanceledOnTouchOutside(false)
+        }
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        viewModel.onCancel()
+        super.onCancel(dialog)
     }
 }

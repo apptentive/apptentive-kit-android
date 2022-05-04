@@ -1,13 +1,14 @@
 package apptentive.com.android.feedback.engagement
 
 import androidx.annotation.WorkerThread
-import apptentive.com.android.feedback.EVENT
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.criteria.Invocation
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionDataConverter
+import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
 import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.EVENT
 
 internal typealias RecordEventCallback = (
     event: Event,
@@ -19,13 +20,16 @@ internal typealias RecordEventCallback = (
 
 internal typealias RecordInteractionCallback = (interaction: Interaction) -> Unit
 
+internal typealias RecordInteractionResponsesCallback = (Map<String, Set<InteractionResponse>>) -> Unit
+
 @Suppress("FoldInitializerAndIfToElvis")
 internal data class DefaultEngagement(
     private val interactionDataProvider: InteractionDataProvider,
     private val interactionConverter: InteractionDataConverter,
     private val interactionEngagement: InteractionEngagement,
     private val recordEvent: RecordEventCallback,
-    private val recordInteraction: RecordInteractionCallback
+    private val recordInteraction: RecordInteractionCallback,
+    private val recordInteractionResponses: RecordInteractionResponsesCallback
 ) : Engagement {
     @WorkerThread
     override fun engage(
@@ -34,15 +38,18 @@ internal data class DefaultEngagement(
         interactionId: String?,
         data: Map<String, Any?>?,
         customData: Map<String, Any?>?,
-        extendedData: List<ExtendedData>?
+        extendedData: List<ExtendedData>?,
+        interactionResponses: Map<String, Set<InteractionResponse>>?
     ): EngagementResult {
         Log.i(EVENT, "Engaged event: $event")
         Log.d(EVENT, "Engaged event interaction ID: $interactionId")
         recordEvent(event, interactionId, data, customData, extendedData)
 
+        if (interactionResponses != null) recordInteractionResponses(interactionResponses)
+
         val interactionData = interactionDataProvider.getInteractionData(event)
         if (interactionData == null) {
-            return EngagementResult.Failure("No runnable interactions for event '${event.name}'")
+            return EngagementResult.InteractionNotShown("No runnable interactions for event '${event.name}'")
         }
 
         val interaction = interactionConverter.convert(interactionData)
@@ -59,7 +66,7 @@ internal data class DefaultEngagement(
     ): EngagementResult {
         val interactionData = interactionDataProvider.getInteractionData(invocations)
         if (interactionData == null) {
-            return EngagementResult.Failure("No runnable interactions")
+            return EngagementResult.InteractionNotShown("No runnable interactions")
         }
 
         val interaction = interactionConverter.convert(interactionData)
@@ -75,7 +82,7 @@ internal data class DefaultEngagement(
         interaction: Interaction
     ): EngagementResult {
         val result = interactionEngagement.engage(context, interaction)
-        if (result is EngagementResult.Success) {
+        if (result is EngagementResult.InteractionShown) {
             recordInteraction(interaction)
         }
 

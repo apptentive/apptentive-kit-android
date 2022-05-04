@@ -1,5 +1,8 @@
 package apptentive.com.android.feedback.engagement.interactions
 
+import apptentive.com.android.util.InternalUseOnly
+
+@InternalUseOnly
 data class InteractionType(val name: String) {
     override fun toString(): String {
         return name

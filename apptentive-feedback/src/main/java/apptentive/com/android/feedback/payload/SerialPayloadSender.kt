@@ -1,8 +1,8 @@
 package apptentive.com.android.feedback.payload
 
-import apptentive.com.android.feedback.PAYLOADS
 import apptentive.com.android.feedback.model.payloads.Payload
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.PAYLOADS
 import apptentive.com.android.util.Result
 
 internal class SerialPayloadSender(
@@ -53,10 +53,15 @@ internal class SerialPayloadSender(
 
     private fun shouldDeletePayload(error: Throwable): Boolean {
         return when (error) {
-            is PayloadRejectedException -> {
-                return true
+            is PayloadSendException -> {
+                Log.d(PAYLOADS, "Payload failed to send... deleting")
+                true
             }
-            else -> false
+            else -> {
+                // Don't delete, retry on next launch
+                Log.w(PAYLOADS, "Unknown payload exception: ${error.cause}")
+                false
+            }
         }
     }
 

@@ -1,9 +1,13 @@
+@file:JvmSynthetic
 package apptentive.com.android.core
 
+import apptentive.com.android.util.InternalUseOnly
 import java.util.TimeZone
 
+@InternalUseOnly
 typealias Callback = () -> Unit
 
+@InternalUseOnly
 typealias TimeInterval = Double
 
 internal const val UNDEFINED: Int = -1
@@ -11,12 +15,17 @@ internal const val UNDEFINED: Int = -1
 internal fun toMilliseconds(time: TimeInterval): Int = (time * 1000L).toInt()
 internal fun toSeconds(time: Long): TimeInterval = time * 0.001
 
+@InternalUseOnly
 fun getTimeSeconds(): TimeInterval = toSeconds(System.currentTimeMillis())
+
+@InternalUseOnly
 fun getUtcOffset(): Int {
     val timezone = TimeZone.getDefault()
     return timezone.getOffset(System.currentTimeMillis()) / 1000
 }
 
-fun isInThePast(time: TimeInterval) = getTimeSeconds() > time
+@InternalUseOnly
+fun isInThePast(time: TimeInterval): Boolean = getTimeSeconds() > time
 
-fun TimeInterval.format(digits: Int = 3) = "%.${digits}f".format(this)
+@InternalUseOnly
+fun TimeInterval.format(digits: Int = 3): String = "%.${digits}f".format(this)

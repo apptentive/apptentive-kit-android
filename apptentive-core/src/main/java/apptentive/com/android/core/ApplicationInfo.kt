@@ -1,12 +1,15 @@
 package apptentive.com.android.core
 
 import android.content.Context
+import apptentive.com.android.util.InternalUseOnly
 
+@InternalUseOnly
 interface ApplicationInfo {
     val versionCode: Int
     val versionName: String
 }
 
+@InternalUseOnly
 class AndroidApplicationInfo(context: Context) : ApplicationInfo {
     private val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
 

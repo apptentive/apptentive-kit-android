@@ -2,12 +2,14 @@ package apptentive.com.android.feedback.conversation
 
 import androidx.core.util.AtomicFile
 import apptentive.com.android.core.TimeInterval
-import apptentive.com.android.feedback.CONVERSATION
 import apptentive.com.android.feedback.conversation.Serializers.conversationSerializer
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
+import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
+import apptentive.com.android.feedback.engagement.interactions.InteractionResponseData
 import apptentive.com.android.feedback.model.AppRelease
+import apptentive.com.android.feedback.model.Configuration
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.CustomData
 import apptentive.com.android.feedback.model.Device
@@ -18,12 +20,14 @@ import apptentive.com.android.feedback.model.EngagementRecords
 import apptentive.com.android.feedback.model.IntegrationConfig
 import apptentive.com.android.feedback.model.IntegrationConfigItem
 import apptentive.com.android.feedback.model.Person
+import apptentive.com.android.feedback.model.RandomSampling
 import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.model.VersionHistory
 import apptentive.com.android.feedback.model.VersionHistoryItem
 import apptentive.com.android.serialization.BinaryDecoder
 import apptentive.com.android.serialization.BinaryEncoder
 import apptentive.com.android.serialization.Decoder
+import apptentive.com.android.serialization.DoubleSerializer
 import apptentive.com.android.serialization.Encoder
 import apptentive.com.android.serialization.LongSerializer
 import apptentive.com.android.serialization.StringSerializer
@@ -33,11 +37,14 @@ import apptentive.com.android.serialization.TypeSerializer
 import apptentive.com.android.serialization.decodeList
 import apptentive.com.android.serialization.decodeMap
 import apptentive.com.android.serialization.decodeNullableString
+import apptentive.com.android.serialization.decodeSet
 import apptentive.com.android.serialization.encodeList
 import apptentive.com.android.serialization.encodeMap
 import apptentive.com.android.serialization.encodeNullableString
+import apptentive.com.android.serialization.encodeSet
 import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.CONVERSATION
 import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.io.EOFException
@@ -253,13 +260,6 @@ internal object Serializers {
                 encoder.encodeNullableString(value.id)
                 encoder.encodeNullableString(value.email)
                 encoder.encodeNullableString(value.name)
-                encoder.encodeNullableString(value.facebookId)
-                encoder.encodeNullableString(value.phoneNumber)
-                encoder.encodeNullableString(value.street)
-                encoder.encodeNullableString(value.city)
-                encoder.encodeNullableString(value.zip)
-                encoder.encodeNullableString(value.country)
-                encoder.encodeNullableString(value.birthday)
                 encoder.encodeNullableString(value.mParticleId)
                 customDataSerializer.encode(encoder, value.customData)
             }
@@ -269,13 +269,6 @@ internal object Serializers {
                     id = decoder.decodeNullableString(),
                     email = decoder.decodeNullableString(),
                     name = decoder.decodeNullableString(),
-                    facebookId = decoder.decodeNullableString(),
-                    phoneNumber = decoder.decodeNullableString(),
-                    street = decoder.decodeNullableString(),
-                    city = decoder.decodeNullableString(),
-                    zip = decoder.decodeNullableString(),
-                    country = decoder.decodeNullableString(),
-                    birthday = decoder.decodeNullableString(),
                     mParticleId = decoder.decodeNullableString(),
                     customData = customDataSerializer.decode(decoder)
                 )
@@ -317,6 +310,7 @@ internal object Serializers {
                 encoder.encodeLong(value.versionCode)
                 encoder.encodeString(value.versionName)
                 encoder.encodeString(value.targetSdkVersion)
+                encoder.encodeString(value.minSdkVersion)
                 encoder.encodeBoolean(value.debug)
                 encoder.encodeBoolean(value.inheritStyle)
                 encoder.encodeBoolean(value.overrideStyle)
@@ -331,11 +325,65 @@ internal object Serializers {
                     versionCode = decoder.decodeLong(),
                     versionName = decoder.decodeString(),
                     targetSdkVersion = decoder.decodeString(),
+                    minSdkVersion = decoder.decodeString(),
                     debug = decoder.decodeBoolean(),
                     inheritStyle = decoder.decodeBoolean(),
                     overrideStyle = decoder.decodeBoolean(),
                     appStore = decoder.decodeNullableString(),
                     customAppStoreURL = decoder.decodeNullableString()
+                )
+            }
+        }
+    }
+
+    val configurationSerializer: TypeSerializer<Configuration> by lazy {
+        object : TypeSerializer<Configuration> {
+            override fun encode(encoder: Encoder, value: Configuration) {
+                encoder.encodeDouble(value.expiry)
+                messageCenterConfigurationSerializer.encode(encoder, value.messageCenter)
+            }
+
+            override fun decode(decoder: Decoder): Configuration {
+                return Configuration(
+                    expiry = decoder.decodeDouble(),
+                    messageCenter = messageCenterConfigurationSerializer.decode(decoder)
+                )
+            }
+        }
+    }
+
+    val messageCenterConfigurationSerializer: TypeSerializer<Configuration.MessageCenter> by lazy {
+        object : TypeSerializer<Configuration.MessageCenter> {
+            override fun encode(encoder: Encoder, value: Configuration.MessageCenter) {
+                encoder.encodeDouble(value.fgPoll)
+                encoder.encodeDouble(value.bgPoll)
+            }
+
+            override fun decode(decoder: Decoder): Configuration.MessageCenter {
+                return Configuration.MessageCenter(
+                    fgPoll = decoder.decodeDouble(),
+                    bgPoll = decoder.decodeDouble()
+                )
+            }
+        }
+    }
+
+    val randomSamplingSerializer: TypeSerializer<RandomSampling> by lazy {
+        object : TypeSerializer<RandomSampling> {
+            override fun encode(encoder: Encoder, value: RandomSampling) {
+                encoder.encodeMap(
+                    obj = value.percents,
+                    keyEncoder = interactionIdSerializer,
+                    valueEncoder = DoubleSerializer
+                )
+            }
+
+            override fun decode(decoder: Decoder): RandomSampling {
+                return RandomSampling(
+                    percents = decoder.decodeMap(
+                        keyDecoder = interactionIdSerializer,
+                        valueDecoder = DoubleSerializer
+                    )
                 )
             }
         }
@@ -384,11 +432,83 @@ internal object Serializers {
         }
     }
 
+    val interactionResponseDataSerializer: TypeSerializer<InteractionResponseData> by lazy {
+        object : TypeSerializer<InteractionResponseData> {
+            override fun encode(encoder: Encoder, value: InteractionResponseData) {
+                encoder.encodeSet(
+                    obj = value.responses,
+                    valueEncoder = interactionResponseSerializer
+                )
+                engagementRecordSerializer.encode(encoder, value.record)
+            }
+
+            override fun decode(decoder: Decoder): InteractionResponseData {
+                return InteractionResponseData(
+                    responses = decoder.decodeSet(interactionResponseSerializer),
+                    record = engagementRecordSerializer.decode(decoder)
+                )
+            }
+        }
+    }
+
+    val interactionResponseSerializer: TypeSerializer<InteractionResponse> by lazy {
+        object : TypeSerializer<InteractionResponse> {
+            override fun encode(encoder: Encoder, value: InteractionResponse) {
+                val responseName = value::class.java.name
+                encoder.encodeString(responseName)
+
+                when (responseName) {
+                    InteractionResponse.IdResponse::class.java.name -> {
+                        value as InteractionResponse.IdResponse
+                        encoder.encodeString(value.id)
+                    }
+                    InteractionResponse.LongResponse::class.java.name -> {
+                        value as InteractionResponse.LongResponse
+                        encoder.encodeLong(value.response)
+                    }
+                    InteractionResponse.StringResponse::class.java.name -> {
+                        value as InteractionResponse.StringResponse
+                        encoder.encodeString(value.response)
+                    }
+                    InteractionResponse.OtherResponse::class.java.name -> {
+                        value as InteractionResponse.OtherResponse
+                        encoder.encodeNullableString(value.id)
+                        encoder.encodeNullableString(value.response)
+                    }
+                }
+            }
+
+            override fun decode(decoder: Decoder): InteractionResponse {
+                val responseName = decoder.decodeString()
+
+                return when (responseName) {
+                    InteractionResponse.IdResponse::class.java.name -> {
+                        InteractionResponse.IdResponse(decoder.decodeString())
+                    }
+                    InteractionResponse.LongResponse::class.java.name -> {
+                        InteractionResponse.LongResponse(decoder.decodeLong())
+                    }
+                    InteractionResponse.StringResponse::class.java.name -> {
+                        InteractionResponse.StringResponse(decoder.decodeString())
+                    }
+                    InteractionResponse.OtherResponse::class.java.name -> {
+                        InteractionResponse.OtherResponse(
+                            id = decoder.decodeNullableString(),
+                            response = decoder.decodeNullableString()
+                        )
+                    }
+                    else -> throw java.lang.Exception("Unknown InteractionResponse type: $responseName")
+                }
+            }
+        }
+    }
+
     val engagementDataSerializer: TypeSerializer<EngagementData> by lazy {
         object : TypeSerializer<EngagementData> {
             override fun encode(encoder: Encoder, value: EngagementData) {
                 encodeEventData(encoder, value.events)
                 encodeInteractionData(encoder, value.interactions)
+                encodeInteractionResponsesData(encoder, value.interactionResponses)
                 encodeVersionHistory(encoder, value.versionHistory)
             }
 
@@ -405,6 +525,17 @@ internal object Serializers {
                     obj = interactions,
                     keyEncoder = interactionIdSerializer
                 )
+
+            private fun encodeInteractionResponsesData(
+                encoder: Encoder,
+                interactionResponses: Map<InteractionId, InteractionResponseData>
+            ) {
+                encoder.encodeMap(
+                    obj = interactionResponses,
+                    keyEncoder = interactionIdSerializer,
+                    valueEncoder = interactionResponseDataSerializer
+                )
+            }
 
             private fun <Key : Any> encodeEngagementRecords(
                 encoder: Encoder,
@@ -429,6 +560,7 @@ internal object Serializers {
                 return EngagementData(
                     events = decodeEventRecords(decoder),
                     interactions = decodeInteractionRecords(decoder),
+                    interactionResponses = decodeInteractionResponsesRecords(decoder),
                     versionHistory = decodeVersionHistory(decoder)
                 )
             }
@@ -439,6 +571,13 @@ internal object Serializers {
 
             private fun decodeInteractionRecords(decoder: Decoder): EngagementRecords<InteractionId> {
                 return decodeEngagementRecords(decoder, keyDecoder = interactionIdSerializer)
+            }
+
+            private fun decodeInteractionResponsesRecords(decoder: Decoder): MutableMap<InteractionId, InteractionResponseData> {
+                return decoder.decodeMap(
+                    keyDecoder = interactionIdSerializer,
+                    valueDecoder = interactionResponseDataSerializer
+                )
             }
 
             private fun <Key : Any> decodeEngagementRecords(
@@ -473,6 +612,8 @@ internal object Serializers {
                 personSerializer.encode(encoder, value.person)
                 sdkSerializer.encode(encoder, value.sdk)
                 appReleaseSerializer.encode(encoder, value.appRelease)
+                configurationSerializer.encode(encoder, value.configuration)
+                randomSamplingSerializer.encode(encoder, value.randomSampling)
                 engagementDataSerializer.encode(encoder, value.engagementData)
             }
 
@@ -485,6 +626,8 @@ internal object Serializers {
                     person = personSerializer.decode(decoder),
                     sdk = sdkSerializer.decode(decoder),
                     appRelease = appReleaseSerializer.decode(decoder),
+                    configuration = configurationSerializer.decode(decoder),
+                    randomSampling = randomSamplingSerializer.decode(decoder),
                     engagementManifest = EngagementManifest(), // EngagementManifest is serialized separately
                     engagementData = engagementDataSerializer.decode(decoder)
                 )

@@ -1,0 +1,48 @@
+task sonatypeAssembleApptentiveModules(type: GradleBuild) {
+    buildName = "sonatypeAssembleApptentiveModules"
+    tasks = ['apptentive-core:assembleRelease',
+             'apptentive-core-ui:assembleRelease',
+             'apptentive-feedback:assembleRelease',
+             'apptentive-enjoyment-dialog:assembleRelease',
+             'apptentive-in-app-review:assembleRelease',
+             'apptentive-navigate-to-link:assembleRelease',
+             'apptentive-notes:assembleRelease',
+             'apptentive-ratings:assembleRelease',
+             'apptentive-survey:assembleRelease']
+}
+
+// Do this first
+task sonatypePublishApptentiveModules(type: GradleBuild)  {
+    buildName = "sonatypePublishApptentiveModules"
+    startParameter.projectProperties = project.gradle.startParameter.projectProperties
+    tasks = ['apptentive-core:publishMavenPublicationToMavenLocal',
+             'apptentive-core-ui:publishMavenPublicationToMavenLocal',
+             'apptentive-feedback:publishMavenPublicationToMavenLocal',
+             'apptentive-enjoyment-dialog:publishMavenPublicationToMavenLocal',
+             'apptentive-in-app-review:publishMavenPublicationToMavenLocal',
+             'apptentive-navigate-to-link:publishMavenPublicationToMavenLocal',
+             'apptentive-notes:publishMavenPublicationToMavenLocal',
+             'apptentive-ratings:publishMavenPublicationToMavenLocal',
+             'apptentive-survey:publishMavenPublicationToMavenLocal']
+    dependsOn sonatypeAssembleApptentiveModules
+}
+
+task sonatypeAssembleApptentiveKitModule(type: GradleBuild) {
+    buildName = "sonatypeAssembleApptentiveModules"
+    tasks = ['apptentive-kit-android:assembleRelease']
+}
+
+// Do this second
+task sonatypePublishApptentiveKitModule(type: GradleBuild)  {
+    buildName = "sonatypePublishApptentiveModules"
+    startParameter.projectProperties = project.gradle.startParameter.projectProperties
+    tasks = ['apptentive-kit-android:publishMavenPublicationToMavenLocal']
+    dependsOn sonatypeAssembleApptentiveKitModule
+}
+
+// Do this third
+task sonatypePublishAndCloseApptentiveStagingRepository(type: GradleBuild) {
+    buildName = "sonatypePublishApptentiveStagingRepository"
+    startParameter.projectProperties = project.gradle.startParameter.projectProperties
+    tasks = ['publishToSonatype', 'closeSonatypeStagingRepository']
+}

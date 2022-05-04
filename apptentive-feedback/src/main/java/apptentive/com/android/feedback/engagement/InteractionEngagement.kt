@@ -1,12 +1,12 @@
 package apptentive.com.android.feedback.engagement
 
-import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionLauncher
 import apptentive.com.android.feedback.utils.ThrottleUtils
+import apptentive.com.android.util.InternalUseOnly
 
-@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+@InternalUseOnly
 interface InteractionEngagement {
     fun engage(context: EngagementContext, interaction: Interaction): EngagementResult
 }
@@ -24,8 +24,8 @@ internal data class DefaultInteractionEngagement(
 
             if (!shouldThrottleInteraction) {
                 launcher.launchInteraction(context, interaction)
-                EngagementResult.Success(interactionId = interaction.id)
-            } else EngagementResult.Failure("${interaction.type.name} throttled.")
+                EngagementResult.InteractionShown(interactionId = interaction.id)
+            } else EngagementResult.InteractionNotShown("${interaction.type.name} throttled.")
         } else EngagementResult.Error("Interaction launcher not found: ${interactionClass.name}")
     }
 }

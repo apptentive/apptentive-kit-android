@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.ProcessLifecycleOwner
 import apptentive.com.android.concurrent.Executors
+import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.Provider
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.DefaultConversationService
@@ -15,6 +16,8 @@ import apptentive.com.android.feedback.conversation.DefaultConversationSerialize
 import apptentive.com.android.feedback.engagement.DefaultEngagement
 import apptentive.com.android.feedback.engagement.DefaultInteractionEngagement
 import apptentive.com.android.feedback.engagement.Engagement
+import apptentive.com.android.feedback.engagement.EngagementContextFactory
+import apptentive.com.android.feedback.engagement.EngagementContextProvider
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.InteractionDataProvider
 import apptentive.com.android.feedback.engagement.InteractionEngagement
@@ -28,6 +31,7 @@ import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionDataConverter
 import apptentive.com.android.feedback.engagement.interactions.InteractionLauncher
 import apptentive.com.android.feedback.engagement.interactions.InteractionModule
+import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.feedback.lifecycle.ApptentiveLifecycleObserver
 import apptentive.com.android.feedback.model.Conversation
@@ -40,19 +44,20 @@ import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadSender
 import apptentive.com.android.feedback.payload.PersistentPayloadQueue
 import apptentive.com.android.feedback.payload.SerialPayloadSender
-import apptentive.com.android.feedback.platform.AndroidEngagementContext
 import apptentive.com.android.feedback.platform.DefaultAppReleaseFactory
 import apptentive.com.android.feedback.platform.DefaultDeviceFactory
 import apptentive.com.android.feedback.platform.DefaultEngagementDataFactory
 import apptentive.com.android.feedback.platform.DefaultEngagementManifestFactory
 import apptentive.com.android.feedback.platform.DefaultPersonFactory
 import apptentive.com.android.feedback.platform.DefaultSDKFactory
+import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.RuntimeUtils
 import apptentive.com.android.network.HttpClient
 import apptentive.com.android.network.UnexpectedResponseException
-import apptentive.com.android.util.FileUtil
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogLevel
+import apptentive.com.android.util.LogTags.LIFE_CYCLE_OBSERVER
+import apptentive.com.android.util.LogTags.PAYLOADS
 import apptentive.com.android.util.Result
 import com.apptentive.android.sdk.conversation.DefaultLegacyConversationManager
 import com.apptentive.android.sdk.conversation.LegacyConversationManager
@@ -106,7 +111,10 @@ internal class ApptentiveDefaultClient(
                         else -> registerCallback?.invoke(RegisterResult.Exception(it.error))
                     }
                 }
-                is Result.Success -> conversationManager.tryFetchEngagementManifest()
+                is Result.Success -> {
+                    conversationManager.tryFetchEngagementManifest()
+                    conversationManager.tryFetchAppConfiguration()
+                }
             }
         }
         conversationManager.activeConversation.observe { conversation ->
@@ -119,7 +127,8 @@ internal class ApptentiveDefaultClient(
                 interactionConverter = interactionConverter,
                 interactionEngagement = createInteractionEngagement(),
                 recordEvent = ::recordEvent,
-                recordInteraction = ::recordInteraction
+                recordInteraction = ::recordInteraction,
+                recordInteractionResponses = ::recordInteractionResponses
             )
 
             // once we have received conversationId and conversationToken we can setup payload sender service
@@ -164,10 +173,10 @@ internal class ApptentiveDefaultClient(
         executors.main.execute {
             Log.i(LIFE_CYCLE_OBSERVER, "Observing App lifecycle")
             ProcessLifecycleOwner.get().lifecycle.addObserver(
-                ApptentiveLifecycleObserver(
-                    this,
-                    context
-                ) { conversationManager.tryFetchEngagementManifest() }
+                ApptentiveLifecycleObserver(this, executors.state) {
+                    conversationManager.tryFetchEngagementManifest()
+                    conversationManager.tryFetchAppConfiguration()
+                }
             )
         }
     }
@@ -223,6 +232,7 @@ internal class ApptentiveDefaultClient(
                 conversation.device,
                 conversation.sdk,
                 conversation.appRelease,
+                conversation.randomSampling,
                 conversation.engagementData
             ),
             usingCustomStoreUrlSkipInAppReviewID = usingCustomStoreUrlSkipInAppReviewID
@@ -233,8 +243,10 @@ internal class ApptentiveDefaultClient(
 
     //region Engagement
 
-    override fun engage(context: Context, event: Event): EngagementResult {
-        return AndroidEngagementContext(context, engagement, payloadSender, executors).engage(event)
+    override fun engage(event: Event): EngagementResult {
+        DependencyProvider.register(EngagementContextProvider(engagement, payloadSender, executors))
+
+        return DependencyProvider.of<EngagementContextFactory>().engagementContext().engage(event)
     }
 
     override fun updatePerson(
@@ -333,16 +345,16 @@ internal class ApptentiveDefaultClient(
     }
 
     @WorkerThread
-    private fun onPayloadSendFinish(result: Result<PayloadData>) {
+    private fun recordInteractionResponses(interactionResponses: Map<String, Set<InteractionResponse>>) {
+        conversationManager.recordInteractionResponses(interactionResponses)
     }
 
-    //endregion
-
-    //region Debug
-
-    internal fun reset() {
-        conversationManager.clear()
-        conversationManager.recordEvent(Event.internal("launch")) // trick sdk to think it was launched
+    @WorkerThread
+    private fun onPayloadSendFinish(result: Result<PayloadData>) {
+        when (result) {
+            is Result.Success -> Log.d(PAYLOADS, "Payload of type \'${result.data.type}\' successfully sent")
+            is Result.Error -> Log.e(PAYLOADS, "Payload failed to send: ${result.error.cause?.message}")
+        }
     }
 
     //endregion

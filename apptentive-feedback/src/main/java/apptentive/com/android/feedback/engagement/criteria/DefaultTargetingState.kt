@@ -9,12 +9,14 @@ import apptentive.com.android.feedback.engagement.criteria.Field.device
 import apptentive.com.android.feedback.engagement.criteria.Field.interactions
 import apptentive.com.android.feedback.engagement.criteria.Field.is_update
 import apptentive.com.android.feedback.engagement.criteria.Field.person
+import apptentive.com.android.feedback.engagement.criteria.Field.random
 import apptentive.com.android.feedback.engagement.criteria.Field.sdk
 import apptentive.com.android.feedback.engagement.criteria.Field.time_at_install
 import apptentive.com.android.feedback.model.AppRelease
 import apptentive.com.android.feedback.model.Device
 import apptentive.com.android.feedback.model.EngagementData
 import apptentive.com.android.feedback.model.Person
+import apptentive.com.android.feedback.model.RandomSampling
 import apptentive.com.android.feedback.model.SDK
 
 internal data class DefaultTargetingState(
@@ -22,15 +24,17 @@ internal data class DefaultTargetingState(
     private val device: Device,
     private val sdk: SDK,
     private val appRelease: AppRelease,
+    private val randomSampling: RandomSampling,
     private val engagementData: EngagementData,
     private val timeSource: TimeSource = DefaultTimeSource
 ) : TargetingState {
     override fun getValue(field: Field): Any? {
         return when (field) {
+            is application.build_type -> appRelease.debug
             is application.version_code -> appRelease.versionCode
-            is application.version_name -> Version.tryParse(appRelease.versionName)
+            is application.version_name -> Version.parse(appRelease.versionName)
 
-            is sdk.version -> Version.tryParse(sdk.version)
+            is sdk.version -> Version.parse(sdk.version)
 
             is current_time -> DateTime(timeSource.getTimeSeconds())
 
@@ -62,13 +66,15 @@ internal data class DefaultTargetingState(
                 appRelease.versionName
             )
             is interactions.last_invoked_at.total -> engagementData.interactions.lastInvoke(field.interactionId)
+            is interactions.answers.id -> engagementData.interactionResponses[field.responseId]?.responses
+            is interactions.answers.value -> engagementData.interactionResponses[field.responseId]?.responses
 
             is person.name -> person.name
             is person.email -> person.email
             is person.custom_data -> person.customData[field.key]
 
             is device.os_name -> device.osName
-            is device.os_version -> device.osVersion
+            is device.os_version -> Version.parse(device.osVersion)
             is device.os_build -> device.osBuild
             is device.manufacturer -> device.manufacturer
             is device.model -> device.model
@@ -90,8 +96,11 @@ internal data class DefaultTargetingState(
             is device.locale_language_code -> device.localeLanguageCode
             is device.locale_raw -> device.localeRaw
             is device.os_api_level -> device.osApiLevel
-            is device.utc_offset -> device.utcOffset
+            is device.utc_offset -> device.utcOffset.toLong()
             is device.custom_data -> device.customData[field.key]
+
+            is random.percent -> randomSampling.getRandomValue()
+            is random.percent_with_id -> randomSampling.getOrPutRandomValue(field.randomPercentId)
 
             else -> null
         }

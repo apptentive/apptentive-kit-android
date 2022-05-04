@@ -39,18 +39,18 @@ class SurveyResponsePayloadTest {
 
         val expectedJson = toProperJson(
             "{" +
-                    "'response':{" +
-                    "'id':'$surveyId'," +
-                    "'answers':{" +
-                    "'1':[{'value':'answer'}]," +
-                    "'2':[{'value':5}]," +
-                    "'3':[{'id':'choice_1'},{'id':'choice_3','value':'text'}]" +
-                    "}," +
-                    "'client_created_at':1000.0," +
-                    "'client_created_at_utc_offset':-18000," +
-                    "'nonce':'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'" +
-                    "}" +
-                    "}"
+                "'response':{" +
+                "'id':'$surveyId'," +
+                "'answers':{" +
+                "'1':[{'value':'answer'}]," +
+                "'2':[{'value':5}]," +
+                "'3':[{'id':'choice_1'},{'id':'choice_3','value':'text'}]" +
+                "}," +
+                "'client_created_at':1000.0," +
+                "'client_created_at_utc_offset':-18000," +
+                "'nonce':'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'" +
+                "}" +
+                "}"
         )
 
         val expected = PayloadData(

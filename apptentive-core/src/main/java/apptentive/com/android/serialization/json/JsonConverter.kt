@@ -1,5 +1,6 @@
 package apptentive.com.android.serialization.json
 
+import apptentive.com.android.util.InternalUseOnly
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -8,6 +9,7 @@ import org.json.JSONObject
 /**
  * Utility class for JSON serialization
  */
+@InternalUseOnly
 object JsonConverter {
     private val gson: Gson by lazy {
         GsonBuilder()

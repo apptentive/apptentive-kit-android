@@ -90,6 +90,7 @@ class DefaultConversationServiceTest : TestCase() {
                             "inheriting_styles" to mockAppRelease.inheritStyle,
                             "overriding_styles" to mockAppRelease.overrideStyle,
                             "target_sdk_version" to mockAppRelease.targetSdkVersion,
+                            "min_sdk_version" to mockAppRelease.minSdkVersion,
                             "type" to mockAppRelease.type,
                             "version_code" to mockAppRelease.versionCode.toDouble(),
                             "version_name" to mockAppRelease.versionName

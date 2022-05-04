@@ -1,24 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<apptentive.com.android.ui.ButtonBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/apptentive_note_button_bar"
-    style="?attr/buttonBarStyle"
-    android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/apptentive_note_button_layout"
+    style="?apptentiveNoteButtonLayoutStyle"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:gravity="bottom"
-    android:layoutDirection="locale"
-    android:orientation="horizontal"
-    android:paddingHorizontal="8dp"
-    android:paddingVertical="2dp"
-    android:paddingStart="8dp"
-    android:paddingTop="2dp"
-    android:paddingEnd="8dp"
-    android:paddingBottom="2dp">
-
-    <android.widget.Space
-        android:id="@+id/spacer"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:visibility="invisible" />
-</apptentive.com.android.ui.ButtonBarLayout>
+    tools:ignore="Orientation" />

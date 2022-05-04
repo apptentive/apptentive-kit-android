@@ -1,14 +1,15 @@
 package apptentive.com.android.feedback.enjoyment
 
-import apptentive.com.android.feedback.INTERACTIONS
-import apptentive.com.android.feedback.engagement.EngagementContext
+import androidx.lifecycle.ViewModel
+import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.INTERACTIONS
 
-internal data class EnjoymentDialogViewModel(
-    private val context: EngagementContext,
-    val interaction: EnjoymentDialogInteraction
-) {
+internal class EnjoymentDialogViewModel : ViewModel() {
+    private val context = DependencyProvider.of<EngagementContextFactory>().engagementContext()
+    val interaction = DependencyProvider.of<EnjoymentDialogInteractionFactory>().getEnjoymentDialogInteraction()
     val title = interaction.title
     val yesText = interaction.yesText
     val noText = interaction.noText

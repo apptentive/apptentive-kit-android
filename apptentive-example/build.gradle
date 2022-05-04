@@ -17,52 +17,14 @@ android {
 
 dependencies {
     implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.3.1'
-    implementation 'com.google.android.material:material:1.4.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
+    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
 
     /**
-     * TODO Step 1: Uncomment the code below for the interactions you'd like to demo
-     * TODO Step 2: Replace APPTENTIVE_VERSION with released version from GitHub
-     *  https://github.com/apptentive/android-sdk
-     *  TODO Dev - (Replace GitHub link with public version)
+     * TODO Step 1: Uncomment the import line below.
+     * TODO Step 2: Replace APPTENTIVE_VERSION with latest released version on GitHub
+     *  https://github.com/apptentive/apptentive-kit-android
      */
-//    def apptentive_version = APPTENTIVE_VERSION
-
-    // Core Apptentive code for using any Apptentive Interaction
-//    implementation "com.apptentive:apptentive-core:$apptentive_version"
-//    implementation "com.apptentive:apptentive-core-ui:$apptentive_version"
-//    implementation "com.apptentive:apptentive-feedback:$apptentive_version"
-
-    // Love Dialog Interaction
-    // https://learn.apptentive.com/knowledge-base/getting-started-with-apptentive/#love-dialog
-//    implementation "com.apptentive:apptentive-enjoyment-dialog:$apptentive_version"
-
-    // Notes Interaction
-    // https://learn.apptentive.com/knowledge-base/getting-started-with-apptentive/#notes
-//    implementation "com.apptentive:apptentive-notes:$apptentive_version"
-
-    // Support library for external linking and deep linking
-//    implementation "com.apptentive:apptentive-navigate-to-link:$apptentive_version"
-
-    // Survey Interaction
-    // https://learn.apptentive.com/knowledge-base/getting-started-with-apptentive/#surveys
-//    implementation "com.apptentive:apptentive-survey:$apptentive_version"
-
-
-    /**
-     * The example app is not set up to handle Google In-App Review and Apptentive Rating Dialog.
-     * Included here (In Gradle) as an implementation example.
-     *
-     * Google In-App Review Interaction     - Requires the app to be in the Play Store
-     * Apptentive Rating Dialog Interaction - Requires Android OS < 5 (API level 20 or below)
-     *  or a non-Play Store App (TO BE IMPLEMENTED)
-     */
-    // Google In-App Review
-    // https://learn.apptentive.com/knowledge-base/requesting-ratings-on-google-play/
-//    implementation "com.apptentive:apptentive-in-app-review:$apptentive_version"
-
-    // Apptentive Rating Dialog Interaction
-    // https://learn.apptentive.com/knowledge-base/getting-started-with-apptentive/#rating-dialog
-//    implementation "com.apptentive:apptentive-ratings:$apptentive_version"
+//    implementation "com.apptentive:apptentive-kit-android:APPTENTIVE_VERSION"
 }

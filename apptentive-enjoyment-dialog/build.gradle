@@ -29,6 +29,7 @@ dependencies {
     implementation project(':apptentive-feedback')
     implementation "androidx.appcompat:appcompat:$appcompat_library_version"
     implementation "androidx.core:core-ktx:$core_ktx_version"
+    implementation "androidx.fragment:fragment-ktx:$fragment_ktx_version"
     implementation "com.google.android.material:material:$material_design_version"
 
     testImplementation project(':apptentive-core-test')
@@ -45,4 +46,12 @@ project.ext {
     artifactId = 'apptentive-enjoyment-dialog'
 }
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        freeCompilerArgs += [
+                //'-Xexplicit-api=warning', // or '-Xexplicit-api=strict'
+                '-opt-in=apptentive.com.android.util.InternalUseOnly',
+        ]
+    }
+}
 apply from: '../publish.gradle'

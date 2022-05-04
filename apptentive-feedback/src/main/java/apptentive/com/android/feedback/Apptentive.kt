@@ -2,13 +2,11 @@ package apptentive.com.android.feedback
 
 import android.app.Application
 import android.content.Context
-import androidx.annotation.VisibleForTesting
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.concurrent.ExecutorQueue
 import apptentive.com.android.concurrent.Executors
 import apptentive.com.android.core.AndroidApplicationInfo
 import apptentive.com.android.core.AndroidExecutorFactoryProvider
-import apptentive.com.android.core.AndroidFileSystemProvider
 import apptentive.com.android.core.AndroidLoggerProvider
 import apptentive.com.android.core.ApplicationInfo
 import apptentive.com.android.core.DependencyProvider
@@ -16,10 +14,9 @@ import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.format
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
-import apptentive.com.android.feedback.utils.RuntimeUtils
+import apptentive.com.android.feedback.platform.AndroidFileSystemProvider
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.feedback.utils.ThrottleUtils
-import apptentive.com.android.feedback.utils.ThrottleUtils.SHARED_PREF_THROTTLE
 import apptentive.com.android.network.DefaultHttpClient
 import apptentive.com.android.network.DefaultHttpNetwork
 import apptentive.com.android.network.DefaultHttpRequestRetryPolicy
@@ -28,15 +25,19 @@ import apptentive.com.android.network.HttpLoggingInterceptor
 import apptentive.com.android.network.HttpNetworkResponse
 import apptentive.com.android.network.HttpRequest
 import apptentive.com.android.network.asString
+import apptentive.com.android.platform.SharedPrefConstants
 import apptentive.com.android.util.Log
-import apptentive.com.android.util.LogTags
+import apptentive.com.android.util.LogTags.FEEDBACK
+import apptentive.com.android.util.LogTags.INTERACTIONS
 import apptentive.com.android.util.LogTags.NETWORK
+import apptentive.com.android.util.LogTags.PROFILE_DATA_UPDATE
+import apptentive.com.android.util.LogTags.SYSTEM
 
 sealed class EngagementResult {
-    data class Success(val interactionId: InteractionId) : EngagementResult() {
+    data class InteractionShown(val interactionId: InteractionId) : EngagementResult() {
         init { Log.d(INTERACTIONS, "Interaction Engaged => interactionID: $interactionId") }
     }
-    data class Failure(val description: String) : EngagementResult() {
+    data class InteractionNotShown(val description: String) : EngagementResult() {
         init { Log.d(INTERACTIONS, "Interaction NOT Engaged => $description") }
     }
     data class Error(val message: String) : EngagementResult() {
@@ -49,10 +50,35 @@ sealed class EngagementResult {
 
 object Apptentive {
     private var client: ApptentiveClient = ApptentiveClient.NULL
+    private var activityInfoCallback: ApptentiveActivityInfo? = null
     private lateinit var stateExecutor: Executor
     private lateinit var mainExecutor: Executor
 
     //region Initialization
+
+    /**
+     * collects the [ApptentiveActivityInfo] reference which can be used to retrieve current activity context.
+     * The retrieved context is used in the apptentive interactions & it's UI elements.
+     *
+     * @param apptentiveActivityInfo
+     */
+
+    @JvmStatic
+    fun registerApptentiveActivityInfoCallback(apptentiveActivityInfo: ApptentiveActivityInfo) {
+        Log.d(FEEDBACK, "Activity info callback is registered")
+        this.activityInfoCallback = apptentiveActivityInfo
+    }
+
+    /**
+     * clears the [ApptentiveActivityInfo] reference
+     */
+    @JvmStatic
+    fun unregisterApptentiveActivityInfoCallback() {
+        Log.d(FEEDBACK, "Activity info callback is unregistered")
+        this.activityInfoCallback = null
+    }
+
+    fun getApptentiveActivityCallback(): ApptentiveActivityInfo? = activityInfoCallback
 
     @Suppress("MemberVisibilityCanBePrivate")
     val registered
@@ -96,6 +122,10 @@ object Apptentive {
             )
         )
 
+        // Save host app theme usage
+        application.getSharedPreferences(SharedPrefConstants.USE_HOST_APP_THEME, Context.MODE_PRIVATE)
+            .edit().putBoolean(SharedPrefConstants.USE_HOST_APP_THEME_KEY, configuration.shouldInheritAppTheme).apply()
+
         // Set log level
         Log.logLevel = configuration.logLevel
 
@@ -105,11 +135,11 @@ object Apptentive {
         // Set rating throttle
         ThrottleUtils.ratingThrottleLength = configuration.ratingInteractionThrottleLength
         ThrottleUtils.throttleSharedPrefs =
-            application.getSharedPreferences(SHARED_PREF_THROTTLE, Context.MODE_PRIVATE)
+            application.getSharedPreferences(SharedPrefConstants.THROTTLE_UTILS, Context.MODE_PRIVATE)
 
         // Save alternate app store URL to be set later
-        application.getSharedPreferences(Constants.SHARED_PREF_CUSTOM_STORE_URL, Context.MODE_PRIVATE)
-            .edit().putString(Constants.SHARED_PREF_CUSTOM_STORE_URL_KEY, configuration.customAppStoreURL).apply()
+        application.getSharedPreferences(SharedPrefConstants.CUSTOM_STORE_URL, Context.MODE_PRIVATE)
+            .edit().putString(SharedPrefConstants.CUSTOM_STORE_URL_KEY, configuration.customAppStoreURL).apply()
 
         Log.i(SYSTEM, "Registering Apptentive Android SDK ${Constants.SDK_VERSION}")
         Log.v(
@@ -179,15 +209,15 @@ object Apptentive {
     //endregion
     @JvmStatic
     @JvmOverloads
-    fun engage(context: Context, eventName: String, callback: EngagementCallback? = null) {
+    fun engage(eventName: String, callback: EngagementCallback? = null) {
         // the above statement would not compile without force unwrapping on Kotlin 1.4.x
         @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
         val callbackFunc: ((EngagementResult) -> Unit)? =
             if (callback != null) callback!!::onComplete else null
-        engage(context, eventName, callbackFunc)
+        engage(eventName, callbackFunc)
     }
 
-    fun engage(context: Context, eventName: String, callback: ((EngagementResult) -> Unit)?) {
+    private fun engage(eventName: String, callback: ((EngagementResult) -> Unit)?) {
         // user callback should be executed on the main thread
         val callbackWrapper: ((EngagementResult) -> Unit)? = if (callback != null) {
             {
@@ -201,33 +231,13 @@ object Apptentive {
         stateExecutor.execute {
             try {
                 val event = Event.local(eventName)
-                val result = client.engage(context, event)
+                val result = client.engage(event)
                 callbackWrapper?.invoke(result)
             } catch (e: Exception) {
                 callbackWrapper?.invoke(EngagementResult.Exception(error = e))
             }
         }
     }
-
-    //region Debug
-
-    /**
-     * *** DEBUG ONLY FUNCTION ***
-     * Clears the Conversation and records an internal "launch" event
-     * @see apptentive.com.android.feedback.ApptentiveDefaultClient.reset
-     */
-    @VisibleForTesting
-    fun reset(context: Context) {
-        if (RuntimeUtils.getApplicationInfo(context).debuggable) {
-            stateExecutor.execute {
-                val client = client as? ApptentiveDefaultClient
-                if (client != null) client.reset()
-                else Log.e(LogTags.CORE, "Unable to clear event: sdk is not initialized")
-            }
-        } else throw IllegalStateException("Can only use reset method in Debug mode")
-    }
-
-    //endregion
 
     // region Person data updates
 
@@ -304,7 +314,7 @@ object Apptentive {
     fun addCustomPersonData(key: String?, value: Number?) {
         stateExecutor.execute {
             if (key != null && value != null) {
-                client.updatePerson(customData = Pair(key, value))
+                client.updatePerson(customData = Pair(key, value.toString().toDouble()))
             }
         }
     }
@@ -369,7 +379,7 @@ object Apptentive {
     fun addCustomDeviceData(key: String?, value: Number?) {
         stateExecutor.execute {
             if (key != null && value != null) {
-                client.updateDevice(customData = Pair(key, value))
+                client.updateDevice(customData = Pair(key, value.toString().toDouble()))
             }
         }
     }

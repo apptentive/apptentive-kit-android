@@ -12,6 +12,7 @@ enum class LogLevel {
     Error
 }
 
+@InternalUseOnly
 object Log {
     var logLevel: LogLevel = LogLevel.Info
     private const val CHUNK_LOG_MESSAGE_LENGTH = 3900 // Max length is 4068. 3900 gives room for additional info
@@ -97,6 +98,7 @@ object Log {
     }
 }
 
+@InternalUseOnly
 data class LogTag(val name: String) {
     override fun toString(): String = name
 }

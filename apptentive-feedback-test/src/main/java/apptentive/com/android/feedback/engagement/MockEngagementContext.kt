@@ -4,6 +4,7 @@ import apptentive.com.android.concurrent.Executors
 import apptentive.com.android.concurrent.ImmediateExecutor
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.criteria.Invocation
+import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
 import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.feedback.model.payloads.Payload
 import apptentive.com.android.feedback.payload.MockPayloadSender
@@ -34,7 +35,8 @@ class MockEngagementContext(
             interactionId: String?,
             data: Map<String, Any?>?,
             customData: Map<String, Any?>?,
-            extendedData: List<ExtendedData>?
+            extendedData: List<ExtendedData>?,
+            interactionResponses: Map<String, Set<InteractionResponse>>?
         ): EngagementResult {
             return onEngage?.invoke(
                 EngageArgs(
@@ -44,14 +46,14 @@ class MockEngagementContext(
                     customData,
                     extendedData
                 )
-            ) ?: EngagementResult.Failure("No runnable interactions")
+            ) ?: EngagementResult.InteractionNotShown("No runnable interactions")
         }
 
         override fun engage(
             context: EngagementContext,
             invocations: List<Invocation>
         ): EngagementResult {
-            return onInvoke?.invoke(invocations) ?: EngagementResult.Failure("No runnable interactions")
+            return onInvoke?.invoke(invocations) ?: EngagementResult.InteractionNotShown("No runnable interactions")
         }
     },
     payloadSender = MockPayloadSender(onSendPayload),

@@ -1,6 +1,6 @@
 package apptentive.com.android.feedback.survey.model
 
-import androidx.annotation.VisibleForTesting
+import apptentive.com.android.util.InternalUseOnly
 
-@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+@InternalUseOnly
 interface SurveyQuestionAnswer

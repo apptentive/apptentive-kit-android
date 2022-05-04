@@ -20,4 +20,3 @@ internal class TextModalModule : InteractionModule<TextModalInteraction> {
         return TextModalInteractionLauncher()
     }
 }
-

@@ -1,5 +1,8 @@
 package apptentive.com.android.serialization
 
+import apptentive.com.android.util.InternalUseOnly
+
+@InternalUseOnly
 interface Encoder {
     fun encodeBoolean(value: Boolean)
     fun encodeByte(value: Byte)

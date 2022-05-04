@@ -1,42 +1,59 @@
 package apptentive.com.android.feedback.enjoyment
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
+import android.view.LayoutInflater
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.fragment.app.DialogFragment
-import apptentive.com.android.feedback.platform.AndroidEngagementContext
+import androidx.fragment.app.viewModels
 import apptentive.com.android.ui.overrideTheme
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textview.MaterialTextView
 
-internal class EnjoymentDialogFragment(
-    val context: AndroidEngagementContext,
-    private val viewModel: EnjoymentDialogViewModel
-) : DialogFragment() {
+internal class EnjoymentDialogFragment : DialogFragment() {
+    private val viewModel by viewModels<EnjoymentDialogViewModel>()
 
+    @SuppressLint("UseGetLayoutInflater", "InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        retainInstance = true
 
-        val ctx = ContextThemeWrapper(
-            context.androidContext,
-            R.style.Theme_Apptentive_Dialog_Alert
-        ).apply {
-            overrideTheme()
-        }
+        val dialog = MaterialAlertDialogBuilder(requireContext()).apply {
+            val ctx = ContextThemeWrapper(
+                requireContext(),
+                R.style.Theme_Apptentive
+            ).apply {
+                overrideTheme()
+            }
+            val enjoymentDialogView = LayoutInflater.from(ctx).inflate(R.layout.apptentive_enjoyment_dialog, null)
+            val messageView = enjoymentDialogView.findViewById<MaterialTextView>(R.id.apptentive_enjoyment_dialog_title)
+            messageView.text = viewModel.title
 
-        return MaterialAlertDialogBuilder(ctx).apply {
-            setMessage(viewModel.title)
-
-            setPositiveButton(viewModel.yesText) { _, _ ->
+            val positiveButtonView = enjoymentDialogView.findViewById<MaterialButton>(R.id.apptentive_enjoyment_dialog_yes)
+            positiveButtonView.text = viewModel.yesText
+            positiveButtonView.setOnClickListener {
                 viewModel.onYesButton()
+                this@EnjoymentDialogFragment.dismiss()
             }
 
-            setNegativeButton(viewModel.noText) { _, _ ->
+            val negativeButtonView = enjoymentDialogView.findViewById<MaterialButton>(R.id.apptentive_enjoyment_dialog_no)
+            negativeButtonView.text = viewModel.noText
+            negativeButtonView.setOnClickListener {
                 viewModel.onNoButton()
+                this@EnjoymentDialogFragment.dismiss()
             }
 
-            setOnCancelListener { viewModel.onCancel() }
+            setView(enjoymentDialogView)
         }.create()
+        return dialog.apply {
+            setCanceledOnTouchOutside(false)
+        }
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        viewModel.onCancel()
+        super.onCancel(dialog)
     }
 
     override fun onDismiss(dialog: DialogInterface) {

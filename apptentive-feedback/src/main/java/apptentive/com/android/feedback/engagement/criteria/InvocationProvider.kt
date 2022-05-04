@@ -1,10 +1,10 @@
 package apptentive.com.android.feedback.engagement.criteria
 
 import apptentive.com.android.core.Converter
-import apptentive.com.android.feedback.CRITERIA
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.model.InvocationData
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.CRITERIA
 
 internal interface InvocationProvider {
     fun getInvocations(event: Event): List<Invocation>?

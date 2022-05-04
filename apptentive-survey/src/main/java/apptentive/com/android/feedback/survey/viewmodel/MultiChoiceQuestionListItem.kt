@@ -7,10 +7,11 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import apptentive.com.android.feedback.survey.R
 import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion
-import apptentive.com.android.feedback.survey.utils.setTextBoxBackgroundFocusFix
 import apptentive.com.android.feedback.survey.view.SurveyQuestionContainerView
 import apptentive.com.android.ui.ListViewItem
 import apptentive.com.android.ui.setInvalid
+import com.google.android.material.checkbox.MaterialCheckBox
+import com.google.android.material.radiobutton.MaterialRadioButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
@@ -95,7 +96,7 @@ internal class MultiChoiceQuestionListItem(
         itemView: SurveyQuestionContainerView,
         private val onSelectionChanged: (questionId: String, choiceId: String, selected: Boolean, text: String?) -> Unit
     ) : SurveyQuestionListItem.ViewHolder<MultiChoiceQuestionListItem>(itemView) {
-        private val choiceContainer: ViewGroup = itemView.findViewById(R.id.choice_container)
+        private val choiceContainer: ViewGroup = itemView.findViewById(R.id.apptentive_choice_container)
         private lateinit var cachedViews: List<CachedViews>
 
         override fun bindView(
@@ -115,7 +116,10 @@ internal class MultiChoiceQuestionListItem(
                 val choiceView = layoutInflater.inflate(choiceLayoutRes, choiceContainer, false)
 
                 // button (checkbox or radio)
-                val compoundButton = choiceView.findViewById<CompoundButton>(R.id.checkbox)
+                val compoundButton =
+                    if (item.allowMultipleAnswers) choiceView.findViewById<MaterialCheckBox>(R.id.apptentive_checkbox)
+                    else choiceView.findViewById<MaterialRadioButton>(R.id.apptentive_radiobutton)
+
                 compoundButton.text = choice.title
                 compoundButton.isChecked = choice.isChecked
 
@@ -125,16 +129,14 @@ internal class MultiChoiceQuestionListItem(
                 // button end
 
                 // text fields
-                val textInputLayout: TextInputLayout = choiceView.findViewById(R.id.other_text_input_layout)
-                val textInputEditText: TextInputEditText = choiceView.findViewById(R.id.other_edit_text)
+                val textInputLayout = choiceView.findViewById<TextInputLayout>(R.id.apptentive_other_text_input_layout)
+                val textInputEditText = choiceView.findViewById<TextInputEditText>(R.id.apptentive_other_edit_text)
 
                 textInputLayout.isVisible = choice.isTextInputVisible
                 textInputLayout.hint = choice.hint
 
                 textInputEditText.setText(choice.text)
-                textInputEditText.setTextBoxBackgroundFocusFix()
                 textInputEditText.doAfterTextChanged {
-                    if (textInputEditText.hasFocus() && it.isNullOrEmpty()) textInputEditText.setText(" ")  // Second part to the fix
                     onSelectionChanged.invoke(questionId, choice.id, true, it?.toString().orEmpty().trim())
                 }
                 // text fields end
@@ -163,7 +165,7 @@ internal class MultiChoiceQuestionListItem(
         }
 
         private fun updateSelection(item: MultiChoiceQuestionListItem) {
-            item.answerChoices.forEachIndexed { index, choice->
+            item.answerChoices.forEachIndexed { index, choice ->
                 cachedViews[index].compoundButton.isChecked = choice.isChecked
                 cachedViews[index].textInputLayout.isVisible = choice.isTextInputVisible
             }

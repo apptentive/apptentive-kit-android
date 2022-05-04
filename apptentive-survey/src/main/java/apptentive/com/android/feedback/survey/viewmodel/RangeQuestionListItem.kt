@@ -1,11 +1,10 @@
 package apptentive.com.android.feedback.survey.viewmodel
 
 import android.content.res.Resources
-import android.view.View
-import android.widget.TextView
 import apptentive.com.android.feedback.survey.R
 import apptentive.com.android.feedback.survey.view.SurveyQuestionContainerView
 import com.google.android.material.slider.Slider
+import com.google.android.material.textview.MaterialTextView
 
 /**
  * Class which represents range question list item state
@@ -68,9 +67,9 @@ internal class RangeQuestionListItem(
         onSelectionChanged: (id: String, selectedIndex: Int) -> Unit
     ) : SurveyQuestionListItem.ViewHolder<RangeQuestionListItem>(itemView) {
 
-        private val rangeSlider = itemView.findViewById<Slider>(R.id.range_slider)
-        private val minLabel = itemView.findViewById<TextView>(R.id.minLabel)
-        private val maxLabel = itemView.findViewById<TextView>(R.id.maxLabel)
+        private val rangeSlider = itemView.findViewById<Slider>(R.id.apptentive_range_slider)
+        private val minLabel = itemView.findViewById<MaterialTextView>(R.id.apptentive_min_label)
+        private val maxLabel = itemView.findViewById<MaterialTextView>(R.id.apptentive_max_label)
 
         init {
             rangeSlider.addOnChangeListener { slider, value, fromUser ->

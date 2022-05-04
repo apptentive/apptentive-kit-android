@@ -1,13 +1,18 @@
 package apptentive.com.android.ratings.ratingdialog
 
 import apptentive.com.android.TestCase
+import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.core.Provider
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.EngageArgs
 import apptentive.com.android.feedback.engagement.EngagementCallback
+import apptentive.com.android.feedback.engagement.EngagementContext
+import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.InvocationCallback
 import apptentive.com.android.feedback.engagement.MockEngagementContext
 import apptentive.com.android.feedback.ratingdialog.RatingDialogInteraction
+import apptentive.com.android.feedback.ratingdialog.RatingDialogInteractionProvider
 import apptentive.com.android.feedback.ratingdialog.RatingDialogViewModel
 import org.junit.Test
 
@@ -28,12 +33,21 @@ class RatingDialogViewModelTest : TestCase() {
     @Test
     fun testInvokeInteractions() {
         val targetInteractionId = "target_id"
-        val viewModel = createViewModel(
-            onInvoke = {
-                // trick it to think an interaction has been invoked
-                EngagementResult.Success(targetInteractionId)
+
+        DependencyProvider.register(object : Provider<EngagementContextFactory> {
+            override fun get(): EngagementContextFactory {
+                return object : EngagementContextFactory {
+                    override fun engagementContext(): EngagementContext {
+                        return createEngagementContext(
+                            null,
+                            { EngagementResult.InteractionShown(targetInteractionId) }
+                        )
+                    }
+                }
             }
-        )
+        })
+        DependencyProvider.register(RatingDialogInteractionProvider(interaction))
+        val viewModel = createViewModel()
 
         viewModel.onRateButton()
         viewModel.onRemindButton()
@@ -41,7 +55,7 @@ class RatingDialogViewModelTest : TestCase() {
         viewModel.onCancel()
 
         val engageResults = listOf(
-             EngageArgs(
+            EngageArgs(
                 event = Event.internal("rate", "RatingDialog"),
                 interactionId = interactionId,
             ),
@@ -69,15 +83,8 @@ class RatingDialogViewModelTest : TestCase() {
 
     //region Helpers
 
-    private fun createViewModel(
-        onEngage: EngagementCallback? = null,
-        onInvoke: InvocationCallback? = null
-    ): RatingDialogViewModel {
-        val context = createEngagementContext(onEngage, onInvoke)
-        return RatingDialogViewModel(
-            context = context,
-            interaction = interaction
-        )
+    private fun createViewModel(): RatingDialogViewModel {
+        return RatingDialogViewModel()
     }
 
     private fun createEngagementContext(
@@ -88,13 +95,13 @@ class RatingDialogViewModelTest : TestCase() {
         onEngage = { args ->
             addResult(args)
             onEngage?.invoke(args)
-                ?: EngagementResult.Failure("No runnable interactions")
+                ?: EngagementResult.InteractionNotShown("No runnable interactions")
         },
         // record invocations for every engage call
         onInvoke = { invocations ->
             addResult(invocations)
             onInvoke?.invoke(invocations)
-                ?: EngagementResult.Failure("No runnable interactions")
+                ?: EngagementResult.InteractionNotShown("No runnable interactions")
         },
         // we don't expect payloads here
         onSendPayload = { payload ->

@@ -1,5 +1,7 @@
 package com.apptentive.android.sdk.storage;
 
+import static apptentive.com.android.util.LogTags.UTIL;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -7,7 +9,6 @@ import java.io.ObjectStreamClass;
 
 import apptentive.com.android.util.Log;
 
-import static apptentive.com.android.feedback.LogTags.UTIL;
 
 /**
  * Extends ObjectInputStream to be able to read serialized objects after serialVersionUID has been

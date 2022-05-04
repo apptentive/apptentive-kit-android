@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+    Compound button color overwrite to use colorOnBackground instead of colorOnSurface.
+
+    Material Color Guidelines defines colorOnSurface as used for "is used for “sheets” of material
+    (like cards and bottom sheets)"
+
+    @see https://material.io/blog/android-material-theme-color
+    @see https://material.io/components/checkboxes/android
+    @see https://material.io/components/radio-buttons/android
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Checked -->
+    <item android:color="?attr/colorSecondary" android:state_checked="true"/>
+    <!-- Unchecked -->
+    <item android:alpha="0.60" android:color="?attr/colorOnBackground" android:state_checked="false"/>
+    <!-- Disabled -->
+    <item android:alpha="@dimen/material_emphasis_disabled" android:color="?attr/colorOnBackground" android:state_enabled="false"/>
+</selector>

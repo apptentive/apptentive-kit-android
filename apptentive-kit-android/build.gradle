@@ -1,0 +1,58 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'org.jlleitschuh.gradle.ktlint'
+}
+
+android {
+    compileSdkVersion rootProject.compileSdkVersion
+    buildToolsVersion rootProject.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.minSdkVersion
+        targetSdkVersion rootProject.targetSdkVersion
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+}
+
+repositories {
+    maven {
+        def artifactoryProperties = new Properties()
+        if  (project.rootProject.file('local.properties').exists()) {
+            artifactoryProperties.load(project.rootProject.file('local.properties').newDataInputStream())
+        }
+        url "https://apptentive.jfrog.io/artifactory/InternalNewAndroidSDK"
+        credentials {
+            username = artifactoryProperties['artifactory_username'] ? artifactoryProperties['artifactory_username'] : ""
+            password = artifactoryProperties['artifactory_password'] ? artifactoryProperties['artifactory_password'] : ""
+        }
+    }
+    mavenLocal()
+}
+
+dependencies {
+    implementation "com.apptentive:apptentive-core:$repoVersion"
+    implementation "com.apptentive:apptentive-core-ui:$repoVersion"
+    implementation "com.apptentive:apptentive-feedback:$repoVersion"
+    implementation "com.apptentive:apptentive-enjoyment-dialog:$repoVersion"
+    implementation "com.apptentive:apptentive-survey:$repoVersion"
+    implementation "com.apptentive:apptentive-notes:$repoVersion"
+    implementation "com.apptentive:apptentive-navigate-to-link:$repoVersion"
+    implementation "com.apptentive:apptentive-ratings:$repoVersion"
+    implementation "com.apptentive:apptentive-in-app-review:$repoVersion"
+}
+
+project.ext {
+    groupId = 'com.apptentive'
+    artifactId = 'apptentive-kit-android'
+}
+
+apply from: '../publish.gradle'

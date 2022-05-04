@@ -1,10 +1,10 @@
 package apptentive.com.android.feedback.survey.viewmodel
 
 import android.view.View
-import android.widget.TextView
 import apptentive.com.android.feedback.survey.R
 import apptentive.com.android.ui.ListViewAdapter
 import apptentive.com.android.ui.ListViewItem
+import com.google.android.material.textview.MaterialTextView
 
 internal class SurveyHeaderListItem(val instructions: String) : SurveyListItem(
     id = "header",
@@ -35,7 +35,7 @@ internal class SurveyHeaderListItem(val instructions: String) : SurveyListItem(
     }
 
     class ViewHolder(itemView: View) : ListViewAdapter.ViewHolder<SurveyHeaderListItem>(itemView) {
-        private val introductionView: TextView = itemView.findViewById(R.id.survey_introduction)
+        private val introductionView = itemView.findViewById<MaterialTextView>(R.id.apptentive_survey_introduction)
 
         override fun bindView(item: SurveyHeaderListItem, position: Int) {
             introductionView.text = item.instructions

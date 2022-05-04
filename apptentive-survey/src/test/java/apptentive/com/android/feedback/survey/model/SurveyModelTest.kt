@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.survey.model
 
+import android.text.SpannedString
 import apptentive.com.android.TestCase
 import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion.ChoiceType
 import com.google.common.truth.Truth.assertThat
@@ -16,7 +17,7 @@ class SurveyModelTest : TestCase() {
             createSingleLineQuestion(id = "id_3")
         )
         model.questionsStream.observe {
-            it.forEach{ question ->
+            it.forEach { question ->
                 addResult(question)
             }
         }
@@ -199,6 +200,7 @@ class SurveyModelTest : TestCase() {
     //endregion
 
     private fun createSurveyModel(vararg questions: SurveyQuestion<*>) = SurveyModel(
+        interactionId = "interaction_id",
         questions = questions.toList(),
         name = "name",
         description = "description",
@@ -210,6 +212,7 @@ class SurveyModelTest : TestCase() {
         closeConfirmTitle = "Close survey?",
         closeConfirmMessage = "All the changes will be lost",
         closeConfirmCloseText = "close",
-        closeConfirmBackText = "Back to survey"
+        closeConfirmBackText = "Back to survey",
+        SpannedString("Terms & Conditions")
     )
 }

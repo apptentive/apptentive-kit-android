@@ -1,24 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?apptentiveNoteLayoutStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <LinearLayout
-        android:id="@+id/apptentive_note"
+        android:id="@+id/apptentive_note_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="start|top"
         android:orientation="vertical">
 
-        <include layout="@layout/apptentive_note_title" />
-
-        <include layout="@layout/apptentive_note_message" />
-
-        <include
-            layout="@layout/apptentive_note_actions"
+        <ImageView
+            style="?apptentiveNoteHeaderImageStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-
     </LinearLayout>
+
 </ScrollView>

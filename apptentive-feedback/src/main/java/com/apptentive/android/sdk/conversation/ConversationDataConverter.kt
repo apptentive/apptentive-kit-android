@@ -17,7 +17,7 @@ import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.model.VersionHistory
 import apptentive.com.android.feedback.model.VersionHistoryItem
-import apptentive.com.android.util.parseInt
+import apptentive.com.android.feedback.utils.parseInt
 import java.io.Serializable
 
 internal typealias LegacyConversationData = ConversationData
@@ -82,13 +82,6 @@ internal fun LegacyPerson.toLatestFormat() = Person(
     id = id,
     email = email,
     name = name,
-    facebookId = facebookId,
-    phoneNumber = phoneNumber,
-    street = street,
-    city = city,
-    zip = zip,
-    country = country,
-    birthday = birthday,
     mParticleId = mParticleId,
     customData = customData.toLatestFormat()
 )
@@ -109,6 +102,7 @@ internal fun LegacyAppRelease.toLatestFormat() = AppRelease(
     versionCode = versionCode.toLong(),
     versionName = versionName,
     targetSdkVersion = targetSdkVersion,
+    minSdkVersion = "0",
     debug = isDebug,
     inheritStyle = isInheritStyle,
     overrideStyle = isOverrideStyle,
@@ -119,7 +113,7 @@ internal fun LegacyCustomData.toLatestFormat() = CustomData(
     content = mapValues(::transformCustomDataValues)
 )
 
-private fun transformCustomDataValues(it: Map.Entry<String, Serializable>): Any =
+private fun transformCustomDataValues(it: Map.Entry<String, Serializable>): Any? =
     when (val value = it.value) {
         is LegacyDateTime -> value.toLatestFormat()
         is LegacyVersion -> value.toLatestFormat()

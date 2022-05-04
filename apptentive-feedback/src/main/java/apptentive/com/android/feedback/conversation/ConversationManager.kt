@@ -5,12 +5,11 @@ import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.Observable
 import apptentive.com.android.core.Provider
 import apptentive.com.android.core.isInThePast
-import apptentive.com.android.feedback.CONVERSATION
 import apptentive.com.android.feedback.Constants
-import apptentive.com.android.feedback.ENGAGEMENT_MANIFEST
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
+import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
 import apptentive.com.android.feedback.model.AppRelease
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.Device
@@ -23,6 +22,9 @@ import apptentive.com.android.feedback.platform.AndroidUtils.currentTimeSeconds
 import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.CONFIGURATION
+import apptentive.com.android.util.LogTags.CONVERSATION
+import apptentive.com.android.util.LogTags.ENGAGEMENT_MANIFEST
 import apptentive.com.android.util.Result
 import com.apptentive.android.sdk.conversation.LegacyConversationManager
 import com.apptentive.android.sdk.conversation.toConversation
@@ -210,6 +212,45 @@ internal class ConversationManager(
         }
     }
 
+    @WorkerThread
+    fun tryFetchAppConfiguration() {
+        val conversation = activeConversationSubject.value
+        val configuration = conversation.configuration
+
+        if (isInThePast(configuration.expiry) || isDebuggable) {
+            Log.d(CONVERSATION, "Fetching configuration")
+            val token = conversation.conversationToken
+            val id = conversation.conversationId
+            if (token != null && id != null) {
+                conversationService.fetchConfiguration(
+                    conversationToken = token,
+                    conversationId = id
+                ) {
+                    when (it) {
+                        is Result.Success -> {
+                            Log.d(CONVERSATION, "Configuration successfully fetched")
+                            Log.v(CONFIGURATION, it.data.toString())
+                            activeConversationSubject.value = activeConversationSubject.value.copy(
+                                configuration = it.data
+                            )
+                        }
+                        is Result.Error -> {
+                            Log.e(CONVERSATION, "Error while fetching configuration", it.error)
+                        }
+                    }
+                }
+            } else {
+                Log.d(
+                    CONVERSATION,
+                    "Fetch configuration is not called. " +
+                        "Conversation token is $token, conversation id is $id"
+                )
+            }
+        } else {
+            Log.d(CONVERSATION, "Configuration up to date")
+        }
+    }
+
     fun recordEvent(event: Event) {
         val conversation = activeConversationSubject.value
         activeConversationSubject.value = conversation.copy(
@@ -262,6 +303,23 @@ internal class ConversationManager(
                 versionCode = conversation.appRelease.versionCode,
                 lastInvoked = DateTime.now()
             )
+        )
+    }
+
+    fun recordInteractionResponses(interactionResponses: Map<String, Set<InteractionResponse>>) {
+        val conversation = activeConversationSubject.value
+        activeConversationSubject.value = conversation.copy(
+            engagementData = conversation.engagementData.apply {
+                interactionResponses.forEach { responses ->
+                    addInvoke(
+                        interactionId = responses.key,
+                        responses = responses.value,
+                        versionName = conversation.appRelease.versionName,
+                        versionCode = conversation.appRelease.versionCode,
+                        lastInvoked = DateTime.now()
+                    )
+                }
+            }
         )
     }
 

@@ -1,13 +1,13 @@
 package apptentive.com.android.feedback
 
-import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionModule
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
+import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.CORE
 
-@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+@InternalUseOnly
 class InteractionModuleComponent(
     private val packageName: String,
     private val interactionNames: List<String>,

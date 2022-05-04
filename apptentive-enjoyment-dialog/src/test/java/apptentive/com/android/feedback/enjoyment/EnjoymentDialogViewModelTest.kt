@@ -1,8 +1,12 @@
 package apptentive.com.android.feedback.enjoyment
 
 import apptentive.com.android.TestCase
+import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.core.Provider
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.EngageArgs
+import apptentive.com.android.feedback.engagement.EngagementContext
+import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.MockEngagementContext
 import apptentive.com.android.feedback.enjoyment.EnjoymentDialogViewModel.Companion.CODE_POINT_CANCEL
@@ -14,15 +18,6 @@ import org.junit.Test
 class EnjoymentDialogViewModelTest : TestCase() {
     @Test
     fun testEvents() {
-        val context = MockEngagementContext(
-            onEngage = { args ->
-                addResult(args)
-                EngagementResult.Failure("No runnable interactions")
-            },
-            onSendPayload = { payload ->
-                throw AssertionError("We didn't expect any payloads here but this one slipped though: $payload")
-            }
-        )
         val interactionId = "123456789"
         val interaction = EnjoymentDialogInteraction(
             id = interactionId,
@@ -31,10 +26,24 @@ class EnjoymentDialogViewModelTest : TestCase() {
             noText = "No",
             dismissText = "Dismiss"
         )
-        val viewModel = EnjoymentDialogViewModel(
-            context = context,
-            interaction = interaction
+
+        DependencyProvider.register(EnjoymentDialogInteractionProvider(interaction))
+        DependencyProvider.register(
+            MockEngagementContextFactory
+            {
+                MockEngagementContext(
+                    onEngage = { args ->
+                        addResult(args)
+                        EngagementResult.InteractionNotShown("No runnable interactions")
+                    },
+                    onSendPayload = { payload ->
+                        throw AssertionError("We didn't expect any payloads here but this one slipped though: $payload")
+                    }
+                )
+            }
         )
+
+        val viewModel = EnjoymentDialogViewModel()
 
         viewModel.onYesButton()
         assertResults(
@@ -62,4 +71,14 @@ class EnjoymentDialogViewModelTest : TestCase() {
             event = Event.internal(codePoint, interaction = "EnjoymentDialog"),
             interactionId = interactionId
         )
+}
+
+class MockEngagementContextFactory(val getEngagementContext: () -> EngagementContext) : Provider<EngagementContextFactory> {
+    override fun get(): EngagementContextFactory {
+        return object : EngagementContextFactory {
+            override fun engagementContext(): EngagementContext {
+                return getEngagementContext()
+            }
+        }
+    }
 }

@@ -264,13 +264,13 @@ class DefaultSurveyQuestionListItemFactoryTest {
 
     @Test
     @Ignore
-    fun testMultiChoiceInvalidNonRequiredQuestionAndPressSubmitButton(){
+    fun testMultiChoiceInvalidNonRequiredQuestionAndPressSubmitButton() {
         TODO()
     }
 
     @Test
     @Ignore
-    fun testMultiChoiceValidRequiredQuestionWithNoInstruction(){
+    fun testMultiChoiceValidRequiredQuestionWithNoInstruction() {
         TODO()
     }
 

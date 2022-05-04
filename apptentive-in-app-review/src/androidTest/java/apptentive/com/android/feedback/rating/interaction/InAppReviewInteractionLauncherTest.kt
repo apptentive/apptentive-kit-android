@@ -8,10 +8,10 @@ import apptentive.com.android.concurrent.Executors
 import apptentive.com.android.concurrent.ImmediateExecutor
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.EngagementCallback
+import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.MockEngagementContext
 import apptentive.com.android.feedback.engagement.PayloadSenderCallback
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
-import apptentive.com.android.feedback.platform.AndroidEngagementContext
 import apptentive.com.android.feedback.rating.reviewmanager.InAppReviewCallback
 import apptentive.com.android.feedback.rating.reviewmanager.InAppReviewManager
 import apptentive.com.android.feedback.rating.reviewmanager.InAppReviewManagerFactory
@@ -25,7 +25,6 @@ class InAppReviewInteractionLauncherTest : TestCase() {
     // Context of the app under test.
     private var appContext = InstrumentationRegistry.getInstrumentation().targetContext
 
-
     @Test
     fun testInAppReviewNotSupported() {
         val launcher: InAppReviewInteractionLauncher =
@@ -33,7 +32,7 @@ class InAppReviewInteractionLauncherTest : TestCase() {
         launcher.launchInteraction(
             createEngagementContext(onEngage = {
                 addResult("engage ${it.event}")
-                EngagementResult.Success(it.interactionId as InteractionId)
+                EngagementResult.InteractionShown(it.interactionId as InteractionId)
             }),
             InAppReviewInteraction("58eebbf2127096704e0000d0")
         )
@@ -44,7 +43,6 @@ class InAppReviewInteractionLauncherTest : TestCase() {
         )
     }
 
-
     @Test
     fun testInAppReviewFailed() {
         val launcher: InAppReviewInteractionLauncher =
@@ -52,7 +50,7 @@ class InAppReviewInteractionLauncherTest : TestCase() {
         launcher.launchInteraction(
             createEngagementContext(onEngage = {
                 addResult("engage ${it.event}")
-                EngagementResult.Failure("Something went wrong")
+                EngagementResult.InteractionNotShown("Something went wrong")
             }),
             InAppReviewInteraction("58eebbf2127096704e0000d0")
         )
@@ -70,7 +68,7 @@ class InAppReviewInteractionLauncherTest : TestCase() {
         launcher.launchInteraction(
             createEngagementContext(context = appContext, onEngage = {
                 addResult("engage ${it.event}")
-                EngagementResult.Success(it.interactionId as InteractionId)
+                EngagementResult.InteractionShown(it.interactionId as InteractionId)
             }),
             InAppReviewInteraction("58eebbf2127096704e0000d0")
         )
@@ -81,12 +79,11 @@ class InAppReviewInteractionLauncherTest : TestCase() {
         )
     }
 
-    private fun createEngagementContext(context: Context = appContext, onEngage: EngagementCallback?): AndroidEngagementContext {
+    private fun createEngagementContext(context: Context = appContext, onEngage: EngagementCallback?): EngagementContext {
         val mockEngagementContext = createMockEngagementContext(
             onEngage = onEngage
         )
-        return AndroidEngagementContext(
-            androidContext = context,
+        return EngagementContext(
             engagement = mockEngagementContext.getEngagement(),
             payloadSender = mockEngagementContext.getPayloadSender(),
             executors = Executors(ImmediateExecutor, ImmediateExecutor)
@@ -99,7 +96,7 @@ class InAppReviewInteractionLauncherTest : TestCase() {
     ) = MockEngagementContext(
         onEngage = onEngage ?: { args ->
             addResult(args)
-            EngagementResult.Success(args.interactionId as InteractionId)
+            EngagementResult.InteractionShown(args.interactionId as InteractionId)
         },
         onSendPayload = onSendPayload ?: { payload ->
             addResult(payload.toJson())
@@ -136,5 +133,3 @@ class MockInAppReviewManagerFactory(private val manager: InAppReviewManager) :
     InAppReviewManagerFactory {
     override fun createReviewManager(context: Context): InAppReviewManager = manager
 }
-
-

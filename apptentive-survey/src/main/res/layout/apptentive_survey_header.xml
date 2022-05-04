@@ -1,23 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.textview.MaterialTextView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/apptentive_survey_introduction"
+    style="?apptentiveSurveyIntroductionStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:accessibilityHeading="true"
-    android:orientation="vertical"
-    tools:targetApi="p">
-
-    <TextView
-        android:id="@+id/survey_introduction"
-        style="?attr/textAppearanceSubtitle1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:paddingTop="@dimen/margin_16dp"
-        android:paddingBottom="@dimen/margin_12dp"
-        android:textColor="?attr/colorOnBackground"
-        android:textStyle="bold"
-        tools:text="Tell us about your experience!"
-        tools:textColor="@null" />
-
-</LinearLayout>
+    tools:text="Tell us about your experience!" />

@@ -20,4 +20,3 @@ internal class RatingDialogModule : InteractionModule<RatingDialogInteraction> {
         return RatingDialogInteractionLauncher()
     }
 }
-

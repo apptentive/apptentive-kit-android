@@ -3,7 +3,7 @@ package apptentive.com.android.feedback.survey.model
 import androidx.annotation.VisibleForTesting
 
 @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
-class MultiChoiceQuestion(
+internal class MultiChoiceQuestion(
     id: String,
     title: String,
     validationError: String,
@@ -58,13 +58,27 @@ class MultiChoiceQuestion(
         data class Choice(val id: String, val checked: Boolean = false, val value: String? = null)
     }
 
+    /** For required questions checks if the response count is within min & max selection boundaries
+     * for optional questions checks if there is an answer */
     override fun isValidAnswer(answer: Answer): Boolean {
-        val checkedCount = answer.choices.sumBy { if (it.checked) 1 else 0 }
+        val isChecked = { choice: Answer.Choice -> if (choice.checked) 1 else 0 }
+        val checkedCount = answer.choices.sumOf(isChecked)
         return checkedCount in minSelections..maxSelections && allChoicesAreValid(answer.choices)
     }
 
+    /** Returns `true` if the optional question has an answer &
+     * and it respects the min & max selection boundary/left unanswered */
+    override fun validateOptionalQuestion(answer: Answer): Boolean {
+        return if (hasAnswer) {
+            val isChecked = { choice: Answer.Choice -> if (choice.checked) 1 else 0 }
+            val checkedCount = answer.choices.sumOf(isChecked)
+            return checkedCount in minSelections..maxSelections && allChoicesAreValid(answer.choices)
+        } else true
+    }
+
     override fun isAnswered(answer: Answer): Boolean {
-        val checkedCount = answer.choices.sumBy { if (it.checked) 1 else 0 }
+        val isChecked = { choice: Answer.Choice -> if (choice.checked) 1 else 0 }
+        val checkedCount = answer.choices.sumOf(isChecked)
         return checkedCount > 0
     }
 
@@ -79,7 +93,7 @@ class MultiChoiceQuestion(
             ?: throw IllegalArgumentException("Unknown choice id: ${choice.id}")
 
         return config.type == ChoiceType.select_option ||
-                config.type == ChoiceType.select_other && !choice.value.isNullOrBlank()
+            config.type == ChoiceType.select_other && !choice.value.isNullOrBlank()
     }
 
     //region Equality

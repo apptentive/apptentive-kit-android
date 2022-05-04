@@ -35,6 +35,8 @@ class LegacyConversationConversionTest {
         val person = createPerson(id = 2)
         val sdk = createSDK()
         val appRelease = createAppRelease()
+        val configuration = Configuration()
+        val randomSampling = RandomSampling()
         val engagementData = createEngagementData()
 
         return Conversation(
@@ -45,6 +47,8 @@ class LegacyConversationConversionTest {
             person,
             sdk,
             appRelease,
+            configuration,
+            randomSampling,
             engagementData
         )
     }
@@ -131,6 +135,7 @@ class LegacyConversationConversionTest {
         val versionCode = 0
         val versionName = "versionName"
         val targetSdkVersion = "targetSdkVersion"
+        val minSdkVersion = "0"
         val debug = false
         val inheritStyle = false
         val overrideStyle = false
@@ -142,6 +147,7 @@ class LegacyConversationConversionTest {
             versionCode.toLong(),
             versionName,
             targetSdkVersion,
+            minSdkVersion,
             debug,
             inheritStyle,
             overrideStyle,
@@ -173,13 +179,6 @@ class LegacyConversationConversionTest {
         val personId = "id-$id"
         val email = "email-$id"
         val name = "name-$id"
-        val facebookId = "facebookId-$id"
-        val phoneNumber = "phoneNumber-$id"
-        val street = "street-$id"
-        val city = "city-$id"
-        val zip = "zip-$id"
-        val country = "country-$id"
-        val birthday = "birthday-$id"
         val mParticleId = "mParticleId-$id"
         val customData = createCustomData(id)
 
@@ -187,13 +186,6 @@ class LegacyConversationConversionTest {
             personId,
             email,
             name,
-            facebookId,
-            phoneNumber,
-            street,
-            city,
-            zip,
-            country,
-            birthday,
             mParticleId,
             customData
         )

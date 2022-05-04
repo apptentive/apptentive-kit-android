@@ -49,13 +49,6 @@ class ConversationTest : TestCase() {
                 id = "id",
                 email = "email",
                 name = "name",
-                facebookId = "facebookId",
-                phoneNumber = "phoneNumber",
-                street = "street",
-                city = "city",
-                zip = "zip",
-                country = "country",
-                birthday = "birthday",
                 mParticleId = "mParticleId",
                 customData = CustomData(mapOf(Pair("key5", "value5")))
             ),
@@ -74,6 +67,7 @@ class ConversationTest : TestCase() {
                 versionCode = 1,
                 versionName = "versionName",
                 targetSdkVersion = "targetSdkVersion",
+                minSdkVersion = "minSdkVersion",
                 debug = true,
                 inheritStyle = false,
                 overrideStyle = true,
@@ -131,7 +125,8 @@ class ConversationTest : TestCase() {
                 identifier = "identifier",
                 versionCode = 1,
                 versionName = "versionName",
-                targetSdkVersion = "targetSdkVersion"
+                targetSdkVersion = "targetSdkVersion",
+                minSdkVersion = "minSdkVersion"
             ),
             engagementManifest = EngagementManifest(), // TODO: pass actual value
             engagementData = EngagementData()

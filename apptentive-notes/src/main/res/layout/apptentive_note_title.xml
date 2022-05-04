@@ -1,7 +1,0 @@
-<androidx.appcompat.widget.DialogTitle xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/apptentive_note_title"
-    style="?attr/materialAlertDialogTitleTextStyle"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingHorizontal="?attr/dialogPreferredPadding"
-    android:paddingTop="@dimen/abc_dialog_padding_top_material" />

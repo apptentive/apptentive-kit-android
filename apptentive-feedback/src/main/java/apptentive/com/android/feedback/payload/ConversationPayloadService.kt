@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.payload
 
 import androidx.annotation.Keep
+import apptentive.com.android.network.SendErrorException
 import apptentive.com.android.util.Result
 
 @Keep
@@ -28,7 +29,18 @@ internal class ConversationPayloadService(
         ) { result ->
             when (result) {
                 is Result.Success -> callback(Result.Success(payload))
-                is Result.Error -> callback(Result.Error(result.error))
+                is Result.Error -> {
+                    when (result.error) {
+                        is SendErrorException -> {
+                            // Convert to more specific Exception
+                            callback(Result.Error(PayloadSendException(payload, cause = result.error)))
+                        }
+                        else -> {
+                            // Unexpected Exception type
+                            callback(Result.Error(result.error))
+                        }
+                    }
+                }
             }
         }
     }

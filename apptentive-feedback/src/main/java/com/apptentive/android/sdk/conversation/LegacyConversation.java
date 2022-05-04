@@ -6,6 +6,8 @@
 
 package com.apptentive.android.sdk.conversation;
 
+import static apptentive.com.android.util.LogTags.MIGRATION;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -23,8 +25,6 @@ import com.apptentive.android.sdk.util.StringUtils;
 import java.io.File;
 
 import apptentive.com.android.util.Log;
-
-import static apptentive.com.android.feedback.LogTags.MIGRATION;
 
 /**
  * Represents a modified version of legacy [Conversation] class (read-only). Used in legacy data migration.

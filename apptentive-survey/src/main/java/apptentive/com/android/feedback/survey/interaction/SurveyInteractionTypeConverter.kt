@@ -3,8 +3,10 @@ package apptentive.com.android.feedback.survey.interaction
 import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
 import apptentive.com.android.feedback.engagement.interactions.InteractionTypeConverter
+import apptentive.com.android.feedback.survey.interaction.SurveyInteraction.TermsAndConditions
 import apptentive.com.android.util.getList
 import apptentive.com.android.util.optBoolean
+import apptentive.com.android.util.optMap
 import apptentive.com.android.util.optString
 
 @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
@@ -28,7 +30,15 @@ internal class SurveyInteractionTypeConverter : InteractionTypeConverter<SurveyI
             questions = configuration.getList("questions").map {
                 @Suppress("UNCHECKED_CAST")
                 it as SurveyQuestionConfiguration
-            }
+            },
+            termsAndConditions = configuration.optMap("terms_and_conditions")?.convertTermsAndConditions()
+        )
+    }
+
+    private fun Map<String, Any?>.convertTermsAndConditions(): TermsAndConditions {
+        return TermsAndConditions(
+            label = optString("label"),
+            link = optString("link")
         )
     }
 }

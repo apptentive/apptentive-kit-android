@@ -1,6 +1,7 @@
 package apptentive.com.android.network
 
 import apptentive.com.android.serialization.json.JsonConverter
+import apptentive.com.android.util.InternalUseOnly
 import java.io.OutputStream
 
 /**
@@ -49,6 +50,7 @@ internal inline fun <reified T> createHttpJsonResponseReader(): HttpResponseRead
  *
  * @param type the type of the response object
  */
+@InternalUseOnly
 class HttpJsonResponseReader<T>(private val type: Class<T>) : HttpResponseReader<T> {
     override fun read(
         response: HttpNetworkResponse

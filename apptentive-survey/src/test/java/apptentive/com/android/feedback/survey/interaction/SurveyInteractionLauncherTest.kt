@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.survey.interaction
 
+import android.text.SpannedString
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import apptentive.com.android.TestCase
 import apptentive.com.android.feedback.EngagementResult
@@ -16,6 +17,7 @@ import apptentive.com.android.feedback.survey.model.SurveyQuestion
 import apptentive.com.android.feedback.survey.model.createMultiChoiceQuestion
 import apptentive.com.android.feedback.survey.model.createRangeQuestion
 import apptentive.com.android.feedback.survey.model.createSingleLineQuestion
+import apptentive.com.android.feedback.survey.utils.createSurveyViewModel
 import apptentive.com.android.toProperJson
 import org.junit.Rule
 import org.junit.Test
@@ -64,10 +66,9 @@ class SurveyInteractionLauncherTest : TestCase() {
                 )
             )
         )
-        val viewModel = SurveyInteractionLauncher().createSurveyViewModel(
+        val viewModel = createSurveyViewModel(
             context = context,
-            model = model,
-            interactionId = "interaction_id"
+            surveyModel = model,
         )
 
         viewModel.submit()
@@ -84,9 +85,9 @@ class SurveyInteractionLauncherTest : TestCase() {
                 interactionId = "interaction_id"
             ),
 
-            // "cancel partial" event
+            // "close" event
             EngageArgs(
-                event = Event.internal(name = "cancel_partial", interaction = "Survey"),
+                event = Event.internal(name = "close", interaction = "Survey"),
                 interactionId = "interaction_id"
             )
         )
@@ -98,7 +99,7 @@ class SurveyInteractionLauncherTest : TestCase() {
     ) = MockEngagementContext(
         onEngage = onEngage ?: { args ->
             addResult(args)
-            EngagementResult.Failure("No runnable interactions")
+            EngagementResult.InteractionNotShown("No runnable interactions")
         },
         onSendPayload = onSendPayload ?: { payload ->
             addResult(payload.toJson())
@@ -107,6 +108,7 @@ class SurveyInteractionLauncherTest : TestCase() {
 
     private fun createSurveyModel(questions: List<SurveyQuestion<*>>? = null): SurveyModel {
         return SurveyModel(
+            interactionId = "interaction_id",
             questions = questions ?: emptyList(),
             name = "name",
             description = "description",
@@ -118,7 +120,8 @@ class SurveyInteractionLauncherTest : TestCase() {
             closeConfirmTitle = "Close survey?",
             closeConfirmMessage = "All the changes will be lost",
             closeConfirmCloseText = "close",
-            closeConfirmBackText = "Back to survey"
+            closeConfirmBackText = "Back to survey",
+            SpannedString("Terms & Conditions")
         )
     }
 }

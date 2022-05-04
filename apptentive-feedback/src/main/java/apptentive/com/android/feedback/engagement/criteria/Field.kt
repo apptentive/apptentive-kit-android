@@ -2,10 +2,12 @@ package apptentive.com.android.feedback.engagement.criteria
 
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
-import apptentive.com.android.util.appVersionCode
-import apptentive.com.android.util.appVersionName
+import apptentive.com.android.feedback.utils.appVersionCode
+import apptentive.com.android.feedback.utils.appVersionName
+import apptentive.com.android.util.InternalUseOnly
 
 @Suppress("ClassName")
+@InternalUseOnly
 sealed class Field(val type: Type, val description: String) {
     enum class Type {
         String,
@@ -17,6 +19,7 @@ sealed class Field(val type: Type, val description: String) {
     }
 
     object application {
+        object build_type : Field(type = Type.Boolean, description = "application build type")
         object version_code : Field(type = Type.Number, description = "application versionCode")
         object version_name : Field(type = Type.Version, description = "application versionName")
     }
@@ -104,6 +107,17 @@ sealed class Field(val type: Type, val description: String) {
             data class total(val interactionId: InteractionId) : Field(
                 type = Type.DateTime,
                 description = "last time interaction id '$interactionId' was invoked"
+            )
+        }
+
+        object answers {
+            data class id(val responseId: InteractionId) : Field(
+                type = Type.Any, // Can be String or Boolean
+                description = "answer id responseId:$responseId"
+            )
+            data class value(val responseId: InteractionId) : Field(
+                type = Type.Any, // Can be String, Boolean, or Long
+                description = "answer value responseId:$responseId"
             )
         }
     }
@@ -246,6 +260,17 @@ sealed class Field(val type: Type, val description: String) {
         )
     }
 
+    object random {
+        object percent : Field(
+            type = Type.Number,
+            description = "random sample percentage"
+        )
+        data class percent_with_id(val randomPercentId: String) : Field(
+            type = Type.Number,
+            description = "random sample percentage for id: $randomPercentId"
+        )
+    }
+
     data class unknown(val path: String) : Field(Type.Any, "unknown path $path")
 
     companion object {
@@ -254,6 +279,7 @@ sealed class Field(val type: Type, val description: String) {
             val components = path.split("/")
             when (components[0]) {
                 "application" -> when (components[1]) {
+                    "debug", "release" -> return application.build_type
                     "version_code" -> return application.version_code
                     "version_name" -> return application.version_name
                 }
@@ -300,6 +326,10 @@ sealed class Field(val type: Type, val description: String) {
                                 interaction_instance_id
                             )
                         }
+                        "answers" -> when (components[3]) {
+                            "id" -> return interactions.answers.id(interaction_instance_id)
+                            "value" -> return interactions.answers.value(interaction_instance_id)
+                        }
                     }
                 }
                 "person" -> when (components[1]) {
@@ -340,6 +370,13 @@ sealed class Field(val type: Type, val description: String) {
                         return device.custom_data(key)
                     }
                 }
+                "random" -> {
+                    if (components[1] == "percent") return random.percent
+                    else {
+                        val random_percent_id = components[1]
+                        if (components[2] == "percent") return random.percent_with_id(random_percent_id)
+                    }
+                }
             }
             return unknown(path)
         }
@@ -351,20 +388,19 @@ internal fun Field.convertValue(value: Any?): Any? {
 
     return when (type) {
         Field.Type.String -> converted as String
-        Field.Type.Number -> converted as Long
+        Field.Type.Number -> converted as Number
         Field.Type.Boolean -> converted as Boolean
         Field.Type.DateTime -> {
             return when (converted) {
                 is DateTime -> converted
-                is Long -> DateTime(converted.toDouble())
-                is Double -> DateTime(converted)
+                is Double -> DateTime(DateTime.now().seconds + converted)
                 else -> throw IllegalArgumentException("Illegal value for DateTime: $converted (${converted?.javaClass?.simpleName})")
             }
         }
         Field.Type.Version -> {
             return when (converted) {
                 is Version -> converted
-                else -> Version.tryParse(converted.toString())
+                else -> Version.parse(converted.toString())
             }
         }
         Field.Type.Any -> converted as Any
@@ -390,7 +426,6 @@ private fun convertComplexValue(value: Any?): Any? {
             }
             throw IllegalArgumentException("Unexpected value: $value")
         }
-        is Double -> value.toLong() // every number in json parsed as double
         else -> value // return as-is
     }
 }

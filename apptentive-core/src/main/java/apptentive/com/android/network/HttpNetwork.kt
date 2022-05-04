@@ -5,6 +5,7 @@ import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.toMilliseconds
 import apptentive.com.android.core.toSeconds
 import apptentive.com.android.network.Constants.DEFAULT_REQUEST_TIMEOUT
+import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.NetworkUtils
 import java.io.IOException
 import java.io.InputStream
@@ -15,11 +16,13 @@ import java.util.zip.GZIPInputStream
 /**
  * Represents a basic network operation and network state query.
  */
+@InternalUseOnly
 interface HttpNetwork {
     fun isNetworkConnected(): Boolean
     fun performRequest(request: HttpRequest<*>): HttpNetworkResponse
 }
 
+@InternalUseOnly
 class DefaultHttpNetwork(
     context: Context,
     private val connectTimeout: TimeInterval = DEFAULT_REQUEST_TIMEOUT,
@@ -66,7 +69,7 @@ class DefaultHttpNetwork(
                 data = stream.readBytes(),
                 headers = responseHeaders,
                 duration = duration
-            )
+            ).also { stream.close() }
         } finally {
             connection.disconnect()
         }

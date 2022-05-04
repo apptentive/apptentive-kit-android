@@ -2,12 +2,15 @@ package apptentive.com.android.network
 
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.UNDEFINED
+import apptentive.com.android.util.InternalUseOnly
 import kotlin.math.min
+import kotlin.math.pow
 import kotlin.random.Random
 
 /**
  * Default retry policy for HTTP-request (will be used unless overwritten).
  */
+@InternalUseOnly
 class DefaultHttpRequestRetryPolicy(
     private val maxNumRetries: Int = Constants.DEFAULT_RETRY_MAX_COUNT,
     private val retryDelay: TimeInterval = Constants.DEFAULT_RETRY_DELAY
@@ -26,7 +29,7 @@ class DefaultHttpRequestRetryPolicy(
 
     override fun getRetryDelay(numRetries: Int): TimeInterval {
         // exponential back-off
-        val temp = min(MAX_RETRY_CAP, retryDelay * Math.pow(2.0, (numRetries - 1).toDouble()))
+        val temp = min(MAX_RETRY_CAP, retryDelay * 2.0.pow((numRetries).toDouble()))
         return temp / 2 * (1.0 + Random.nextDouble())
     }
 
