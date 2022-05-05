@@ -37,11 +37,15 @@ internal class MessageCenterInteractionTypeConverter : InteractionTypeConverter<
     private fun Map<String, Any?>.toComposer(): Composer =
         Composer(
             title = optString("title"),
+            hintText = optString("hint_text"),
+            sendButton = optString("send_button"),
+            sendStart = optString("send_start"),
+            sendOk = optString("send_ok"),
+            sendFail = optString("send_fail"),
+            closeText = optString("close_text"),
             closeBody = optString("close_confirm_body"),
             closeDiscard = optString("close_discard_button"),
             closeCancel = optString("close_cancel_button"),
-            sendButton = optString("send_button"),
-            hintText = optString("hint_text"),
         )
 
     private fun Map<String, Any?>.toGreeting(): Greeting =

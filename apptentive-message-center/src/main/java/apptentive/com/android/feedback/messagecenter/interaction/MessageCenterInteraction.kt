@@ -19,11 +19,15 @@ internal data class MessageCenterInteraction(
 
     data class Composer(
         val title: String?,
+        val hintText: String?,
+        val sendButton: String?,
+        val sendStart: String?,
+        val sendOk: String?,
+        val sendFail: String?,
+        val closeText: String?,
         val closeBody: String?,
         val closeDiscard: String?,
         val closeCancel: String?,
-        val sendButton: String?,
-        val hintText: String?
     )
 
     data class Greeting(

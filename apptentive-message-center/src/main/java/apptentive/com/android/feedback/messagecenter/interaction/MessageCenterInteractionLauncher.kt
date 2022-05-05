@@ -2,7 +2,9 @@ package apptentive.com.android.feedback.messagecenter.interaction
 
 import androidx.annotation.Keep
 import androidx.annotation.VisibleForTesting
+import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.engagement.EngagementContext
+import apptentive.com.android.feedback.messagecenter.MessageCenterModelProvider
 import apptentive.com.android.feedback.platform.AndroidViewInteractionLauncher
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags
@@ -20,5 +22,6 @@ internal class MessageCenterInteractionLauncher : AndroidViewInteractionLauncher
         Log.v(LogTags.INTERACTIONS, "Message center interaction data: $interaction")
 
         // Launch Message center landing page
+        DependencyProvider.register(MessageCenterModelProvider(interaction))
     }
 }
