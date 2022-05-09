@@ -60,16 +60,15 @@ class TextModalViewModelTest : TestCase() {
         DependencyProvider.register(
             MockEngagementContextFactory {
                 createEngagementContext(
-                    null,
-                    { EngagementResult.InteractionShown(targetInteractionId) }
-                )
+                    null
+                ) { EngagementResult.InteractionShown(targetInteractionId) }
             }
         )
 
         val viewModel = createViewModel()
 
         // check action title
-        val action = viewModel.actions[0]
+        val action = viewModel.actions[0] as TextModalViewModel.ActionModel.OtherActionModel
         assertThat(action.title).isEqualTo(ACTION_LABEL_INTERACTION)
 
         // invoke action
@@ -108,7 +107,7 @@ class TextModalViewModelTest : TestCase() {
         val viewModel = createViewModel()
 
         // check action title
-        val action = viewModel.actions[0]
+        val action = viewModel.actions[0] as TextModalViewModel.ActionModel.OtherActionModel
         assertThat(action.title).isEqualTo(ACTION_LABEL_INTERACTION)
 
         // invoke action
@@ -159,7 +158,7 @@ class TextModalViewModelTest : TestCase() {
         val viewModel = createViewModel()
 
         // check action title
-        val action = viewModel.actions[1]
+        val action = viewModel.actions[1] as TextModalViewModel.ActionModel.OtherActionModel
         assertThat(action.title).isEqualTo(ACTION_LABEL_EVENT)
 
         // invoke action
@@ -207,7 +206,7 @@ class TextModalViewModelTest : TestCase() {
         val viewModel = createViewModel()
 
         // check action title
-        val action = viewModel.actions[1]
+        val action = viewModel.actions[1] as TextModalViewModel.ActionModel.OtherActionModel
         assertThat(action.title).isEqualTo(ACTION_LABEL_EVENT)
 
         // invoke action
@@ -250,7 +249,7 @@ class TextModalViewModelTest : TestCase() {
         val viewModel = createViewModel()
 
         // check action title
-        val action = viewModel.actions[2]
+        val action = viewModel.actions[2] as TextModalViewModel.ActionModel.DismissActionModel
         assertThat(action.title).isEqualTo(ACTION_LABEL_DISMISS)
 
         // invoke action

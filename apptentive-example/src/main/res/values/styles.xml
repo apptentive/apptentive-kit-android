@@ -174,6 +174,7 @@
 <!--        <item name="apptentiveNoteMessageTextStyle">@style/Custom.Note.Message.Text</item>-->
 <!--        <item name="apptentiveNoteButtonLayoutStyle">@style/Custom.Note.ButtonLayout</item>-->
 <!--        <item name="apptentiveNoteButtonStyle">@style/Custom.Dialog.Button.Note</item>-->
+<!--        <item name="apptentiveNoteDismissButtonStyle">@style/Custom.Dialog.Button.Note</item>-->
 
         <!-- Apptentive Rating Dialog Styles-->
 <!--        <item name="apptentiveRatingDialogLayoutStyle">@style/Custom.RatingDialog.Layout</item>-->

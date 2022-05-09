@@ -25,6 +25,7 @@
         <attr name="apptentiveNoteMessageTextStyle" format="reference" />
         <attr name="apptentiveNoteButtonLayoutStyle" format="reference" />
         <attr name="apptentiveNoteButtonStyle" format="reference"/>
+        <attr name="apptentiveNoteDismissButtonStyle" format="reference"/>
 
         <!-- Apptentive Rating Dialog Styles -->
         <attr name="apptentiveRatingDialogLayoutStyle" format="reference" />
