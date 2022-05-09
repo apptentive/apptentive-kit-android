@@ -6,6 +6,7 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import apptentive.com.android.concurrent.Executors
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.Provider
+import apptentive.com.android.feedback.backend.ConversationPayloadService
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.DefaultConversationService
 import apptentive.com.android.feedback.conversation.ConversationManager
@@ -39,7 +40,6 @@ import apptentive.com.android.feedback.model.CustomData
 import apptentive.com.android.feedback.model.payloads.AppReleaseAndSDKPayload
 import apptentive.com.android.feedback.model.payloads.EventPayload
 import apptentive.com.android.feedback.model.payloads.ExtendedData
-import apptentive.com.android.feedback.payload.ConversationPayloadService
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadSender
 import apptentive.com.android.feedback.payload.PersistentPayloadQueue

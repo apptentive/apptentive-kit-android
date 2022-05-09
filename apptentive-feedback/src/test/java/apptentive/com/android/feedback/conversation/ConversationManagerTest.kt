@@ -6,6 +6,7 @@ import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.getTimeSeconds
 import apptentive.com.android.feedback.backend.ConversationCredentials
 import apptentive.com.android.feedback.backend.ConversationService
+import apptentive.com.android.feedback.backend.PayloadResponse
 import apptentive.com.android.feedback.mockAppRelease
 import apptentive.com.android.feedback.mockDevice
 import apptentive.com.android.feedback.mockPerson
@@ -17,11 +18,11 @@ import apptentive.com.android.feedback.model.CustomData
 import apptentive.com.android.feedback.model.Device
 import apptentive.com.android.feedback.model.EngagementData
 import apptentive.com.android.feedback.model.EngagementManifest
+import apptentive.com.android.feedback.model.MessageList
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.model.VersionHistory
 import apptentive.com.android.feedback.payload.PayloadData
-import apptentive.com.android.feedback.payload.PayloadResponse
 import apptentive.com.android.util.Result
 import com.apptentive.android.sdk.conversation.ConversationData
 import com.apptentive.android.sdk.conversation.LegacyConversationManager
@@ -242,6 +243,14 @@ private class MockConversationService(
         callback: (Result<Configuration>) -> Unit
     ) {
         callback(Result.Success(Configuration(expiry = testTimeInterval ?: getTimeSeconds() + 1800)))
+    }
+
+    override fun getMessages(
+        conversationToken: String,
+        conversationId: String,
+        callback: (Result<MessageList>) -> Unit
+    ) {
+        callback(Result.Success(MessageList(messageList = null, endsWith = "", hasMore = false)))
     }
 
     override fun sendPayloadRequest(

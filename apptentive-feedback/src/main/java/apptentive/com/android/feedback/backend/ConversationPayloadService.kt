@@ -1,6 +1,9 @@
-package apptentive.com.android.feedback.payload
+package apptentive.com.android.feedback.backend
 
 import androidx.annotation.Keep
+import apptentive.com.android.feedback.payload.PayloadData
+import apptentive.com.android.feedback.payload.PayloadSendException
+import apptentive.com.android.feedback.payload.PayloadService
 import apptentive.com.android.network.SendErrorException
 import apptentive.com.android.util.Result
 
