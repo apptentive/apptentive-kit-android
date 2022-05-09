@@ -33,10 +33,18 @@
 <!--        <item name="apptentiveLoveDialogTitleImageStyle">@style/Custom.LoveDialog.Title.Image</item>-->
 <!--        <item name="apptentiveLoveDialogHeaderImageStyle">@style/Custom.LoveDialog.HeaderImage.Disney</item>-->
 <!--        <item name="apptentiveLoveDialogButtonLayoutStyle"/>-->
+
+        <!-- No -> Yes Ordering (default) -->
+<!--        <item name="apptentiveLoveDialogButtonLayoutStyle">@style/Custom.LoveDialog.ButtonLayout</item>-->
 <!--        <item name="apptentiveLoveDialogYesButtonStyle">@style/Custom.Dialog.Button.LoveDialogYes</item>-->
 <!--        <item name="apptentiveLoveDialogYesButtonStyle">@style/Custom.Dialog.Button.LoveDialogYes.Disney</item>-->
 <!--        <item name="apptentiveLoveDialogNoButtonStyle">@style/Custom.Dialog.Button.LoveDialogNo</item>-->
 <!--        <item name="apptentiveLoveDialogNoButtonStyle">@style/Custom.Dialog.Button.LoveDialogNo.Disney</item>-->
+
+        <!-- Yes -> No Ordering -->
+<!--        <item name="apptentiveLoveDialogButtonLayoutStyleAlternate">@style/Custom.LoveDialog.ButtonLayoutAlternate</item>-->
+<!--        <item name="apptentiveLoveDialogYesButtonStyleAlternate">@style/Custom.Dialog.Button.LoveDialogYes.Alternate</item>-->
+<!--        <item name="apptentiveLoveDialogNoButtonStyleAlternate">@style/Custom.Dialog.Button.LoveDialogNo.Alternate</item>-->
 
         <!-- Note Styles-->
 <!--        <item name="apptentiveNoteLayoutStyle">@style/Custom.Note.Layout</item>-->
@@ -184,6 +192,15 @@
         <item name="android:paddingStart">8dp</item>
         <item name="android:paddingTop">8dp</item>
         <item name="android:paddingEnd">8dp</item>
+    </style>
+
+    <style name="Custom.LoveDialog.ButtonLayout">
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <style name="Custom.LoveDialog.ButtonLayoutAlternate">
+        <item name="android:background">?colorSurface</item>
+        <item name="android:orientation">vertical</item>
     </style>
 
     <style name="Custom.LoveDialog.Layout.Disney">
@@ -372,6 +389,15 @@
         <item name="android:layout_weight">1</item>
     </style>
 
+    <style name="Custom.Dialog.Button.LoveDialogYes.Alternate" parent="Widget.MaterialComponents.Button">
+        <item name="cornerRadius">36dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:minWidth">160dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:backgroundTint">@color/color_on_secondary</item>
+        <item name="android:textColor">@color/color_secondary</item>
+    </style>
+
     <style name="Custom.Dialog.Button.LoveDialogNo" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="cornerRadius">24dp</item>
         <item name="strokeColor">@color/color_secondary</item>
@@ -381,6 +407,12 @@
         <item name="strokeWidth">2dp</item>
         <item name="android:layout_weight">1</item>
         <item name="android:textColor">@color/color_secondary</item>
+    </style>
+
+    <style name="Custom.Dialog.Button.LoveDialogNo.Alternate" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textColor">@color/color_error</item>
+        <item name="android:minWidth">160dp</item>
     </style>
 
     <style name="Custom.Dialog.Button.LoveDialogYes.Disney" parent="Widget.MaterialComponents.Button.TextButton">

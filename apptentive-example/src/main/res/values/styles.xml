@@ -160,9 +160,16 @@
 <!--        <item name="apptentiveLoveDialogTitleStyle">@style/Custom.LoveDialog.Title</item>-->
 <!--        <item name="apptentiveLoveDialogTitleImageStyle">@style/Custom.LoveDialog.Title.Image</item>-->
 <!--        <item name="apptentiveLoveDialogHeaderImageStyle">@style/Custom.LoveDialog.HeaderImage</item>-->
+
+        <!-- No -> Yes Ordering (default) -->
 <!--        <item name="apptentiveLoveDialogButtonLayoutStyle" />-->
 <!--        <item name="apptentiveLoveDialogYesButtonStyle">@style/Custom.Dialog.Button.LoveDialogYes</item>-->
 <!--        <item name="apptentiveLoveDialogNoButtonStyle">@style/Custom.Dialog.Button.LoveDialogNo</item>-->
+
+        <!-- Yes -> No Ordering -->
+<!--        <item name="apptentiveLoveDialogButtonLayoutStyleAlternate">@style/Custom.LoveDialog.ButtonLayoutAlternate</item>-->
+<!--        <item name="apptentiveLoveDialogYesButtonStyleAlternate">@style/Custom.Dialog.Button.LoveDialogYes.Alternate</item>-->
+<!--        <item name="apptentiveLoveDialogNoButtonStyleAlternate">@style/Custom.Dialog.Button.LoveDialogNo.Alternate</item>-->
 
         <!-- Note Styles-->
 <!--        <item name="apptentiveNoteLayoutStyle">@style/Custom.Note.Layout</item>-->
@@ -311,6 +318,11 @@
         <item name="android:paddingStart">8dp</item>
         <item name="android:paddingTop">8dp</item>
         <item name="android:paddingEnd">8dp</item>
+    </style>
+
+    <style name="Custom.LoveDialog.ButtonLayoutAlternate">
+        <item name="android:background">?colorSurface</item>
+        <item name="android:orientation">vertical</item>
     </style>
 
     <style name="Custom.Note"/>
@@ -477,6 +489,22 @@
         <item name="strokeWidth">2dp</item>
         <item name="android:layout_weight">1</item>
         <item name="android:textColor">?colorSecondary</item>
+    </style>
+
+
+    <style name="Custom.Dialog.Button.LoveDialogYes.Alternate" parent="Widget.MaterialComponents.Button">
+        <item name="cornerRadius">36dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:minWidth">160dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:backgroundTint">?colorOnSecondary</item>
+        <item name="android:textColor">?colorSecondary</item>
+    </style>
+
+    <style name="Custom.Dialog.Button.LoveDialogNo.Alternate" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textColor">?colorError</item>
+        <item name="android:minWidth">160dp</item>
     </style>
 
     <style name="Custom.Dialog.Button.Note" parent="Widget.MaterialComponents.Button.OutlinedButton">

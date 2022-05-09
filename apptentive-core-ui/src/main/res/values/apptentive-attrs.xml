@@ -11,9 +11,16 @@
         <attr name="apptentiveLoveDialogHeaderImageStyle" format="reference" />
         <attr name="apptentiveLoveDialogTitleStyle" format="reference" />
         <attr name="apptentiveLoveDialogTitleImageStyle" format="reference" />
+
+        <!-- No -> Yes Ordering (default) -->
         <attr name="apptentiveLoveDialogButtonLayoutStyle" format="reference" />
         <attr name="apptentiveLoveDialogYesButtonStyle" format="reference" />
         <attr name="apptentiveLoveDialogNoButtonStyle" format="reference" />
+
+        <!-- Yes -> No Ordering -->
+        <attr name="apptentiveLoveDialogButtonLayoutStyleAlternate" format="reference" />
+        <attr name="apptentiveLoveDialogYesButtonStyleAlternate" format="reference" />
+        <attr name="apptentiveLoveDialogNoButtonStyleAlternate" format="reference" />
 
         <!-- Note Dialog Styles -->
         <attr name="apptentiveNoteLayoutStyle" format="reference" />

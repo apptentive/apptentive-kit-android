@@ -27,9 +27,16 @@
         <item name="apptentiveLoveDialogHeaderImageStyle"/>
         <item name="apptentiveLoveDialogTitleStyle">@style/Apptentive.TextAppearance.Title.Dialog.TitleOrMessageOnly</item>
         <item name="apptentiveLoveDialogTitleImageStyle"/>
+
+        <!-- No -> Yes Ordering (default) -->
         <item name="apptentiveLoveDialogButtonLayoutStyle">@style/Apptentive.Dialog.ButtonLayout</item>
         <item name="apptentiveLoveDialogYesButtonStyle">@style/Apptentive.Widget.Dialog.Button.SideBySide.Yes</item>
         <item name="apptentiveLoveDialogNoButtonStyle">@style/Apptentive.Widget.Dialog.Button.SideBySide.No</item>
+
+        <!-- Yes -> No Ordering -->
+        <item name="apptentiveLoveDialogButtonLayoutStyleAlternate">@style/Apptentive.Dialog.ButtonLayout.Alternate</item>
+        <item name="apptentiveLoveDialogYesButtonStyleAlternate"/>
+        <item name="apptentiveLoveDialogNoButtonStyleAlternate"/>
 
         <!-- Note Dialog Styles -->
         <item name="apptentiveNoteLayoutStyle">@style/Apptentive.Dialog.Layout</item>
@@ -193,6 +200,11 @@
 
     <style name="Apptentive.Dialog.ButtonLayout">
         <item name="android:gravity">end</item>
+    </style>
+
+
+    <style name="Apptentive.Dialog.ButtonLayout.Alternate">
+        <item name="android:visibility">gone</item>
     </style>
 
     <style name="Apptentive.Dialog.ButtonLayout.Note">
