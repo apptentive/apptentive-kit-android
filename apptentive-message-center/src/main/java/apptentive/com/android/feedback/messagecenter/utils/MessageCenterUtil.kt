@@ -1,8 +1,8 @@
 package apptentive.com.android.feedback.messagecenter.utils
 
 import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.feedback.dependencyprovider.MessageCenterModelFactory
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
-import apptentive.com.android.feedback.messagecenter.MessageCenterModelFactory
 import apptentive.com.android.feedback.messagecenter.viewmodel.MessageCenterViewModel
 
 internal fun createMessageCenterViewModel(): MessageCenterViewModel {

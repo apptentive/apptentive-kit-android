@@ -1,4 +1,4 @@
-package apptentive.com.android.feedback.messagecenter
+package apptentive.com.android.feedback.dependencyprovider
 
 import apptentive.com.android.core.Provider
 import apptentive.com.android.feedback.messagecenter.interaction.MessageCenterInteraction

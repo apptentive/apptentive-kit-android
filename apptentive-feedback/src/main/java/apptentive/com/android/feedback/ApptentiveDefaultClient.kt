@@ -9,6 +9,7 @@ import apptentive.com.android.core.Provider
 import apptentive.com.android.feedback.backend.ConversationPayloadService
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.DefaultConversationService
+import apptentive.com.android.feedback.backend.MessageFetchService
 import apptentive.com.android.feedback.conversation.ConversationManager
 import apptentive.com.android.feedback.conversation.ConversationRepository
 import apptentive.com.android.feedback.conversation.ConversationSerializer
@@ -35,6 +36,7 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionModule
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.feedback.lifecycle.ApptentiveLifecycleObserver
+import apptentive.com.android.feedback.message.MessageManager
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.CustomData
 import apptentive.com.android.feedback.model.payloads.AppReleaseAndSDKPayload
@@ -72,6 +74,7 @@ internal class ApptentiveDefaultClient(
     private lateinit var conversationManager: ConversationManager
     private lateinit var payloadSender: PayloadSender
     private lateinit var interactionModules: Map<String, InteractionModule<Interaction>>
+    private var messageManager: MessageManager? = null
     private var engagement: Engagement = NullEngagement()
 
     //region Initialization
@@ -93,7 +96,7 @@ internal class ApptentiveDefaultClient(
             legacyConversationManagerProvider = object : Provider<LegacyConversationManager> {
                 override fun get() = DefaultLegacyConversationManager(context)
             },
-            RuntimeUtils.getApplicationInfo(context).debuggable
+            isDebuggable = RuntimeUtils.getApplicationInfo(context).debuggable
         )
         conversationManager.fetchConversationToken {
             when (it) {
@@ -114,6 +117,12 @@ internal class ApptentiveDefaultClient(
                 is Result.Success -> {
                     conversationManager.tryFetchEngagementManifest()
                     conversationManager.tryFetchAppConfiguration()
+                    val activeConversation = conversationManager.activeConversation.value
+                    messageManager = MessageManager(
+                        activeConversation.conversationId,
+                        activeConversation.conversationToken,
+                        conversationService as MessageFetchService
+                    )
                 }
             }
         }
@@ -173,10 +182,16 @@ internal class ApptentiveDefaultClient(
         executors.main.execute {
             Log.i(LIFE_CYCLE_OBSERVER, "Observing App lifecycle")
             ProcessLifecycleOwner.get().lifecycle.addObserver(
-                ApptentiveLifecycleObserver(this, executors.state) {
-                    conversationManager.tryFetchEngagementManifest()
-                    conversationManager.tryFetchAppConfiguration()
-                }
+                ApptentiveLifecycleObserver(
+                    this, executors.state, {
+                        conversationManager.tryFetchEngagementManifest()
+                        conversationManager.tryFetchAppConfiguration()
+                        messageManager?.onForeground()
+                    },
+                    {
+                        messageManager?.onBackground()
+                    }
+                )
             )
         }
     }
