@@ -98,10 +98,19 @@ internal class ApptentiveDefaultClient(
             },
             isDebuggable = RuntimeUtils.getApplicationInfo(context).debuggable
         )
-        conversationManager.fetchConversationToken {
-            when (it) {
+
+        getConversationToken(conversationService, registerCallback)
+        addObservers(serialPayloadSender, conversationService)
+    }
+
+    private fun getConversationToken(
+        conversationService: ConversationService,
+        registerCallback: ((result: RegisterResult) -> Unit)?
+    ) {
+        conversationManager.fetchConversationToken { result ->
+            when (result) {
                 is Result.Error -> {
-                    when (val error = it.error) {
+                    when (val error = result.error) {
                         is UnexpectedResponseException -> {
                             val responseCode = error.statusCode
                             val message = error.errorMessage
@@ -111,13 +120,16 @@ internal class ApptentiveDefaultClient(
                                 )
                             )
                         }
-                        else -> registerCallback?.invoke(RegisterResult.Exception(it.error))
+                        else -> registerCallback?.invoke(RegisterResult.Exception(result.error))
                     }
                 }
                 is Result.Success -> {
                     conversationManager.tryFetchEngagementManifest()
                     conversationManager.tryFetchAppConfiguration()
                     val activeConversation = conversationManager.activeConversation.value
+                    if (activeConversation.conversationId != null && activeConversation.conversationToken != null) {
+                        registerCallback?.invoke(RegisterResult.Success)
+                    }
                     messageManager = MessageManager(
                         activeConversation.conversationId,
                         activeConversation.conversationToken,
@@ -126,6 +138,9 @@ internal class ApptentiveDefaultClient(
                 }
             }
         }
+    }
+
+    private fun addObservers(serialPayloadSender: SerialPayloadSender, conversationService: ConversationService) {
         conversationManager.activeConversation.observe { conversation ->
             if (Log.canLog(LogLevel.Verbose)) { // avoid unnecessary computations
                 conversation.logConversation()
@@ -153,22 +168,6 @@ internal class ApptentiveDefaultClient(
                 )
             }
         }
-
-        // add an observer to track SDK registration
-        if (registerCallback != null) {
-            var callbackInvoked = false // make sure the initialization callback only gets invoked once
-            conversationManager.activeConversation.observe { conversation ->
-                val conversationId = conversation.conversationId
-                val conversationToken = conversation.conversationToken
-                if (conversationId != null && conversationToken != null) {
-                    if (!callbackInvoked) {
-                        registerCallback.invoke(RegisterResult.Success)
-                        callbackInvoked = true
-                    }
-                }
-            }
-        }
-
         // add an observer to track SDK & AppRelease changes
         conversationManager.sdkAppReleaseUpdate.observe { appReleaseSDKUpdated ->
             if (appReleaseSDKUpdated) {
@@ -178,7 +177,6 @@ internal class ApptentiveDefaultClient(
                 payloadSender.sendPayload(payload)
             }
         }
-
         executors.main.execute {
             Log.i(LIFE_CYCLE_OBSERVER, "Observing App lifecycle")
             ProcessLifecycleOwner.get().lifecycle.addObserver(
