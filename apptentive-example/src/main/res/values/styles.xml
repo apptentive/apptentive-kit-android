@@ -230,6 +230,7 @@
 <!--        <item name="apptentiveSurveyOtherTextFieldLayoutStyle">@style/Custom.Survey.OtherTextField.TextInputLayout</item>-->
 <!--        <item name="apptentiveSurveyOtherTextFieldEditTextStyle">@style/Custom.Survey.OtherTextField.EditText</item>-->
 <!--        <item name="apptentiveSurveySubmitButtonStyle">@style/Custom.Survey.Submit.Button</item>-->
+<!--        <item name="apptentiveSurveyFootnoteStyle">@style/Custom.Survey.Footnote</item>-->
         <!-- Survey Styles End -->
 
         <!-- Text Size Start -->
@@ -245,6 +246,7 @@
 <!--        <item name="apptentiveTextSizeBody1">30sp</item>-->
 <!--        <item name="apptentiveTextSizeCaption">30sp</item>-->
 <!--        <item name="apptentiveTextSizeButtonColored">30sp</item>-->
+<!--        <item name="apptentiveTextSizeSurveyTermsAndConditions">30sp</item>-->
         <!-- Text Size End -->
 
         <!-- Text Color Start -->
@@ -262,7 +264,7 @@
 <!--        <item name="apptentiveTextColorSurveyIntroduction">@color/color_secondary</item>-->
 <!--        <item name="apptentiveTextColorBody1">@color/color_secondary</item>-->
 <!--        <item name="apptentiveTextColorSurveyQuestionInstructions">@color/color_secondary</item>-->
-<!--        <item name="apptentiveSurveyFootnoteStyle">@style/Custom.Survey.Footnote</item>-->
+<!--        <item name="apptentiveTextColorSurveyTermsAndConditions">@color/color_secondary</item>-->
 <!--        <item name="apptentiveTextColorSurveyTermsAndConditions">@color/color_secondary</item>-->
         <!-- Text Color End -->
 
@@ -664,4 +666,348 @@
     </style>
     <!-- Survey Widgets End -->
     <!-- Widgets End -->
+
+    <!-- Cookbook 1 -->
+    <!--    <style name="ApptentiveThemeOverride">-->
+    <!-- All Interactions -->
+    <!--        <item name="apptentiveFontFamilyDefault">@font/mulish</item>-->
+
+    <!-- Dialogs -->
+    <!--        <item name="colorSurface">#081728</item>-->
+    <!--        <item name="colorOnSurface">#FFFFFF</item>-->
+
+    <!-- Love Dialog -->
+    <!--        <item name="apptentiveLoveDialogTitleStyle">@style/Cookbook1.Dialog.TitleOrMessageOnly</item>-->
+    <!--        <item name="apptentiveLoveDialogYesButtonStyle">@style/Cookbook1.Button.LoveDialog</item>-->
+    <!--        <item name="apptentiveLoveDialogNoButtonStyle">@style/Cookbook1.Button.LoveDialog</item>-->
+
+    <!-- Note Dialog -->
+    <!--        <item name="apptentiveNoteTitleWithMessageTextStyle">@style/Cookbook1.Dialog.TitleWithMessage</item>-->
+    <!--        <item name="apptentiveNoteTitleOrMessageOnlyTextStyle">@style/Cookbook1.Dialog.TitleOrMessageOnly</item>-->
+    <!--        <item name="apptentiveNoteMessageTextStyle">@style/Cookbook1.Dialog.Message</item>-->
+    <!--        <item name="apptentiveNoteButtonLayoutStyle">@style/Cookbook1.Dialog.ButtonLayout.Stacked</item>-->
+    <!--        <item name="apptentiveNoteButtonStyle">@style/Cookbook1.Button.Stacked</item>-->
+    <!--        <item name="apptentiveNoteDismissButtonStyle">@style/Cookbook1.Button.Stacked.Dismiss</item>-->
+
+    <!-- Survey -->
+    <!--        <item name="colorOnPrimary">#FFFFFF</item>-->
+    <!--        <item name="android:colorBackground">#081728</item>-->
+    <!--        <item name="colorOnBackground">#FFFFFF</item>-->
+    <!--        <item name="colorSecondary">#2294D5</item>-->
+
+    <!--        <item name="android:statusBarColor">#081728</item>-->
+    <!--        <item name="android:windowLightStatusBar" tools:ignore="NewApi">false</item>-->
+
+    <!--        <item name="apptentiveTextSizeSurveyQuestionTitle">15sp</item>-->
+    <!--        <item name="apptentiveTextColorSurveyTermsAndConditions">#DCDCDC</item>-->
+    <!--        <item name="apptentiveTextSizeSurveyTermsAndConditions">15sp</item>-->
+
+    <!--        <item name="apptentiveSurveyToolbarStyle">@style/Cookbook1.Survey.Toolbar</item>-->
+    <!--        <item name="apptentiveSurveyBottomAppBarStyle">@style/Cookbook1.Survey.BottomAppBar</item>-->
+
+    <!--        <item name="apptentiveSurveyTitleStyle">@style/Cookbook1.Survey.Title</item>-->
+    <!--        <item name="apptentiveSurveyIntroductionStyle">@style/Cookbook1.Survey.Introduction</item>-->
+
+    <!--        <item name="apptentiveSurveySingleLineLayoutStyle">@style/Cookbook1.Survey.TextInputLayout</item>-->
+    <!--        <item name="apptentiveSurveySingleLineEditTextStyle">@style/Cookbook1.Survey.EditText</item>-->
+    <!--        <item name="apptentiveSurveyOtherTextFieldLayoutStyle">@style/Cookbook1.Survey.TextInputLayout.Other</item>-->
+    <!--        <item name="apptentiveSurveyOtherTextFieldEditTextStyle">@style/Cookbook1.Survey.EditText</item>-->
+    <!--        <item name="apptentiveSurveySubmitButtonStyle">@style/Cookbook1.Button.Survey</item>-->
+
+    <!--        <item name="apptentiveGenericDialogTitleTextStyle">@style/Cookbook1.Dialog.TitleWithMessage</item>-->
+    <!--        <item name="apptentiveGenericDialogMessageTextStyle">@style/Cookbook1.Dialog.Message</item>-->
+    <!--        <item name="apptentiveGenericDialogButtonLayoutStyle">@style/Cookbook1.Dialog.ButtonLayout.Stacked</item>-->
+    <!--        <item name="apptentiveGenericDialogPositiveButtonStyle">@style/Cookbook1.Button.Stacked.Dismiss</item>-->
+    <!--        <item name="apptentiveGenericDialogNegativeButtonStyle">@style/Cookbook1.Button.Stacked</item>-->
+    <!--    </style>-->
+
+    <!-- General -->
+<!--    <style name="Cookbook1.Button" parent="Widget.MaterialComponents.Button">-->
+<!--        <item name="android:fontFamily">@font/mulish</item>-->
+<!--        <item name="cornerRadius">24dp</item>-->
+<!--        <item name="android:textSize">15sp</item>-->
+<!--        <item name="android:textStyle">bold</item>-->
+<!--        <item name="android:textColor">?colorOnSurface</item>-->
+<!--        <item name="android:layout_weight">1</item>-->
+<!--        <item name="backgroundTint">@null</item>-->
+<!--        <item name="android:background">@drawable/cookbook_1_button</item>-->
+<!--    </style>-->
+
+<!--    &lt;!&ndash; Dialogs &ndash;&gt;-->
+<!--    <style name="Cookbook1.Dialog.TitleOrMessageOnly" parent="Apptentive.TextAppearance.Title.Dialog.TitleOrMessageOnly">-->
+<!--        <item name="android:textSize">18sp</item>-->
+<!--        <item name="android:paddingTop">8dp</item>-->
+<!--        <item name="android:alpha">1</item>-->
+<!--    </style>-->
+
+<!--    &lt;!&ndash; Love Dialog &ndash;&gt;-->
+<!--    <style name="Cookbook1.Button.LoveDialog">-->
+<!--        <item name="android:minWidth">120dp</item>-->
+<!--        <item name="android:layout_marginTop">16dp</item>-->
+<!--        <item name="android:layout_marginStart">16dp</item>-->
+<!--        <item name="android:layout_marginEnd">16dp</item>-->
+<!--        <item name="android:layout_marginBottom">24dp</item>-->
+<!--    </style>-->
+
+<!--    &lt;!&ndash; Note Dialog &ndash;&gt;-->
+<!--    <style name="Cookbook1.Dialog.TitleWithMessage" parent="Apptentive.TextAppearance.Title.Dialog.WithMessage">-->
+<!--        <item name="android:textSize">18sp</item>-->
+<!--        <item name="android:textAlignment">center</item>-->
+<!--        <item name="android:paddingTop">8dp</item>-->
+<!--        <item name="android:paddingBottom">16dp</item>-->
+<!--        <item name="android:textStyle">bold</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook1.Dialog.Message" parent="Apptentive.TextAppearance.Message.Dialog">-->
+<!--        <item name="android:textSize">15sp</item>-->
+<!--        <item name="android:alpha">1</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook1.Dialog.ButtonLayout.Stacked" parent="">-->
+<!--        <item name="android:gravity">center</item>-->
+<!--        <item name="android:paddingTop">24dp</item>-->
+<!--        <item name="android:paddingBottom">16dp</item>-->
+<!--        <item name="android:showDividers">middle</item>-->
+<!--        <item name="android:orientation">vertical</item>-->
+<!--        <item name="android:divider">@drawable/cookbook_1_button_spacing</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook1.Button.Stacked">-->
+<!--        <item name="android:minWidth">240dp</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook1.Button.Stacked.Dismiss" parent="Apptentive.Widget.Dialog.Button">-->
+<!--        <item name="android:textColor">?colorOnSurface</item>-->
+<!--        <item name="android:textSize">15sp</item>-->
+<!--        <item name="android:textStyle">bold</item>-->
+<!--        <item name="android:minWidth">240dp</item>-->
+<!--        <item name="android:gravity">center</item>-->
+<!--        <item name="cornerRadius">24dp</item>-->
+<!--    </style>-->
+
+<!--    &lt;!&ndash; Survey &ndash;&gt;-->
+<!--    <style name="Cookbook1.Survey.Toolbar" parent="Apptentive.Widget.Survey.Toolbar">-->
+<!--        <item name="android:background">@drawable/cookbook_1_survey_toolbar_bottom_app_bar</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook1.Survey.BottomAppBar" parent="">-->
+<!--        <item name="android:background">@drawable/cookbook_1_survey_toolbar_bottom_app_bar</item>-->
+<!--        <item name="android:minHeight">44dp</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook1.Survey.Title" parent="Apptentive.TextAppearance.Title.Survey">-->
+<!--        <item name="android:textSize">19sp</item>-->
+<!--        <item name="android:layout_gravity">center</item>-->
+<!--        <item name="android:textStyle">bold</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook1.Survey.Introduction" parent="Apptentive.TextAppearance.Introduction.Survey">-->
+<!--        <item name="android:layout_marginTop">8dp</item>-->
+<!--        <item name="android:textSize">19sp</item>-->
+<!--        <item name="android:textStyle">bold</item>-->
+<!--        <item name="android:alpha">1</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook1.Survey.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">-->
+<!--        <item name="android:fontFamily">@font/mulish</item>-->
+<!--        <item name="android:textColorHint">?android:colorBackground</item>-->
+<!--        <item name="hintTextColor">?android:colorBackground</item>-->
+<!--        <item name="android:paddingStart">16dp</item>-->
+<!--        <item name="android:paddingEnd">16dp</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook1.Survey.TextInputLayout.Other">-->
+<!--        <item name="android:layout_marginStart">40dp</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook1.Survey.EditText" parent="Apptentive.Widget.Survey.SingleLine.EditText">-->
+<!--        <item name="android:background">@drawable/cookbook_1_survey_text_box_background</item>-->
+<!--        <item name="android:textSize">12sp</item>-->
+<!--        <item name="android:textColor">?android:colorBackground</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook1.Button.Survey">-->
+<!--        <item name="android:minWidth">160dp</item>-->
+<!--        <item name="android:layout_marginTop">8dp</item>-->
+<!--    </style>-->
+
+    <!-- Cookbook 2 -->
+    <!--    <style name="ApptentiveThemeOverride">-->
+    <!-- All Interactions -->
+    <!--        <item name="apptentiveFontFamilyDefault">@font/sen</item>-->
+
+    <!-- Dialogs -->
+    <!--        <item name="colorSurface">#FFFFFF</item>-->
+    <!--        <item name="colorOnSurface">#213346</item>-->
+
+    <!-- Love Dialog -->
+    <!--        <item name="apptentiveLoveDialogLayoutStyle">@style/Cookbook2.Dialog.Layout</item>-->
+    <!--        <item name="apptentiveLoveDialogHeaderImageStyle">@style/Cookbook2.Dialog.HeaderImage.LoveDialog</item>-->
+    <!--        <item name="apptentiveLoveDialogTitleStyle">@style/Cookbook2.Dialog.Title</item>-->
+    <!--        <item name="apptentiveLoveDialogButtonLayoutStyle">@style/Cookbook2.Dialog.ButtonLayout.LoveDialog</item>-->
+    <!--        <item name="apptentiveLoveDialogYesButtonStyle">@style/Cookbook2.Button.LoveDialog</item>-->
+    <!--        <item name="apptentiveLoveDialogNoButtonStyle">@style/Cookbook2.Button.LoveDialog</item>-->
+
+    <!-- Note Dialog -->
+    <!--        <item name="apptentiveNoteLayoutStyle">@style/Cookbook2.Dialog.Layout</item>-->
+    <!--        <item name="apptentiveNoteHeaderImageStyle">@style/Cookbook2.Dialog.HeaderImage.Note</item>-->
+    <!--        <item name="apptentiveNoteTitleWithMessageTextStyle">@style/Cookbook2.Dialog.Title</item>-->
+    <!--        <item name="apptentiveNoteTitleOrMessageOnlyTextStyle">@style/Cookbook2.Dialog.Title</item>-->
+    <!--        <item name="apptentiveNoteMessageTextStyle">@style/Cookbook2.Dialog.Message</item>-->
+    <!--        <item name="apptentiveNoteButtonLayoutStyle">@style/Cookbook2.Dialog.ButtonLayout.Stacked</item>-->
+    <!--        <item name="apptentiveNoteButtonStyle">@style/Cookbook2.Button.Stacked</item>-->
+    <!--        <item name="apptentiveNoteDismissButtonStyle">@style/Cookbook2.Dialog.Button.Stacked.Dismiss</item>-->
+
+    <!-- Survey -->
+    <!--        <item name="colorPrimary">#056E0F</item>-->
+    <!--        <item name="colorOnPrimary">#FFFFFF</item>-->
+    <!--        <item name="android:colorBackground">#FFFFFF</item>-->
+    <!--        <item name="colorOnBackground">#213346</item>-->
+    <!--        <item name="colorSecondary">#34993E</item>-->
+
+    <!--        <item name="android:statusBarColor">#FFFFFF</item>-->
+    <!--        <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>-->
+
+    <!--        <item name="apptentiveTextColorSurveyTermsAndConditions">?colorOnPrimary</item>-->
+    <!--        <item name="apptentiveTextSizeSurveyTermsAndConditions">15sp</item>-->
+
+    <!--        <item name="apptentiveSurveyToolbarStyle">@style/Cookbook2.Survey.Toolbar</item>-->
+    <!--        <item name="apptentiveSurveyBottomAppBarStyle">@style/Cookbook2.Survey.BottomAppBar</item>-->
+    <!--        <item name="apptentiveSurveyTitleStyle">@style/Cookbook2.Survey.Title</item>-->
+    <!--        <item name="apptentiveSurveyIntroductionStyle">@style/Cookbook2.Survey.Introduction</item>-->
+    <!--        <item name="apptentiveSurveyQuestionTitleStyle">@style/Cookbook2.Survey.Title.Question</item>-->
+    <!--        <item name="apptentiveSurveyFootnoteStyle">@style/Cookbook2.Survey.Footnote</item>-->
+    <!--        <item name="apptentiveSurveySubmitButtonStyle">@style/Cookbook2.Button</item>-->
+
+    <!--        <item name="apptentiveGenericDialogTitleTextStyle">@style/Cookbook2.Dialog.Title</item>-->
+    <!--        <item name="apptentiveGenericDialogMessageTextStyle">@style/Cookbook2.Dialog.Message</item>-->
+    <!--        <item name="apptentiveGenericDialogButtonLayoutStyle">@style/Cookbook2.Dialog.ButtonLayout.Stacked</item>-->
+    <!--        <item name="apptentiveGenericDialogPositiveButtonStyle">@style/Cookbook2.Button.Stacked</item>-->
+    <!--        <item name="apptentiveGenericDialogNegativeButtonStyle">@style/Cookbook2.Button.Stacked</item>-->
+    <!--    </style>-->
+
+    <!-- General -->
+<!--    <style name="Cookbook2.Button" parent="Widget.MaterialComponents.Button.OutlinedButton">-->
+<!--        <item name="android:paddingTop">10dp</item>-->
+<!--        <item name="android:paddingBottom">10dp</item>-->
+<!--        <item name="android:layout_weight">1</item>-->
+<!--        <item name="android:fontFamily">@font/sen</item>-->
+<!--        <item name="android:textColor">?colorOnSurface</item>-->
+<!--        <item name="android:textSize">15sp</item>-->
+<!--        <item name="android:textStyle">bold</item>-->
+<!--        <item name="android:minWidth">120dp</item>-->
+<!--        <item name="cornerRadius">10dp</item>-->
+<!--        <item name="strokeColor">?colorSecondary</item>-->
+<!--        <item name="strokeWidth">3dp</item>-->
+<!--    </style>-->
+
+<!--    &lt;!&ndash; Dialogs &ndash;&gt;-->
+<!--    <style name="Cookbook2.Dialog.Layout" parent="">-->
+<!--        <item name="android:background">?colorSurface</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook2.Dialog.Title" parent="Apptentive.TextAppearance.Title.Dialog.WithMessage">-->
+<!--        <item name="android:textStyle">bold</item>-->
+<!--        <item name="android:paddingTop">12dp</item>-->
+<!--        <item name="android:paddingStart">24dp</item>-->
+<!--        <item name="android:paddingEnd">24dp</item>-->
+<!--    </style>-->
+
+<!--    &lt;!&ndash; Love Dialog &ndash;&gt;-->
+<!--    <style name="Cookbook2.Dialog.HeaderImage.LoveDialog" parent="">-->
+<!--        <item name="android:src">@drawable/cookbook_2_love_dialog_header</item>-->
+<!--        <item name="android:adjustViewBounds">true</item>-->
+<!--        <item name="android:layout_marginBottom">4dp</item>-->
+<!--        <item name="android:paddingStart">-2dp</item>-->
+<!--        <item name="android:paddingEnd">-2dp</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook2.Dialog.ButtonLayout.LoveDialog" parent="">-->
+<!--        <item name="android:paddingStart">16dp</item>-->
+<!--        <item name="android:paddingEnd">16dp</item>-->
+<!--        <item name="android:paddingTop">4dp</item>-->
+<!--        <item name="android:paddingBottom">16dp</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook2.Button.LoveDialog">-->
+<!--        <item name="android:minWidth">120dp</item>-->
+<!--        <item name="android:layout_marginStart">12dp</item>-->
+<!--        <item name="android:layout_marginEnd">12dp</item>-->
+<!--    </style>-->
+
+<!--    &lt;!&ndash; Note Dialog &ndash;&gt;-->
+<!--    <style name="Cookbook2.Dialog.Message" parent="Apptentive.TextAppearance.Message.Dialog">-->
+<!--        <item name="android:paddingTop">8dp</item>-->
+<!--        <item name="android:paddingStart">24dp</item>-->
+<!--        <item name="android:paddingEnd">24dp</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook2.Dialog.HeaderImage.Note" parent="">-->
+<!--        <item name="android:textSize">15sp</item>-->
+<!--        <item name="android:src">@drawable/cookbook_2_note_header</item>-->
+<!--        <item name="android:layout_marginBottom">4dp</item>-->
+<!--        <item name="android:paddingStart">-2dp</item>-->
+<!--        <item name="android:paddingEnd">-2dp</item>-->
+<!--        <item name="android:adjustViewBounds">true</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook2.Dialog.ButtonLayout.Stacked" parent="">-->
+<!--        <item name="android:orientation">vertical</item>-->
+<!--        <item name="android:gravity">center</item>-->
+<!--        <item name="android:paddingTop">20dp</item>-->
+<!--        <item name="android:paddingBottom">16dp</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook2.Button.Stacked">-->
+<!--        <item name="android:minWidth">224dp</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook2.Dialog.Button.Stacked.Dismiss" parent="Apptentive.Widget.Dialog.Button">-->
+<!--        <item name="android:textColor">?colorOnSurface</item>-->
+<!--        <item name="android:textSize">15sp</item>-->
+<!--        <item name="android:textStyle">bold</item>-->
+<!--        <item name="android:minWidth">224dp</item>-->
+<!--        <item name="android:gravity">center</item>-->
+<!--        <item name="cornerRadius">10dp</item>-->
+<!--    </style>-->
+
+<!--    &lt;!&ndash; Survey &ndash;&gt;-->
+<!--    <style name="Cookbook2.Survey.Toolbar" parent="Apptentive.Widget.Survey.Toolbar">-->
+<!--        <item name="android:background">@drawable/cookbook_2_survey_toolbar</item>-->
+<!--        <item name="navigationIconTint">?colorOnBackground</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook2.Survey.BottomAppBar" parent="">-->
+<!--        <item name="android:background">?colorPrimary</item>-->
+<!--        <item name="android:minHeight">44dp</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook2.Survey.Title" parent="Apptentive.TextAppearance.Title.Survey">-->
+<!--        <item name="android:textColor">?colorPrimary</item>-->
+<!--        <item name="android:textSize">19sp</item>-->
+<!--        <item name="android:layout_gravity">center</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook2.Survey.Introduction" parent="Apptentive.TextAppearance.Introduction.Survey">-->
+<!--        <item name="android:textSize">19sp</item>-->
+<!--        <item name="android:textStyle">bold</item>-->
+<!--        <item name="android:layout_marginTop">8dp</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook2.Survey.Title.Question" parent="Apptentive.TextAppearance.Title.Survey.Question">-->
+<!--        <item name="android:textSize">15sp</item>-->
+<!--        <item name="android:textStyle">bold</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook2.Survey.Footnote" parent="">-->
+<!--        <item name="android:fontFamily">@font/sen</item>-->
+<!--        <item name="android:textColor">?colorOnBackground</item>-->
+<!--        <item name="android:textSize">11sp</item>-->
+<!--        <item name="android:gravity">center</item>-->
+<!--        <item name="android:paddingStart">16dp</item>-->
+<!--        <item name="android:paddingEnd">16dp</item>-->
+<!--        <item name="android:layout_marginTop">16dp</item>-->
+<!--        <item name="android:layout_marginBottom">16dp</item>-->
+<!--        <item name="android:text">Note: Our company policy for submission does not allow us to accept ideas or materials we have not specifically requested.</item>-->
+<!--    </style>-->
 </resources>

@@ -95,6 +95,7 @@
         <attr name="apptentiveTextSizeBody1" format="dimension|reference" />
         <attr name="apptentiveTextSizeCaption" format="dimension|reference" />
         <attr name="apptentiveTextSizeButtonColored" format="dimension|reference" />
+        <attr name="apptentiveTextSizeSurveyTermsAndConditions" format="dimension|reference"/>
 
         <!-- Text Color -->
         <attr name="apptentiveTextColorDialogTitleWithMessage" format="color|reference"/>
@@ -104,6 +105,7 @@
         <attr name="apptentiveTextColorError" format="color|reference"/>
         <attr name="apptentiveTextColorBody1" format="color|reference"/>
         <attr name="apptentiveTextColorButtonBorderless" format="color|reference"/>
+        <attr name="apptentiveTextColorButtonColored" format="color|reference"/>
         <attr name="apptentiveTextColorSurveyTitle" format="color|reference"/>
         <attr name="apptentiveTextColorSurveyIntroduction" format="color|reference"/>
         <attr name="apptentiveTextColorSurveyRangeLabel" format="color|reference"/>
