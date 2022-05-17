@@ -133,8 +133,11 @@ internal class ApptentiveDefaultClient(
                     messageManager = MessageManager(
                         activeConversation.conversationId,
                         activeConversation.conversationToken,
-                        conversationService as MessageFetchService
-                    )
+                        conversationService as MessageFetchService,
+                        executors.state
+                    ).also { messageManager ->
+                        messageManager.onConversationChanged(activeConversation)
+                    }
                 }
             }
         }
@@ -184,10 +187,10 @@ internal class ApptentiveDefaultClient(
                     this, executors.state, {
                         conversationManager.tryFetchEngagementManifest()
                         conversationManager.tryFetchAppConfiguration()
-                        messageManager?.onForeground()
+                        messageManager?.onAppForeground()
                     },
                     {
-                        messageManager?.onBackground()
+                        messageManager?.onAppBackground()
                     }
                 )
             )

@@ -250,7 +250,7 @@ private class MockConversationService(
         conversationId: String,
         callback: (Result<MessageList>) -> Unit
     ) {
-        callback(Result.Success(MessageList(messageList = null, endsWith = "", hasMore = false)))
+        callback(Result.Success(MessageList(messages = null, endsWith = "", hasMore = false)))
     }
 
     override fun sendPayloadRequest(

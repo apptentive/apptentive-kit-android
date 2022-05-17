@@ -13,7 +13,7 @@ import apptentive.com.android.util.generateUUID
 
 @InternalUseOnly
 data class MessageList(
-    val messageList: List<Message>?,
+    val messages: List<Message>?,
     val endsWith: String?,
     val hasMore: Boolean?,
 )
