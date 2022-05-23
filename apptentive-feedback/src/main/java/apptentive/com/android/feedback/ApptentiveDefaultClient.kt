@@ -37,6 +37,7 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionRespon
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.feedback.lifecycle.ApptentiveLifecycleObserver
 import apptentive.com.android.feedback.message.MessageManager
+import apptentive.com.android.feedback.message.MessageManagerFactoryProvider
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.CustomData
 import apptentive.com.android.feedback.model.payloads.AppReleaseAndSDKPayload
@@ -137,6 +138,10 @@ internal class ApptentiveDefaultClient(
                         executors.state
                     ).also { messageManager ->
                         messageManager.onConversationChanged(activeConversation)
+                    }
+
+                    messageManager?.let {
+                        DependencyProvider.register(MessageManagerFactoryProvider(it))
                     }
                 }
             }

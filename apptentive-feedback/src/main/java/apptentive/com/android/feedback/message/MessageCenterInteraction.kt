@@ -1,12 +1,13 @@
-package apptentive.com.android.feedback.messagecenter.interaction
+package apptentive.com.android.feedback.message
 
-import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.engagement.interactions.Interaction
+import apptentive.com.android.feedback.engagement.interactions.InteractionId
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
+import apptentive.com.android.util.InternalUseOnly
 
-@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
-internal data class MessageCenterInteraction(
-    val messageCenterId: String,
+@InternalUseOnly
+data class MessageCenterInteraction(
+    val messageCenterId: InteractionId,
     val title: String?,
     val branding: String?,
     val composer: Composer?,
@@ -15,7 +16,7 @@ internal data class MessageCenterInteraction(
     val automatedMessage: AutomatedMessage?,
     val errorMessage: ErrorMessage?,
     val profile: Profile?,
-) : Interaction(messageCenterId, type = InteractionType.MessageCenter) {
+) : Interaction(id = messageCenterId, type = InteractionType.MessageCenter) {
 
     data class Composer(
         val title: String?,
@@ -69,3 +70,5 @@ internal data class MessageCenterInteraction(
         )
     }
 }
+
+internal const val DEFAULT_INTERNAL_EVENT_NAME = "show_message_center"

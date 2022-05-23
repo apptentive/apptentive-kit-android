@@ -85,6 +85,22 @@
         <attr name="apptentiveSurveyButtonColorDefault" format="color|reference" />
         <!-- Survey Styles End -->
 
+        <!-- Message Center -->
+
+        <!-- App Bars -->
+        <attr name="apptentiveMessageCenterToolbarStyle" format="reference"/>
+        <attr name="apptentiveActionButtonStyle" format="reference" />
+
+        <!-- Widgets -->
+        <attr name="apptentiveMessageCenterAttachmentImageStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterComposerStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterSendImageStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterComposerLayoutStyle" format="reference"/>
+        <attr name="apptentiveViewSeparatorStyle" format="reference"/>
+
+
+        <!-- Message Center End -->
+
         <!-- Text Size -->
         <attr name="apptentiveTextSizeDialogTitleWithMessage" format="dimension|reference" />
         <attr name="apptentiveTextSizeDialogTitleOrMessageOnly" format="dimension|reference" />

@@ -75,6 +75,12 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
             Apptentive.engage("note_event") { handleResult(it) }
         }
 
+        binding.messageCenterButton.setOnClickListener {
+            Apptentive.showMessageCenter() {
+                handleResult(it)
+            }
+        }
+
         binding.ratingDialogButton.setOnClickListener {
             Apptentive.engage("rating_dialog_event") { handleResult(it) }
         }

@@ -1,8 +1,10 @@
+package apptentive.com.android.feedback
+
 import androidx.annotation.Keep
 import apptentive.com.android.feedback.engagement.interactions.InteractionLauncher
 import apptentive.com.android.feedback.engagement.interactions.InteractionModule
 import apptentive.com.android.feedback.engagement.interactions.InteractionTypeConverter
-import apptentive.com.android.feedback.messagecenter.interaction.MessageCenterInteraction
+import apptentive.com.android.feedback.message.MessageCenterInteraction
 import apptentive.com.android.feedback.messagecenter.interaction.MessageCenterInteractionLauncher
 import apptentive.com.android.feedback.messagecenter.interaction.MessageCenterInteractionTypeConverter
 

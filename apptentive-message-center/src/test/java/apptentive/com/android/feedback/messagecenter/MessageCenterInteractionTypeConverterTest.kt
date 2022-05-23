@@ -1,7 +1,7 @@
 package apptentive.com.android.feedback.messagecenter
 
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
-import apptentive.com.android.feedback.messagecenter.interaction.MessageCenterInteraction
+import apptentive.com.android.feedback.message.MessageCenterInteraction
 import apptentive.com.android.feedback.messagecenter.interaction.MessageCenterInteractionTypeConverter
 import apptentive.com.android.serialization.json.JsonConverter
 import junit.framework.TestCase

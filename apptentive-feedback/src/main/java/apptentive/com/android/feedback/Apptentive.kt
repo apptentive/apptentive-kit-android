@@ -14,6 +14,7 @@ import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.format
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
+import apptentive.com.android.feedback.message.DEFAULT_INTERNAL_EVENT_NAME
 import apptentive.com.android.feedback.platform.AndroidFileSystemProvider
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.feedback.utils.ThrottleUtils
@@ -207,6 +208,9 @@ object Apptentive {
     }
 
     //endregion
+
+    //region Engagement
+
     @JvmStatic
     @JvmOverloads
     fun engage(eventName: String, callback: EngagementCallback? = null) {
@@ -237,6 +241,24 @@ object Apptentive {
                 callbackWrapper?.invoke(EngagementResult.Exception(error = e))
             }
         }
+    }
+
+    //endregion
+
+    //region Message Center
+
+    /**
+     * Opens the Apptentive Message Center. This task is performed asynchronously.
+     *
+     * @param callback Called with true if an Interaction will be displayed, else false.
+     */
+
+    @JvmStatic
+    @JvmOverloads
+    fun showMessageCenter(callback: EngagementCallback? = null) {
+        val engagementCallback: ((EngagementResult) -> Unit)? =
+            if (callback != null) callback::onComplete else null
+        client.engage(Event.internal(DEFAULT_INTERNAL_EVENT_NAME))
     }
 
     // region Person data updates

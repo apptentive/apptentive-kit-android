@@ -38,4 +38,16 @@
     <dimen name="apptentive_survey_edit_text_min_height">48dp</dimen>
     <dimen name="apptentive_survey_footers_vertical_padding_margin">16dp</dimen>
     <dimen name="apptentive_bottom_app_bar_min_height">36dp</dimen>
+
+
+    <!-- Message center -->
+    <dimen name="apptentive_separator_height">1dp</dimen>
+    <dimen name="apptentive_message_composer_text_padding">8dp</dimen>
+    <dimen name="apptentive_message_appbar_action_button_padding">16dp</dimen>
+    <dimen name="apptentive_message_composer_attachment_margin">16dp</dimen>
+    <dimen name="apptentive_message_composer_margin_start">16dp</dimen>
+    <dimen name="apptentive_message_composer_margin_end">16dp</dimen>
+    <dimen name="apptentive_message_composer_margin_bottom">32dp</dimen>
+    <dimen name="apptentive_message_composer_send_margin_end">16dp</dimen>
+    <dimen name="apptentive_separator_margin_bottom">32dp</dimen>
 </resources>

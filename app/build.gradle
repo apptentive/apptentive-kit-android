@@ -81,6 +81,7 @@ dependencies {
     implementation project(':apptentive-survey')
     implementation project(':apptentive-notes')
     implementation project(':apptentive-ratings')
+    implementation project(':apptentive-message-center')
     implementation project(':apptentive-navigate-to-link')
     implementation project(':apptentive-in-app-review')
     implementation "androidx.appcompat:appcompat:$appcompat_library_version"

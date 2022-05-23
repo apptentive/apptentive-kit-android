@@ -1,9 +1,9 @@
 package apptentive.com.android.feedback.dependencyprovider
 
 import apptentive.com.android.core.Provider
-import apptentive.com.android.feedback.messagecenter.interaction.MessageCenterInteraction
-import apptentive.com.android.feedback.messagecenter.model.MessageCenterModel
+import apptentive.com.android.feedback.message.MessageCenterInteraction
 import apptentive.com.android.feedback.messagecenter.utils.convertToMessageCenterModel
+import apptentive.com.android.feedback.model.MessageCenterModel
 
 internal interface MessageCenterModelFactory {
     fun messageCenterModel(): MessageCenterModel
