@@ -18,6 +18,7 @@
 
 
     <style name="ApptentiveThemeOverride">
+        <item name="apptentiveMessageCenterGreetingHeaderStyle">@style/Custom.MessageCenter.Header</item>
 <!--        <item name="android:statusBarColor">@android:color/white</item>-->
 <!--        <item name="android:windowLightStatusBar">true</item>-->
 
@@ -963,4 +964,10 @@
         <item name="android:layout_marginBottom">16dp</item>
         <item name="android:text">Note: Our company policy for submission does not allow us to accept ideas or materials we have not specifically requested.</item>
     </style>
+
+    <style name="Custom.MessageCenter.Header" parent="">
+        <item name="android:src">@mipmap/ic_launcher</item>
+        <item name="android:layout_margin">16dp</item>
+    </style>
+
 </resources>

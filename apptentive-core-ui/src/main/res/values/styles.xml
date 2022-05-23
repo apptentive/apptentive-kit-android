@@ -16,7 +16,6 @@
         <item name="android:statusBarColor">@color/apptentive_color_primary</item>
         <item name="android:actionButtonStyle">?apptentiveActionButtonStyle</item>
 
-
         <!-- Minor Interface Customization -->
 
         <!-- General Alert Dialog Styles -->
@@ -116,6 +115,10 @@
         <item name="apptentiveTextSizeCaption">@dimen/apptentive_text_size_caption</item>
         <item name="apptentiveTextSizeButtonColored">@dimen/apptentive_text_size_default</item>
         <item name="apptentiveTextSizeSurveyTermsAndConditions">@dimen/apptentive_text_size_default</item>
+
+        <!-- Message Center -->
+        <item name="apptentiveTextSizeMessageCenterGreetingTitle">@dimen/apptentive_text_size_message_center_title</item>
+        <item name="apptentiveTextSizeMessageCenterGreetingBody">?apptentiveTextSizeBody1</item>
         <!-- Text Size End -->
 
         <!-- Text Color Start -->
@@ -139,6 +142,10 @@
         <item name="apptentiveTextColorSurveyQuestionInstructions">?colorOnBackground</item>
         <item name="apptentiveTextColorButtonColored">?colorOnPrimary</item>
         <item name="apptentiveTextColorSurveyTermsAndConditions">?colorOnPrimary</item>
+
+        <!-- Message Center -->
+        <item name="apptentiveTextColorMessageCenterGreetingTitle">?colorOnBackground</item>
+        <item name="apptentiveTextColorMessageCenterGreetingBody">?apptentiveTextColorBody1</item>
         <!-- Text Color End -->
 
         <!-- Text Alpha -->
@@ -177,6 +184,11 @@
         <item name="apptentiveTypefaceBody1">?apptentiveTypefaceDefault</item>
         <item name="apptentiveTypefaceCaption">?apptentiveTypefaceDefault</item>
         <item name="apptentiveTypefaceButtonColored">?apptentiveTypefaceDefault</item>
+
+        <!-- Message Center -->
+        <item name="apptentiveTypefaceMessageCenterGreetingTitle">?apptentiveTypefaceDefault</item>
+        <item name="apptentiveTypefaceMessageCenterGreetingBody">?apptentiveTypefaceBody1</item>
+
         <!-- Typeface End -->
 
         <!-- Message Center -->
@@ -186,6 +198,9 @@
         <item name="apptentiveMessageCenterSendImageStyle">@style/Apptentive.Widget.MessageCenter.Image.Send</item>
         <item name="apptentiveViewSeparatorStyle">@style/Apptentive.Widget.Separator</item>
         <item name="apptentiveActionButtonStyle">@style/Apptentive.Widget.MessageCenter.ActionButton</item>
+        <item name="apptentiveMessageCenterGreetingHeaderStyle">@style/Apptentive.Widget.MessageCenter.Image.Header</item>
+        <item name="apptentiveMessageCenterGreetingStyle">@style/Apptentive.Widget.MessageCenter.Greeting.Title</item>
+        <item name="apptentiveMessageCenterGreetingBodyTextStyle">@style/Apptentive.Widget.MessageCenter.Greeting.Body</item>
     </style>
 
     <!-- This style has been a problem within our UI and will be disabled by default -->
@@ -538,6 +553,11 @@
 
     <!-- Message Center Widgets Start -->
     <!-- https://material.io/components/app-bars-top/android -->
+
+    <style name="Apptentive.Widget.MessageCenter"/>
+    <style name="Apptentive.Widget.MessageCenter.Image"/>
+    <style name="Apptentive.Widget.MessageCenter.Greeting"/>
+
     <style name="Apptentive.Widget.MessageCenter.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
         <item name="navigationIcon">@drawable/ic_baseline_close_24</item>
         <item name="navigationContentDescription">@string/close</item>
@@ -547,8 +567,9 @@
         <item name="android:drawablePadding">@dimen/apptentive_message_appbar_action_button_padding</item>
     </style>
 
-    <style name="Apptentive.Widget.MessageCenter.Image.Attachment" parent="Widget.MaterialComponents.ActionBar.Primary">
+    <style name="Apptentive.Widget.MessageCenter.Image.Attachment">
         <item name="android:src">@drawable/ic_paperclip</item>
+        <item name="android:drawablePadding">@dimen/apptentive_message_appbar_action_button_padding</item>
         <item name="android:layout_marginStart">@dimen/apptentive_message_composer_attachment_margin</item>
     </style>
 
@@ -581,6 +602,31 @@
         <item name="android:layout_marginBottom">@dimen/apptentive_separator_margin_bottom</item>
     </style>
 
+    <style name="Apptentive.Widget.MessageCenter.Image.Header">
+        <item name="android:layout_margin">@dimen/apptentive_message_header_margin</item>
+        <item name="android:src">@drawable/ic_placeholder_message_homescreen</item>
+    </style>
+
+    <style name ="Apptentive.Widget.MessageCenter.Greeting.Title">
+        <item name="android:textColor">?attr/apptentiveTextColorMessageCenterGreetingTitle</item>
+        <item name="android:textSize">?attr/apptentiveTextSizeMessageCenterGreetingTitle</item>
+        <item name="android:typeface">?attr/apptentiveTypefaceMessageCenterGreetingTitle</item>
+        <item name="android:textAppearance">?textAppearanceHeadline6</item>
+        <item name="android:alpha">?apptentiveHeaderAlpha</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:accessibilityHeading" tools:ignore="NewApi">true</item>
+        <item name="android:layout_margin">@dimen/apptentive_message_greeting_title</item>
+    </style>
+
+    <style name="Apptentive.Widget.MessageCenter.Greeting.Body">
+        <item name="android:textSize">?apptentiveTextSizeMessageCenterGreetingBody</item>
+        <item name="android:textColor">?apptentiveTextColorMessageCenterGreetingBody</item>
+        <item name="android:fontFamily">?apptentiveFontFamilyBody1</item>
+        <item name="android:typeface">?apptentiveTypefaceMessageCenterGreetingBody</item>
+        <item name="android:textAppearance">?textAppearanceBodySmall</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:layout_margin">@dimen/apptentive_message_greeting_body</item>
+    </style>
 
     <!-- Message Center Widgets End -->
 

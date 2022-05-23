@@ -36,7 +36,12 @@ class MessageCenterViewModel(
 ) : ViewModel() {
     private val context: EngagementContext = DependencyProvider.of<EngagementContextFactory>().engagementContext()
     private val messageManager: MessageManager = DependencyProvider.of<MessageManagerFactory>().messageManager()
+
     val title: String = model.title ?: ""
+    val greeting: String = model.greeting?.title ?: ""
+    val greetingBody: String = model.greeting?.body ?: ""
+    // true if messageList size is 0
+    val isFirstLaunch: Boolean = true
 
     private val exitEvent = LiveEvent<Boolean>()
     val exitStream: LiveData<Boolean> = exitEvent

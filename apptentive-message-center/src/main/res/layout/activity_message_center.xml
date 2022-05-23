@@ -41,6 +41,42 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/apptentive_appbar">
 
+        <!-- Greeting group -->
+        <ImageView
+            android:id="@+id/apptentive_message_center_greeting_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?apptentiveMessageCenterGreetingHeaderStyle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/apptentive_message_center_greeting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?apptentiveMessageCenterGreetingStyle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/apptentive_message_center_greeting_header"/>
+
+        <TextView
+            android:id="@+id/apptentive_message_center_greeting_body"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?apptentiveMessageCenterGreetingBodyTextStyle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/apptentive_message_center_greeting"/>
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/apptentive_message_center_greeting_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="apptentive_message_center_greeting,apptentive_message_center_greeting_body,apptentive_message_center_greeting_header"/>
+
+        <!-- Composer -->
         <View
             android:id="@+id/apptentive_separator"
             android:layout_width="match_parent"

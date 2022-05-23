@@ -97,7 +97,21 @@
         <attr name="apptentiveMessageCenterSendImageStyle" format="reference"/>
         <attr name="apptentiveMessageCenterComposerLayoutStyle" format="reference"/>
         <attr name="apptentiveViewSeparatorStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterGreetingHeaderStyle" format="reference" />
+        <attr name="apptentiveMessageCenterGreetingStyle" format="reference" />
+        <attr name="apptentiveMessageCenterGreetingBodyTextStyle" format="reference" />
 
+        <!-- Typeface -->
+        <attr name="apptentiveTypefaceMessageCenterGreetingTitle" format="reference"/>
+        <attr name="apptentiveTypefaceMessageCenterGreetingBody" format="reference"/>
+
+        <!-- Text Color -->
+        <attr name="apptentiveTextColorMessageCenterGreetingTitle" format="reference"/>
+        <attr name="apptentiveTextColorMessageCenterGreetingBody" format="reference"/>
+
+        <!-- Text Size -->
+        <attr name="apptentiveTextSizeMessageCenterGreetingTitle" format="reference"/>
+        <attr name="apptentiveTextSizeMessageCenterGreetingBody" format="reference"/>
 
         <!-- Message Center End -->
 
