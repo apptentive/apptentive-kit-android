@@ -39,7 +39,9 @@
         <attr name="apptentiveRatingDialogTitleTextStyle" format="reference" />
         <attr name="apptentiveRatingDialogTitleImageStyle" format="reference" />
         <attr name="apptentiveRatingDialogHeaderImageStyle" format="reference" />
-        <attr name="apptentiveRatingDialogButtonStyle" format="reference"/>
+        <attr name="apptentiveRatingDialogButtonRateStyle" format="reference"/>
+        <attr name="apptentiveRatingDialogButtonRemindStyle" format="reference"/>
+        <attr name="apptentiveRatingDialogButtonDeclineStyle" format="reference"/>
         <attr name="apptentiveRatingDialogMessageTextStyle" format="reference" />
 
         <!-- Generic Dialog Styles -->

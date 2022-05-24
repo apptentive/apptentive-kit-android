@@ -671,6 +671,7 @@
     <!--    <style name="ApptentiveThemeOverride">-->
     <!-- All Interactions -->
     <!--        <item name="apptentiveFontFamilyDefault">@font/mulish</item>-->
+    <!--        <item name="colorSecondary">#2294D5</item>-->
 
     <!-- Dialogs -->
     <!--        <item name="colorSurface">#081728</item>-->
@@ -687,13 +688,20 @@
     <!--        <item name="apptentiveNoteMessageTextStyle">@style/Cookbook1.Dialog.Message</item>-->
     <!--        <item name="apptentiveNoteButtonLayoutStyle">@style/Cookbook1.Dialog.ButtonLayout.Stacked</item>-->
     <!--        <item name="apptentiveNoteButtonStyle">@style/Cookbook1.Button.Stacked</item>-->
-    <!--        <item name="apptentiveNoteDismissButtonStyle">@style/Cookbook1.Button.Stacked.Dismiss</item>-->
+    <!--        <item name="apptentiveNoteDismissButtonStyle">@style/Cookbook1.Button.Stacked.Borderless</item>-->
+
+    <!-- Apptentive Rating Dialog -->
+    <!--        <item name="apptentiveRatingDialogLayoutStyle">@style/Cookbook1.Dialog.Layout</item>-->
+    <!--        <item name="apptentiveRatingDialogTitleTextStyle">@style/Cookbook1.Dialog.TitleWithMessage</item>-->
+    <!--        <item name="apptentiveRatingDialogMessageTextStyle">@style/Cookbook1.Dialog.Message</item>-->
+    <!--        <item name="apptentiveRatingDialogButtonRateStyle">@style/Cookbook1.Button.Stacked.RatingDialog</item>-->
+    <!--        <item name="apptentiveRatingDialogButtonRemindStyle">@style/Cookbook1.Button.Stacked.Borderless.RatingDialog</item>-->
+    <!--        <item name="apptentiveRatingDialogButtonDeclineStyle">@style/Cookbook1.Button.Stacked.Borderless.RatingDialog</item>-->
 
     <!-- Survey -->
     <!--        <item name="colorOnPrimary">#FFFFFF</item>-->
     <!--        <item name="android:colorBackground">#081728</item>-->
     <!--        <item name="colorOnBackground">#FFFFFF</item>-->
-    <!--        <item name="colorSecondary">#2294D5</item>-->
 
     <!--        <item name="android:statusBarColor">#081728</item>-->
     <!--        <item name="android:windowLightStatusBar" tools:ignore="NewApi">false</item>-->
@@ -740,6 +748,19 @@
 <!--        <item name="android:alpha">1</item>-->
 <!--    </style>-->
 
+<!--    <style name="Cookbook1.Dialog.TitleWithMessage" parent="Apptentive.TextAppearance.Title.Dialog.WithMessage">-->
+<!--        <item name="android:textSize">18sp</item>-->
+<!--        <item name="android:textAlignment">center</item>-->
+<!--        <item name="android:paddingTop">8dp</item>-->
+<!--        <item name="android:paddingBottom">16dp</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook1.Dialog.Message" parent="Apptentive.TextAppearance.Message.Dialog">-->
+<!--        <item name="android:textSize">15sp</item>-->
+<!--        <item name="android:alpha">.8</item>-->
+<!--        <item name="android:paddingBottom">24dp</item>-->
+<!--    </style>-->
+
 <!--    &lt;!&ndash; Love Dialog &ndash;&gt;-->
 <!--    <style name="Cookbook1.Button.LoveDialog">-->
 <!--        <item name="android:minWidth">120dp</item>-->
@@ -750,22 +771,8 @@
 <!--    </style>-->
 
 <!--    &lt;!&ndash; Note Dialog &ndash;&gt;-->
-<!--    <style name="Cookbook1.Dialog.TitleWithMessage" parent="Apptentive.TextAppearance.Title.Dialog.WithMessage">-->
-<!--        <item name="android:textSize">18sp</item>-->
-<!--        <item name="android:textAlignment">center</item>-->
-<!--        <item name="android:paddingTop">8dp</item>-->
-<!--        <item name="android:paddingBottom">16dp</item>-->
-<!--        <item name="android:textStyle">bold</item>-->
-<!--    </style>-->
-
-<!--    <style name="Cookbook1.Dialog.Message" parent="Apptentive.TextAppearance.Message.Dialog">-->
-<!--        <item name="android:textSize">15sp</item>-->
-<!--        <item name="android:alpha">1</item>-->
-<!--    </style>-->
-
 <!--    <style name="Cookbook1.Dialog.ButtonLayout.Stacked" parent="">-->
 <!--        <item name="android:gravity">center</item>-->
-<!--        <item name="android:paddingTop">24dp</item>-->
 <!--        <item name="android:paddingBottom">16dp</item>-->
 <!--        <item name="android:showDividers">middle</item>-->
 <!--        <item name="android:orientation">vertical</item>-->
@@ -776,13 +783,30 @@
 <!--        <item name="android:minWidth">240dp</item>-->
 <!--    </style>-->
 
-<!--    <style name="Cookbook1.Button.Stacked.Dismiss" parent="Apptentive.Widget.Dialog.Button">-->
+<!--    <style name="Cookbook1.Button.Stacked.Borderless" parent="Apptentive.Widget.Dialog.Button">-->
 <!--        <item name="android:textColor">?colorOnSurface</item>-->
 <!--        <item name="android:textSize">15sp</item>-->
 <!--        <item name="android:textStyle">bold</item>-->
 <!--        <item name="android:minWidth">240dp</item>-->
 <!--        <item name="android:gravity">center</item>-->
 <!--        <item name="cornerRadius">24dp</item>-->
+<!--    </style>-->
+
+<!--    &lt;!&ndash; Rating Dialog &ndash;&gt;-->
+<!--    <style name="Cookbook1.Dialog.Layout" parent="Apptentive.Dialog.Layout">-->
+<!--        <item name="android:paddingBottom">16dp</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook1.Button.Stacked.RatingDialog">-->
+<!--        <item name="android:layout_gravity">center</item>-->
+<!--        <item name="android:layout_marginBottom">8dp</item>-->
+<!--        <item name="android:minWidth">184dp</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook1.Button.Stacked.Borderless.RatingDialog">-->
+<!--        <item name="android:layout_gravity">center</item>-->
+<!--        <item name="android:layout_marginTop">4dp</item>-->
+<!--        <item name="android:minWidth">184dp</item>-->
 <!--    </style>-->
 
 <!--    &lt;!&ndash; Survey &ndash;&gt;-->
@@ -835,6 +859,7 @@
     <!--    <style name="ApptentiveThemeOverride">-->
     <!-- All Interactions -->
     <!--        <item name="apptentiveFontFamilyDefault">@font/sen</item>-->
+    <!--        <item name="colorSecondary">#34993E</item>-->
 
     <!-- Dialogs -->
     <!--        <item name="colorSurface">#FFFFFF</item>-->
@@ -856,14 +881,22 @@
     <!--        <item name="apptentiveNoteMessageTextStyle">@style/Cookbook2.Dialog.Message</item>-->
     <!--        <item name="apptentiveNoteButtonLayoutStyle">@style/Cookbook2.Dialog.ButtonLayout.Stacked</item>-->
     <!--        <item name="apptentiveNoteButtonStyle">@style/Cookbook2.Button.Stacked</item>-->
-    <!--        <item name="apptentiveNoteDismissButtonStyle">@style/Cookbook2.Dialog.Button.Stacked.Dismiss</item>-->
+    <!--        <item name="apptentiveNoteDismissButtonStyle">@style/Cookbook2.Button.Stacked.Borderless</item>-->
+
+    <!-- Apptentive Rating Dialog -->
+    <!--        <item name="apptentiveRatingDialogLayoutStyle">@style/Cookbook2.Dialog.Layout.RatingDialog</item>-->
+    <!--        <item name="apptentiveRatingDialogHeaderImageStyle">@style/Cookbook2.Dialog.HeaderImage.RatingDialog</item>-->
+    <!--        <item name="apptentiveRatingDialogTitleTextStyle">@style/Cookbook2.Dialog.Title.RatingDialog</item>-->
+    <!--        <item name="apptentiveRatingDialogMessageTextStyle">@style/Cookbook2.Dialog.Message</item>-->
+    <!--        <item name="apptentiveRatingDialogButtonRateStyle">@style/Cookbook2.Button.Stacked.RatingDialog</item>-->
+    <!--        <item name="apptentiveRatingDialogButtonRemindStyle">@style/Cookbook2.Button.Stacked.Borderless.RatingDialog</item>-->
+    <!--        <item name="apptentiveRatingDialogButtonDeclineStyle">@style/Cookbook2.Button.Stacked.Borderless.RatingDialog</item>-->
 
     <!-- Survey -->
     <!--        <item name="colorPrimary">#056E0F</item>-->
     <!--        <item name="colorOnPrimary">#FFFFFF</item>-->
     <!--        <item name="android:colorBackground">#FFFFFF</item>-->
     <!--        <item name="colorOnBackground">#213346</item>-->
-    <!--        <item name="colorSecondary">#34993E</item>-->
 
     <!--        <item name="android:statusBarColor">#FFFFFF</item>-->
     <!--        <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>-->
@@ -906,6 +939,14 @@
 <!--        <item name="android:background">?colorSurface</item>-->
 <!--    </style>-->
 
+<!--    <style name="Cookbook2.Dialog.HeaderImage" parent="">-->
+<!--        <item name="android:src">@drawable/cookbook_2_love_dialog_header</item>-->
+<!--        <item name="android:adjustViewBounds">true</item>-->
+<!--        <item name="android:layout_marginBottom">4dp</item>-->
+<!--        <item name="android:paddingStart">-2dp</item>-->
+<!--        <item name="android:paddingEnd">-2dp</item>-->
+<!--    </style>-->
+
 <!--    <style name="Cookbook2.Dialog.Title" parent="Apptentive.TextAppearance.Title.Dialog.WithMessage">-->
 <!--        <item name="android:textStyle">bold</item>-->
 <!--        <item name="android:paddingTop">12dp</item>-->
@@ -913,13 +954,18 @@
 <!--        <item name="android:paddingEnd">24dp</item>-->
 <!--    </style>-->
 
+<!--    <style name="Cookbook2.Dialog.Message" parent="Apptentive.TextAppearance.Message.Dialog">-->
+<!--        <item name="android:textSize">16sp</item>-->
+<!--        <item name="android:alpha">.8</item>-->
+<!--        <item name="android:lineSpacingExtra">3sp</item>-->
+<!--        <item name="android:paddingTop">8dp</item>-->
+<!--        <item name="android:paddingStart">24dp</item>-->
+<!--        <item name="android:paddingEnd">24dp</item>-->
+<!--    </style>-->
+
 <!--    &lt;!&ndash; Love Dialog &ndash;&gt;-->
-<!--    <style name="Cookbook2.Dialog.HeaderImage.LoveDialog" parent="">-->
+<!--    <style name="Cookbook2.Dialog.HeaderImage.LoveDialog">-->
 <!--        <item name="android:src">@drawable/cookbook_2_love_dialog_header</item>-->
-<!--        <item name="android:adjustViewBounds">true</item>-->
-<!--        <item name="android:layout_marginBottom">4dp</item>-->
-<!--        <item name="android:paddingStart">-2dp</item>-->
-<!--        <item name="android:paddingEnd">-2dp</item>-->
 <!--    </style>-->
 
 <!--    <style name="Cookbook2.Dialog.ButtonLayout.LoveDialog" parent="">-->
@@ -936,19 +982,8 @@
 <!--    </style>-->
 
 <!--    &lt;!&ndash; Note Dialog &ndash;&gt;-->
-<!--    <style name="Cookbook2.Dialog.Message" parent="Apptentive.TextAppearance.Message.Dialog">-->
-<!--        <item name="android:paddingTop">8dp</item>-->
-<!--        <item name="android:paddingStart">24dp</item>-->
-<!--        <item name="android:paddingEnd">24dp</item>-->
-<!--    </style>-->
-
-<!--    <style name="Cookbook2.Dialog.HeaderImage.Note" parent="">-->
-<!--        <item name="android:textSize">15sp</item>-->
+<!--    <style name="Cookbook2.Dialog.HeaderImage.Note">-->
 <!--        <item name="android:src">@drawable/cookbook_2_note_header</item>-->
-<!--        <item name="android:layout_marginBottom">4dp</item>-->
-<!--        <item name="android:paddingStart">-2dp</item>-->
-<!--        <item name="android:paddingEnd">-2dp</item>-->
-<!--        <item name="android:adjustViewBounds">true</item>-->
 <!--    </style>-->
 
 <!--    <style name="Cookbook2.Dialog.ButtonLayout.Stacked" parent="">-->
@@ -962,13 +997,40 @@
 <!--        <item name="android:minWidth">224dp</item>-->
 <!--    </style>-->
 
-<!--    <style name="Cookbook2.Dialog.Button.Stacked.Dismiss" parent="Apptentive.Widget.Dialog.Button">-->
+<!--    <style name="Cookbook2.Button.Stacked.Borderless" parent="Apptentive.Widget.Dialog.Button">-->
 <!--        <item name="android:textColor">?colorOnSurface</item>-->
 <!--        <item name="android:textSize">15sp</item>-->
 <!--        <item name="android:textStyle">bold</item>-->
 <!--        <item name="android:minWidth">224dp</item>-->
 <!--        <item name="android:gravity">center</item>-->
 <!--        <item name="cornerRadius">10dp</item>-->
+<!--    </style>-->
+
+<!--    &lt;!&ndash; Rating Dialog &ndash;&gt;-->
+<!--    <style name="Cookbook2.Dialog.Layout.RatingDialog">-->
+<!--        <item name="android:paddingBottom">20dp</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook2.Dialog.HeaderImage.RatingDialog">-->
+<!--        <item name="android:src">@drawable/cookbook_2_rating_dialog_header</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook2.Dialog.Title.RatingDialog">-->
+<!--        <item name="android:textAlignment">center</item>-->
+<!--        <item name="android:paddingTop">20dp</item>-->
+<!--        <item name="android:paddingBottom">16dp</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook2.Button.Stacked.RatingDialog">-->
+<!--        <item name="android:layout_gravity">center</item>-->
+<!--        <item name="android:layout_marginTop">12dp</item>-->
+<!--        <item name="android:layout_marginBottom">4dp</item>-->
+<!--        <item name="android:minWidth">184dp</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook2.Button.Stacked.Borderless.RatingDialog">-->
+<!--        <item name="android:layout_gravity">center</item>-->
+<!--        <item name="android:minWidth">184dp</item>-->
 <!--    </style>-->
 
 <!--    &lt;!&ndash; Survey &ndash;&gt;-->

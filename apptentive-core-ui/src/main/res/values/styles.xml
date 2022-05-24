@@ -55,7 +55,9 @@
         <item name="apptentiveRatingDialogHeaderImageStyle"/>
         <item name="apptentiveRatingDialogTitleTextStyle">@style/Apptentive.TextAppearance.Title.Dialog.WithMessage</item>
         <item name="apptentiveRatingDialogTitleImageStyle"/>
-        <item name="apptentiveRatingDialogButtonStyle">@style/Apptentive.Widget.Dialog.Button.Stacked.RatingDialog</item>
+        <item name="apptentiveRatingDialogButtonRateStyle">@style/Apptentive.Widget.Dialog.Button.Stacked.RatingDialog</item>
+        <item name="apptentiveRatingDialogButtonRemindStyle">@style/Apptentive.Widget.Dialog.Button.Stacked.RatingDialog</item>
+        <item name="apptentiveRatingDialogButtonDeclineStyle">@style/Apptentive.Widget.Dialog.Button.Stacked.RatingDialog</item>
         <item name="apptentiveRatingDialogMessageTextStyle">@style/Apptentive.TextAppearance.Message.Dialog</item>
 
         <!-- Generic Dialog Styles -->
