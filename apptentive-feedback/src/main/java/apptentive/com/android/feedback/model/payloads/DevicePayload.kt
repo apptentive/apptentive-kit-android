@@ -17,7 +17,7 @@ internal class DevicePayload(
     val osName: String,
     val osVersion: String,
     val osBuild: String,
-    val osApiLevel: Int,
+    val osApiLevel: String,
     val manufacturer: String,
     val model: String,
     val board: String,
@@ -88,7 +88,7 @@ internal class DevicePayload(
         result = 31 * result + osName.hashCode()
         result = 31 * result + osVersion.hashCode()
         result = 31 * result + osBuild.hashCode()
-        result = 31 * result + osApiLevel
+        result = 31 * result + osApiLevel.hashCode()
         result = 31 * result + manufacturer.hashCode()
         result = 31 * result + model.hashCode()
         result = 31 * result + board.hashCode()
