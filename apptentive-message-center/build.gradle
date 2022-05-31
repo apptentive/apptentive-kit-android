@@ -1,6 +1,6 @@
 plugins {
     id 'com.android.library'
-    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-android'
     id 'org.jlleitschuh.gradle.ktlint'
 }
 
@@ -50,6 +50,11 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"
 }
 
+project.ext {
+    groupId = 'com.apptentive'
+    artifactId = 'apptentive-message-center'
+}
+
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions {
         freeCompilerArgs += [
@@ -58,3 +63,5 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
         ]
     }
 }
+
+apply from: '../publish.gradle'
