@@ -74,6 +74,8 @@
         <!-- Survey Styles Start -->
         <!-- Layout -->
         <item name="apptentiveSurveyLayoutStyle">@style/Apptentive.Survey.Layout</item>
+        <item name="apptentiveSurveyQuestionLayoutStyle">@style/Apptentive.Survey.Layout.Question</item>
+        <item name="apptentiveSurveyQuestionDividerStyle"/>
 
         <!-- App Bars -->
         <item name="apptentiveSurveyToolbarStyle">@style/Apptentive.Widget.Survey.Toolbar</item>
@@ -104,19 +106,21 @@
         <!-- Survey Styles End -->
 
         <!-- Text Size Start -->
+        <item name="apptentiveTextSizeDefault">@dimen/apptentive_text_size_default</item>
+
         <!-- Dialog -->
         <item name="apptentiveTextSizeDialogTitleWithMessage">@dimen/apptentive_text_size_dialog_title</item>
-        <item name="apptentiveTextSizeDialogTitleOrMessageOnly">@dimen/apptentive_text_size_default</item>
-        <item name="apptentiveTextSizeButtonBorderless">@dimen/apptentive_text_size_default</item>
-        <item name="apptentiveTextSizeSubhead">@dimen/apptentive_text_size_default</item>
+        <item name="apptentiveTextSizeDialogTitleOrMessageOnly">?apptentiveTextSizeDefault</item>
+        <item name="apptentiveTextSizeButtonBorderless">?apptentiveTextSizeDefault</item>
+        <item name="apptentiveTextSizeSubhead">?apptentiveTextSizeDefault</item>
 
         <!-- Survey -->
         <item name="apptentiveTextSizeSurveyQuestionTitle">@dimen/apptentive_text_size_question_title</item>
         <item name="apptentiveTextSizeSurveyIntroduction">@dimen/apptentive_text_size_survey_introduction</item>
-        <item name="apptentiveTextSizeBody1">@dimen/apptentive_text_size_default</item>
+        <item name="apptentiveTextSizeBody1">?apptentiveTextSizeDefault</item>
         <item name="apptentiveTextSizeCaption">@dimen/apptentive_text_size_caption</item>
-        <item name="apptentiveTextSizeButtonColored">@dimen/apptentive_text_size_default</item>
-        <item name="apptentiveTextSizeSurveyTermsAndConditions">@dimen/apptentive_text_size_default</item>
+        <item name="apptentiveTextSizeButtonColored">?apptentiveTextSizeDefault</item>
+        <item name="apptentiveTextSizeSurveyTermsAndConditions">?apptentiveTextSizeDefault</item>
 
         <!-- Message Center -->
         <item name="apptentiveTextSizeMessageCenterGreetingTitle">@dimen/apptentive_text_size_message_center_title</item>
@@ -253,6 +257,14 @@
         <item name="android:layout_weight">1</item>
         <item name="layoutManager">androidx.recyclerview.widget.LinearLayoutManager</item>
     </style>
+
+    <style name="Apptentive.Survey.Layout.Question" parent="">
+        <item name="android:accessibilityHeading" tools:targetApi="p">true</item>
+        <item name="android:gravity">start</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:paddingTop">@dimen/apptentive_survey_question_top_padding</item>
+        <item name="android:paddingBottom">@dimen/apptentive_survey_question_bottom_padding</item>
+    </style>
     <!-- Interaction Layouts End -->
 
 
@@ -260,6 +272,7 @@
     <style name="Apptentive.TextAppearance" parent="Widget.MaterialComponents.TextView">
         <item name="android:fontFamily">?apptentiveFontFamilyDefault</item>
     </style>
+
     <style name="Apptentive.TextAppearance.Title">
         <item name="android:fontFamily">?apptentiveFontFamilyTitle</item>
     </style>
@@ -334,7 +347,6 @@
         <item name="android:autoLink">all</item>
         <item name="android:importantForAccessibility">no</item>
         <item name="android:alpha">?apptentiveHeaderAlpha</item>
-        <item name="android:layout_marginTop">@dimen/apptentive_survey_question_title_top_margin</item>
         <item name="android:layout_marginBottom">@dimen/apptentive_survey_question_title_bottom_margin</item>
         <item name="android:layout_marginStart">@dimen/apptentive_activity_horizontal_margin_padding</item>
         <item name="android:layout_marginEnd">@dimen/apptentive_activity_horizontal_margin_padding</item>
@@ -354,8 +366,9 @@
         <item name="android:focusable">true</item>
         <item name="android:alpha">?apptentiveSubheaderAlpha</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:paddingTop">@dimen/apptentive_survey_range_label_vertical_padding</item>
-        <item name="android:paddingBottom">@dimen/apptentive_survey_range_label_vertical_padding</item>
+        <item name="android:maxHeight">@dimen/apptentive_survey_range_label_max_height</item>
+        <item name="android:paddingTop">@dimen/apptentive_survey_range_label_top_padding</item>
+        <item name="android:paddingBottom">@dimen/apptentive_survey_range_label_bottom_padding</item>
         <item name="android:paddingStart">@dimen/apptentive_activity_horizontal_margin_padding</item>
         <item name="android:paddingEnd">@dimen/apptentive_activity_horizontal_margin_padding</item>
     </style>
@@ -375,7 +388,6 @@
         <item name="android:alpha">?apptentiveHeaderAlpha</item>
         <item name="android:layout_marginStart">@dimen/apptentive_activity_horizontal_margin_padding</item>
         <item name="android:layout_marginEnd">@dimen/apptentive_activity_horizontal_margin_padding</item>
-        <item name="android:layout_marginBottom">@dimen/apptentive_survey_question_error_bottom_padding</item>
     </style>
 
     <style name="Apptentive.TextAppearance.Caption.Survey.TermsAndConditions">

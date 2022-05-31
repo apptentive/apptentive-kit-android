@@ -26,16 +26,18 @@
 
     <!-- Activities -->
     <dimen name="apptentive_activity_horizontal_margin_padding">16dp</dimen>
+    <dimen name="apptentive_survey_question_top_padding">8dp</dimen>
+    <dimen name="apptentive_survey_question_bottom_padding">24dp</dimen>
     <dimen name="apptentive_survey_introduction_padding">16dp</dimen>
-    <dimen name="apptentive_survey_question_title_top_margin">12dp</dimen>
     <dimen name="apptentive_survey_question_title_bottom_margin">8dp</dimen>
     <dimen name="apptentive_survey_question_instructions_bottom_padding">4dp</dimen>
-    <dimen name="apptentive_survey_question_error_bottom_padding">12dp</dimen>
     <dimen name="apptentive_survey_radio_checkbox_min_height">40dp</dimen>
     <dimen name="apptentive_survey_radio_checkbox_range_horizontal_margin">11dp</dimen>
     <dimen name="apptentive_survey_radio_checkbox_horizontal_padding">8dp</dimen>
     <dimen name="apptentive_survey_other_text_field_start_margin">40dp</dimen>
-    <dimen name="apptentive_survey_range_label_vertical_padding">2dp</dimen>
+    <dimen name="apptentive_survey_range_label_top_padding">2dp</dimen>
+    <dimen name="apptentive_survey_range_label_bottom_padding">4dp</dimen>
+    <dimen name="apptentive_survey_range_label_max_height">30dp</dimen>
     <dimen name="apptentive_survey_edit_text_min_height">48dp</dimen>
     <dimen name="apptentive_survey_footers_vertical_padding_margin">16dp</dimen>
     <dimen name="apptentive_bottom_app_bar_min_height">36dp</dimen>

@@ -66,6 +66,7 @@
         <!-- TextViews -->
         <attr name="apptentiveSurveyTitleStyle" format="reference"/>
         <attr name="apptentiveSurveyIntroductionStyle" format="reference"/>
+        <attr name="apptentiveSurveyQuestionLayoutStyle" format="reference"/>
         <attr name="apptentiveSurveyQuestionTitleStyle" format="reference"/>
         <attr name="apptentiveSurveyQuestionInstructionsStyle" format="reference"/>
         <attr name="apptentiveSurveyQuestionErrorStyle" format="reference"/>
@@ -85,6 +86,7 @@
         <attr name="apptentiveSurveyOtherTextFieldEditTextStyle" format="reference"/>
         <attr name="apptentiveSurveySubmitButtonStyle" format="reference" />
         <attr name="apptentiveSurveyButtonColorDefault" format="color|reference" />
+        <attr name="apptentiveSurveyQuestionDividerStyle" format="reference" />
         <!-- Survey Styles End -->
 
         <!-- Message Center -->
@@ -125,6 +127,7 @@
         <!-- Message Center End -->
 
         <!-- Text Size -->
+        <attr name="apptentiveTextSizeDefault" format="dimension|reference" />
         <attr name="apptentiveTextSizeDialogTitleWithMessage" format="dimension|reference" />
         <attr name="apptentiveTextSizeDialogTitleOrMessageOnly" format="dimension|reference" />
         <attr name="apptentiveTextSizeSurveyQuestionTitle" format="dimension|reference" />
