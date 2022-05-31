@@ -42,8 +42,8 @@
 
     <!-- Message center -->
     <dimen name="apptentive_separator_height">1dp</dimen>
-    <dimen name="apptentive_message_composer_text_padding">8dp</dimen>
-    <dimen name="apptentive_message_appbar_action_button_padding">16dp</dimen>
+    <dimen name="apptentive_message_composer_text_padding">10dp</dimen>
+    <dimen name="apptentive_message_appbar_action_button_padding">12dp</dimen>
     <dimen name="apptentive_message_composer_attachment_margin">16dp</dimen>
     <dimen name="apptentive_message_composer_margin_start">16dp</dimen>
     <dimen name="apptentive_message_composer_margin_end">16dp</dimen>
@@ -53,4 +53,13 @@
     <dimen name="apptentive_message_header_margin">16dp</dimen>
     <dimen name="apptentive_message_greeting_title">16dp</dimen>
     <dimen name="apptentive_message_greeting_body">16dp</dimen>
+    <dimen name="apptentive_message_bubble_margin">16dp</dimen>
+    <dimen name="apptentive_message_bubble_max_width">280dp</dimen>
+    <dimen name="apptentive_message_bubble_padding_start">16dp</dimen>
+    <dimen name="apptentive_message_bubble_padding_end">32dp</dimen>
+    <dimen name="apptentive_message_bubble_padding_top">16dp</dimen>
+    <dimen name="apptentive_message_bubble_view_padding_bottom">16dp</dimen>
+    <dimen name="apptentive_message_bubble_status_padding_top">4dp</dimen>
+    <dimen name="apptentive_message_bubble_status_padding_bottom">16dp</dimen>
+    <dimen name="apptentive_message_list_margin">16dp</dimen>
 </resources>

@@ -76,6 +76,21 @@
             android:visibility="gone"
             app:constraint_referenced_ids="apptentive_message_center_greeting,apptentive_message_center_greeting_body,apptentive_message_center_greeting_header"/>
 
+        <!-- Message list -->
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/apptentive_message_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/apptentive_message_list_margin"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/apptentive_separator"
+            app:layout_behavior ="@string/appbar_scrolling_view_behavior"
+            tools:listitem="@layout/apptentive_item_message_bubble"/>
+
         <!-- Composer -->
         <View
             android:id="@+id/apptentive_separator"

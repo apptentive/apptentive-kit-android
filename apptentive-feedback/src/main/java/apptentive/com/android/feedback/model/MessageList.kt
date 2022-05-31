@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.model
 
+import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.feedback.model.payloads.MessagePayload
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.generateUUID
@@ -39,7 +40,8 @@ data class Message(
     val body: String?,
     val inbound: Boolean = false,
     val hidden: Boolean = false,
-    val automated: Boolean = false
+    val automated: Boolean = false,
+    val createdAt: TimeInterval = System.currentTimeMillis().toDouble()
 ) {
     fun toMessagePayload(): MessagePayload = MessagePayload(
         nonce = nonce,

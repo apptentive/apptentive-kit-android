@@ -1,7 +1,9 @@
 package apptentive.com.android.feedback.message
 
 import apptentive.com.android.concurrent.Executor
+import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.core.Observable
 import apptentive.com.android.feedback.backend.MessageFetchService
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.lifecycle.LifecycleListener
@@ -23,10 +25,12 @@ class MessageManager(
     private val serialExecutor: Executor,
 ) : LifecycleListener, ConversationListener {
     private var isMessageCenterUsed: Boolean = true
-    private var isMessageCenterInForeground = true
+    private var isMessageCenterInForeground = false
     private val pollingScheduler: PollingScheduler by lazy {
         MessagePollingScheduler(serialExecutor)
     }
+    private val messagesSubject: BehaviorSubject<List<Message>> = BehaviorSubject(listOf())
+    val messages: Observable<List<Message>> get() = messagesSubject
 
     private lateinit var configuration: Configuration
     private lateinit var senderProfile: Person
@@ -54,6 +58,8 @@ class MessageManager(
                 // Store the message list
                 if (it is Result.Success) {
                     Log.d(MESSAGE_CENTER, "Fetch finished successfully ${it.data}")
+                    // TODO Messages should be stored in message store, temporary logic
+                    messagesSubject.value = it.data.messages ?: listOf()
                     pollingScheduler.onFetchFinish()
                 } else {
                     Log.d(MESSAGE_CENTER, "There is an issue in the message fetch")
@@ -76,9 +82,13 @@ class MessageManager(
     // Listens to MessageCenterActivity's active status
     fun onMessageCenterLaunchStatusChanged(isActive: Boolean) {
         isMessageCenterInForeground = isActive
+        Log.d(MESSAGE_CENTER, "Message center active status $isActive")
         // Resets polling with the right polling interval
         startPolling(true)
     }
+
+    // Fetches all the messages from message store
+    fun getAllMessages(): List<Message> = messages.value
 
     private fun startPolling(resetPolling: Boolean = false) {
         val delay =

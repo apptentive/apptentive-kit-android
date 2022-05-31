@@ -7,8 +7,10 @@ pipeline {
       // Use shared function in `jenkins-shared-libs` to configure a custom Jenkins agent
       // https://github.com/apptentive/jenkins-shared-libs/blob/master/vars/apptentiveAgent.groovy
       apptentiveAgent(
-        yaml: readTrusted("_cri/KubernetesBuildPod.yaml"),
-        use_vault: true
+        use_vault: true,
+        use_podman: true,
+        use_aws: true,
+        use_conpose: true,
       )
     )
   }
@@ -35,8 +37,8 @@ pipeline {
                 script {
                   gitCommit = apptentiveGetReleaseCommit()
                   imageName = apptentiveDockerBuild('build', gitCommit)
-                  container('docker') {
-                    sh "docker run ${imageName} ./gradlew ktlintCheck"
+                  container('podman') {
+                    sh "podman run ${imageName} ./gradlew ktlintCheck"
                   }
                 }
               }
@@ -47,8 +49,8 @@ pipeline {
                 script {
                   gitCommit = apptentiveGetReleaseCommit()
                   imageName = apptentiveDockerBuild('build', gitCommit)
-                  container('docker') {
-                    sh "docker run ${imageName} ./gradlew test --exclude-task :apptentive-kit-android:test"
+                  container('podman') {
+                    sh "podman run ${imageName} ./gradlew test --exclude-task :apptentive-kit-android:test"
                   }
                 }
               }
@@ -81,8 +83,8 @@ pipeline {
 
           gitCommit = apptentiveGetReleaseCommit()
           imageName = apptentiveDockerBuild('build', gitCommit)
-          container('docker') {
-            sh "docker run  --env GITHUB_TOKEN=${GITHUB_TOKEN} --env BUILD_NUMBER=${BUILD_NUMBER} --env BRANCH_NAME=${BRANCH_NAME} ${imageName} ./gradlew assembleRelease :app:tag :app:githubRelease"
+          container('podman') {
+            sh "podman run  --env GITHUB_TOKEN=${GITHUB_TOKEN} --env BUILD_NUMBER=${BUILD_NUMBER} --env BRANCH_NAME=${BRANCH_NAME} ${imageName} ./gradlew assembleRelease :app:tag :app:githubRelease"
           }
         }
       }

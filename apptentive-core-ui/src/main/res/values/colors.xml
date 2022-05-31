@@ -13,4 +13,6 @@
     <color name="apptentive_color_text_color_secondary">#858585</color>
     <color name="apptentive_color_on_secondary">#FFFFFF</color>
     <color name="apptentive_color_error">#B00020</color>
+    <color name="apptentive_color_outbound_message">#EAEAEA</color>
+    <color name="apptentive_color_outbound_text">#5D5D5D</color>
 </resources>

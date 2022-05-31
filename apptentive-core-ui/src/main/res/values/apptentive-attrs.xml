@@ -99,9 +99,16 @@
         <attr name="apptentiveMessageCenterSendImageStyle" format="reference"/>
         <attr name="apptentiveMessageCenterComposerLayoutStyle" format="reference"/>
         <attr name="apptentiveViewSeparatorStyle" format="reference"/>
-        <attr name="apptentiveMessageCenterGreetingHeaderStyle" format="reference" />
+        <attr name="apptentiveMessageCenterGreetingHeaderStyle" format="reference"/>
         <attr name="apptentiveMessageCenterGreetingStyle" format="reference" />
-        <attr name="apptentiveMessageCenterGreetingBodyTextStyle" format="reference" />
+        <attr name="apptentiveMessageCenterGreetingBodyTextStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterBubble" format="reference"/>
+        <attr name="apptentiveMessageCenterOutboundBubble" format="reference"/>
+        <attr name="apptentiveMessageCenterInboundBubble" format="reference"/>
+        <attr name="apptentiveMessageCenterInboundBubbleText" format="reference"/>
+        <attr name="apptentiveMessageCenterInboundBubbleStatusText" format="reference"/>
+        <attr name="apptentiveMessageCenterOutboundBubbleText" format="reference"/>
+        <attr name="apptentiveMessageCenterOutboundBubbleStatusText" format="reference"/>
 
         <!-- Typeface -->
         <attr name="apptentiveTypefaceMessageCenterGreetingTitle" format="reference"/>
