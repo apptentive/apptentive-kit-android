@@ -37,13 +37,10 @@ class MessageManager(
 
     override fun onAppBackground() {
         Log.d(MESSAGE_CENTER, "App is in the background, stop polling")
-        stopPolling()
     }
 
     override fun onAppForeground() {
         Log.d(MESSAGE_CENTER, "App is in the foreground, start polling")
-        if (isMessageCenterUsed)
-            startPolling()
     }
 
     override fun onConversationChanged(conversation: Conversation) {

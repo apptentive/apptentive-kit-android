@@ -245,22 +245,6 @@ object Apptentive {
 
     //endregion
 
-    //region Message Center
-
-    /**
-     * Opens the Apptentive Message Center. This task is performed asynchronously.
-     *
-     * @param callback Called with true if an Interaction will be displayed, else false.
-     */
-
-    @JvmStatic
-    @JvmOverloads
-    fun showMessageCenter(callback: EngagementCallback? = null) {
-        val engagementCallback: ((EngagementResult) -> Unit)? =
-            if (callback != null) callback::onComplete else null
-        client.engage(Event.internal(DEFAULT_INTERNAL_EVENT_NAME))
-    }
-
     // region Person data updates
 
     /**
