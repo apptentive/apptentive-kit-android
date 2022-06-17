@@ -48,7 +48,6 @@ dependencies {
     implementation "com.apptentive:apptentive-navigate-to-link:$repoVersion"
     implementation "com.apptentive:apptentive-ratings:$repoVersion"
     implementation "com.apptentive:apptentive-in-app-review:$repoVersion"
-    implementation "com.apptentive:apptentive-message-center:$repoVersion"
 }
 
 project.ext {
