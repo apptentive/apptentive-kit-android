@@ -1,7 +1,7 @@
 # 2022-06-21 - v6.0.0-beta02
 
 #### Improvements
-* Interface customization UI improvements
+* Interface customization UI additions
 
 #### Known Issues and Limitations
 * minSDKVersion is now 21
