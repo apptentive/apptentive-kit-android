@@ -20,11 +20,5 @@
 * Dark mode support
 * Modernized theme based on Material Design
 
-#### Known Issues and Limitations
-* minSDKVersion is now 21
-* Message Center is not yet implemented
-* Encryption is not yet supported
-* Client authentication (login/logout) is not yet supported
-
 #### Previous Releases
 You can find versions 5 and earlier in our [legacy SDK repository](https://github.com/apptentive/apptentive-android)
