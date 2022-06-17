@@ -19,7 +19,7 @@ internal class InAppReviewInteractionLauncher(private val inAppReviewManagerFact
     ) {
         super.launchInteraction(engagementContext, interaction)
         engagementContext.engage(Event.internal(InternalEvent.EVENT_REQUEST.labelName, interaction.type), interaction.id)
-        val reviewManager = inAppReviewManagerFactory.createReviewManager(engagementContext.getActivityContext())
+        val reviewManager = inAppReviewManagerFactory.createReviewManager(engagementContext.getAppActivity())
         if (reviewManager.isInAppReviewSupported()) {
             reviewManager.startReviewFlow(object : InAppReviewCallback {
                 override fun onReviewComplete() {

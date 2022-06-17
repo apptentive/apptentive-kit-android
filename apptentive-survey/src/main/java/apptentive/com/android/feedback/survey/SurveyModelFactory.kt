@@ -30,7 +30,7 @@ private class DefaultSurveyModelFactory(
                 DefaultSurveyQuestionConverter().convert(
                     config = config,
                     requiredTextMessage = interaction.requiredText
-                        ?: engagementContext.getActivityContext().getString(R.string.apptentive_required)
+                        ?: engagementContext.getAppActivity().getString(R.string.apptentive_required)
                 )
             },
             name = interaction.name,

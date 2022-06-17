@@ -28,7 +28,7 @@ internal class MessageCenterInteractionLauncher : AndroidViewInteractionLauncher
 
         // Launch Message center landing page
         engagementContext.executors.main.execute {
-            engagementContext.getActivityContext().startViewModelActivity<MessageCenterActivity>()
+            engagementContext.getAppActivity().startViewModelActivity<MessageCenterActivity>()
         }
     }
 }
