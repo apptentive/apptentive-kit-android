@@ -1,673 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--
-    - Main Apptentive Styling item info
+    - MAIN APPTENTIVE STYLING INFO -
 
-    - Have a style named "ApptentiveThemeOverride" in your styles.xml file to override Apptentive styles
+    - Start with a style named "ApptentiveThemeOverride" in your styles.xml file
+    - This will allow you to override Apptentive styles
     - Items defined in this style will ONLY affect Apptentive interactions
+    -->
+
+    <style name="ApptentiveThemeOverride">
+        <!-- This is where you'll add your override items -->
+    </style>
+
+    <!--
+    - GENERAL STYLING INFO -
 
     - We disable the android:background style for Apptentive interaction styling
     - It causes some unexpected issues for some Views
     - You can re-enable this within ApptentiveThemeOverride
 
-    - Material Color info: https://material.io/blog/android-material-theme-color
+    - MATERIAL COLOR INFO -
+        - https://material.io/blog/android-material-theme-color
 
     Dialogs:
     - Dialog background color uses colorSurface
-    - Dialog color on background (title and message text) uses colorOnSurface
+    - Dialog color on background (title and message text) use colorOnSurface
     - Dialog buttons text color uses colorSecondary
         - Override with apptentiveTextColorDialogTextButton
     - Dialog title has an alpha of .90 by default
-        - Override with apptentiveHeaderAlpha
+        - Override with apptentiveHeaderAlpha (also affects Survey elements)
     - Dialog message has an alpha of .75 by default
-        - Override with apptentiveSubheaderAlpha
-
-    Use Dialog header image:
-
-    - Dialog small title header image example start -
-    - This is positioned before the title text -
-    - Set through style apptentiveLoveDialogTitleImageStyle &
-        apptentiveNoteTitleWithMessageImageStyle &
-        apptentiveNoteTitleOrMessageOnlyImageStyle &
-        apptentiveRatingDialogTitleImageStyle -
-    <style name="Custom.Dialog.Title.Image">
-        <item name="android:src">@mipmap/ic_launcher</item> <- Your image (preferably app logo)
-        <item name="android:maxWidth">40dp</item> <- minWidth/maxWidth to size
-        <item name="android:maxHeight">40dp</item> <- minHeight/maxHeight to size
-        <item name="android:adjustViewBounds">true</item> <- Helps with image resizing
-    </style>
-    - Dialog small title header image example end -
-
-    - Dialog large header image example start -
-    - This is positioned above the title text -
-    - Set through styles apptentiveLoveDialogLayoutStyle &
-        apptentiveLoveDialogHeaderImageStyle &
-        apptentiveNoteHeaderImageStyle &
-        apptentiveRatingDialogHeaderImageStyle -
-    <style name="Custom.Dialog.Layout"> <- Override the layout to remove preset paddings
-        <item name="android:background">?colorSurface</item> <- Background color of your dialog
-    </style>
-
-    <style name="Custom.Dialog.HeaderImage">
-        <item name="android:src">@drawable/header_image</item> <- Your image
-        <item name="android:layout_weight">1</item> <- Weight to make it the entire width of the dialog
-        <item name="android:adjustViewBounds">true</item> <- Helps with image resizing
-    </style>
-    - Dialog large header image example end -
-
-    - Love Dialog image buttons example start -
-        <style name="Custom.Dialog.Button.Yes" parent="Widget.MaterialComponents.Button.TextButton"> <- TextButton to remove borders
-        <item name="android:textSize">0sp</item> <- Get rid of the text
-        <item name="android:layout_weight">1</item> <- Let the buttons take up even space
-        <item name="android:layout_marginEnd">48dp</item> <- "Yes" is on the right, give it some layout space
-        <item name="android:layout_marginStart">24dp</item> <- Spacing from the "no" button
-        <item name="android:ambientShadowAlpha">0</item> <- Remove the button shadow color
-        <item name="icon">@drawable/yes_image</item> <- Your image for the "Yes" button
-        <item name="iconSize">80dp</item> <- Size of your image (use a 1:1 aspect ratio image)
-        <item name="iconTint">@null</item> <- Remove the tint layered on top
-        <item name="iconGravity">textTop</item> <- Helps with button alignment
-        <item name="iconPadding">0dp</item> <- Helps with precise padding around button
-        <item name="rippleColor">@null</item> <- Removes button ripple which can look strange with an image
-    </style>
-
-    <style name="Custom.Dialog.Button.No" parent="Widget.MaterialComponents.Button.TextButton"> <- TextButton to remove borders
-        <item name="android:textSize">0sp</item> <- Get rid of the text
-        <item name="android:layout_weight">1</item> <- Let the buttons take up even space
-        <item name="android:layout_marginEnd">24dp</item> <- Spacing from the "yes" button
-        <item name="android:layout_marginStart">48dp</item> <- "No" is on the left, give it some layout space
-        <item name="android:ambientShadowAlpha">0</item> <- Remove the button shadow color
-        <item name="icon">@drawable/no_image</item> <- Your image for the "No" button
-        <item name="iconSize">80dp</item> <- Size of your image (use a 1:1 aspect ratio image)
-        <item name="iconTint">@null</item> <- Remove the tint layered on top
-        <item name="iconGravity">textTop</item> <- Helps with button alignment
-        <item name="iconPadding">0dp</item> <- Helps with precise padding around button
-        <item name="rippleColor">@null</item> <- Removes button ripple which can look strange with an image
-    </style>
-    - Love Dialog image buttons example start -
-
-    Apptentive Rating Dialog:
-
+        - Override with apptentiveSubheaderAlpha  (also affects Survey elements)
 
     Surveys:
     - Survey toolbar / bottom bar colors uses colorPrimary
     - Survey toolbar / bottom bar text colors uses colorOnPrimary
     - Survey background uses android:colorBackground
     - Survey color on background (text & some widget colors) uses colorOnBackground
+    - Survey question widgets accent colors use colorSecondary
     - Survey submit button color uses colorPrimary
     - Survey submit button text color uses colorOnPrimary
     - Survey description, question title, and radio/checkbox options have alphas of .90 by default
-        - Override with apptentiveHeaderAlpha
+        - Override with apptentiveHeaderAlpha (also affects Dialog elements)
         - Note that affects default text colors as well as error colors
     - Question instructions, text box hints, and range labels have an alpha of .75 by default
-        - Override with apptentiveSubheaderAlpha
+        - Override with apptentiveSubheaderAlpha (also affects Dialog elements)
         - Note that affects default text colors as well as error colors
 
-    Use Survey header image instead of title text:
-    - Small Header Example Start -
-    - Set through styles apptentiveSurveyTitleStyle & apptentiveSurveyHeaderImageStyle
-    - Example (Good starting point):
+    - RESOURCES -
+    - Learn.Apptentive Interface Customization article. A great start to styling with Apptentive.
+        - https://learn.apptentive.com/knowledge-base/android-interface-customization-2/
 
-    <style name="ApptentiveThemeOverride">
-        <item name="apptentiveSurveyTitleStyle">@style/Custom.Survey.Title</item>
-        <item name="apptentiveSurveyHeaderImageStyle">@style/Custom.Survey.HeaderImage</item>
-    </style>
+    - Learn.Apptentive Cookbooks. Great examples of more complex customizations that you can get inspired from.
+        - The styles from these cookbooks have been imported and commented out below for your convenience.
+        - https://learn.apptentive.com/knowledge-base/android-ui-cookbook-overview/
 
-    <style name="Custom.Survey.Title" parent="Widget.MaterialComponents.TextView">
-        <item name="android:visibility">gone</item> <- So the title text doesn't show
-    </style>
+    - styles.xml file within the apptentive-core-ui package for our default styles.
+        - apptentive-core-ui/src/main/res/values/styles.xml
 
-    <style name="Custom.Survey.HeaderImage">
-        <item name="android:src">@drawable/small_header_image</item> <- Set your header image here
-        <item name="android:maxHeight">?actionBarSize</item> <- minHeight/maxHeight to size
-        <item name="android:adjustViewBounds">true</item> <- Helps with image resizing
-        <item name="android:layout_gravity">center</item> <- Image positioning
-        <item name="android:layout_margin">2dp</item> <- Image spacing
-    </style>
-    - Small Header Example End -
-
-    - Large Header Example Start -
-    - Set through styles apptentiveSurveyTitleStyle & apptentiveSurveyToolbarStyle
-    - Example (Good starting point):
-
-    <style name="ApptentiveThemeOverride">
-        <item name="apptentiveSurveyTitleStyle">@style/Custom.Survey.Title</item>
-        <item name="apptentiveSurveyToolbarStyle">@style/Custom.Survey.Toolbar</item>
-    </style>
-
-    <style name="Custom.Survey.Title" parent="Widget.MaterialComponents.TextView">
-        <item name="android:visibility">gone</item> <- So the title text doesn't show
-    </style>
-
-    <style name="Custom.Survey.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
-        <item name="android:background">@drawable/large_header_image</item> <- Set your header image here
-        <item name="layout_constraintHeight_max">224dp</item> <- minHeight/maxHeight to size
-        <item name="navigationIcon">@drawable/ic_baseline_close_24</item> <- Close navigation icon
-        <item name="navigationContentDescription">Close</item> <- Close navigation description
-        <item name="navigationIconTint">@android:color/white</item> <- Close navigation color
-    </style>
-    - Large Header Example End -
+    - apptentive-attrs.xml file within the apptentive-core-ui package for all available styles.
+        - apptentive-core-ui/src/main/res/values/apptentive-attrs.xml
     -->
 
-    <!-- Apptentive Minor Interface Customization ApptentiveThemeOverride examples -->
-    <style name="ApptentiveThemeOverride">
 
-        <!-- General Alert Dialog Styles -->
-<!--        <item name="apptentiveDialogButtonStyle">@style/Custom.Dialog.Button</item>-->
-<!--        <item name="apptentiveDialogBackground">?colorSecondary</item>-->
+    <!-- COOKBOOKS -->
+    <!-- https://learn.apptentive.com/knowledge-base/android-ui-cookbook-overview/ -->
 
-        <!-- Love Dialog Styles-->
-<!--        <item name="apptentiveLoveDialogLayoutStyle">@style/Custom.LoveDialog.Layout</item>-->
-<!--        <item name="apptentiveLoveDialogTitleStyle">@style/Custom.LoveDialog.Title</item>-->
-<!--        <item name="apptentiveLoveDialogTitleImageStyle">@style/Custom.LoveDialog.Title.Image</item>-->
-<!--        <item name="apptentiveLoveDialogHeaderImageStyle">@style/Custom.LoveDialog.HeaderImage</item>-->
-
-        <!-- No -> Yes Ordering (default) -->
-<!--        <item name="apptentiveLoveDialogButtonLayoutStyle" />-->
-<!--        <item name="apptentiveLoveDialogYesButtonStyle">@style/Custom.Dialog.Button.LoveDialogYes</item>-->
-<!--        <item name="apptentiveLoveDialogNoButtonStyle">@style/Custom.Dialog.Button.LoveDialogNo</item>-->
-
-        <!-- Yes -> No Ordering -->
-<!--        <item name="apptentiveLoveDialogButtonLayoutStyleAlternate">@style/Custom.LoveDialog.ButtonLayoutAlternate</item>-->
-<!--        <item name="apptentiveLoveDialogYesButtonStyleAlternate">@style/Custom.Dialog.Button.LoveDialogYes.Alternate</item>-->
-<!--        <item name="apptentiveLoveDialogNoButtonStyleAlternate">@style/Custom.Dialog.Button.LoveDialogNo.Alternate</item>-->
-
-        <!-- Note Styles-->
-<!--        <item name="apptentiveNoteLayoutStyle">@style/Custom.Note.Layout</item>-->
-<!--        <item name="apptentiveNoteHeaderImageStyle">@style/Custom.Note.HeaderImage</item>-->
-<!--        <item name="apptentiveNoteTitleWithMessageTextStyle">@style/Custom.Note.Title.WithMessage.Text</item>-->
-<!--        <item name="apptentiveNoteTitleWithMessageImageStyle">@style/Custom.Note.TitleImage</item>-->
-<!--        <item name="apptentiveNoteTitleOrMessageOnlyTextStyle">@style/Custom.Note.TitleOrMessageOnly</item>-->
-<!--        <item name="apptentiveNoteTitleOrMessageOnlyImageStyle">@style/Custom.Note.TitleImage</item>-->
-<!--        <item name="apptentiveNoteMessageTextStyle">@style/Custom.Note.Message.Text</item>-->
-<!--        <item name="apptentiveNoteButtonLayoutStyle">@style/Custom.Note.ButtonLayout</item>-->
-<!--        <item name="apptentiveNoteButtonStyle">@style/Custom.Dialog.Button.Note</item>-->
-<!--        <item name="apptentiveNoteDismissButtonStyle">@style/Custom.Dialog.Button.Note</item>-->
-
-        <!-- Apptentive Rating Dialog Styles-->
-<!--        <item name="apptentiveRatingDialogLayoutStyle">@style/Custom.RatingDialog.Layout</item>-->
-<!--        <item name="apptentiveRatingDialogHeaderImageStyle">@style/Custom.RatingDialog.HeaderImage</item>-->
-<!--        <item name="apptentiveRatingDialogTitleTextStyle">@style/Custom.RatingDialog.Title</item>-->
-<!--        <item name="apptentiveRatingDialogTitleImageStyle">@style/Custom.RatingDialog.TitleImage</item>-->
-<!--        <item name="apptentiveRatingDialogButtonStyle">@style/Custom.Dialog.Button.RatingDialog</item>-->
-<!--        <item name="apptentiveRatingDialogMessageTextStyle">@style/Custom.RatingDialog.Message</item>-->
-
-        <!-- Generic Dialog Styles -->
-        <!-- Currently used in: Survey Close Confirmation -->
-<!--        <item name="apptentiveGenericDialogLayoutStyle">@style/Custom.Note.Layout</item>-->
-<!--        <item name="apptentiveGenericDialogHeaderImageStyle">@style/Custom.Note.HeaderImage</item>-->
-<!--        <item name="apptentiveGenericDialogTitleTextStyle">@style/Custom.Note.Title.WithMessage.Text</item>-->
-<!--        <item name="apptentiveGenericDialogTitleImageStyle">@style/Custom.Note.TitleImage</item>-->
-<!--        <item name="apptentiveGenericDialogMessageTextStyle">@style/Custom.Note.Message.Text</item>-->
-<!--        <item name="apptentiveGenericDialogButtonLayoutStyle">@style/Custom.Note.ButtonLayout</item>-->
-<!--        <item name="apptentiveGenericDialogPositiveButtonStyle">@style/Custom.Dialog.Button.Note</item>-->
-<!--        <item name="apptentiveGenericDialogNegativeButtonStyle">@style/Custom.Dialog.Button.Note</item>-->
-
-        <!-- Survey Styles Start -->
-        <!-- Layout -->
-<!--        <item name="apptentiveSurveyLayoutStyle">@style/Custom.Survey.Layout</item>-->
-
-        <!-- App Bars -->
-<!--        <item name="apptentiveSurveyToolbarStyle">@style/Custom.Survey.Toolbar</item>-->
-<!--        <item name="apptentiveSurveyBottomAppBarStyle">@style/Custom.Survey.BottomAppBar</item>-->
-
-        <!-- TextViews -->
-<!--        <item name="apptentiveSurveyTitleStyle">@style/Custom.Survey.Title</item>-->
-<!--        <item name="apptentiveSurveyIntroductionStyle">@style/Custom.Survey.Introduction</item>-->
-<!--        <item name="apptentiveSurveyQuestionTitleStyle">@style/Custom.Survey.Question.Title</item>-->
-<!--        <item name="apptentiveSurveyQuestionInstructionsStyle">@style/Custom.Survey.Question.Caption.Instructions</item>-->
-<!--        <item name="apptentiveSurveyQuestionErrorStyle">@style/Custom.Survey.Question.Caption.Error</item>-->
-<!--        <item name="apptentiveSurveyRangeLabelStyle">@style/Custom.Survey.Question.Caption.RangeLabel</item>-->
-<!--        <item name="apptentiveSurveySubmitErrorStyle">@style/Custom.Survey.Error</item>-->
-<!--        <item name="apptentiveSurveyTermsAndConditionsStyle">@style/Custom.Survey.TermsAndConditions</item>-->
-
-        <!-- Widgets -->
-<!--        <item name="apptentiveSurveyHeaderImageStyle">@style/Custom.Survey.HeaderImage</item>-->
-<!--        <item name="apptentiveSurveyCheckBoxStyle">@style/Custom.Survey.CheckBox</item>-->
-<!--        <item name="apptentiveSurveyRadioButtonStyle">@style/Custom.Survey.RadioButton</item>-->
-<!--        <item name="apptentiveSurveyRangeStyle">@style/Custom.Survey.Range</item>-->
-<!--        <item name="apptentiveSurveySingleLineLayoutStyle">@style/Custom.Survey.SingleLine.TextInputLayout</item>-->
-<!--        <item name="apptentiveSurveySingleLineEditTextStyle">@style/Custom.Survey.SingleLine.EditText</item>-->
-<!--        <item name="apptentiveSurveyOtherTextFieldLayoutStyle">@style/Custom.Survey.OtherTextField.TextInputLayout</item>-->
-<!--        <item name="apptentiveSurveyOtherTextFieldEditTextStyle">@style/Custom.Survey.OtherTextField.EditText</item>-->
-<!--        <item name="apptentiveSurveySubmitButtonStyle">@style/Custom.Survey.Submit.Button</item>-->
-<!--        <item name="apptentiveSurveyFootnoteStyle">@style/Custom.Survey.Footnote</item>-->
-        <!-- Survey Styles End -->
-
-        <!-- Text Size Start -->
-        <!-- Dialog -->
-<!--        <item name="apptentiveTextSizeDialogTitleWithMessage">30sp</item>-->
-<!--        <item name="apptentiveTextSizeDialogTitleOrMessageOnly">30sp</item>-->
-<!--        <item name="apptentiveTextSizeSurveyQuestionTitle">30sp</item>-->
-<!--        <item name="apptentiveTextSizeButtonBorderless">30sp</item>-->
-
-        <!-- Survey -->
-<!--        <item name="apptentiveTextSizeSurveyIntroduction">30sp</item>-->
-<!--        <item name="apptentiveTextSizeSubhead">30sp</item>-->
-<!--        <item name="apptentiveTextSizeBody1">30sp</item>-->
-<!--        <item name="apptentiveTextSizeCaption">30sp</item>-->
-<!--        <item name="apptentiveTextSizeButtonColored">30sp</item>-->
-<!--        <item name="apptentiveTextSizeSurveyTermsAndConditions">30sp</item>-->
-        <!-- Text Size End -->
-
-        <!-- Text Color Start -->
-        <!-- Dialog -->
-<!--        <item name="apptentiveTextColorDialogTitleWithMessage">@color/color_secondary</item>-->
-<!--        <item name="apptentiveTextColorDialogTitleOrMessageOnly">@color/color_secondary</item>-->
-<!--        <item name="apptentiveTextColorTitle">@color/color_secondary</item>-->
-<!--        <item name="apptentiveTextColorSubhead">@color/color_secondary</item>-->
-<!--        <item name="apptentiveTextColorDialogTextButton">@color/color_primary</item>-->
-
-        <!-- Survey -->
-<!--        <item name="apptentiveTextColorError">@color/color_secondary</item>-->
-<!--        <item name="apptentiveTextColorSurveyRangeLabel">@color/color_secondary</item>-->
-<!--        <item name="apptentiveTextColorSurveyTitle">@color/color_secondary</item>-->
-<!--        <item name="apptentiveTextColorSurveyIntroduction">@color/color_secondary</item>-->
-<!--        <item name="apptentiveTextColorBody1">@color/color_secondary</item>-->
-<!--        <item name="apptentiveTextColorSurveyQuestionInstructions">@color/color_secondary</item>-->
-<!--        <item name="apptentiveTextColorSurveyTermsAndConditions">@color/color_secondary</item>-->
-<!--        <item name="apptentiveTextColorSurveyTermsAndConditions">@color/color_secondary</item>-->
-        <!-- Text Color End -->
-
-        <!-- Text Alpha -->
-<!--        <item name="apptentiveHeaderAlpha">1.0</item>-->
-<!--        <item name="apptentiveSubheaderAlpha">0.8</item>-->
-
-        <!-- Font Family Start -->
-<!--        <item name="apptentiveFontFamilyDefault">@font/montserrat</item>-->
-<!--        <item name="apptentiveFontFamilyMediumDefault">@font/montserrat</item>-->
-<!--        <item name="apptentiveFontFamilySubhead">@font/montserrat</item>-->
-
-        <!-- Dialog Only -->
-<!--        <item name="apptentiveFontFamilyTitle">@font/montserrat</item>-->
-<!--        <item name="apptentiveFontFamilyButtonBorderless">@font/montserrat</item>-->
-
-        <!-- Survey Only -->
-<!--        <item name="apptentiveFontFamilyToolbar">@font/montserrat</item>-->
-<!--        <item name="apptentiveFontFamilyBody1">@font/montserrat</item>-->
-<!--        <item name="apptentiveFontFamilyCaption">@font/montserrat</item>-->
-<!--        <item name="apptentiveFontFamilyButtonColored">@font/montserrat</item>-->
-        <!-- Font Family End -->
-
-        <!-- Typeface Start -->
-<!--        <item name="apptentiveTypefaceDefault">@integer/apptentive_typeface_monospace</item>-->
-
-        <!-- Dialog -->
-<!--        <item name="apptentiveTypefaceDialogTitle">@integer/apptentive_typeface_monospace</item>-->
-<!--        <item name="apptentiveTypefaceDialogTitleOrMessageOnly">@integer/apptentive_typeface_monospace</item>-->
-<!--        <item name="apptentiveTypefaceButtonBorderless">@integer/apptentive_typeface_monospace</item>-->
-
-        <!-- Survey -->
-<!--        <item name="apptentiveTypefaceTitle">@integer/apptentive_typeface_monospace</item>-->
-<!--        <item name="apptentiveTypefaceSurveyIntroduction">@integer/apptentive_typeface_monospace</item>-->
-<!--        <item name="apptentiveTypefaceSubhead">@integer/apptentive_typeface_monospace</item>-->
-<!--        <item name="apptentiveTypefaceBody1">@integer/apptentive_typeface_monospace</item>-->
-<!--        <item name="apptentiveTypefaceCaption">@integer/apptentive_typeface_monospace</item>-->
-<!--        <item name="apptentiveTypefaceButtonColored">@integer/apptentive_typeface_monospace</item>-->
-        <!-- Typeface End -->
-    </style>
-
-
-    <!-- Apptentive Minor Interface Customization Styles Examples -->
-
-    <!-- Interaction Layouts Start -->
-    <style name="Custom"/>
-
-    <style name="Custom.LoveDialog"/>
-
-    <style name="Custom.LoveDialog.Layout">
-        <item name="android:background">?colorSurface</item>
-        <item name="android:paddingBottom">8dp</item>
-        <item name="android:paddingStart">8dp</item>
-        <item name="android:paddingTop">8dp</item>
-        <item name="android:paddingEnd">8dp</item>
-    </style>
-
-    <style name="Custom.LoveDialog.ButtonLayoutAlternate">
-        <item name="android:background">?colorSurface</item>
-        <item name="android:orientation">vertical</item>
-    </style>
-
-    <style name="Custom.Note"/>
-
-    <style name="Custom.Note.Layout">
-<!--        <item name="android:background">@drawable/note_example_background</item>-->
-        <item name="android:paddingBottom">16dp</item>
-    </style>
-
-    <style name="Custom.Note.ButtonLayout">
-        <item name="android:orientation">vertical</item>
-        <item name="android:gravity">center</item>
-    </style>
-
-    <style name="Custom.RatingDialog"/>
-
-    <style name="Custom.RatingDialog.Layout">
-        <item name="android:background">?colorSurface</item>
-        <item name="android:paddingBottom">16dp</item>
-    </style>
-
-    <style name="Custom.Survey"/>
-
-    <style name="Custom.Survey.Layout">
-        <item name="android:colorBackground">?colorOnSecondary</item>
-    </style>
-    <!-- Interaction Layouts End -->
-
-    <!-- Text Styles Start -->
-    <style name="Custom.Text" parent="Widget.MaterialComponents.TextView">
-        <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textColor">?colorOnBackground</item>
-    </style>
-
-    <!-- Dialog Text Styles Start -->
-    <style name="Custom.LoveDialog.Title" parent="Custom.Text">
-        <item name="android:textColor">?colorSecondaryVariant</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textSize">18sp</item>
-    </style>
-
-    <style name="Custom.Note.Title.WithMessage.Text" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
-        <item name="android:textColor">?colorSecondaryVariant</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
-    </style>
-
-    <style name="Custom.Note.Message.Text" parent="Custom.Text">
-        <item name="android:textColor">?colorSecondaryVariant</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textSize">10sp</item>
-    </style>
-
-    <style name="Custom.Note.TitleOrMessageOnly" parent="Custom.Text">
-        <item name="android:textColor">?colorSecondaryVariant</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textSize">18sp</item>
-    </style>
-
-    <style name="Custom.RatingDialog.Title" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
-        <item name="android:textColor">?colorOnSurface</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textSize">24sp</item>
-        <item name="android:includeFontPadding">false</item>
-        <item name="android:paddingTop">16dp</item>
-        <item name="android:paddingBottom">8dp</item>
-        <item name="android:paddingEnd">16dp</item>
-    </style>
-
-    <style name="Custom.RatingDialog.Message" parent="Custom.Text">
-        <item name="android:textColor">?colorOnSurface</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:paddingBottom">8dp</item>
-        <item name="android:paddingStart">16dp</item>
-        <item name="android:paddingEnd">16dp</item>
-    </style>
-    <!-- Dialog Text Styles End -->
-
-    <!-- Survey Text Styles Start -->
-    <style name="Custom.Survey.Title" parent="Custom.Text">
-        <item name="android:visibility">gone</item>
-    </style>
-
-    <style name="Custom.Survey.Introduction" parent="Custom.Text">
-        <item name="android:textColor">?colorSecondaryVariant</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textSize">18sp</item>
-    </style>
-
-    <style name="Custom.Survey.Question.Title" parent="Custom.Text">
-        <item name="android:textColor">?colorSecondaryVariant</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textSize">18sp</item>
-    </style>
-
-    <style name="Custom.Survey.Question.Caption.Instructions" parent="Custom.Text">
-        <item name="android:textColor">?colorSecondaryVariant</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textSize">18sp</item>
-    </style>
-
-    <style name="Custom.Survey.Question.Caption.Error" parent="Custom.Text">
-        <item name="android:textColor">?colorSecondaryVariant</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textSize">18sp</item>
-    </style>
-
-    <style name="Custom.Survey.Question.Caption.RangeLabel" parent="Custom.Text">
-        <item name="android:textColor">?colorSecondaryVariant</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textSize">18sp</item>
-    </style>
-
-    <style name="Custom.Survey.Error" parent="Custom.Text">
-        <item name="android:textColor">?colorSecondaryVariant</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textSize">18sp</item>
-    </style>
-
-
-    <style name="Custom.Survey.Footnote" parent="Custom.Text">
-        <item name="android:textSize">11sp</item>
-        <item name="android:orientation">vertical</item>
-        <item name="android:gravity">center</item>
-        <item name="android:text">Your footer text here.</item>
-    </style>
-
-    <style name="Custom.Survey.TermsAndConditions" parent="Custom.Text">
-        <item name="android:textColor">?colorSecondaryVariant</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textSize">18sp</item>
-    </style>
-    <!-- Survey Text Styles End -->
-    <!-- Text Styles End -->
-
-    <!-- Widgets Start -->
-    <!-- Dialog Widgets Start -->
-    <style name="Custom.Dialog.Button" parent="Widget.MaterialComponents.Button.OutlinedButton">
-        <item name="android:textColor">?colorSecondaryVariant</item>
-        <item name="android:textSize">20sp</item>
-        <item name="android:backgroundTint">@color/purple_200</item>
-        <item name="fontFamily">@font/pacifico_regular</item>
-        <item name="cornerRadius">24dp</item>
-    </style>
-
-    <style name="Custom.Dialog.Button.LoveDialogYes" parent="Widget.MaterialComponents.Button.OutlinedButton">
-        <item name="cornerRadius">24dp</item>
-        <item name="android:backgroundTint">?colorSurface</item>
-        <item name="strokeColor">?colorSecondary</item>
-        <item name="android:layout_marginEnd">56dp</item>
-        <item name="android:layout_marginStart">16dp</item>
-        <item name="android:layout_marginBottom">8dp</item>
-        <item name="strokeWidth">2dp</item>
-        <item name="android:textColor">?colorSecondary</item>
-        <item name="android:layout_weight">1</item>
-    </style>
-
-    <style name="Custom.Dialog.Button.LoveDialogNo" parent="Widget.MaterialComponents.Button.OutlinedButton">
-        <item name="cornerRadius">24dp</item>
-        <item name="strokeColor">?colorSecondary</item>
-        <item name="android:backgroundTint">?colorSurface</item>
-        <item name="android:layout_marginEnd">16dp</item>
-        <item name="android:layout_marginStart">56dp</item>
-        <item name="strokeWidth">2dp</item>
-        <item name="android:layout_weight">1</item>
-        <item name="android:textColor">?colorSecondary</item>
-    </style>
-
-
-    <style name="Custom.Dialog.Button.LoveDialogYes.Alternate" parent="Widget.MaterialComponents.Button">
-        <item name="cornerRadius">36dp</item>
-        <item name="android:layout_gravity">center</item>
-        <item name="android:minWidth">160dp</item>
-        <item name="android:textSize">20sp</item>
-        <item name="android:backgroundTint">?colorOnSecondary</item>
-        <item name="android:textColor">?colorSecondary</item>
-    </style>
-
-    <style name="Custom.Dialog.Button.LoveDialogNo.Alternate" parent="Widget.MaterialComponents.Button.TextButton">
-        <item name="android:layout_gravity">center</item>
-        <item name="android:textColor">?colorError</item>
-        <item name="android:minWidth">160dp</item>
-    </style>
-
-    <style name="Custom.Dialog.Button.Note" parent="Widget.MaterialComponents.Button.OutlinedButton">
-        <item name="android:minWidth">312dp</item>
-        <item name="android:maxWidth">312dp</item>
-        <item name="android:textColor">?colorSurface</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="strokeColor">?colorSurface</item>
-        <item name="strokeWidth">2dp</item>
-        <item name="cornerRadius">30dp</item>
-        <item name="android:textAllCaps">false</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:layout_gravity">center</item>
-        <item name="android:textAlignment">center</item>
-    </style>
-
-    <style name="Custom.Dialog.Button.RatingDialog" parent="Widget.MaterialComponents.Button.OutlinedButton">
-        <item name="android:minWidth">312dp</item>
-        <item name="android:maxWidth">312dp</item>
-        <item name="android:textColor">?colorPrimary</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="strokeColor">?colorPrimary</item>
-        <item name="strokeWidth">2dp</item>
-        <item name="android:textAllCaps">false</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:layout_gravity">center_horizontal</item>
-        <item name="android:textAlignment">center</item>
-    </style>
-
-    <style name="Custom.LoveDialog.HeaderImage">
-<!--        <item name="android:src">@drawable/header_example</item>-->
-        <item name="android:layout_weight">1</item>
-        <item name="android:adjustViewBounds">true</item>
-    </style>
-
-    <style name="Custom.Note.HeaderImage">
-<!--        <item name="android:src">@drawable/note_header_example</item>-->
-        <item name="android:paddingStart">-2dp</item>
-        <item name="android:paddingEnd">-2dp</item>
-        <item name="android:layout_weight">1</item>
-        <item name="android:adjustViewBounds">true</item>
-    </style>
-
-    <style name="Custom.RatingDialog.HeaderImage">
-<!--        <item name="android:src">@drawable/rating_header_example</item>-->
-        <item name="android:layout_weight">1</item>
-        <item name="android:adjustViewBounds">true</item>
-    </style>
-
-    <style name="Custom.LoveDialog.Title.Image">
-        <item name="android:src">@mipmap/ic_launcher</item>
-        <item name="android:maxWidth">40dp</item>
-        <item name="android:maxHeight">40dp</item>
-        <item name="android:minWidth">40dp</item>
-        <item name="android:minHeight">40dp</item>
-        <item name="android:adjustViewBounds">true</item>
-    </style>
-
-    <style name="Custom.Note.TitleImage">
-        <item name="android:src">@mipmap/ic_launcher</item>
-        <item name="android:maxWidth">40dp</item>
-        <item name="android:maxHeight">40dp</item>
-        <item name="android:minWidth">40dp</item>
-        <item name="android:minHeight">40dp</item>
-        <item name="android:layout_gravity">center_vertical</item>
-        <item name="android:layout_marginStart">16dp</item>
-        <item name="android:layout_marginTop">8dp</item>
-        <item name="android:layout_marginBottom">8dp</item>
-        <item name="android:adjustViewBounds">true</item>
-    </style>
-
-    <style name="Custom.RatingDialog.TitleImage">
-        <item name="android:src">@mipmap/ic_launcher</item>
-        <item name="android:paddingStart">16dp</item>
-        <item name="android:maxWidth">64dp</item>
-        <item name="android:maxHeight">64dp</item>
-        <item name="android:minWidth">64dp</item>
-        <item name="android:minHeight">64dp</item>
-        <item name="android:adjustViewBounds">true</item>
-    </style>
-    <!-- Dialog Widgets End -->
-
-    <!-- Survey Widgets Start -->
-    <style name="Custom.Survey.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
-        <item name="android:colorBackground">?colorSecondary</item>
-        <item name="navigationIcon">@drawable/ic_back_arrow</item>
-        <item name="navigationContentDescription">Back</item>
-        <item name="navigationIconTint">?colorOnSecondary</item>
-        <item name="titleTextColor">?colorOnSecondary</item>
-        <item name="titleTextAppearance">@style/TextAppearance.MaterialComponents.Headline4</item>
-    </style>
-
-    <style name="Custom.Survey.HeaderImage">
-        <item name="android:src">@drawable/example_logo</item>
-        <item name="android:layout_gravity">center</item>
-        <item name="android:layout_margin">2dp</item>
-        <item name="android:maxHeight">?actionBarSize</item>
-        <item name="android:adjustViewBounds">true</item>
-    </style>
-
-    <style name="Custom.Survey.CheckBox" parent="Widget.AppCompat.CompoundButton.CheckBox">
-        <item name="android:textColor">?colorSecondaryVariant</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textSize">18sp</item>
-        <item name="android:buttonTint">?colorPrimaryVariant</item>
-    </style>
-
-    <style name="Custom.Survey.RadioButton" parent="Widget.AppCompat.CompoundButton.RadioButton">
-        <item name="android:textColor">?colorSecondaryVariant</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textSize">18sp</item>
-        <item name="android:buttonTint">?colorPrimaryVariant</item>
-    </style>
-
-    <style name="Custom.Survey.Range" parent="Widget.MaterialComponents.Slider">
-        <item name="labelBehavior">withinBounds</item>
-        <item name="haloColor">?colorPrimaryVariant</item>
-        <item name="thumbColor">?colorPrimaryVariant</item>
-        <item name="trackColorActive">?colorPrimaryVariant</item>
-        <item name="trackColorInactive">?colorPrimaryVariant</item>
-        <item name="tickColorActive">?colorSecondary</item>
-        <item name="tickColorInactive">?colorSecondary</item>
-    </style>
-
-    <style name="Custom.Survey.SingleLine.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-        <item name="boxStrokeColor">?colorSecondary</item>
-        <item name="android:textColorHint">?colorSecondary</item>
-    </style>
-
-    <style name="Custom.Survey.SingleLine.EditText" parent="Widget.AppCompat.EditText">
-        <item name="android:textColor">?colorSecondaryVariant</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textSize">18sp</item>
-    </style>
-
-    <style name="Custom.Survey.OtherTextField.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-        <item name="boxStrokeColor">?colorSecondary</item>
-        <item name="android:textColorHint">?colorSecondary</item>
-    </style>
-
-    <style name="Custom.Survey.OtherTextField.EditText" parent="Widget.AppCompat.EditText">
-        <item name="android:textColor">?colorSecondary</item>
-        <item name="android:fontFamily">@font/pacifico_regular</item>
-        <item name="android:textSize">18sp</item>
-    </style>
-
-    <style name="Custom.Survey.Submit.Button" parent="Widget.MaterialComponents.Button">
-        <item name="android:textSize">16sp</item>
-        <item name="android:textColor">?colorPrimary</item>
-        <item name="android:backgroundTint">?colorOnPrimary</item>
-        <item name="fontFamily">@font/pacifico_regular</item>
-        <item name="cornerRadius">24dp</item>
-    </style>
-
-    <style name="Custom.Survey.BottomAppBar" parent="Widget.MaterialComponents.Toolbar.Primary">
-        <item name="android:colorBackground">?colorSecondary</item>
-    </style>
-    <!-- Survey Widgets End -->
-    <!-- Widgets End -->
+    <!-- TIP: Uncomment commented out lines with (CMD or CTRL) + / -->
 
     <!-- Cookbook 1 -->
+    <!-- https://learn.apptentive.com/knowledge-base/android-ui-cookbook-design-1/ -->
 <!--    <style name="ApptentiveThemeOverride">-->
 <!--        &lt;!&ndash; All Interactions &ndash;&gt;-->
 <!--        <item name="apptentiveFontFamilyDefault">@font/mulish</item>-->
@@ -853,7 +255,8 @@
 <!--        <item name="android:layout_marginTop">4dp</item>-->
 <!--    </style>-->
 
-<!--    &lt;!&ndash; Cookbook 2 &ndash;&gt;-->
+    <!-- Cookbook 2 -->
+    <!-- https://learn.apptentive.com/knowledge-base/android-ui-cookbook-design-2/ -->
 <!--    <style name="ApptentiveThemeOverride">-->
 <!--        &lt;!&ndash; All Interactions &ndash;&gt;-->
 <!--        <item name="apptentiveFontFamilyDefault">@font/sen</item>-->
@@ -1052,6 +455,7 @@
 <!--    </style>-->
 
     <!-- Cookbook 3 -->
+    <!-- https://learn.apptentive.com/knowledge-base/android-ui-cookbook-design-3/ -->
 <!--    <style name="ApptentiveThemeOverride">-->
 <!--        &lt;!&ndash; All Interactions &ndash;&gt;-->
 <!--        <item name="apptentiveFontFamilyDefault">@font/comfortaa</item>-->
