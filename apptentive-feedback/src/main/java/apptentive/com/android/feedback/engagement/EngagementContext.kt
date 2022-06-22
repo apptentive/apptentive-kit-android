@@ -58,7 +58,7 @@ open class EngagementContext(
     @VisibleForTesting
     fun getPayloadSender() = payloadSender
 
-    fun getFragmentManager(context: Context? = getActivityInfo()): FragmentManager {
+    fun getFragmentManager(context: Context? = getAppActivity()): FragmentManager {
         return when (context) {
             is AppCompatActivity, is FragmentActivity -> (context as FragmentActivity).supportFragmentManager
             is ContextThemeWrapper -> getFragmentManager(context.baseContext)
@@ -67,15 +67,18 @@ open class EngagementContext(
         }
     }
 
-    fun getActivityContext(): Context {
-        return requireNotNull(getActivityInfo()) {
+    fun getAppActivity(): Activity {
+        return requireNotNull(getAppActivityInfo()) {
             "Apptentive Activity Callback not registered. " +
-                "Extend ApptentiveActivity.kt, implement the getActivity() function, " +
-                "and call registerApptentiveActivityCallback(this) " +
-                "in your Activity's onCreate function."
+                "Extend ApptentiveActivityInfo.kt, " +
+                "implement the getApptentiveActivityInfo() function, " +
+                "and call registerApptentiveActivityInfoCallback(this) " +
+                "in your Activity's onResume function. " +
+                "Also call unregisterApptentiveActivityInfoCallback() in your" +
+                "Activity's onPause function to help prevent memory leaks."
         }
     }
 
-    private fun getActivityInfo(): Activity? =
+    private fun getAppActivityInfo(): Activity? =
         Apptentive.getApptentiveActivityCallback()?.getApptentiveActivityInfo()
 }

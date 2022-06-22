@@ -30,6 +30,7 @@ internal class EnjoymentDialogFragment : DialogFragment() {
             val messageView = enjoymentDialogView.findViewById<MaterialTextView>(R.id.apptentive_enjoyment_dialog_title)
             messageView.text = viewModel.title
 
+            // No -> Yes Orientation (default)
             val positiveButtonView = enjoymentDialogView.findViewById<MaterialButton>(R.id.apptentive_enjoyment_dialog_yes)
             positiveButtonView.text = viewModel.yesText
             positiveButtonView.setOnClickListener {
@@ -40,6 +41,21 @@ internal class EnjoymentDialogFragment : DialogFragment() {
             val negativeButtonView = enjoymentDialogView.findViewById<MaterialButton>(R.id.apptentive_enjoyment_dialog_no)
             negativeButtonView.text = viewModel.noText
             negativeButtonView.setOnClickListener {
+                viewModel.onNoButton()
+                this@EnjoymentDialogFragment.dismiss()
+            }
+
+            // Yes -> No Orientation (alternate - enabled through styles)
+            val positiveButtonViewAlternate = enjoymentDialogView.findViewById<MaterialButton>(R.id.apptentive_enjoyment_dialog_yes_alternate)
+            positiveButtonViewAlternate.text = viewModel.yesText
+            positiveButtonViewAlternate.setOnClickListener {
+                viewModel.onYesButton()
+                this@EnjoymentDialogFragment.dismiss()
+            }
+
+            val negativeButtonViewAlternate = enjoymentDialogView.findViewById<MaterialButton>(R.id.apptentive_enjoyment_dialog_no_alternate)
+            negativeButtonViewAlternate.text = viewModel.noText
+            negativeButtonViewAlternate.setOnClickListener {
                 viewModel.onNoButton()
                 this@EnjoymentDialogFragment.dismiss()
             }

@@ -41,7 +41,7 @@ data class Device(
         osName = osName,
         osVersion = osVersion,
         osBuild = osBuild,
-        osApiLevel = osApiLevel,
+        osApiLevel = osApiLevel.toString(),
         manufacturer = manufacturer,
         model = model,
         board = board,

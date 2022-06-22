@@ -5,10 +5,10 @@ import apptentive.com.android.feedback.model.AppRelease
 import apptentive.com.android.feedback.model.Configuration
 import apptentive.com.android.feedback.model.Device
 import apptentive.com.android.feedback.model.EngagementManifest
+import apptentive.com.android.feedback.model.MessageList
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.payload.PayloadData
-import apptentive.com.android.feedback.payload.PayloadResponse
 import apptentive.com.android.network.CacheControl
 import apptentive.com.android.network.HttpClient
 import apptentive.com.android.network.HttpHeaders
@@ -84,6 +84,22 @@ internal class DefaultConversationService(
                 this["Authorization"] = "Bearer $conversationToken"
             },
             responseReader = ConfigurationReader
+        )
+        sendRequest(request, callback)
+    }
+
+    override fun getMessages(
+        conversationToken: String,
+        conversationId: String,
+        callback: (Result<MessageList>) -> Unit
+    ) {
+        val request = createJsonRequest(
+            method = HttpMethod.GET,
+            path = "conversations/$conversationId/messages",
+            headers = MutableHttpHeaders().apply {
+                this["Authorization"] = "Bearer $conversationToken"
+            },
+            responseReader = HttpJsonResponseReader(MessageList::class.java)
         )
         sendRequest(request, callback)
     }

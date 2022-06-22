@@ -16,16 +16,29 @@ internal class TextModalViewModel : ViewModel() {
     val title = interaction.title
     val message = interaction.body
     val actions = interaction.actions.mapIndexed { index, action ->
-        ActionModel(
-            title = action.label,
-            callback = {
-                // invoke action
-                context.executors.state.execute(createActionCallback(action, index))
+        if (action is TextModalInteraction.Action.Dismiss) {
+            ActionModel.DismissActionModel(
+                title = action.label,
+                callback = {
+                    // invoke action
+                    context.executors.state.execute(createActionCallback(action, index))
 
-                // dismiss UI
-                onDismiss?.invoke()
-            }
-        )
+                    // dismiss UI
+                    onDismiss?.invoke()
+                }
+            )
+        } else {
+            ActionModel.OtherActionModel(
+                title = action.label,
+                callback = {
+                    // invoke action
+                    context.executors.state.execute(createActionCallback(action, index))
+
+                    // dismiss UI
+                    onDismiss?.invoke()
+                }
+            )
+        }
     }
 
     var onDismiss: Callback? = null
@@ -93,9 +106,19 @@ internal class TextModalViewModel : ViewModel() {
             }
         }
 
-    data class ActionModel(val title: String, val callback: Callback) {
-        operator fun invoke() {
-            callback.invoke()
+    sealed class ActionModel(open val title: String, open val callback: Callback) {
+        data class OtherActionModel(override val title: String, override val callback: Callback) :
+            ActionModel(title, callback) {
+            operator fun invoke() {
+                callback.invoke()
+            }
+        }
+
+        data class DismissActionModel(override val title: String, override val callback: Callback) :
+            ActionModel(title, callback) {
+            operator fun invoke() {
+                callback.invoke()
+            }
         }
     }
 
@@ -117,7 +140,8 @@ internal class TextModalViewModel : ViewModel() {
         ): Map<String, Any?> {
             // we need to include a target interaction id (if any)
             if (engagementResult != null) {
-                val interactionId = (engagementResult as? EngagementResult.InteractionShown)?.interactionId
+                val interactionId =
+                    (engagementResult as? EngagementResult.InteractionShown)?.interactionId
                 return mapOf(
                     DATA_ACTION_ID to action.id,
                     DATA_ACTION_LABEL to action.label,

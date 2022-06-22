@@ -43,7 +43,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/apptentive_rating_dialog_button"
-            style="?apptentiveRatingDialogButtonStyle"
+            style="?apptentiveRatingDialogButtonRateStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="RATE ANDROID DEMO APP"
@@ -51,7 +51,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/apptentive_rating_dialog_remind_button"
-            style="?apptentiveRatingDialogButtonStyle"
+            style="?apptentiveRatingDialogButtonRemindStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="REMIND ME LATER"
@@ -59,7 +59,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/apptentive_rating_dialog_decline_button"
-            style="?apptentiveRatingDialogButtonStyle"
+            style="?apptentiveRatingDialogButtonDeclineStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="NO THANKS"

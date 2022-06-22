@@ -6,8 +6,10 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import apptentive.com.android.concurrent.Executors
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.Provider
+import apptentive.com.android.feedback.backend.ConversationPayloadService
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.DefaultConversationService
+import apptentive.com.android.feedback.backend.MessageFetchService
 import apptentive.com.android.feedback.conversation.ConversationManager
 import apptentive.com.android.feedback.conversation.ConversationRepository
 import apptentive.com.android.feedback.conversation.ConversationSerializer
@@ -34,12 +36,13 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionModule
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.feedback.lifecycle.ApptentiveLifecycleObserver
+import apptentive.com.android.feedback.message.MessageManager
+import apptentive.com.android.feedback.message.MessageManagerFactoryProvider
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.CustomData
 import apptentive.com.android.feedback.model.payloads.AppReleaseAndSDKPayload
 import apptentive.com.android.feedback.model.payloads.EventPayload
 import apptentive.com.android.feedback.model.payloads.ExtendedData
-import apptentive.com.android.feedback.payload.ConversationPayloadService
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadSender
 import apptentive.com.android.feedback.payload.PersistentPayloadQueue
@@ -72,6 +75,7 @@ internal class ApptentiveDefaultClient(
     private lateinit var conversationManager: ConversationManager
     private lateinit var payloadSender: PayloadSender
     private lateinit var interactionModules: Map<String, InteractionModule<Interaction>>
+    private var messageManager: MessageManager? = null
     private var engagement: Engagement = NullEngagement()
 
     //region Initialization
@@ -93,12 +97,21 @@ internal class ApptentiveDefaultClient(
             legacyConversationManagerProvider = object : Provider<LegacyConversationManager> {
                 override fun get() = DefaultLegacyConversationManager(context)
             },
-            RuntimeUtils.getApplicationInfo(context).debuggable
+            isDebuggable = RuntimeUtils.getApplicationInfo(context).debuggable
         )
-        conversationManager.fetchConversationToken {
-            when (it) {
+
+        getConversationToken(conversationService, registerCallback)
+        addObservers(serialPayloadSender, conversationService)
+    }
+
+    private fun getConversationToken(
+        conversationService: ConversationService,
+        registerCallback: ((result: RegisterResult) -> Unit)?
+    ) {
+        conversationManager.fetchConversationToken { result ->
+            when (result) {
                 is Result.Error -> {
-                    when (val error = it.error) {
+                    when (val error = result.error) {
                         is UnexpectedResponseException -> {
                             val responseCode = error.statusCode
                             val message = error.errorMessage
@@ -108,15 +121,34 @@ internal class ApptentiveDefaultClient(
                                 )
                             )
                         }
-                        else -> registerCallback?.invoke(RegisterResult.Exception(it.error))
+                        else -> registerCallback?.invoke(RegisterResult.Exception(result.error))
                     }
                 }
                 is Result.Success -> {
                     conversationManager.tryFetchEngagementManifest()
                     conversationManager.tryFetchAppConfiguration()
+                    val activeConversation = conversationManager.activeConversation.value
+                    if (activeConversation.conversationId != null && activeConversation.conversationToken != null) {
+                        registerCallback?.invoke(RegisterResult.Success)
+                    }
+                    messageManager = MessageManager(
+                        activeConversation.conversationId,
+                        activeConversation.conversationToken,
+                        conversationService as MessageFetchService,
+                        executors.state
+                    ).also { messageManager ->
+                        messageManager.onConversationChanged(activeConversation)
+                    }
+
+                    messageManager?.let {
+                        DependencyProvider.register(MessageManagerFactoryProvider(it))
+                    }
                 }
             }
         }
+    }
+
+    private fun addObservers(serialPayloadSender: SerialPayloadSender, conversationService: ConversationService) {
         conversationManager.activeConversation.observe { conversation ->
             if (Log.canLog(LogLevel.Verbose)) { // avoid unnecessary computations
                 conversation.logConversation()
@@ -144,22 +176,6 @@ internal class ApptentiveDefaultClient(
                 )
             }
         }
-
-        // add an observer to track SDK registration
-        if (registerCallback != null) {
-            var callbackInvoked = false // make sure the initialization callback only gets invoked once
-            conversationManager.activeConversation.observe { conversation ->
-                val conversationId = conversation.conversationId
-                val conversationToken = conversation.conversationToken
-                if (conversationId != null && conversationToken != null) {
-                    if (!callbackInvoked) {
-                        registerCallback.invoke(RegisterResult.Success)
-                        callbackInvoked = true
-                    }
-                }
-            }
-        }
-
         // add an observer to track SDK & AppRelease changes
         conversationManager.sdkAppReleaseUpdate.observe { appReleaseSDKUpdated ->
             if (appReleaseSDKUpdated) {
@@ -169,14 +185,19 @@ internal class ApptentiveDefaultClient(
                 payloadSender.sendPayload(payload)
             }
         }
-
         executors.main.execute {
             Log.i(LIFE_CYCLE_OBSERVER, "Observing App lifecycle")
             ProcessLifecycleOwner.get().lifecycle.addObserver(
-                ApptentiveLifecycleObserver(this, executors.state) {
-                    conversationManager.tryFetchEngagementManifest()
-                    conversationManager.tryFetchAppConfiguration()
-                }
+                ApptentiveLifecycleObserver(
+                    this, executors.state, {
+                        conversationManager.tryFetchEngagementManifest()
+                        conversationManager.tryFetchAppConfiguration()
+                        messageManager?.onAppForeground()
+                    },
+                    {
+                        messageManager?.onAppBackground()
+                    }
+                )
             )
         }
     }

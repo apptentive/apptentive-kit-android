@@ -69,7 +69,7 @@ data class ApptentiveConfiguration(
      * By supplying your custom app store URL here, the user will be directed to
      * the provided URL when prompted to rate your app.
      *
-     * Do NOT use if you wish to use Google In-App Review.
+     * **DO NOT** use if you wish to use Google In-App Review.
      *
      * When `null` (this is the default), the user will see the Google In-App Review and
      * will be able to leave an app rating to the Play Store listing of the app.

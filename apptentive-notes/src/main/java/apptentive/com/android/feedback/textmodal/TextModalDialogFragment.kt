@@ -63,13 +63,21 @@ internal class TextModalDialogFragment : DialogFragment() {
 
             viewModel.actions.forEach { action ->
                 val button = inflater.inflate(R.layout.apptentive_note_action, null) as MaterialButton
+                val dismissButton = inflater.inflate(R.layout.apptentive_note_dismiss_action, null) as MaterialButton
 
-                button.layoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
-                button.text = action.title
-
-                buttonLayout.addView(button)
-                button.setOnClickListener {
-                    action.invoke()
+                when (action) {
+                    is TextModalViewModel.ActionModel.DismissActionModel -> {
+                        dismissButton.layoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
+                        dismissButton.text = action.title
+                        buttonLayout.addView(dismissButton)
+                        dismissButton.setOnClickListener { action.invoke() }
+                    }
+                    is TextModalViewModel.ActionModel.OtherActionModel -> {
+                        button.layoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
+                        button.text = action.title
+                        buttonLayout.addView(button)
+                        button.setOnClickListener { action.invoke() }
+                    }
                 }
             }
             //endregion

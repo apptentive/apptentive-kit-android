@@ -1,8 +1,7 @@
 package apptentive.com.android.feedback.lifecycle
 
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.feedback.ApptentiveClient
 import apptentive.com.android.feedback.engagement.Event
@@ -13,23 +12,26 @@ import apptentive.com.android.util.LogTags.LIFE_CYCLE_OBSERVER
 internal class ApptentiveLifecycleObserver(
     val client: ApptentiveClient,
     private val stateExecutor: Executor,
-    val refreshManifest: () -> Unit
-) : LifecycleObserver {
+    private val onForeground: () -> Unit,
+    private val onBackground: () -> Unit,
+) : DefaultLifecycleObserver {
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    fun onBackground() {
+    override fun onStop(owner: LifecycleOwner) {
         stateExecutor.execute {
             Log.d(LIFE_CYCLE_OBSERVER, "App is in background")
             client.engage(Event.internal(InternalEvent.APP_EXIT.labelName))
+            onBackground()
         }
+        super.onStop(owner)
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    fun onForeground() {
+    // App is in the foreground
+    override fun onStart(owner: LifecycleOwner) {
+        super.onStart(owner)
         stateExecutor.execute {
             Log.d(LIFE_CYCLE_OBSERVER, "App is in foreground")
             client.engage(Event.internal(InternalEvent.APP_LAUNCH.labelName))
-            refreshManifest()
+            onForeground()
         }
     }
 }

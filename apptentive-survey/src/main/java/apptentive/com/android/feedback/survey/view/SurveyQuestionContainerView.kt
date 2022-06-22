@@ -17,7 +17,7 @@ internal class SurveyQuestionContainerView(
     attrs: AttributeSet?,
     defStyleAttr: Int
 ) : FrameLayout(context, attrs, defStyleAttr) {
-    private val titleInstructionsLayout: LinearLayout
+    private val questionLayout: LinearLayout
     private val titleTextView: MaterialTextView
     private val instructionsTextView: MaterialTextView
     private val answerContainerView: LinearLayout
@@ -53,7 +53,7 @@ internal class SurveyQuestionContainerView(
         val contentView = LayoutInflater.from(context)
             .inflate(R.layout.apptentive_survey_question_container, this, true)
 
-        titleInstructionsLayout = contentView.findViewById(R.id.apptentive_question_title_instructions_layout)
+        questionLayout = contentView.findViewById(R.id.apptentive_question_layout)
         titleTextView = contentView.findViewById(R.id.apptentive_question_title)
         instructionsTextView = contentView.findViewById(R.id.apptentive_question_instructions)
         answerContainerView = contentView.findViewById(R.id.apptentive_answer_container)
@@ -72,7 +72,7 @@ internal class SurveyQuestionContainerView(
     }
 
     fun setQuestionContentDescription(cd: String) {
-        titleInstructionsLayout.contentDescription = cd
+        questionLayout.contentDescription = cd
     }
 
     fun setErrorMessage(errorMessage: String?) {
@@ -85,7 +85,7 @@ internal class SurveyQuestionContainerView(
         } else {
             titleTextView.setTextColor(titleTextViewDefaultColor)
             instructionsTextView.setTextColor(instructionsTextViewDefaultColor)
-            errorMessageView.visibility = View.INVISIBLE
+            errorMessageView.visibility = View.GONE
             setQuestionContentDescription(accessibilityDescription)
         }
     }

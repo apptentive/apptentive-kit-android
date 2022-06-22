@@ -13,7 +13,7 @@ internal class NavigateToLinkInteractionLauncher : InteractionLauncher<NavigateT
         engagementContext.executors.main.execute {
             Log.i(INTERACTIONS, "Navigation attempt to URL/Deep Link: ${interaction.url}")
             Log.v(INTERACTIONS, "Navigate to URL/Deep Link interaction data: $interaction")
-            LinkNavigator.navigate(engagementContext, engagementContext.getActivityContext(), interaction)
+            LinkNavigator.navigate(engagementContext, engagementContext.getAppActivity(), interaction)
         }
     }
 }

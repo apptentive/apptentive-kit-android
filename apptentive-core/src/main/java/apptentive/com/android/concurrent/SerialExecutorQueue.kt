@@ -5,10 +5,12 @@ import android.os.HandlerThread
 import android.os.Looper
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.toMilliseconds
+import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.CORE
 
-internal class SerialExecutorQueue : ExecutorQueue {
+@InternalUseOnly
+class SerialExecutorQueue : ExecutorQueue {
     private val handler: Handler
     private val handlerThread: HandlerThread?
 

@@ -24,7 +24,7 @@ internal class SurveyInteractionLauncher : AndroidViewInteractionLauncher<Survey
         DependencyProvider.register(SurveyModelFactoryProvider(engagementContext, interaction))
 
         engagementContext.executors.main.execute {
-            engagementContext.getActivityContext().startViewModelActivity<SurveyActivity>()
+            engagementContext.getAppActivity().startViewModelActivity<SurveyActivity>()
         }
     }
 }

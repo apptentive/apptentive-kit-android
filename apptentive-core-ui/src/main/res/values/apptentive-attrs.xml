@@ -11,9 +11,16 @@
         <attr name="apptentiveLoveDialogHeaderImageStyle" format="reference" />
         <attr name="apptentiveLoveDialogTitleStyle" format="reference" />
         <attr name="apptentiveLoveDialogTitleImageStyle" format="reference" />
+
+        <!-- No -> Yes Ordering (default) -->
         <attr name="apptentiveLoveDialogButtonLayoutStyle" format="reference" />
         <attr name="apptentiveLoveDialogYesButtonStyle" format="reference" />
         <attr name="apptentiveLoveDialogNoButtonStyle" format="reference" />
+
+        <!-- Yes -> No Ordering -->
+        <attr name="apptentiveLoveDialogButtonLayoutStyleAlternate" format="reference" />
+        <attr name="apptentiveLoveDialogYesButtonStyleAlternate" format="reference" />
+        <attr name="apptentiveLoveDialogNoButtonStyleAlternate" format="reference" />
 
         <!-- Note Dialog Styles -->
         <attr name="apptentiveNoteLayoutStyle" format="reference" />
@@ -25,13 +32,16 @@
         <attr name="apptentiveNoteMessageTextStyle" format="reference" />
         <attr name="apptentiveNoteButtonLayoutStyle" format="reference" />
         <attr name="apptentiveNoteButtonStyle" format="reference"/>
+        <attr name="apptentiveNoteDismissButtonStyle" format="reference"/>
 
         <!-- Apptentive Rating Dialog Styles -->
         <attr name="apptentiveRatingDialogLayoutStyle" format="reference" />
         <attr name="apptentiveRatingDialogTitleTextStyle" format="reference" />
         <attr name="apptentiveRatingDialogTitleImageStyle" format="reference" />
         <attr name="apptentiveRatingDialogHeaderImageStyle" format="reference" />
-        <attr name="apptentiveRatingDialogButtonStyle" format="reference"/>
+        <attr name="apptentiveRatingDialogButtonRateStyle" format="reference"/>
+        <attr name="apptentiveRatingDialogButtonRemindStyle" format="reference"/>
+        <attr name="apptentiveRatingDialogButtonDeclineStyle" format="reference"/>
         <attr name="apptentiveRatingDialogMessageTextStyle" format="reference" />
 
         <!-- Generic Dialog Styles -->
@@ -56,6 +66,7 @@
         <!-- TextViews -->
         <attr name="apptentiveSurveyTitleStyle" format="reference"/>
         <attr name="apptentiveSurveyIntroductionStyle" format="reference"/>
+        <attr name="apptentiveSurveyQuestionLayoutStyle" format="reference"/>
         <attr name="apptentiveSurveyQuestionTitleStyle" format="reference"/>
         <attr name="apptentiveSurveyQuestionInstructionsStyle" format="reference"/>
         <attr name="apptentiveSurveyQuestionErrorStyle" format="reference"/>
@@ -75,9 +86,48 @@
         <attr name="apptentiveSurveyOtherTextFieldEditTextStyle" format="reference"/>
         <attr name="apptentiveSurveySubmitButtonStyle" format="reference" />
         <attr name="apptentiveSurveyButtonColorDefault" format="color|reference" />
+        <attr name="apptentiveSurveyQuestionDividerStyle" format="reference" />
         <!-- Survey Styles End -->
 
+        <!-- Message Center -->
+
+        <!-- App Bars -->
+        <attr name="apptentiveMessageCenterToolbarStyle" format="reference"/>
+        <attr name="apptentiveActionButtonStyle" format="reference" />
+
+        <!-- Widgets -->
+        <attr name="apptentiveMessageCenterAttachmentImageStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterComposerStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterSendImageStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterComposerLayoutStyle" format="reference"/>
+        <attr name="apptentiveViewSeparatorStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterGreetingHeaderStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterGreetingStyle" format="reference" />
+        <attr name="apptentiveMessageCenterGreetingBodyTextStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterBubble" format="reference"/>
+        <attr name="apptentiveMessageCenterOutboundBubble" format="reference"/>
+        <attr name="apptentiveMessageCenterInboundBubble" format="reference"/>
+        <attr name="apptentiveMessageCenterInboundBubbleText" format="reference"/>
+        <attr name="apptentiveMessageCenterInboundBubbleStatusText" format="reference"/>
+        <attr name="apptentiveMessageCenterOutboundBubbleText" format="reference"/>
+        <attr name="apptentiveMessageCenterOutboundBubbleStatusText" format="reference"/>
+
+        <!-- Typeface -->
+        <attr name="apptentiveTypefaceMessageCenterGreetingTitle" format="reference"/>
+        <attr name="apptentiveTypefaceMessageCenterGreetingBody" format="reference"/>
+
+        <!-- Text Color -->
+        <attr name="apptentiveTextColorMessageCenterGreetingTitle" format="reference"/>
+        <attr name="apptentiveTextColorMessageCenterGreetingBody" format="reference"/>
+
         <!-- Text Size -->
+        <attr name="apptentiveTextSizeMessageCenterGreetingTitle" format="reference"/>
+        <attr name="apptentiveTextSizeMessageCenterGreetingBody" format="reference"/>
+
+        <!-- Message Center End -->
+
+        <!-- Text Size -->
+        <attr name="apptentiveTextSizeDefault" format="dimension|reference" />
         <attr name="apptentiveTextSizeDialogTitleWithMessage" format="dimension|reference" />
         <attr name="apptentiveTextSizeDialogTitleOrMessageOnly" format="dimension|reference" />
         <attr name="apptentiveTextSizeSurveyQuestionTitle" format="dimension|reference" />
@@ -87,6 +137,7 @@
         <attr name="apptentiveTextSizeBody1" format="dimension|reference" />
         <attr name="apptentiveTextSizeCaption" format="dimension|reference" />
         <attr name="apptentiveTextSizeButtonColored" format="dimension|reference" />
+        <attr name="apptentiveTextSizeSurveyTermsAndConditions" format="dimension|reference"/>
 
         <!-- Text Color -->
         <attr name="apptentiveTextColorDialogTitleWithMessage" format="color|reference"/>
@@ -96,6 +147,7 @@
         <attr name="apptentiveTextColorError" format="color|reference"/>
         <attr name="apptentiveTextColorBody1" format="color|reference"/>
         <attr name="apptentiveTextColorButtonBorderless" format="color|reference"/>
+        <attr name="apptentiveTextColorButtonColored" format="color|reference"/>
         <attr name="apptentiveTextColorSurveyTitle" format="color|reference"/>
         <attr name="apptentiveTextColorSurveyIntroduction" format="color|reference"/>
         <attr name="apptentiveTextColorSurveyRangeLabel" format="color|reference"/>

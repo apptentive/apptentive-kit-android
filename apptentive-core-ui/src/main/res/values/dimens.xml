@@ -8,6 +8,7 @@
     <dimen name="apptentive_text_size_caption">12sp</dimen>
     <dimen name="apptentive_header_alpha">0.9</dimen>
     <dimen name="apptentive_subheader_alpha">0.75</dimen>
+    <dimen name="apptentive_text_size_message_center_title">20sp</dimen>
 
     <!-- Dialogs -->
     <dimen name="apptentive_dialog_message_horizontal_padding">16dp</dimen>
@@ -25,17 +26,42 @@
 
     <!-- Activities -->
     <dimen name="apptentive_activity_horizontal_margin_padding">16dp</dimen>
+    <dimen name="apptentive_survey_question_top_padding">8dp</dimen>
+    <dimen name="apptentive_survey_question_bottom_padding">24dp</dimen>
     <dimen name="apptentive_survey_introduction_padding">16dp</dimen>
-    <dimen name="apptentive_survey_question_title_top_margin">12dp</dimen>
     <dimen name="apptentive_survey_question_title_bottom_margin">8dp</dimen>
     <dimen name="apptentive_survey_question_instructions_bottom_padding">4dp</dimen>
-    <dimen name="apptentive_survey_question_error_bottom_padding">12dp</dimen>
     <dimen name="apptentive_survey_radio_checkbox_min_height">40dp</dimen>
     <dimen name="apptentive_survey_radio_checkbox_range_horizontal_margin">11dp</dimen>
     <dimen name="apptentive_survey_radio_checkbox_horizontal_padding">8dp</dimen>
     <dimen name="apptentive_survey_other_text_field_start_margin">40dp</dimen>
-    <dimen name="apptentive_survey_range_label_vertical_padding">2dp</dimen>
+    <dimen name="apptentive_survey_range_label_top_padding">2dp</dimen>
+    <dimen name="apptentive_survey_range_label_bottom_padding">4dp</dimen>
+    <dimen name="apptentive_survey_range_label_max_height">30dp</dimen>
     <dimen name="apptentive_survey_edit_text_min_height">48dp</dimen>
     <dimen name="apptentive_survey_footers_vertical_padding_margin">16dp</dimen>
     <dimen name="apptentive_bottom_app_bar_min_height">36dp</dimen>
+
+    <!-- Message center -->
+    <dimen name="apptentive_separator_height">1dp</dimen>
+    <dimen name="apptentive_message_composer_text_padding">10dp</dimen>
+    <dimen name="apptentive_message_appbar_action_button_padding">12dp</dimen>
+    <dimen name="apptentive_message_composer_attachment_margin">16dp</dimen>
+    <dimen name="apptentive_message_composer_margin_start">16dp</dimen>
+    <dimen name="apptentive_message_composer_margin_end">16dp</dimen>
+    <dimen name="apptentive_message_composer_margin_bottom">32dp</dimen>
+    <dimen name="apptentive_message_composer_send_margin_end">16dp</dimen>
+    <dimen name="apptentive_separator_margin_bottom">32dp</dimen>
+    <dimen name="apptentive_message_header_margin">16dp</dimen>
+    <dimen name="apptentive_message_greeting_title">16dp</dimen>
+    <dimen name="apptentive_message_greeting_body">16dp</dimen>
+    <dimen name="apptentive_message_bubble_margin">16dp</dimen>
+    <dimen name="apptentive_message_bubble_max_width">280dp</dimen>
+    <dimen name="apptentive_message_bubble_padding_start">16dp</dimen>
+    <dimen name="apptentive_message_bubble_padding_end">32dp</dimen>
+    <dimen name="apptentive_message_bubble_padding_top">16dp</dimen>
+    <dimen name="apptentive_message_bubble_view_padding_bottom">16dp</dimen>
+    <dimen name="apptentive_message_bubble_status_padding_top">4dp</dimen>
+    <dimen name="apptentive_message_bubble_status_padding_bottom">16dp</dimen>
+    <dimen name="apptentive_message_list_margin">16dp</dimen>
 </resources>

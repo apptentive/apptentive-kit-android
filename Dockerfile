@@ -1,4 +1,4 @@
-FROM gradle:7-jdk11 as build
+FROM gradle:7-jdk11-openj9 as build
 
 LABEL maintainer="Apptentive Engineering <engineering@apptentive.com>"
 

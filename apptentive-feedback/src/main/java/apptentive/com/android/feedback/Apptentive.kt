@@ -14,6 +14,7 @@ import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.format
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
+import apptentive.com.android.feedback.message.DEFAULT_INTERNAL_EVENT_NAME
 import apptentive.com.android.feedback.platform.AndroidFileSystemProvider
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.feedback.utils.ThrottleUtils
@@ -207,6 +208,9 @@ object Apptentive {
     }
 
     //endregion
+
+    //region Engagement
+
     @JvmStatic
     @JvmOverloads
     fun engage(eventName: String, callback: EngagementCallback? = null) {
@@ -238,6 +242,8 @@ object Apptentive {
             }
         }
     }
+
+    //endregion
 
     // region Person data updates
 
