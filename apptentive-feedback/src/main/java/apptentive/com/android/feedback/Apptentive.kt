@@ -66,8 +66,8 @@ object Apptentive {
 
     @JvmStatic
     fun registerApptentiveActivityInfoCallback(apptentiveActivityInfo: ApptentiveActivityInfo) {
-        Log.d(FEEDBACK, "Activity info callback is registered")
-        this.activityInfoCallback = apptentiveActivityInfo
+        activityInfoCallback = apptentiveActivityInfo
+        Log.d(FEEDBACK, "Activity info callback for ${activityInfoCallback?.getApptentiveActivityInfo()?.localClassName} registered")
     }
 
     /**
@@ -75,8 +75,8 @@ object Apptentive {
      */
     @JvmStatic
     fun unregisterApptentiveActivityInfoCallback() {
-        Log.d(FEEDBACK, "Activity info callback is unregistered")
-        this.activityInfoCallback = null
+        Log.d(FEEDBACK, "Activity info callback for ${activityInfoCallback?.getApptentiveActivityInfo()?.localClassName} unregistered")
+        activityInfoCallback = null
     }
 
     fun getApptentiveActivityCallback(): ApptentiveActivityInfo? = activityInfoCallback
