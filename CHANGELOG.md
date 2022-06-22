@@ -3,6 +3,9 @@
 #### Improvements
 * Interface customization UI additions
 
+#### New Features
+* [Apptentive UI Cookbook for Interface Customizations](https://learn.apptentive.com/knowledge-base/android-ui-cookbook-overview/)
+
 #### Known Issues and Limitations
 * minSDKVersion is now 21
 * Message Center is not yet implemented
