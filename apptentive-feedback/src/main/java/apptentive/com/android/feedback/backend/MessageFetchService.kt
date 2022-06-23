@@ -9,6 +9,7 @@ interface MessageFetchService {
     fun getMessages(
         conversationToken: String,
         conversationId: String,
+        lastMessageID: String,
         callback: (Result<MessageList>) -> Unit
     )
 }

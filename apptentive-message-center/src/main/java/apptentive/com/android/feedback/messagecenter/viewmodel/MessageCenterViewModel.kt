@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import apptentive.com.android.concurrent.Executors
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.LiveEvent
+import apptentive.com.android.feedback.dependencyprovider.MessageCenterModelFactory
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
@@ -32,10 +33,10 @@ import apptentive.com.android.util.isSame
  *
  */
 
-class MessageCenterViewModel(
-    private val model: MessageCenterModel,
-    private val executors: Executors,
-) : ViewModel() {
+class MessageCenterViewModel : ViewModel() {
+
+    private val model = DependencyProvider.of<MessageCenterModelFactory>().messageCenterModel()
+    private val executors = DependencyProvider.of<EngagementContextFactory>().engagementContext().executors
     private val context: EngagementContext = DependencyProvider.of<EngagementContextFactory>().engagementContext()
     private val messageManager: MessageManager = DependencyProvider.of<MessageManagerFactory>().messageManager()
 

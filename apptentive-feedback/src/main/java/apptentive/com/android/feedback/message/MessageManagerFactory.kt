@@ -8,7 +8,8 @@ interface MessageManagerFactory {
     fun messageManager(): MessageManager
 }
 
-internal class MessageManagerFactoryProvider(val messageManager: MessageManager) : Provider<MessageManagerFactory> {
+@InternalUseOnly
+class MessageManagerFactoryProvider(val messageManager: MessageManager) : Provider<MessageManagerFactory> {
     override fun get(): MessageManagerFactory {
         return object : MessageManagerFactory {
             override fun messageManager(): MessageManager {

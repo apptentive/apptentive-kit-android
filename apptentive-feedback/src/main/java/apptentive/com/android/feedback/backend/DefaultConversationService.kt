@@ -91,11 +91,12 @@ internal class DefaultConversationService(
     override fun getMessages(
         conversationToken: String,
         conversationId: String,
+        lastMessageID: String,
         callback: (Result<MessageList>) -> Unit
     ) {
         val request = createJsonRequest(
             method = HttpMethod.GET,
-            path = "conversations/$conversationId/messages",
+            path = "conversations/$conversationId/messages?starts_after=$lastMessageID",
             headers = MutableHttpHeaders().apply {
                 this["Authorization"] = "Bearer $conversationToken"
             },

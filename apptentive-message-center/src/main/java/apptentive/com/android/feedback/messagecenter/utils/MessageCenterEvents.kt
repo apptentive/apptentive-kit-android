@@ -1,17 +1,5 @@
 package apptentive.com.android.feedback.messagecenter.utils
 
-import apptentive.com.android.core.DependencyProvider
-import apptentive.com.android.feedback.dependencyprovider.MessageCenterModelFactory
-import apptentive.com.android.feedback.engagement.EngagementContextFactory
-import apptentive.com.android.feedback.messagecenter.viewmodel.MessageCenterViewModel
-
-internal fun createMessageCenterViewModel(): MessageCenterViewModel {
-    return MessageCenterViewModel(
-        model = DependencyProvider.of<MessageCenterModelFactory>().messageCenterModel(),
-        executors = DependencyProvider.of<EngagementContextFactory>().engagementContext().executors
-    )
-}
-
 // Message center internal events
 internal object MessageCenterEvents {
     val EVENT_NAME_CLOSE = "close"

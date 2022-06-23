@@ -26,6 +26,8 @@ class MessageManager(
 ) : LifecycleListener, ConversationListener {
     private var isMessageCenterUsed: Boolean = true
     private var isMessageCenterInForeground = false
+    // TODO initialize it from message storage's messageList
+    private var lastDownloadedMessageID: String = ""
     private val pollingScheduler: PollingScheduler by lazy {
         MessagePollingScheduler(serialExecutor)
     }
@@ -51,20 +53,43 @@ class MessageManager(
         senderProfile = conversation.person
     }
 
-    private fun fetchMessages() {
-        // Tie the logic with polling & lastDownloaded messageId
+    @InternalUseOnly
+    fun fetchMessages() {
         if (!conversationId.isNullOrEmpty() && !conversationToken.isNullOrEmpty()) {
-            messageFetchService.getMessages(conversationToken, conversationId) {
+            messageFetchService.getMessages(conversationToken, conversationId, lastDownloadedMessageID) {
                 // Store the message list
                 if (it is Result.Success) {
                     Log.d(MESSAGE_CENTER, "Fetch finished successfully ${it.data}")
-                    // TODO Messages should be stored in message store, temporary logic
-                    messagesSubject.value = it.data.messages ?: listOf()
-                    pollingScheduler.onFetchFinish()
+                    // Merge the new messages with existing messages
+                    val isMessageListUpdated =
+                        mergeMessages(it.data.messages ?: listOf(), it.data.endsWith)
+                    // Fetch until hasMore is true & not receiving empty list
+                    fetchMoreIfNeeded(it.data.hasMore ?: false, isMessageListUpdated)
                 } else {
-                    Log.d(MESSAGE_CENTER, "There is an issue in the message fetch")
+                    Log.d(MESSAGE_CENTER, "Cannot fetch messages, conversationId/conversationToken is null or empty!")
                 }
             }
+        }
+    }
+
+    // TODO Messages should be stored sorted in message store, temporary logic
+    private fun mergeMessages(newMessages: List<Message>, endsWith: String?): Boolean {
+        return if (newMessages.isNotEmpty()) {
+            val mergedList: List<Message> = messagesSubject.value + newMessages
+            // To filter duplicates
+            val finalList: List<Message> = mergedList.toSet().toList()
+            messagesSubject.value = finalList
+            lastDownloadedMessageID = endsWith ?: this.lastDownloadedMessageID
+            true
+        } else false
+    }
+
+    private fun fetchMoreIfNeeded(hasMore: Boolean, receivedNonEmptyMessage: Boolean) {
+        if (hasMore && receivedNonEmptyMessage) {
+            Log.d(MESSAGE_CENTER, "Fetch messages after lastDownloadedMessageID $lastDownloadedMessageID")
+            fetchMessages()
+        } else {
+            pollingScheduler.onFetchFinish()
         }
     }
 
@@ -72,6 +97,7 @@ class MessageManager(
     fun sendMessage(message: String) {
         val context = DependencyProvider.of<EngagementContextFactory>().engagementContext()
         val message = Message(
+            // TODO get the correct type
             type = "Text message",
             body = message,
             sender = Sender(senderProfile.id, senderProfile.name, null),
@@ -81,8 +107,10 @@ class MessageManager(
 
     // Listens to MessageCenterActivity's active status
     fun onMessageCenterLaunchStatusChanged(isActive: Boolean) {
+        // Fetch messages as soon as message center comes to foreground
+        if (isActive) fetchMessages()
         isMessageCenterInForeground = isActive
-        Log.d(MESSAGE_CENTER, "Message center active status $isActive")
+        Log.d(MESSAGE_CENTER, "Message center foreground status $isActive")
         // Resets polling with the right polling interval
         startPolling(true)
     }

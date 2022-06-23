@@ -4,7 +4,6 @@ import android.app.Activity
 import androidx.activity.viewModels
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
-import apptentive.com.android.feedback.messagecenter.utils.createMessageCenterViewModel
 import apptentive.com.android.feedback.messagecenter.viewmodel.MessageCenterViewModel
 import apptentive.com.android.ui.ApptentiveViewModelActivity
 import apptentive.com.android.ui.ViewModelFactory
@@ -25,7 +24,7 @@ open class BaseMessageCenterActivity : ApptentiveViewModelActivity(), Apptentive
      *
      */
     val viewModel: MessageCenterViewModel by viewModels {
-        ViewModelFactory { createMessageCenterViewModel() }
+        ViewModelFactory { MessageCenterViewModel() }
     }
 
     override fun onResume() {
