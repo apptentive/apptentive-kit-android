@@ -11,7 +11,7 @@ import apptentive.com.android.util.generateUUID
 /**
  * A payload class to send messages.
  *
- * @param nonce - The nonce assigned to the message
+ * @param messageNonce - The nonce assigned to the message
  * @param body - Body of the message
  * @param sender -  Data container class for Message Sender.
  * @param hidden - Flag to determine whether the message should be hidden in the Message Center UI
@@ -19,14 +19,14 @@ import apptentive.com.android.util.generateUUID
  */
 
 @InternalUseOnly
-class MessagePayload(
-    nonce: String = generateUUID(),
+data class MessagePayload(
+    val messageNonce: String = generateUUID(),
     val type: String,
     val body: String,
     val sender: Sender?,
     val hidden: Boolean = false,
     val automated: Boolean = false
-) : ConversationPayload(nonce) {
+) : ConversationPayload(messageNonce) {
     override fun getPayloadType(): PayloadType = PayloadType.Message
 
     override fun getContentType(): MediaType = MediaType.applicationJson

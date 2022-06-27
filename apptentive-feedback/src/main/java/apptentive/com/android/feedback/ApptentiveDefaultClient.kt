@@ -36,6 +36,7 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionModule
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.feedback.lifecycle.ApptentiveLifecycleObserver
+import apptentive.com.android.feedback.message.DefaultMessageRepository
 import apptentive.com.android.feedback.message.MessageManager
 import apptentive.com.android.feedback.message.MessageManagerFactoryProvider
 import apptentive.com.android.feedback.model.Conversation
@@ -135,7 +136,8 @@ internal class ApptentiveDefaultClient(
                         activeConversation.conversationId,
                         activeConversation.conversationToken,
                         conversationService as MessageFetchService,
-                        executors.state
+                        executors.state,
+                        DefaultMessageRepository()
                     ).also { messageManager ->
                         messageManager.onConversationChanged(activeConversation)
                     }

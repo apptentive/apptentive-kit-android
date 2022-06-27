@@ -1,8 +1,11 @@
 package apptentive.com.android.feedback.model
 
 import apptentive.com.android.core.TimeInterval
+import apptentive.com.android.feedback.model.Message.Status
 import apptentive.com.android.feedback.model.payloads.MessagePayload
 import apptentive.com.android.util.InternalUseOnly
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.util.generateUUID
 
 /**
@@ -24,9 +27,12 @@ data class MessageList(
  *
  * @param id - The server-side identifier for the message
  * @param nonce - The nonce assigned to the message
- * @param inbound - bool value to determine the message origin
- * @param createdAt - The message created time
  * @param body - Body of the message
+ * @param messageStatus - Status of the message [Status]
+ * @param inbound - bool value to determine the message origin
+ * @param hidden - bool value to determine if the message should be hidden in the UI
+ * @param automated - bool value to determine if the message was sent by an automatic process
+ * @param createdAt - The message created time
  */
 
 @InternalUseOnly
@@ -34,21 +40,43 @@ data class Message(
     val customData: String? = null,
     val id: String? = null,
     val nonce: String = generateUUID(),
-    val type: String,
+    // TODO find if type is needed at all
+    var type: String,
     // val attachments: Attachment?,
     val sender: Sender?,
     val body: String?,
+    var messageStatus: Status = Status.Unknown,
     val inbound: Boolean = false,
     val hidden: Boolean = false,
     val automated: Boolean = false,
     val createdAt: TimeInterval = System.currentTimeMillis().toDouble()
 ) {
     fun toMessagePayload(): MessagePayload = MessagePayload(
-        nonce = nonce,
+        messageNonce = nonce,
         type = type,
         body = body ?: "",
         sender = sender,
     )
+
+    enum class Status {
+        Draft, // A draft message
+        Sending, // Queued for sending
+        Sent, // Posted to the server
+        Failed, // Permanently failed
+        Saved, // Incoming message
+        Unknown;
+
+        companion object {
+            fun parse(state: String): Status {
+                try {
+                    return Status.valueOf(state)
+                } catch (e: IllegalArgumentException) {
+                    Log.e(MESSAGE_CENTER, "Error parsing unknown Message.status: $state")
+                }
+                return Unknown
+            }
+        }
+    }
 }
 
 /**

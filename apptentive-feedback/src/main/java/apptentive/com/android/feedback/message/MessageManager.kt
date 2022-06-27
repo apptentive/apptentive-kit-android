@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.message
 
+import androidx.annotation.VisibleForTesting
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.DependencyProvider
@@ -23,15 +24,16 @@ class MessageManager(
     private val conversationToken: String?,
     private val messageFetchService: MessageFetchService,
     private val serialExecutor: Executor,
+    private val messageRepository: MessageRepository,
 ) : LifecycleListener, ConversationListener {
     private var isMessageCenterUsed: Boolean = true
     private var isMessageCenterInForeground = false
-    // TODO initialize it from message storage's messageList
-    private var lastDownloadedMessageID: String = ""
-    private val pollingScheduler: PollingScheduler by lazy {
+    private var lastDownloadedMessageID: String = messageRepository.getLastReceivedMessageIDFromEntries()
+    @VisibleForTesting
+    val pollingScheduler: PollingScheduler by lazy {
         MessagePollingScheduler(serialExecutor)
     }
-    private val messagesSubject: BehaviorSubject<List<Message>> = BehaviorSubject(listOf())
+    private val messagesSubject: BehaviorSubject<List<Message>> = BehaviorSubject(messageRepository.getAllMessages())
     val messages: Observable<List<Message>> get() = messagesSubject
 
     private lateinit var configuration: Configuration
@@ -39,6 +41,7 @@ class MessageManager(
 
     override fun onAppBackground() {
         Log.d(MESSAGE_CENTER, "App is in the background, stop polling")
+        messageRepository.saveMessages()
         stopPolling()
     }
 
@@ -72,14 +75,19 @@ class MessageManager(
         }
     }
 
-    // TODO Messages should be stored sorted in message store, temporary logic
     private fun mergeMessages(newMessages: List<Message>, endsWith: String?): Boolean {
         return if (newMessages.isNotEmpty()) {
-            val mergedList: List<Message> = messagesSubject.value + newMessages
-            // To filter duplicates
-            val finalList: List<Message> = mergedList.toSet().toList()
-            messagesSubject.value = finalList
-            lastDownloadedMessageID = endsWith ?: this.lastDownloadedMessageID
+            lastDownloadedMessageID = endsWith ?: messageRepository.getLastReceivedMessageIDFromEntries()
+            // Update storage
+            messageRepository.addOrUpdateMessage(
+                newMessages.map { message ->
+                    message.messageStatus = Message.Status.Saved
+                    // TODO revisit type field
+                    message.type = "Text"
+                    message
+                }
+            )
+            messagesSubject.value = messageRepository.getAllMessages()
             true
         } else false
     }
@@ -97,8 +105,8 @@ class MessageManager(
     fun sendMessage(message: String) {
         val context = DependencyProvider.of<EngagementContextFactory>().engagementContext()
         val message = Message(
-            // TODO get the correct type
-            type = "Text message",
+            // TODO revisit type field
+            type = "Text",
             body = message,
             sender = Sender(senderProfile.id, senderProfile.name, null),
         )
@@ -107,8 +115,11 @@ class MessageManager(
 
     // Listens to MessageCenterActivity's active status
     fun onMessageCenterLaunchStatusChanged(isActive: Boolean) {
-        // Fetch messages as soon as message center comes to foreground
-        if (isActive) fetchMessages()
+        if (isActive) {
+            messagesSubject.value = messageRepository.getAllMessages()
+            // Fetch messages as soon as message center comes to foreground
+            fetchMessages()
+        }
         isMessageCenterInForeground = isActive
         Log.d(MESSAGE_CENTER, "Message center foreground status $isActive")
         // Resets polling with the right polling interval

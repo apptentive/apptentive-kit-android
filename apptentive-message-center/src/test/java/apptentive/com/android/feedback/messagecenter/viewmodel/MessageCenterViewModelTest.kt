@@ -18,6 +18,7 @@ import apptentive.com.android.feedback.message.MessageCenterInteraction
 import apptentive.com.android.feedback.message.MessageManager
 import apptentive.com.android.feedback.message.MessageManagerFactory
 import apptentive.com.android.feedback.message.MessageManagerFactoryProvider
+import apptentive.com.android.feedback.message.MessageRepository
 import apptentive.com.android.feedback.messagecenter.utils.MessageCenterEvents.EVENT_NAME_CLOSE
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.MessageList
@@ -47,8 +48,9 @@ class MessageCenterViewModelTest : TestCase() {
         val messageManager = MessageManager(
             "conversationId",
             "token",
-            TestMessageFetchService(),
-            TestExecutor()
+            MockMessageFetchService(),
+            MockExecutor(),
+            MockMessageRepository()
         )
         DependencyProvider.register(
             MessageCenterModelProvider(
@@ -118,7 +120,7 @@ class MessageCenterViewModelTest : TestCase() {
         )
 }
 
-class TestMessageFetchService : MessageFetchService {
+class MockMessageFetchService : MessageFetchService {
     override fun getMessages(
         conversationToken: String,
         conversationId: String,
@@ -129,7 +131,7 @@ class TestMessageFetchService : MessageFetchService {
     }
 }
 
-class TestExecutor : Executor {
+class MockExecutor : Executor {
     override fun execute(task: () -> Unit) {
         task()
     }
@@ -144,4 +146,20 @@ class MockEngagementContextFactory(val getEngagementContext: () -> EngagementCon
             }
         }
     }
+}
+
+class MockMessageRepository : MessageRepository {
+    override fun getLastReceivedMessageIDFromEntries(): String = ""
+
+    override fun addOrUpdateMessage(message: List<Message>) {}
+
+    override fun getAllMessages(): List<Message> {
+        return testMessageList
+    }
+
+    override fun saveMessages() {}
+
+    override fun deleteMessage(nonce: String) {}
+
+    override fun updateMessage(message: Message) {}
 }
