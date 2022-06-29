@@ -36,7 +36,7 @@ class MessageManager(
     private val messagesSubject: BehaviorSubject<List<Message>> = BehaviorSubject(messageRepository.getAllMessages())
     val messages: Observable<List<Message>> get() = messagesSubject
 
-    private lateinit var configuration: Configuration
+    private var configuration: Configuration = Configuration()
     private lateinit var senderProfile: Person
 
     override fun onAppBackground() {

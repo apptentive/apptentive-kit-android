@@ -138,10 +138,7 @@ internal class ApptentiveDefaultClient(
                         conversationService as MessageFetchService,
                         executors.state,
                         DefaultMessageRepository()
-                    ).also { messageManager ->
-                        messageManager.onConversationChanged(activeConversation)
-                    }
-
+                    )
                     messageManager?.let {
                         DependencyProvider.register(MessageManagerFactoryProvider(it))
                     }
@@ -177,6 +174,7 @@ internal class ApptentiveDefaultClient(
                     )
                 )
             }
+            messageManager?.onConversationChanged(conversation)
         }
         // add an observer to track SDK & AppRelease changes
         conversationManager.sdkAppReleaseUpdate.observe { appReleaseSDKUpdated ->
