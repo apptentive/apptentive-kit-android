@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.messagecenter.viewmodel
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import apptentive.com.android.concurrent.Executors
@@ -15,6 +16,8 @@ import apptentive.com.android.feedback.message.MessageManagerFactory
 import apptentive.com.android.feedback.messagecenter.utils.MessageCenterEvents
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.MessageCenterModel
+import apptentive.com.android.feedback.utils.convertToGroupDate
+import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.isSame
 
 /**
@@ -44,7 +47,7 @@ class MessageCenterViewModel : ViewModel() {
     val greeting: String = model.greeting?.title ?: ""
     val greetingBody: String = model.greeting?.body ?: ""
     val composerHint: String = model.composer?.hintText ?: ""
-    var messages: List<Message> = getMessagesFromManager().toMutableList()
+    var messages: List<Message> = groupMessages(getMessagesFromManager())
     val isFirstLaunch: Boolean = messages.isEmpty()
 
     private val newMessagesSubject = LiveEvent<List<Message>>()
@@ -57,11 +60,12 @@ class MessageCenterViewModel : ViewModel() {
     val clearMessageStream: LiveData<Boolean> = clearMessage
 
     private val messageObserver: (List<Message>) -> Unit = { newMessageList: List<Message> ->
-        if (!messages.isSame(newMessageList)) {
+        val newGroupedMessages = groupMessages(newMessageList)
+        if (!messages.isSame(newGroupedMessages)) {
             executors.main.execute {
-                val newMessage = newMessageList.filterNot { messages.contains(it) }
+                val newMessage = newGroupedMessages.filterNot { messages.contains(it) }
                 newMessagesSubject.value = newMessage
-                messages = newMessageList
+                messages = newGroupedMessages
             }
         }
     }
@@ -74,6 +78,20 @@ class MessageCenterViewModel : ViewModel() {
         // Clears the observer
         messageManager.messages.removeObserver(messageObserver)
         super.onCleared()
+    }
+
+    @VisibleForTesting
+    @InternalUseOnly
+    fun groupMessages(messages: List<Message>): List<Message> {
+        var lastGroupTimestamp: String? = null
+
+        return messages.onEach { message ->
+            val groupTimestamp = convertToGroupDate(message.createdAt)
+            if (lastGroupTimestamp != groupTimestamp) {
+                lastGroupTimestamp = groupTimestamp
+                message.groupTimestamp = groupTimestamp
+            }
+        }
     }
 
     private fun getMessagesFromManager(): List<Message> = messageManager.getAllMessages()

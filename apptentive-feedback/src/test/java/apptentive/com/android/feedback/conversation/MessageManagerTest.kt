@@ -99,7 +99,7 @@ private class MockExecutor : Executor {
 }
 
 private class MockMessageRepository : MessageRepository {
-    override fun addOrUpdateMessage(message: List<Message>) {}
+    override fun addOrUpdateMessage(messages: List<Message>) {}
 
     override fun getLastReceivedMessageIDFromEntries(): String = ""
 

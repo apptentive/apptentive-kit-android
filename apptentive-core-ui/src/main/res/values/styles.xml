@@ -208,6 +208,7 @@
         <item name="apptentiveMessageCenterGreetingStyle">@style/Apptentive.Widget.MessageCenter.Greeting.Title</item>
         <item name="apptentiveMessageCenterGreetingBodyTextStyle">@style/Apptentive.Widget.MessageCenter.Greeting.Body</item>
         <item name="apptentiveMessageCenterBubble">@style/Apptentive.Widget.MessageCenter.Bubble.View</item>
+        <item name="apptentiveMessageCenterGroupTimeStamp">@style/Apptentive.Widget.MessageCenter.Text.GroupTimestamp</item>
         <item name="apptentiveMessageCenterOutboundBubble">@style/Apptentive.Widget.MessageCenter.Bubble.Outbound</item>
         <item name="apptentiveMessageCenterInboundBubble">@style/Apptentive.Widget.MessageCenter.Bubble.Inbound</item>
         <item name="apptentiveMessageCenterInboundBubbleText">@style/Apptentive.Widget.MessageCenter.Text.Bubble</item>
@@ -667,6 +668,11 @@
         <item name="android:paddingEnd">@dimen/apptentive_message_bubble_padding_end</item>
         <item name="android:paddingTop">@dimen/apptentive_message_bubble_padding_top</item>
         <item name="android:maxWidth">@dimen/apptentive_message_bubble_max_width</item>
+    </style>
+
+    <style name="Apptentive.Widget.MessageCenter.Text.GroupTimestamp">
+        <item name="android:textColor">?colorPrimary</item>
+        <item name="android:paddingBottom">8dp</item>
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.Bubble.View" parent="">

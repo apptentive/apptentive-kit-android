@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.model
 
 import apptentive.com.android.core.TimeInterval
+import apptentive.com.android.core.toSeconds
 import apptentive.com.android.feedback.model.Message.Status
 import apptentive.com.android.feedback.model.payloads.MessagePayload
 import apptentive.com.android.util.InternalUseOnly
@@ -49,7 +50,8 @@ data class Message(
     val inbound: Boolean = false,
     val hidden: Boolean = false,
     val automated: Boolean = false,
-    val createdAt: TimeInterval = System.currentTimeMillis().toDouble()
+    val createdAt: TimeInterval = toSeconds(System.currentTimeMillis()), // Parity because server returns seconds
+    var groupTimestamp: String? = null
 ) {
     fun toMessagePayload(): MessagePayload = MessagePayload(
         messageNonce = nonce,

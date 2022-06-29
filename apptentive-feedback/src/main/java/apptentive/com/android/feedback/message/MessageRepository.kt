@@ -9,7 +9,7 @@ import apptentive.com.android.util.LogTags.MESSAGE_CENTER
 
 @InternalUseOnly
 interface MessageRepository {
-    fun addOrUpdateMessage(message: List<Message>)
+    fun addOrUpdateMessage(messages: List<Message>)
     fun updateMessage(message: Message)
     fun getAllMessages(): List<Message>
     fun getLastReceivedMessageIDFromEntries(): String

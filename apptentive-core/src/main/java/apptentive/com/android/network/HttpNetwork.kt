@@ -82,8 +82,8 @@ class DefaultHttpNetwork(
      */
     private fun openConnection(request: HttpRequest<*>): HttpURLConnection {
         val connection = createConnection(request.url)
-        connection.connectTimeout = toMilliseconds(connectTimeout)
-        connection.readTimeout = toMilliseconds(readTimeout)
+        connection.connectTimeout = toMilliseconds(connectTimeout).toInt()
+        connection.readTimeout = toMilliseconds(readTimeout).toInt()
         connection.useCaches = false
         connection.doInput = true
         return connection

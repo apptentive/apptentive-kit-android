@@ -3,12 +3,13 @@ package apptentive.com.android.feedback.messagecenter.view
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import apptentive.com.android.feedback.messagecenter.R
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.utils.convertToDate
+import com.google.android.material.textview.MaterialTextView
 
 class MessageListAdapter(dataSet: List<Message>) : RecyclerView.Adapter<MessageViewHolder>() {
 
@@ -23,12 +24,17 @@ class MessageListAdapter(dataSet: List<Message>) : RecyclerView.Adapter<MessageV
     override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
         val message = listItems[position]
         with(holder.itemView) {
+            val groupTimestamp = findViewById<MaterialTextView>(R.id.apptentive_message_group_time_stamp)
             val inboundLayout = findViewById<ConstraintLayout>(R.id.apptentive_message_inbound)
             val outboundLayout = findViewById<ConstraintLayout>(R.id.apptentive_message_outbound)
-            val inboundText = findViewById<TextView>(R.id.apptentive_message_inbound_text)
-            val inboundStatus = findViewById<TextView>(R.id.apptentive_message_inbound_time_stamp)
-            val outboundText = findViewById<TextView>(R.id.apptentive_message_outbound_text)
-            val outboundStatus = findViewById<TextView>(R.id.apptentive_message_outbound_time_stamp)
+            val inboundText = findViewById<MaterialTextView>(R.id.apptentive_message_inbound_text)
+            val inboundStatus = findViewById<MaterialTextView>(R.id.apptentive_message_inbound_time_stamp)
+            val outboundText = findViewById<MaterialTextView>(R.id.apptentive_message_outbound_text)
+            val outboundStatus = findViewById<MaterialTextView>(R.id.apptentive_message_outbound_time_stamp)
+
+            groupTimestamp.isVisible = message.groupTimestamp != null
+            groupTimestamp.text = message.groupTimestamp
+
             if (message.inbound) {
                 inboundLayout.visibility = View.VISIBLE
                 outboundLayout.visibility = View.GONE
