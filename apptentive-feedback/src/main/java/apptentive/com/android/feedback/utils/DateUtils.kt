@@ -27,17 +27,17 @@ fun convertToGroupDate(timeInterval: TimeInterval): String {
 
     return when {
         groupDate.get(Calendar.YEAR) < currentDate.get(Calendar.YEAR) -> {
-            val dateFormat = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
+            val dateFormat = SimpleDateFormat("MMMM d, yyyy", Locale.getDefault())
             dateFormat.format(Date(createdAt))
         }
 
         createdAt < currentDate.timeInMillis - (DAY_IN_MILLIS * 6) -> {
-            val dateFormat = SimpleDateFormat("MM/dd", Locale.getDefault())
+            val dateFormat = SimpleDateFormat("MMMM d", Locale.getDefault())
             dateFormat.format(Date(createdAt))
         }
 
         else -> {
-            val dateFormat = SimpleDateFormat("EEEE MM/dd", Locale.getDefault())
+            val dateFormat = SimpleDateFormat("EEEE, MMMM d", Locale.getDefault())
             dateFormat.format(Date(createdAt))
         }
     }
