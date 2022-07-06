@@ -6,6 +6,7 @@ import apptentive.com.android.util.LogTags.PROFILE_DATA_UPDATE
 
 internal interface ApptentiveClient {
     fun engage(event: Event): EngagementResult
+    fun sendHiddenTextMessage(message: String)
     fun updateDevice(customData: Pair<String, Any?>? = null, deleteKey: String? = null)
     fun updatePerson(name: String? = null, email: String? = null, customData: Pair<String, Any?>? = null, deleteKey: String? = null)
 
@@ -26,6 +27,10 @@ private class ApptentiveNullClient : ApptentiveClient {
         deleteKey: String?
     ) {
         Log.d(PROFILE_DATA_UPDATE, "Apptentive SDK is not initialized; update person failed")
+    }
+
+    override fun sendHiddenTextMessage(message: String) {
+        Log.d(PROFILE_DATA_UPDATE, "Apptentive SDK is not initialized; send attachment text failed")
     }
 
     override fun updateDevice(customData: Pair<String, Any?>?, deleteKey: String?) {

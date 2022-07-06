@@ -30,6 +30,7 @@ import apptentive.com.android.platform.SharedPrefConstants
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.FEEDBACK
 import apptentive.com.android.util.LogTags.INTERACTIONS
+import apptentive.com.android.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.util.LogTags.NETWORK
 import apptentive.com.android.util.LogTags.PROFILE_DATA_UPDATE
 import apptentive.com.android.util.LogTags.SYSTEM
@@ -261,7 +262,25 @@ object Apptentive {
         client.engage(Event.internal(DEFAULT_INTERNAL_EVENT_NAME))
     }
 
-    // region Person data updates
+    /**
+     * Sends a text message to the server. This message will be visible in the conversation view on the server, but will
+     * not be shown in the client's Message Center.
+     *
+     * @param text The message you wish to send.
+     */
+    fun sendAttachmentText(text: String?) {
+        stateExecutor.execute {
+            text?.let {
+                client.sendHiddenTextMessage(text)
+            } ?: run {
+                Log.d(MESSAGE_CENTER, "Attachment text was null")
+            }
+        }
+    }
+
+    //endregion
+
+    //region Person data updates
 
     /**
      * Sets the user's name. This name will be sent to the Apptentive server and displayed in conversations you have

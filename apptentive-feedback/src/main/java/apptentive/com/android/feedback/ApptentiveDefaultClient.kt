@@ -270,6 +270,10 @@ internal class ApptentiveDefaultClient(
         return DependencyProvider.of<EngagementContextFactory>().engagementContext().engage(event)
     }
 
+    override fun sendHiddenTextMessage(message: String) {
+        messageManager?.sendMessage(message, true)
+    }
+
     override fun updatePerson(
         name: String?,
         email: String?,

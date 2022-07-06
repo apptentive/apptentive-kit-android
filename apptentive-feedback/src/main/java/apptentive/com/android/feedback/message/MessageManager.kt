@@ -102,13 +102,14 @@ class MessageManager(
     }
 
     // Test method to send message until UI is built
-    fun sendMessage(message: String) {
+    fun sendMessage(message: String, isHidden: Boolean = false) {
         val context = DependencyProvider.of<EngagementContextFactory>().engagementContext()
         val message = Message(
             // TODO revisit type field
             type = "Text",
             body = message,
             sender = Sender(senderProfile.id, senderProfile.name, null),
+            hidden = isHidden
         )
         context.sendPayload(message.toMessagePayload())
     }

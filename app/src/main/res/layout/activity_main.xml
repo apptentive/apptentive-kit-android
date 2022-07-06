@@ -98,6 +98,39 @@
                 app:layout_constraintStart_toEndOf="@+id/eventTextLayout"
                 app:layout_constraintTop_toTopOf="@id/eventTextLayout" />
 
+            <!-- Temporary for sending hidden MS text -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/hiddenMessageCenterTextLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_4dp"
+                android:layout_marginEnd="@dimen/margin_4dp"
+                android:hint="Hidden Message Center Text"
+                app:layout_constraintEnd_toStartOf="@+id/engageEventButton"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/eventTextLayout">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/hiddenMessageCenterTextEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/hiddenMessageCenterEventButton"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_4dp"
+                android:layout_marginTop="@dimen/event_button_top_margin"
+                android:minHeight="@dimen/button_min_height"
+                android:text="Send"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/hiddenMessageCenterTextLayout"
+                app:layout_constraintTop_toTopOf="@id/hiddenMessageCenterTextLayout" />
+
             <TextView
                 android:id="@+id/interactionsText"
                 style="@style/TextAppearance.AppCompat.Subhead"
@@ -108,7 +141,7 @@
                 android:textAllCaps="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/eventTextLayout" />
+                app:layout_constraintTop_toBottomOf="@id/hiddenMessageCenterTextLayout" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/loveDialogButton"

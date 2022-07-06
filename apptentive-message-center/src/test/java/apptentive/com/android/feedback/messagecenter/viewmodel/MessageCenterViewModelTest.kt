@@ -76,6 +76,15 @@ val testMessageList: List<Message> = listOf(
         body = "Hello5",
         sender = null,
         createdAt = toSeconds(System.currentTimeMillis() - (DAY_IN_MILLIS * 365))
+    ),
+    Message(
+        id = "Test6 Hidden",
+        nonce = "UUID6",
+        type = "MC6",
+        body = "Hello6",
+        sender = null,
+        createdAt = toSeconds(System.currentTimeMillis() - 1000),
+        hidden = true
     )
 )
 
@@ -142,7 +151,7 @@ class MessageCenterViewModelTest : TestCase() {
         val manager = DependencyProvider.of<MessageManagerFactory>().messageManager()
         manager.fetchMessages()
         addResult(viewModel.messages)
-        assertResults(testMessageList)
+        assertResults(testMessageList.filterNot { it.hidden })
     }
 
     @Test

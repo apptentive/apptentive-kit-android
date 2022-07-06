@@ -58,6 +58,7 @@ data class Message(
         type = type,
         body = body ?: "",
         sender = sender,
+        hidden = hidden
     )
 
     enum class Status {

@@ -63,6 +63,20 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
             }
         }
 
+        // Temporary
+        binding.hiddenMessageCenterEventButton.setOnClickListener {
+            val hiddenText = binding.hiddenMessageCenterTextEditText.text?.toString()?.trim()
+            if (!hiddenText.isNullOrEmpty()) {
+                Apptentive.sendAttachmentText(hiddenText)
+                binding.hiddenMessageCenterTextLayout.isErrorEnabled = false
+                binding.hiddenMessageCenterTextLayout.error = ""
+                binding.hiddenMessageCenterTextEditText.setText("")
+            } else {
+                binding.hiddenMessageCenterTextLayout.isErrorEnabled = true
+                binding.hiddenMessageCenterTextLayout.error = "No text entered"
+            }
+        }
+
         binding.loveDialogButton.setOnClickListener {
             Apptentive.engage("love_dialog_event") { handleResult(it) }
         }

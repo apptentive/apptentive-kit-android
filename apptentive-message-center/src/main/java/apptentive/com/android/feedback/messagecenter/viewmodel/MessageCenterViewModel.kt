@@ -47,7 +47,7 @@ class MessageCenterViewModel : ViewModel() {
     val greeting: String = model.greeting?.title ?: ""
     val greetingBody: String = model.greeting?.body ?: ""
     val composerHint: String = model.composer?.hintText ?: ""
-    var messages: List<Message> = groupMessages(getMessagesFromManager())
+    var messages: List<Message> = groupMessages(getMessagesFromManager().filterHidden())
     val isFirstLaunch: Boolean = messages.isEmpty()
 
     private val newMessagesSubject = LiveEvent<List<Message>>()
@@ -60,7 +60,7 @@ class MessageCenterViewModel : ViewModel() {
     val clearMessageStream: LiveData<Boolean> = clearMessage
 
     private val messageObserver: (List<Message>) -> Unit = { newMessageList: List<Message> ->
-        val newGroupedMessages = groupMessages(newMessageList)
+        val newGroupedMessages = groupMessages(newMessageList.filterHidden())
         if (!messages.isSame(newGroupedMessages)) {
             executors.main.execute {
                 val newMessage = newGroupedMessages.filterNot { messages.contains(it) }
@@ -95,6 +95,8 @@ class MessageCenterViewModel : ViewModel() {
     }
 
     private fun getMessagesFromManager(): List<Message> = messageManager.getAllMessages()
+
+    private fun List<Message>.filterHidden(): List<Message> = filterNot { it.hidden }
 
     fun exitMessageCenter() {
         onMessageCenterEvent(MessageCenterEvents.EVENT_NAME_CLOSE)
