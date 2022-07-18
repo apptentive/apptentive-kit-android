@@ -80,12 +80,47 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
         }
     }
 
+    private fun handleDraftMessage(shouldSave: Boolean) { // vs shouldRestore
+        // Consts for shared prefs
+        val MESSAGE_CENTER_DRAFT = "com.apptentive.sdk.messagecenter.draft"
+        val MESSAGE_CENTER_DRAFT_TEXT = "message.text"
+        val MESSAGE_CENTER_DRAFT_ATTACHMENT_1 = "message.attachment.1"
+        val MESSAGE_CENTER_DRAFT_ATTACHMENT_2 = "message.attachment.2"
+        val MESSAGE_CENTER_DRAFT_ATTACHMENT_3 = "message.attachment.3"
+        val MESSAGE_CENTER_DRAFT_ATTACHMENT_4 = "message.attachment.4"
+
+        val sharedPrefs = getSharedPreferences(MESSAGE_CENTER_DRAFT, MODE_PRIVATE)
+
+        if (shouldSave) {
+            sharedPrefs
+                .edit()
+                .putString(MESSAGE_CENTER_DRAFT_TEXT, messageText.text?.toString())
+                // TODO Path to attachment files instead of storing the entire file.
+                .putString(MESSAGE_CENTER_DRAFT_ATTACHMENT_1, "")
+                .putString(MESSAGE_CENTER_DRAFT_ATTACHMENT_2, "")
+                .putString(MESSAGE_CENTER_DRAFT_ATTACHMENT_3, "")
+                .putString(MESSAGE_CENTER_DRAFT_ATTACHMENT_4, "")
+                .apply()
+        } else {
+            val draftText = sharedPrefs.getString(MESSAGE_CENTER_DRAFT_TEXT, null)
+            val draftAttachment1Path = sharedPrefs.getString(MESSAGE_CENTER_DRAFT_ATTACHMENT_1, null)
+            val draftAttachment2Path = sharedPrefs.getString(MESSAGE_CENTER_DRAFT_ATTACHMENT_2, null)
+            val draftAttachment3Path = sharedPrefs.getString(MESSAGE_CENTER_DRAFT_ATTACHMENT_3, null)
+            val draftAttachment4Path = sharedPrefs.getString(MESSAGE_CENTER_DRAFT_ATTACHMENT_4, null)
+
+            messageText.setText(draftText.orEmpty())
+            // TODO Set draft attachments
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         viewModel.onMessageViewStatusChanged(true)
+        handleDraftMessage(false)
     }
 
     override fun onStop() {
+        handleDraftMessage(true)
         viewModel.onMessageViewStatusChanged(false)
         super.onStop()
     }
