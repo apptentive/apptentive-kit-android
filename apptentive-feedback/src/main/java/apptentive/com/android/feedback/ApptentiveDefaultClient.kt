@@ -46,6 +46,7 @@ import apptentive.com.android.feedback.model.payloads.EventPayload
 import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadSender
+import apptentive.com.android.feedback.payload.PayloadType
 import apptentive.com.android.feedback.payload.PersistentPayloadQueue
 import apptentive.com.android.feedback.payload.SerialPayloadSender
 import apptentive.com.android.feedback.platform.DefaultAppReleaseFactory
@@ -377,8 +378,19 @@ internal class ApptentiveDefaultClient(
     @WorkerThread
     private fun onPayloadSendFinish(result: Result<PayloadData>) {
         when (result) {
-            is Result.Success -> Log.d(PAYLOADS, "Payload of type \'${result.data.type}\' successfully sent")
-            is Result.Error -> Log.e(PAYLOADS, "Payload failed to send: ${result.error.cause?.message}")
+            is Result.Success -> {
+                val resultData = result.data
+
+                if (resultData.type == PayloadType.Message) messageManager?.updateMessageStatus(true, resultData)
+
+                Log.d(PAYLOADS, "Payload of type \'${resultData.type}\' successfully sent")
+            }
+            is Result.Error -> {
+                val resultData = result.data as? PayloadData
+                if (resultData?.type == PayloadType.Message) messageManager?.updateMessageStatus(false, resultData)
+
+                Log.e(PAYLOADS, "Payload failed to send: ${result.error.cause?.message}")
+            }
         }
     }
 

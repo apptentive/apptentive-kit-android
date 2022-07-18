@@ -36,11 +36,11 @@ internal class ConversationPayloadService(
                     when (result.error) {
                         is SendErrorException -> {
                             // Convert to more specific Exception
-                            callback(Result.Error(PayloadSendException(payload, cause = result.error)))
+                            callback(Result.Error(payload, PayloadSendException(payload, cause = result.error)))
                         }
                         else -> {
                             // Unexpected Exception type
-                            callback(Result.Error(result.error))
+                            callback(Result.Error(payload, result.error))
                         }
                     }
                 }

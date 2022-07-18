@@ -38,6 +38,7 @@ internal class DefaultMessageRepository : MessageRepository {
             if (existing != null) {
                 existing.id = message.id
                 existing.messageState = message.messageStatus.name
+                message.createdAt = JsonConverter.fromJson<Message>(existing.messageJson).createdAt // Use the original createdAt time, not the server's
                 existing.messageJson = JsonConverter.toJson(message)
             } else {
                 val newEntry = MessageEntry(

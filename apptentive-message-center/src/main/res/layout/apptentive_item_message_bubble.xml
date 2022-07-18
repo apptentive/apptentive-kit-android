@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="01/02/2022" />
 
-    <!-- Outbound message for the dashboard -->
+    <!-- Outbound message from the dashboard (Our sent messages) -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/apptentive_message_outbound"
         style="?attr/apptentiveMessageCenterOutboundBubble"
@@ -47,7 +47,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Inbound message for the dashboard -->
+    <!-- Inbound message to the dashboard  (Our received messages) -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/apptentive_message_inbound"
         style="?attr/apptentiveMessageCenterInboundBubble"

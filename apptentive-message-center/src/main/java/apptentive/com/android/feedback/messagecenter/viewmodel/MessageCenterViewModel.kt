@@ -18,7 +18,8 @@ import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.MessageCenterModel
 import apptentive.com.android.feedback.utils.convertToGroupDate
 import apptentive.com.android.util.InternalUseOnly
-import apptentive.com.android.util.isSame
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags
 
 /**
  * ViewModel for MessageCenter
@@ -60,13 +61,10 @@ class MessageCenterViewModel : ViewModel() {
     val clearMessageStream: LiveData<Boolean> = clearMessage
 
     private val messageObserver: (List<Message>) -> Unit = { newMessageList: List<Message> ->
-        val newGroupedMessages = groupMessages(newMessageList.filterHidden())
-        if (!messages.isSame(newGroupedMessages)) {
-            executors.main.execute {
-                val newMessage = newGroupedMessages.filterNot { messages.contains(it) }
-                newMessagesSubject.value = newMessage
-                messages = newGroupedMessages
-            }
+        messages = mergeMessages(newMessageList)
+
+        executors.main.execute {
+            if (messages.isNotEmpty()) newMessagesSubject.value = messages
         }
     }
 
@@ -94,6 +92,23 @@ class MessageCenterViewModel : ViewModel() {
         }
     }
 
+    private fun mergeMessages(newMessages: List<Message>): List<Message> {
+        val mergedMessagesList = mutableListOf<Message>()
+
+        // If message is already in list, update it
+        mergedMessagesList.addAll(
+            messages.map { message ->
+                newMessages.firstOrNull { it.nonce == message.nonce } ?: message
+            }
+        )
+
+        // If message is not in list, add it
+        mergedMessagesList.addAll(newMessages.filterNot { mergedMessagesList.contains(it) })
+
+        // Sort all by createdAt time
+        return mergedMessagesList.filterNot { it.hidden }.sortedBy { it.createdAt }
+    }
+
     private fun getMessagesFromManager(): List<Message> = messageManager.getAllMessages()
 
     private fun List<Message>.filterHidden(): List<Message> = filterNot { it.hidden }
@@ -104,8 +119,10 @@ class MessageCenterViewModel : ViewModel() {
     }
 
     fun sendMessage(message: String) {
-        clearMessage.postValue(true)
-        messageManager.sendMessage(message)
+        if (message.isNotBlank()) {
+            clearMessage.postValue(true)
+            messageManager.sendMessage(message)
+        } else Log.d(LogTags.MESSAGE_CENTER, "Cannot send blank message")
     }
 
     fun onMessageCenterEvent(event: String) {

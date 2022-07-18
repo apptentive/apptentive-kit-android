@@ -131,9 +131,9 @@ internal class SerialPayloadSender(
     private fun notifyFailure(error: Throwable, payload: PayloadData) {
         try {
             if (error is PayloadSendException) {
-                callback(Result.Error(error))
+                callback(Result.Error(payload, error))
             } else {
-                callback(Result.Error(PayloadSendException(payload, cause = error)))
+                callback(Result.Error(payload, PayloadSendException(payload, cause = error)))
             }
         } catch (e: Exception) {
             Log.e(PAYLOADS, "Payload NOT sent with exception", e)

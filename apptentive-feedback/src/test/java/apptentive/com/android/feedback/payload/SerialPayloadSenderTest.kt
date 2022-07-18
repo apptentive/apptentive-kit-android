@@ -32,9 +32,12 @@ class SerialPayloadSenderTest : TestCase() {
 
     @Test
     fun testFailedPayload() {
+        val payload2 = createPayload("payload-2")
+
         val service = MockPayloadService {
             when (it.nonce) {
                 "payload-2" -> Result.Error(
+                    data = payload2.toPayloadData(),
                     error = PayloadSendException(it)
                 )
                 else -> Result.Success(it)
@@ -42,7 +45,6 @@ class SerialPayloadSenderTest : TestCase() {
         }
 
         val payload1 = createPayload("payload-1")
-        val payload2 = createPayload("payload-2")
         val payload3 = createPayload("payload-3")
         val sender = SerialPayloadSender(
             payloadQueue = MockPayloadQueue(),

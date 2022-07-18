@@ -82,13 +82,14 @@
             android:id="@+id/apptentive_message_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_margin="@dimen/apptentive_message_list_margin"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/apptentive_separator"
-            app:layout_behavior ="@string/appbar_scrolling_view_behavior"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/apptentive_item_message_bubble"/>
 
         <!-- Composer -->

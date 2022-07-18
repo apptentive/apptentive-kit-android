@@ -30,7 +30,7 @@ data class MessageList(
  * @param nonce - The nonce assigned to the message
  * @param body - Body of the message
  * @param messageStatus - Status of the message [Status]
- * @param inbound - bool value to determine the message origin
+ * @param inbound - bool value to determine the message origin. true = inbound to THE BACKEND. false = outbound from THE BACKEND.
  * @param hidden - bool value to determine if the message should be hidden in the UI
  * @param automated - bool value to determine if the message was sent by an automatic process
  * @param createdAt - The message created time
@@ -50,7 +50,7 @@ data class Message(
     val inbound: Boolean = false,
     val hidden: Boolean = false,
     val automated: Boolean = false,
-    val createdAt: TimeInterval = toSeconds(System.currentTimeMillis()), // Parity because server returns seconds
+    var createdAt: TimeInterval = toSeconds(System.currentTimeMillis()), // Parity because server returns seconds
     var groupTimestamp: String? = null
 ) {
     fun toMessagePayload(): MessagePayload = MessagePayload(

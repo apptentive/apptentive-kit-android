@@ -92,7 +92,7 @@ class DefaultHttpClient(
 
             // invoke callback
             callbackExecutor.execute {
-                callback(Result.Error(e))
+                callback(Result.Error(request, e))
             }
         }
     }

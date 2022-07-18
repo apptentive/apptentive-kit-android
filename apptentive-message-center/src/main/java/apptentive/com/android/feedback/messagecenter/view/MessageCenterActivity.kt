@@ -9,7 +9,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.Group
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import apptentive.com.android.feedback.messagecenter.R
 import com.google.android.material.appbar.MaterialToolbar
@@ -29,17 +28,17 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
         messageText = findViewById(R.id.apptentive_composer_text)
         messageList = findViewById(R.id.apptentive_message_list)
         greetingGroup = findViewById(R.id.apptentive_message_center_greeting_group)
+        messageListAdapter = MessageListAdapter()
 
         topAppBar.title = viewModel.title
         messageText.hint = viewModel.composerHint
-        messageListAdapter = MessageListAdapter(viewModel.messages)
         findViewById<TextView>(R.id.apptentive_message_center_greeting).text = viewModel.greeting
         findViewById<TextView>(R.id.apptentive_message_center_greeting_body).text = viewModel.greetingBody
-        messageList.apply {
-            layoutManager = LinearLayoutManager(this@MessageCenterActivity)
-            adapter = messageListAdapter
-            val lastItem = messageListAdapter.itemCount - 1
-            if (lastItem >= 0) smoothScrollToPosition(lastItem)
+
+        messageList.adapter = messageListAdapter
+        messageListAdapter.submitList(viewModel.messages) {
+            val lastItem = messageListAdapter.currentList.size - 1
+            if (lastItem >= 0) messageList.scrollToPosition(lastItem) // TODO Scroll to first unread
         }
 
         if (viewModel.isFirstLaunch && viewModel.messages.isEmpty()) greetingGroup.visibility = View.VISIBLE
@@ -64,11 +63,10 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
         viewModel.newMessages.observe(this) { newMessages ->
             greetingGroup.visibility = View.GONE
             messageList.visibility = View.VISIBLE
-            // Update adapter
-            messageListAdapter.listItems.addAll(newMessages)
-            messageListAdapter.notifyDataSetChanged()
-            val lastItem = messageListAdapter.itemCount - 1
-            if (lastItem >= 0) messageList.smoothScrollToPosition(messageListAdapter.itemCount - 1)
+            messageListAdapter.submitList(newMessages) {
+                val lastItem = messageListAdapter.currentList.size - 1
+                if (lastItem >= 0) messageList.smoothScrollToPosition(lastItem) // TODO Scroll to first unread
+            }
         }
     }
 

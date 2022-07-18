@@ -13,6 +13,7 @@ import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.Sender
+import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.MESSAGE_CENTER
@@ -101,19 +102,26 @@ class MessageManager(
         }
     }
 
-    // Test method to send message until UI is built
-    fun sendMessage(message: String, isHidden: Boolean = false) {
+    @InternalUseOnly
+    fun sendMessage(messageText: String, isHidden: Boolean = false) {
         val context = DependencyProvider.of<EngagementContextFactory>().engagementContext()
         val message = Message(
             // TODO revisit type field
             type = "Text",
-            body = message,
+            body = messageText,
             sender = Sender(senderProfile.id, senderProfile.name, null),
-            hidden = isHidden
+            hidden = isHidden,
+            messageStatus = Message.Status.Sending,
+            inbound = true
         )
+
+        messageRepository.addOrUpdateMessage(listOf(message))
+        messagesSubject.value = messageRepository.getAllMessages()
+
         context.sendPayload(message.toMessagePayload())
     }
 
+    @InternalUseOnly
     // Listens to MessageCenterActivity's active status
     fun onMessageCenterLaunchStatusChanged(isActive: Boolean) {
         if (isActive) {
@@ -127,8 +135,21 @@ class MessageManager(
         startPolling(true)
     }
 
+    @InternalUseOnly
     // Fetches all the messages from message store
     fun getAllMessages(): List<Message> = messages.value
+
+    @InternalUseOnly
+    fun updateMessageStatus(isSuccess: Boolean, payloadData: PayloadData) {
+        messageRepository.getAllMessages().find {
+            it.nonce == payloadData.nonce
+        }?.apply {
+            messageStatus = if (isSuccess) Message.Status.Sent else Message.Status.Failed
+        }?.also {
+            messageRepository.addOrUpdateMessage(listOf(it))
+            messagesSubject.value = messageRepository.getAllMessages()
+        }
+    }
 
     private fun startPolling(resetPolling: Boolean = false) {
         val delay =
