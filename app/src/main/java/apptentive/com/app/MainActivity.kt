@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
         }
 
         binding.dataButton.setOnClickListener {
-            val intent = Intent(this, DataActivity::class.java)
+            val intent = Intent(this, DevFunctionsActivity::class.java)
             startActivity(intent)
         }
 
@@ -60,20 +60,6 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
             } else {
                 binding.eventTextLayout.isErrorEnabled = true
                 binding.eventTextLayout.error = "No event entered"
-            }
-        }
-
-        // Temporary
-        binding.hiddenMessageCenterEventButton.setOnClickListener {
-            val hiddenText = binding.hiddenMessageCenterTextEditText.text?.toString()?.trim()
-            if (!hiddenText.isNullOrEmpty()) {
-                Apptentive.sendAttachmentText(hiddenText)
-                binding.hiddenMessageCenterTextLayout.isErrorEnabled = false
-                binding.hiddenMessageCenterTextLayout.error = ""
-                binding.hiddenMessageCenterTextEditText.setText("")
-            } else {
-                binding.hiddenMessageCenterTextLayout.isErrorEnabled = true
-                binding.hiddenMessageCenterTextLayout.error = "No text entered"
             }
         }
 

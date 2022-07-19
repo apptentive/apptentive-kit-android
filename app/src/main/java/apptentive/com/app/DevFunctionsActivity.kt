@@ -1,19 +1,24 @@
 package apptentive.com.app
 
+import android.Manifest
+import android.net.Uri
 import android.os.Bundle
+import android.webkit.MimeTypeMap
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import apptentive.com.android.feedback.Apptentive
-import apptentive.com.app.databinding.ActivityDataBinding
+import apptentive.com.app.databinding.ActivityDevFunctionsBinding
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
-class DataActivity : AppCompatActivity() {
-    lateinit var binding: ActivityDataBinding
+class DevFunctionsActivity : AppCompatActivity() {
+    lateinit var binding: ActivityDevFunctionsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,16 +27,15 @@ class DataActivity : AppCompatActivity() {
         val isNightMode = prefs.getBoolean(EXTRA_NIGHT_MODE, false)
         delegate.localNightMode = if (isNightMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
 
-        binding = ActivityDataBinding.inflate(layoutInflater)
+        binding = ActivityDevFunctionsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.backButton.setOnClickListener {
             onBackPressed()
         }
-    }
 
-    override fun onResume() {
-        super.onResume()
+        setupFunctionTypeDropdown()
 
+        // Custom Data
         setupDataTypeDropdown()
         setupCustomStringData()
         setupCustomNumberData()
@@ -39,6 +43,36 @@ class DataActivity : AppCompatActivity() {
         setupRemoveData()
         setupPersonName()
         setupPersonEmail()
+
+        // Message Center
+        setupMessageCenterHiddenText()
+        setupMessageCenterHiddenTextFile()
+        setupSendAttachmentFile()
+        setupFilePicker()
+        setupPhotoPicker()
+    }
+
+    //region Data
+    private fun setupFunctionTypeDropdown() {
+        val DATA = "DATA"
+        val MESSAGE_CENTER = "MESSAGE CENTER"
+
+        val functionTypeValues = listOf(DATA, MESSAGE_CENTER)
+        val functionTypesAdapter = ArrayAdapter(this, R.layout.list_item, functionTypeValues)
+
+        binding.apply {
+            dataTypesLayout.isVisible = functionsTypeDropdown.text.toString() == DATA
+            messageCenterLayout.isVisible = functionsTypeDropdown.text.toString() == MESSAGE_CENTER
+
+            functionsTypeDropdown.setAdapter(functionTypesAdapter)
+
+            functionsTypeDropdown.addTextChangedListener {
+                dataTypesLayout.isVisible = it.toString() == DATA
+                messageCenterLayout.isVisible = it.toString() == MESSAGE_CENTER
+            }
+
+            functionsTypeDropdown.setText(MESSAGE_CENTER, false)
+        }
     }
 
     private fun setupDataTypeDropdown() {
@@ -278,10 +312,169 @@ class DataActivity : AppCompatActivity() {
     }
 
     private fun makeToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 
     enum class DataTypes {
         PERSON, DEVICE
     }
+    //endregion
+
+    //region Message Center
+    private fun setupMessageCenterHiddenText() {
+        binding.apply {
+            hiddenMessageCenterTextButton.setOnClickListener {
+                val hiddenText = hiddenMessageCenterTextEditText.text?.toString()?.trim()
+                if (!hiddenText.isNullOrEmpty()) {
+                    Apptentive.sendAttachmentText(hiddenText)
+                    hiddenMessageCenterTextLayout.isErrorEnabled = false
+                    hiddenMessageCenterTextLayout.error = ""
+                    hiddenMessageCenterTextEditText.setText("")
+
+                    makeToast("Hidden text sent: $hiddenText")
+                } else {
+                    hiddenMessageCenterTextLayout.isErrorEnabled = true
+                    hiddenMessageCenterTextLayout.error = "No text entered"
+                }
+            }
+        }
+    }
+
+    private fun setupMessageCenterHiddenTextFile() {
+        binding.apply {
+            hiddenMessageCenterTextFileButton.setOnClickListener {
+                val text = hiddenMessageCenterTextFileEditText.text?.toString()
+                val bytes = text?.toByteArray()
+//                Apptentive.sendAttachmentFile(bytes, "text/plain")
+//                hiddenMessageCenterTextFileEditText.setText("")
+
+                makeToast("Attachments not yet implemented.\nText: $text\nBytes: $bytes")
+            }
+        }
+    }
+
+    private fun setupSendAttachmentFile() {
+        val PPTX = "test.pptx"
+        val DOCX = "test.docx"
+        val PDF = "test.pdf"
+
+        val attachmentTypeValues = listOf(PPTX, DOCX, PDF)
+        val attachmentTypesAdapter = ArrayAdapter(this, R.layout.list_item, attachmentTypeValues)
+
+        binding.apply {
+            attachmentFileDropdown.setAdapter(attachmentTypesAdapter)
+
+            sendAttachmentFileButton.setOnClickListener {
+                if (!attachmentFileDropdown.text.isNullOrEmpty()) {
+                    val fileName = attachmentFileDropdown.text.toString()
+                    val uri = createFileAssetUriString(fileName)
+                    val extension = MimeTypeMap.getFileExtensionFromUrl(uri)
+                    val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+                    val fis = openFileAsset(this@DevFunctionsActivity, fileName)
+//                        Apptentive.sendAttachmentFile(fis, mimeType)
+
+                    attachmentFileLayout.isErrorEnabled = false
+                    attachmentFileLayout.error = ""
+
+                    makeToast(
+                        "Attachments not yet implemented.\nFile name: $fileName\n" +
+                            "URI: $uri\nExtension: $extension\nMime Type: $mimeType"
+                    )
+                } else {
+                    attachmentFileLayout.isErrorEnabled = true
+                    attachmentFileLayout.error = "No file selected"
+                }
+            }
+        }
+    }
+
+    private fun setupFilePicker() {
+        binding.apply {
+            filePickerButton.setOnClickListener {
+                selectFile.launch("*/*")
+            }
+
+            sendFileButton.setOnClickListener {
+                if (!filePickerEditText.text.isNullOrEmpty()) {
+//                    Apptentive.sendAttachmentFile(fileUri.toString())
+                    filePickerTextLayout.isErrorEnabled = false
+                    filePickerTextLayout.error = ""
+
+                    makeToast("Attachments not yet implemented.\n URI: $fileUri")
+                } else {
+                    filePickerTextLayout.isErrorEnabled = true
+                    filePickerTextLayout.error = "No file selected"
+                }
+            }
+        }
+    }
+
+    private var fileUri: Uri? = null
+    private val selectFile =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { returnUri ->
+            returnUri?.let { uri ->
+                fileUri = uri
+                binding.filePickerEditText.setText(getFileName(contentResolver, uri))
+            } ?: makeToast("Picker cancelled")
+        }
+
+    private fun setupPhotoPicker() {
+        binding.apply {
+            photoPickerButton.setOnClickListener {
+                launchCamera()
+            }
+
+            sendPhotoButton.setOnClickListener {
+                if (!photoPickerEditText.text.isNullOrEmpty()) {
+//                    Apptentive.sendAttachmentFile(photoUri.toString())
+                    photoPickerTextLayout.isErrorEnabled = false
+                    photoPickerTextLayout.error = ""
+
+                    makeToast("Attachments not yet implemented.\n URI: $photoUri")
+                } else {
+                    photoPickerTextLayout.isErrorEnabled = true
+                    photoPickerTextLayout.error = "No photo taken"
+                }
+            }
+        }
+    }
+
+    private val requestCameraPermissionAndTakePic =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { cameraPermissionGranted ->
+            when {
+                cameraPermissionGranted -> makePhotoFileAndTakePicture()
+                shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) -> makeToast("Camera permission is required to take a photo")
+                else -> openPermissionNeededDialog(this, "Camera", "take a photo")
+            }
+        }
+
+    private var photoUri: Uri? = null
+    private val takePhoto =
+        registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+            if (success && photoUri != null) binding.photoPickerEditText.setText(
+                getFileName(
+                    contentResolver,
+                    photoUri!!
+                )
+            )
+            else makeToast("Camera cancelled")
+        }
+
+    private fun makePhotoFileAndTakePicture() {
+        createImageFile(this@DevFunctionsActivity)?.let {
+            photoUri = FileProvider.getUriForFile(
+                this@DevFunctionsActivity,
+                "${BuildConfig.APPLICATION_ID}.provider",
+                it
+            )
+        }
+
+        photoUri?.apply { takePhoto.launch(this) } ?: makeToast("Error occurred while creating image file")
+    }
+
+    private fun launchCamera() {
+        requestCameraPermissionAndTakePic.launch(Manifest.permission.CAMERA)
+    }
+
+    //endregion
 }
