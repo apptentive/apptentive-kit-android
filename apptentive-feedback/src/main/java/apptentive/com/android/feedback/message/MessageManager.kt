@@ -63,7 +63,7 @@ class MessageManager(
             messageFetchService.getMessages(conversationToken, conversationId, lastDownloadedMessageID) {
                 // Store the message list
                 if (it is Result.Success) {
-                    Log.d(MESSAGE_CENTER, "Fetch finished successfully ${it.data}")
+                    Log.d(MESSAGE_CENTER, "Fetch finished successfully")
                     // Merge the new messages with existing messages
                     val isMessageListUpdated =
                         mergeMessages(it.data.messages ?: listOf(), it.data.endsWith)

@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.backend
 
 import apptentive.com.android.core.getTimeSeconds
+import apptentive.com.android.feedback.BuildConfig
 import apptentive.com.android.feedback.model.AppRelease
 import apptentive.com.android.feedback.model.Configuration
 import apptentive.com.android.feedback.model.Device
@@ -94,9 +95,14 @@ internal class DefaultConversationService(
         lastMessageID: String,
         callback: (Result<MessageList>) -> Unit
     ) {
+        val debugPageSize = 5
+        val path = if (BuildConfig.DEBUG)
+            "conversations/$conversationId/messages?starts_after=$lastMessageID&page_size=$debugPageSize"
+        else
+            "conversations/$conversationId/messages?starts_after=$lastMessageID" // Takes default page size set by the server
         val request = createJsonRequest(
             method = HttpMethod.GET,
-            path = "conversations/$conversationId/messages?starts_after=$lastMessageID",
+            path = path,
             headers = MutableHttpHeaders().apply {
                 this["Authorization"] = "Bearer $conversationToken"
             },
