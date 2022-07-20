@@ -151,7 +151,7 @@ class MessageCenterViewModelTest : TestCase() {
         val manager = DependencyProvider.of<MessageManagerFactory>().messageManager()
         manager.fetchMessages()
         addResult(viewModel.messages)
-        assertResults(testMessageList.filterNot { it.hidden }.sortedBy { it.createdAt })
+        assertResults(viewModel.groupMessages(testMessageList.filterNot { it.hidden }.sortedBy { it.createdAt }))
     }
 
     @Test
@@ -180,9 +180,10 @@ class MessageCenterViewModelTest : TestCase() {
         viewModel.messages.forEach { assertTrue(isInThePast(it.createdAt)) }
         assertEquals(yearAgo, viewModel.messages[0].groupTimestamp)
         assertEquals(weekAgo, viewModel.messages[1].groupTimestamp)
-        assertNull(viewModel.messages[2].groupTimestamp) // If same day, don't show group timestamp
-        assertEquals(dayAgo, viewModel.messages[3].groupTimestamp)
+        assertEquals(dayAgo, viewModel.messages[2].groupTimestamp)
+        assertNull(viewModel.messages[3].groupTimestamp) // If same day, don't show group timestamp
         assertEquals(now, viewModel.messages[4].groupTimestamp)
+        assertEquals(5, viewModel.messages.size)
     }
 }
 

@@ -48,7 +48,7 @@ class MessageCenterViewModel : ViewModel() {
     val greeting: String = model.greeting?.title ?: ""
     val greetingBody: String = model.greeting?.body ?: ""
     val composerHint: String = model.composer?.hintText ?: ""
-    var messages: List<Message> = groupMessages(getMessagesFromManager().filterHidden())
+    var messages: List<Message> = getMessagesFromManager().filterSortAndGroupMessages()
     val isFirstLaunch: Boolean = messages.isEmpty()
 
     private val newMessagesSubject = LiveEvent<List<Message>>()
@@ -105,13 +105,14 @@ class MessageCenterViewModel : ViewModel() {
         // If message is not in list, add it
         mergedMessagesList.addAll(newMessages.filterNot { mergedMessagesList.contains(it) })
 
-        // Sort all by createdAt time
-        return mergedMessagesList.filterNot { it.hidden }.sortedBy { it.createdAt }
+        // Filter out hidden messages, sort by createdAt time, then group by date
+        return mergedMessagesList.filterSortAndGroupMessages()
     }
 
     private fun getMessagesFromManager(): List<Message> = messageManager.getAllMessages()
 
-    private fun List<Message>.filterHidden(): List<Message> = filterNot { it.hidden }
+    private fun List<Message>.filterSortAndGroupMessages(): List<Message> =
+        groupMessages(filterNot { it.hidden }.sortedBy { it.createdAt })
 
     fun exitMessageCenter() {
         onMessageCenterEvent(MessageCenterEvents.EVENT_NAME_CLOSE)

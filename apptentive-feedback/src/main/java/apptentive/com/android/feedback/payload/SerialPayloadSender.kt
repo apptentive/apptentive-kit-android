@@ -59,7 +59,7 @@ internal class SerialPayloadSender(
             }
             else -> {
                 // Don't delete, retry on next launch
-                Log.w(PAYLOADS, "Unknown payload exception: ${error.cause}")
+                Log.w(PAYLOADS, "Unknown payload exception: $error")
                 false
             }
         }

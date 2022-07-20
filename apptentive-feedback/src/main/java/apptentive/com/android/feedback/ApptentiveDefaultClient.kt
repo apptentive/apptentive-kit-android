@@ -389,7 +389,7 @@ internal class ApptentiveDefaultClient(
                 val resultData = result.data as? PayloadData
                 if (resultData?.type == PayloadType.Message) messageManager?.updateMessageStatus(false, resultData)
 
-                Log.e(PAYLOADS, "Payload failed to send: ${result.error.cause?.message}")
+                Log.e(PAYLOADS, "Payload failed to send: ${result.error.cause}")
             }
         }
     }
