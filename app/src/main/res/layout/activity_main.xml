@@ -98,19 +98,6 @@
                 app:layout_constraintStart_toEndOf="@+id/eventTextLayout"
                 app:layout_constraintTop_toTopOf="@id/eventTextLayout" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/hiddenMessageCenterTextButton"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_4dp"
-                android:layout_marginTop="@dimen/event_button_top_margin"
-                android:minHeight="@dimen/button_min_height"
-                android:text="Send"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/eventTextLayout"
-                app:layout_constraintTop_toTopOf="@id/eventTextLayout" />
-
             <TextView
                 android:id="@+id/interactionsText"
                 style="@style/TextAppearance.AppCompat.Subhead"
