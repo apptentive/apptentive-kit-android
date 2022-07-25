@@ -71,4 +71,4 @@ data class MessageCenterInteraction(
     }
 }
 
-internal const val DEFAULT_INTERNAL_EVENT_NAME = "show_message_center"
+internal const val EVENT_MESSAGE_CENTER = "show_message_center"

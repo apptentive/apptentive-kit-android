@@ -17,7 +17,7 @@ interface MessageRepository {
     fun saveMessages()
 }
 
-internal class DefaultMessageRepository : MessageRepository {
+internal class DefaultMessageRepository(val messageSerializer: MessageSerializer) : MessageRepository {
 
     private val messageEntries: MutableList<MessageEntry> = mutableListOf()
 
@@ -51,13 +51,13 @@ internal class DefaultMessageRepository : MessageRepository {
                 messageEntries.add(newEntry)
             }
         }
+        saveMessages()
     }
 
     override fun getAllMessages(): List<Message> {
-        // TODO Build the messageEntries from the persistent message storage file
         // TODO Works only for Text message type, need small refactor for the messages with attachments
         val messageList = mutableListOf<Message>()
-        for (entry in messageEntries) {
+        for (entry in messageSerializer.loadMessages()) {
             val message = buildMessageFromJson(entry.messageJson)
             message.messageStatus = Message.Status.parse(entry.messageState)
             messageList.add(message)
@@ -71,19 +71,22 @@ internal class DefaultMessageRepository : MessageRepository {
             existing.id = message.id
             existing.messageState = message.messageStatus.name
             existing.messageJson = JsonConverter.toJson(message)
+            saveMessages()
         } else {
             Log.d(MESSAGE_CENTER, "Cannot update message. Message with nonce ${message.nonce} not found.")
         }
     }
 
     override fun saveMessages() {
-        // TODO serialize into a file
+        messageSerializer.saveMessages(messages = messageEntries)
     }
 
     override fun deleteMessage(nonce: String) {
         val entry = messageEntries.filter { it.nonce == nonce }
-        if (entry != null) messageEntries.removeAll(entry)
-        else Log.d(MESSAGE_CENTER, "Cannot delete message. Message with nonce $nonce not found.")
+        if (entry != null) {
+            messageEntries.removeAll(entry)
+            saveMessages()
+        } else Log.d(MESSAGE_CENTER, "Cannot delete message. Message with nonce $nonce not found.")
     }
 
     data class MessageEntry(

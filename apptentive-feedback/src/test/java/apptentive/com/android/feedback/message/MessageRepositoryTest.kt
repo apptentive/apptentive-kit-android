@@ -1,9 +1,10 @@
-package apptentive.com.android.feedback.conversation
+package apptentive.com.android.feedback.message
 
 import apptentive.com.android.TestCase
-import apptentive.com.android.feedback.message.DefaultMessageRepository
+import apptentive.com.android.feedback.conversation.testMessageList
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.Sender
+import apptentive.com.android.serialization.json.JsonConverter
 import org.junit.Test
 
 class MessageRepositoryTest : TestCase() {
@@ -20,7 +21,7 @@ class MessageRepositoryTest : TestCase() {
 
     @Test
     fun testAddMessages() {
-        val messageRepo = DefaultMessageRepository()
+        val messageRepo = DefaultMessageRepository(MockMessageSerializer(testMessageList))
         messageRepo.addOrUpdateMessage(testMessageList)
         addResult(testMessageList)
         assertResults(messageRepo.getAllMessages())
@@ -28,8 +29,6 @@ class MessageRepositoryTest : TestCase() {
 
     @Test
     fun testUpdateMessage() {
-        val messageRepository = DefaultMessageRepository()
-        messageRepository.addOrUpdateMessage(testMessageList)
         val updatedMessage = Message(
             id = "Test",
             nonce = "UUID",
@@ -37,6 +36,9 @@ class MessageRepositoryTest : TestCase() {
             body = "Hi",
             sender = Sender(id = "1234", name = "John Doe", profilePhoto = null),
         )
+        val messageRepository = DefaultMessageRepository(MockMessageSerializer(listOf(updatedMessage)))
+        messageRepository.addOrUpdateMessage(testMessageList)
+
         // Testing update message
         messageRepository.updateMessage(updatedMessage)
         addResult(listOf(updatedMessage))
@@ -66,7 +68,7 @@ class MessageRepositoryTest : TestCase() {
 
     @Test
     fun deleteMessage() {
-        val messageRepository = DefaultMessageRepository()
+        val messageRepository = DefaultMessageRepository(MockMessageSerializer(listOf()))
         messageRepository.addOrUpdateMessage(testMessageList)
         messageRepository.deleteMessage("UUID")
         addResult(listOf<Message>())
@@ -75,7 +77,7 @@ class MessageRepositoryTest : TestCase() {
 
     @Test
     fun testLastReceivedMessageID() {
-        val messageRepository = DefaultMessageRepository()
+        val messageRepository = DefaultMessageRepository(MockMessageSerializer(testMessageList))
         val messages = listOf(
             Message(
                 id = "Test1",
@@ -98,4 +100,27 @@ class MessageRepositoryTest : TestCase() {
         addResult("Test2")
         assertResults(messageRepository.getLastReceivedMessageIDFromEntries())
     }
+
+    private class MockMessageSerializer(val testList: List<Message>) : MessageSerializer {
+        override fun loadMessages(): List<DefaultMessageRepository.MessageEntry> {
+            return convertToMessageEntry(testList)
+        }
+
+        override fun saveMessages(messages: List<DefaultMessageRepository.MessageEntry>) {}
+    }
+}
+
+internal fun convertToMessageEntry(messages: List<Message>): List<DefaultMessageRepository.MessageEntry> {
+    val messageEntries = mutableListOf<DefaultMessageRepository.MessageEntry>()
+    for (message in messages) {
+        val newEntry = DefaultMessageRepository.MessageEntry(
+            id = message.id,
+            messageState = message.messageStatus.name,
+            createdAt = message.createdAt,
+            nonce = message.nonce,
+            messageJson = JsonConverter.toJson(message)
+        )
+        messageEntries.add(newEntry)
+    }
+    return messageEntries
 }

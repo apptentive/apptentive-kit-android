@@ -37,6 +37,7 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionRespon
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.feedback.lifecycle.ApptentiveLifecycleObserver
 import apptentive.com.android.feedback.message.DefaultMessageRepository
+import apptentive.com.android.feedback.message.DefaultMessageSerializer
 import apptentive.com.android.feedback.message.MessageManager
 import apptentive.com.android.feedback.message.MessageManagerFactoryProvider
 import apptentive.com.android.feedback.model.Conversation
@@ -138,7 +139,9 @@ internal class ApptentiveDefaultClient(
                         activeConversation.conversationToken,
                         conversationService as MessageFetchService,
                         executors.state,
-                        DefaultMessageRepository()
+                        DefaultMessageRepository(
+                            messageSerializer = DefaultMessageSerializer(messagesFile = getMessagesFile())
+                        )
                     )
                     messageManager?.let {
                         DependencyProvider.register(MessageManagerFactoryProvider(it))
@@ -409,6 +412,11 @@ internal class ApptentiveDefaultClient(
 
         private fun getConversationDir(): File {
             return FileUtil.getInternalDir("conversations", createIfNecessary = true)
+        }
+
+        private fun getMessagesFile(): File {
+            val conversationsDir = getConversationDir()
+            return File(conversationsDir, "messages.bin")
         }
     }
 }

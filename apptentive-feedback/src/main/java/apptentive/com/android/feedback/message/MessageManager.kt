@@ -42,8 +42,8 @@ class MessageManager(
 
     override fun onAppBackground() {
         Log.d(MESSAGE_CENTER, "App is in the background, stop polling")
-        messageRepository.saveMessages()
         stopPolling()
+        messageRepository.saveMessages()
     }
 
     override fun onAppForeground() {

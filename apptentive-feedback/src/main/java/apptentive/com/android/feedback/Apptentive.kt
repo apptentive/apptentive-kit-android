@@ -14,7 +14,8 @@ import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.format
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
-import apptentive.com.android.feedback.message.DEFAULT_INTERNAL_EVENT_NAME
+import apptentive.com.android.feedback.message.EVENT_MESSAGE_CENTER
+import apptentive.com.android.feedback.message.MessageSerializerException
 import apptentive.com.android.feedback.platform.AndroidFileSystemProvider
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.feedback.utils.ThrottleUtils
@@ -257,9 +258,16 @@ object Apptentive {
     @JvmStatic
     @JvmOverloads
     fun showMessageCenter(callback: EngagementCallback? = null) {
-        val engagementCallback: ((EngagementResult) -> Unit)? =
-            if (callback != null) callback::onComplete else null
-        client.engage(Event.internal(DEFAULT_INTERNAL_EVENT_NAME))
+        stateExecutor.execute {
+            try {
+                val callbackFunc: ((EngagementResult) -> Unit)? =
+                    if (callback != null) callback::onComplete else null
+                // TODO pass callback function
+                client.engage(Event.internal(EVENT_MESSAGE_CENTER))
+            } catch (e: MessageSerializerException) {
+                Log.e(MESSAGE_CENTER, "Message center cannot be launched ${e.message}")
+            }
+        }
     }
 
     /**
