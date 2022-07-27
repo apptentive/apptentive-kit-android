@@ -1,7 +1,6 @@
 package apptentive.com.android.feedback.message
 
 import apptentive.com.android.TestCase
-import apptentive.com.android.feedback.conversation.testMessageList
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.Sender
 import apptentive.com.android.serialization.json.JsonConverter

@@ -54,7 +54,7 @@ class MessageManager(
 
     override fun onAppForeground() {
         if (hasSentMessage) {
-            Log.d(MESSAGE_CENTER, "App is in the foreground & canTriggerBgPoll is true, start polling")
+            Log.d(MESSAGE_CENTER, "App is in the foreground & hasSentMessage is true, start polling")
             startPolling()
         }
     }
@@ -137,7 +137,10 @@ class MessageManager(
 
         context.sendPayload(message.toMessagePayload())
         clearCustomData()
-        if (!hasSentMessage) hasSentMessage = true
+        if (!hasSentMessage) {
+            hasSentMessage = true
+            startPolling()
+        }
     }
 
     @InternalUseOnly

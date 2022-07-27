@@ -1,4 +1,4 @@
-package apptentive.com.android.feedback.conversation
+package apptentive.com.android.feedback.message
 
 import apptentive.com.android.TestCase
 import apptentive.com.android.concurrent.Executor
@@ -7,8 +7,6 @@ import apptentive.com.android.feedback.backend.MessageFetchService
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.MockEngagementContext
-import apptentive.com.android.feedback.message.MessageManager
-import apptentive.com.android.feedback.message.MessageRepository
 import apptentive.com.android.feedback.model.AppRelease
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.CustomData
@@ -69,8 +67,19 @@ class MessageManagerTest : TestCase() {
 
     @Test
     fun testHasSentMessage() {
-        // No messages in the storage
+        // App launched with at least one message in the storage
         var messageManager = MessageManager(
+            "1234",
+            "token",
+            MockMessageFetchService(),
+            MockExecutor(),
+            MockMessageRepository()
+        )
+        messageManager.onAppForeground()
+        Assert.assertTrue(messageManager.pollingScheduler.isPolling())
+
+        // App is launched with no messages in the storage
+        messageManager = MessageManager(
             "1234",
             "token",
             MockMessageFetchService(),
@@ -80,15 +89,10 @@ class MessageManagerTest : TestCase() {
         messageManager.onAppForeground()
         Assert.assertFalse(messageManager.pollingScheduler.isPolling())
 
-        // At least one message
-        messageManager = MessageManager(
-            "1234",
-            "token",
-            MockMessageFetchService(),
-            MockExecutor(),
-            MockMessageRepository()
-        )
-        messageManager.onAppForeground()
+        // Send a message, should trigger polling
+        messageManager.onConversationChanged(testConversation)
+        messageManager.sendMessage("Sending a message")
+
         Assert.assertTrue(messageManager.pollingScheduler.isPolling())
     }
 
