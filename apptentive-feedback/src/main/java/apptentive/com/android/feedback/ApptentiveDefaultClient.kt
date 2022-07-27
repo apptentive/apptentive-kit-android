@@ -38,6 +38,7 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.feedback.lifecycle.ApptentiveLifecycleObserver
 import apptentive.com.android.feedback.message.DefaultMessageRepository
 import apptentive.com.android.feedback.message.DefaultMessageSerializer
+import apptentive.com.android.feedback.message.EVENT_MESSAGE_CENTER
 import apptentive.com.android.feedback.message.MessageManager
 import apptentive.com.android.feedback.message.MessageManagerFactoryProvider
 import apptentive.com.android.feedback.model.Conversation
@@ -63,6 +64,7 @@ import apptentive.com.android.network.UnexpectedResponseException
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogLevel
 import apptentive.com.android.util.LogTags.LIFE_CYCLE_OBSERVER
+import apptentive.com.android.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.util.LogTags.PAYLOADS
 import apptentive.com.android.util.Result
 import com.apptentive.android.sdk.conversation.DefaultLegacyConversationManager
@@ -302,6 +304,26 @@ internal class ApptentiveDefaultClient(
             conversationManager.updatePerson(newPerson)
             payloadSender.sendPayload(newPerson.toPersonPayload())
         }
+    }
+
+    override fun showMessageCenter(callback: EngagementCallback?, customData: CustomData?) {
+        customData?.let {
+            val filteredCustomData = filterCustomData(customData)
+            if (filteredCustomData.content.isNotEmpty())
+                messageManager?.setCustomData(filteredCustomData)
+            else
+                Log.v(MESSAGE_CENTER, "Not setting custom data. No supported types found")
+        }
+        engage(Event.internal(EVENT_MESSAGE_CENTER))
+    }
+
+    private fun filterCustomData(customData: CustomData): CustomData {
+        return CustomData(
+            content =
+            customData.content.filter {
+                it.value is String || it.value is Int || it.value is Double || it.value is Float || it.value is Boolean || it.value is Short
+            }
+        )
     }
 
     override fun updateDevice(customData: Pair<String, Any?>?, deleteKey: String?) {

@@ -38,7 +38,6 @@ data class MessageList(
 
 @InternalUseOnly
 data class Message(
-    val customData: String? = null,
     val id: String? = null,
     val nonce: String = generateUUID(),
     // TODO find if type is needed at all
@@ -50,6 +49,7 @@ data class Message(
     val inbound: Boolean = false,
     val hidden: Boolean = false,
     val automated: Boolean = false,
+    val customData: Map<String, Any?>? = null,
     var createdAt: TimeInterval = toSeconds(System.currentTimeMillis()), // Parity because server returns seconds
     var groupTimestamp: String? = null
 ) {
@@ -58,7 +58,8 @@ data class Message(
         type = type,
         body = body ?: "",
         sender = sender,
-        hidden = hidden
+        hidden = hidden,
+        customData = customData
     )
 
     enum class Status {

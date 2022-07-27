@@ -25,7 +25,8 @@ data class MessagePayload(
     val body: String,
     val sender: Sender?,
     val hidden: Boolean = false,
-    val automated: Boolean = false
+    val automated: Boolean = false,
+    val customData: Map<String, Any?>? = null
 ) : ConversationPayload(messageNonce) {
     override fun getPayloadType(): PayloadType = PayloadType.Message
 

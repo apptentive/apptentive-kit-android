@@ -11,6 +11,7 @@ import apptentive.com.android.feedback.message.MessageManager
 import apptentive.com.android.feedback.message.MessageRepository
 import apptentive.com.android.feedback.model.AppRelease
 import apptentive.com.android.feedback.model.Conversation
+import apptentive.com.android.feedback.model.CustomData
 import apptentive.com.android.feedback.model.Device
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.MessageList
@@ -22,6 +23,7 @@ import apptentive.com.android.feedback.payload.MockPayloadSender
 import apptentive.com.android.util.Result
 import org.junit.Assert
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -132,6 +134,13 @@ class MessageManagerTest : TestCase() {
         assertEquals(expectedPayload.type, actualPayload?.type)
         assertEquals(expectedPayload.body, actualPayload?.body)
         assertEquals(expectedPayload.hidden, actualPayload?.hidden)
+    }
+
+    @Test
+    fun testCustomDataCleanup() {
+        messageManager.setCustomData(CustomData())
+        messageManager.sendMessage("Hello")
+        assertTrue(messageManager.messageCustomData == null)
     }
 }
 

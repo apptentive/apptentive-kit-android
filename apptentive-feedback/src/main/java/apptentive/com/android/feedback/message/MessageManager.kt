@@ -10,6 +10,7 @@ import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.lifecycle.LifecycleListener
 import apptentive.com.android.feedback.model.Configuration
 import apptentive.com.android.feedback.model.Conversation
+import apptentive.com.android.feedback.model.CustomData
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.Sender
@@ -33,6 +34,8 @@ class MessageManager(
 
     private var isMessageCenterInForeground = false
     private var lastDownloadedMessageID: String = messageRepository.getLastReceivedMessageIDFromEntries()
+    @InternalUseOnly var messageCustomData: CustomData? = null
+
     @VisibleForTesting
     val pollingScheduler: PollingScheduler by lazy {
         MessagePollingScheduler(serialExecutor)
@@ -59,6 +62,15 @@ class MessageManager(
     override fun onConversationChanged(conversation: Conversation) {
         configuration = conversation.configuration
         senderProfile = conversation.person
+    }
+
+    @InternalUseOnly
+    fun setCustomData(customData: CustomData) {
+        this.messageCustomData = customData
+    }
+
+    private fun clearCustomData() {
+        this.messageCustomData = null
     }
 
     @InternalUseOnly
@@ -116,14 +128,15 @@ class MessageManager(
             sender = Sender(senderProfile.id, senderProfile.name, null),
             hidden = isHidden,
             messageStatus = Message.Status.Sending,
-            inbound = true
+            inbound = true,
+            customData = messageCustomData?.content
         )
 
         messageRepository.addOrUpdateMessage(listOf(message))
         messagesSubject.value = messageRepository.getAllMessages()
 
         context.sendPayload(message.toMessagePayload())
-
+        clearCustomData()
         if (!hasSentMessage) hasSentMessage = true
     }
 

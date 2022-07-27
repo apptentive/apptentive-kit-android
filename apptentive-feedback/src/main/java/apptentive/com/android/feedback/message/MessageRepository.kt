@@ -57,10 +57,14 @@ internal class DefaultMessageRepository(val messageSerializer: MessageSerializer
     override fun getAllMessages(): List<Message> {
         // TODO Works only for Text message type, need small refactor for the messages with attachments
         val messageList = mutableListOf<Message>()
-        for (entry in messageSerializer.loadMessages()) {
-            val message = buildMessageFromJson(entry.messageJson)
-            message.messageStatus = Message.Status.parse(entry.messageState)
-            messageList.add(message)
+        try {
+            for (entry in messageSerializer.loadMessages()) {
+                val message = buildMessageFromJson(entry.messageJson)
+                message.messageStatus = Message.Status.parse(entry.messageState)
+                messageList.add(message)
+            }
+        } catch (e: MessageSerializerException) {
+            Log.e(MESSAGE_CENTER, "There was an exception while deserializing the messages ${e.message}")
         }
         return messageList
     }
@@ -78,7 +82,11 @@ internal class DefaultMessageRepository(val messageSerializer: MessageSerializer
     }
 
     override fun saveMessages() {
-        messageSerializer.saveMessages(messages = messageEntries)
+        try {
+            messageSerializer.saveMessages(messages = messageEntries)
+        } catch (e: MessageSerializerException) {
+            Log.e(MESSAGE_CENTER, "Cannot save messages. A Serialization issue occurred ${e.message}")
+        }
     }
 
     override fun deleteMessage(nonce: String) {
