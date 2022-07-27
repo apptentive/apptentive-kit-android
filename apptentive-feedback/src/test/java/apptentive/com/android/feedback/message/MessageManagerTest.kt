@@ -66,6 +66,31 @@ class MessageManagerTest : TestCase() {
     }
 
     @Test
+    fun testHasSentMessage() {
+        // No messages in the storage
+        var messageManager = MessageManager(
+            "1234",
+            "token",
+            MockMessageFetchService(),
+            MockExecutor(),
+            MockMessageRepository(listOf())
+        )
+        messageManager.onAppForeground()
+        Assert.assertFalse(messageManager.pollingScheduler.isPolling())
+
+        // At least one message
+        messageManager = MessageManager(
+            "1234",
+            "token",
+            MockMessageFetchService(),
+            MockExecutor(),
+            MockMessageRepository()
+        )
+        messageManager.onAppForeground()
+        Assert.assertTrue(messageManager.pollingScheduler.isPolling())
+    }
+
+    @Test
     fun testNewMessages() {
         messageManager.fetchMessages()
         addResult(messageManager.messages.value)
@@ -153,13 +178,13 @@ private class MockExecutor : Executor {
     }
 }
 
-private class MockMessageRepository : MessageRepository {
+private class MockMessageRepository(val messageList: List<Message> = testMessageList) : MessageRepository {
     override fun addOrUpdateMessage(messages: List<Message>) {}
 
     override fun getLastReceivedMessageIDFromEntries(): String = ""
 
     override fun getAllMessages(): List<Message> {
-        return testMessageList
+        return messageList
     }
 
     override fun saveMessages() {}

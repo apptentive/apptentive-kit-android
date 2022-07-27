@@ -27,14 +27,17 @@ class MessageManager(
     private val serialExecutor: Executor,
     private val messageRepository: MessageRepository,
 ) : LifecycleListener, ConversationListener {
-    private var isMessageCenterUsed: Boolean = true
+
+    private val messagesFromStorage: List<Message> = messageRepository.getAllMessages()
+    private var hasSentMessage: Boolean = messagesFromStorage.isNotEmpty() // True after the first non hidden message is sent from mc client
+
     private var isMessageCenterInForeground = false
     private var lastDownloadedMessageID: String = messageRepository.getLastReceivedMessageIDFromEntries()
     @VisibleForTesting
     val pollingScheduler: PollingScheduler by lazy {
         MessagePollingScheduler(serialExecutor)
     }
-    private val messagesSubject: BehaviorSubject<List<Message>> = BehaviorSubject(messageRepository.getAllMessages())
+    private val messagesSubject: BehaviorSubject<List<Message>> = BehaviorSubject(messagesFromStorage)
     val messages: Observable<List<Message>> get() = messagesSubject
 
     private var configuration: Configuration = Configuration()
@@ -47,9 +50,10 @@ class MessageManager(
     }
 
     override fun onAppForeground() {
-        Log.d(MESSAGE_CENTER, "App is in the foreground, start polling")
-        if (isMessageCenterUsed)
+        if (hasSentMessage) {
+            Log.d(MESSAGE_CENTER, "App is in the foreground & canTriggerBgPoll is true, start polling")
             startPolling()
+        }
     }
 
     override fun onConversationChanged(conversation: Conversation) {
@@ -119,6 +123,8 @@ class MessageManager(
         messagesSubject.value = messageRepository.getAllMessages()
 
         context.sendPayload(message.toMessagePayload())
+
+        if (!hasSentMessage) hasSentMessage = true
     }
 
     @InternalUseOnly
@@ -132,7 +138,8 @@ class MessageManager(
         isMessageCenterInForeground = isActive
         Log.d(MESSAGE_CENTER, "Message center foreground status $isActive")
         // Resets polling with the right polling interval
-        startPolling(true)
+        if (hasSentMessage)
+            startPolling(true)
     }
 
     @InternalUseOnly
