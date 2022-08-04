@@ -112,7 +112,7 @@ class MessageCenterViewModel : ViewModel() {
     private fun getMessagesFromManager(): List<Message> = messageManager.getAllMessages()
 
     private fun List<Message>.filterSortAndGroupMessages(): List<Message> =
-        groupMessages(filterNot { it.hidden }.sortedBy { it.createdAt })
+        groupMessages(filterNot { it.hidden == true }.sortedBy { it.createdAt })
 
     fun exitMessageCenter() {
         onMessageCenterEvent(MessageCenterEvents.EVENT_NAME_CLOSE)

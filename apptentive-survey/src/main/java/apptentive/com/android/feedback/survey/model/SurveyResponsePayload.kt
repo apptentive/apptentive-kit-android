@@ -30,6 +30,8 @@ internal class SurveyResponsePayload(
 
     override fun getContentType() = MediaType.applicationJson
 
+    override fun getDataBytes(): ByteArray = toJson().toByteArray()
+
     companion object {
         fun fromAnswers(
             id: InteractionId,

@@ -1,6 +1,7 @@
 package apptentive.com.app
 
 import android.Manifest
+import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
 import android.webkit.MimeTypeMap
@@ -13,11 +14,12 @@ import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import apptentive.com.android.feedback.Apptentive
+import apptentive.com.android.feedback.ApptentiveActivityInfo
 import apptentive.com.app.databinding.ActivityDevFunctionsBinding
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
-class DevFunctionsActivity : AppCompatActivity() {
+class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
     lateinit var binding: ActivityDevFunctionsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -345,10 +347,10 @@ class DevFunctionsActivity : AppCompatActivity() {
             hiddenMessageCenterTextFileButton.setOnClickListener {
                 val text = hiddenMessageCenterTextFileEditText.text?.toString()
                 val bytes = text?.toByteArray()
-//                Apptentive.sendAttachmentFile(bytes, "text/plain")
-//                hiddenMessageCenterTextFileEditText.setText("")
+                Apptentive.sendAttachmentFile(bytes, "text/plain")
+                hiddenMessageCenterTextFileEditText.setText("")
 
-                makeToast("Attachments not yet implemented.\nText: $text\nBytes: $bytes")
+                makeToast("Hidden text file sent.\nText: $text\nBytes: $bytes")
             }
         }
     }
@@ -371,13 +373,13 @@ class DevFunctionsActivity : AppCompatActivity() {
                     val extension = MimeTypeMap.getFileExtensionFromUrl(uri)
                     val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
                     val fis = openFileAsset(this@DevFunctionsActivity, fileName)
-//                        Apptentive.sendAttachmentFile(fis, mimeType)
+                    Apptentive.sendAttachmentFile(fis, mimeType)
 
                     attachmentFileLayout.isErrorEnabled = false
                     attachmentFileLayout.error = ""
 
                     makeToast(
-                        "Attachments not yet implemented.\nFile name: $fileName\n" +
+                        "Attachment by stream sent.\nFile name: $fileName\n" +
                             "URI: $uri\nExtension: $extension\nMime Type: $mimeType"
                     )
                 } else {
@@ -396,11 +398,11 @@ class DevFunctionsActivity : AppCompatActivity() {
 
             sendFileButton.setOnClickListener {
                 if (!filePickerEditText.text.isNullOrEmpty()) {
-//                    Apptentive.sendAttachmentFile(fileUri.toString())
+                    Apptentive.sendAttachmentFile(fileUri.toString())
                     filePickerTextLayout.isErrorEnabled = false
                     filePickerTextLayout.error = ""
 
-                    makeToast("Attachments not yet implemented.\n URI: $fileUri")
+                    makeToast("Attachment by URI sent.\n URI: $fileUri")
                 } else {
                     filePickerTextLayout.isErrorEnabled = true
                     filePickerTextLayout.error = "No file selected"
@@ -426,11 +428,11 @@ class DevFunctionsActivity : AppCompatActivity() {
 
             sendPhotoButton.setOnClickListener {
                 if (!photoPickerEditText.text.isNullOrEmpty()) {
-//                    Apptentive.sendAttachmentFile(photoUri.toString())
+                    Apptentive.sendAttachmentFile(photoUri.toString())
                     photoPickerTextLayout.isErrorEnabled = false
                     photoPickerTextLayout.error = ""
 
-                    makeToast("Attachments not yet implemented.\n URI: $photoUri")
+                    makeToast("Photo by URI sent.\n URI: $photoUri")
                 } else {
                     photoPickerTextLayout.isErrorEnabled = true
                     photoPickerTextLayout.error = "No photo taken"
@@ -474,6 +476,20 @@ class DevFunctionsActivity : AppCompatActivity() {
 
     private fun launchCamera() {
         requestCameraPermissionAndTakePic.launch(Manifest.permission.CAMERA)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Apptentive.registerApptentiveActivityInfoCallback(this)
+    }
+
+    override fun getApptentiveActivityInfo(): Activity {
+        return this
+    }
+
+    override fun onPause() {
+        Apptentive.unregisterApptentiveActivityInfoCallback()
+        super.onPause()
     }
 
     //endregion

@@ -34,6 +34,7 @@ import apptentive.com.android.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.util.LogTags.NETWORK
 import apptentive.com.android.util.LogTags.PROFILE_DATA_UPDATE
 import apptentive.com.android.util.LogTags.SYSTEM
+import java.io.InputStream
 
 sealed class EngagementResult {
     data class InteractionShown(val interactionId: InteractionId) : EngagementResult() {
@@ -182,6 +183,7 @@ object Apptentive {
             override fun intercept(request: HttpRequest<*>) {
                 Log.d(NETWORK, "--> ${request.method} ${request.url}")
                 Log.v(NETWORK, "Headers:\n${SensitiveDataUtils.hideIfSanitized(request.headers)}")
+                Log.v(NETWORK, "Content-Type: ${request.requestBody?.contentType}")
                 Log.v(NETWORK, "Request Body: ${SensitiveDataUtils.hideIfSanitized(request.requestBody?.asString())}")
             }
 
@@ -276,6 +278,56 @@ object Apptentive {
                 Log.d(MESSAGE_CENTER, "Attachment text was null")
             }
         }
+    }
+
+    /**
+     * Sends a file to the server. This file will be visible in the conversation view on the server, but will not be shown
+     * in the client's Message Center. A local copy of this file will be made until the message is transmitted, at which
+     * point the temporary file will be deleted.
+     *
+     * @param uri The URI path of the local resource file.
+     */
+    fun sendAttachmentFile(uri: String?) {
+        if (!uri.isNullOrBlank()) {
+            stateExecutor.execute {
+                client.sendHiddenAttachmentFileUri(uri)
+            }
+        } else Log.d(MESSAGE_CENTER, "URI String was null or blank. URI: $uri")
+    }
+
+    /**
+     * Sends a file to the server. This file will be visible in the conversation view on the server, but will not be shown
+     * in the client's Message Center. A local copy of this file will be made until the message is transmitted, at which
+     * point the temporary file will be deleted.
+     *
+     * @param content  A byte array of the file contents.
+     * @param mimeType The mime type of the file.
+     */
+    fun sendAttachmentFile(content: ByteArray?, mimeType: String?) {
+        if (content != null && mimeType != null) {
+            stateExecutor.execute {
+                client.sendHiddenAttachmentFileBytes(content, mimeType)
+            }
+        } else Log.d(MESSAGE_CENTER, "Content and Mime Type cannot be null\nContent: $content, mimeType: $mimeType")
+    }
+
+    /**
+     * Sends a file to the server. This file will be visible in the conversation view on the server, but will not be shown
+     * in the client's Message Center. A local copy of this file will be made until the message is transmitted, at which
+     * point the temporary file will be deleted.
+     *
+     * @param inputStream An InputStream from the desired file.
+     * @param mimeType    The mime type of the file.
+     */
+    fun sendAttachmentFile(inputStream: InputStream?, mimeType: String?) {
+        if (inputStream != null && mimeType != null) {
+            stateExecutor.execute {
+                client.sendHiddenAttachmentFileStream(inputStream, mimeType)
+            }
+        } else Log.d(
+            MESSAGE_CENTER,
+            "InputStream and Mime Type cannot be null\ninputStream: $inputStream, mimeType: $mimeType"
+        )
     }
 
     //endregion

@@ -1,5 +1,7 @@
 package apptentive.com.android.feedback.message
 
+import android.net.Uri
+import android.webkit.MimeTypeMap
 import androidx.annotation.VisibleForTesting
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.core.BehaviorSubject
@@ -15,10 +17,12 @@ import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.Sender
 import apptentive.com.android.feedback.payload.PayloadData
+import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.util.Result
+import java.io.InputStream
 
 @InternalUseOnly
 class MessageManager(
@@ -27,6 +31,7 @@ class MessageManager(
     private val messageFetchService: MessageFetchService,
     private val serialExecutor: Executor,
     private val messageRepository: MessageRepository,
+//    private val attachmentManager: AttachmentManager,
 ) : LifecycleListener, ConversationListener {
 
     private val messagesFromStorage: List<Message> = messageRepository.getAllMessages()
@@ -119,11 +124,10 @@ class MessageManager(
     }
 
     @InternalUseOnly
-    fun sendMessage(messageText: String, isHidden: Boolean = false) {
+    fun sendMessage(messageText: String, isHidden: Boolean? = null) {
         val context = DependencyProvider.of<EngagementContextFactory>().engagementContext()
         val message = Message(
-            // TODO revisit type field
-            type = "Text",
+            type = Message.MESSAGE_TYPE_TEXT,
             body = messageText,
             sender = Sender(senderProfile.id, senderProfile.name, null),
             hidden = isHidden,
@@ -141,6 +145,77 @@ class MessageManager(
             hasSentMessage = true
             startPolling()
         }
+    }
+
+    @InternalUseOnly
+    fun sendMessage(message: Message) {
+        val context = DependencyProvider.of<EngagementContextFactory>().engagementContext()
+        messageRepository.addOrUpdateMessage(listOf(message))
+        messagesSubject.value = messageRepository.getAllMessages()
+
+        context.sendPayload(message.toMessagePayload())
+        if (!hasSentMessage) {
+            hasSentMessage = true
+            startPolling()
+        }
+    }
+
+    @InternalUseOnly
+    fun sendAttachment(uri: String, isHidden: Boolean? = null) {
+        val message = Message(
+            type = Message.MESSAGE_TYPE_COMPOUND,
+            body = null,
+            sender = Sender(senderProfile.id, senderProfile.name, null),
+            hidden = isHidden,
+            messageStatus = Message.Status.Sending,
+            inbound = true
+        )
+
+        /*
+         * Make a local copy in the cache dir. By default the file name is "apptentive-api-file + nonce"
+         * If original uri is known, the name will be taken from the original uri
+         */
+        val activity = DependencyProvider.of<EngagementContextFactory>().engagementContext().getAppActivity()
+        var localFilePath = FileUtil.generateCacheFilePathFromNonceOrPrefix(
+            message.nonce,
+            Uri.parse(uri).lastPathSegment
+        )
+        var mimeType = FileUtil.getMimeTypeFromUri(activity, Uri.parse(uri))
+        val mime = MimeTypeMap.getSingleton()
+        var extension = mime.getExtensionFromMimeType(mimeType)
+
+        // If we can't get the mime type from the uri, try getting it from the extension.
+        if (extension == null) extension = MimeTypeMap.getFileExtensionFromUrl(uri)
+        if (mimeType == null && extension != null) mimeType = mime.getMimeTypeFromExtension(extension)
+        if (!extension.isNullOrEmpty()) localFilePath += ".$extension"
+
+        FileUtil.createLocalStoredFile(uri, localFilePath, mimeType)?.let {
+            it.id = message.nonce
+            message.storedFiles = listOf(it)
+            sendMessage(message)
+        } ?: Log.e(MESSAGE_CENTER, "Issue with creating attachment file. Cannot send.")
+    }
+
+    fun sendHiddenAttachmentFromInputStream(inputStream: InputStream, mimeType: String) {
+        val message = Message(
+            type = Message.MESSAGE_TYPE_COMPOUND,
+            body = null,
+            sender = Sender(senderProfile.id, senderProfile.name, null),
+            hidden = true,
+            messageStatus = Message.Status.Sending,
+            inbound = true
+        )
+
+        var localFilePath: String = FileUtil.generateCacheFilePathFromNonceOrPrefix(message.nonce, null)
+        val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)
+        if (!extension.isNullOrEmpty()) localFilePath += ".$extension"
+
+        // When created from InputStream, there is no source file uri or path, thus just use the cache file path
+        FileUtil.createLocalStoredFile(inputStream, localFilePath, localFilePath, mimeType)?.let {
+            it.id = message.nonce
+            message.storedFiles = listOf(it)
+            sendMessage(message)
+        } ?: Log.e(MESSAGE_CENTER, "Issue with creating attachment file. Cannot send.")
     }
 
     @InternalUseOnly

@@ -19,6 +19,7 @@ import apptentive.com.android.feedback.model.Sender
 import apptentive.com.android.feedback.model.payloads.MessagePayload
 import apptentive.com.android.feedback.payload.MockPayloadSender
 import apptentive.com.android.util.Result
+import apptentive.com.android.util.generateUUID
 import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -106,10 +107,14 @@ class MessageManagerTest : TestCase() {
     @Test
     fun testSendHiddenMessage() {
         val expectedPayload = MessagePayload(
-            type = "Text",
+            type = Message.MESSAGE_TYPE_TEXT,
             sender = Sender("123", "Tester", null),
             body = "ABC Hidden",
-            hidden = true
+            hidden = true,
+            boundary = generateUUID(),
+            messageNonce = generateUUID(),
+            automated = null,
+            attachments = emptyList()
         )
 
         messageManager.sendMessage("ABC Hidden", true)
@@ -125,10 +130,14 @@ class MessageManagerTest : TestCase() {
     fun testSendMessage() {
         val payloadSender = engagementContext.getPayloadSender() as MockPayloadSender
         val expectedPayload = MessagePayload(
-            type = "Text",
+            type = Message.MESSAGE_TYPE_TEXT,
             sender = Sender("123", "Tester", null),
             body = "ABC",
-            hidden = false
+            hidden = null,
+            boundary = generateUUID(),
+            messageNonce = generateUUID(),
+            automated = null,
+            attachments = emptyList()
         )
 
         messageManager.sendMessage("ABC")

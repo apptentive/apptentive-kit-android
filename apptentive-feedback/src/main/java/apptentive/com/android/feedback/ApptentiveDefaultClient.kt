@@ -69,7 +69,9 @@ import apptentive.com.android.util.LogTags.PAYLOADS
 import apptentive.com.android.util.Result
 import com.apptentive.android.sdk.conversation.DefaultLegacyConversationManager
 import com.apptentive.android.sdk.conversation.LegacyConversationManager
+import java.io.ByteArrayInputStream
 import java.io.File
+import java.io.InputStream
 
 internal class ApptentiveDefaultClient(
     private val apptentiveKey: String,
@@ -278,6 +280,26 @@ internal class ApptentiveDefaultClient(
 
     override fun sendHiddenTextMessage(message: String) {
         messageManager?.sendMessage(message, true)
+    }
+
+    override fun sendHiddenAttachmentFileUri(uri: String) {
+        messageManager?.sendAttachment(uri, true)
+    }
+
+    override fun sendHiddenAttachmentFileBytes(bytes: ByteArray, mimeType: String) {
+        var inputStream: ByteArrayInputStream? = null
+        try {
+            inputStream = ByteArrayInputStream(bytes)
+            messageManager?.sendHiddenAttachmentFromInputStream(inputStream, mimeType)
+        } catch (e: Exception) {
+            Log.e(MESSAGE_CENTER, "Exception when sending attachment. Closing input stream.", e)
+        } finally {
+            FileUtil.ensureClosed(inputStream)
+        }
+    }
+
+    override fun sendHiddenAttachmentFileStream(inputStream: InputStream, mimeType: String) {
+        messageManager?.sendHiddenAttachmentFromInputStream(inputStream, mimeType)
     }
 
     override fun updatePerson(

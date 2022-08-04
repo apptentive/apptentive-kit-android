@@ -42,22 +42,26 @@ data class Message(
     val nonce: String = generateUUID(),
     // TODO find if type is needed at all
     var type: String,
-    // val attachments: Attachment?,
     val sender: Sender?,
     val body: String?,
+    var storedFiles: List<StoredFile> = emptyList(),
     var messageStatus: Status = Status.Unknown,
     val inbound: Boolean = false,
-    val hidden: Boolean = false,
-    val automated: Boolean = false,
-    val customData: Map<String, Any?>? = null,
+    val hidden: Boolean? = null, // true or null
+    val automated: Boolean? = null, // true or null
+    val read: Boolean = false,
     var createdAt: TimeInterval = toSeconds(System.currentTimeMillis()), // Parity because server returns seconds
-    var groupTimestamp: String? = null
+    var groupTimestamp: String? = null,
+    val customData: Map<String, Any?>? = null
 ) {
     fun toMessagePayload(): MessagePayload = MessagePayload(
         messageNonce = nonce,
+        boundary = generateUUID().replace("-", ""),
+        attachments = storedFiles,
         type = type,
-        body = body ?: "",
+        body = body,
         sender = sender,
+        automated = automated,
         hidden = hidden,
         customData = customData
     )
@@ -80,6 +84,11 @@ data class Message(
                 return Unknown
             }
         }
+    }
+
+    companion object {
+        const val MESSAGE_TYPE_TEXT = "Text"
+        const val MESSAGE_TYPE_COMPOUND = "CompoundMessage"
     }
 }
 

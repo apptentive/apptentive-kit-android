@@ -151,7 +151,7 @@ class MessageCenterViewModelTest : TestCase() {
         val manager = DependencyProvider.of<MessageManagerFactory>().messageManager()
         manager.fetchMessages()
         addResult(viewModel.messages)
-        assertResults(viewModel.groupMessages(testMessageList.filterNot { it.hidden }.sortedBy { it.createdAt }))
+        assertResults(viewModel.groupMessages(testMessageList.filterNot { it.hidden == true }.sortedBy { it.createdAt }))
     }
 
     @Test

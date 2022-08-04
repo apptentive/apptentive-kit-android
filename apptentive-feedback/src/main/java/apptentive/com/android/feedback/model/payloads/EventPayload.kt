@@ -38,6 +38,8 @@ class EventPayload(
 
     override fun getContentType() = MediaType.applicationJson
 
+    override fun getDataBytes(): ByteArray = toJson().toByteArray()
+
     //endregion
 
     //region Equality
