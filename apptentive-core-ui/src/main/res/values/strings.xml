@@ -2,4 +2,7 @@
 <resources>
     <string name="close">Close</string>
     <string name="profile">Profile</string>
+    <string name="message_validation_error">Messages cannot be empty</string>
+    <string name="email_validation_error">Email is either empty or invalid</string>
+    <string name="name_validation_error">Name cannot be empty</string>
 </resources>

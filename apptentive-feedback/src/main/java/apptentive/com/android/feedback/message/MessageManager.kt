@@ -7,6 +7,7 @@ import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.Observable
+import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.backend.MessageFetchService
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.lifecycle.LifecycleListener
@@ -48,6 +49,9 @@ class MessageManager(
     private val messagesSubject: BehaviorSubject<List<Message>> = BehaviorSubject(messagesFromStorage)
     val messages: Observable<List<Message>> get() = messagesSubject
 
+    private val profileSubject: BehaviorSubject<Person?> = BehaviorSubject(null)
+    val profile: Observable<Person?> get() = profileSubject
+
     private var configuration: Configuration = Configuration()
     private lateinit var senderProfile: Person
 
@@ -67,6 +71,7 @@ class MessageManager(
     override fun onConversationChanged(conversation: Conversation) {
         configuration = conversation.configuration
         senderProfile = conversation.person
+        profileSubject.value = senderProfile
     }
 
     @InternalUseOnly
@@ -148,6 +153,11 @@ class MessageManager(
     }
 
     @InternalUseOnly
+    fun updateProfile(name: String?, email: String?) {
+        name?.let { Apptentive.setPersonName(name) }
+        email?.let { Apptentive.setPersonEmail(email) }
+    }
+
     fun sendMessage(message: Message) {
         val context = DependencyProvider.of<EngagementContextFactory>().engagementContext()
         messageRepository.addOrUpdateMessage(listOf(message))

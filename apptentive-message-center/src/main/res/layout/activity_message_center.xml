@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/apptentive_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -73,8 +74,18 @@
             android:id="@+id/apptentive_message_center_greeting_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
+            android:visibility="visible"
             app:constraint_referenced_ids="apptentive_message_center_greeting,apptentive_message_center_greeting_body,apptentive_message_center_greeting_header"/>
+
+        <!-- Profile -->
+        <apptentive.com.android.feedback.messagecenter.view.ProfileView
+            android:id="@+id/apptentive_message_center_profile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/apptentive_message_center_greeting_body"
+            app:layout_constraintBottom_toTopOf="@+id/apptentive_separator"/>
 
         <!-- Message list -->
 
@@ -120,8 +131,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             style="?apptentiveMessageCenterComposerStyle"
+            app:layout_goneMarginBottom="@dimen/apptentive_message_error_text_margin_bottom"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/apptentive_composer_error"
             app:layout_constraintEnd_toStartOf="@id/apptentive_send_image"
             app:layout_constraintStart_toEndOf="@id/apptentive_attach_image" />
 
@@ -137,6 +149,16 @@
             app:layout_constraintBottom_toBottomOf="@id/apptentive_composer_text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/apptentive_composer_text" />
+
+        <TextView
+            android:id="@+id/apptentive_composer_error"
+            style="?attr/apptentiveMessageCenterErrorStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/apptentive_composer_text"
+            tools:text="Message cannot be empty" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

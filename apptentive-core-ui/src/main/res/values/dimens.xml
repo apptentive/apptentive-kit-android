@@ -49,7 +49,7 @@
     <dimen name="apptentive_message_composer_attachment_margin">16dp</dimen>
     <dimen name="apptentive_message_composer_margin_start">16dp</dimen>
     <dimen name="apptentive_message_composer_margin_end">16dp</dimen>
-    <dimen name="apptentive_message_composer_margin_bottom">32dp</dimen>
+    <dimen name="apptentive_message_composer_margin_bottom">0dp</dimen>
     <dimen name="apptentive_message_composer_send_margin_end">16dp</dimen>
     <dimen name="apptentive_separator_margin_bottom">32dp</dimen>
     <dimen name="apptentive_message_header_margin">16dp</dimen>
@@ -64,4 +64,5 @@
     <dimen name="apptentive_message_bubble_status_padding_top">4dp</dimen>
     <dimen name="apptentive_message_bubble_status_padding_bottom">16dp</dimen>
     <dimen name="apptentive_message_list_margin">16dp</dimen>
+    <dimen name="apptentive_message_error_text_margin_bottom">16dp</dimen>
 </resources>

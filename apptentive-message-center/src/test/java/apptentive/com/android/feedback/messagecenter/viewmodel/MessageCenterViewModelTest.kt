@@ -137,9 +137,7 @@ class MessageCenterViewModelTest : TestCase() {
                         addResult(args)
                         EngagementResult.InteractionNotShown("No runnable interactions")
                     },
-                    onSendPayload = { payload ->
-                        throw AssertionError("We didn't expect any payloads here but this one slipped though: $payload")
-                    }
+                    onSendPayload = {}
                 )
             }
         )
@@ -184,6 +182,33 @@ class MessageCenterViewModelTest : TestCase() {
         assertNull(viewModel.messages[3].groupTimestamp) // If same day, don't show group timestamp
         assertEquals(now, viewModel.messages[4].groupTimestamp)
         assertEquals(5, viewModel.messages.size)
+    }
+
+    @Test
+    fun testValidation() {
+        val viewModel = MessageCenterViewModel()
+        // Empty email
+        viewModel.validateMessageWithProfile("Test", "")
+        addResult(MessageCenterViewModel.ValidationDataModel(emailError = true))
+        assertResults(viewModel.errorMessagesStream.value ?: MessageCenterViewModel.ValidationDataModel())
+
+        // Reset
+        viewModel.validateMessageWithProfile("Test", "test@test.com")
+        addResult(MessageCenterViewModel.ValidationDataModel(emailError = false))
+        assertResults(viewModel.errorMessagesStream.value ?: MessageCenterViewModel.ValidationDataModel())
+
+        // Invalid email
+        viewModel.validateMessageWithProfile("Test", "test@.com")
+        addResult(MessageCenterViewModel.ValidationDataModel(emailError = true))
+        assertResults(viewModel.errorMessagesStream.value ?: MessageCenterViewModel.ValidationDataModel())
+
+        // Reset
+        viewModel.validateMessageWithProfile("Test", "test@test.com")
+
+        // Blank message
+        viewModel.validateMessageWithProfile("", "test@test.com")
+        addResult(MessageCenterViewModel.ValidationDataModel(messageError = true))
+        assertResults(viewModel.errorMessagesStream.value ?: MessageCenterViewModel.ValidationDataModel())
     }
 }
 
