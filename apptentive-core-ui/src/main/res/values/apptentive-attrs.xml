@@ -93,6 +93,7 @@
 
         <!-- App Bars -->
         <attr name="apptentiveMessageCenterToolbarStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterProfileToolbarStyle" format="reference"/>
         <attr name="apptentiveActionButtonStyle" format="reference" />
 
         <!-- Widgets -->

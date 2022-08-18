@@ -1,6 +1,5 @@
 package apptentive.com.android.feedback.messagecenter.viewmodel
 
-import android.util.Patterns
 import androidx.annotation.VisibleForTesting
 import androidx.core.util.PatternsCompat
 import androidx.lifecycle.LiveData
@@ -52,7 +51,7 @@ class MessageCenterViewModel : ViewModel() {
     val greetingBody: String = model.greeting?.body ?: ""
     val composerHint: String = model.composer?.hintText ?: ""
     var messages: List<Message> = getMessagesFromManager().filterSortAndGroupMessages()
-    var showLauncherView: Boolean = messages.isEmpty()
+    var showLauncherView: Boolean = messages.isEmpty() && showProfile()
 
     private val newMessagesSubject = LiveEvent<List<Message>>()
     val newMessages: LiveData<List<Message>> get() = newMessagesSubject
@@ -136,7 +135,7 @@ class MessageCenterViewModel : ViewModel() {
         exitEvent.postValue(true)
     }
 
-    fun sendMessage(message: String, email: String? = null, name: String? = null) {
+    fun sendMessage(message: String, name: String? = null, email: String? = null) {
         // Validate profile only if the profile view is visible
         if (showLauncherView && validateMessageWithProfile(message, email) ||
             !showLauncherView && validateMessage(message)
@@ -169,12 +168,15 @@ class MessageCenterViewModel : ViewModel() {
     fun validateMessageWithProfile(message: String, email: String?): Boolean {
         // TODO verify with attachments
         return if (message.isBlank()) {
-            errorMessages.value = ValidationDataModel(messageError = true)
-            validateProfile(email)
+            val validationDataModel = ValidationDataModel(messageError = true)
+            errorMessages.value = validationDataModel
+            errorMessages.value = validationDataModel.copy(emailError = !validateProfile(email, model))
             false
         } else {
-            errorMessages.value = ValidationDataModel(messageError = false)
-            validateProfile(email)
+            val isValid = validateProfile(email, model)
+            val validationDataModel = ValidationDataModel(messageError = false, emailError = !isValid)
+            errorMessages.value = validationDataModel
+            isValid
         }
     }
 
@@ -189,24 +191,20 @@ class MessageCenterViewModel : ViewModel() {
         }
     }
 
-    private fun validateProfile(email: String?): Boolean {
-        return when {
-            model.profile?.require == true && email?.isNotEmpty() == true && Patterns.EMAIL_ADDRESS.matcher(email).matches() -> true
-            model.profile?.request == true && model.profile?.require == false && email?.isEmpty() == true -> true
-            model.profile?.request == true && email?.isNotEmpty() == true && Patterns.EMAIL_ADDRESS.matcher(email).matches() -> true
-            PatternsCompat.EMAIL_ADDRESS.matcher(email).matches() -> true
-            model.profile?.request == false && model.profile?.require == false && email?.isEmpty() == true -> true
-            else -> {
-                val validationDataModel = errorMessagesStream.value ?: ValidationDataModel()
-                errorMessages.value = validationDataModel.copy(emailError = true)
-                false
-            }
-        }
-    }
+    fun showProfile(): Boolean = model.profile?.request == true || model.profile?.require == true
 
     data class ValidationDataModel(
         val nameError: Boolean = false,
         val emailError: Boolean = false,
         val messageError: Boolean = false
     )
+}
+
+fun validateProfile(email: String?, model: MessageCenterModel): Boolean {
+    return when {
+        model.profile?.require == true && PatternsCompat.EMAIL_ADDRESS.matcher(email.toString()).matches() -> true
+        model.profile?.request == true && model.profile?.require == false && email?.isEmpty() == true -> true
+        model.profile?.request == true && PatternsCompat.EMAIL_ADDRESS.matcher(email.toString()).matches() -> true
+        else -> false
+    }
 }

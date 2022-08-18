@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="close">Close</string>
-    <string name="profile">Profile</string>
-    <string name="message_validation_error">Messages cannot be empty</string>
-    <string name="email_validation_error">Email is either empty or invalid</string>
-    <string name="name_validation_error">Name cannot be empty</string>
+    <string name="apptentive_close">Close</string>
+    <string name="apptentive_back">Back</string>
+    <string name="apptentive_profile">Profile</string>
+    <string name="apptentive_message_validation_error">Message should not be empty</string>
+    <string name="apptentive_email_validation_error">Email is either empty or invalid</string>
+    <string name="apptentive_name_validation_error">Name cannot be empty</string>
+    <string name="apptentive_profile_confirmation_dialog_title">Close Profile?</string>
+    <string name="apptentive_profile_confirmation_dialog_message">The changes to your profile will not be saved.</string>
+    <string name="apptentive_profile_back_to_profile">Back to profile</string>
 </resources>

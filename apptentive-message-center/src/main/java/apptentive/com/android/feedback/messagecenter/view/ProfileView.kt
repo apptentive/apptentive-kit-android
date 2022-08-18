@@ -38,6 +38,16 @@ class ProfileView(context: Context, attrs: AttributeSet? = null) : ConstraintLay
 
     fun getEmail() = profileEmail
 
+    fun updateName(name: String) {
+        nameEditText.setText(name)
+        profileName = name
+    }
+
+    fun updateEmail(email: String) {
+        emailEditText.setText(email)
+        profileEmail = email
+    }
+
     fun setNameHint(hint: String) {
         nameInputLayout.hint = hint
     }
@@ -47,12 +57,12 @@ class ProfileView(context: Context, attrs: AttributeSet? = null) : ConstraintLay
     }
 
     fun setEmailError(value: Boolean) {
-        if (value) emailInputLayout.error = context.getString(R.string.email_validation_error)
+        if (value) emailInputLayout.error = context.getString(R.string.apptentive_email_validation_error)
         else emailInputLayout.error = null
     }
 
     fun setNameError(value: Boolean) {
-        if (value) nameInputLayout.error = context.getString(R.string.email_validation_error)
+        if (value) nameInputLayout.error = context.getString(R.string.apptentive_email_validation_error)
         else nameInputLayout.error = null
     }
 }

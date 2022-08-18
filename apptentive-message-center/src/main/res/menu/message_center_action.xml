@@ -3,6 +3,6 @@
     <item
         android:id="@+id/action_profile"
         android:icon="@drawable/ic_profile"
-        android:title="@string/profile"
+        android:title="@string/apptentive_profile"
         app:showAsAction="always"/>
 </menu>

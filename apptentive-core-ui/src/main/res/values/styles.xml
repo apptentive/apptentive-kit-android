@@ -199,6 +199,7 @@
 
         <!-- Message Center -->
         <item name="apptentiveMessageCenterToolbarStyle">@style/Apptentive.Widget.MessageCenter.Toolbar</item>
+        <item name="apptentiveMessageCenterProfileToolbarStyle">@style/Apptentive.Widget.MessageCenter.Profile.Toolbar</item>
         <item name="apptentiveMessageCenterAttachmentImageStyle">@style/Apptentive.Widget.MessageCenter.Image.Attachment</item>
         <item name="apptentiveMessageCenterComposerStyle">@style/Apptentive.Widget.MessageCenter.Composer.EditText</item>
         <item name="apptentiveMessageCenterSendImageStyle">@style/Apptentive.Widget.MessageCenter.Image.Send</item>
@@ -464,7 +465,7 @@
     <!-- https://material.io/components/app-bars-top/android -->
     <style name="Apptentive.Widget.Survey.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
         <item name="navigationIcon">@drawable/ic_baseline_close_24</item>
-        <item name="navigationContentDescription">@string/close</item>
+        <item name="navigationContentDescription">@string/apptentive_close</item>
     </style>
 
     <style name="Apptentive.Widget.Survey.HeaderImage"/>
@@ -585,7 +586,12 @@
 
     <style name="Apptentive.Widget.MessageCenter.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
         <item name="navigationIcon">@drawable/ic_baseline_close_24</item>
-        <item name="navigationContentDescription">@string/close</item>
+        <item name="navigationContentDescription">@string/apptentive_close</item>
+    </style>
+
+    <style name="Apptentive.Widget.MessageCenter.Profile.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="navigationIcon">@drawable/ic_arrow_left</item>
+        <item name="navigationContentDescription">@string/apptentive_back</item>
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.ActionButton" parent="Widget.AppCompat.ActionButton">

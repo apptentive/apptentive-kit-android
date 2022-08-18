@@ -93,6 +93,29 @@ class MessageCenterViewModelTest : TestCase() {
     @get:Rule
     var rule: TestRule = InstantTaskExecutorRule()
 
+    val messageCenterInteraction = MessageCenterInteraction(
+        messageCenterId = "12345",
+        title = "Message center",
+        branding = "Branding",
+        composer = MessageCenterInteraction.Composer(
+            title = "Composer title",
+            hintText = "",
+            sendButton = null,
+            sendStart = null,
+            sendOk = null,
+            sendFail = null,
+            closeText = "",
+            closeBody = "",
+            closeDiscard = "",
+            closeCancel = ""
+        ),
+        greeting = MessageCenterInteraction.Greeting("", "", ""),
+        status = MessageCenterInteraction.Status(""),
+        automatedMessage = MessageCenterInteraction.AutomatedMessage(""),
+        errorMessage = null,
+        profile = MessageCenterInteraction.Profile(request = true, require = true, null, null)
+    )
+
     @Before
     fun setup() {
         val messageManager = MessageManager(
@@ -103,30 +126,7 @@ class MessageCenterViewModelTest : TestCase() {
             MockMessageRepository()
         )
         DependencyProvider.register(
-            MessageCenterModelProvider(
-                MessageCenterInteraction(
-                    messageCenterId = "12345",
-                    title = "Message center",
-                    branding = "Branding",
-                    composer = MessageCenterInteraction.Composer(
-                        title = "Composer title",
-                        hintText = "",
-                        sendButton = null,
-                        sendStart = null,
-                        sendOk = null,
-                        sendFail = null,
-                        closeText = "",
-                        closeBody = "",
-                        closeDiscard = "",
-                        closeCancel = ""
-                    ),
-                    greeting = MessageCenterInteraction.Greeting("", "", ""),
-                    status = MessageCenterInteraction.Status(""),
-                    automatedMessage = MessageCenterInteraction.AutomatedMessage(""),
-                    errorMessage = null,
-                    profile = null
-                )
-            )
+            MessageCenterModelProvider(messageCenterInteraction)
         )
         DependencyProvider.register(MessageManagerFactoryProvider(messageManager))
         DependencyProvider.register(
@@ -186,15 +186,11 @@ class MessageCenterViewModelTest : TestCase() {
 
     @Test
     fun testValidation() {
-        val viewModel = MessageCenterViewModel()
+        var viewModel = MessageCenterViewModel()
+        // Require email is set
         // Empty email
         viewModel.validateMessageWithProfile("Test", "")
         addResult(MessageCenterViewModel.ValidationDataModel(emailError = true))
-        assertResults(viewModel.errorMessagesStream.value ?: MessageCenterViewModel.ValidationDataModel())
-
-        // Reset
-        viewModel.validateMessageWithProfile("Test", "test@test.com")
-        addResult(MessageCenterViewModel.ValidationDataModel(emailError = false))
         assertResults(viewModel.errorMessagesStream.value ?: MessageCenterViewModel.ValidationDataModel())
 
         // Invalid email
@@ -202,12 +198,24 @@ class MessageCenterViewModelTest : TestCase() {
         addResult(MessageCenterViewModel.ValidationDataModel(emailError = true))
         assertResults(viewModel.errorMessagesStream.value ?: MessageCenterViewModel.ValidationDataModel())
 
-        // Reset
-        viewModel.validateMessageWithProfile("Test", "test@test.com")
-
         // Blank message
         viewModel.validateMessageWithProfile("", "test@test.com")
         addResult(MessageCenterViewModel.ValidationDataModel(messageError = true))
+        assertResults(viewModel.errorMessagesStream.value ?: MessageCenterViewModel.ValidationDataModel())
+
+        DependencyProvider.register(
+            MessageCenterModelProvider(messageCenterInteraction.copy(profile = MessageCenterInteraction.Profile(request = true, require = false, null, null)))
+        )
+        viewModel = MessageCenterViewModel()
+        // Request email is set
+        // Empty email
+        viewModel.validateMessageWithProfile("Test", "")
+        addResult(MessageCenterViewModel.ValidationDataModel())
+        assertResults(viewModel.errorMessagesStream.value ?: MessageCenterViewModel.ValidationDataModel())
+
+        // Invalid email
+        viewModel.validateMessageWithProfile("Test", "test@.com")
+        addResult(MessageCenterViewModel.ValidationDataModel(emailError = true))
         assertResults(viewModel.errorMessagesStream.value ?: MessageCenterViewModel.ValidationDataModel())
     }
 }

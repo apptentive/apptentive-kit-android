@@ -8,12 +8,13 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Group
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
 import apptentive.com.android.feedback.messagecenter.R
+import apptentive.com.android.ui.startViewModelActivity
 import com.google.android.material.appbar.MaterialToolbar
 
 class MessageCenterActivity : BaseMessageCenterActivity() {
@@ -29,7 +30,7 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_message_center)
+        setContentView(R.layout.apptentive_activity_message_center)
 
         constraintLayout = findViewById(R.id.apptentive_root)
         topAppBar = findViewById(R.id.apptentive_toolbar)
@@ -79,7 +80,7 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
             profileView.setNameError(errorMessages.nameError)
             if (errorMessages.messageError) {
                 composerErrorView.visibility = View.VISIBLE
-                composerErrorView.text = getString(R.string.message_validation_error)
+                composerErrorView.text = getString(R.string.apptentive_message_validation_error)
             } else {
                 composerErrorView.visibility = View.GONE
                 messageText.error = null
@@ -105,7 +106,7 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
         val sendButton = findViewById<ImageView>(R.id.apptentive_send_image)
         sendButton.setOnClickListener {
             if (viewModel.showLauncherView)
-                viewModel.sendMessage(messageText.text.toString(), profileView.getEmail(), profileView.getName())
+                viewModel.sendMessage(messageText.text.toString(), profileView.getName(), profileView.getEmail())
             else
                 viewModel.sendMessage(messageText.text.toString())
         }
@@ -144,6 +145,8 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
         // Consts for shared prefs
         val MESSAGE_CENTER_DRAFT = "com.apptentive.sdk.messagecenter.draft"
         val MESSAGE_CENTER_DRAFT_TEXT = "message.text"
+        val MESSAGE_CENTER_PROFILE_NAME = "profile.name"
+        val MESSAGE_CENTER_PROFILE_EMAIL = "profile.email"
         val MESSAGE_CENTER_DRAFT_ATTACHMENT_1 = "message.attachment.1"
         val MESSAGE_CENTER_DRAFT_ATTACHMENT_2 = "message.attachment.2"
         val MESSAGE_CENTER_DRAFT_ATTACHMENT_3 = "message.attachment.3"
@@ -155,6 +158,8 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
             sharedPrefs
                 .edit()
                 .putString(MESSAGE_CENTER_DRAFT_TEXT, messageText.text?.toString())
+                .putString(MESSAGE_CENTER_PROFILE_NAME, profileView.getName())
+                .putString(MESSAGE_CENTER_PROFILE_EMAIL, profileView.getEmail())
                 // TODO Path to attachment files instead of storing the entire file.
                 .putString(MESSAGE_CENTER_DRAFT_ATTACHMENT_1, "")
                 .putString(MESSAGE_CENTER_DRAFT_ATTACHMENT_2, "")
@@ -163,12 +168,18 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
                 .apply()
         } else {
             val draftText = sharedPrefs.getString(MESSAGE_CENTER_DRAFT_TEXT, null)
+            val name = sharedPrefs.getString(MESSAGE_CENTER_PROFILE_NAME, "")
+            val email = sharedPrefs.getString(MESSAGE_CENTER_PROFILE_EMAIL, "")
             val draftAttachment1Path = sharedPrefs.getString(MESSAGE_CENTER_DRAFT_ATTACHMENT_1, null)
             val draftAttachment2Path = sharedPrefs.getString(MESSAGE_CENTER_DRAFT_ATTACHMENT_2, null)
             val draftAttachment3Path = sharedPrefs.getString(MESSAGE_CENTER_DRAFT_ATTACHMENT_3, null)
             val draftAttachment4Path = sharedPrefs.getString(MESSAGE_CENTER_DRAFT_ATTACHMENT_4, null)
 
             messageText.setText(draftText.orEmpty())
+            if (profileView.isVisible) {
+                profileView.updateEmail(email.orEmpty())
+                profileView.updateName(name.orEmpty())
+            }
             // TODO Set draft attachments
         }
     }
@@ -188,14 +199,15 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         actionMenu = menu
         menuInflater.inflate(R.menu.message_center_action, menu)
-        if (viewModel.showLauncherView)
+        if (viewModel.showLauncherView || !viewModel.showProfile())
             actionMenu?.findItem(R.id.action_profile)?.isVisible = false
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.action_profile)
-            Toast.makeText(this, "Profile is selected", Toast.LENGTH_SHORT).show()
+        if (item.itemId == R.id.action_profile) {
+            startViewModelActivity<ProfileActivity>()
+        }
         return true
     }
 }
