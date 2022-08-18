@@ -35,7 +35,7 @@ internal class SerialPayloadSender(
     }
 
     private fun handleSentPayload(payload: PayloadData) {
-        payloadQueue.deletePayload(payload)
+        payloadQueue.deletePayloadAndAssociatedFiles(payload)
         notifySuccess(payload)
         sendNextUnsentPayload()
     }
@@ -43,7 +43,7 @@ internal class SerialPayloadSender(
     private fun handleFailedPayload(payload: PayloadData, error: Throwable) {
         val shouldDeletePayload = shouldDeletePayload(error)
         if (shouldDeletePayload) {
-            payloadQueue.deletePayload(payload)
+            payloadQueue.deletePayloadAndAssociatedFiles(payload)
             notifyFailure(error, payload)
             sendNextUnsentPayload()
         } else {

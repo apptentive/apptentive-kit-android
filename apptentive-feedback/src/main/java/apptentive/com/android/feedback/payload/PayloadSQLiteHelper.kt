@@ -6,9 +6,12 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.annotation.VisibleForTesting
+import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.network.HttpMethod
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.PAYLOADS
+import java.io.FileNotFoundException
+import java.io.IOException
 
 internal class PayloadSQLiteHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -31,6 +34,7 @@ internal class PayloadSQLiteHelper(context: Context) :
             put(COL_METHOD, payload.method.toString())
             put(COL_MEDIA_TYPE, payload.mediaType.toString())
             put(COL_PAYLOAD_DATA, payload.data)
+            put(COL_PAYLOAD_DATA_FILE, payload.dataFilePath)
         }
 
         writableDatabase.use { db ->
@@ -89,14 +93,21 @@ internal class PayloadSQLiteHelper(context: Context) :
         }
     }
 
+    @Throws(FileNotFoundException::class, IOException::class)
     private fun readPayload(cursor: Cursor): PayloadData {
+        val dataBytes = cursor.getBlob(COL_PAYLOAD_DATA)
+        val dataPath = cursor.getString(COL_PAYLOAD_DATA_FILE)
+        val payloadData = if (dataBytes.isNotEmpty()) dataBytes
+        else FileUtil.readFileData(dataPath)
+
         return PayloadData(
             nonce = cursor.getString(COL_NONCE),
             type = PayloadType.parse(cursor.getString(COL_TYPE)),
             path = cursor.getString(COL_PATH),
             method = HttpMethod.valueOf(cursor.getString(COL_METHOD)),
             mediaType = MediaType.parse(cursor.getString(COL_MEDIA_TYPE)),
-            data = cursor.getBlob(COL_PAYLOAD_DATA)
+            data = payloadData,
+            dataFilePath = dataPath
         )
     }
 
@@ -130,7 +141,7 @@ internal class PayloadSQLiteHelper(context: Context) :
 
     companion object {
         private const val DATABASE_NAME = "payloads.db"
-        private const val DATABASE_VERSION = 1
+        private const val DATABASE_VERSION = 2
         const val TABLE_NAME = "payloads"
         private val COL_PRIMARY_KEY = Column(index = 0, name = "_ID")
         private val COL_NONCE = Column(index = 1, name = "nonce")
@@ -139,6 +150,7 @@ internal class PayloadSQLiteHelper(context: Context) :
         private val COL_METHOD = Column(index = 4, name = "method")
         private val COL_MEDIA_TYPE = Column(index = 5, name = "media_type")
         private val COL_PAYLOAD_DATA = Column(index = 6, name = "data")
+        private val COL_PAYLOAD_DATA_FILE = Column(index = 7, name = "data_file")
 
         private val SQL_QUERY_CREATE_TABLE = "CREATE TABLE $TABLE_NAME (" +
             "$COL_PRIMARY_KEY INTEGER PRIMARY KEY, " +
@@ -147,7 +159,8 @@ internal class PayloadSQLiteHelper(context: Context) :
             "$COL_PATH TEXT, " +
             "$COL_METHOD TEXT, " +
             "$COL_MEDIA_TYPE TEXT, " +
-            "$COL_PAYLOAD_DATA BLOB" +
+            "$COL_PAYLOAD_DATA BLOB, " +
+            "$COL_PAYLOAD_DATA_FILE TEXT" +
             ")"
         private const val SQL_QUERY_DROP_TABLE = "DROP TABLE IF EXISTS $TABLE_NAME"
     }

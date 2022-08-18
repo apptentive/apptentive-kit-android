@@ -1,10 +1,14 @@
 package apptentive.com.android.feedback.utils
 
+import kotlin.math.max
+
 internal fun createStringTable(rows: List<Array<Any?>>): String {
     val columnSizes = IntArray(rows[0].size)
     for (row in rows) {
+        if (row.any { it.toString().length > 10000 }) return "Skipping printing of large attachment"
+
         for (i in row.indices) {
-            columnSizes[i] = Math.max(
+            columnSizes[i] = max(
                 columnSizes[i],
                 row[i].toString().length
             )
@@ -23,10 +27,8 @@ internal fun createStringTable(rows: List<Array<Any?>>): String {
     for (row in rows) {
         result.append("\n")
         for (i in row.indices) {
-            if (i > 0) {
-                result.append(" | ")
-            }
-            result.append(String.format("%-${columnSizes[i]}s", row[i]))
+            if (i > 0) result.append(" | ")
+            result.append("${row[i]}-${columnSizes[i]}s")
         }
     }
     result.append("\n").append(line)

@@ -184,7 +184,12 @@ object Apptentive {
                 Log.d(NETWORK, "--> ${request.method} ${request.url}")
                 Log.v(NETWORK, "Headers:\n${SensitiveDataUtils.hideIfSanitized(request.headers)}")
                 Log.v(NETWORK, "Content-Type: ${request.requestBody?.contentType}")
-                Log.v(NETWORK, "Request Body: ${SensitiveDataUtils.hideIfSanitized(request.requestBody?.asString())}")
+                Log.v(
+                    NETWORK,
+                    "Request Body: " +
+                        if ((request.requestBody?.asString()?.length ?: 0) < 5000) SensitiveDataUtils.hideIfSanitized(request.requestBody?.asString())
+                        else "Request body too large to print."
+                )
             }
 
             override fun intercept(response: HttpNetworkResponse) {
@@ -285,6 +290,8 @@ object Apptentive {
      * in the client's Message Center. A local copy of this file will be made until the message is transmitted, at which
      * point the temporary file will be deleted.
      *
+     * NOTICE: FILE SIZE LIMIT IS 15MB
+     *
      * @param uri The URI path of the local resource file.
      */
     fun sendAttachmentFile(uri: String?) {
@@ -299,6 +306,8 @@ object Apptentive {
      * Sends a file to the server. This file will be visible in the conversation view on the server, but will not be shown
      * in the client's Message Center. A local copy of this file will be made until the message is transmitted, at which
      * point the temporary file will be deleted.
+     *
+     * NOTICE: FILE SIZE LIMIT IS 15MB
      *
      * @param content  A byte array of the file contents.
      * @param mimeType The mime type of the file.
@@ -315,6 +324,8 @@ object Apptentive {
      * Sends a file to the server. This file will be visible in the conversation view on the server, but will not be shown
      * in the client's Message Center. A local copy of this file will be made until the message is transmitted, at which
      * point the temporary file will be deleted.
+     *
+     * NOTICE: FILE SIZE LIMIT IS 15MB
      *
      * @param inputStream An InputStream from the desired file.
      * @param mimeType    The mime type of the file.

@@ -6,5 +6,5 @@ import apptentive.com.android.util.InternalUseOnly
 interface PayloadQueue {
     fun enqueuePayload(payload: PayloadData)
     fun nextUnsentPayload(): PayloadData?
-    fun deletePayload(payload: PayloadData)
+    fun deletePayloadAndAssociatedFiles(payload: PayloadData)
 }

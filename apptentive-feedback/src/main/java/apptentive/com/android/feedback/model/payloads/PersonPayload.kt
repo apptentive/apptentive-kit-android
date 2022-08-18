@@ -28,7 +28,9 @@ internal class PersonPayload(
 
     override fun getContentType() = MediaType.applicationJson
 
-    override fun getDataBytes(): ByteArray = toJson().toByteArray()
+    override fun getDataBytes() = toJson().toByteArray()
+
+    override fun getDataFilePath() = ""
 
     override fun equals(other: Any?): Boolean {
         return when {

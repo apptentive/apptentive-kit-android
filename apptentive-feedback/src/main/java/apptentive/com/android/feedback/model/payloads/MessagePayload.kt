@@ -34,7 +34,7 @@ import java.io.File
 data class MessagePayload(
     @Transient val messageNonce: String,
     @Transient val boundary: String,
-    @Transient var attachments: List<StoredFile>,
+    @Transient var storedFiles: List<StoredFile>,
     val type: String,
     val body: String?,
     val sender: Sender?,
@@ -62,6 +62,18 @@ data class MessagePayload(
         private const val TWO_HYPHENS = "--"
     }
 
+    override fun getDataFilePath(): String {
+        return if (type == Message.MESSAGE_TYPE_COMPOUND) {
+            val fileName = FileUtil.generateCacheFilePath(nonce, "apptentive-message-payload")
+            FileUtil.writeFileData(fileName, saveDataBytes())
+            fileName
+        } else ""
+    }
+
+    override fun getDataBytes(): ByteArray {
+        return if (type == Message.MESSAGE_TYPE_TEXT) toJson().toByteArray() else ByteArray(0)
+    }
+
     /**
      * This is a multipart request. To accomplish this, we will create a data blog that is the entire contents
      * of the request after the request's headers. Each part of the body includes its own headers,
@@ -69,10 +81,7 @@ data class MessagePayload(
      *
      * @return a Byte array that can be set on the payload request.
      */
-
-    override fun getDataBytes(): ByteArray {
-        if (type == Message.MESSAGE_TYPE_TEXT) return toJson().toByteArray()
-
+    private fun saveDataBytes(): ByteArray {
         val data = ByteArrayOutputStream()
 
         // Connect data to the request header.
@@ -90,8 +99,13 @@ data class MessagePayload(
         data.write(textMessagePart)
 
         // Then append attachments as other parts
-        attachments.forEach { attachment ->
-            data.write(getAttachmentByteStream(attachment).toByteArray())
+        storedFiles.forEach { storedFile ->
+            val attachmentStream = getAttachmentByteStream(storedFile)
+            try {
+                data.write(attachmentStream.toByteArray())
+            } finally {
+                FileUtil.ensureClosed(attachmentStream)
+            }
         }
         data.write(LINE_END.toByteArray())
 
@@ -103,7 +117,7 @@ data class MessagePayload(
         return data.toByteArray()
     }
 
-    private fun getAttachmentByteStream(attachment: StoredFile): ByteArrayOutputStream {
+    private fun getAttachmentByteStream(storedFile: StoredFile): ByteArrayOutputStream {
         val attachmentStream = ByteArrayOutputStream()
 
         Log.v(PAYLOADS, "Starting to write an attachment part.")
@@ -113,46 +127,46 @@ data class MessagePayload(
         val attachmentEnvelope = (
             "Content-Disposition: form-data; " +
                 "name=\"file[]\"; " +
-                "filename=\"${attachment.fileName}\"$LINE_END" +
-                "Content-Type: ${attachment.mimeType}$LINE_END$LINE_END"
+                "filename=\"${storedFile.fileName}\"$LINE_END" +
+                "Content-Type: ${storedFile.mimeType}$LINE_END$LINE_END"
             ).toByteArray()
 
         Log.v(PAYLOADS, "Writing attachment envelope: $attachmentEnvelope")
         attachmentStream.write(attachmentEnvelope)
 
-        val activity = DependencyProvider.of<EngagementContextFactory>().engagementContext().getAppActivity()
+        retrieveAndWriteFileToStream(storedFile, attachmentStream)
+        Log.v(PAYLOADS, "Writing attachment bytes: ${attachmentStream.size()}")
+        return attachmentStream
+    }
 
-        val inputPath =
-            if (URLUtil.isContentUrl(attachment.sourceUriOrPath)) Uri.parse(attachment.sourceUriOrPath)
-            else Uri.fromFile(File(attachment.sourceUriOrPath))
-        val fileInputStream = activity.contentResolver.openInputStream(inputPath)
-
+    private fun retrieveAndWriteFileToStream(storedFile: StoredFile, attachmentStream: ByteArrayOutputStream) {
         try {
+            val activity = DependencyProvider.of<EngagementContextFactory>().engagementContext()
+                .getAppActivity()
+
+            val inputPath =
+                if (URLUtil.isContentUrl(storedFile.sourceUriOrPath)) Uri.parse(storedFile.sourceUriOrPath)
+                else Uri.fromFile(File(storedFile.localFilePath))
+
+            val fileInputStream = activity.contentResolver.openInputStream(inputPath)
             requireNotNull(fileInputStream)
-            if (FileUtil.isMimeTypeImage(attachment.mimeType)) {
+            if (FileUtil.isMimeTypeImage(storedFile.mimeType)) {
                 Log.v(PAYLOADS, "Appending image attachment.")
                 ImageUtil.appendScaledDownImageToStream(
-                    attachment.sourceUriOrPath,
+                    storedFile.sourceUriOrPath,
                     fileInputStream,
                     attachmentStream
                 )
             } else {
                 Log.v(PAYLOADS, "Appending non-image attachment.")
-                FileUtil.appendFileToStream(
-                    fileInputStream,
-                    attachmentStream
-                )
+                FileUtil.appendFileToStream(fileInputStream, attachmentStream)
             }
         } catch (e: Exception) {
             Log.e(
                 PAYLOADS,
-                "Error reading Message Payload attachment: \"${attachment.localFilePath}\".",
+                "Error reading Message Payload attachment: \"${storedFile.localFilePath}\".",
                 e
             )
-        } finally {
-            FileUtil.ensureClosed(fileInputStream)
         }
-        Log.v(PAYLOADS, "Writing attachment bytes: ${attachmentStream.size()}")
-        return attachmentStream
     }
 }

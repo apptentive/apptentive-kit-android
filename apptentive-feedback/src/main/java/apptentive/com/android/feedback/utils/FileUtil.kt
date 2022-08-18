@@ -1,7 +1,6 @@
 package apptentive.com.android.feedback.utils
 
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-import android.app.Activity
 import android.content.Context
 import android.net.Uri
 import android.os.Build
@@ -27,7 +26,7 @@ import java.io.InputStream
 import java.io.OutputStream
 
 @InternalUseOnly
-internal object FileUtil {
+object FileUtil {
     private val fileSystem: FileSystem by lazy { DependencyProvider.of<FileSystem>() }
 
     @WorkerThread
@@ -39,16 +38,16 @@ internal object FileUtil {
         return context.contentResolver?.getType(contentUri) // Usually `application/TYPE`
     }
 
-    fun generateCacheFilePathFromNonceOrPrefix(nonce: String, prefix: String?): String {
-        val activity = DependencyProvider.of<EngagementContextFactory>().engagementContext().getAppActivity()
-
-        val fileName = prefix ?: "apptentive-api-file-$nonce"
-        val cacheDir = getDiskCacheDir(activity)
+    fun generateCacheFilePath(nonce: String, prefix: String?): String {
+        val fileName = prefix?.plus("-$nonce") ?: "apptentive-api-file-$nonce"
+        val cacheDir = getDiskCacheDir()
         val cacheFile = File(cacheDir, fileName)
         return cacheFile.path
     }
 
-    private fun getDiskCacheDir(activity: Activity): File? {
+    private fun getDiskCacheDir(): File? {
+        val activity = DependencyProvider.of<EngagementContextFactory>().engagementContext().getAppActivity()
+
         return if ((Environment.MEDIA_MOUNTED == Environment.getExternalStorageState() || !Environment.isExternalStorageRemovable()) &&
             SystemUtils.hasPermission(activity, WRITE_EXTERNAL_STORAGE)
         ) activity.externalCacheDir else activity.cacheDir ?: null
@@ -145,12 +144,79 @@ internal object FileUtil {
             copy(fileInputStream, outputStream)
         } catch (e: Exception) {
             Log.e(UTIL, "Exception while appending file to stream", e)
+        } finally {
+            ensureClosed(fileInputStream)
+            ensureClosed(outputStream)
+        }
+    }
+
+    @Throws(FileNotFoundException::class, IOException::class)
+    fun writeFileData(fileLocation: String, data: ByteArray) {
+        val fileOutputStream = FileOutputStream(File(fileLocation))
+        try {
+            fileOutputStream.use { outputStream -> outputStream.write(data) }
+        } catch (e: Exception) {
+            Log.e(UTIL, "Exception writing file", e)
+        } finally {
+            ensureClosed(fileOutputStream)
+        }
+    }
+
+    @Throws(FileNotFoundException::class, IOException::class)
+    fun readFileData(fileLocation: String): ByteArray {
+        try {
+            return readFile(File(fileLocation))
+        } catch (e: Exception) {
+            Log.e(UTIL, "Exception reading file", e)
+            throw e
+        }
+    }
+
+    @Throws(FileNotFoundException::class, IOException::class)
+    fun readFile(file: File): ByteArray {
+        val fileSize = verifyFileSize(file)
+        val data = ByteArray(fileSize)
+        val read = readFile(file, data)
+        verifyAllDataRead(file, data, read)
+        return data
+    }
+
+    @Throws(IOException::class)
+    private fun verifyFileSize(file: File): Int {
+        val fileSize = file.length()
+        if (fileSize > Int.MAX_VALUE) {
+            throw IOException("File size (" + fileSize + " bytes) for " + file.name + " too large.")
+        }
+        return fileSize.toInt()
+    }
+
+    @Throws(FileNotFoundException::class, IOException::class)
+    private fun readFile(file: File, data: ByteArray): Int {
+        val fileInputStream = FileInputStream(file)
+        try {
+            fileInputStream.use { inputStream -> return inputStream.read(data) }
+        } catch (e: Exception) {
+            Log.e(UTIL, "Exception reading file", e)
+            throw e
+        } finally {
+            ensureClosed(fileInputStream)
+        }
+    }
+
+    @Throws(IOException::class)
+    fun verifyAllDataRead(file: File, data: ByteArray, read: Int) {
+        if (read != data.size) {
+            throw IOException(
+                "Expected to read " + data.size +
+                    " bytes from file " + file.name + " but got only " + read + " bytes from file."
+            )
         }
     }
 
     fun ensureClosed(stream: Closeable?) {
         if (stream != null) {
             try {
+                if (stream is OutputStream) stream.flush()
                 stream.close()
             } catch (e: IOException) {
                 Log.e(UTIL, "Exception while closing stream", e)
@@ -187,6 +253,13 @@ internal object FileUtil {
         } catch (e: Exception) {
             Log.d(UTIL, "Exception while retrieving name, using default: $defaultName")
             defaultName
+        }
+    }
+
+    fun deleteFile(filePath: String) {
+        if (filePath.isNotBlank()) {
+            val file = File(filePath)
+            if (file.exists()) file.delete()
         }
     }
 }

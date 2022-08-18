@@ -32,6 +32,9 @@ internal object ImageUtil {
             )
         } catch (e: IOException) {
             Log.e(UTIL, "Exception while getting image orientation", e)
+        } finally {
+            FileUtil.ensureClosed(fileInputStream)
+            FileUtil.ensureClosed(outputStream)
         }
 
         // Copy the file contents over

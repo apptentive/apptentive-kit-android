@@ -57,7 +57,7 @@ data class Message(
     fun toMessagePayload(): MessagePayload = MessagePayload(
         messageNonce = nonce,
         boundary = generateUUID().replace("-", ""),
-        attachments = storedFiles,
+        storedFiles = storedFiles,
         type = type,
         body = body,
         sender = sender,

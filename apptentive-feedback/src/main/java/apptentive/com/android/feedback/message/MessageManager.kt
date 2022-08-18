@@ -186,7 +186,7 @@ class MessageManager(
          * If original uri is known, the name will be taken from the original uri
          */
         val activity = DependencyProvider.of<EngagementContextFactory>().engagementContext().getAppActivity()
-        var localFilePath = FileUtil.generateCacheFilePathFromNonceOrPrefix(
+        var localFilePath = FileUtil.generateCacheFilePath(
             message.nonce,
             Uri.parse(uri).lastPathSegment
         )
@@ -216,7 +216,7 @@ class MessageManager(
             inbound = true
         )
 
-        var localFilePath: String = FileUtil.generateCacheFilePathFromNonceOrPrefix(message.nonce, null)
+        var localFilePath: String = FileUtil.generateCacheFilePath(message.nonce, null)
         val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)
         if (!extension.isNullOrEmpty()) localFilePath += ".$extension"
 

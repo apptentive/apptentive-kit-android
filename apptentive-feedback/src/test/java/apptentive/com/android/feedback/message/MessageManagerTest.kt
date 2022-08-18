@@ -114,7 +114,7 @@ class MessageManagerTest : TestCase() {
             boundary = generateUUID(),
             messageNonce = generateUUID(),
             automated = null,
-            attachments = emptyList()
+            storedFiles = emptyList()
         )
 
         messageManager.sendMessage("ABC Hidden", true)
@@ -137,7 +137,7 @@ class MessageManagerTest : TestCase() {
             boundary = generateUUID(),
             messageNonce = generateUUID(),
             automated = null,
-            attachments = emptyList()
+            storedFiles = emptyList()
         )
 
         messageManager.sendMessage("ABC")
