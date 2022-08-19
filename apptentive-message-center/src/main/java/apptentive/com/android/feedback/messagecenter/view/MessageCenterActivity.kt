@@ -106,7 +106,7 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
         val sendButton = findViewById<ImageView>(R.id.apptentive_send_image)
         sendButton.setOnClickListener {
             if (viewModel.showLauncherView)
-                viewModel.sendMessage(messageText.text.toString(), profileView.getName(), profileView.getEmail())
+                viewModel.sendMessage(messageText.text.toString(), profileView.getName(), profileView.getEmail().trim())
             else
                 viewModel.sendMessage(messageText.text.toString())
         }
@@ -138,7 +138,8 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
         profileView.visibility = View.GONE
         greetingGroup.visibility = View.GONE
         messageList.visibility = View.VISIBLE
-        actionMenu?.findItem(R.id.action_profile)?.isVisible = true
+        if (viewModel.showProfile())
+            actionMenu?.findItem(R.id.action_profile)?.isVisible = true
     }
 
     private fun handleDraftMessage(shouldSave: Boolean) { // vs shouldRestore

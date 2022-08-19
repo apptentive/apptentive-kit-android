@@ -191,7 +191,8 @@ class MessageCenterViewModel : ViewModel() {
         }
     }
 
-    fun showProfile(): Boolean = model.profile?.request == true || model.profile?.require == true
+    fun showProfile(): Boolean =
+        model.profile?.request == true || model.profile?.require == true
 
     data class ValidationDataModel(
         val nameError: Boolean = false,

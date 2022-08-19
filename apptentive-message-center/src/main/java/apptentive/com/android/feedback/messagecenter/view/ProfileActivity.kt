@@ -29,11 +29,11 @@ class ProfileActivity : BaseProfileActivity() {
         setSupportActionBar(topAppBar)
 
         topAppBar.setNavigationOnClickListener {
-            viewModel.exitProfileView(profileView.getName(), profileView.getEmail())
+            viewModel.exitProfileView(profileView.getName(), profileView.getEmail().trim())
         }
 
         saveButton.setOnClickListener {
-            viewModel.submitProfile(profileView.getName(), profileView.getEmail())
+            viewModel.submitProfile(profileView.getName(), profileView.getEmail().trim())
         }
 
         viewModel.errorMessagesStream.observe(this) { error ->

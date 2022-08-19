@@ -8,5 +8,5 @@
     <string name="apptentive_name_validation_error">Name cannot be empty</string>
     <string name="apptentive_profile_confirmation_dialog_title">Close Profile?</string>
     <string name="apptentive_profile_confirmation_dialog_message">The changes to your profile will not be saved.</string>
-    <string name="apptentive_profile_back_to_profile">Back to profile</string>
+    <string name="apptentive_profile_back_to_profile">Stay</string>
 </resources>
