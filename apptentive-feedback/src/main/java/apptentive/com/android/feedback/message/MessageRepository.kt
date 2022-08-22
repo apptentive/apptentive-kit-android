@@ -91,7 +91,7 @@ internal class DefaultMessageRepository(val messageSerializer: MessageSerializer
 
     override fun deleteMessage(nonce: String) {
         val entry = messageEntries.filter { it.nonce == nonce }
-        if (entry != null) {
+        if (entry.isNotEmpty()) {
             messageEntries.removeAll(entry)
             saveMessages()
         } else Log.d(MESSAGE_CENTER, "Cannot delete message. Message with nonce $nonce not found.")

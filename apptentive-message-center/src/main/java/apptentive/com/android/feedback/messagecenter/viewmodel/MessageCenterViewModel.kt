@@ -5,6 +5,7 @@ import androidx.core.util.PatternsCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import apptentive.com.android.concurrent.Executors
+import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.LiveEvent
 import apptentive.com.android.feedback.dependencyprovider.MessageCenterModelFactory
@@ -22,6 +23,7 @@ import apptentive.com.android.feedback.utils.convertToGroupDate
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags
+import apptentive.com.android.util.LogTags.MESSAGE_CENTER
 
 /**
  * ViewModel for MessageCenter
@@ -51,6 +53,9 @@ class MessageCenterViewModel : ViewModel() {
     val greetingBody: String = model.greeting?.body ?: ""
     val composerHint: String = model.composer?.hintText ?: ""
     var messages: List<Message> = getMessagesFromManager().filterSortAndGroupMessages()
+    var hasAutomatedMessage: Boolean = !model.automatedMessage?.body.isNullOrEmpty()
+    var updateViewWithAutomatedMessage: Boolean = hasAutomatedMessage
+    lateinit var automatedMessage: Message
     var showLauncherView: Boolean = messages.isEmpty() && showProfile()
 
     private val newMessagesSubject = LiveEvent<List<Message>>()
@@ -73,20 +78,36 @@ class MessageCenterViewModel : ViewModel() {
         }
     }
 
+    private val automatedMessageSubject: BehaviorSubject<List<Message>> = BehaviorSubject(listOf())
+
     private val profileObserver: (Person?) -> Unit = { profile ->
         if (profile?.email?.isNotEmpty() == true) showLauncherView = false
     }
 
     init {
         messageManager.messages.observe(messageObserver)
+        automatedMessageSubject.observe(messageObserver)
         messageManager.profile.observe(profileObserver)
         errorMessages.postValue(ValidationDataModel())
+        if (hasAutomatedMessage) {
+            automatedMessageSubject.value = listOf(
+                Message(
+                    type = Message.MESSAGE_TYPE_TEXT,
+                    body = model.automatedMessage?.body,
+                    sender = null,
+                    messageStatus = Message.Status.Sending,
+                    automated = true,
+                    inbound = false,
+                )
+            )
+        }
     }
 
     override fun onCleared() {
         // Clears the observer
         messageManager.messages.removeObserver(messageObserver)
         messageManager.profile.removeObserver(profileObserver)
+        automatedMessageSubject.removeObserver(messageObserver)
         super.onCleared()
     }
 
@@ -142,8 +163,17 @@ class MessageCenterViewModel : ViewModel() {
         ) {
             showLauncherView = false
             clearMessage.postValue(true)
+            if (hasAutomatedMessage) {
+                messages.findLast { it.automated == true }?.let {
+                    messageManager.sendMessage(it)
+                    hasAutomatedMessage = false
+                }
+            }
             messageManager.sendMessage(message)
+
+            // messageManager.sendMessage(message, hasAutomatedMessage = hasAutomatedMessage)
             messageManager.updateProfile(name, email)
+            //  hasAutomatedMessage = false
         } else {
             Log.d(LogTags.MESSAGE_CENTER, "Cannot send blank message")
         }

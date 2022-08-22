@@ -34,6 +34,12 @@ class MessageManagerTest : TestCase() {
 
     @Before
     fun setup() {
+        val engagementContextFactory = object : EngagementContextFactory {
+            override fun engagementContext(): EngagementContext {
+                return engagementContext
+            }
+        }
+        DependencyProvider.register(engagementContextFactory as EngagementContextFactory)
         messageManager = MessageManager(
             "1234",
             "token",
@@ -41,14 +47,6 @@ class MessageManagerTest : TestCase() {
             MockExecutor(),
             MockMessageRepository()
         )
-
-        val engagementContextFactory = object : EngagementContextFactory {
-            override fun engagementContext(): EngagementContext {
-                return engagementContext
-            }
-        }
-
-        DependencyProvider.register(engagementContextFactory as EngagementContextFactory)
         messageManager.onConversationChanged(testConversation)
     }
 

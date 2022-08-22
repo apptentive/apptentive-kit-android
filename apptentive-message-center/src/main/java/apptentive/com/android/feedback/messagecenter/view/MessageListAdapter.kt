@@ -5,15 +5,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import apptentive.com.android.feedback.messagecenter.R
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.utils.convertToDate
 import com.google.android.material.textview.MaterialTextView
 
-class MessageListAdapter() : ListAdapter<Message, MessageViewHolder>(DiffCallback()) {
+class MessageListAdapter(dataSet: List<Message>) : RecyclerView.Adapter<MessageViewHolder>() {
+
+    val listItems: MutableList<Message> = dataSet.toMutableList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -22,7 +22,7 @@ class MessageListAdapter() : ListAdapter<Message, MessageViewHolder>(DiffCallbac
     }
 
     override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
-        val message = getItem(position)
+        val message = listItems[position]
         with(holder.itemView) {
             val groupTimestamp = findViewById<MaterialTextView>(R.id.apptentive_message_group_time_stamp)
             val inboundLayout = findViewById<ConstraintLayout>(R.id.apptentive_message_inbound)
@@ -51,15 +51,7 @@ class MessageListAdapter() : ListAdapter<Message, MessageViewHolder>(DiffCallbac
         }
     }
 
-    override fun getItemCount(): Int = currentList.size
-
-    private class DiffCallback : DiffUtil.ItemCallback<Message>() {
-        override fun areItemsTheSame(oldItem: Message, newItem: Message) =
-            oldItem.id == newItem.id
-
-        override fun areContentsTheSame(oldItem: Message, newItem: Message) =
-            oldItem == newItem
-    }
+    override fun getItemCount(): Int = listItems.size
 }
 
 class MessageViewHolder(view: View) : RecyclerView.ViewHolder(view)

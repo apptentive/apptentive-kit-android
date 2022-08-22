@@ -92,7 +92,6 @@ class MessageCenterViewModelTest : TestCase() {
 
     @get:Rule
     var rule: TestRule = InstantTaskExecutorRule()
-
     val messageCenterInteraction = MessageCenterInteraction(
         messageCenterId = "12345",
         title = "Message center",
@@ -118,17 +117,6 @@ class MessageCenterViewModelTest : TestCase() {
 
     @Before
     fun setup() {
-        val messageManager = MessageManager(
-            "conversationId",
-            "token",
-            MockMessageFetchService(),
-            MockExecutor(),
-            MockMessageRepository()
-        )
-        DependencyProvider.register(
-            MessageCenterModelProvider(messageCenterInteraction)
-        )
-        DependencyProvider.register(MessageManagerFactoryProvider(messageManager))
         DependencyProvider.register(
             MockEngagementContextFactory
             {
@@ -141,6 +129,15 @@ class MessageCenterViewModelTest : TestCase() {
                 )
             }
         )
+        val messageManager = MessageManager(
+            "conversationId",
+            "token",
+            MockMessageFetchService(),
+            MockExecutor(),
+            MockMessageRepository()
+        )
+        DependencyProvider.register(MessageCenterModelProvider(messageCenterInteraction))
+        DependencyProvider.register(MessageManagerFactoryProvider(messageManager))
     }
 
     @Test
@@ -166,6 +163,21 @@ class MessageCenterViewModelTest : TestCase() {
             event = Event.internal(codePoint, interaction = InteractionType.MessageCenter),
             interactionId = interactionId
         )
+
+    @Test
+    fun testAutomatedMessage() {
+        DependencyProvider.register(
+            MessageCenterModelProvider(
+                messageCenterInteraction.copy(
+                    automatedMessage = MessageCenterInteraction.AutomatedMessage("This is an automated message")
+                )
+            )
+        )
+        val viewModel = MessageCenterViewModel()
+        val manager = DependencyProvider.of<MessageManagerFactory>().messageManager()
+        manager.fetchMessages()
+        assertTrue(viewModel.messages.last().automated!!)
+    }
 
     @Test
     fun testGetAndGroupMessages() {

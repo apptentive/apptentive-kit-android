@@ -169,7 +169,8 @@ internal class ApptentiveDefaultClient(
                 recordInteraction = ::recordInteraction,
                 recordInteractionResponses = ::recordInteractionResponses
             )
-
+            // register engagement context as soon as DefaultEngagement is created to make it available for MessageManager
+            DependencyProvider.register(EngagementContextProvider(engagement, payloadSender, executors))
             // once we have received conversationId and conversationToken we can setup payload sender service
             val conversationId = conversation.conversationId
             val conversationToken = conversation.conversationToken
@@ -273,8 +274,6 @@ internal class ApptentiveDefaultClient(
     //region Engagement
 
     override fun engage(event: Event): EngagementResult {
-        DependencyProvider.register(EngagementContextProvider(engagement, payloadSender, executors))
-
         return DependencyProvider.of<EngagementContextFactory>().engagementContext().engage(event)
     }
 
