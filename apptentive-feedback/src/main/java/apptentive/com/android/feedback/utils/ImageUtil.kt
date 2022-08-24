@@ -3,11 +3,15 @@ package apptentive.com.android.feedback.utils
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.media.ThumbnailUtils
 import android.net.Uri
+import android.os.Build
+import android.util.Size
 import android.webkit.URLUtil
 import androidx.exifinterface.media.ExifInterface
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
+import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.UTIL
 import java.io.BufferedOutputStream
@@ -18,10 +22,16 @@ import java.io.InputStream
 import java.io.OutputStream
 import kotlin.math.min
 
-internal object ImageUtil {
+@InternalUseOnly
+object ImageUtil {
     private const val MAX_SENT_IMAGE_EDGE = 1024
+    private const val THUMBNAIL_SIZE = 256
 
-    fun appendScaledDownImageToStream(filePath: String, fileInputStream: InputStream, outputStream: OutputStream?): Boolean {
+    fun appendScaledDownImageToStream(
+        filePath: String,
+        fileInputStream: InputStream,
+        outputStream: OutputStream?
+    ): Boolean {
         // Retrieve image orientation
         var imageOrientation = 0
         try {
@@ -226,5 +236,13 @@ internal object ImageUtil {
         val heightRatio =
             if (MAX_SENT_IMAGE_EDGE <= 0) 1.0f else MAX_SENT_IMAGE_EDGE.toFloat() / height
         return min(1.0f, min(widthRatio, heightRatio)) // Don't scale above 1.0x
+    }
+
+    fun getImageThumbnailBitmap(filePath: String): Bitmap? {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ThumbnailUtils.createImageThumbnail(File(filePath), Size(THUMBNAIL_SIZE, THUMBNAIL_SIZE), null)
+        } else {
+            ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(filePath), THUMBNAIL_SIZE, THUMBNAIL_SIZE)
+        }
     }
 }

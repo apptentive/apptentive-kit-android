@@ -64,7 +64,8 @@ data class MessagePayload(
 
     override fun getDataFilePath(): String {
         return if (type == Message.MESSAGE_TYPE_COMPOUND) {
-            val fileName = FileUtil.generateCacheFilePath(nonce, "apptentive-message-payload")
+            val activity = DependencyProvider.of<EngagementContextFactory>().engagementContext().getAppActivity()
+            val fileName = FileUtil.generateCacheFilePathFromNonceOrPrefix(activity, nonce, "apptentive-message-payload")
             FileUtil.writeFileData(fileName, saveDataBytes())
             fileName
         } else ""
@@ -92,7 +93,7 @@ data class MessagePayload(
         val textMessagePart = (
             "Content-Disposition: form-data; " +
                 "name=\"message\"$LINE_END" +
-                "Content-Type: {${MediaType.applicationJson}}$LINE_END$LINE_END" +
+                "Content-Type: ${MediaType.applicationJson};charset=UTF-8$LINE_END$LINE_END" +
                 JsonConverter.toJson(this)
             ).toByteArray()
         Log.v(PAYLOADS, "Writing text envelope: $textMessagePart")
@@ -141,11 +142,10 @@ data class MessagePayload(
 
     private fun retrieveAndWriteFileToStream(storedFile: StoredFile, attachmentStream: ByteArrayOutputStream) {
         try {
-            val activity = DependencyProvider.of<EngagementContextFactory>().engagementContext()
-                .getAppActivity()
+            val activity = DependencyProvider.of<EngagementContextFactory>().engagementContext().getAppActivity()
 
             val inputPath =
-                if (URLUtil.isContentUrl(storedFile.sourceUriOrPath)) Uri.parse(storedFile.sourceUriOrPath)
+                if (URLUtil.isContentUrl(storedFile.localFilePath)) Uri.parse(storedFile.localFilePath)
                 else Uri.fromFile(File(storedFile.localFilePath))
 
             val fileInputStream = activity.contentResolver.openInputStream(inputPath)
@@ -153,7 +153,7 @@ data class MessagePayload(
             if (FileUtil.isMimeTypeImage(storedFile.mimeType)) {
                 Log.v(PAYLOADS, "Appending image attachment.")
                 ImageUtil.appendScaledDownImageToStream(
-                    storedFile.sourceUriOrPath,
+                    storedFile.localFilePath,
                     fileInputStream,
                     attachmentStream
                 )

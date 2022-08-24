@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="01/02/2022" />
 
-    <!-- Outbound message from the dashboard (Our sent messages) -->
+    <!-- Outbound message from the dashboard (Received from backend) -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/apptentive_message_outbound"
         style="?attr/apptentiveMessageCenterOutboundBubble"
@@ -35,6 +35,18 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Hello! I have an issue with the order number 1234. Can you update the order with the following address?" />
 
+        <LinearLayout
+            android:id="@+id/apptentive_message_outbound_attachments_layout"
+            style="?apptentiveMessageCenterBubbleAttachmentsLayoutStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/apptentive_message_outbound_time_stamp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/apptentive_message_outbound_text"
+            tools:ignore="Orientation" />
+
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/apptentive_message_outbound_time_stamp"
             style="?attr/apptentiveMessageCenterOutboundBubbleStatusText"
@@ -42,12 +54,12 @@
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/apptentive_message_outbound_text"
+            app:layout_constraintTop_toBottomOf="@id/apptentive_message_outbound_attachments_layout"
             tools:text="Sent 01/02/2022" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Inbound message to the dashboard  (Our received messages) -->
+    <!-- Inbound message to the dashboard  (Sent by us to backend) -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/apptentive_message_inbound"
         style="?attr/apptentiveMessageCenterInboundBubble"
@@ -63,7 +75,19 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Dear customer, Can you describe your issue? We will try to fix it as soon as possible." />
+            tools:text="Dear customer, can you describe your issue? We will try to fix it as soon as possible." />
+
+        <LinearLayout
+            android:id="@+id/apptentive_message_inbound_attachments_layout"
+            style="?apptentiveMessageCenterBubbleAttachmentsLayoutStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/apptentive_message_inbound_time_stamp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/apptentive_message_inbound_text"
+            tools:ignore="Orientation" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/apptentive_message_inbound_time_stamp"
@@ -72,7 +96,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/apptentive_message_inbound_text"
+            app:layout_constraintTop_toBottomOf="@id/apptentive_message_inbound_attachments_layout"
             tools:text="Sent 01/02/2022" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

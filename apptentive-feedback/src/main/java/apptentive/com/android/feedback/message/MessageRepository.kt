@@ -9,7 +9,7 @@ import apptentive.com.android.util.LogTags.MESSAGE_CENTER
 
 @InternalUseOnly
 interface MessageRepository {
-    fun addOrUpdateMessage(messages: List<Message>)
+    fun addOrUpdateMessages(messages: List<Message>)
     fun updateMessage(message: Message)
     fun getAllMessages(): List<Message>
     fun getLastReceivedMessageIDFromEntries(): String
@@ -19,7 +19,7 @@ interface MessageRepository {
 
 internal class DefaultMessageRepository(val messageSerializer: MessageSerializer) : MessageRepository {
 
-    private val messageEntries: MutableList<MessageEntry> = mutableListOf()
+    private val messageEntries: MutableList<MessageEntry> = messageSerializer.loadMessages().toMutableList()
 
     override fun getLastReceivedMessageIDFromEntries(): String {
         return messageEntries.lastOrNull {
@@ -32,13 +32,15 @@ internal class DefaultMessageRepository(val messageSerializer: MessageSerializer
     private fun buildMessageFromJson(json: String): Message =
         JsonConverter.fromJson(json)
 
-    override fun addOrUpdateMessage(messages: List<Message>) {
+    override fun addOrUpdateMessages(messages: List<Message>) {
         for (message in messages) {
             val existing = findEntry(message.nonce)
             if (existing != null) {
+                val existingMessage = JsonConverter.fromJson<Message>(existing.messageJson)
+                message.createdAt = existingMessage.createdAt
+                message.storedFiles = existingMessage.storedFiles
                 existing.id = message.id
                 existing.messageState = message.messageStatus.name
-                message.createdAt = JsonConverter.fromJson<Message>(existing.messageJson).createdAt // Use the original createdAt time, not the server's
                 existing.messageJson = JsonConverter.toJson(message)
             } else {
                 val newEntry = MessageEntry(
@@ -55,7 +57,6 @@ internal class DefaultMessageRepository(val messageSerializer: MessageSerializer
     }
 
     override fun getAllMessages(): List<Message> {
-        // TODO Works only for Text message type, need small refactor for the messages with attachments
         val messageList = mutableListOf<Message>()
         try {
             for (entry in messageSerializer.loadMessages()) {

@@ -1,6 +1,5 @@
 package apptentive.com.android.feedback.message
 
-import android.net.Uri
 import android.webkit.MimeTypeMap
 import androidx.annotation.VisibleForTesting
 import apptentive.com.android.concurrent.Executor
@@ -17,6 +16,7 @@ import apptentive.com.android.feedback.model.CustomData
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.Sender
+import apptentive.com.android.feedback.model.StoredFile
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.util.InternalUseOnly
@@ -106,11 +106,9 @@ class MessageManager(
         return if (newMessages.isNotEmpty()) {
             lastDownloadedMessageID = endsWith ?: messageRepository.getLastReceivedMessageIDFromEntries()
             // Update storage
-            messageRepository.addOrUpdateMessage(
+            messageRepository.addOrUpdateMessages(
                 newMessages.map { message ->
                     message.messageStatus = Message.Status.Saved
-                    // TODO revisit type field
-                    message.type = "Text"
                     message
                 }
             )
@@ -129,11 +127,12 @@ class MessageManager(
     }
 
     @InternalUseOnly
-    fun sendMessage(messageText: String, isHidden: Boolean? = null) {
+    fun sendMessage(messageText: String, attachments: List<StoredFile> = emptyList(), isHidden: Boolean? = null) {
         val context = DependencyProvider.of<EngagementContextFactory>().engagementContext()
         val message = Message(
-            type = Message.MESSAGE_TYPE_TEXT,
+            type = if (attachments.isEmpty()) Message.MESSAGE_TYPE_TEXT else Message.MESSAGE_TYPE_COMPOUND,
             body = messageText,
+            storedFiles = attachments,
             sender = Sender(senderProfile.id, senderProfile.name, null),
             hidden = isHidden,
             messageStatus = Message.Status.Sending,
@@ -141,7 +140,7 @@ class MessageManager(
             customData = messageCustomData?.content
         )
 
-        messageRepository.addOrUpdateMessage(listOf(message))
+        messageRepository.addOrUpdateMessages(listOf(message))
         messagesSubject.value = messageRepository.getAllMessages()
 
         context.sendPayload(message.toMessagePayload())
@@ -160,7 +159,7 @@ class MessageManager(
 
     fun sendMessage(message: Message) {
         val context = DependencyProvider.of<EngagementContextFactory>().engagementContext()
-        messageRepository.addOrUpdateMessage(listOf(message))
+        messageRepository.addOrUpdateMessages(listOf(message))
         messagesSubject.value = messageRepository.getAllMessages()
 
         context.sendPayload(message.toMessagePayload())
@@ -186,20 +185,7 @@ class MessageManager(
          * If original uri is known, the name will be taken from the original uri
          */
         val activity = DependencyProvider.of<EngagementContextFactory>().engagementContext().getAppActivity()
-        var localFilePath = FileUtil.generateCacheFilePath(
-            message.nonce,
-            Uri.parse(uri).lastPathSegment
-        )
-        var mimeType = FileUtil.getMimeTypeFromUri(activity, Uri.parse(uri))
-        val mime = MimeTypeMap.getSingleton()
-        var extension = mime.getExtensionFromMimeType(mimeType)
-
-        // If we can't get the mime type from the uri, try getting it from the extension.
-        if (extension == null) extension = MimeTypeMap.getFileExtensionFromUrl(uri)
-        if (mimeType == null && extension != null) mimeType = mime.getMimeTypeFromExtension(extension)
-        if (!extension.isNullOrEmpty()) localFilePath += ".$extension"
-
-        FileUtil.createLocalStoredFile(uri, localFilePath, mimeType)?.let {
+        FileUtil.createLocalStoredFile(activity, uri, message.nonce)?.let {
             it.id = message.nonce
             message.storedFiles = listOf(it)
             sendMessage(message)
@@ -216,7 +202,8 @@ class MessageManager(
             inbound = true
         )
 
-        var localFilePath: String = FileUtil.generateCacheFilePath(message.nonce, null)
+        val activity = DependencyProvider.of<EngagementContextFactory>().engagementContext().getAppActivity()
+        var localFilePath: String = FileUtil.generateCacheFilePathFromNonceOrPrefix(activity, message.nonce, null)
         val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)
         if (!extension.isNullOrEmpty()) localFilePath += ".$extension"
 
@@ -254,7 +241,7 @@ class MessageManager(
         }?.apply {
             messageStatus = if (isSuccess) Message.Status.Sent else Message.Status.Failed
         }?.also {
-            messageRepository.addOrUpdateMessage(listOf(it))
+            messageRepository.addOrUpdateMessages(listOf(it))
             messagesSubject.value = messageRepository.getAllMessages()
         }
     }

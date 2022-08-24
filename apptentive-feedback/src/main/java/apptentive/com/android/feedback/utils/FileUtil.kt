@@ -1,11 +1,13 @@
 package apptentive.com.android.feedback.utils
 
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+import android.app.Activity
 import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.OpenableColumns
+import android.webkit.MimeTypeMap
 import android.webkit.URLUtil
 import androidx.annotation.WorkerThread
 import apptentive.com.android.core.DependencyProvider
@@ -38,16 +40,14 @@ object FileUtil {
         return context.contentResolver?.getType(contentUri) // Usually `application/TYPE`
     }
 
-    fun generateCacheFilePath(nonce: String, prefix: String?): String {
+    fun generateCacheFilePathFromNonceOrPrefix(activity: Activity, nonce: String, prefix: String?): String {
         val fileName = prefix?.plus("-$nonce") ?: "apptentive-api-file-$nonce"
-        val cacheDir = getDiskCacheDir()
+        val cacheDir = getDiskCacheDir(activity)
         val cacheFile = File(cacheDir, fileName)
         return cacheFile.path
     }
 
-    private fun getDiskCacheDir(): File? {
-        val activity = DependencyProvider.of<EngagementContextFactory>().engagementContext().getAppActivity()
-
+    private fun getDiskCacheDir(activity: Activity): File? {
         return if ((Environment.MEDIA_MOUNTED == Environment.getExternalStorageState() || !Environment.isExternalStorageRemovable()) &&
             SystemUtils.hasPermission(activity, WRITE_EXTERNAL_STORAGE)
         ) activity.externalCacheDir else activity.cacheDir ?: null
@@ -56,23 +56,35 @@ object FileUtil {
     /**
      * This method creates a cached file exactly copying from the input stream.
      *
-     * @param sourceUri     the source file path or uri string
-     * @param localFilePath the cache file path string
-     * @param mimeType      the mimeType of the source input stream
+     * @param uriString the source file path or uri string
+     * @param nonce     the generated nonce of the message
      * @return null if failed, otherwise a StoredFile object
      */
-    fun createLocalStoredFile(sourceUri: String, localFilePath: String, mimeType: String?): StoredFile? {
-        val activity = DependencyProvider.of<EngagementContextFactory>().engagementContext().getAppActivity()
+    fun createLocalStoredFile(activity: Activity, uriString: String, nonce: String): StoredFile? {
+        var localFilePath = generateCacheFilePathFromNonceOrPrefix(
+            activity,
+            nonce,
+            Uri.parse(uriString).lastPathSegment
+        )
+        var mimeType = getMimeTypeFromUri(activity, Uri.parse(uriString))
+        val mime = MimeTypeMap.getSingleton()
+        var extension = mime.getExtensionFromMimeType(mimeType)
+
+        // If we can't get the mime type from the uri, try getting it from the extension.
+        if (extension == null) extension = MimeTypeMap.getFileExtensionFromUrl(uriString)
+        if (mimeType == null && extension != null) mimeType = mime.getMimeTypeFromExtension(extension)
+        if (!extension.isNullOrEmpty()) localFilePath += ".$extension"
+
         var inputStream: InputStream? = null
         return try {
-            val uri = Uri.parse(sourceUri)
-            inputStream = if (URLUtil.isContentUrl(sourceUri)) {
+            val uri = Uri.parse(uriString)
+            inputStream = if (URLUtil.isContentUrl(uriString)) {
                 activity.contentResolver.openInputStream(uri)
             } else {
-                val file = File(uri.path ?: sourceUri)
+                val file = File(uri.path ?: uriString)
                 FileInputStream(file)
             }
-            createLocalStoredFile(inputStream, sourceUri, localFilePath, mimeType)
+            createLocalStoredFile(inputStream, uriString, localFilePath, mimeType)
         } catch (e: FileNotFoundException) {
             null
         } finally {
@@ -101,6 +113,7 @@ object FileUtil {
         var cos: CountingOutputStream? = null
         var bos: BufferedOutputStream? = null
         var fos: FileOutputStream? = null
+        val bytesWritten: Long
         try {
             val localFile = File(localFilePath)
             // Local cache file name may not be unique, and can be reused, in which case, the
@@ -109,11 +122,12 @@ object FileUtil {
             fos = FileOutputStream(localFile)
             bos = BufferedOutputStream(fos)
             cos = CountingOutputStream(bos)
-            val buf = ByteArray(2048)
+            val buf = ByteArray(4096)
             var count: Int
-            while (inputStream.read(buf, 0, 2048).also { count = it } != -1) {
+            while (inputStream.read(buf, 0, 4096).also { count = it } != -1) {
                 cos.write(buf, 0, count)
             }
+            bytesWritten = cos.bytesWritten
             Log.v(UTIL, "File saved, size = " + (cos.bytesWritten / 1024).toString() + "k")
         } catch (e: IOException) {
             Log.e(UTIL, "Error creating local copy of file attachment.", e)
@@ -128,7 +142,8 @@ object FileUtil {
         return StoredFile(
             sourceUriOrPath = sourceUri,
             localFilePath = localFilePath,
-            mimeType = mimeType
+            mimeType = mimeType,
+            fileSize = bytesWritten
         )
     }
 

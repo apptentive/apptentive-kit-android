@@ -116,6 +116,12 @@
         <attr name="apptentiveMessageCenterSingleLineLayoutStyle" format="reference"/>
         <attr name="apptentiveMessageCenterSingleLineEditTextStyle" format="reference"/>
         <attr name="apptentiveMessageCenterErrorStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterComposerAttachmentsLayoutStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterBubbleAttachmentsLayoutStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterAttachmentLayoutStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterAttachmentThumbnailStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterAttachmentThumbnailTypeStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterAttachmentThumbnailSpacing" format="dimension"/>
 
         <!-- Typeface -->
         <attr name="apptentiveTypefaceMessageCenterGreetingTitle" format="reference"/>

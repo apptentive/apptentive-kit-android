@@ -21,7 +21,7 @@ class MessageRepositoryTest : TestCase() {
     @Test
     fun testAddMessages() {
         val messageRepo = DefaultMessageRepository(MockMessageSerializer(testMessageList))
-        messageRepo.addOrUpdateMessage(testMessageList)
+        messageRepo.addOrUpdateMessages(testMessageList)
         addResult(testMessageList)
         assertResults(messageRepo.getAllMessages())
     }
@@ -36,7 +36,7 @@ class MessageRepositoryTest : TestCase() {
             sender = Sender(id = "1234", name = "John Doe", profilePhoto = null),
         )
         val messageRepository = DefaultMessageRepository(MockMessageSerializer(listOf(updatedMessage)))
-        messageRepository.addOrUpdateMessage(testMessageList)
+        messageRepository.addOrUpdateMessages(testMessageList)
 
         // Testing update message
         messageRepository.updateMessage(updatedMessage)
@@ -62,13 +62,13 @@ class MessageRepositoryTest : TestCase() {
         )
 
         addResult(updatedList)
-        messageRepository.addOrUpdateMessage(updatedList)
+        messageRepository.addOrUpdateMessages(updatedList)
     }
 
     @Test
     fun deleteMessage() {
         val messageRepository = DefaultMessageRepository(MockMessageSerializer(listOf()))
-        messageRepository.addOrUpdateMessage(testMessageList)
+        messageRepository.addOrUpdateMessages(testMessageList)
         messageRepository.deleteMessage("UUID")
         addResult(listOf<Message>())
         assertResults(messageRepository.getAllMessages())
@@ -95,7 +95,7 @@ class MessageRepositoryTest : TestCase() {
                 sender = Sender(id = "1234", name = "John Doe", profilePhoto = null),
             )
         )
-        messageRepository.addOrUpdateMessage(messages)
+        messageRepository.addOrUpdateMessages(messages)
         addResult("Test2")
         assertResults(messageRepository.getLastReceivedMessageIDFromEntries())
     }

@@ -9,7 +9,7 @@ import kotlin.Throws
  * Counts the number of bytes written to it, and sends them along to the wrapped OutputStream.
  */
 class CountingOutputStream(os: OutputStream?) : BufferedOutputStream(os) {
-    var bytesWritten = 0
+    var bytesWritten = 0L
         private set
 
     @Throws(IOException::class)

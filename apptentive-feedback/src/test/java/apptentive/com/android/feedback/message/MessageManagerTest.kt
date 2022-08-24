@@ -115,7 +115,7 @@ class MessageManagerTest : TestCase() {
             storedFiles = emptyList()
         )
 
-        messageManager.sendMessage("ABC Hidden", true)
+        messageManager.sendMessage("ABC Hidden", isHidden = true)
 
         val actualPayload = payloadSender.payload as MessagePayload?
         assertEquals(expectedPayload.sender, actualPayload?.sender)
@@ -199,7 +199,7 @@ private class MockExecutor : Executor {
 }
 
 private class MockMessageRepository(val messageList: List<Message> = testMessageList) : MessageRepository {
-    override fun addOrUpdateMessage(messages: List<Message>) {}
+    override fun addOrUpdateMessages(messages: List<Message>) {}
 
     override fun getLastReceivedMessageIDFromEntries(): String = ""
 

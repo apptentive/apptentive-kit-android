@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/apptentive_root"
@@ -13,15 +12,15 @@
         android:id="@+id/apptentive_appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/apptentive_toolbar"
+            style="?apptentiveMessageCenterToolbarStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="?apptentiveMessageCenterToolbarStyle">
+            android:layout_height="wrap_content">
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/apptentive_message_center_title"
@@ -30,7 +29,7 @@
                 tools:targetApi="p"
                 tools:text="Message Center" />
 
-            </com.google.android.material.appbar.MaterialToolbar>
+        </com.google.android.material.appbar.MaterialToolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -45,47 +44,47 @@
         <!-- Greeting group -->
         <ImageView
             android:id="@+id/apptentive_message_center_greeting_header"
+            style="?apptentiveMessageCenterGreetingHeaderStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="?apptentiveMessageCenterGreetingHeaderStyle"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/apptentive_message_center_greeting"
+            style="?apptentiveMessageCenterGreetingStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="?apptentiveMessageCenterGreetingStyle"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/apptentive_message_center_greeting_header"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/apptentive_message_center_greeting_header" />
 
         <TextView
             android:id="@+id/apptentive_message_center_greeting_body"
+            style="?apptentiveMessageCenterGreetingBodyTextStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="?apptentiveMessageCenterGreetingBodyTextStyle"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/apptentive_message_center_greeting"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/apptentive_message_center_greeting" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/apptentive_message_center_greeting_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="visible"
-            app:constraint_referenced_ids="apptentive_message_center_greeting,apptentive_message_center_greeting_body,apptentive_message_center_greeting_header"/>
+            android:visibility="gone"
+            app:constraint_referenced_ids="apptentive_message_center_greeting,apptentive_message_center_greeting_body,apptentive_message_center_greeting_header" />
 
         <!-- Profile -->
         <apptentive.com.android.feedback.messagecenter.view.ProfileView
             android:id="@+id/apptentive_message_center_profile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/apptentive_separator"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/apptentive_message_center_greeting_body"
-            app:layout_constraintBottom_toTopOf="@+id/apptentive_separator"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/apptentive_message_center_greeting_body" />
 
         <!-- Message list -->
 
@@ -96,59 +95,61 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/apptentive_separator"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/apptentive_item_message_bubble"/>
+            app:layout_constraintBottom_toTopOf="@id/apptentive_separator"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:listitem="@layout/apptentive_item_message_bubble" />
 
         <!-- Composer -->
         <View
             android:id="@+id/apptentive_separator"
+            style="?apptentiveViewSeparatorStyle"
             android:layout_width="match_parent"
             android:layout_height="@dimen/apptentive_separator_height"
-            style="?apptentiveViewSeparatorStyle"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/apptentive_composer_text"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/apptentive_composer_text" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <ImageView
-            android:id="@+id/apptentive_attach_image"
+            android:id="@+id/apptentive_attachment_button"
+            style="?apptentiveMessageCenterAttachmentImageStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
             android:focusable="true"
-            style="?apptentiveMessageCenterAttachmentImageStyle"
-            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/apptentive_composer_text"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@id/apptentive_composer_text"
             app:layout_constraintTop_toTopOf="@id/apptentive_composer_text"
-            app:layout_constraintBottom_toBottomOf="@id/apptentive_composer_text" />
+            tools:ignore="ContentDescription" />
 
         <EditText
             android:id="@+id/apptentive_composer_text"
+            style="?apptentiveMessageCenterComposerStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            style="?apptentiveMessageCenterComposerStyle"
-            app:layout_goneMarginBottom="@dimen/apptentive_message_error_text_margin_bottom"
-            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            android:importantForAutofill="no"
             app:layout_constraintBottom_toTopOf="@id/apptentive_composer_error"
-            app:layout_constraintEnd_toStartOf="@id/apptentive_send_image"
-            app:layout_constraintStart_toEndOf="@id/apptentive_attach_image" />
+            app:layout_constraintEnd_toStartOf="@id/apptentive_send_message_button"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toEndOf="@id/apptentive_attachment_button" />
 
         <ImageView
-            android:id="@+id/apptentive_send_image"
+            android:id="@+id/apptentive_send_message_button"
+            style="?apptentiveMessageCenterSendImageStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
             android:focusable="true"
-            style="?apptentiveMessageCenterSendImageStyle"
-            app:layout_constraintHorizontal_chainStyle="spread_inside"
-            app:layout_constraintTop_toTopOf="@id/apptentive_composer_text"
             app:layout_constraintBottom_toBottomOf="@id/apptentive_composer_text"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/apptentive_composer_text" />
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toEndOf="@id/apptentive_composer_text"
+            app:layout_constraintTop_toTopOf="@id/apptentive_composer_text"
+            tools:ignore="ContentDescription" />
 
         <TextView
             android:id="@+id/apptentive_composer_error"
@@ -156,9 +157,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/apptentive_composer_attachments_layout"
+            app:layout_constraintEnd_toEndOf="@id/apptentive_composer_text"
             app:layout_constraintStart_toStartOf="@+id/apptentive_composer_text"
             tools:text="Message cannot be empty" />
+
+        <LinearLayout
+            android:id="@+id/apptentive_composer_attachments_layout"
+            style="?attr/apptentiveMessageCenterComposerAttachmentsLayoutStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/apptentive_composer_text"
+            tools:ignore="Orientation" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

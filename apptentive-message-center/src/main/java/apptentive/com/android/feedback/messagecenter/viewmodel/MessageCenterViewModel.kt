@@ -1,5 +1,7 @@
 package apptentive.com.android.feedback.messagecenter.viewmodel
 
+import android.app.Activity
+import android.net.Uri
 import androidx.annotation.VisibleForTesting
 import androidx.core.util.PatternsCompat
 import androidx.lifecycle.LiveData
@@ -19,11 +21,14 @@ import apptentive.com.android.feedback.messagecenter.utils.MessageCenterEvents
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.MessageCenterModel
 import apptentive.com.android.feedback.model.Person
+import apptentive.com.android.feedback.model.StoredFile
+import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.convertToGroupDate
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags
 import apptentive.com.android.util.LogTags.MESSAGE_CENTER
+import apptentive.com.android.util.generateUUID
 
 /**
  * ViewModel for MessageCenter
@@ -60,6 +65,9 @@ class MessageCenterViewModel : ViewModel() {
 
     private val newMessagesSubject = LiveEvent<List<Message>>()
     val newMessages: LiveData<List<Message>> get() = newMessagesSubject
+
+    private val draftAttachmentsEvent = LiveEvent<List<StoredFile>>()
+    val draftAttachmentsStream: LiveData<List<StoredFile>> = draftAttachmentsEvent
 
     private val exitEvent = LiveEvent<Boolean>()
     val exitStream: LiveData<Boolean> = exitEvent
@@ -162,7 +170,9 @@ class MessageCenterViewModel : ViewModel() {
             !showLauncherView && validateMessage(message)
         ) {
             showLauncherView = false
+            messageManager.sendMessage(message, draftAttachmentsStream.value.orEmpty())
             clearMessage.postValue(true)
+            draftAttachmentsEvent.postValue(emptyList())
             if (hasAutomatedMessage) {
                 messages.findLast { it.automated == true }?.let {
                     messageManager.sendMessage(it)
@@ -196,8 +206,7 @@ class MessageCenterViewModel : ViewModel() {
 
     @VisibleForTesting
     fun validateMessageWithProfile(message: String, email: String?): Boolean {
-        // TODO verify with attachments
-        return if (message.isBlank()) {
+        return if (message.isBlank() && draftAttachmentsStream.value.isNullOrEmpty()) {
             val validationDataModel = ValidationDataModel(messageError = true)
             errorMessages.value = validationDataModel
             errorMessages.value = validationDataModel.copy(emailError = !validateProfile(email, model))
@@ -211,8 +220,7 @@ class MessageCenterViewModel : ViewModel() {
     }
 
     private fun validateMessage(message: String): Boolean {
-        // TODO verify with attachments
-        return if (message.isBlank()) {
+        return if (message.isBlank() && draftAttachmentsStream.value.isNullOrEmpty()) {
             errorMessages.value = ValidationDataModel(messageError = true)
             false
         } else {
@@ -229,6 +237,18 @@ class MessageCenterViewModel : ViewModel() {
         val emailError: Boolean = false,
         val messageError: Boolean = false
     )
+
+    fun addAttachment(activity: Activity, uri: Uri) {
+        FileUtil.createLocalStoredFile(activity, uri.toString(), generateUUID())?.let { file ->
+            val updatedAttachments = draftAttachmentsStream.value.orEmpty().plus(file)
+            draftAttachmentsEvent.value = updatedAttachments
+        }
+    }
+
+    fun addAttachments(files: List<StoredFile>) {
+        val updatedAttachments = draftAttachmentsEvent.value.orEmpty().plus(files)
+        draftAttachmentsEvent.value = updatedAttachments
+    }
 }
 
 fun validateProfile(email: String?, model: MessageCenterModel): Boolean {

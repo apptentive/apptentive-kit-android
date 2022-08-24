@@ -278,7 +278,7 @@ internal class ApptentiveDefaultClient(
     }
 
     override fun sendHiddenTextMessage(message: String) {
-        messageManager?.sendMessage(message, true)
+        messageManager?.sendMessage(message, isHidden = true)
     }
 
     override fun sendHiddenAttachmentFileUri(uri: String) {

@@ -9,4 +9,7 @@
     <string name="apptentive_profile_confirmation_dialog_title">Close Profile?</string>
     <string name="apptentive_profile_confirmation_dialog_message">The changes to your profile will not be saved.</string>
     <string name="apptentive_profile_back_to_profile">Stay</string>
+    <string name="apptentive_add_attachment">Add attachment</string>
+    <string name="apptentive_attachment_thumbnail">Attachment thumbnail</string>
+    <string name="apptentive_send_message">Send message</string>
 </resources>

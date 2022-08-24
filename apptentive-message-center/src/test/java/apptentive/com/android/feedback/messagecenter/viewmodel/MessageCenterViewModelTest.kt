@@ -263,7 +263,7 @@ class MockEngagementContextFactory(val getEngagementContext: () -> EngagementCon
 class MockMessageRepository : MessageRepository {
     override fun getLastReceivedMessageIDFromEntries(): String = ""
 
-    override fun addOrUpdateMessage(messages: List<Message>) {}
+    override fun addOrUpdateMessages(messages: List<Message>) {}
 
     override fun getAllMessages(): List<Message> {
         return testMessageList

@@ -35,5 +35,10 @@ data class StoredFile(
     val fileName: String = FileUtil.getFileName(
         sourceUriOrPath,
         MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)
-    )
+    ),
+
+    /*
+    * Bytes of saved file. Divide by 1024 to get kb. Divide again by 1024 to get mb.
+    */
+    val fileSize: Long
 )
