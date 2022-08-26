@@ -208,6 +208,7 @@
         <item name="apptentiveMessageCenterGreetingHeaderStyle">@style/Apptentive.Widget.MessageCenter.Image.Header</item>
         <item name="apptentiveMessageCenterGreetingStyle">@style/Apptentive.Widget.MessageCenter.Greeting.Title</item>
         <item name="apptentiveMessageCenterGreetingBodyTextStyle">@style/Apptentive.Widget.MessageCenter.Greeting.Body</item>
+        <item name="apptentiveMessageCenterSLAText">@style/Apptentive.Widget.MessageCenter.Text.SLA</item>
         <item name="apptentiveMessageCenterBubble">@style/Apptentive.Widget.MessageCenter.Bubble.View</item>
         <item name="apptentiveMessageCenterGroupTimeStamp">@style/Apptentive.Widget.MessageCenter.Text.GroupTimestamp</item>
         <item name="apptentiveMessageCenterOutboundBubble">@style/Apptentive.Widget.MessageCenter.Bubble.Outbound</item>
@@ -699,6 +700,17 @@
     <style name="Apptentive.Widget.MessageCenter.Bubble.View" parent="">
         <item name="android:paddingBottom">@dimen/apptentive_message_bubble_view_padding_bottom</item>
         <item name="paddingStart">@dimen/apptentive_message_bubble_padding_start</item>
+    </style>
+
+    <style name="Apptentive.Widget.MessageCenter.Text.SLA" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textSize">?apptentiveTextSizeMessageCenterGreetingBody</item>
+        <item name="android:textColor">?apptentiveTextColorMessageCenterGreetingBody</item>
+        <item name="android:fontFamily">?apptentiveFontFamilyBody1</item>
+        <item name="android:typeface">?apptentiveTypefaceMessageCenterGreetingBody</item>
+        <item name="android:textAppearance">?textAppearanceBodySmall</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:paddingTop">@dimen/apptentive_message_sla_padding</item>
+        <item name="android:paddingBottom">@dimen/apptentive_message_sla_padding</item>
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.Text.Bubble"/>

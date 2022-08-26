@@ -18,6 +18,9 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.feedback.message.MessageManager
 import apptentive.com.android.feedback.message.MessageManagerFactory
 import apptentive.com.android.feedback.messagecenter.utils.MessageCenterEvents
+import apptentive.com.android.feedback.messagecenter.view.GreetingData
+import apptentive.com.android.feedback.messagecenter.view.MessageViewData
+import apptentive.com.android.feedback.messagecenter.view.ProfileViewData
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.MessageCenterModel
 import apptentive.com.android.feedback.model.Person
@@ -26,7 +29,6 @@ import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.convertToGroupDate
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
-import apptentive.com.android.util.LogTags
 import apptentive.com.android.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.util.generateUUID
 
@@ -57,10 +59,9 @@ class MessageCenterViewModel : ViewModel() {
     val greeting: String = model.greeting?.title ?: ""
     val greetingBody: String = model.greeting?.body ?: ""
     val composerHint: String = model.composer?.hintText ?: ""
+    val messageSLA: String = model.status?.body ?: ""
     var messages: List<Message> = getMessagesFromManager().filterSortAndGroupMessages()
     var hasAutomatedMessage: Boolean = !model.automatedMessage?.body.isNullOrEmpty()
-    var updateViewWithAutomatedMessage: Boolean = hasAutomatedMessage
-    lateinit var automatedMessage: Message
     var showLauncherView: Boolean = messages.isEmpty() && showProfile()
 
     private val newMessagesSubject = LiveEvent<List<Message>>()
@@ -133,9 +134,9 @@ class MessageCenterViewModel : ViewModel() {
         }
     }
 
-    fun getEmailHint() = model.profile?.initial?.emailHint
+    private fun getEmailHint() = model.profile?.initial?.emailHint.orEmpty()
 
-    fun getNameHint() = model.profile?.initial?.nameHint
+    private fun getNameHint() = model.profile?.initial?.nameHint.orEmpty()
 
     private fun mergeMessages(newMessages: List<Message>): List<Message> {
         val mergedMessagesList = mutableListOf<Message>()
@@ -170,22 +171,18 @@ class MessageCenterViewModel : ViewModel() {
             !showLauncherView && validateMessage(message)
         ) {
             showLauncherView = false
-            messageManager.sendMessage(message, draftAttachmentsStream.value.orEmpty())
-            clearMessage.postValue(true)
-            draftAttachmentsEvent.postValue(emptyList())
             if (hasAutomatedMessage) {
                 messages.findLast { it.automated == true }?.let {
                     messageManager.sendMessage(it)
                     hasAutomatedMessage = false
                 }
             }
-            messageManager.sendMessage(message)
-
-            // messageManager.sendMessage(message, hasAutomatedMessage = hasAutomatedMessage)
+            messageManager.sendMessage(message, draftAttachmentsStream.value.orEmpty())
+            draftAttachmentsEvent.postValue(emptyList())
+            clearMessage.postValue(true)
             messageManager.updateProfile(name, email)
-            //  hasAutomatedMessage = false
         } else {
-            Log.d(LogTags.MESSAGE_CENTER, "Cannot send blank message")
+            Log.d(MESSAGE_CENTER, "Cannot send blank message")
         }
     }
 
@@ -231,6 +228,16 @@ class MessageCenterViewModel : ViewModel() {
 
     fun showProfile(): Boolean =
         model.profile?.request == true || model.profile?.require == true
+
+    fun buildMessageViewDataModel(profileVisibility: Boolean = true): List<MessageViewData> {
+        val messageViewData = mutableListOf<MessageViewData>()
+        messageViewData.add(0, MessageViewData(GreetingData(greeting, greetingBody), null, null))
+        messages.map { message ->
+            messageViewData.add(MessageViewData(null, null, message))
+        }
+        messageViewData.add(MessageViewData(null, ProfileViewData(getEmailHint(), getNameHint(), profileVisibility), null))
+        return messageViewData
+    }
 
     data class ValidationDataModel(
         val nameError: Boolean = false,

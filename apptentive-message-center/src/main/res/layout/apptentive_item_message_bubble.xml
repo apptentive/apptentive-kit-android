@@ -22,6 +22,7 @@
         style="?attr/apptentiveMessageCenterOutboundBubble"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_goneMarginTop="24dp"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/apptentive_message_group_time_stamp">

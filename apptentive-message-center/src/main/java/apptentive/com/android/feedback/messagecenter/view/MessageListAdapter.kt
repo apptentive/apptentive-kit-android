@@ -4,74 +4,171 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import apptentive.com.android.feedback.messagecenter.R
+import apptentive.com.android.feedback.messagecenter.viewmodel.MessageCenterViewModel
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.utils.convertToDate
 import com.google.android.material.textview.MaterialTextView
 
-class MessageListAdapter(dataSet: List<Message>) : RecyclerView.Adapter<MessageViewHolder>() {
+class MessageListAdapter(
+    dataSet: List<MessageViewData>,
+    private val messageViewModel: MessageCenterViewModel
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    val listItems: MutableList<Message> = dataSet.toMutableList()
+    val listItems: MutableList<MessageViewData> = dataSet.toMutableList()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.apptentive_item_message_bubble, parent, false)
-        return MessageViewHolder(view)
+    private var profileView: ProfileView? = null
+
+    companion object {
+        private const val TYPE_HEADER = 0
+        private const val TYPE_ITEMS = 1
+        private const val TYPE_FOOTER = 2
     }
 
-    override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
-        val message = listItems[position]
-        with(holder.itemView) {
-            val groupTimestamp = findViewById<MaterialTextView>(R.id.apptentive_message_group_time_stamp)
-            val inboundLayout = findViewById<ConstraintLayout>(R.id.apptentive_message_inbound)
-            val outboundLayout = findViewById<ConstraintLayout>(R.id.apptentive_message_outbound)
-            val inboundText = findViewById<MaterialTextView>(R.id.apptentive_message_inbound_text)
-            val inboundAttachments = findViewById<LinearLayout>(R.id.apptentive_message_inbound_attachments_layout)
-            val inboundStatus = findViewById<MaterialTextView>(R.id.apptentive_message_inbound_time_stamp)
-            val outboundText = findViewById<MaterialTextView>(R.id.apptentive_message_outbound_text)
-            val outboundAttachments = findViewById<LinearLayout>(R.id.apptentive_message_outbound_attachments_layout)
-            val outboundStatus = findViewById<MaterialTextView>(R.id.apptentive_message_outbound_time_stamp)
+    fun getProfileName(): String = profileView?.getName().orEmpty()
 
-            groupTimestamp.isVisible = message.groupTimestamp != null
-            groupTimestamp.text = message.groupTimestamp
+    fun getProfileEmail(): String = profileView?.getEmail().orEmpty()
 
-            if (message.inbound) { // Message from US to the BACKEND
-                inboundLayout.visibility = View.VISIBLE
-                outboundLayout.visibility = View.GONE
-                inboundText.isVisible = !message.body.isNullOrEmpty()
-                inboundText.text = message.body
-                inboundAttachments.removeAllViews()
-                message.storedFiles.forEach { file ->
-                    inboundAttachments.addView(
-                        MessageCenterAttachmentThumbnailView(context, null).apply {
-                            setAttachmentView(file.localFilePath, file.mimeType) { }
+    fun setEmailError(value: Boolean) {
+        profileView?.setEmailError(value)
+    }
+
+    fun setNameError(value: Boolean) {
+        profileView?.setNameError(value)
+    }
+
+    fun updateEmail(email: String?) {
+        email?.let { profileView?.updateEmail(email) }
+    }
+
+    fun updateName(name: String?) {
+        name?.let { profileView?.updateName(name) }
+    }
+
+    fun isProfileViewVisible(): Boolean = profileView?.isVisible == true
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val layoutInflater = LayoutInflater.from(parent.context)
+        return when (viewType) {
+            TYPE_HEADER -> {
+                val view = layoutInflater.inflate(R.layout.apptentive_item_message_header, parent, false)
+                MessageHeaderViewHolder(view)
+            }
+
+            TYPE_ITEMS -> {
+                val view = layoutInflater
+                    .inflate(R.layout.apptentive_item_message_bubble, parent, false)
+                MessageViewHolder(view)
+            }
+
+            TYPE_FOOTER -> {
+                val view = layoutInflater.inflate(R.layout.apptentive_item_message_footer, parent, false)
+                MessageFooterViewHolder(view)
+            }
+            else -> throw IllegalArgumentException("Invalid View Type")
+        }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder) {
+            is MessageViewHolder -> {
+                val message = listItems[position].message
+                with(holder.itemView) {
+                    val groupTimestamp =
+                        findViewById<MaterialTextView>(R.id.apptentive_message_group_time_stamp)
+                    val inboundLayout =
+                        findViewById<ConstraintLayout>(R.id.apptentive_message_inbound)
+                    val outboundLayout =
+                        findViewById<ConstraintLayout>(R.id.apptentive_message_outbound)
+                    val inboundText =
+                        findViewById<MaterialTextView>(R.id.apptentive_message_inbound_text)
+                    val inboundAttachments =
+                        findViewById<LinearLayout>(R.id.apptentive_message_inbound_attachments_layout)
+                    val inboundStatus =
+                        findViewById<MaterialTextView>(R.id.apptentive_message_inbound_time_stamp)
+                    val outboundText =
+                        findViewById<MaterialTextView>(R.id.apptentive_message_outbound_text)
+                    val outboundAttachments =
+                        findViewById<LinearLayout>(R.id.apptentive_message_outbound_attachments_layout)
+                    val outboundStatus =
+                        findViewById<MaterialTextView>(R.id.apptentive_message_outbound_time_stamp)
+
+                    groupTimestamp.isVisible =
+                        !(message?.groupTimestamp == null || (message.automated == true && message.messageStatus == Message.Status.Sending))
+
+                    if (message?.inbound == true) { // Message from US to the BACKEND
+                        inboundLayout.visibility = View.VISIBLE
+                        outboundLayout.visibility = View.GONE
+                        inboundText.text = message.body
+                        inboundAttachments.removeAllViews()
+                        message.storedFiles.forEach { file ->
+                            inboundAttachments.addView(
+                                MessageCenterAttachmentThumbnailView(context, null).apply {
+                                    setAttachmentView(file.localFilePath, file.mimeType) { }
+                                }
+                            )
                         }
-                    )
-                }
-                val status = if (message.messageStatus == Message.Status.Saved) Message.Status.Sent else message.messageStatus
-                inboundStatus.text = "$status \u2022 ${convertToDate(message.createdAt)}"
-            } else { // Message from the BACKEND to US
-                inboundLayout.visibility = View.GONE
-                outboundLayout.visibility = View.VISIBLE
-                outboundText.text = message.body
-                outboundText.isVisible = !message.body.isNullOrEmpty()
-                outboundStatus.text = convertToDate(message.createdAt)
-                outboundAttachments.removeAllViews()
-                message.storedFiles.orEmpty().forEach { file ->
-                    outboundAttachments.addView(
-                        MessageCenterAttachmentThumbnailView(context, null).apply {
-                            setAttachmentView(file.localFilePath, file.mimeType) { }
+                        val status =
+                            if (message.messageStatus == Message.Status.Saved) Message.Status.Sent else message.messageStatus
+                        inboundStatus.text = "$status \u2022 ${convertToDate(message.createdAt)}"
+                    } else { // Message from the BACKEND to US
+                        inboundLayout.visibility = View.GONE
+                        outboundLayout.visibility = View.VISIBLE
+                        outboundText.text = message?.body
+                        outboundText.isVisible = !message?.body.isNullOrEmpty()
+                        outboundStatus.text = convertToDate(message?.createdAt ?: 0.0)
+                        outboundAttachments.removeAllViews()
+                        message?.storedFiles.orEmpty().forEach { file ->
+                            outboundAttachments.addView(
+                                MessageCenterAttachmentThumbnailView(context, null).apply {
+                                    setAttachmentView(file.localFilePath, file.mimeType) { }
+                                }
+                            )
                         }
-                    )
+                    }
                 }
             }
+
+            is MessageHeaderViewHolder -> {
+                val greetingData = listItems[position].greetingData
+                holder.itemView.findViewById<TextView>(R.id.apptentive_message_center_greeting).text = greetingData?.greetingTitle
+                holder.itemView.findViewById<TextView>(R.id.apptentive_message_center_greeting_body).text = greetingData?.greetingBody
+            }
+
+            is MessageFooterViewHolder -> {
+                profileView = holder.itemView.findViewById(R.id.apptentive_message_center_profile)
+                val statusView: MaterialTextView = holder.itemView.findViewById(R.id.apptentive_message_center_status)
+                statusView.text = messageViewModel.messageSLA
+
+                if (messageViewModel.showLauncherView || messageViewModel.showProfile() && listItems.size > 2 && listItems[1].message?.automated == true && listItems[1].message?.messageStatus == Message.Status.Sending) {
+                    val profileData = listItems[position].profileData
+                    profileView?.setEmailHint(profileData?.emailHint ?: "")
+                    profileView?.setNameHint(profileData?.nameHint ?: "")
+                } else {
+                    profileView?.visibility = View.GONE
+                }
+            }
+        }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return when (position) {
+            0 -> TYPE_HEADER
+            listItems.size - 1 -> TYPE_FOOTER
+            else -> TYPE_ITEMS
         }
     }
 
     override fun getItemCount(): Int = listItems.size
 }
 
-class MessageViewHolder(view: View) : RecyclerView.ViewHolder(view)
+class MessageHeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+class MessageFooterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+data class GreetingData(val greetingTitle: String, val greetingBody: String)
+data class ProfileViewData(val emailHint: String, val nameHint: String, val visibility: Boolean)
+data class MessageViewData(val greetingData: GreetingData?, val profileData: ProfileViewData?, val message: Message?)

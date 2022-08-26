@@ -58,7 +58,7 @@ class ProfileActivity : BaseProfileActivity() {
                     }
                 )
 
-                confirmationDialog?.show()
+                confirmationDialog.show()
             } else
                 super.onBackPressed()
         }

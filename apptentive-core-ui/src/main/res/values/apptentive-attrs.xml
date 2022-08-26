@@ -105,6 +105,7 @@
         <attr name="apptentiveMessageCenterGreetingHeaderStyle" format="reference"/>
         <attr name="apptentiveMessageCenterGreetingStyle" format="reference" />
         <attr name="apptentiveMessageCenterGreetingBodyTextStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterSLAText" format="reference"/>
         <attr name="apptentiveMessageCenterBubble" format="reference"/>
         <attr name="apptentiveMessageCenterGroupTimeStamp" format="reference"/>
         <attr name="apptentiveMessageCenterOutboundBubble" format="reference"/>
