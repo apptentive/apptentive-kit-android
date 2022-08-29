@@ -263,10 +263,28 @@ object Apptentive {
 
     @JvmStatic
     @JvmOverloads
-    fun showMessageCenter(customData: CustomData? = null, callback: EngagementCallback? = null,) {
+    fun showMessageCenter(customData: CustomData? = null, callback: EngagementCallback? = null) {
         val engagementCallback: ((EngagementResult) -> Unit)? =
             if (callback != null) callback::onComplete else null
         client.showMessageCenter(engagementCallback, customData)
+    }
+
+    /**
+     * Our SDK must connect to our server at least once to download initial configuration for Message
+     * Center. Call this method to see whether or not Message Center can be displayed. This task is
+     * performed asynchronously.
+     *
+     * @param callback Called after we check to see if Message Center can be displayed, but before it
+     * is displayed. Called with true if an Interaction will be displayed, else false.
+     */
+    // Legacy / Java version
+    fun canShowMessageCenter(callback: BooleanCallback) {
+        canShowMessageCenter { callback.onFinish(it) }
+    }
+
+    // Kotlin version
+    fun canShowMessageCenter(callback: (Boolean) -> Unit) {
+        client.canShowMessageCenter(callback)
     }
 
     /**
@@ -517,5 +535,18 @@ object Apptentive {
                 client.updateDevice(deleteKey = key)
             }
         }
+    }
+
+    /**
+     * Allows certain Apptentive API methods to execute and return a boolean result asynchronously.
+     */
+    interface BooleanCallback {
+        /**
+         * Passes the result of an Apptentive API method call.
+         *
+         * @param result true depending on the use of the consuming API method. Check the javadoc for
+         * the method that uses this callback in its signature.
+         */
+        fun onFinish(result: Boolean)
     }
 }

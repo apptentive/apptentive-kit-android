@@ -28,6 +28,10 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        Apptentive.canShowMessageCenter {
+            binding.messageCenterButton.isEnabled = it
+        }
+
         binding.nightSwitch.isChecked = isNightMode
         binding.nightSwitch.setOnCheckedChangeListener { _, isChecked ->
             delegate.localNightMode = if (isChecked) MODE_NIGHT_YES else MODE_NIGHT_NO

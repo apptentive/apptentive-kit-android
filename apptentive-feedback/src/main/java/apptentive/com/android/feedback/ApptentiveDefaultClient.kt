@@ -81,6 +81,7 @@ internal class ApptentiveDefaultClient(
 ) : ApptentiveClient {
     private lateinit var conversationManager: ConversationManager
     private lateinit var payloadSender: PayloadSender
+    private lateinit var interactionDataProvider: InteractionDataProvider
     private lateinit var interactionModules: Map<String, InteractionModule<Interaction>>
     private var messageManager: MessageManager? = null
     private var engagement: Engagement = NullEngagement()
@@ -161,8 +162,10 @@ internal class ApptentiveDefaultClient(
                 conversation.logConversation()
             }
 
+            interactionDataProvider = createInteractionDataProvider(conversation)
+
             engagement = DefaultEngagement(
-                interactionDataProvider = createInteractionDataProvider(conversation),
+                interactionDataProvider = interactionDataProvider,
                 interactionConverter = interactionConverter,
                 interactionEngagement = createInteractionEngagement(),
                 recordEvent = ::recordEvent,
@@ -336,6 +339,14 @@ internal class ApptentiveDefaultClient(
                 Log.v(MESSAGE_CENTER, "Not setting custom data. No supported types found")
         }
         engage(Event.internal(EVENT_MESSAGE_CENTER))
+    }
+
+    override fun canShowMessageCenter(callback: (Boolean) -> Unit) {
+        callback(
+            if (this::interactionDataProvider.isInitialized) { // Check if lateinit value is set
+                interactionDataProvider.getInteractionData(Event.internal(EVENT_MESSAGE_CENTER)) != null
+            } else false
+        )
     }
 
     private fun filterCustomData(customData: CustomData): CustomData {

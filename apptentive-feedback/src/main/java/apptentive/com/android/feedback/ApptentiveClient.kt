@@ -11,6 +11,7 @@ import java.io.InputStream
 internal interface ApptentiveClient {
     fun engage(event: Event): EngagementResult
     fun showMessageCenter(callback: EngagementCallback? = null, customData: CustomData?)
+    fun canShowMessageCenter(callback: (Boolean) -> Unit)
     fun sendHiddenTextMessage(message: String)
     fun sendHiddenAttachmentFileUri(uri: String)
     fun sendHiddenAttachmentFileBytes(bytes: ByteArray, mimeType: String)
@@ -47,6 +48,10 @@ private class ApptentiveNullClient : ApptentiveClient {
 
     override fun showMessageCenter(callback: EngagementCallback?, customData: CustomData?) {
         Log.d(MESSAGE_CENTER, "Apptentive SDK is not initialized; message center launch failed")
+    }
+
+    override fun canShowMessageCenter(callback: (Boolean) -> Unit) {
+        Log.d(MESSAGE_CENTER, "Apptentive SDK is not initialized; can show message center check failed")
     }
 
     override fun sendHiddenAttachmentFileUri(uri: String) {
