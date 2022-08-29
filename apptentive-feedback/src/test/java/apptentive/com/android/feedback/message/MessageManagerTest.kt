@@ -3,7 +3,7 @@ package apptentive.com.android.feedback.message
 import apptentive.com.android.TestCase
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.core.DependencyProvider
-import apptentive.com.android.feedback.backend.MessageFetchService
+import apptentive.com.android.feedback.backend.MessageCenterService
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.MockEngagementContext
@@ -43,7 +43,7 @@ class MessageManagerTest : TestCase() {
         messageManager = MessageManager(
             "1234",
             "token",
-            MockMessageFetchService(),
+            MockMessageCenterService(),
             MockExecutor(),
             MockMessageRepository()
         )
@@ -70,7 +70,7 @@ class MessageManagerTest : TestCase() {
         var messageManager = MessageManager(
             "1234",
             "token",
-            MockMessageFetchService(),
+            MockMessageCenterService(),
             MockExecutor(),
             MockMessageRepository()
         )
@@ -81,7 +81,7 @@ class MessageManagerTest : TestCase() {
         messageManager = MessageManager(
             "1234",
             "token",
-            MockMessageFetchService(),
+            MockMessageCenterService(),
             MockExecutor(),
             MockMessageRepository(listOf())
         )
@@ -112,7 +112,7 @@ class MessageManagerTest : TestCase() {
             boundary = generateUUID(),
             messageNonce = generateUUID(),
             automated = null,
-            storedFiles = emptyList()
+            attachments = emptyList()
         )
 
         messageManager.sendMessage("ABC Hidden", isHidden = true)
@@ -135,7 +135,7 @@ class MessageManagerTest : TestCase() {
             boundary = generateUUID(),
             messageNonce = generateUUID(),
             automated = null,
-            storedFiles = emptyList()
+            attachments = emptyList()
         )
 
         messageManager.sendMessage("ABC")
@@ -181,7 +181,7 @@ val testMessageList: List<Message> = listOf(
     )
 )
 
-private class MockMessageFetchService : MessageFetchService {
+private class MockMessageCenterService : MessageCenterService {
     override fun getMessages(
         conversationToken: String,
         conversationId: String,
@@ -189,6 +189,10 @@ private class MockMessageFetchService : MessageFetchService {
         callback: (Result<MessageList>) -> Unit
     ) {
         callback(Result.Success(MessageList(testMessageList, null, null)))
+    }
+
+    override fun getAttachment(remoteUrl: String, callback: (Result<ByteArray>) -> Unit) {
+        TODO("Not yet implemented")
     }
 }
 

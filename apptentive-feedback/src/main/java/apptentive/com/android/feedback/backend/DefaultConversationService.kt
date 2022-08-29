@@ -11,6 +11,7 @@ import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.network.CacheControl
+import apptentive.com.android.network.HttpByteArrayResponseReader
 import apptentive.com.android.network.HttpClient
 import apptentive.com.android.network.HttpHeaders
 import apptentive.com.android.network.HttpHeaders.Companion.CACHE_CONTROL
@@ -109,6 +110,21 @@ internal class DefaultConversationService(
             responseReader = HttpJsonResponseReader(MessageList::class.java)
         )
         sendRequest(request, callback)
+    }
+
+    override fun getAttachment(remoteUrl: String, callback: (Result<ByteArray>) -> Unit) {
+        val request = HttpRequest
+            .Builder<ByteArray>(remoteUrl)
+            .method(HttpMethod.GET, null)
+            .responseReader(HttpByteArrayResponseReader())
+            .build()
+
+        httpClient.send(request) {
+            when (it) {
+                is Result.Success -> callback(Result.Success(it.data.payload))
+                is Result.Error -> callback(it)
+            }
+        }
     }
 
     override fun sendPayloadRequest(

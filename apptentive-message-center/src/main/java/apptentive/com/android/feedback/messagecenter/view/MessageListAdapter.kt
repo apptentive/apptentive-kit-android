@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.messagecenter.view
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,9 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import apptentive.com.android.feedback.messagecenter.R
+import apptentive.com.android.feedback.messagecenter.view.custom.HandleAttachmentBottomSheet.Companion.APPTENTIVE_ATTACHMENT_BOTTOMSHEET_FILEPATH
+import apptentive.com.android.feedback.messagecenter.view.custom.MessageCenterAttachmentThumbnailView
+import apptentive.com.android.feedback.messagecenter.view.custom.ProfileView
 import apptentive.com.android.feedback.messagecenter.viewmodel.MessageCenterViewModel
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.utils.convertToDate
@@ -55,7 +59,8 @@ class MessageListAdapter(
         val layoutInflater = LayoutInflater.from(parent.context)
         return when (viewType) {
             TYPE_HEADER -> {
-                val view = layoutInflater.inflate(R.layout.apptentive_item_message_header, parent, false)
+                val view =
+                    layoutInflater.inflate(R.layout.apptentive_item_message_header, parent, false)
                 MessageHeaderViewHolder(view)
             }
 
@@ -66,7 +71,8 @@ class MessageListAdapter(
             }
 
             TYPE_FOOTER -> {
-                val view = layoutInflater.inflate(R.layout.apptentive_item_message_footer, parent, false)
+                val view =
+                    layoutInflater.inflate(R.layout.apptentive_item_message_footer, parent, false)
                 MessageFooterViewHolder(view)
             }
             else -> throw IllegalArgumentException("Invalid View Type")
@@ -104,14 +110,10 @@ class MessageListAdapter(
                         inboundLayout.visibility = View.VISIBLE
                         outboundLayout.visibility = View.GONE
                         inboundText.text = message.body
+                        inboundText.isVisible = !message.body.isNullOrEmpty()
+                        inboundText.text = message.body
                         inboundAttachments.removeAllViews()
-                        message.storedFiles.forEach { file ->
-                            inboundAttachments.addView(
-                                MessageCenterAttachmentThumbnailView(context, null).apply {
-                                    setAttachmentView(file.localFilePath, file.mimeType) { }
-                                }
-                            )
-                        }
+                        inboundAttachments.addAttachments(message)
                         val status =
                             if (message.messageStatus == Message.Status.Saved) Message.Status.Sent else message.messageStatus
                         inboundStatus.text = "$status \u2022 ${convertToDate(message.createdAt)}"
@@ -122,26 +124,24 @@ class MessageListAdapter(
                         outboundText.isVisible = !message?.body.isNullOrEmpty()
                         outboundStatus.text = convertToDate(message?.createdAt ?: 0.0)
                         outboundAttachments.removeAllViews()
-                        message?.storedFiles.orEmpty().forEach { file ->
-                            outboundAttachments.addView(
-                                MessageCenterAttachmentThumbnailView(context, null).apply {
-                                    setAttachmentView(file.localFilePath, file.mimeType) { }
-                                }
-                            )
-                        }
+                        outboundAttachments.addAttachments(message)
                     }
                 }
             }
 
             is MessageHeaderViewHolder -> {
                 val greetingData = listItems[position].greetingData
-                holder.itemView.findViewById<TextView>(R.id.apptentive_message_center_greeting).text = greetingData?.greetingTitle
-                holder.itemView.findViewById<TextView>(R.id.apptentive_message_center_greeting_body).text = greetingData?.greetingBody
+                holder.itemView.findViewById<TextView>(R.id.apptentive_message_center_greeting).text =
+                    greetingData?.greetingTitle
+                holder.itemView.findViewById<TextView>(R.id.apptentive_message_center_greeting_body).text =
+                    greetingData?.greetingBody
             }
 
             is MessageFooterViewHolder -> {
-                profileView = holder.itemView.findViewById(R.id.apptentive_message_center_profile)
-                val statusView: MaterialTextView = holder.itemView.findViewById(R.id.apptentive_message_center_status)
+                profileView =
+                    holder.itemView.findViewById(R.id.apptentive_message_center_profile)
+                val statusView: MaterialTextView =
+                    holder.itemView.findViewById(R.id.apptentive_message_center_status)
                 statusView.text = messageViewModel.messageSLA
 
                 if (messageViewModel.showLauncherView || messageViewModel.showProfile() && listItems.size > 2 && listItems[1].message?.automated == true && listItems[1].message?.messageStatus == Message.Status.Sending) {
@@ -152,6 +152,27 @@ class MessageListAdapter(
                     profileView?.visibility = View.GONE
                 }
             }
+        }
+    }
+
+    private fun LinearLayout.addAttachments(message: Message?) {
+        message?.attachments?.forEach { file ->
+            addView(
+                MessageCenterAttachmentThumbnailView(context, null).apply {
+                    setAttachmentView(file, messageViewModel.isFileDownloading(file)) {
+                        if (file.hasLocalFile()) {
+                            context.startActivity(
+                                Intent(context, ImagePreviewActivity::class.java).apply {
+                                    putExtra(
+                                        APPTENTIVE_ATTACHMENT_BOTTOMSHEET_FILEPATH,
+                                        file.localFilePath
+                                    )
+                                }
+                            )
+                        } else messageViewModel.downloadFile(message, file)
+                    }
+                }
+            )
         }
     }
 
@@ -171,4 +192,8 @@ class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 class MessageFooterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 data class GreetingData(val greetingTitle: String, val greetingBody: String)
 data class ProfileViewData(val emailHint: String, val nameHint: String, val visibility: Boolean)
-data class MessageViewData(val greetingData: GreetingData?, val profileData: ProfileViewData?, val message: Message?)
+data class MessageViewData(
+    val greetingData: GreetingData?,
+    val profileData: ProfileViewData?,
+    val message: Message?
+)

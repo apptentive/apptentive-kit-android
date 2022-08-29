@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="We will get back to you as soon as possible" />
 
-    <apptentive.com.android.feedback.messagecenter.view.ProfileView
+    <apptentive.com.android.feedback.messagecenter.view.custom.ProfileView
         android:id="@+id/apptentive_message_center_profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

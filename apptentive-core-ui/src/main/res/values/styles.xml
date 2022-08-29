@@ -224,7 +224,12 @@
         <item name="apptentiveMessageCenterBubbleAttachmentsLayoutStyle">@style/Apptentive.Widget.MessageCenter.Bubble.AttachmentsLayout</item>
         <item name="apptentiveMessageCenterAttachmentLayoutStyle">@style/Apptentive.Widget.MessageCenter.AttachmentLayout</item>
         <item name="apptentiveMessageCenterAttachmentThumbnailStyle">@style/Apptentive.Widget.MessageCenter.AttachmentThumbnail</item>
-        <item name="apptentiveMessageCenterAttachmentThumbnailTypeStyle">@style/Apptentive.Widget.MessageCenter.Text.AttachmentType</item>
+        <item name="apptentiveMessageCenterAttachmentThumbnailTypeTextStyle">@style/Apptentive.Widget.MessageCenter.Text.AttachmentType</item>
+        <item name="apptentiveMessageCenterAttachmentThumbnailTypeIconStyle">@style/Apptentive.Widget.MessageCenter.Icon.AttachmentType</item>
+        <item name="apptentiveMessageCenterPreviewAttachmentText">@style/Apptentive.Widget.MessageCenter.Text.AttachmentBottomSheet.Preview</item>
+        <item name="apptentiveMessageCenterPreviewAttachmentImage">@style/Apptentive.Widget.MessageCenter.Image.AttachmentBottomSheet.Preview</item>
+        <item name="apptentiveMessageCenterRemoveAttachmentText">@style/Apptentive.Widget.MessageCenter.Text.AttachmentBottomSheet.Remove</item>
+        <item name="apptentiveMessageCenterRemoveAttachmentImage">@style/Apptentive.Widget.MessageCenter.Image.AttachmentBottomSheet.Remove</item>
         <item name="apptentiveMessageCenterAttachmentThumbnailSpacing">@dimen/apptentive_message_attachment_spacing</item>
     </style>
 
@@ -791,6 +796,40 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">@dimen/apptentive_message_attachment_type_text_size</item>
         <item name="android:layout_marginBottom">@dimen/apptentive_message_attachment_type_text_bottom_margin</item>
+    </style>
+
+
+    <style name="Apptentive.Widget.MessageCenter.Icon.AttachmentType" parent="">
+        <item name="android:src">@drawable/ic_download</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <style name="Apptentive.Widget.MessageCenter.Text.AttachmentBottomSheet" parent="Widget.MaterialComponents.TextView">
+        <item name="android:fontFamily">?apptentiveFontFamilyMediumDefault</item>
+        <item name="android:background">?selectableItemBackground</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:minHeight">@dimen/apptentive_message_attachment_bottom_sheet_min_height</item>
+        <item name="android:paddingStart">@dimen/apptentive_message_attachment_bottom_sheet_text_padding_start</item>
+        <item name="android:paddingEnd">@dimen/apptentive_message_attachment_bottom_sheet_text_padding_end</item>
+        <item name="android:textSize">@dimen/apptentive_message_attachment_bottom_sheet_text_size</item>
+    </style>
+
+    <style name="Apptentive.Widget.MessageCenter.Text.AttachmentBottomSheet.Preview">
+        <item name="android:text">@string/apptentive_preview_attachment</item>
+    </style>
+
+    <style name="Apptentive.Widget.MessageCenter.Text.AttachmentBottomSheet.Remove">
+        <item name="android:text">@string/apptentive_remove_attachment</item>
+    </style>
+
+    <style name="Apptentive.Widget.MessageCenter.Image.AttachmentBottomSheet.Preview" parent="">
+        <item name="android:importantForAccessibility">no</item>
+        <item name="android:src">@drawable/ic_preview</item>
+    </style>
+
+    <style name="Apptentive.Widget.MessageCenter.Image.AttachmentBottomSheet.Remove" parent="">
+        <item name="android:importantForAccessibility">no</item>
+        <item name="android:src">@drawable/ic_remove</item>
     </style>
     <!-- Message Center Widgets End -->
 

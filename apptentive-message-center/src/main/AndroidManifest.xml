@@ -8,6 +8,10 @@
             android:theme="@style/Theme.Apptentive"
             android:exported="false" />
         <activity
+            android:name=".view.ImagePreviewActivity"
+            android:theme="@style/Theme.Apptentive"
+            android:exported="false" />
+        <activity
             android:name=".view.MessageCenterActivity"
             android:theme="@style/Theme.Apptentive"
             android:exported="false"

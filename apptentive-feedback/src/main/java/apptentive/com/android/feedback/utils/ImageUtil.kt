@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.utils
 
+import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
@@ -9,79 +10,40 @@ import android.os.Build
 import android.util.Size
 import android.webkit.URLUtil
 import androidx.exifinterface.media.ExifInterface
-import apptentive.com.android.core.DependencyProvider
-import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.UTIL
-import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileNotFoundException
-import java.io.IOException
 import java.io.InputStream
-import java.io.OutputStream
 import kotlin.math.min
 
 @InternalUseOnly
 object ImageUtil {
-    private const val MAX_SENT_IMAGE_EDGE = 1024
+    private const val MAX_SENT_IMAGE_EDGE = 2048
     private const val THUMBNAIL_SIZE = 256
-
-    fun appendScaledDownImageToStream(
-        filePath: String,
-        fileInputStream: InputStream,
-        outputStream: OutputStream?
-    ): Boolean {
-        // Retrieve image orientation
-        var imageOrientation = 0
-        try {
-            val exif = ExifInterface(fileInputStream)
-            imageOrientation = exif.getAttributeInt(
-                ExifInterface.TAG_ORIENTATION,
-                ExifInterface.ORIENTATION_NORMAL
-            )
-        } catch (e: IOException) {
-            Log.e(UTIL, "Exception while getting image orientation", e)
-        } finally {
-            FileUtil.ensureClosed(fileInputStream)
-            FileUtil.ensureClosed(outputStream)
-        }
-
-        // Copy the file contents over
-        var cos: CountingOutputStream? = null
-        return try {
-            cos = CountingOutputStream(BufferedOutputStream(outputStream))
-            System.gc()
-            val smaller = createScaledBitmapFromLocalImageSource(filePath, imageOrientation)
-            smaller?.compress(Bitmap.CompressFormat.JPEG, 95, cos)
-            cos.flush()
-            Log.v(UTIL, "Bitmap bytes appended, size = ${(cos.bytesWritten / 1024)}k")
-            smaller?.recycle()
-            true
-        } catch (e: Exception) {
-            Log.e(UTIL, "Error creating or storing image", e)
-            false
-        } finally {
-            FileUtil.ensureClosed(cos)
-        }
-    }
 
     /**
      * This method first uses a straight binary pixel conversion to shrink an image to *almost* the
      * right size, and then performs a scaling of this resulting bitmap to achieve the final size.
      * It will create two bitmaps in memory while it is running.
      *
-     * @param filePath    either full absolute path to the source image file or the content uri to the source image
-     * @param orientation The orientation for the image expressed as degrees
+     * @param filePath    Either full absolute path to the source image file or the content uri to the source image
+     * @param inputStream Stream to read original image from
+     * @param filePath    Original file path of image
      * @return A Bitmap scaled by maxWidth, maxHeight, and config.
      */
     @Synchronized
     @Throws(NullPointerException::class, FileNotFoundException::class)
-    private fun createScaledBitmapFromLocalImageSource(
-        filePath: String,
-        orientation: Int
+    fun createScaledBitmapFromLocalImageSource(
+        activity: Activity,
+        inputStream: InputStream,
+        filePath: String
     ): Bitmap? {
-        val tempBitmap = createTempBitmap(filePath, orientation) ?: return null
+        val exif = ExifInterface(inputStream)
+        val imageOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+
+        val tempBitmap = createTempBitmap(activity, filePath, imageOrientation) ?: return null
 
         // Start by grabbing the bitmap from file, sampling down a little first if the image is huge.
         var outBitmap = tempBitmap
@@ -105,18 +67,18 @@ object ImageUtil {
         return outBitmap
     }
 
-    private fun createTempBitmap(filePath: String, orientation: Int): Bitmap? {
+    private fun createTempBitmap(activity: Activity, filePath: String, orientation: Int): Bitmap? {
         return if (URLUtil.isContentUrl(filePath)) {
             try {
                 val uri = Uri.parse(filePath)
-                createLightweightScaledBitmap(null, uri, orientation)
+                createLightweightScaledBitmap(activity, null, uri, orientation)
             } catch (e: NullPointerException) {
                 throw NullPointerException("Failed to create scaled bitmap")
             }
         } else {
             if (File(filePath).exists()) {
                 try {
-                    createLightweightScaledBitmap(filePath, null, orientation)
+                    createLightweightScaledBitmap(activity, filePath, null, orientation)
                 } catch (e: NullPointerException) {
                     throw NullPointerException("Failed to create scaled bitmap")
                 }
@@ -131,19 +93,18 @@ object ImageUtil {
      * bitmap that is smaller than the original. It will create only the returned bitmap in memory.
      * From [Loading Large Bitmaps Efficiently](http://developer.android.com/training/displaying-bitmaps/load-bitmap.html)
      *
-     * @param filePath Full absolute path  to the image file. (optional, maybe null)
-     * @param fileUri          content uri of the source image. (optional, maybe null)
-     * @param orientation      The orientation for the image expressed as degrees
+     * @param filePath     Full absolute path to the image file. (optional, maybe null)
+     * @param fileUri      Content uri of the source image. (optional, maybe null)
+     * @param orientation  The orientation for the image expressed as degrees
      * @return A bitmap whose edges are equal to or less than MAX_SENT_IMAGE_EDGE in length.
      */
     @Throws(NullPointerException::class, FileNotFoundException::class)
     private fun createLightweightScaledBitmap(
+        activity: Activity,
         filePath: String?,
         fileUri: Uri?,
         orientation: Int
     ): Bitmap? {
-        val context =
-            DependencyProvider.of<EngagementContextFactory>().engagementContext().getAppActivity()
         val decodeBitmapFromUri = when {
             fileUri != null -> true
             !filePath.isNullOrEmpty() -> false
@@ -158,7 +119,7 @@ object ImageUtil {
             var inputStream: InputStream? = null
             try {
                 inputStream =
-                    context.contentResolver.openInputStream(fileUri!!) // should not be null
+                    fileUri?.let { activity.contentResolver.openInputStream(it) }
                 BitmapFactory.decodeStream(inputStream, null, decodeBoundsOptions)
             } catch (e: FileNotFoundException) {
                 throw FileNotFoundException("Failed to decode image")
@@ -194,7 +155,7 @@ object ImageUtil {
         if (decodeBitmapFromUri) {
             var inputStream: InputStream? = null
             try {
-                inputStream = context.contentResolver.openInputStream(fileUri!!)
+                inputStream = fileUri?.let { activity.contentResolver.openInputStream(it) }
                 returnImage = BitmapFactory.decodeStream(inputStream, null, options)
             } catch (e: FileNotFoundException) {
                 throw FileNotFoundException("Failed to decode image")
@@ -238,11 +199,25 @@ object ImageUtil {
         return min(1.0f, min(widthRatio, heightRatio)) // Don't scale above 1.0x
     }
 
-    fun getImageThumbnailBitmap(filePath: String): Bitmap? {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            ThumbnailUtils.createImageThumbnail(File(filePath), Size(THUMBNAIL_SIZE, THUMBNAIL_SIZE), null)
-        } else {
-            ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(filePath), THUMBNAIL_SIZE, THUMBNAIL_SIZE)
+    fun getImageThumbnailBitmap(filePath: String?): Bitmap? {
+        return try {
+            if (!filePath.isNullOrBlank()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    ThumbnailUtils.createImageThumbnail(
+                        File(filePath),
+                        Size(THUMBNAIL_SIZE, THUMBNAIL_SIZE),
+                        null
+                    )
+                } else {
+                    ThumbnailUtils.extractThumbnail(
+                        BitmapFactory.decodeFile(filePath),
+                        THUMBNAIL_SIZE,
+                        THUMBNAIL_SIZE
+                    )
+                }
+            } else throw FileNotFoundException("File path is empty")
+        } catch (e: Exception) {
+            throw e
         }
     }
 }

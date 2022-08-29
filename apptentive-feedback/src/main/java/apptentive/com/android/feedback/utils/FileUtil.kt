@@ -3,21 +3,22 @@ package apptentive.com.android.feedback.utils
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.app.Activity
 import android.content.Context
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.OpenableColumns
 import android.webkit.MimeTypeMap
-import android.webkit.URLUtil
 import androidx.annotation.WorkerThread
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
-import apptentive.com.android.feedback.model.StoredFile
+import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.platform.FileSystem
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.UTIL
-import java.io.BufferedOutputStream
+import apptentive.com.android.util.generateUUID
+import java.io.BufferedInputStream
 import java.io.Closeable
 import java.io.File
 import java.io.FileInputStream
@@ -36,7 +37,7 @@ object FileUtil {
         return fileSystem.getInternalDir(path, createIfNecessary)
     }
 
-    fun getMimeTypeFromUri(context: Context, contentUri: Uri): String? {
+    private fun getMimeTypeFromUri(context: Context, contentUri: Uri): String? {
         return context.contentResolver?.getType(contentUri) // Usually `application/TYPE`
     }
 
@@ -54,17 +55,20 @@ object FileUtil {
     }
 
     /**
-     * This method creates a cached file exactly copying from the input stream.
+     * This method creates a cached file copying from the input stream.
+     * Compresses if image type.
      *
-     * @param uriString the source file path or uri string
+     * @param uriString the local file path uri
      * @param nonce     the generated nonce of the message
-     * @return null if failed, otherwise a StoredFile object
+     * @return null if failed, otherwise a [Message.Attachment]
      */
-    fun createLocalStoredFile(activity: Activity, uriString: String, nonce: String): StoredFile? {
+    fun createLocalStoredAttachment(activity: Activity, uriString: String, nonce: String): Message.Attachment? {
+        val localFile = Uri.parse(uriString)
+
         var localFilePath = generateCacheFilePathFromNonceOrPrefix(
             activity,
             nonce,
-            Uri.parse(uriString).lastPathSegment
+            localFile?.lastPathSegment
         )
         var mimeType = getMimeTypeFromUri(activity, Uri.parse(uriString))
         val mime = MimeTypeMap.getSingleton()
@@ -77,14 +81,10 @@ object FileUtil {
 
         var inputStream: InputStream? = null
         return try {
-            val uri = Uri.parse(uriString)
-            inputStream = if (URLUtil.isContentUrl(uriString)) {
-                activity.contentResolver.openInputStream(uri)
-            } else {
-                val file = File(uri.path ?: uriString)
-                FileInputStream(file)
-            }
-            createLocalStoredFile(inputStream, uriString, localFilePath, mimeType)
+            inputStream = if (localFile != null) {
+                activity.contentResolver.openInputStream(localFile)
+            } else null
+            createLocalStoredAttachmentFile(activity, inputStream, uriString, localFilePath, mimeType)
         } catch (e: FileNotFoundException) {
             null
         } finally {
@@ -96,22 +96,22 @@ object FileUtil {
      * This method creates a cached file copy from the source input stream.
      *
      * @param inputStream   the source input stream
-     * @param sourceUri     the source file path or uri string
+     * @param sourceUri     the local file path uri
      * @param localFilePath the cache file path string
      * @param mimeType      the mimeType of the source input stream
-     * @return null if failed, otherwise a StoredFile object
+     * @return null if failed, otherwise a [Message.Attachment] object
      */
-    fun createLocalStoredFile(
+    fun createLocalStoredAttachmentFile(
+        activity: Activity,
         inputStream: InputStream?,
         sourceUri: String,
         localFilePath: String,
         mimeType: String?
-    ): StoredFile? {
+    ): Message.Attachment? {
         if (inputStream == null) return null
 
-        // Copy the file contents over.
+        var bis: BufferedInputStream? = null
         var cos: CountingOutputStream? = null
-        var bos: BufferedOutputStream? = null
         var fos: FileOutputStream? = null
         val bytesWritten: Long
         try {
@@ -119,31 +119,38 @@ object FileUtil {
             // Local cache file name may not be unique, and can be reused, in which case, the
             //  previously created cache file need to be deleted before it is being copied over.
             if (localFile.exists()) localFile.delete()
+            bis = BufferedInputStream(inputStream)
             fos = FileOutputStream(localFile)
-            bos = BufferedOutputStream(fos)
-            cos = CountingOutputStream(bos)
-            val buf = ByteArray(4096)
-            var count: Int
-            while (inputStream.read(buf, 0, 4096).also { count = it } != -1) {
-                cos.write(buf, 0, count)
-            }
+            cos = CountingOutputStream(fos)
+
+            System.gc() // Clear up memory to help prevent OOM issues
+
+            if (isMimeTypeImage(mimeType)) {
+                val smallerImage = ImageUtil.createScaledBitmapFromLocalImageSource(activity, inputStream, sourceUri)
+                smallerImage?.compress(Bitmap.CompressFormat.JPEG, 95, cos)
+                Log.v(UTIL, "New image file size = " + (cos.bytesWritten / 1024).toString() + "k")
+                smallerImage?.recycle()
+            } else bis.use { cos.write(it.read()) }
             bytesWritten = cos.bytesWritten
             Log.v(UTIL, "File saved, size = " + (cos.bytesWritten / 1024).toString() + "k")
         } catch (e: IOException) {
             Log.e(UTIL, "Error creating local copy of file attachment.", e)
             return null
         } finally {
+            cos?.flush()
+            ensureClosed(bis)
             ensureClosed(cos)
-            ensureClosed(bos)
             ensureClosed(fos)
+            System.gc() // Clean up memory after done
         }
 
-        // Create a StoredFile database entry for this locally saved file.
-        return StoredFile(
+        // Create a Attachment database entry for this locally saved file.
+        return Message.Attachment(
+            id = generateUUID(),
             sourceUriOrPath = sourceUri,
             localFilePath = localFilePath,
-            mimeType = mimeType,
-            fileSize = bytesWritten
+            contentType = mimeType,
+            size = bytesWritten
         )
     }
 
@@ -271,8 +278,8 @@ object FileUtil {
         }
     }
 
-    fun deleteFile(filePath: String) {
-        if (filePath.isNotBlank()) {
+    fun deleteFile(filePath: String?) {
+        if (!filePath.isNullOrBlank()) {
             val file = File(filePath)
             if (file.exists()) file.delete()
         }

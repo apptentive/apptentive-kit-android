@@ -12,4 +12,6 @@
     <string name="apptentive_add_attachment">Add attachment</string>
     <string name="apptentive_attachment_thumbnail">Attachment thumbnail</string>
     <string name="apptentive_send_message">Send message</string>
+    <string name="apptentive_preview_attachment">Preview attachment</string>
+    <string name="apptentive_remove_attachment">Remove attachment</string>
 </resources>

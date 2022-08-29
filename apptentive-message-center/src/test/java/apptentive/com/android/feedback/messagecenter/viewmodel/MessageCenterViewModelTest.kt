@@ -8,7 +8,7 @@ import apptentive.com.android.core.Provider
 import apptentive.com.android.core.isInThePast
 import apptentive.com.android.core.toSeconds
 import apptentive.com.android.feedback.EngagementResult
-import apptentive.com.android.feedback.backend.MessageFetchService
+import apptentive.com.android.feedback.backend.MessageCenterService
 import apptentive.com.android.feedback.dependencyprovider.MessageCenterModelProvider
 import apptentive.com.android.feedback.engagement.EngageArgs
 import apptentive.com.android.feedback.engagement.EngagementContext
@@ -132,7 +132,7 @@ class MessageCenterViewModelTest : TestCase() {
         val messageManager = MessageManager(
             "conversationId",
             "token",
-            MockMessageFetchService(),
+            MockMessageCenterService(),
             MockExecutor(),
             MockMessageRepository()
         )
@@ -232,7 +232,7 @@ class MessageCenterViewModelTest : TestCase() {
     }
 }
 
-class MockMessageFetchService : MessageFetchService {
+class MockMessageCenterService : MessageCenterService {
     override fun getMessages(
         conversationToken: String,
         conversationId: String,
@@ -240,6 +240,10 @@ class MockMessageFetchService : MessageFetchService {
         callback: (Result<MessageList>) -> Unit
     ) {
         callback(Result.Success(MessageList(testMessageList, null, null)))
+    }
+
+    override fun getAttachment(remoteUrl: String, callback: (Result<ByteArray>) -> Unit) {
+        TODO("Not yet implemented")
     }
 }
 

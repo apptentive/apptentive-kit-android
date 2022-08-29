@@ -24,7 +24,6 @@ import apptentive.com.android.feedback.messagecenter.view.ProfileViewData
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.MessageCenterModel
 import apptentive.com.android.feedback.model.Person
-import apptentive.com.android.feedback.model.StoredFile
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.convertToGroupDate
 import apptentive.com.android.util.InternalUseOnly
@@ -67,8 +66,11 @@ class MessageCenterViewModel : ViewModel() {
     private val newMessagesSubject = LiveEvent<List<Message>>()
     val newMessages: LiveData<List<Message>> get() = newMessagesSubject
 
-    private val draftAttachmentsEvent = LiveEvent<List<StoredFile>>()
-    val draftAttachmentsStream: LiveData<List<StoredFile>> = draftAttachmentsEvent
+    private val draftAttachmentsEvent = LiveEvent<List<Message.Attachment>>()
+    val draftAttachmentsStream: LiveData<List<Message.Attachment>> = draftAttachmentsEvent
+
+    private val attachmentDownloadQueueEvent = LiveEvent<Set<Message.Attachment>>()
+    val attachmentDownloadQueueStream: LiveData<Set<Message.Attachment>> = attachmentDownloadQueueEvent
 
     private val exitEvent = LiveEvent<Boolean>()
     val exitStream: LiveData<Boolean> = exitEvent
@@ -177,6 +179,7 @@ class MessageCenterViewModel : ViewModel() {
                     hasAutomatedMessage = false
                 }
             }
+
             messageManager.sendMessage(message, draftAttachmentsStream.value.orEmpty())
             draftAttachmentsEvent.postValue(emptyList())
             clearMessage.postValue(true)
@@ -246,15 +249,37 @@ class MessageCenterViewModel : ViewModel() {
     )
 
     fun addAttachment(activity: Activity, uri: Uri) {
-        FileUtil.createLocalStoredFile(activity, uri.toString(), generateUUID())?.let { file ->
+        FileUtil.createLocalStoredAttachment(activity, uri.toString(), generateUUID())?.let { file ->
             val updatedAttachments = draftAttachmentsStream.value.orEmpty().plus(file)
             draftAttachmentsEvent.value = updatedAttachments
         }
     }
 
-    fun addAttachments(files: List<StoredFile>) {
-        val updatedAttachments = draftAttachmentsEvent.value.orEmpty().plus(files)
+    fun addAttachments(files: List<Message.Attachment>) {
+        val updatedAttachments = draftAttachmentsStream.value.orEmpty().plus(files)
         draftAttachmentsEvent.value = updatedAttachments
+    }
+
+    fun removeAttachment(file: Message.Attachment) {
+        val updatedAttachments = draftAttachmentsStream.value.orEmpty().minus(file)
+        draftAttachmentsEvent.value = updatedAttachments
+        FileUtil.deleteFile(file.localFilePath)
+    }
+
+    fun downloadFile(message: Message, file: Message.Attachment) {
+        file.url?.run {
+            val downloadQueueStartDownload = attachmentDownloadQueueStream.value.orEmpty().plus(file)
+            attachmentDownloadQueueEvent.value = downloadQueueStartDownload
+
+            messageManager.downloadAttachment(context.getAppActivity(), message, file) {
+                val downloadQueueFinishDownload = attachmentDownloadQueueStream.value.orEmpty().minus(file)
+                attachmentDownloadQueueEvent.postValue(downloadQueueFinishDownload)
+            }
+        }
+    }
+
+    fun isFileDownloading(file: Message.Attachment): Boolean {
+        return attachmentDownloadQueueStream.value?.contains(file) == true
     }
 }
 

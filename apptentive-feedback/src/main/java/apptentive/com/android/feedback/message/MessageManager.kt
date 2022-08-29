@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.message
 
+import android.app.Activity
 import android.webkit.MimeTypeMap
 import androidx.annotation.VisibleForTesting
 import apptentive.com.android.concurrent.Executor
@@ -7,7 +8,7 @@ import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.Observable
 import apptentive.com.android.feedback.Apptentive
-import apptentive.com.android.feedback.backend.MessageFetchService
+import apptentive.com.android.feedback.backend.MessageCenterService
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.lifecycle.LifecycleListener
 import apptentive.com.android.feedback.model.Configuration
@@ -16,23 +17,22 @@ import apptentive.com.android.feedback.model.CustomData
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.Sender
-import apptentive.com.android.feedback.model.StoredFile
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.util.Result
+import apptentive.com.android.util.generateUUID
 import java.io.InputStream
 
 @InternalUseOnly
 class MessageManager(
     private val conversationId: String?,
     private val conversationToken: String?,
-    private val messageFetchService: MessageFetchService,
+    private val messageCenterService: MessageCenterService,
     private val serialExecutor: Executor,
-    private val messageRepository: MessageRepository,
-//    private val attachmentManager: AttachmentManager,
+    private val messageRepository: MessageRepository
 ) : LifecycleListener, ConversationListener {
 
     private val messagesFromStorage: List<Message> = messageRepository.getAllMessages()
@@ -86,7 +86,7 @@ class MessageManager(
     @InternalUseOnly
     fun fetchMessages() {
         if (!conversationId.isNullOrEmpty() && !conversationToken.isNullOrEmpty()) {
-            messageFetchService.getMessages(conversationToken, conversationId, lastDownloadedMessageID) {
+            messageCenterService.getMessages(conversationToken, conversationId, lastDownloadedMessageID) {
                 // Store the message list
                 if (it is Result.Success) {
                     Log.d(MESSAGE_CENTER, "Fetch finished successfully")
@@ -127,12 +127,12 @@ class MessageManager(
     }
 
     @InternalUseOnly
-    fun sendMessage(messageText: String, attachments: List<StoredFile> = emptyList(), isHidden: Boolean? = null) {
+    fun sendMessage(messageText: String, attachments: List<Message.Attachment> = emptyList(), isHidden: Boolean? = null) {
         val context = DependencyProvider.of<EngagementContextFactory>().engagementContext()
         val message = Message(
             type = if (attachments.isEmpty()) Message.MESSAGE_TYPE_TEXT else Message.MESSAGE_TYPE_COMPOUND,
             body = messageText,
-            storedFiles = attachments,
+            attachments = attachments,
             sender = Sender(senderProfile.id, senderProfile.name, null),
             hidden = isHidden,
             messageStatus = Message.Status.Sending,
@@ -185,9 +185,9 @@ class MessageManager(
          * If original uri is known, the name will be taken from the original uri
          */
         val activity = DependencyProvider.of<EngagementContextFactory>().engagementContext().getAppActivity()
-        FileUtil.createLocalStoredFile(activity, uri, message.nonce)?.let {
+        FileUtil.createLocalStoredAttachment(activity, uri, message.nonce)?.let {
             it.id = message.nonce
-            message.storedFiles = listOf(it)
+            message.attachments = listOf(it)
             sendMessage(message)
         } ?: Log.e(MESSAGE_CENTER, "Issue with creating attachment file. Cannot send.")
     }
@@ -208,11 +208,33 @@ class MessageManager(
         if (!extension.isNullOrEmpty()) localFilePath += ".$extension"
 
         // When created from InputStream, there is no source file uri or path, thus just use the cache file path
-        FileUtil.createLocalStoredFile(inputStream, localFilePath, localFilePath, mimeType)?.let {
+        FileUtil.createLocalStoredAttachmentFile(activity, inputStream, localFilePath, localFilePath, mimeType)?.let {
             it.id = message.nonce
-            message.storedFiles = listOf(it)
+            message.attachments = listOf(it)
             sendMessage(message)
         } ?: Log.e(MESSAGE_CENTER, "Issue with creating attachment file. Cannot send.")
+    }
+
+    fun downloadAttachment(activity: Activity, message: Message, attachment: Message.Attachment, callback: () -> Unit) {
+        messageCenterService.getAttachment(attachment.url.orEmpty()) { result ->
+            if (result is Result.Success) {
+                val localFileLocation = FileUtil.generateCacheFilePathFromNonceOrPrefix(activity, attachment.id ?: generateUUID(), null)
+                FileUtil.writeFileData(localFileLocation, result.data)
+                val updatedMessage = message.copy(
+                    attachments = message.attachments?.also { attachments ->
+                        attachments.find {
+                            it.id == attachment.id
+                        }?.localFilePath = localFileLocation
+                    }
+                )
+                messageRepository.addOrUpdateMessages(listOf(updatedMessage))
+                Log.d(MESSAGE_CENTER, "Image fetched successfully")
+                callback()
+            } else {
+                Log.e(MESSAGE_CENTER, "Error retrieving image", (result as Result.Error).error)
+                callback()
+            }
+        }
     }
 
     @InternalUseOnly

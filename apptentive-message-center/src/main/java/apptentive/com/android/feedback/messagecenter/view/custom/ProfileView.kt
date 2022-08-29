@@ -1,4 +1,4 @@
-package apptentive.com.android.feedback.messagecenter.view
+package apptentive.com.android.feedback.messagecenter.view.custom
 
 import android.content.Context
 import android.util.AttributeSet

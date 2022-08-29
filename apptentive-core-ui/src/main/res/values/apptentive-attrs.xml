@@ -121,7 +121,14 @@
         <attr name="apptentiveMessageCenterBubbleAttachmentsLayoutStyle" format="reference"/>
         <attr name="apptentiveMessageCenterAttachmentLayoutStyle" format="reference"/>
         <attr name="apptentiveMessageCenterAttachmentThumbnailStyle" format="reference"/>
-        <attr name="apptentiveMessageCenterAttachmentThumbnailTypeStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterAttachmentThumbnailTypeTextStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterAttachmentThumbnailTypeIconStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterPreviewAttachmentText" format="reference"/>
+        <attr name="apptentiveMessageCenterPreviewAttachmentImage" format="reference"/>
+        <attr name="apptentiveMessageCenterRemoveAttachmentText" format="reference"/>
+        <attr name="apptentiveMessageCenterRemoveAttachmentImage" format="reference"/>
+
+        <!-- Other -->
         <attr name="apptentiveMessageCenterAttachmentThumbnailSpacing" format="dimension"/>
 
         <!-- Typeface -->

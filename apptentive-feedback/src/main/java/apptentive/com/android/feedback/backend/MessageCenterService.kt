@@ -5,11 +5,16 @@ import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Result
 
 @InternalUseOnly
-interface MessageFetchService {
+interface MessageCenterService {
     fun getMessages(
         conversationToken: String,
         conversationId: String,
         lastMessageID: String,
         callback: (Result<MessageList>) -> Unit
+    )
+
+    fun getAttachment(
+        remoteUrl: String,
+        callback: (Result<ByteArray>) -> Unit
     )
 }

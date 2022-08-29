@@ -1,17 +1,21 @@
 package apptentive.com.android.feedback.model
 
+import android.webkit.MimeTypeMap
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.toSeconds
 import apptentive.com.android.feedback.model.Message.Status
 import apptentive.com.android.feedback.model.payloads.MessagePayload
+import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.util.generateUUID
+import java.io.File
 
 /**
  * Data container class for Message Center message list.
  *
+ * @param messages - Messages list returned from server [Message]
  * @param endsWith - Last downloaded Message ID.
  * @param hasMore - boolean value to determine if there are more messages to fetch from the server
  */
@@ -28,23 +32,28 @@ data class MessageList(
  *
  * @param id - The server-side identifier for the message
  * @param nonce - The nonce assigned to the message
- * @param body - Body of the message
+ * @param type - Text for text only. Compound if attachments are present.
+ * @param sender - ID, name, and profile photo of sender from server [Sender]
+ * @param body - `String` body of the message
+ * @param attachments - Attachments either locally stored or from server [Message.Attachment]
  * @param messageStatus - Status of the message [Status]
- * @param inbound - bool value to determine the message origin. true = inbound to THE BACKEND. false = outbound from THE BACKEND.
- * @param hidden - bool value to determine if the message should be hidden in the UI
- * @param automated - bool value to determine if the message was sent by an automatic process
- * @param createdAt - The message created time
+ * @param inbound - `bool` value to determine the message origin. true = inbound to THE BACKEND. false = outbound from THE BACKEND.
+ * @param hidden - `bool` value to determine if the message should be hidden in the UI. `String` or `null`
+ * @param automated - `bool` value to determine if the message was sent by an automatic process. `String` or `null`
+ * @param read - `bool` value to determine if the message was visible on the screen
+ * @param createdAt - The message created time in seconds
+ * @param groupTimestamp - Visually groups the first date of a specific date in the message list. `String` or `null`.
+ * @param customData - Optional extra data sent with message
  */
 
 @InternalUseOnly
 data class Message(
     val id: String? = null,
     val nonce: String = generateUUID(),
-    // TODO find if type is needed at all
-    var type: String,
+    var type: String?,
     val sender: Sender?,
     val body: String?,
-    var storedFiles: List<StoredFile> = emptyList(),
+    var attachments: List<Attachment>? = emptyList(),
     var messageStatus: Status = Status.Unknown,
     val inbound: Boolean = false,
     val hidden: Boolean? = null, // true or null
@@ -54,10 +63,51 @@ data class Message(
     var groupTimestamp: String? = null,
     val customData: Map<String, Any?>? = null
 ) {
+
+    data class Attachment(
+        var id: String?,
+
+        // The mime type of the attachment
+        val contentType: String?,
+
+        /*
+        * Bytes of saved file
+        * Files from server are limited to 1MB (dashboard limitation)
+        * Divide by 1024 to get kb. Divide again by 1024 to get mb
+        */
+        val size: Long,
+
+        /*
+        * For outgoing attachment, this field is empty
+        * For incoming attachment, this field is the full remote url to the attachment
+        */
+        var url: String? = null,
+
+        /*
+        * *Only valid for activity session*
+        * The source image uri or source image full path
+        */
+        var sourceUriOrPath: String? = null,
+
+        // The full path to the on-device cache file where the source image is copied to
+        var localFilePath: String?,
+
+        // Creation time of original file in seconds to match backend
+        var creationTime: TimeInterval = toSeconds(System.currentTimeMillis()),
+
+        // Will either be the actual file name (from original file or from remote), or `file.mimeTypeExtension`
+        val originalName: String = FileUtil.getFileName(
+            sourceUriOrPath.orEmpty(),
+            MimeTypeMap.getSingleton().getExtensionFromMimeType(contentType)
+        )
+    ) {
+        fun hasLocalFile() = !localFilePath.isNullOrEmpty() && File(localFilePath.orEmpty()).exists()
+    }
+
     fun toMessagePayload(): MessagePayload = MessagePayload(
         messageNonce = nonce,
         boundary = generateUUID().replace("-", ""),
-        storedFiles = storedFiles,
+        attachments = attachments.orEmpty(),
         type = type,
         body = body,
         sender = sender,

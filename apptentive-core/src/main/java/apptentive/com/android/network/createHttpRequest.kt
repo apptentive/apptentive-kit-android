@@ -62,3 +62,9 @@ class HttpJsonResponseReader<T>(private val type: Class<T>) : HttpResponseReader
         return JsonConverter.fromJson(json, type) as T
     }
 }
+
+class HttpByteArrayResponseReader : HttpResponseReader<ByteArray> {
+    override fun read(response: HttpNetworkResponse): ByteArray {
+        return response.data
+    }
+}

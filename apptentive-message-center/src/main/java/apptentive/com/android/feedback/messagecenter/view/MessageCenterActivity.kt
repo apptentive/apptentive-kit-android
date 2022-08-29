@@ -13,7 +13,10 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
 import apptentive.com.android.feedback.messagecenter.R
-import apptentive.com.android.feedback.model.StoredFile
+import apptentive.com.android.feedback.messagecenter.view.custom.HandleAttachmentBottomSheet
+import apptentive.com.android.feedback.messagecenter.view.custom.HandleAttachmentBottomSheet.Companion.APPTENTIVE_ATTACHMENT_BOTTOMSHEET_TAG
+import apptentive.com.android.feedback.messagecenter.view.custom.MessageCenterAttachmentThumbnailView
+import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.ui.startViewModelActivity
 import com.google.android.material.appbar.MaterialToolbar
@@ -70,19 +73,15 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
         viewModel.clearMessageStream.observe(this) { clearMessage ->
             if (clearMessage) {
                 messageText.text.clear()
-                handleDraftMessage(true)
                 attachmentsLayout.removeAllViews()
+                handleDraftMessage(true)
             }
         }
 
         viewModel.draftAttachmentsStream.observe(this) { attachments ->
             attachmentsLayout.removeAllViews()
             attachments.forEach { file ->
-                attachmentsLayout.addView(
-                    MessageCenterAttachmentThumbnailView(this, null).apply {
-                        setAttachmentView(file.localFilePath, file.mimeType) { }
-                    }
-                )
+                attachmentsLayout.addView(getAttachmentView(file))
             }
 
             if (viewModel.draftAttachmentsStream.value?.size == 4) {
@@ -92,6 +91,12 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
                 attachmentButton.isEnabled = true
                 attachmentButton.alpha = 1.0f
             }
+
+            handleDraftMessage(true)
+        }
+
+        viewModel.attachmentDownloadQueueStream.observe(this) {
+            messageListAdapter.notifyDataSetChanged()
         }
 
         viewModel.errorMessagesStream.observe(this) { errorMessages ->
@@ -141,6 +146,19 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
         }
     }
 
+    private fun getAttachmentView(file: Message.Attachment): MessageCenterAttachmentThumbnailView {
+        return MessageCenterAttachmentThumbnailView(this, null).apply {
+            setAttachmentView(file, false) {
+                val bottomSheet = HandleAttachmentBottomSheet(file.localFilePath.orEmpty()) {
+                    viewModel.removeAttachment(file)
+                }
+                if (supportFragmentManager.findFragmentByTag(APPTENTIVE_ATTACHMENT_BOTTOMSHEET_TAG) == null) {
+                    bottomSheet.show(supportFragmentManager, APPTENTIVE_ATTACHMENT_BOTTOMSHEET_TAG)
+                }
+            }
+        }
+    }
+
     private fun handleDraftMessage(shouldSave: Boolean) { // vs shouldRestore
         // Consts for shared prefs
         val MESSAGE_CENTER_DRAFT = "com.apptentive.sdk.messagecenter.draft"
@@ -163,7 +181,7 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
                     MESSAGE_CENTER_DRAFT_ATTACHMENTS,
                     viewModel.draftAttachmentsStream.value?.map { file ->
                         JsonConverter.toJson(file)
-                    }?.toSet()
+                    }.orEmpty().toSet()
                 )
                 .apply()
         } else {
@@ -174,8 +192,8 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
             // Restore draft attachments
             val stringSet = sharedPrefs.getStringSet(MESSAGE_CENTER_DRAFT_ATTACHMENTS, mutableSetOf()).orEmpty()
             if (viewModel.draftAttachmentsStream.value.isNullOrEmpty() && stringSet.isNotEmpty()) {
-                val draftAttachments: List<StoredFile> = stringSet.mapNotNull {
-                    JsonConverter.fromJson(it, StoredFile::class.java) as? StoredFile
+                val draftAttachments: List<Message.Attachment> = stringSet.mapNotNull {
+                    JsonConverter.fromJson(it, Message.Attachment::class.java) as? Message.Attachment
                 }
                 viewModel.addAttachments(draftAttachments)
             }
@@ -197,7 +215,6 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
     }
 
     override fun onStop() {
-        handleDraftMessage(true)
         viewModel.onMessageViewStatusChanged(false)
         super.onStop()
     }

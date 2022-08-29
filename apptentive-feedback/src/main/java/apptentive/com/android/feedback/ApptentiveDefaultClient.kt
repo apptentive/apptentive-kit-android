@@ -9,7 +9,7 @@ import apptentive.com.android.core.Provider
 import apptentive.com.android.feedback.backend.ConversationPayloadService
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.DefaultConversationService
-import apptentive.com.android.feedback.backend.MessageFetchService
+import apptentive.com.android.feedback.backend.MessageCenterService
 import apptentive.com.android.feedback.conversation.ConversationManager
 import apptentive.com.android.feedback.conversation.ConversationRepository
 import apptentive.com.android.feedback.conversation.ConversationSerializer
@@ -141,7 +141,7 @@ internal class ApptentiveDefaultClient(
                     messageManager = MessageManager(
                         activeConversation.conversationId,
                         activeConversation.conversationToken,
-                        conversationService as MessageFetchService,
+                        conversationService as MessageCenterService,
                         executors.state,
                         DefaultMessageRepository(
                             messageSerializer = DefaultMessageSerializer(messagesFile = getMessagesFile())

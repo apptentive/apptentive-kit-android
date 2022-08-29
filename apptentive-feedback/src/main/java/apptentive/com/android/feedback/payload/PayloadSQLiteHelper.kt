@@ -37,11 +37,15 @@ internal class PayloadSQLiteHelper(context: Context) :
             put(COL_PAYLOAD_DATA_FILE, payload.dataFilePath)
         }
 
-        writableDatabase.use { db ->
-            val result = db.insert(TABLE_NAME, null, values)
-            if (result == -1L) {
-                throw RuntimeException("Unable to add payload: $payload")
+        try {
+            writableDatabase.use { db ->
+                val result = db.insert(TABLE_NAME, null, values)
+                if (result == -1L) {
+                    throw RuntimeException("Unable to add payload: $payload")
+                }
             }
+        } catch (e: Exception) {
+            Log.e(PAYLOADS, "Error writing to database", e)
         }
     }
 

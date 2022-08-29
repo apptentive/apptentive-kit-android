@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Hello! I have an issue with the order number 1234. Can you update the order with the following address?" />
+            tools:text="This is an incoming message."/>
 
         <LinearLayout
             android:id="@+id/apptentive_message_outbound_attachments_layout"
@@ -76,7 +76,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Dear customer, can you describe your issue? We will try to fix it as soon as possible." />
+            tools:text="This is an outgoing message." />
 
         <LinearLayout
             android:id="@+id/apptentive_message_inbound_attachments_layout"

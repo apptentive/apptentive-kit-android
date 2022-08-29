@@ -6,6 +6,7 @@ import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.MESSAGE_CENTER
+import apptentive.com.android.util.generateUUID
 
 @InternalUseOnly
 interface MessageRepository {
@@ -38,11 +39,17 @@ internal class DefaultMessageRepository(val messageSerializer: MessageSerializer
             if (existing != null) {
                 val existingMessage = JsonConverter.fromJson<Message>(existing.messageJson)
                 message.createdAt = existingMessage.createdAt
-                message.storedFiles = existingMessage.storedFiles
+                message.attachments = existingMessage.attachments?.onEach { attachment ->
+                    message.attachments?.find { it.id == attachment.id }?.run {
+                        if (!url.isNullOrBlank()) attachment.url = url // Update URL
+                        if (!localFilePath.isNullOrBlank()) attachment.localFilePath = localFilePath // Update local file path
+                    }
+                }
                 existing.id = message.id
                 existing.messageState = message.messageStatus.name
                 existing.messageJson = JsonConverter.toJson(message)
             } else {
+                message.attachments?.onEach { it.id = it.id ?: generateUUID() }
                 val newEntry = MessageEntry(
                     id = message.id,
                     messageState = message.messageStatus.name,

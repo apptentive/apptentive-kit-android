@@ -7,11 +7,9 @@ import apptentive.com.android.feedback.Constants
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.Sender
-import apptentive.com.android.feedback.model.StoredFile
 import apptentive.com.android.feedback.payload.MediaType
 import apptentive.com.android.feedback.payload.PayloadType
 import apptentive.com.android.feedback.utils.FileUtil
-import apptentive.com.android.feedback.utils.ImageUtil
 import apptentive.com.android.network.HttpMethod
 import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.util.InternalUseOnly
@@ -34,8 +32,8 @@ import java.io.File
 data class MessagePayload(
     @Transient val messageNonce: String,
     @Transient val boundary: String,
-    @Transient var storedFiles: List<StoredFile>,
-    val type: String,
+    @Transient var attachments: List<Message.Attachment>,
+    val type: String?,
     val body: String?,
     val sender: Sender?,
     val hidden: Boolean?,
@@ -100,8 +98,8 @@ data class MessagePayload(
         data.write(textMessagePart)
 
         // Then append attachments as other parts
-        storedFiles.forEach { storedFile ->
-            val attachmentStream = getAttachmentByteStream(storedFile)
+        attachments.forEach { attachment ->
+            val attachmentStream = getAttachmentByteStream(attachment)
             try {
                 data.write(attachmentStream.toByteArray())
             } finally {
@@ -118,7 +116,7 @@ data class MessagePayload(
         return data.toByteArray()
     }
 
-    private fun getAttachmentByteStream(storedFile: StoredFile): ByteArrayOutputStream {
+    private fun getAttachmentByteStream(attachment: Message.Attachment): ByteArrayOutputStream {
         val attachmentStream = ByteArrayOutputStream()
 
         Log.v(PAYLOADS, "Starting to write an attachment part.")
@@ -128,43 +126,34 @@ data class MessagePayload(
         val attachmentEnvelope = (
             "Content-Disposition: form-data; " +
                 "name=\"file[]\"; " +
-                "filename=\"${storedFile.fileName}\"$LINE_END" +
-                "Content-Type: ${storedFile.mimeType}$LINE_END$LINE_END"
+                "filename=\"${attachment.originalName}\"$LINE_END" +
+                "Content-Type: ${attachment.contentType}$LINE_END$LINE_END"
             ).toByteArray()
 
         Log.v(PAYLOADS, "Writing attachment envelope: $attachmentEnvelope")
         attachmentStream.write(attachmentEnvelope)
 
-        retrieveAndWriteFileToStream(storedFile, attachmentStream)
+        retrieveAndWriteFileToStream(attachment, attachmentStream)
         Log.v(PAYLOADS, "Writing attachment bytes: ${attachmentStream.size()}")
         return attachmentStream
     }
 
-    private fun retrieveAndWriteFileToStream(storedFile: StoredFile, attachmentStream: ByteArrayOutputStream) {
+    private fun retrieveAndWriteFileToStream(attachment: Message.Attachment, attachmentStream: ByteArrayOutputStream) {
         try {
             val activity = DependencyProvider.of<EngagementContextFactory>().engagementContext().getAppActivity()
 
             val inputPath =
-                if (URLUtil.isContentUrl(storedFile.localFilePath)) Uri.parse(storedFile.localFilePath)
-                else Uri.fromFile(File(storedFile.localFilePath))
+                if (URLUtil.isContentUrl(attachment.localFilePath)) Uri.parse(attachment.localFilePath)
+                else Uri.fromFile(File(attachment.localFilePath.orEmpty()))
 
             val fileInputStream = activity.contentResolver.openInputStream(inputPath)
             requireNotNull(fileInputStream)
-            if (FileUtil.isMimeTypeImage(storedFile.mimeType)) {
-                Log.v(PAYLOADS, "Appending image attachment.")
-                ImageUtil.appendScaledDownImageToStream(
-                    storedFile.localFilePath,
-                    fileInputStream,
-                    attachmentStream
-                )
-            } else {
-                Log.v(PAYLOADS, "Appending non-image attachment.")
-                FileUtil.appendFileToStream(fileInputStream, attachmentStream)
-            }
+            Log.v(PAYLOADS, "Appending attachment.")
+            FileUtil.appendFileToStream(fileInputStream, attachmentStream)
         } catch (e: Exception) {
             Log.e(
                 PAYLOADS,
-                "Error reading Message Payload attachment: \"${storedFile.localFilePath}\".",
+                "Error reading Message Payload attachment: \"${attachment.localFilePath}\".",
                 e
             )
         }

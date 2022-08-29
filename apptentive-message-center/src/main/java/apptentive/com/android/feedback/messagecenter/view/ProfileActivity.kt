@@ -2,6 +2,7 @@ package apptentive.com.android.feedback.messagecenter.view
 
 import android.os.Bundle
 import apptentive.com.android.feedback.messagecenter.R
+import apptentive.com.android.feedback.messagecenter.view.custom.ProfileView
 import apptentive.com.android.ui.ApptentiveGenericDialog
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.button.MaterialButton
