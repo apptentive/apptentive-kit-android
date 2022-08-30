@@ -8,9 +8,9 @@
     <!-- Greeting group -->
     <ImageView
         android:id="@+id/apptentive_message_center_greeting_header"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         style="?apptentiveMessageCenterGreetingHeaderStyle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -18,9 +18,9 @@
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/apptentive_message_center_greeting"
+        style="?apptentiveMessageCenterGreetingStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="?apptentiveMessageCenterGreetingStyle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/apptentive_message_center_greeting_header"
@@ -28,9 +28,9 @@
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/apptentive_message_center_greeting_body"
+        style="?apptentiveMessageCenterGreetingBodyTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="?apptentiveMessageCenterGreetingBodyTextStyle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/apptentive_message_center_greeting"

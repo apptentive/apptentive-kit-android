@@ -18,6 +18,7 @@ import apptentive.com.android.feedback.messagecenter.view.custom.HandleAttachmen
 import apptentive.com.android.feedback.messagecenter.view.custom.MessageCenterAttachmentThumbnailView
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.serialization.json.JsonConverter
+import apptentive.com.android.ui.hideSoftKeyboard
 import apptentive.com.android.ui.startViewModelActivity
 import com.google.android.material.appbar.MaterialToolbar
 
@@ -111,17 +112,25 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
             }
         }
 
-        viewModel.newMessages.observe(this) { newMessages ->
-            messageList.visibility = View.VISIBLE
-            // Update adapter
-            messageListAdapter.listItems.clear()
-            messageListAdapter.listItems.addAll(viewModel.buildMessageViewDataModel(false))
-            messageListAdapter.notifyDataSetChanged()
-            val lastItem = messageListAdapter.itemCount - 1
-            if (lastItem >= 0) messageList.smoothScrollToPosition(messageListAdapter.itemCount - 1)
-            if (viewModel.showProfile())
-                actionMenu?.findItem(R.id.action_profile)?.isVisible = true
+        viewModel.newMessages.observe(this) {
+            updateMessageListAdapter()
         }
+
+        viewModel.avatarBitmapStream.observe(this) {
+            updateMessageListAdapter()
+        }
+    }
+
+    private fun updateMessageListAdapter() {
+        messageList.visibility = View.VISIBLE
+        // Update adapter
+        messageListAdapter.listItems.clear()
+        messageListAdapter.listItems.addAll(viewModel.buildMessageViewDataModel(false))
+        messageListAdapter.notifyDataSetChanged()
+        val lastItem = messageListAdapter.itemCount - 1
+        if (lastItem >= 0) messageList.smoothScrollToPosition(messageListAdapter.itemCount - 1)
+        if (viewModel.showProfile())
+            actionMenu?.findItem(R.id.action_profile)?.isVisible = true
     }
 
     private fun setListeners() {
@@ -130,6 +139,8 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
         }
         val sendButton = findViewById<ImageView>(R.id.apptentive_send_message_button)
         sendButton.setOnClickListener {
+            currentFocus?.clearFocus()
+            it.hideSoftKeyboard()
             if (viewModel.showLauncherView)
                 viewModel.sendMessage(messageText.text.toString(), messageListAdapter.getProfileName(), messageListAdapter.getProfileEmail())
             else

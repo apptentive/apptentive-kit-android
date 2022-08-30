@@ -22,10 +22,18 @@
         style="?attr/apptentiveMessageCenterOutboundBubble"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_goneMarginTop="24dp"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/apptentive_message_group_time_stamp">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/apptentive_message_outbound_sender_text"
+            style="?attr/apptentiveMessageCenterSenderText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="John Doe"/>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/apptentive_message_outbound_text"
@@ -33,7 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/apptentive_message_outbound_sender_text"
             tools:text="This is an incoming message."/>
 
         <LinearLayout

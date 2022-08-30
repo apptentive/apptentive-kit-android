@@ -1,9 +1,11 @@
 package apptentive.com.android.feedback.messagecenter.view
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -35,7 +37,7 @@ class MessageListAdapter(
 
     fun getProfileName(): String = profileView?.getName().orEmpty()
 
-    fun getProfileEmail(): String = profileView?.getEmail().orEmpty()
+    fun getProfileEmail(): String = profileView?.getEmail().orEmpty().trim()
 
     fun setEmailError(value: Boolean) {
         profileView?.setEmailError(value)
@@ -102,6 +104,8 @@ class MessageListAdapter(
                         findViewById<LinearLayout>(R.id.apptentive_message_outbound_attachments_layout)
                     val outboundStatus =
                         findViewById<MaterialTextView>(R.id.apptentive_message_outbound_time_stamp)
+                    val outboundSenderText =
+                        findViewById<MaterialTextView>(R.id.apptentive_message_outbound_sender_text)
 
                     groupTimestamp.isVisible =
                         !(message?.groupTimestamp == null || (message.automated == true && message.messageStatus == Message.Status.Sending))
@@ -122,6 +126,10 @@ class MessageListAdapter(
                         outboundLayout.visibility = View.VISIBLE
                         outboundText.text = message?.body
                         outboundText.isVisible = !message?.body.isNullOrEmpty()
+                        if (message?.sender?.name.isNullOrEmpty())
+                            outboundSenderText.visibility = View.GONE
+                        else
+                            outboundSenderText.text = message?.sender?.name
                         outboundStatus.text = convertToDate(message?.createdAt ?: 0.0)
                         outboundAttachments.removeAllViews()
                         outboundAttachments.addAttachments(message)
@@ -135,6 +143,11 @@ class MessageListAdapter(
                     greetingData?.greetingTitle
                 holder.itemView.findViewById<TextView>(R.id.apptentive_message_center_greeting_body).text =
                     greetingData?.greetingBody
+                holder.itemView.findViewById<ImageView>(R.id.apptentive_message_center_greeting_header).apply {
+                    greetingData?.avatarBitmap?.let { avatar ->
+                        this.setImageBitmap(avatar)
+                    }
+                }
             }
 
             is MessageFooterViewHolder -> {
@@ -190,7 +203,7 @@ class MessageListAdapter(
 class MessageHeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 class MessageFooterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
-data class GreetingData(val greetingTitle: String, val greetingBody: String)
+data class GreetingData(val greetingTitle: String, val greetingBody: String, val avatarBitmap: Bitmap?)
 data class ProfileViewData(val emailHint: String, val nameHint: String, val visibility: Boolean)
 data class MessageViewData(
     val greetingData: GreetingData?,

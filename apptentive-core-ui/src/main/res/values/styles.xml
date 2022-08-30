@@ -152,6 +152,7 @@
         <!-- Message Center -->
         <item name="apptentiveTextColorMessageCenterGreetingTitle">?colorOnBackground</item>
         <item name="apptentiveTextColorMessageCenterGreetingBody">?apptentiveTextColorBody1</item>
+        <item name="apptentiveTextSizeSmall">@dimen/apptentive_text_size_small</item>
         <!-- Text Color End -->
 
         <!-- Text Alpha -->
@@ -231,6 +232,7 @@
         <item name="apptentiveMessageCenterRemoveAttachmentText">@style/Apptentive.Widget.MessageCenter.Text.AttachmentBottomSheet.Remove</item>
         <item name="apptentiveMessageCenterRemoveAttachmentImage">@style/Apptentive.Widget.MessageCenter.Image.AttachmentBottomSheet.Remove</item>
         <item name="apptentiveMessageCenterAttachmentThumbnailSpacing">@dimen/apptentive_message_attachment_spacing</item>
+        <item name="apptentiveMessageCenterSenderText">@style/Apptentive.Widget.MessageCenter.Text.Bubble.Sender</item>
     </style>
 
     <!-- This style has been a problem within our UI and will be disabled by default -->
@@ -653,6 +655,10 @@
     <style name="Apptentive.Widget.MessageCenter.Image.Header">
         <item name="android:layout_margin">@dimen/apptentive_message_header_margin</item>
         <item name="android:src">@drawable/ic_placeholder_message_homescreen</item>
+        <item name="layout_constraintHeight_max">@dimen/apptentive_message_header_image_max_height</item>
+        <item name="layout_constraintWidth_max">@dimen/apptentive_message_header_image_max_width</item>
+        <item name="layout_constraintHeight_min">@dimen/apptentive_message_header_image_min_height</item>
+        <item name="layout_constraintWidth_min">@dimen/apptentive_message_header_image_min_width</item>
     </style>
 
     <style name ="Apptentive.Widget.MessageCenter.Greeting.Title">
@@ -680,12 +686,18 @@
 
     <style name="Apptentive.Widget.MessageCenter.Bubble.Inbound">
         <item name="android:background">@drawable/ic_message_bubble_receive</item>
-        <item name="android:padding">@dimen/apptentive_message_bubble_padding</item>
+        <item name="android:paddingStart">@dimen/apptentive_message_bubble_padding</item>
+        <item name="android:paddingEnd">@dimen/apptentive_message_bubble_padding</item>
+        <item name="android:paddingBottom">@dimen/apptentive_message_bubble_padding</item>
+        <item name="android:paddingTop">@dimen/apptentive_message_bubble_padding_top</item>
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.Bubble.Outbound">
         <item name="android:background">@drawable/ic_message_bubble_send</item>
-        <item name="android:padding">@dimen/apptentive_message_bubble_padding</item>
+        <item name="android:paddingStart">@dimen/apptentive_message_bubble_padding</item>
+        <item name="android:paddingEnd">@dimen/apptentive_message_bubble_padding</item>
+        <item name="android:paddingBottom">@dimen/apptentive_message_bubble_padding</item>
+        <item name="android:paddingTop">@dimen/apptentive_message_bubble_padding_top</item>
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.Text" parent="Widget.MaterialComponents.TextView">
@@ -694,12 +706,13 @@
         <item name="android:typeface">?apptentiveTypefaceBody1</item>
         <item name="android:textSize">?apptentiveTextSizeBody1</item>
         <item name="android:maxWidth">@dimen/apptentive_message_bubble_max_width</item>
+        <item name="android:paddingTop">@dimen/apptentive_message_bubble_text_padding_top</item>
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.Text.GroupTimestamp">
         <item name="android:textColor">?colorPrimary</item>
         <item name="android:paddingBottom">8dp</item>
-        <item name="android:paddingTop">@dimen/apptentive_message_bubble_padding_top</item>
+        <item name="android:paddingTop">@dimen/apptentive_message_bubble_group_time_padding_top</item>
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.Bubble.View" parent="">
@@ -708,10 +721,8 @@
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.Text.SLA" parent="Widget.MaterialComponents.TextView">
-        <item name="android:textSize">?apptentiveTextSizeMessageCenterGreetingBody</item>
-        <item name="android:textColor">?apptentiveTextColorMessageCenterGreetingBody</item>
-        <item name="android:fontFamily">?apptentiveFontFamilyBody1</item>
-        <item name="android:typeface">?apptentiveTypefaceMessageCenterGreetingBody</item>
+        <item name="android:textSize">?apptentiveTextSizeCaption</item>
+        <item name="android:textColor">@color/apptentive_color_outbound_text</item>
         <item name="android:textAppearance">?textAppearanceBodySmall</item>
         <item name="android:textAlignment">center</item>
         <item name="android:paddingTop">@dimen/apptentive_message_sla_padding</item>
@@ -726,13 +737,19 @@
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.Text.Bubble.Status">
-        <item name="android:textSize">?apptentiveTextSizeCaption</item>
+        <item name="android:textSize">?apptentiveTextSizeSmall</item>
         <item name="android:paddingTop">@dimen/apptentive_message_bubble_status_padding_top</item>
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.Text.Bubble.Status.Outbound">
-        <item name="android:textSize">?apptentiveTextSizeCaption</item>
+        <item name="android:textSize">?apptentiveTextSizeSmall</item>
         <item name="android:textColor">@color/apptentive_color_outbound_text</item>
+    </style>
+
+    <style name="Apptentive.Widget.MessageCenter.Text.Bubble.Sender" parent="">
+        <item name="android:textSize">?apptentiveTextSizeSmall</item>
+        <item name="android:textColor">@color/apptentive_color_outbound_text</item>
+        <item name="android:paddingTop">@dimen/apptentive_message_bubble_sender_padding_top</item>
     </style>
 
     <!-- https://material.io/components/text-fields/android#outlined-text-field -->

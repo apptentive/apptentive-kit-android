@@ -16,6 +16,7 @@ import apptentive.com.android.util.LogTags.UTIL
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.InputStream
+import java.net.URL
 import kotlin.math.min
 
 @InternalUseOnly
@@ -219,5 +220,10 @@ object ImageUtil {
         } catch (e: Exception) {
             throw e
         }
+    }
+
+    fun loadAvatar(imageUrl: String): Bitmap {
+        val url = URL(imageUrl)
+        return BitmapFactory.decodeStream(url.openStream())
     }
 }

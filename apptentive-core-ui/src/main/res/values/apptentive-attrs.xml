@@ -130,6 +130,7 @@
 
         <!-- Other -->
         <attr name="apptentiveMessageCenterAttachmentThumbnailSpacing" format="dimension"/>
+        <attr name="apptentiveMessageCenterSenderText" format="dimension"/>
 
         <!-- Typeface -->
         <attr name="apptentiveTypefaceMessageCenterGreetingTitle" format="reference"/>
@@ -157,6 +158,7 @@
         <attr name="apptentiveTextSizeCaption" format="dimension|reference" />
         <attr name="apptentiveTextSizeButtonColored" format="dimension|reference" />
         <attr name="apptentiveTextSizeSurveyTermsAndConditions" format="dimension|reference"/>
+        <attr name="apptentiveTextSizeSmall" format="dimension|reference"/>
 
         <!-- Text Color -->
         <attr name="apptentiveTextColorDialogTitleWithMessage" format="color|reference"/>
