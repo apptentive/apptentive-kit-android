@@ -160,7 +160,7 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
     private fun getAttachmentView(file: Message.Attachment): MessageCenterAttachmentThumbnailView {
         return MessageCenterAttachmentThumbnailView(this, null).apply {
             setAttachmentView(file, false) {
-                val bottomSheet = HandleAttachmentBottomSheet(file.localFilePath.orEmpty()) {
+                val bottomSheet = HandleAttachmentBottomSheet(file.originalName, file.localFilePath) {
                     viewModel.removeAttachment(file)
                 }
                 if (supportFragmentManager.findFragmentByTag(APPTENTIVE_ATTACHMENT_BOTTOMSHEET_TAG) == null) {

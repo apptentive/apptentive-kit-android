@@ -1,11 +1,9 @@
 package apptentive.com.android.feedback.model
 
-import android.webkit.MimeTypeMap
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.toSeconds
 import apptentive.com.android.feedback.model.Message.Status
 import apptentive.com.android.feedback.model.payloads.MessagePayload
-import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.MESSAGE_CENTER
@@ -96,10 +94,7 @@ data class Message(
         var creationTime: TimeInterval = toSeconds(System.currentTimeMillis()),
 
         // Will either be the actual file name (from original file or from remote), or `file.mimeTypeExtension`
-        val originalName: String = FileUtil.getFileName(
-            sourceUriOrPath.orEmpty(),
-            MimeTypeMap.getSingleton().getExtensionFromMimeType(contentType)
-        )
+        val originalName: String?
     ) {
         fun hasLocalFile() = !localFilePath.isNullOrEmpty() && File(localFilePath.orEmpty()).exists()
     }

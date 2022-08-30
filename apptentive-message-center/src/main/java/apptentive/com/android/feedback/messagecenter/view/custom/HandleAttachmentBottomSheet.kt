@@ -10,7 +10,8 @@ import apptentive.com.android.feedback.messagecenter.view.ImagePreviewActivity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class HandleAttachmentBottomSheet(
-    private val filePath: String,
+    private val fileName: String?,
+    private val filePath: String?,
     private val onDeleteCallback: () -> Unit
 ) : BottomSheetDialogFragment() {
     private lateinit var previewButton: TextViewButton
@@ -37,6 +38,7 @@ class HandleAttachmentBottomSheet(
         previewButton.setOnClickListener {
             context?.startActivity(
                 Intent(context, ImagePreviewActivity::class.java).apply {
+                    putExtra(APPTENTIVE_ATTACHMENT_BOTTOMSHEET_FILENAME, fileName)
                     putExtra(APPTENTIVE_ATTACHMENT_BOTTOMSHEET_FILEPATH, filePath)
                 }
             )
@@ -53,6 +55,7 @@ class HandleAttachmentBottomSheet(
     internal companion object {
         private const val APPTENTIVE_ATTACHMENT_BOTTOMSHEET = "apptentive.attachment.bottomsheet"
         internal const val APPTENTIVE_ATTACHMENT_BOTTOMSHEET_TAG = "$APPTENTIVE_ATTACHMENT_BOTTOMSHEET.tag"
+        internal const val APPTENTIVE_ATTACHMENT_BOTTOMSHEET_FILENAME = "$APPTENTIVE_ATTACHMENT_BOTTOMSHEET.filename"
         internal const val APPTENTIVE_ATTACHMENT_BOTTOMSHEET_FILEPATH = "$APPTENTIVE_ATTACHMENT_BOTTOMSHEET.filepath"
     }
 }

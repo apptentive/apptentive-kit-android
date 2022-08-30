@@ -12,6 +12,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import apptentive.com.android.feedback.messagecenter.R
+import apptentive.com.android.feedback.messagecenter.view.custom.HandleAttachmentBottomSheet.Companion.APPTENTIVE_ATTACHMENT_BOTTOMSHEET_FILENAME
 import apptentive.com.android.feedback.messagecenter.view.custom.HandleAttachmentBottomSheet.Companion.APPTENTIVE_ATTACHMENT_BOTTOMSHEET_FILEPATH
 import apptentive.com.android.feedback.messagecenter.view.custom.MessageCenterAttachmentThumbnailView
 import apptentive.com.android.feedback.messagecenter.view.custom.ProfileView
@@ -176,10 +177,8 @@ class MessageListAdapter(
                         if (file.hasLocalFile()) {
                             context.startActivity(
                                 Intent(context, ImagePreviewActivity::class.java).apply {
-                                    putExtra(
-                                        APPTENTIVE_ATTACHMENT_BOTTOMSHEET_FILEPATH,
-                                        file.localFilePath
-                                    )
+                                    putExtra(APPTENTIVE_ATTACHMENT_BOTTOMSHEET_FILENAME, file.originalName)
+                                    putExtra(APPTENTIVE_ATTACHMENT_BOTTOMSHEET_FILEPATH, file.localFilePath)
                                 }
                             )
                         } else messageViewModel.downloadFile(message, file)

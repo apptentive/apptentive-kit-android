@@ -11,7 +11,6 @@ import android.provider.OpenableColumns
 import android.webkit.MimeTypeMap
 import androidx.annotation.WorkerThread
 import apptentive.com.android.core.DependencyProvider
-import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.platform.FileSystem
 import apptentive.com.android.util.InternalUseOnly
@@ -150,7 +149,8 @@ object FileUtil {
             sourceUriOrPath = sourceUri,
             localFilePath = localFilePath,
             contentType = mimeType,
-            size = bytesWritten
+            size = bytesWritten,
+            originalName = getFileName(activity, sourceUri, mimeType)
         )
     }
 
@@ -258,12 +258,11 @@ object FileUtil {
         }
     }
 
-    fun getFileName(uriPath: String, mimeType: String?): String {
+    fun getFileName(activity: Activity, uriPath: String, mimeType: String?): String {
         val defaultName = "file.$mimeType"
 
         return try {
-            val contentResolver = DependencyProvider.of<EngagementContextFactory>()
-                .engagementContext().getAppActivity().contentResolver
+            val contentResolver = activity.contentResolver
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 contentResolver.query(Uri.parse(uriPath), null, null, null)?.use {
