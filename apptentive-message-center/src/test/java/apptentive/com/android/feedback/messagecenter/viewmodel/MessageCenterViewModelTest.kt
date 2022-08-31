@@ -154,14 +154,15 @@ class MessageCenterViewModelTest : TestCase() {
         val viewModel = MessageCenterViewModel()
         viewModel.exitMessageCenter()
         assertResults(
-            createCall(EVENT_NAME_CLOSE, "12345")
+            createCall(EVENT_NAME_CLOSE, mapOf("cause" to "menu_item"))
         )
     }
 
-    private fun createCall(codePoint: String, interactionId: String) =
+    private fun createCall(codePoint: String, data: Map<String, Any?>?) =
         EngageArgs(
             event = Event.internal(codePoint, interaction = InteractionType.MessageCenter),
-            interactionId = interactionId
+            interactionId = "12345",
+            data = data
         )
 
     @Test

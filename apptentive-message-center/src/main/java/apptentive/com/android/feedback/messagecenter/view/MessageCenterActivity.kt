@@ -13,6 +13,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
 import apptentive.com.android.feedback.messagecenter.R
+import apptentive.com.android.feedback.messagecenter.utils.MessageCenterEvents
 import apptentive.com.android.feedback.messagecenter.view.custom.HandleAttachmentBottomSheet
 import apptentive.com.android.feedback.messagecenter.view.custom.HandleAttachmentBottomSheet.Companion.APPTENTIVE_ATTACHMENT_BOTTOMSHEET_TAG
 import apptentive.com.android.feedback.messagecenter.view.custom.MessageCenterAttachmentThumbnailView
@@ -37,7 +38,10 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
         registerForActivityResult(ActivityResultContracts.GetContent()) { returnUri ->
             returnUri?.let { uri ->
                 viewModel.addAttachment(this, uri)
-            }
+            } ?: viewModel.onMessageCenterEvent(
+                event = MessageCenterEvents.EVENT_NAME_ATTACHMENT_CANCEL,
+                data = null
+            )
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -240,8 +244,23 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_profile) {
+            viewModel.onMessageCenterEvent(
+                event = MessageCenterEvents.EVENT_NAME_PROFILE_OPEN,
+                data = mapOf(
+                    "required" to viewModel.isProfileRequired(),
+                    "trigger" to "button"
+                )
+            )
             startViewModelActivity<ProfileActivity>()
         }
         return true
+    }
+
+    override fun onBackPressed() {
+        viewModel.onMessageCenterEvent(
+            event = MessageCenterEvents.EVENT_NAME_CANCEL,
+            data = mapOf("cause" to "back_button")
+        )
+        super.onBackPressed()
     }
 }

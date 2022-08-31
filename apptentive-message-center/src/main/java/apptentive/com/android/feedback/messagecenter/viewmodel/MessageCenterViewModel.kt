@@ -118,8 +118,11 @@ class MessageCenterViewModel : ViewModel() {
                 )
             )
         }
-
         if (!avatarUrl.isNullOrEmpty()) loadAvatar(avatarUrl)
+        if (messageSLA.isNotEmpty()) onMessageCenterEvent(
+            event = MessageCenterEvents.EVENT_NAME_STATUS,
+            data = null
+        )
     }
 
     override fun onCleared() {
@@ -171,7 +174,10 @@ class MessageCenterViewModel : ViewModel() {
         groupMessages(filterNot { it.hidden == true }.sortedBy { it.createdAt })
 
     fun exitMessageCenter() {
-        onMessageCenterEvent(MessageCenterEvents.EVENT_NAME_CLOSE)
+        onMessageCenterEvent(
+            event = MessageCenterEvents.EVENT_NAME_CLOSE,
+            data = mapOf("cause" to "menu_item")
+        )
         exitEvent.postValue(true)
     }
 
@@ -199,15 +205,12 @@ class MessageCenterViewModel : ViewModel() {
         }
     }
 
-    fun onMessageCenterEvent(event: String) {
-        when (event) {
-            MessageCenterEvents.EVENT_NAME_CLOSE -> {
-                context.engage(
-                    event = Event.internal(event, interaction = InteractionType.MessageCenter),
-                    interactionId = model.interactionId
-                )
-            }
-        }
+    fun onMessageCenterEvent(event: String, data: Map<String, Any?>?) {
+        context.engage(
+            event = Event.internal(event, interaction = InteractionType.MessageCenter),
+            interactionId = model.interactionId,
+            data = data
+        )
     }
 
     fun onMessageViewStatusChanged(isActive: Boolean) {
@@ -239,6 +242,8 @@ class MessageCenterViewModel : ViewModel() {
         }
     }
 
+    fun isProfileRequired(): Boolean = model.profile?.require == true
+
     fun showProfile(): Boolean =
         model.profile?.request == true || model.profile?.require == true
 
@@ -263,6 +268,10 @@ class MessageCenterViewModel : ViewModel() {
             val updatedAttachments = draftAttachmentsStream.value.orEmpty().plus(file)
             draftAttachmentsEvent.value = updatedAttachments
         }
+        onMessageCenterEvent(
+            event = MessageCenterEvents.EVENT_NAME_ATTACH,
+            data = null
+        )
     }
 
     fun addAttachments(files: List<Message.Attachment>) {
@@ -274,6 +283,10 @@ class MessageCenterViewModel : ViewModel() {
         val updatedAttachments = draftAttachmentsStream.value.orEmpty().minus(file)
         draftAttachmentsEvent.value = updatedAttachments
         FileUtil.deleteFile(file.localFilePath)
+        onMessageCenterEvent(
+            event = MessageCenterEvents.EVENT_NAME_ATTACHMENT_DELETE,
+            data = null
+        )
     }
 
     fun downloadFile(message: Message, file: Message.Attachment) {

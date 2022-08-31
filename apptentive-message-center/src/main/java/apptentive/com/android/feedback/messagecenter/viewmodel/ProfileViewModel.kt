@@ -5,11 +5,16 @@ import androidx.lifecycle.ViewModel
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.LiveEvent
 import apptentive.com.android.feedback.dependencyprovider.MessageCenterModelFactory
+import apptentive.com.android.feedback.engagement.EngagementContext
+import apptentive.com.android.feedback.engagement.EngagementContextFactory
+import apptentive.com.android.feedback.engagement.Event
+import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.feedback.message.MessageManager
 import apptentive.com.android.feedback.message.MessageManagerFactory
 import apptentive.com.android.feedback.model.Person
 
 class ProfileViewModel : ViewModel() {
+    private val context: EngagementContext = DependencyProvider.of<EngagementContextFactory>().engagementContext()
     private val model = DependencyProvider.of<MessageCenterModelFactory>().messageCenterModel()
     private val messageManager: MessageManager = DependencyProvider.of<MessageManagerFactory>().messageManager()
 
@@ -52,6 +57,16 @@ class ProfileViewModel : ViewModel() {
         } else {
             errorMessages.value = true
         }
+    }
+
+    fun isProfileRequired(): Boolean = model.profile?.require == true
+
+    fun onMessageCenterEvent(event: String, data: Map<String, Any?>?) {
+        context.engage(
+            event = Event.internal(event, interaction = InteractionType.MessageCenter),
+            interactionId = model.interactionId,
+            data = data
+        )
     }
 
     fun exitProfileView(name: String, email: String) {

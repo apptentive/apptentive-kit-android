@@ -2,6 +2,7 @@ package apptentive.com.android.feedback.messagecenter.view
 
 import android.os.Bundle
 import apptentive.com.android.feedback.messagecenter.R
+import apptentive.com.android.feedback.messagecenter.utils.MessageCenterEvents
 import apptentive.com.android.feedback.messagecenter.view.custom.ProfileView
 import apptentive.com.android.ui.ApptentiveGenericDialog
 import com.google.android.material.appbar.MaterialToolbar
@@ -55,13 +56,27 @@ class ProfileActivity : BaseProfileActivity() {
                     positiveButton = ApptentiveGenericDialog.DialogButton(getString(R.string.apptentive_profile_back_to_profile)) {
                     },
                     negativeButton = ApptentiveGenericDialog.DialogButton(getString(R.string.apptentive_close)) {
+                        viewModel.onMessageCenterEvent(
+                            event = MessageCenterEvents.EVENT_NAME_PROFILE_CLOSE,
+                            data = mapOf(
+                                "required" to viewModel.isProfileRequired(),
+                                "button_label" to getString(R.string.apptentive_close)
+                            )
+                        )
                         super.onBackPressed()
                     }
                 )
-
                 confirmationDialog.show()
-            } else
+            } else {
+                viewModel.onMessageCenterEvent(
+                    event = MessageCenterEvents.EVENT_NAME_PROFILE_SUBMIT,
+                    data = mapOf(
+                        "required" to viewModel.isProfileRequired(),
+                        "button_label" to saveButton.text.toString()
+                    )
+                )
                 super.onBackPressed()
+            }
         }
     }
 
