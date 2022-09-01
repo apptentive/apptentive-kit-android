@@ -17,6 +17,8 @@ import apptentive.com.android.feedback.model.CustomData
 import apptentive.com.app.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -25,12 +27,8 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
         val isNightMode = prefs.getBoolean(EXTRA_NIGHT_MODE, false)
         delegate.localNightMode = if (isNightMode) MODE_NIGHT_YES else MODE_NIGHT_NO
 
-        val binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        Apptentive.canShowMessageCenter {
-            binding.messageCenterButton.isEnabled = it
-        }
 
         binding.nightSwitch.isChecked = isNightMode
         binding.nightSwitch.setOnCheckedChangeListener { _, isChecked ->
@@ -104,6 +102,9 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
     override fun onResume() {
         super.onResume()
         Apptentive.registerApptentiveActivityInfoCallback(this)
+        Apptentive.canShowMessageCenter {
+            binding.messageCenterButton.isEnabled = it
+        }
     }
 
     override fun getApptentiveActivityInfo(): Activity {
