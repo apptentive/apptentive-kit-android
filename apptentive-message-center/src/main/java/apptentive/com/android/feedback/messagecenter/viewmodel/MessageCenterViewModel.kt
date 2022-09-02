@@ -39,7 +39,7 @@ import apptentive.com.android.util.generateUUID
  * MessageCenterViewModel class is responsible for preparing and managing MessageCenter data
  * for MessageCenter views
  *
- * @property model [MessageCenterModel] data model that represents the MessageCenter
+ * @property messageCenterModel [MessageCenterModel] data model that represents the MessageCenter
  * @property executors [Executors] executes submitted runnable tasks in main/background threads.
  *
  *  Apptentive uses two executors
@@ -49,21 +49,23 @@ import apptentive.com.android.util.generateUUID
  *
  */
 
+@InternalUseOnly
 class MessageCenterViewModel : ViewModel() {
 
-    private val model = DependencyProvider.of<MessageCenterModelFactory>().messageCenterModel()
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    val messageCenterModel = DependencyProvider.of<MessageCenterModelFactory>().messageCenterModel()
     private val executors = DependencyProvider.of<EngagementContextFactory>().engagementContext().executors
     private val context: EngagementContext = DependencyProvider.of<EngagementContextFactory>().engagementContext()
     private val messageManager: MessageManager = DependencyProvider.of<MessageManagerFactory>().messageManager()
 
-    val title: String = model.title.orEmpty()
-    private val greeting: String = model.greeting?.title.orEmpty()
-    private val greetingBody: String = model.greeting?.body.orEmpty()
-    private val avatarUrl: String? = model.greeting?.image
-    val composerHint: String = model.composer?.hintText.orEmpty()
-    val messageSLA: String = model.status?.body.orEmpty()
-    var messages: List<Message> = getMessagesFromManager().filterSortAndGroupMessages()
-    var hasAutomatedMessage: Boolean = !model.automatedMessage?.body.isNullOrEmpty()
+    val title: String = messageCenterModel.title.orEmpty()
+    private val greeting: String = messageCenterModel.greeting?.title.orEmpty()
+    private val greetingBody: String = messageCenterModel.greeting?.body.orEmpty()
+    private val avatarUrl: String? = messageCenterModel.greeting?.image
+    val composerHint: String = messageCenterModel.composer?.hintText.orEmpty()
+    val messageSLA: String = messageCenterModel.status?.body.orEmpty()
+    var messages: List<Message> = messageManager.getAllMessages().filterSortAndGroupMessages()
+    var hasAutomatedMessage: Boolean = !messageCenterModel.automatedMessage?.body.isNullOrEmpty()
     var showLauncherView: Boolean = messages.isEmpty() && showProfile()
 
     private val newMessagesSubject = LiveEvent<List<Message>>()
@@ -95,7 +97,8 @@ class MessageCenterViewModel : ViewModel() {
         }
     }
 
-    private val automatedMessageSubject: BehaviorSubject<List<Message>> = BehaviorSubject(listOf())
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    val automatedMessageSubject: BehaviorSubject<List<Message>> = BehaviorSubject(listOf())
 
     private val profileObserver: (Person?) -> Unit = { profile ->
         if (profile?.email?.isNotEmpty() == true) showLauncherView = false
@@ -110,7 +113,7 @@ class MessageCenterViewModel : ViewModel() {
             automatedMessageSubject.value = listOf(
                 Message(
                     type = Message.MESSAGE_TYPE_TEXT,
-                    body = model.automatedMessage?.body,
+                    body = messageCenterModel.automatedMessage?.body,
                     sender = null,
                     messageStatus = Message.Status.Sending,
                     automated = true,
@@ -147,11 +150,12 @@ class MessageCenterViewModel : ViewModel() {
         }
     }
 
-    private fun getEmailHint() = model.profile?.initial?.emailHint.orEmpty()
+    private fun getEmailHint() = messageCenterModel.profile?.initial?.emailHint.orEmpty()
 
-    private fun getNameHint() = model.profile?.initial?.nameHint.orEmpty()
+    private fun getNameHint() = messageCenterModel.profile?.initial?.nameHint.orEmpty()
 
-    private fun mergeMessages(newMessages: List<Message>): List<Message> {
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun mergeMessages(newMessages: List<Message>): List<Message> {
         val mergedMessagesList = mutableListOf<Message>()
 
         // If message is already in list, update it
@@ -167,8 +171,6 @@ class MessageCenterViewModel : ViewModel() {
         // Filter out hidden messages, sort by createdAt time, then group by date
         return mergedMessagesList.filterSortAndGroupMessages()
     }
-
-    private fun getMessagesFromManager(): List<Message> = messageManager.getAllMessages()
 
     private fun List<Message>.filterSortAndGroupMessages(): List<Message> =
         groupMessages(filterNot { it.hidden == true }.sortedBy { it.createdAt })
@@ -208,7 +210,7 @@ class MessageCenterViewModel : ViewModel() {
     fun onMessageCenterEvent(event: String, data: Map<String, Any?>?) {
         context.engage(
             event = Event.internal(event, interaction = InteractionType.MessageCenter),
-            interactionId = model.interactionId,
+            interactionId = messageCenterModel.interactionId,
             data = data
         )
     }
@@ -222,10 +224,10 @@ class MessageCenterViewModel : ViewModel() {
         return if (message.isBlank() && draftAttachmentsStream.value.isNullOrEmpty()) {
             val validationDataModel = ValidationDataModel(messageError = true)
             errorMessagesEvent.value = validationDataModel
-            errorMessagesEvent.value = validationDataModel.copy(emailError = !validateProfile(email, model))
+            errorMessagesEvent.value = validationDataModel.copy(emailError = !validateProfile(email, messageCenterModel))
             false
         } else {
-            val isValid = validateProfile(email, model)
+            val isValid = validateProfile(email, messageCenterModel)
             val validationDataModel = ValidationDataModel(messageError = false, emailError = !isValid)
             errorMessagesEvent.value = validationDataModel
             isValid
@@ -242,15 +244,15 @@ class MessageCenterViewModel : ViewModel() {
         }
     }
 
-    fun isProfileRequired(): Boolean = model.profile?.require == true
+    fun isProfileRequired(): Boolean = messageCenterModel.profile?.require == true
 
     fun showProfile(): Boolean =
-        model.profile?.request == true || model.profile?.require == true
+        messageCenterModel.profile?.request == true || messageCenterModel.profile?.require == true
 
     fun buildMessageViewDataModel(profileVisibility: Boolean = true): List<MessageViewData> {
         val messageViewData = mutableListOf<MessageViewData>()
         messageViewData.add(0, MessageViewData(GreetingData(greeting, greetingBody, getAvatar()), null, null))
-        messages.map { message ->
+        messages.forEach { message ->
             messageViewData.add(MessageViewData(null, null, message))
         }
         messageViewData.add(MessageViewData(null, ProfileViewData(getEmailHint(), getNameHint(), profileVisibility), null))

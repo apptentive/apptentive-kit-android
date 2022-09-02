@@ -96,8 +96,6 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
                 attachmentButton.isEnabled = true
                 attachmentButton.alpha = 1.0f
             }
-
-            handleDraftMessage(true)
         }
 
         viewModel.attachmentDownloadQueueStream.observe(this) {
@@ -230,6 +228,7 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
     }
 
     override fun onStop() {
+        handleDraftMessage(true)
         viewModel.onMessageViewStatusChanged(false)
         super.onStop()
     }

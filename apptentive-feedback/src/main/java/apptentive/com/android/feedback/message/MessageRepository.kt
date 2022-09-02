@@ -38,11 +38,14 @@ internal class DefaultMessageRepository(val messageSerializer: MessageSerializer
             val existing = findEntry(message.nonce)
             if (existing != null) {
                 val existingMessage = JsonConverter.fromJson<Message>(existing.messageJson)
-                message.createdAt = existingMessage.createdAt
                 message.attachments = existingMessage.attachments?.onEach { attachment ->
                     message.attachments?.find { it.id == attachment.id }?.run {
-                        if (!url.isNullOrBlank()) attachment.url = url // Update URL
-                        if (!localFilePath.isNullOrBlank()) attachment.localFilePath = localFilePath // Update local file path
+                        // Update important values
+                        if (!contentType.isNullOrBlank()) attachment.contentType = contentType
+                        if (!localFilePath.isNullOrBlank()) attachment.localFilePath = localFilePath
+                        if (!url.isNullOrBlank()) attachment.url = url
+                        if (!originalName.isNullOrBlank()) attachment.originalName = originalName
+                        if (size != 0L) attachment.size = size
                     }
                 }
                 existing.id = message.id

@@ -207,7 +207,7 @@ class MessageManager(
         val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)
         if (!extension.isNullOrEmpty()) localFilePath += ".$extension"
 
-        // When created from InputStream, there is no source file uri or path, thus just use the cache file path
+        // When created from InputStream, there is no source file uri or path, so just use the cache file path
         FileUtil.createLocalStoredAttachmentFile(activity, inputStream, localFilePath, localFilePath, mimeType)?.let {
             it.id = message.nonce
             message.attachments = listOf(it)

@@ -143,7 +143,7 @@ object FileUtil {
             System.gc() // Clean up memory after done
         }
 
-        // Create a Attachment database entry for this locally saved file.
+        // Create an attachment database entry for this locally saved file.
         return Message.Attachment(
             id = generateUUID(),
             sourceUriOrPath = sourceUri,

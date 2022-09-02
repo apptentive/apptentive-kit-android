@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.messagecenter.viewmodel
 
+import android.text.format.DateUtils.DAY_IN_MILLIS
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import apptentive.com.android.TestCase
 import apptentive.com.android.concurrent.Executor
@@ -21,12 +22,19 @@ import apptentive.com.android.feedback.message.MessageManager
 import apptentive.com.android.feedback.message.MessageManagerFactory
 import apptentive.com.android.feedback.message.MessageManagerFactoryProvider
 import apptentive.com.android.feedback.message.MessageRepository
+import apptentive.com.android.feedback.messagecenter.utils.MessageCenterEvents.EVENT_NAME_ATTACHMENT_DELETE
 import apptentive.com.android.feedback.messagecenter.utils.MessageCenterEvents.EVENT_NAME_CLOSE
+import apptentive.com.android.feedback.messagecenter.utils.MessageCenterEvents.EVENT_NAME_STATUS
+import apptentive.com.android.feedback.messagecenter.view.GreetingData
+import apptentive.com.android.feedback.messagecenter.view.MessageViewData
+import apptentive.com.android.feedback.messagecenter.view.ProfileViewData
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.MessageList
 import apptentive.com.android.feedback.utils.convertToGroupDate
 import apptentive.com.android.util.Result
+import apptentive.com.android.util.generateUUID
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -34,7 +42,26 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
 
-const val DAY_IN_MILLIS = 24 * 60 * 60 * 1000L
+private val attachments = listOf(
+    Message.Attachment(
+        id = "attachment 1",
+        contentType = "jpg",
+        size = 100000,
+        url = "www.google.com",
+        sourceUriOrPath = null,
+        localFilePath = "cache://attachment1",
+        originalName = "attachment1.jpg"
+    ),
+    Message.Attachment(
+        id = "attachment 2",
+        contentType = "png",
+        size = 10000,
+        url = null,
+        sourceUriOrPath = "content://attachment2",
+        localFilePath = "cache://attachment2",
+        originalName = "attachment2.jpg"
+    )
+)
 
 val testMessageList: List<Message> = listOf(
     Message(
@@ -51,7 +78,8 @@ val testMessageList: List<Message> = listOf(
         type = "MC2",
         body = "Hello2",
         sender = null,
-        createdAt = toSeconds(System.currentTimeMillis() - DAY_IN_MILLIS)
+        createdAt = toSeconds(System.currentTimeMillis() - DAY_IN_MILLIS),
+        attachments = attachments
     ),
     Message(
         id = "Test3",
@@ -67,7 +95,8 @@ val testMessageList: List<Message> = listOf(
         type = "MC4",
         body = "Hello4",
         sender = null,
-        createdAt = toSeconds(System.currentTimeMillis() - (DAY_IN_MILLIS * 7))
+        createdAt = toSeconds(System.currentTimeMillis() - (DAY_IN_MILLIS * 7)),
+        attachments = attachments.subList(0, 0)
     ),
     Message(
         id = "Test5",
@@ -92,7 +121,8 @@ class MessageCenterViewModelTest : TestCase() {
 
     @get:Rule
     var rule: TestRule = InstantTaskExecutorRule()
-    val messageCenterInteraction = MessageCenterInteraction(
+
+    private val messageCenterInteractionNoData = MessageCenterInteraction(
         messageCenterId = "12345",
         title = "Message center",
         branding = "Branding",
@@ -113,6 +143,19 @@ class MessageCenterViewModelTest : TestCase() {
         automatedMessage = MessageCenterInteraction.AutomatedMessage(""),
         errorMessage = null,
         profile = MessageCenterInteraction.Profile(request = true, require = true, null, null)
+    )
+
+    private val messageCenterInteractionWithData = messageCenterInteractionNoData.copy(
+        greeting = MessageCenterInteraction.Greeting("Title", "Greeting message", ""), // No url because can't test
+        status = MessageCenterInteraction.Status("Status message"),
+        automatedMessage = MessageCenterInteraction.AutomatedMessage("Automated message"),
+        profile = MessageCenterInteraction.Profile(
+            false, false,
+            MessageCenterInteraction.Profile.Initial(
+                "Profile title", "Name hint", "Email hint", "Skip button", "Save button", "Email explain"
+            ),
+            null
+        )
     )
 
     @Before
@@ -136,8 +179,44 @@ class MessageCenterViewModelTest : TestCase() {
             MockExecutor(),
             MockMessageRepository()
         )
-        DependencyProvider.register(MessageCenterModelProvider(messageCenterInteraction))
+        DependencyProvider.register(MessageCenterModelProvider(messageCenterInteractionNoData))
         DependencyProvider.register(MessageManagerFactoryProvider(messageManager))
+    }
+
+    @Test
+    fun testBaseInitNoData() {
+        val viewModel = MessageCenterViewModel()
+
+        assertEquals(MessageCenterViewModel.ValidationDataModel(), viewModel.errorMessagesStream.value)
+        assertFalse(viewModel.hasAutomatedMessage)
+        assertEquals(emptyList<Message>(), viewModel.automatedMessageSubject.value)
+        assertNull(viewModel.avatarBitmapStream.value)
+    }
+
+    @Test
+    fun testInitWithData() {
+        DependencyProvider.register(MessageCenterModelProvider(messageCenterInteractionWithData))
+        val viewModel = MessageCenterViewModel()
+
+        val vmAutomatedMessage = viewModel.automatedMessageSubject.value.firstOrNull()
+        val vmAutomatedMessageCreated = vmAutomatedMessage?.createdAt ?: toSeconds(System.currentTimeMillis())
+        val automatedMessage = listOf(
+            Message(
+                nonce = vmAutomatedMessage?.nonce ?: generateUUID(),
+                type = Message.MESSAGE_TYPE_TEXT,
+                body = viewModel.messageCenterModel.automatedMessage?.body,
+                sender = null,
+                messageStatus = Message.Status.Sending,
+                automated = true,
+                inbound = false,
+                createdAt = vmAutomatedMessageCreated,
+                groupTimestamp = null
+            )
+        )
+
+        assertEquals(MessageCenterViewModel.ValidationDataModel(), viewModel.errorMessagesStream.value)
+        assertEquals(automatedMessage, viewModel.automatedMessageSubject.value)
+        assertResults(createCall(EVENT_NAME_STATUS, null))
     }
 
     @Test
@@ -153,9 +232,7 @@ class MessageCenterViewModelTest : TestCase() {
     fun testExitMessageCenter() {
         val viewModel = MessageCenterViewModel()
         viewModel.exitMessageCenter()
-        assertResults(
-            createCall(EVENT_NAME_CLOSE, mapOf("cause" to "menu_item"))
-        )
+        assertResults(createCall(EVENT_NAME_CLOSE, mapOf("cause" to "menu_item")))
     }
 
     private fun createCall(codePoint: String, data: Map<String, Any?>?) =
@@ -167,16 +244,8 @@ class MessageCenterViewModelTest : TestCase() {
 
     @Test
     fun testAutomatedMessage() {
-        DependencyProvider.register(
-            MessageCenterModelProvider(
-                messageCenterInteraction.copy(
-                    automatedMessage = MessageCenterInteraction.AutomatedMessage("This is an automated message")
-                )
-            )
-        )
+        DependencyProvider.register(MessageCenterModelProvider(messageCenterInteractionWithData))
         val viewModel = MessageCenterViewModel()
-        val manager = DependencyProvider.of<MessageManagerFactory>().messageManager()
-        manager.fetchMessages()
         assertTrue(viewModel.messages.last().automated!!)
     }
 
@@ -195,6 +264,29 @@ class MessageCenterViewModelTest : TestCase() {
         assertNull(viewModel.messages[3].groupTimestamp) // If same day, don't show group timestamp
         assertEquals(now, viewModel.messages[4].groupTimestamp)
         assertEquals(5, viewModel.messages.size)
+    }
+
+    @Test
+    fun testMergeMessages() {
+        val viewModel = MessageCenterViewModel()
+
+        val newMessage = Message(
+            id = "New ID",
+            nonce = "New UUID",
+            type = "text",
+            body = "Hello New",
+            sender = null,
+            createdAt = toSeconds(System.currentTimeMillis() - (DAY_IN_MILLIS / 2))
+        )
+
+        val duplicateMessage = testMessageList.first()
+
+        assertEquals(5, viewModel.newMessages.value?.size ?: 0)
+
+        val newMessageList = viewModel.mergeMessages(listOf(newMessage, duplicateMessage))
+
+        assertEquals(6, newMessageList.size)
+        assertEquals(newMessage, newMessageList[4]) // Should be second most recent
     }
 
     @Test
@@ -217,7 +309,7 @@ class MessageCenterViewModelTest : TestCase() {
         assertResults(viewModel.errorMessagesStream.value ?: MessageCenterViewModel.ValidationDataModel())
 
         DependencyProvider.register(
-            MessageCenterModelProvider(messageCenterInteraction.copy(profile = MessageCenterInteraction.Profile(request = true, require = false, null, null)))
+            MessageCenterModelProvider(messageCenterInteractionNoData.copy(profile = MessageCenterInteraction.Profile(request = true, require = false, null, null)))
         )
         viewModel = MessageCenterViewModel()
         // Request email is set
@@ -230,6 +322,75 @@ class MessageCenterViewModelTest : TestCase() {
         viewModel.validateMessageWithProfile("Test", "test@.com")
         addResult(MessageCenterViewModel.ValidationDataModel(emailError = true))
         assertResults(viewModel.errorMessagesStream.value ?: MessageCenterViewModel.ValidationDataModel())
+    }
+
+    @Test
+    fun testBuildMessageViewDataModel() {
+        DependencyProvider.register(MessageCenterModelProvider(messageCenterInteractionWithData))
+        val viewModel = MessageCenterViewModel()
+
+        val expectedList = mutableListOf<MessageViewData>()
+        expectedList.add(
+            MessageViewData(
+                GreetingData("Title", "Greeting message", null),
+                null,
+                null
+            )
+        )
+        viewModel.messages.forEach { expectedList.add(MessageViewData(null, null, it)) }
+        expectedList.add(
+            MessageViewData(
+                null,
+                ProfileViewData("Email hint", "Name hint", true),
+                null
+            )
+        )
+
+        assertEquals(expectedList, viewModel.buildMessageViewDataModel())
+
+        val profileNotVisibleList = expectedList.apply {
+            val profileView = last().copy(profileData = last().profileData?.copy(visibility = false))
+            removeLast()
+            expectedList.add(profileView)
+        }
+        assertEquals(profileNotVisibleList, viewModel.buildMessageViewDataModel(false))
+    }
+
+    @Test
+    fun testAddAttachments() {
+        val viewModel = MessageCenterViewModel()
+
+        assertNull(viewModel.draftAttachmentsStream.value)
+
+        viewModel.addAttachments(attachments)
+
+        assertEquals(2, viewModel.draftAttachmentsStream.value?.size)
+    }
+
+    @Test
+    fun testRemoveAttachment() {
+        val viewModel = MessageCenterViewModel()
+        viewModel.addAttachments(attachments)
+
+        assertEquals(2, viewModel.draftAttachmentsStream.value?.size)
+
+        viewModel.removeAttachment(attachments.first())
+        assertResults(createCall(EVENT_NAME_ATTACHMENT_DELETE, null))
+
+        assertEquals(1, viewModel.draftAttachmentsStream.value?.size)
+        assertEquals(attachments[1], viewModel.draftAttachmentsStream.value?.get(0))
+
+        // This shouldn't do anything because we already removed
+        viewModel.removeAttachment(attachments.first())
+        // Same as before
+        assertEquals(1, viewModel.draftAttachmentsStream.value?.size)
+        assertEquals(attachments[1], viewModel.draftAttachmentsStream.value?.get(0))
+        assertResults(createCall(EVENT_NAME_ATTACHMENT_DELETE, null))
+
+        viewModel.removeAttachment(attachments[1])
+
+        assertEquals(0, viewModel.draftAttachmentsStream.value?.size)
+        assertResults(createCall(EVENT_NAME_ATTACHMENT_DELETE, null))
     }
 }
 
@@ -244,7 +405,7 @@ class MockMessageCenterService : MessageCenterService {
     }
 
     override fun getAttachment(remoteUrl: String, callback: (Result<ByteArray>) -> Unit) {
-        TODO("Not yet implemented")
+        callback(Result.Success(remoteUrl.toByteArray()))
     }
 }
 

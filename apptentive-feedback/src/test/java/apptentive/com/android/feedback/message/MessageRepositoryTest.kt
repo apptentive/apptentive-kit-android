@@ -1,12 +1,37 @@
 package apptentive.com.android.feedback.message
 
+import android.text.format.DateUtils.DAY_IN_MILLIS
 import apptentive.com.android.TestCase
+import apptentive.com.android.core.toSeconds
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.Sender
 import apptentive.com.android.serialization.json.JsonConverter
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Test
 
 class MessageRepositoryTest : TestCase() {
+
+    private val attachments = listOf(
+        Message.Attachment(
+            id = "attachment 1",
+            contentType = "jpg",
+            size = 100000,
+            url = "www.google.com",
+            sourceUriOrPath = null,
+            localFilePath = "cache://attachment1",
+            originalName = "attachment1.jpg"
+        ),
+        Message.Attachment(
+            id = "attachment 2",
+            contentType = "png",
+            size = 10000,
+            url = null,
+            sourceUriOrPath = "content://attachment2",
+            localFilePath = "cache://attachment2",
+            originalName = "attachment2.jpg"
+        )
+    )
 
     private val testMessageList: List<Message> = listOf(
         Message(
@@ -14,7 +39,51 @@ class MessageRepositoryTest : TestCase() {
             nonce = "UUID",
             type = "MC",
             body = "Hello",
-            sender = Sender(id = "1234", name = "John Doe", profilePhoto = null),
+            sender = null,
+            createdAt = toSeconds(System.currentTimeMillis()),
+            attachments = attachments
+        ),
+        Message(
+            id = "Test2",
+            nonce = "UUID2",
+            type = "MC2",
+            body = "Hello2",
+            sender = null,
+            createdAt = toSeconds(System.currentTimeMillis() - DAY_IN_MILLIS)
+        ),
+        Message(
+            id = "Test3",
+            nonce = "UUID3",
+            type = "MC3",
+            body = "Hello3",
+            sender = null,
+            createdAt = toSeconds(System.currentTimeMillis() - (DAY_IN_MILLIS + 100))
+        ),
+        Message(
+            id = "Test4",
+            nonce = "UUID4",
+            type = "MC4",
+            body = "Hello4",
+            sender = null,
+            createdAt = toSeconds(System.currentTimeMillis() - (DAY_IN_MILLIS * 7)),
+            attachments = attachments.subList(0, 0)
+        ),
+        Message(
+            id = "Test5",
+            nonce = "UUID5",
+            type = "MC5",
+            body = "Hello5",
+            sender = null,
+            createdAt = toSeconds(System.currentTimeMillis() - (DAY_IN_MILLIS * 365))
+        ),
+        Message(
+            id = "Test6 Hidden",
+            nonce = "UUID6",
+            type = "MC6",
+            body = "Hello6",
+            sender = null,
+            createdAt = toSeconds(System.currentTimeMillis() - 1000),
+            hidden = true
         )
     )
 
@@ -35,34 +104,97 @@ class MessageRepositoryTest : TestCase() {
             body = "Hi",
             sender = Sender(id = "1234", name = "John Doe", profilePhoto = null),
         )
-        val messageRepository = DefaultMessageRepository(MockMessageSerializer(listOf(updatedMessage)))
-        messageRepository.addOrUpdateMessages(testMessageList)
+        val messageRepository = DefaultMessageRepository(MockMessageSerializer(testMessageList))
 
         // Testing update message
         messageRepository.updateMessage(updatedMessage)
-        addResult(listOf(updatedMessage))
-        assertResults(messageRepository.getAllMessages())
+        assertEquals(
+            messageRepository.getAllMessages().find { it.nonce == updatedMessage.nonce },
+            updatedMessage
+        )
+    }
 
-        // Testing add or update message
-        val updatedList = listOf(
-            Message(
-                id = "Test",
-                nonce = "UUID",
-                type = "MC",
-                body = "body updated",
-                sender = Sender(id = "1234", name = "John Doe", profilePhoto = null),
-            ),
-            Message(
-                id = "Test",
-                nonce = "UUID2",
-                type = "MC",
-                body = "Message added",
-                sender = Sender(id = "1234", name = "John Doe", profilePhoto = null),
+    @Test
+    fun testAddOrUpdateMessage() {
+        val messageRepository = DefaultMessageRepository(MockMessageSerializer(testMessageList))
+
+        val updatedMessage = Message(
+            id = "Test updated",
+            nonce = "UUID",
+            type = "MC updated",
+            messageStatus = Message.Status.Sent,
+            body = "body updated",
+            sender = Sender(id = "1234", name = "John Doe", profilePhoto = null),
+            attachments = listOf(
+                Message.Attachment(
+                    id = "attachment 1",
+                    contentType = "png",
+                    size = 1000,
+                    url = "www.newurl.com",
+                    sourceUriOrPath = "saved://path",
+                    localFilePath = "cache://attachment1234",
+                    originalName = "attachment123.jpg"
+                ),
+                Message.Attachment(
+                    id = "attachment 2",
+                    contentType = "jpeg",
+                    size = 100000,
+                    url = "urlnow.com",
+                    sourceUriOrPath = "content://attachment234",
+                    localFilePath = "cache://attachment234",
+                    originalName = "attachment255.jpg"
+                )
             )
         )
 
-        addResult(updatedList)
-        messageRepository.addOrUpdateMessages(updatedList)
+        val newMessage = Message(
+            id = "Test",
+            nonce = "UUID8",
+            type = "MC",
+            body = "Message added",
+            sender = Sender(id = "1234", name = "John Doe", profilePhoto = null),
+        )
+
+        val newList = listOf(updatedMessage, newMessage)
+        val listToUpdate = listOf(updatedMessage.copy(), newMessage.copy()) // Don't edit existing
+
+        messageRepository.addOrUpdateMessages(listToUpdate)
+
+        newList.forEach { message ->
+            val before = testMessageList.find { it.nonce == message.nonce }
+            val saved = messageRepository.getAllMessages().find { it.nonce == message.nonce }
+            assertEquals(saved?.id, message.id)
+            assertEquals(saved?.nonce, message.nonce)
+            assertEquals(saved?.groupTimestamp, message.groupTimestamp)
+            assertEquals(saved?.automated, message.automated)
+            assertEquals(saved?.body, message.body)
+            assertEquals(saved?.customData, message.customData)
+            assertEquals(saved?.hidden, message.hidden)
+            assertEquals(saved?.inbound, message.inbound)
+            assertEquals(saved?.read, message.read)
+            assertEquals(saved?.sender, message.sender)
+            assertEquals(saved?.type, message.type)
+            assertEquals(saved?.messageStatus, message.messageStatus)
+
+            if (message.nonce == "UUID") { // updated
+                assertEquals(saved?.createdAt, message.createdAt)
+                assertNotEquals(before?.createdAt, message.createdAt) // Updated
+                assertNotEquals(saved?.messageStatus, before?.messageStatus)
+            } else assertEquals(saved?.createdAt, message.createdAt)
+
+            message.attachments?.forEach { attach ->
+                val savedAttach = saved?.attachments?.find { it.id == attach.id }
+                assertEquals(savedAttach?.contentType, attach.contentType)
+                assertEquals(savedAttach?.localFilePath, attach.localFilePath)
+                assertEquals(savedAttach?.url, attach.url)
+                assertEquals(savedAttach?.originalName, attach.originalName)
+                assertEquals(savedAttach?.size, attach.size)
+
+                // These should not change and are not as important so we don't update (should we?)
+                assertNotEquals(savedAttach?.creationTime, attach.creationTime)
+                assertNotEquals(savedAttach?.sourceUriOrPath, attach.sourceUriOrPath)
+            }
+        }
     }
 
     @Test
@@ -70,8 +202,8 @@ class MessageRepositoryTest : TestCase() {
         val messageRepository = DefaultMessageRepository(MockMessageSerializer(listOf()))
         messageRepository.addOrUpdateMessages(testMessageList)
         messageRepository.deleteMessage("UUID")
-        addResult(listOf<Message>())
-        assertResults(messageRepository.getAllMessages())
+        val expectedList = testMessageList.toMutableList().apply { removeAt(0) }
+        assertEquals(expectedList, messageRepository.getAllMessages())
     }
 
     @Test
@@ -100,12 +232,16 @@ class MessageRepositoryTest : TestCase() {
         assertResults(messageRepository.getLastReceivedMessageIDFromEntries())
     }
 
-    private class MockMessageSerializer(val testList: List<Message>) : MessageSerializer {
+    private class MockMessageSerializer(testList: List<Message>) : MessageSerializer {
+        var savedList: List<DefaultMessageRepository.MessageEntry> = convertToMessageEntry(testList)
+
         override fun loadMessages(): List<DefaultMessageRepository.MessageEntry> {
-            return convertToMessageEntry(testList)
+            return savedList
         }
 
-        override fun saveMessages(messages: List<DefaultMessageRepository.MessageEntry>) {}
+        override fun saveMessages(messages: List<DefaultMessageRepository.MessageEntry>) {
+            savedList = messages
+        }
     }
 }
 
