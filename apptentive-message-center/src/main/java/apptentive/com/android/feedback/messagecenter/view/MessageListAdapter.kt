@@ -108,8 +108,17 @@ class MessageListAdapter(
                     val outboundSenderText =
                         findViewById<MaterialTextView>(R.id.apptentive_message_outbound_sender_text)
 
-                    groupTimestamp.isVisible =
-                        !(message?.groupTimestamp == null || (message.automated == true && message.messageStatus == Message.Status.Sending))
+                    groupTimestamp.visibility = when {
+                        // valid time stamp & a view only with an unresponded automated message
+                        message?.groupTimestamp != null && itemCount > 3 &&
+                            message.automated == true && message.messageStatus == Message.Status.Sending ->
+                            View.INVISIBLE
+                        // null time stamp
+                        message?.groupTimestamp == null -> View.GONE
+                        // valid time stamp
+                        else -> View.VISIBLE
+                    }
+                    groupTimestamp.text = message?.groupTimestamp
 
                     if (message?.inbound == true) { // Message from US to the BACKEND
                         inboundLayout.visibility = View.VISIBLE
