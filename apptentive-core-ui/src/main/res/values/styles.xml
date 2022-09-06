@@ -813,6 +813,7 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">@dimen/apptentive_message_attachment_type_text_size</item>
         <item name="android:layout_marginBottom">@dimen/apptentive_message_attachment_type_text_bottom_margin</item>
+        <item name="android:paddingTop">@dimen/apptentive_message_bubble_attachment_text_padding_top</item>
     </style>
 
 
