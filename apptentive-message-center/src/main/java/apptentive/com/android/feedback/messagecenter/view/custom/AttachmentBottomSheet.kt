@@ -7,9 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import apptentive.com.android.feedback.messagecenter.R
 import apptentive.com.android.feedback.messagecenter.view.ImagePreviewActivity
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class HandleAttachmentBottomSheet(
+class AttachmentBottomSheet(
     private val fileName: String?,
     private val filePath: String?,
     private val onDeleteCallback: () -> Unit
@@ -27,6 +28,10 @@ class HandleAttachmentBottomSheet(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Start expanded in landscape mode
+        val behavior = BottomSheetBehavior.from(requireView().parent as View)
+        behavior.state = BottomSheetBehavior.STATE_EXPANDED
 
         previewButton = view.findViewById(R.id.apptentive_preview_attachment_button)
         deleteButton = view.findViewById(R.id.apptentive_remove_attachment_button)
@@ -50,6 +55,11 @@ class HandleAttachmentBottomSheet(
             onDeleteCallback.invoke()
             dismiss()
         }
+    }
+
+    override fun onPause() {
+        dismiss()
+        super.onPause()
     }
 
     internal companion object {

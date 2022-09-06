@@ -6,6 +6,7 @@ import android.net.Uri
 import androidx.annotation.VisibleForTesting
 import androidx.core.util.PatternsCompat
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import apptentive.com.android.concurrent.Executors
 import apptentive.com.android.core.BehaviorSubject
@@ -71,10 +72,10 @@ class MessageCenterViewModel : ViewModel() {
     private val newMessagesSubject = LiveEvent<List<Message>>()
     val newMessages: LiveData<List<Message>> get() = newMessagesSubject
 
-    private val draftAttachmentsEvent = LiveEvent<List<Message.Attachment>>()
+    private val draftAttachmentsEvent = MutableLiveData<List<Message.Attachment>>()
     val draftAttachmentsStream: LiveData<List<Message.Attachment>> = draftAttachmentsEvent
 
-    private val attachmentDownloadQueueEvent = LiveEvent<Set<Message.Attachment>>()
+    private val attachmentDownloadQueueEvent = MutableLiveData<Set<Message.Attachment>>()
     val attachmentDownloadQueueStream: LiveData<Set<Message.Attachment>> = attachmentDownloadQueueEvent
 
     private val exitEvent = LiveEvent<Boolean>()

@@ -14,8 +14,8 @@ import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
 import apptentive.com.android.feedback.messagecenter.R
 import apptentive.com.android.feedback.messagecenter.utils.MessageCenterEvents
-import apptentive.com.android.feedback.messagecenter.view.custom.HandleAttachmentBottomSheet
-import apptentive.com.android.feedback.messagecenter.view.custom.HandleAttachmentBottomSheet.Companion.APPTENTIVE_ATTACHMENT_BOTTOMSHEET_TAG
+import apptentive.com.android.feedback.messagecenter.view.custom.AttachmentBottomSheet
+import apptentive.com.android.feedback.messagecenter.view.custom.AttachmentBottomSheet.Companion.APPTENTIVE_ATTACHMENT_BOTTOMSHEET_TAG
 import apptentive.com.android.feedback.messagecenter.view.custom.MessageCenterAttachmentThumbnailView
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.serialization.json.JsonConverter
@@ -162,7 +162,7 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
     private fun getAttachmentView(file: Message.Attachment): MessageCenterAttachmentThumbnailView {
         return MessageCenterAttachmentThumbnailView(this, null).apply {
             setAttachmentView(file, false) {
-                val bottomSheet = HandleAttachmentBottomSheet(file.originalName, file.localFilePath) {
+                val bottomSheet = AttachmentBottomSheet(file.originalName, file.localFilePath) {
                     viewModel.removeAttachment(file)
                 }
                 if (supportFragmentManager.findFragmentByTag(APPTENTIVE_ATTACHMENT_BOTTOMSHEET_TAG) == null) {
