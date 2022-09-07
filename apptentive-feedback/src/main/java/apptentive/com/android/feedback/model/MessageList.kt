@@ -38,7 +38,7 @@ data class MessageList(
  * @param inbound - `bool` value to determine the message origin. true = inbound to THE BACKEND. false = outbound from THE BACKEND.
  * @param hidden - `bool` value to determine if the message should be hidden in the UI. `String` or `null`
  * @param automated - `bool` value to determine if the message was sent by an automatic process. `String` or `null`
- * @param read - `bool` value to determine if the message was visible on the screen
+ * @param read - `bool` value to determine if the message was shown
  * @param createdAt - The message created time in seconds
  * @param groupTimestamp - Visually groups the first date of a specific date in the message list. `String` or `null`.
  * @param customData - Optional extra data sent with message
@@ -56,7 +56,7 @@ data class Message(
     val inbound: Boolean = false,
     val hidden: Boolean? = null, // true or null
     val automated: Boolean? = null, // true or null
-    val read: Boolean = false,
+    var read: Boolean? = true, // true or null
     var createdAt: TimeInterval = toSeconds(System.currentTimeMillis()), // Parity because server returns seconds
     var groupTimestamp: String? = null,
     val customData: Map<String, Any?>? = null

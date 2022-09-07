@@ -24,6 +24,7 @@ import apptentive.com.android.feedback.message.MessageManagerFactoryProvider
 import apptentive.com.android.feedback.message.MessageRepository
 import apptentive.com.android.feedback.messagecenter.utils.MessageCenterEvents.EVENT_NAME_ATTACHMENT_DELETE
 import apptentive.com.android.feedback.messagecenter.utils.MessageCenterEvents.EVENT_NAME_CLOSE
+import apptentive.com.android.feedback.messagecenter.utils.MessageCenterEvents.EVENT_NAME_READ
 import apptentive.com.android.feedback.messagecenter.utils.MessageCenterEvents.EVENT_NAME_STATUS
 import apptentive.com.android.feedback.messagecenter.view.GreetingData
 import apptentive.com.android.feedback.messagecenter.view.MessageViewData
@@ -90,20 +91,22 @@ val testMessageList: List<Message> = listOf(
         createdAt = toSeconds(System.currentTimeMillis() - (DAY_IN_MILLIS + 100))
     ),
     Message(
-        id = "Test4",
+        id = "Test4NotRead",
         nonce = "UUID4",
         type = "MC4",
         body = "Hello4",
         sender = null,
+        read = false,
         createdAt = toSeconds(System.currentTimeMillis() - (DAY_IN_MILLIS * 7)),
         attachments = attachments.subList(0, 0)
     ),
     Message(
-        id = "Test5",
+        id = "Test5NotRead",
         nonce = "UUID5",
         type = "MC5",
         body = "Hello5",
         sender = null,
+        read = false,
         createdAt = toSeconds(System.currentTimeMillis() - (DAY_IN_MILLIS * 365))
     ),
     Message(
@@ -146,13 +149,22 @@ class MessageCenterViewModelTest : TestCase() {
     )
 
     private val messageCenterInteractionWithData = messageCenterInteractionNoData.copy(
-        greeting = MessageCenterInteraction.Greeting("Title", "Greeting message", ""), // No url because can't test
+        greeting = MessageCenterInteraction.Greeting(
+            "Title",
+            "Greeting message",
+            ""
+        ), // No url because can't test
         status = MessageCenterInteraction.Status("Status message"),
         automatedMessage = MessageCenterInteraction.AutomatedMessage("Automated message"),
         profile = MessageCenterInteraction.Profile(
             false, false,
             MessageCenterInteraction.Profile.Initial(
-                "Profile title", "Name hint", "Email hint", "Skip button", "Save button", "Email explain"
+                "Profile title",
+                "Name hint",
+                "Email hint",
+                "Skip button",
+                "Save button",
+                "Email explain"
             ),
             null
         )
@@ -187,7 +199,10 @@ class MessageCenterViewModelTest : TestCase() {
     fun testBaseInitNoData() {
         val viewModel = MessageCenterViewModel()
 
-        assertEquals(MessageCenterViewModel.ValidationDataModel(), viewModel.errorMessagesStream.value)
+        assertEquals(
+            MessageCenterViewModel.ValidationDataModel(),
+            viewModel.errorMessagesStream.value
+        )
         assertFalse(viewModel.hasAutomatedMessage)
         assertEquals(emptyList<Message>(), viewModel.automatedMessageSubject.value)
         assertNull(viewModel.avatarBitmapStream.value)
@@ -199,7 +214,8 @@ class MessageCenterViewModelTest : TestCase() {
         val viewModel = MessageCenterViewModel()
 
         val vmAutomatedMessage = viewModel.automatedMessageSubject.value.firstOrNull()
-        val vmAutomatedMessageCreated = vmAutomatedMessage?.createdAt ?: toSeconds(System.currentTimeMillis())
+        val vmAutomatedMessageCreated =
+            vmAutomatedMessage?.createdAt ?: toSeconds(System.currentTimeMillis())
         val automatedMessage = listOf(
             Message(
                 nonce = vmAutomatedMessage?.nonce ?: generateUUID(),
@@ -214,7 +230,10 @@ class MessageCenterViewModelTest : TestCase() {
             )
         )
 
-        assertEquals(MessageCenterViewModel.ValidationDataModel(), viewModel.errorMessagesStream.value)
+        assertEquals(
+            MessageCenterViewModel.ValidationDataModel(),
+            viewModel.errorMessagesStream.value
+        )
         assertEquals(automatedMessage, viewModel.automatedMessageSubject.value)
         assertResults(createCall(EVENT_NAME_STATUS, null))
     }
@@ -225,7 +244,12 @@ class MessageCenterViewModelTest : TestCase() {
         val manager = DependencyProvider.of<MessageManagerFactory>().messageManager()
         manager.fetchMessages()
         addResult(viewModel.messages)
-        assertResults(viewModel.groupMessages(testMessageList.filterNot { it.hidden == true }.sortedBy { it.createdAt }))
+        assertResults(
+            viewModel.groupMessages(
+                testMessageList.filterNot { it.hidden == true }
+                    .sortedBy { it.createdAt }
+            )
+        )
     }
 
     @Test
@@ -253,9 +277,12 @@ class MessageCenterViewModelTest : TestCase() {
     fun testGetAndGroupMessages() {
         val viewModel = MessageCenterViewModel()
         val now = convertToGroupDate(toSeconds(System.currentTimeMillis())) // DayOfWeek MM/DD
-        val dayAgo = convertToGroupDate(toSeconds(System.currentTimeMillis() - (DAY_IN_MILLIS * 1))) // DayOfWeek MM/DD
-        val weekAgo = convertToGroupDate(toSeconds(System.currentTimeMillis() - (DAY_IN_MILLIS * 7))) // MM/DD
-        val yearAgo = convertToGroupDate(toSeconds(System.currentTimeMillis() - (DAY_IN_MILLIS * 365))) // MM/DD/YYYY
+        val dayAgo =
+            convertToGroupDate(toSeconds(System.currentTimeMillis() - (DAY_IN_MILLIS * 1))) // DayOfWeek MM/DD
+        val weekAgo =
+            convertToGroupDate(toSeconds(System.currentTimeMillis() - (DAY_IN_MILLIS * 7))) // MM/DD
+        val yearAgo =
+            convertToGroupDate(toSeconds(System.currentTimeMillis() - (DAY_IN_MILLIS * 365))) // MM/DD/YYYY
 
         viewModel.messages.forEach { assertTrue(isInThePast(it.createdAt)) }
         assertEquals(yearAgo, viewModel.messages[0].groupTimestamp)
@@ -296,32 +323,75 @@ class MessageCenterViewModelTest : TestCase() {
         // Empty email
         viewModel.validateMessageWithProfile("Test", "")
         addResult(MessageCenterViewModel.ValidationDataModel(emailError = true))
-        assertResults(viewModel.errorMessagesStream.value ?: MessageCenterViewModel.ValidationDataModel())
+        assertResults(
+            viewModel.errorMessagesStream.value ?: MessageCenterViewModel.ValidationDataModel()
+        )
 
         // Invalid email
         viewModel.validateMessageWithProfile("Test", "test@.com")
         addResult(MessageCenterViewModel.ValidationDataModel(emailError = true))
-        assertResults(viewModel.errorMessagesStream.value ?: MessageCenterViewModel.ValidationDataModel())
+        assertResults(
+            viewModel.errorMessagesStream.value ?: MessageCenterViewModel.ValidationDataModel()
+        )
 
         // Blank message
         viewModel.validateMessageWithProfile("", "test@test.com")
         addResult(MessageCenterViewModel.ValidationDataModel(messageError = true))
-        assertResults(viewModel.errorMessagesStream.value ?: MessageCenterViewModel.ValidationDataModel())
+        assertResults(
+            viewModel.errorMessagesStream.value ?: MessageCenterViewModel.ValidationDataModel()
+        )
 
         DependencyProvider.register(
-            MessageCenterModelProvider(messageCenterInteractionNoData.copy(profile = MessageCenterInteraction.Profile(request = true, require = false, null, null)))
+            MessageCenterModelProvider(
+                messageCenterInteractionNoData.copy(
+                    profile = MessageCenterInteraction.Profile(
+                        request = true,
+                        require = false,
+                        null,
+                        null
+                    )
+                )
+            )
         )
         viewModel = MessageCenterViewModel()
         // Request email is set
         // Empty email
         viewModel.validateMessageWithProfile("Test", "")
         addResult(MessageCenterViewModel.ValidationDataModel())
-        assertResults(viewModel.errorMessagesStream.value ?: MessageCenterViewModel.ValidationDataModel())
+        assertResults(
+            viewModel.errorMessagesStream.value ?: MessageCenterViewModel.ValidationDataModel()
+        )
 
         // Invalid email
         viewModel.validateMessageWithProfile("Test", "test@.com")
         addResult(MessageCenterViewModel.ValidationDataModel(emailError = true))
-        assertResults(viewModel.errorMessagesStream.value ?: MessageCenterViewModel.ValidationDataModel())
+        assertResults(
+            viewModel.errorMessagesStream.value ?: MessageCenterViewModel.ValidationDataModel()
+        )
+    }
+
+    @Test
+    fun testHandleUnreadMessages() {
+        val viewModel = MessageCenterViewModel()
+        val unreadMessages = viewModel.messages.filter { it.read != true }
+
+        assertEquals(2, unreadMessages.size)
+
+        viewModel.handleUnreadMessages()
+
+        assertEquals(0, viewModel.messages.filter { it.read != true }.size)
+
+        assertResults(
+            *unreadMessages.map {
+                createCall(
+                    codePoint = EVENT_NAME_READ,
+                    data = mapOf(
+                        "message_id" to it.id,
+                        "message_type" to it.type
+                    )
+                )
+            }.toTypedArray()
+        )
     }
 
     @Test
@@ -349,7 +419,8 @@ class MessageCenterViewModelTest : TestCase() {
         assertEquals(expectedList, viewModel.buildMessageViewDataModel())
 
         val profileNotVisibleList = expectedList.apply {
-            val profileView = last().copy(profileData = last().profileData?.copy(visibility = false))
+            val profileView =
+                last().copy(profileData = last().profileData?.copy(visibility = false))
             removeLast()
             expectedList.add(profileView)
         }
@@ -391,6 +462,17 @@ class MessageCenterViewModelTest : TestCase() {
 
         assertEquals(0, viewModel.draftAttachmentsStream.value?.size)
         assertResults(createCall(EVENT_NAME_ATTACHMENT_DELETE, null))
+    }
+
+    @Test
+    fun testGetFirstUnreadMessagePosition() {
+        DependencyProvider.register(MessageCenterModelProvider(messageCenterInteractionWithData))
+        val viewModel = MessageCenterViewModel()
+
+        val firstUnreadItem = viewModel
+            .getFirstUnreadMessagePosition(viewModel.buildMessageViewDataModel(false))
+
+        assertEquals(1, firstUnreadItem)
     }
 }
 

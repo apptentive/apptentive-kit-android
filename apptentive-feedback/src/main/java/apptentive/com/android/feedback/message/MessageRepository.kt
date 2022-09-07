@@ -48,6 +48,7 @@ internal class DefaultMessageRepository(val messageSerializer: MessageSerializer
                         if (size != 0L) attachment.size = size
                     }
                 }
+                message.read = existingMessage.read ?: message.read // If already set (true), keep
                 existing.id = message.id
                 existing.messageState = message.messageStatus.name
                 existing.messageJson = JsonConverter.toJson(message)

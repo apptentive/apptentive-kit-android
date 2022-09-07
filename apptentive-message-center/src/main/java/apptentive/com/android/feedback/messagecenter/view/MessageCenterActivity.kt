@@ -80,6 +80,8 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
                 messageText.text.clear()
                 attachmentsLayout.removeAllViews()
                 handleDraftMessage(true)
+                val lastItem = messageListAdapter.itemCount - 1
+                if (lastItem >= 0) messageList.smoothScrollToPosition(lastItem)
             }
         }
 
@@ -123,16 +125,23 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
         }
     }
 
+    private var hasScrolled = false
     private fun updateMessageListAdapter() {
         messageList.visibility = View.VISIBLE
         // Update adapter
         messageListAdapter.listItems.clear()
         messageListAdapter.listItems.addAll(viewModel.buildMessageViewDataModel(false))
         messageListAdapter.notifyDataSetChanged()
+        val firstUnreadItem = viewModel.getFirstUnreadMessagePosition(messageListAdapter.listItems)
         val lastItem = messageListAdapter.itemCount - 1
-        if (lastItem >= 0) messageList.smoothScrollToPosition(messageListAdapter.itemCount - 1)
-        if (viewModel.showProfile())
-            actionMenu?.findItem(R.id.action_profile)?.isVisible = true
+        if ((lastItem >= 0 && !hasScrolled) || firstUnreadItem >= 0) {
+            hasScrolled = true
+            messageList.smoothScrollToPosition(
+                if (firstUnreadItem >= 0) firstUnreadItem else lastItem
+            )
+        }
+        if (viewModel.showProfile()) actionMenu?.findItem(R.id.action_profile)?.isVisible = true
+        viewModel.handleUnreadMessages()
     }
 
     private fun setListeners() {

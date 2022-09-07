@@ -169,6 +169,10 @@ class MessageManager(
         }
     }
 
+    fun updateMessages(messages: List<Message>) {
+        messageRepository.addOrUpdateMessages(messages)
+    }
+
     @InternalUseOnly
     fun sendAttachment(uri: String, isHidden: Boolean? = null) {
         val message = Message(

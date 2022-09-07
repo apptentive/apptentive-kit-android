@@ -250,6 +250,23 @@ class MessageCenterViewModel : ViewModel() {
     fun showProfile(): Boolean =
         messageCenterModel.profile?.request == true || messageCenterModel.profile?.require == true
 
+    fun handleUnreadMessages() {
+        if (messages.any { it.read != true }) {
+            messages.filter { it.read != true }.onEach {
+                onMessageCenterEvent(
+                    event = MessageCenterEvents.EVENT_NAME_READ,
+                    data = mapOf(
+                        "message_id" to it.id,
+                        "message_type" to it.type
+                    )
+                )
+                it.read = true
+            }
+
+            messageManager.updateMessages(messages)
+        }
+    }
+
     fun buildMessageViewDataModel(profileVisibility: Boolean = true): List<MessageViewData> {
         val messageViewData = mutableListOf<MessageViewData>()
         messageViewData.add(0, MessageViewData(GreetingData(greeting, greetingBody, getAvatar()), null, null))
@@ -258,6 +275,12 @@ class MessageCenterViewModel : ViewModel() {
         }
         messageViewData.add(MessageViewData(null, ProfileViewData(getEmailHint(), getNameHint(), profileVisibility), null))
         return messageViewData
+    }
+
+    fun getFirstUnreadMessagePosition(adapterItems: List<MessageViewData>): Int {
+        return adapterItems.indexOfFirst {
+            it.message != null && it.message.read != true
+        }
     }
 
     data class ValidationDataModel(
