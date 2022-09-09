@@ -737,17 +737,17 @@
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.Text.Bubble.Status">
-        <item name="android:textSize">?apptentiveTextSizeSmall</item>
+        <item name="android:textSize">?apptentiveTextSizeCaption</item>
         <item name="android:paddingTop">@dimen/apptentive_message_bubble_status_padding_top</item>
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.Text.Bubble.Status.Outbound">
-        <item name="android:textSize">?apptentiveTextSizeSmall</item>
+        <item name="android:textSize">?apptentiveTextSizeCaption</item>
         <item name="android:textColor">@color/apptentive_color_outbound_text</item>
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.Text.Bubble.Sender" parent="">
-        <item name="android:textSize">?apptentiveTextSizeSmall</item>
+        <item name="android:textSize">?apptentiveTextSizeCaption</item>
         <item name="android:textColor">@color/apptentive_color_outbound_text</item>
         <item name="android:paddingTop">@dimen/apptentive_message_bubble_sender_padding_top</item>
     </style>
