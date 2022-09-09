@@ -110,7 +110,7 @@ class MessageListAdapter(
 
                     groupTimestamp.visibility = when {
                         // valid time stamp & a view only with an unresponded automated message
-                        message?.groupTimestamp != null && itemCount > 3 &&
+                        message?.groupTimestamp != null && itemCount == 3 &&
                             message.automated == true && message.messageStatus == Message.Status.Sending ->
                             View.INVISIBLE
                         // null time stamp
