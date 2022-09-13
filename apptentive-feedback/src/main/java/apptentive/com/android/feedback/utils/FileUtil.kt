@@ -129,14 +129,13 @@ object FileUtil {
                 smallerImage?.compress(Bitmap.CompressFormat.JPEG, 95, cos)
                 Log.v(UTIL, "New image file size = " + (cos.bytesWritten / 1024).toString() + "k")
                 smallerImage?.recycle()
-            } else bis.use { cos.write(it.read()) }
+            } else bis.use { it.copyTo(cos) }
             bytesWritten = cos.bytesWritten
             Log.v(UTIL, "File saved, size = " + (cos.bytesWritten / 1024).toString() + "k")
         } catch (e: IOException) {
             Log.e(UTIL, "Error creating local copy of file attachment.", e)
             return null
         } finally {
-            cos?.flush()
             ensureClosed(bis)
             ensureClosed(cos)
             ensureClosed(fos)
@@ -159,17 +158,6 @@ object FileUtil {
 
         val fileType = mimeType.substring(0, mimeType.indexOf("/"))
         return fileType.equals("Image", ignoreCase = true)
-    }
-
-    fun appendFileToStream(fileInputStream: InputStream, outputStream: OutputStream) {
-        try {
-            copy(fileInputStream, outputStream)
-        } catch (e: Exception) {
-            Log.e(UTIL, "Exception while appending file to stream", e)
-        } finally {
-            ensureClosed(fileInputStream)
-            ensureClosed(outputStream)
-        }
     }
 
     @Throws(FileNotFoundException::class, IOException::class)
@@ -246,19 +234,7 @@ object FileUtil {
         }
     }
 
-    private fun copy(input: InputStream, output: OutputStream) {
-        try {
-            val buffer = ByteArray(4096)
-            var bytesRead: Int
-            while (input.read(buffer).also { bytesRead = it } > 0) {
-                output.write(buffer, 0, bytesRead)
-            }
-        } catch (e: Exception) {
-            Log.e(UTIL, "Exception while copying stream", e)
-        }
-    }
-
-    fun getFileName(activity: Activity, uriPath: String, mimeType: String?): String {
+    private fun getFileName(activity: Activity, uriPath: String, mimeType: String?): String {
         val defaultName = "file.$mimeType"
 
         return try {

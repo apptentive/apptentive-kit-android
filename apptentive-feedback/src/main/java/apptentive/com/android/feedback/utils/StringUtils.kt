@@ -3,10 +3,15 @@ package apptentive.com.android.feedback.utils
 import kotlin.math.max
 
 internal fun createStringTable(rows: List<Array<Any?>>): String {
-    val columnSizes = IntArray(rows[0].size)
-    for (row in rows) {
-        if (row.any { it.toString().length > 10000 }) return "Skipping printing of large attachment"
-
+    val printableRows = rows.map { row ->
+        row.map { item ->
+            val itemSize = item.toString().length
+            if (itemSize > 8000) "Skipping printing of large item of size: $itemSize bytes "
+            else item
+        }
+    }
+    val columnSizes = IntArray(printableRows[0].size)
+    for (row in printableRows) {
         for (i in row.indices) {
             columnSizes[i] = max(
                 columnSizes[i],
@@ -24,7 +29,7 @@ internal fun createStringTable(rows: List<Array<Any?>>): String {
         line.append('-')
     }
     val result = StringBuilder(line)
-    for (row in rows) {
+    for (row in printableRows) {
         result.append("\n")
         for (i in row.indices) {
             if (i > 0) result.append(" | ")

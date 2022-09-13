@@ -1,7 +1,5 @@
 package apptentive.com.android.feedback.model.payloads
 
-import android.net.Uri
-import android.webkit.URLUtil
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.Constants
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
@@ -140,16 +138,8 @@ data class MessagePayload(
 
     private fun retrieveAndWriteFileToStream(attachment: Message.Attachment, attachmentStream: ByteArrayOutputStream) {
         try {
-            val activity = DependencyProvider.of<EngagementContextFactory>().engagementContext().getAppActivity()
-
-            val inputPath =
-                if (URLUtil.isContentUrl(attachment.localFilePath)) Uri.parse(attachment.localFilePath)
-                else Uri.fromFile(File(attachment.localFilePath.orEmpty()))
-
-            val fileInputStream = activity.contentResolver.openInputStream(inputPath)
-            requireNotNull(fileInputStream)
             Log.v(PAYLOADS, "Appending attachment.")
-            FileUtil.appendFileToStream(fileInputStream, attachmentStream)
+            attachmentStream.write(File(attachment.localFilePath.orEmpty()).readBytes())
         } catch (e: Exception) {
             Log.e(
                 PAYLOADS,

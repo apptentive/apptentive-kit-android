@@ -21,11 +21,6 @@ class LogTest : TestCase() {
 
     @Test
     fun testGetMessageWithTagsPrintsWhenOver3900() {
-        val threadTag = "[${if (Log.logger.isMainQueue()) "Main Queue" else Thread.currentThread().name}]"
-        val logTag = LogTag("tag")
-        val logTagString = " [${logTag.name}]"
-        val chunkTagStart = " [*/"
-
         val messageChunkTests = listOf(
             loremIpsum1000Characters to 1,
             loremIpsum3899Characters to 1,

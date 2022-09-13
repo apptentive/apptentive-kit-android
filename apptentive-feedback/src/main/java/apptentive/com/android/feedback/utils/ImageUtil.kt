@@ -29,9 +29,8 @@ object ImageUtil {
      * right size, and then performs a scaling of this resulting bitmap to achieve the final size.
      * It will create two bitmaps in memory while it is running.
      *
-     * @param filePath    Either full absolute path to the source image file or the content uri to the source image
-     * @param inputStream Stream to read original image from
-     * @param filePath    Original file path of image
+     * @param inputStream Stream to read original image
+     * @param imageUri    Either full absolute path to the source image file or the content uri to the source image
      * @return A Bitmap scaled by maxWidth, maxHeight, and config.
      */
     @Synchronized
@@ -39,12 +38,12 @@ object ImageUtil {
     fun createScaledBitmapFromLocalImageSource(
         activity: Activity,
         inputStream: InputStream,
-        filePath: String
+        imageUri: String
     ): Bitmap? {
         val exif = ExifInterface(inputStream)
         val imageOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
 
-        val tempBitmap = createTempBitmap(activity, filePath, imageOrientation) ?: return null
+        val tempBitmap = createTempBitmap(activity, imageUri, imageOrientation) ?: return null
 
         // Start by grabbing the bitmap from file, sampling down a little first if the image is huge.
         var outBitmap = tempBitmap
