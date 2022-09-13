@@ -330,7 +330,7 @@ internal class ApptentiveDefaultClient(
         }
     }
 
-    override fun showMessageCenter(callback: EngagementCallback?, customData: CustomData?) {
+    override fun showMessageCenter(customData: CustomData?): EngagementResult {
         customData?.let {
             val filteredCustomData = filterCustomData(customData)
             if (filteredCustomData.content.isNotEmpty())
@@ -338,7 +338,7 @@ internal class ApptentiveDefaultClient(
             else
                 Log.v(MESSAGE_CENTER, "Not setting custom data. No supported types found")
         }
-        engage(Event.internal(EVENT_MESSAGE_CENTER))
+        return engage(Event.internal(EVENT_MESSAGE_CENTER))
     }
 
     override fun canShowMessageCenter(callback: (Boolean) -> Unit) {
@@ -444,7 +444,11 @@ internal class ApptentiveDefaultClient(
             }
             is Result.Error -> {
                 val resultData = result.data as? PayloadData
-                if (resultData?.type == PayloadType.Message) messageManager?.updateMessageStatus(false, resultData)
+                if (resultData?.type == PayloadType.Message) {
+                    messageManager?.updateMessageStatus(false, resultData)
+                    val EVENT_NAME_MESSAGE_HTTP_ERROR = "message_http_error"
+                    engage(Event.internal(EVENT_NAME_MESSAGE_HTTP_ERROR, InteractionType.MessageCenter))
+                }
 
                 Log.e(PAYLOADS, "Payload failed to send: ${result.error.cause}")
             }

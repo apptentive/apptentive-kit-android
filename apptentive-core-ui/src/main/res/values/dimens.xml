@@ -81,6 +81,7 @@
     <dimen name="apptentive_message_bubble_view_padding_bottom">16dp</dimen>
     <dimen name="apptentive_message_bubble_attachment_margin_top">4dp</dimen>
     <dimen name="apptentive_message_bubble_status_padding_top">4dp</dimen>
+    <dimen name="apptentive_message_bubble_error_padding_top">4dp</dimen>
     <dimen name="apptentive_message_bubble_sender_padding_top">2dp</dimen>
     <dimen name="apptentive_message_bubble_status_padding_bottom">16dp</dimen>
     <dimen name="apptentive_message_list_margin">16dp</dimen>

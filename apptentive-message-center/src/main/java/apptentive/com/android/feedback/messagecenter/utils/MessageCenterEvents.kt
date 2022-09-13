@@ -4,10 +4,8 @@ package apptentive.com.android.feedback.messagecenter.utils
 internal object MessageCenterEvents {
     val EVENT_NAME_CLOSE = "close" // Closed from X in toolbar
     val EVENT_NAME_CANCEL = "cancel" // Closed from back button
-    val EVENT_NAME_READ = "read" // Message was read // TODO Read messages
+    val EVENT_NAME_READ = "read" // Message was read
     val EVENT_NAME_STATUS = "status" // When there is a messageSLA
-    val EVENT_NAME_MESSAGE_HTTP_ERROR = "message_http_error" // TODO Error state handling
-    val EVENT_NAME_MESSAGE_NETWORK_ERROR = "message_network_error" // TODO Error state handling
     val EVENT_NAME_PROFILE_OPEN = "profile_open" // Profile screen button pressed
     val EVENT_NAME_PROFILE_CLOSE = "profile_close" // Profile screen closed
     val EVENT_NAME_PROFILE_SUBMIT = "profile_submit" // Profile updated
@@ -26,5 +24,6 @@ internal object MessageCenterEvents {
     // These are used in Legacy, but UI doesn't have open / close compose functionality
     val EVENT_NAME_COMPOSE_OPEN = "compose_open" // N/A. Legacy has compose FAB
     val EVENT_NAME_COMPOSE_CLOSE = "compose_close" // N/A. Legacy can close creating message
+    val EVENT_NAME_MESSAGE_NETWORK_ERROR = "message_network_error" // Network errors are handled differently
     */
 }

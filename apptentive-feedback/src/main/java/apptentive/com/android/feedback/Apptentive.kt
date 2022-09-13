@@ -256,17 +256,31 @@ object Apptentive {
     //region Message Center
 
     /**
-     * Opens the Apptentive Message Center. This task is performed asynchronously.
+     * Opens the Apptentive Message Center.
+     * This operation is performed asynchronously.
      *
-     * @param callback Called with true if an Interaction will be displayed, else false.
+     * @param customData Optional extra data sent with opening of Message Center
+     * @param callback   Returns [EngagementCallback] result.
      */
-
     @JvmStatic
     @JvmOverloads
     fun showMessageCenter(customData: CustomData? = null, callback: EngagementCallback? = null) {
-        val engagementCallback: ((EngagementResult) -> Unit)? =
-            if (callback != null) callback::onComplete else null
-        client.showMessageCenter(engagementCallback, customData)
+        val callbackWrapper: ((EngagementResult) -> Unit)? = if (callback != null) {
+            {
+                mainExecutor.execute {
+                    callback.onComplete(it)
+                }
+            }
+        } else null
+
+        stateExecutor.execute {
+            try {
+                val result = client.showMessageCenter(customData)
+                callbackWrapper?.invoke(result)
+            } catch (e: Exception) {
+                callbackWrapper?.invoke(EngagementResult.Exception(error = e))
+            }
+        }
     }
 
     /**
@@ -275,16 +289,13 @@ object Apptentive {
      * performed asynchronously.
      *
      * @param callback Called after we check to see if Message Center can be displayed, but before it
-     * is displayed. Called with true if an Interaction will be displayed, else false.
+     * is displayed. Called with true Message Center will be displayed, else false.
      */
-    // Legacy / Java version
+    @JvmStatic
     fun canShowMessageCenter(callback: BooleanCallback) {
-        canShowMessageCenter { callback.onFinish(it) }
-    }
-
-    // Kotlin version
-    fun canShowMessageCenter(callback: (Boolean) -> Unit) {
-        client.canShowMessageCenter(callback)
+        client.canShowMessageCenter {
+            callback.onFinish(it)
+        }
     }
 
     /**
@@ -535,18 +546,5 @@ object Apptentive {
                 client.updateDevice(deleteKey = key)
             }
         }
-    }
-
-    /**
-     * Allows certain Apptentive API methods to execute and return a boolean result asynchronously.
-     */
-    interface BooleanCallback {
-        /**
-         * Passes the result of an Apptentive API method call.
-         *
-         * @param result true depending on the use of the consuming API method. Check the javadoc for
-         * the method that uses this callback in its signature.
-         */
-        fun onFinish(result: Boolean)
     }
 }

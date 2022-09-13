@@ -112,6 +112,7 @@
         <attr name="apptentiveMessageCenterInboundBubble" format="reference"/>
         <attr name="apptentiveMessageCenterInboundBubbleText" format="reference"/>
         <attr name="apptentiveMessageCenterInboundBubbleStatusText" format="reference"/>
+        <attr name="apptentiveMessageCenterInboundBubbleErrorText" format="reference"/>
         <attr name="apptentiveMessageCenterOutboundBubbleText" format="reference"/>
         <attr name="apptentiveMessageCenterOutboundBubbleStatusText" format="reference"/>
         <attr name="apptentiveMessageCenterSingleLineLayoutStyle" format="reference"/>

@@ -32,9 +32,11 @@ class ApptentiveGenericDialog : DialogFragment() {
         val dialog = dialogBuilder.create()
 
         val titleView = dialogLayout.findViewById<MaterialTextView>(R.id.apptentive_generic_dialog_title)
+        titleView.isVisible = !title.isNullOrBlank()
         titleView.text = title
 
         val messageView = dialogLayout.findViewById<MaterialTextView>(R.id.apptentive_generic_dialog_message)
+        messageView.isVisible = !message.isNullOrBlank()
         messageView.text = message
 
         val positiveButtonView = dialogLayout.findViewById<MaterialButton>(R.id.apptentive_generic_dialog_positive)

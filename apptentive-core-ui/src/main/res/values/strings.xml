@@ -14,4 +14,6 @@
     <string name="apptentive_send_message">Send message</string>
     <string name="apptentive_preview_attachment">Preview attachment</string>
     <string name="apptentive_remove_attachment">Remove attachment</string>
+    <string name="apptentive_failed_to_send">Failed to send. We will automatically retry later.</string>
+    <string name="apptentive_cannot_open_message_center">Message Center cannot be launched at this time. Please try again shortly.</string>
 </resources>

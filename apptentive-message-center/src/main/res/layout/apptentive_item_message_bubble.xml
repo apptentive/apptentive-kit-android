@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="John Doe"/>
+            tools:text="John Doe" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/apptentive_message_outbound_text"
@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/apptentive_message_outbound_sender_text"
-            tools:text="This is an incoming message."/>
+            tools:text="This is an incoming message." />
 
         <LinearLayout
             android:id="@+id/apptentive_message_outbound_attachments_layout"
@@ -64,7 +64,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/apptentive_message_outbound_attachments_layout"
-            tools:text="Sent 01/02/2022" />
+            tools:text="01/02/2022" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -100,7 +100,7 @@
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/apptentive_message_inbound_time_stamp"
-            style="?attr/apptentiveMessageCenterInboundBubbleStatusText"
+            style="?apptentiveMessageCenterInboundBubbleStatusText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -109,5 +109,15 @@
             tools:text="Sent 01/02/2022" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/apptentive_message_inbound_send_error"
+        style="?apptentiveMessageCenterInboundBubbleErrorText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@id/apptentive_message_inbound"
+        app:layout_constraintTop_toBottomOf="@id/apptentive_message_inbound" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -112,7 +112,6 @@ data class Message(
     )
 
     enum class Status {
-        Draft, // A draft message
         Sending, // Queued for sending
         Sent, // Posted to the server
         Failed, // Permanently failed

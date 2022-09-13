@@ -87,26 +87,21 @@ class MessageListAdapter(
             is MessageViewHolder -> {
                 val message = listItems[position].message
                 with(holder.itemView) {
-                    val groupTimestamp =
-                        findViewById<MaterialTextView>(R.id.apptentive_message_group_time_stamp)
-                    val inboundLayout =
-                        findViewById<ConstraintLayout>(R.id.apptentive_message_inbound)
-                    val outboundLayout =
-                        findViewById<ConstraintLayout>(R.id.apptentive_message_outbound)
-                    val inboundText =
-                        findViewById<MaterialTextView>(R.id.apptentive_message_inbound_text)
-                    val inboundAttachments =
-                        findViewById<LinearLayout>(R.id.apptentive_message_inbound_attachments_layout)
-                    val inboundStatus =
-                        findViewById<MaterialTextView>(R.id.apptentive_message_inbound_time_stamp)
-                    val outboundText =
-                        findViewById<MaterialTextView>(R.id.apptentive_message_outbound_text)
-                    val outboundAttachments =
-                        findViewById<LinearLayout>(R.id.apptentive_message_outbound_attachments_layout)
-                    val outboundStatus =
-                        findViewById<MaterialTextView>(R.id.apptentive_message_outbound_time_stamp)
-                    val outboundSenderText =
-                        findViewById<MaterialTextView>(R.id.apptentive_message_outbound_sender_text)
+                    val groupTimestamp = findViewById<MaterialTextView>(R.id.apptentive_message_group_time_stamp)
+
+                    // Inbound aka Message from US to the DASHBOARD (blue bubble)
+                    val inboundLayout = findViewById<ConstraintLayout>(R.id.apptentive_message_inbound)
+                    val inboundText = findViewById<MaterialTextView>(R.id.apptentive_message_inbound_text)
+                    val inboundAttachments = findViewById<LinearLayout>(R.id.apptentive_message_inbound_attachments_layout)
+                    val inboundStatus = findViewById<MaterialTextView>(R.id.apptentive_message_inbound_time_stamp)
+                    val inboundError = findViewById<MaterialTextView>(R.id.apptentive_message_inbound_send_error)
+
+                    // Outbound aka Message from the DASHBOARD to US (gray bubble)
+                    val outboundLayout = findViewById<ConstraintLayout>(R.id.apptentive_message_outbound)
+                    val outboundText = findViewById<MaterialTextView>(R.id.apptentive_message_outbound_text)
+                    val outboundAttachments = findViewById<LinearLayout>(R.id.apptentive_message_outbound_attachments_layout)
+                    val outboundStatus = findViewById<MaterialTextView>(R.id.apptentive_message_outbound_time_stamp)
+                    val outboundSenderText = findViewById<MaterialTextView>(R.id.apptentive_message_outbound_sender_text)
 
                     groupTimestamp.visibility = when {
                         // valid time stamp & a view only with an unresponded automated message
@@ -120,27 +115,28 @@ class MessageListAdapter(
                     }
                     groupTimestamp.text = message?.groupTimestamp
 
-                    if (message?.inbound == true) { // Message from US to the BACKEND
-                        inboundLayout.visibility = View.VISIBLE
-                        outboundLayout.visibility = View.GONE
+                    if (message?.inbound == true) { // Message from US to the DASHBOARD
+                        inboundLayout.isVisible = true
+                        outboundLayout.isVisible = false
                         inboundText.text = message.body
                         inboundText.isVisible = !message.body.isNullOrEmpty()
                         inboundText.text = message.body
                         inboundAttachments.removeAllViews()
                         inboundAttachments.addAttachments(message)
                         val status =
-                            if (message.messageStatus == Message.Status.Saved) Message.Status.Sent else message.messageStatus
+                            if (message.messageStatus == Message.Status.Saved) Message.Status.Sent
+                            else message.messageStatus
                         inboundStatus.text = "$status \u2022 ${convertToDate(message.createdAt)}"
-                    } else { // Message from the BACKEND to US
-                        inboundLayout.visibility = View.GONE
-                        outboundLayout.visibility = View.VISIBLE
+                        inboundError.isVisible = message.messageStatus == Message.Status.Failed
+                    } else { // Message from the DASHBOARD to US
+                        inboundLayout.isVisible = false
+                        inboundError.isVisible = false
+                        outboundLayout.isVisible = true
                         outboundText.text = message?.body
                         outboundText.isVisible = !message?.body.isNullOrEmpty()
-                        if (message?.sender?.name.isNullOrEmpty())
-                            outboundSenderText.visibility = View.GONE
-                        else
-                            outboundSenderText.text = message?.sender?.name
-                        outboundStatus.text = convertToDate(message?.createdAt ?: 0.0)
+                        if (message?.sender?.name.isNullOrEmpty()) outboundSenderText.visibility = View.GONE
+                        else outboundSenderText.text = message?.sender?.name
+                        if (message?.createdAt != null) outboundStatus.text = convertToDate(message.createdAt)
                         outboundAttachments.removeAllViews()
                         outboundAttachments.addAttachments(message)
                     }

@@ -214,8 +214,9 @@
         <item name="apptentiveMessageCenterGroupTimeStamp">@style/Apptentive.Widget.MessageCenter.Text.GroupTimestamp</item>
         <item name="apptentiveMessageCenterOutboundBubble">@style/Apptentive.Widget.MessageCenter.Bubble.Outbound</item>
         <item name="apptentiveMessageCenterInboundBubble">@style/Apptentive.Widget.MessageCenter.Bubble.Inbound</item>
-        <item name="apptentiveMessageCenterInboundBubbleText">@style/Apptentive.Widget.MessageCenter.Text.Bubble</item>
+        <item name="apptentiveMessageCenterInboundBubbleText">@style/Apptentive.Widget.MessageCenter.Text.Bubble.Inbound</item>
         <item name="apptentiveMessageCenterInboundBubbleStatusText">@style/Apptentive.Widget.MessageCenter.Text.Bubble.Status</item>
+        <item name="apptentiveMessageCenterInboundBubbleErrorText">@style/Apptentive.Widget.MessageCenter.Text.Bubble.Error</item>
         <item name="apptentiveMessageCenterOutboundBubbleText">@style/Apptentive.Widget.MessageCenter.Text.Bubble.Outbound</item>
         <item name="apptentiveMessageCenterOutboundBubbleStatusText">@style/Apptentive.Widget.MessageCenter.Text.Bubble.Status.Outbound</item>
         <item name="apptentiveMessageCenterSingleLineLayoutStyle">@style/Apptentive.Widget.MessageCenter.SingleLine.TextInputLayout</item>
@@ -731,14 +732,29 @@
 
     <style name="Apptentive.Widget.MessageCenter.Text.Bubble"/>
 
+    <style name="Apptentive.Widget.MessageCenter.Text.Bubble.Inbound">
+        <item name="android:textColorHighlight">@color/apptentive_color_outbound_text</item>
+        <item name="android:textIsSelectable">true</item>
+        <item name="android:autoLink">all</item>
+    </style>
+
     <style name="Apptentive.Widget.MessageCenter.Text.Bubble.Outbound">
         <!-- TODO verify the color -->
         <item name="android:textColor">@color/apptentive_color_outbound_text</item>
+        <item name="android:textIsSelectable">true</item>
+        <item name="android:autoLink">all</item>
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.Text.Bubble.Status">
         <item name="android:textSize">?apptentiveTextSizeCaption</item>
         <item name="android:paddingTop">@dimen/apptentive_message_bubble_status_padding_top</item>
+    </style>
+
+    <style name="Apptentive.Widget.MessageCenter.Text.Bubble.Error">
+        <item name="android:textSize">?apptentiveTextSizeSmall</item>
+        <item name="android:textColor">?apptentiveTextColorError</item>
+        <item name="android:paddingTop">@dimen/apptentive_message_bubble_error_padding_top</item>
+        <item name="android:text">@string/apptentive_failed_to_send</item>
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.Text.Bubble.Status.Outbound">
