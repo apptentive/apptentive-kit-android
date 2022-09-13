@@ -54,13 +54,13 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
         attachmentsLayout = findViewById(R.id.apptentive_composer_attachments_layout)
         messageList = findViewById(R.id.apptentive_message_list)
         composerErrorView = findViewById(R.id.apptentive_composer_error)
-        messageListAdapter = MessageListAdapter(viewModel.buildMessageViewDataModel(), viewModel)
         topAppBar.title = viewModel.title
         messageText.hint = viewModel.composerHint
-        messageList.apply {
-            adapter = messageListAdapter
-            val lastItem = messageListAdapter.itemCount - 1
-            if (lastItem >= 0) smoothScrollToPosition(lastItem)
+        messageListAdapter = MessageListAdapter(viewModel)
+        messageList.adapter = messageListAdapter
+        messageListAdapter.submitList(viewModel.buildMessageViewDataModel()) {
+            val lastItem = messageListAdapter.currentList.size - 1
+            if (lastItem >= 0) messageList.scrollToPosition(lastItem) // TODO Scroll to first unread
         }
 
         // SupportActionBar should be set before setting NavigationOnClickListener
@@ -101,7 +101,7 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
         }
 
         viewModel.attachmentDownloadQueueStream.observe(this) {
-            messageListAdapter.notifyDataSetChanged()
+            messageListAdapter.submitList(viewModel.buildMessageViewDataModel())
         }
 
         viewModel.errorMessagesStream.observe(this) { errorMessages ->
@@ -129,18 +129,18 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
     private fun updateMessageListAdapter() {
         messageList.visibility = View.VISIBLE
         // Update adapter
-        messageListAdapter.listItems.clear()
-        messageListAdapter.listItems.addAll(viewModel.buildMessageViewDataModel(false))
-        messageListAdapter.notifyDataSetChanged()
-        val firstUnreadItem = viewModel.getFirstUnreadMessagePosition(messageListAdapter.listItems)
-        val lastItem = messageListAdapter.itemCount - 1
-        if ((lastItem >= 0 && !hasScrolled) || firstUnreadItem >= 0) {
-            hasScrolled = true
-            messageList.smoothScrollToPosition(
-                if (firstUnreadItem >= 0) firstUnreadItem else lastItem
-            )
+        messageListAdapter.submitList(viewModel.buildMessageViewDataModel()) {
+            val firstUnreadItem = viewModel.getFirstUnreadMessagePosition(messageListAdapter.currentList)
+            val lastItem = messageListAdapter.itemCount - 1
+            if ((lastItem >= 0 && !hasScrolled) || firstUnreadItem >= 0) {
+                hasScrolled = true
+                messageList.smoothScrollToPosition(
+                    if (firstUnreadItem >= 0) firstUnreadItem else lastItem
+                )
+            }
         }
-        if (viewModel.showProfile()) actionMenu?.findItem(R.id.action_profile)?.isVisible = true
+        if (viewModel.isProfileConfigured())
+            actionMenu?.findItem(R.id.action_profile)?.isVisible = true
         viewModel.handleUnreadMessages()
     }
 
@@ -152,7 +152,7 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
         sendButton.setOnClickListener {
             currentFocus?.clearFocus()
             it.hideSoftKeyboard()
-            if (viewModel.showLauncherView)
+            if (viewModel.showProfileView)
                 viewModel.sendMessage(messageText.text.toString(), messageListAdapter.getProfileName(), messageListAdapter.getProfileEmail())
             else
                 viewModel.sendMessage(messageText.text.toString())
@@ -245,7 +245,7 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         actionMenu = menu
         menuInflater.inflate(R.menu.message_center_action, menu)
-        if (viewModel.showLauncherView || !viewModel.showProfile())
+        if (viewModel.showProfileView || !viewModel.isProfileConfigured())
             actionMenu?.findItem(R.id.action_profile)?.isVisible = false
         return true
     }

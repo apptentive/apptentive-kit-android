@@ -27,6 +27,7 @@ import apptentive.com.android.feedback.messagecenter.utils.MessageCenterEvents.E
 import apptentive.com.android.feedback.messagecenter.utils.MessageCenterEvents.EVENT_NAME_READ
 import apptentive.com.android.feedback.messagecenter.utils.MessageCenterEvents.EVENT_NAME_STATUS
 import apptentive.com.android.feedback.messagecenter.view.GreetingData
+import apptentive.com.android.feedback.messagecenter.view.ListItemType
 import apptentive.com.android.feedback.messagecenter.view.MessageViewData
 import apptentive.com.android.feedback.messagecenter.view.ProfileViewData
 import apptentive.com.android.feedback.model.Message
@@ -308,7 +309,7 @@ class MessageCenterViewModelTest : TestCase() {
 
         val duplicateMessage = testMessageList.first()
 
-        assertEquals(5, viewModel.newMessages.value?.size ?: 0)
+        assertEquals(7, viewModel.newMessages.value?.size ?: 0)
 
         val newMessageList = viewModel.mergeMessages(listOf(newMessage, duplicateMessage))
 
@@ -402,16 +403,18 @@ class MessageCenterViewModelTest : TestCase() {
         val expectedList = mutableListOf<MessageViewData>()
         expectedList.add(
             MessageViewData(
+                ListItemType.HEADER,
                 GreetingData("Title", "Greeting message", null),
                 null,
                 null
             )
         )
-        viewModel.messages.forEach { expectedList.add(MessageViewData(null, null, it)) }
+        viewModel.messages.forEach { expectedList.add(MessageViewData(ListItemType.MESSAGE, null, null, it)) }
         expectedList.add(
             MessageViewData(
+                ListItemType.FOOTER,
                 null,
-                ProfileViewData("Email hint", "Name hint", true),
+                ProfileViewData("Email hint", "Name hint", viewModel.showProfileView),
                 null
             )
         )
@@ -419,12 +422,11 @@ class MessageCenterViewModelTest : TestCase() {
         assertEquals(expectedList, viewModel.buildMessageViewDataModel())
 
         val profileNotVisibleList = expectedList.apply {
-            val profileView =
-                last().copy(profileData = last().profileData?.copy(visibility = false))
+            val profileView = last().copy(profileData = last().profileData?.copy(showProfile = false))
             removeLast()
             expectedList.add(profileView)
         }
-        assertEquals(profileNotVisibleList, viewModel.buildMessageViewDataModel(false))
+        assertEquals(profileNotVisibleList, viewModel.buildMessageViewDataModel())
     }
 
     @Test
@@ -470,7 +472,7 @@ class MessageCenterViewModelTest : TestCase() {
         val viewModel = MessageCenterViewModel()
 
         val firstUnreadItem = viewModel
-            .getFirstUnreadMessagePosition(viewModel.buildMessageViewDataModel(false))
+            .getFirstUnreadMessagePosition(viewModel.buildMessageViewDataModel())
 
         assertEquals(1, firstUnreadItem)
     }

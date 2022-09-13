@@ -10,6 +10,8 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import apptentive.com.android.feedback.messagecenter.R
 import apptentive.com.android.feedback.messagecenter.view.custom.AttachmentBottomSheet.Companion.APPTENTIVE_ATTACHMENT_BOTTOMSHEET_FILENAME
@@ -21,12 +23,8 @@ import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.utils.convertToDate
 import com.google.android.material.textview.MaterialTextView
 
-class MessageListAdapter(
-    dataSet: List<MessageViewData>,
-    private val messageViewModel: MessageCenterViewModel
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
-    val listItems: MutableList<MessageViewData> = dataSet.toMutableList()
+class MessageListAdapter(private val messageViewModel: MessageCenterViewModel) :
+    ListAdapter<MessageViewData, RecyclerView.ViewHolder>(DiffCallback()) {
 
     private var profileView: ProfileView? = null
 
@@ -85,7 +83,7 @@ class MessageListAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is MessageViewHolder -> {
-                val message = listItems[position].message
+                val message = getItem(position).message
                 with(holder.itemView) {
                     val groupTimestamp = findViewById<MaterialTextView>(R.id.apptentive_message_group_time_stamp)
 
@@ -144,7 +142,7 @@ class MessageListAdapter(
             }
 
             is MessageHeaderViewHolder -> {
-                val greetingData = listItems[position].greetingData
+                val greetingData = getItem(position).greetingData
                 holder.itemView.findViewById<TextView>(R.id.apptentive_message_center_greeting).text =
                     greetingData?.greetingTitle
                 holder.itemView.findViewById<TextView>(R.id.apptentive_message_center_greeting_body).text =
@@ -163,12 +161,12 @@ class MessageListAdapter(
                     holder.itemView.findViewById(R.id.apptentive_message_center_status)
                 statusView.text = messageViewModel.messageSLA
 
-                if (messageViewModel.showLauncherView || messageViewModel.showProfile() && listItems.size > 2 && listItems[1].message?.automated == true && listItems[1].message?.messageStatus == Message.Status.Sending) {
-                    val profileData = listItems[position].profileData
-                    profileView?.setEmailHint(profileData?.emailHint ?: "")
-                    profileView?.setNameHint(profileData?.nameHint ?: "")
-                } else {
-                    profileView?.visibility = View.GONE
+                val profileData = getItem(position).profileData
+
+                profileData?.let { viewData ->
+                    profileView?.setEmailHint(viewData.emailHint)
+                    profileView?.setNameHint(viewData.nameHint)
+                    profileView?.isVisible = viewData.showProfile
                 }
             }
         }
@@ -196,21 +194,33 @@ class MessageListAdapter(
     override fun getItemViewType(position: Int): Int {
         return when (position) {
             0 -> TYPE_HEADER
-            listItems.size - 1 -> TYPE_FOOTER
+            currentList.size - 1 -> TYPE_FOOTER
             else -> TYPE_ITEMS
         }
     }
 
-    override fun getItemCount(): Int = listItems.size
+    override fun getItemCount(): Int = currentList.size
+
+    private class DiffCallback : DiffUtil.ItemCallback<MessageViewData>() {
+        override fun areItemsTheSame(oldItem: MessageViewData, newItem: MessageViewData) =
+            oldItem.listItemType == newItem.listItemType && oldItem.message?.id == newItem.message?.id
+
+        override fun areContentsTheSame(oldItem: MessageViewData, newItem: MessageViewData): Boolean =
+            oldItem == newItem
+    }
 }
 
 class MessageHeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 class MessageFooterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 data class GreetingData(val greetingTitle: String, val greetingBody: String, val avatarBitmap: Bitmap?)
-data class ProfileViewData(val emailHint: String, val nameHint: String, val visibility: Boolean)
+data class ProfileViewData(val emailHint: String, val nameHint: String, val showProfile: Boolean)
 data class MessageViewData(
+    val listItemType: ListItemType,
     val greetingData: GreetingData?,
     val profileData: ProfileViewData?,
     val message: Message?
 )
+enum class ListItemType {
+    HEADER, FOOTER, MESSAGE
+}

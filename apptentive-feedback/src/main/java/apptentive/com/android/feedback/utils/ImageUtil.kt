@@ -12,6 +12,7 @@ import android.webkit.URLUtil
 import androidx.exifinterface.media.ExifInterface
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.util.LogTags.UTIL
 import java.io.File
 import java.io.FileNotFoundException
@@ -221,8 +222,14 @@ object ImageUtil {
         }
     }
 
-    fun loadAvatar(imageUrl: String): Bitmap {
-        val url = URL(imageUrl)
-        return BitmapFactory.decodeStream(url.openStream())
+    fun loadAvatar(imageUrl: String): Bitmap? {
+        var avatarBitmap: Bitmap? = null
+        try {
+            val url = URL(imageUrl)
+            avatarBitmap = BitmapFactory.decodeStream(url.openStream())
+        } catch (e: Exception) {
+            Log.w(MESSAGE_CENTER, "Cannot fetch Avatar image due to $e")
+        }
+        return avatarBitmap
     }
 }

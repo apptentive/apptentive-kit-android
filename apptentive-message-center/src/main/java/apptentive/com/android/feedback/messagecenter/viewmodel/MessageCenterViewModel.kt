@@ -21,6 +21,7 @@ import apptentive.com.android.feedback.message.MessageManager
 import apptentive.com.android.feedback.message.MessageManagerFactory
 import apptentive.com.android.feedback.messagecenter.utils.MessageCenterEvents
 import apptentive.com.android.feedback.messagecenter.view.GreetingData
+import apptentive.com.android.feedback.messagecenter.view.ListItemType
 import apptentive.com.android.feedback.messagecenter.view.MessageViewData
 import apptentive.com.android.feedback.messagecenter.view.ProfileViewData
 import apptentive.com.android.feedback.model.Message
@@ -67,10 +68,11 @@ class MessageCenterViewModel : ViewModel() {
     val messageSLA: String = messageCenterModel.status?.body.orEmpty()
     var messages: List<Message> = messageManager.getAllMessages().filterSortAndGroupMessages()
     var hasAutomatedMessage: Boolean = !messageCenterModel.automatedMessage?.body.isNullOrEmpty()
-    var showLauncherView: Boolean = messages.isEmpty() && showProfile()
+    var showProfileView: Boolean = canShowProfile()
+    private var isAvatarLoading: Boolean = false
 
-    private val newMessagesSubject = LiveEvent<List<Message>>()
-    val newMessages: LiveData<List<Message>> get() = newMessagesSubject
+    private val newMessagesSubject = LiveEvent<List<MessageViewData>>()
+    val newMessages: LiveData<List<MessageViewData>> get() = newMessagesSubject
 
     private val draftAttachmentsEvent = MutableLiveData<List<Message.Attachment>>()
     val draftAttachmentsStream: LiveData<List<Message.Attachment>> = draftAttachmentsEvent
@@ -94,7 +96,7 @@ class MessageCenterViewModel : ViewModel() {
         messages = mergeMessages(newMessageList)
 
         executors.main.execute {
-            if (messages.isNotEmpty()) newMessagesSubject.value = messages
+            if (messages.isNotEmpty()) newMessagesSubject.value = buildMessageViewDataModel()
         }
     }
 
@@ -102,7 +104,7 @@ class MessageCenterViewModel : ViewModel() {
     val automatedMessageSubject: BehaviorSubject<List<Message>> = BehaviorSubject(listOf())
 
     private val profileObserver: (Person?) -> Unit = { profile ->
-        if (profile?.email?.isNotEmpty() == true) showLauncherView = false
+        if (profile?.email?.isNotEmpty() == true) showProfileView = false
     }
 
     init {
@@ -184,14 +186,22 @@ class MessageCenterViewModel : ViewModel() {
         exitEvent.postValue(true)
     }
 
-    private fun getAvatar(): Bitmap? = avatarBitmapStream.value
+    private fun getAvatar(): Bitmap? {
+        if (!isAvatarLoading && avatarBitmapStream.value == null) {
+            Log.d(MESSAGE_CENTER, "Fetch message center avatar image")
+            isAvatarLoading = true
+            avatarUrl?.let { loadAvatar(avatarUrl) }
+            isAvatarLoading = false
+        }
+        return avatarBitmapStream.value
+    }
 
     fun sendMessage(message: String, name: String? = null, email: String? = null) {
         // Validate profile only if the profile view is visible
-        if (showLauncherView && validateMessageWithProfile(message, email) ||
-            !showLauncherView && validateMessage(message)
+        if (showProfileView && validateMessageWithProfile(message, email) ||
+            !showProfileView && validateMessage(message)
         ) {
-            showLauncherView = false
+            showProfileView = false
             if (hasAutomatedMessage) {
                 messages.findLast { it.automated == true }?.let {
                     messageManager.sendMessage(it)
@@ -247,7 +257,7 @@ class MessageCenterViewModel : ViewModel() {
 
     fun isProfileRequired(): Boolean = messageCenterModel.profile?.require == true
 
-    fun showProfile(): Boolean =
+    fun isProfileConfigured(): Boolean =
         messageCenterModel.profile?.request == true || messageCenterModel.profile?.require == true
 
     fun handleUnreadMessages() {
@@ -267,13 +277,17 @@ class MessageCenterViewModel : ViewModel() {
         }
     }
 
-    fun buildMessageViewDataModel(profileVisibility: Boolean = true): List<MessageViewData> {
+    private fun canShowProfile(): Boolean = isProfileConfigured() && messages.isEmpty() || isProfileConfigured() && hasAutomatedMessageInSending()
+
+    private fun hasAutomatedMessageInSending(): Boolean = messages.size == 1 && messages[0].automated == true && messages[0].messageStatus == Message.Status.Sending
+
+    fun buildMessageViewDataModel(): List<MessageViewData> {
         val messageViewData = mutableListOf<MessageViewData>()
-        messageViewData.add(0, MessageViewData(GreetingData(greeting, greetingBody, getAvatar()), null, null))
+        messageViewData.add(0, MessageViewData(ListItemType.HEADER, GreetingData(greeting, greetingBody, getAvatar()), null, null))
         messages.forEach { message ->
-            messageViewData.add(MessageViewData(null, null, message))
+            messageViewData.add(MessageViewData(ListItemType.MESSAGE, null, null, message))
         }
-        messageViewData.add(MessageViewData(null, ProfileViewData(getEmailHint(), getNameHint(), profileVisibility), null))
+        messageViewData.add(MessageViewData(ListItemType.FOOTER, null, ProfileViewData(getEmailHint(), getNameHint(), showProfileView), null))
         return messageViewData
     }
 
@@ -333,7 +347,8 @@ class MessageCenterViewModel : ViewModel() {
 
     private fun loadAvatar(imageUrl: String) {
         executors.state.execute {
-            avatarBitmapEvent.postValue(ImageUtil.loadAvatar(imageUrl))
+            val avatarBitmap = ImageUtil.loadAvatar(imageUrl)
+            avatarBitmap?.let { avatarBitmapEvent.postValue(it) }
         }
     }
 }
