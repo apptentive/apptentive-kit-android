@@ -73,7 +73,7 @@
     <string name="string">String</string>
     <string name="number">Number</string>
     <string name="boolean_string">Boolean</string>
-    <string name="other_data">Other Data</string>
+    <string name="other_person_data">Other Person Data</string>
     <string name="deep_link_successful">Deep Link Successful</string>
 
     <plurals name="unread_messages">

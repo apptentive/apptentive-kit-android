@@ -1,7 +1,6 @@
 package apptentive.com.android.feedback
 
 import apptentive.com.android.feedback.engagement.Event
-import apptentive.com.android.feedback.model.CustomData
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.util.LogTags.MESSAGE_CENTER_HIDDEN
@@ -9,8 +8,8 @@ import apptentive.com.android.util.LogTags.PROFILE_DATA_UPDATE
 import java.io.InputStream
 
 internal interface ApptentiveClient {
-    fun engage(event: Event): EngagementResult
-    fun showMessageCenter(customData: CustomData?): EngagementResult
+    fun engage(event: Event, customData: Map<String, Any?>? = null): EngagementResult
+    fun showMessageCenter(customData: Map<String, Any?>?): EngagementResult
     fun addUnreadMessagesListener(callback: (Int) -> Unit)
     fun getUnreadMessageCount(): Int
     fun canShowMessageCenter(callback: (Boolean) -> Unit)
@@ -27,7 +26,7 @@ internal interface ApptentiveClient {
 }
 
 private class ApptentiveNullClient : ApptentiveClient {
-    override fun engage(event: Event): EngagementResult {
+    override fun engage(event: Event, customData: Map<String, Any?>?): EngagementResult {
         return EngagementResult.Error("Apptentive SDK is not initialized")
     }
 
@@ -48,7 +47,7 @@ private class ApptentiveNullClient : ApptentiveClient {
         Log.d(PROFILE_DATA_UPDATE, "Apptentive SDK is not initialized; update device failed")
     }
 
-    override fun showMessageCenter(customData: CustomData?): EngagementResult {
+    override fun showMessageCenter(customData: Map<String, Any?>?): EngagementResult {
         Log.d(MESSAGE_CENTER, "Apptentive SDK is not initialized; message center launch failed")
         return EngagementResult.Error("Apptentive SDK is not initialized")
     }

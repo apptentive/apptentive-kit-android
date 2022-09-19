@@ -13,7 +13,6 @@ import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.lifecycle.LifecycleListener
 import apptentive.com.android.feedback.model.Configuration
 import apptentive.com.android.feedback.model.Conversation
-import apptentive.com.android.feedback.model.CustomData
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.Sender
@@ -40,7 +39,7 @@ class MessageManager(
 
     private var isMessageCenterInForeground = false
     private var lastDownloadedMessageID: String = messageRepository.getLastReceivedMessageIDFromEntries()
-    var messageCustomData: CustomData? = null
+    var messageCustomData: Map<String, Any?>? = null
 
     @VisibleForTesting
     val pollingScheduler: PollingScheduler by lazy {
@@ -77,7 +76,8 @@ class MessageManager(
         profileSubject.value = senderProfile
     }
 
-    fun setCustomData(customData: CustomData) {
+    @InternalUseOnly
+    fun setCustomData(customData: Map<String, Any?>) {
         this.messageCustomData = customData
     }
 
@@ -145,7 +145,7 @@ class MessageManager(
             hidden = isHidden,
             messageStatus = Message.Status.Sending,
             inbound = true,
-            customData = messageCustomData?.content
+            customData = messageCustomData
         )
 
         messageRepository.addOrUpdateMessages(listOf(message))

@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
 import apptentive.com.android.feedback.EngagementResult
-import apptentive.com.android.feedback.model.CustomData
 import apptentive.com.app.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
@@ -79,7 +78,7 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
         }
 
         binding.messageCenterButton.setOnClickListener {
-            Apptentive.showMessageCenter(CustomData(mapOf("Second" to 2, "name" to "custom_data"))) {
+            Apptentive.showMessageCenter {
                 handleResult(it)
             }
         }
@@ -104,7 +103,7 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
 
     private fun handleResult(it: EngagementResult) {
         if (it !is EngagementResult.InteractionShown) {
-            Toast.makeText(this, "Not engaged: $it", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Interaction NOT shown: $it", Toast.LENGTH_LONG).show()
         }
     }
 

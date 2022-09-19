@@ -22,6 +22,8 @@ import com.google.android.material.textfield.TextInputLayout
 class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
     lateinit var binding: ActivityDevFunctionsBinding
 
+    private val customData: MutableMap<String, Any?> = mutableMapOf()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -39,12 +41,15 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
 
         // Custom Data
         setupDataTypeDropdown()
+        setupEngageEvent()
+        setupMessageCenterButton()
         setupCustomStringData()
         setupCustomNumberData()
         setupCustomBooleanData()
         setupRemoveData()
         setupPersonName()
         setupPersonEmail()
+        clearCustomData()
 
         // Message Center
         setupMessageCenterHiddenText()
@@ -54,41 +59,109 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
         setupPhotoPicker()
     }
 
-    //region Data
-    private fun setupFunctionTypeDropdown() {
-        val DATA = "DATA"
-        val MESSAGE_CENTER = "MESSAGE CENTER"
+    private fun isPersonOrDevice(): Boolean {
+        return binding.dataTypeDropdown.text.toString() in listOf(DataTypes.PERSON.name, DataTypes.DEVICE.name)
+    }
 
-        val functionTypeValues = listOf(DATA, MESSAGE_CENTER)
+    private fun addToCustomData(key: String, value: Any?) {
+        customData[key] = value
+
+        val customDataListText = buildString {
+            append("Custom Data:\n")
+            customData.forEach { (k, v) ->
+                append("Key: $k")
+                append(" / ")
+                append("Value: $v\n")
+            }
+        }
+
+        binding.customDataList.text = customDataListText
+    }
+
+    private fun clearCustomData() {
+        customData.clear()
+        binding.customDataList.text = "No Custom Data"
+    }
+
+    //region Custom Data
+    private fun setupFunctionTypeDropdown() {
+        val CUSTOM_DATA = "CUSTOM DATA"
+        val HIDDEN_MESSAGES = "HIDDEN MESSAGES"
+
+        val functionTypeValues = listOf(CUSTOM_DATA, HIDDEN_MESSAGES)
         val functionTypesAdapter = ArrayAdapter(this, R.layout.list_item, functionTypeValues)
 
         binding.apply {
-            dataTypesLayout.isVisible = functionsTypeDropdown.text.toString() == DATA
-            messageCenterLayout.isVisible = functionsTypeDropdown.text.toString() == MESSAGE_CENTER
+            dataTypesLayout.isVisible = functionsTypeDropdown.text.toString() == CUSTOM_DATA
+            hiddenMessageLayout.isVisible = functionsTypeDropdown.text.toString() == HIDDEN_MESSAGES
+            customDataList.isVisible = !isPersonOrDevice()
 
             functionsTypeDropdown.setAdapter(functionTypesAdapter)
 
             functionsTypeDropdown.addTextChangedListener {
-                dataTypesLayout.isVisible = it.toString() == DATA
-                messageCenterLayout.isVisible = it.toString() == MESSAGE_CENTER
+                dataTypesLayout.isVisible = it.toString() == CUSTOM_DATA
+                hiddenMessageLayout.isVisible = it.toString() == HIDDEN_MESSAGES
             }
-
-            functionsTypeDropdown.setText(MESSAGE_CENTER, false)
         }
     }
 
     private fun setupDataTypeDropdown() {
-        val dataTypeValues = listOf(DataTypes.PERSON, DataTypes.DEVICE)
+        val dataTypeValues = listOf(
+            DataTypes.EVENT.name, DataTypes.MESSAGE_CENTER.name,
+            DataTypes.PERSON.name, DataTypes.DEVICE.name
+        )
+
         val dataTypesAdapter = ArrayAdapter(this, R.layout.list_item, dataTypeValues)
 
         binding.apply {
-            personDataLayout.isVisible = dataTypeDropdown.text.toString() == DataTypes.PERSON.name
-
             dataTypeDropdown.setAdapter(dataTypesAdapter)
+
             dataTypeDropdown.addTextChangedListener {
+                // Remove only for Person or Device (unsure if possible for Events or MC)
+                removeCustomValueKeyTextLayout.isVisible = isPersonOrDevice()
+                removeCustomValueButton.isVisible = isPersonOrDevice()
+
+                // Name and email only visible for Person custom data
                 personDataLayout.isVisible = it.toString() == DataTypes.PERSON.name
 
+                // Event sending only for event custom data
+                eventTextLayout.isVisible = dataTypeDropdown.text.toString() == DataTypes.EVENT.name
+                engageEventButton.isVisible = dataTypeDropdown.text.toString() == DataTypes.EVENT.name
+
+                // MC button only for Message Center custom data
+                messageCenterButton.isVisible = dataTypeDropdown.text.toString() == DataTypes.MESSAGE_CENTER.name
+
+                // Custom Data list only used for EVENT or MC
+                customDataList.isVisible = !isPersonOrDevice()
+
                 if (it.toString().isNotEmpty()) dataTypeLayout.isErrorEnabled = false
+            }
+        }
+    }
+
+    private fun setupEngageEvent() {
+        binding.engageEventButton.setOnClickListener {
+            val engageEvent = binding.eventTextEditText.text?.toString()?.trim()
+            if (!engageEvent.isNullOrEmpty()) {
+                Apptentive.engage(engageEvent, if (customData.isEmpty()) null else customData) {
+                    makeToast("Event \'$engageEvent\' engaged with custom data: $customData")
+                    clearCustomData()
+                }
+                binding.eventTextLayout.isErrorEnabled = false
+                binding.eventTextLayout.error = ""
+                binding.eventTextEditText.setText("")
+            } else {
+                binding.eventTextLayout.isErrorEnabled = true
+                binding.eventTextLayout.error = "No event entered"
+            }
+        }
+    }
+
+    private fun setupMessageCenterButton() {
+        binding.messageCenterButton.setOnClickListener {
+            Apptentive.showMessageCenter(if (customData.isEmpty()) null else customData) {
+                makeToast("Message Center engaged with custom data: $customData")
+                clearCustomData()
             }
         }
     }
@@ -121,8 +194,15 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
                             customStringKey,
                             customStringValue
                         )
+                        else -> addToCustomData(customStringKey!!, customStringValue)
                     }
-                    makeToast("Key: $customStringKey / Value: \"$customStringValue\"\nadded to $dataType")
+
+                    if (isPersonOrDevice()) {
+                        makeToast("Key: $customStringKey / Value: \"$customStringValue\"\nadded to $dataType")
+                    } else {
+                        makeToast("Key: $customStringKey / Value: \"$customStringValue\" added to customData list: $customData")
+                    }
+
                     clearTextFields(addCustomStringKeyEditText, addCustomStringValueEditText)
                 }
             }
@@ -164,8 +244,15 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
                             customNumberKey,
                             customNumberValue
                         )
+                        else -> addToCustomData(customNumberKey!!, customNumberValue)
                     }
-                    makeToast("Key: $customNumberKey / Value: $customNumberValue\nadded to $dataType")
+
+                    if (isPersonOrDevice()) {
+                        makeToast("Key: $customNumberKey / Value: $customNumberValue\nadded to $dataType")
+                    } else {
+                        makeToast("Key: $customNumberKey / Value: $customNumberValue added to customData list: $customData")
+                    }
+
                     clearTextFields(addCustomNumberKeyEditText, addCustomNumberValueEditText)
                 }
             }
@@ -211,8 +298,14 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
                             customBooleanKey,
                             customBooleanValue
                         )
+                        else -> addToCustomData(customBooleanKey!!, customBooleanValue)
                     }
-                    makeToast("Key: $customBooleanKey / Value: $customBooleanValue\nadded to $dataType")
+                    if (isPersonOrDevice()) {
+                        makeToast("Key: $customBooleanKey / Value: \"$customBooleanValue\"\nadded to $dataType")
+                    } else {
+                        makeToast("Key: $customBooleanKey / Value: \"$customBooleanValue\" added to customData list: $customData")
+                    }
+
                     clearTextFields(addCustomBooleanKeyEditText)
                     addCustomBooleanValueDropdown.text = null
                 }
@@ -317,8 +410,11 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 
-    enum class DataTypes {
-        PERSON, DEVICE
+    enum class DataTypes(name: String) {
+        PERSON("PERSON"),
+        DEVICE("DEVICE"),
+        EVENT("EVENT"),
+        MESSAGE_CENTER("MESSAGE CENTER")
     }
     //endregion
 

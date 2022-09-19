@@ -14,7 +14,6 @@ import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.format
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
-import apptentive.com.android.feedback.model.CustomData
 import apptentive.com.android.feedback.platform.AndroidFileSystemProvider
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.feedback.utils.ThrottleUtils
@@ -36,6 +35,22 @@ import apptentive.com.android.util.LogTags.PROFILE_DATA_UPDATE
 import apptentive.com.android.util.LogTags.SYSTEM
 import java.io.InputStream
 
+/**
+ * Result class used in a callback for the `engage` function to help understand what happens.
+ *
+ * [InteractionShown]    Event was evaluated through criteria and an Apptentive Interaction
+ *                       was shown as a result. Returns with ID of interaction shown.
+ *
+ * [InteractionNotShown] Event was evaluated through criteria and an Apptentive Interaction
+ *                       was NOT shown as a result. Returns with [String] reasoning
+ *
+ * [Error]               Event was evaluated through criteria and an interaction was supposed to show,
+ *                       but an error occurred in that process. Can also show if the SDK fails to
+ *                       initialize. Returns with [String] reasoning.
+ *
+ * [Exception]           At some point in the evaluation or interaction showing process a [Throwable]
+ *                       was thrown. Returns with [String] error message and prints error stacktrace.
+ */
 sealed class EngagementResult {
     data class InteractionShown(val interactionId: InteractionId) : EngagementResult() {
         init { Log.d(INTERACTIONS, "Interaction Engaged => interactionID: $interactionId") }
@@ -60,10 +75,11 @@ object Apptentive {
     //region Initialization
 
     /**
-     * collects the [ApptentiveActivityInfo] reference which can be used to retrieve current activity context.
-     * The retrieved context is used in the apptentive interactions & it's UI elements.
+     * Collects the [ApptentiveActivityInfo] reference which can be used to retrieve the
+     * current [Activity]'s [Context].
+     * The retrieved context is used in the Apptentive interactions & its UI elements.
      *
-     * @param apptentiveActivityInfo
+     * @param apptentiveActivityInfo reference to the app's current [Activity]
      */
 
     @JvmStatic
@@ -81,7 +97,7 @@ object Apptentive {
         activityInfoCallback = null
     }
 
-    fun getApptentiveActivityCallback(): ApptentiveActivityInfo? = activityInfoCallback
+    internal fun getApptentiveActivityCallback(): ApptentiveActivityInfo? = activityInfoCallback
 
     @Suppress("MemberVisibilityCanBePrivate")
     val registered
@@ -219,17 +235,30 @@ object Apptentive {
 
     //region Engagement
 
+    /**
+     * This method takes a unique event of type [String], stores a record of that event having been
+     * visited, determines if there is an interaction that is able to run for this event, and then
+     * runs it. Only one interaction at most will run per invocation of this method. This task is
+     * performed asynchronously.
+     *
+     * @param eventName  A unique [String] representing the line this method is called on. For instance,
+     *                   you may want to have the ability to target interactions to run after the user
+     *                   uploads a file in your app. You may then call `engage("finished_upload")`.
+     * @param customData Extra data sent with the engaged event. A Map of [String] keys to values.
+     *                   Values may be of type [String], [Number], or [Boolean].
+     * @param callback   Returns [EngagementCallback] of an [EngagementResult].
+     */
     @JvmStatic
     @JvmOverloads
-    fun engage(eventName: String, callback: EngagementCallback? = null) {
+    fun engage(eventName: String, customData: Map<String, Any?>? = null, callback: EngagementCallback? = null) {
         // the above statement would not compile without force unwrapping on Kotlin 1.4.x
         @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
         val callbackFunc: ((EngagementResult) -> Unit)? =
             if (callback != null) callback!!::onComplete else null
-        engage(eventName, callbackFunc)
+        engage(eventName, customData, callbackFunc)
     }
 
-    private fun engage(eventName: String, callback: ((EngagementResult) -> Unit)?) {
+    private fun engage(eventName: String, customData: Map<String, Any?>?, callback: ((EngagementResult) -> Unit)?) {
         // user callback should be executed on the main thread
         val callbackWrapper: ((EngagementResult) -> Unit)? = if (callback != null) {
             {
@@ -243,7 +272,7 @@ object Apptentive {
         stateExecutor.execute {
             try {
                 val event = Event.local(eventName)
-                val result = client.engage(event)
+                val result = client.engage(event, customData)
                 callbackWrapper?.invoke(result)
             } catch (e: Exception) {
                 callbackWrapper?.invoke(EngagementResult.Exception(error = e))
@@ -259,12 +288,13 @@ object Apptentive {
      * Opens the Apptentive Message Center.
      * This operation is performed asynchronously.
      *
-     * @param customData Optional extra data sent with opening of Message Center
-     * @param callback   Returns [EngagementCallback] result.
+     * @param customData Extra data sent with messages in Message Center. A Map of [String] keys
+     *                   to values. Values may be of type [String], [Number], or [Boolean].
+     * @param callback   Returns [EngagementCallback] of an [EngagementResult]
      */
     @JvmStatic
     @JvmOverloads
-    fun showMessageCenter(customData: CustomData? = null, callback: EngagementCallback? = null) {
+    fun showMessageCenter(customData: Map<String, Any?>? = null, callback: EngagementCallback? = null) {
         val callbackWrapper: ((EngagementResult) -> Unit)? = if (callback != null) {
             {
                 mainExecutor.execute {
@@ -330,8 +360,8 @@ object Apptentive {
     }
 
     /**
-     * Sends a text message to the server. This message will be visible in the conversation view on the server, but will
-     * not be shown in the client's Message Center.
+     * Sends a text message to the server. This message will be visible in the conversation view
+     * on the server, but will not be shown in the client's Message Center.
      *
      * @param text The message you wish to send.
      */
@@ -346,9 +376,9 @@ object Apptentive {
     }
 
     /**
-     * Sends a file to the server. This file will be visible in the conversation view on the server, but will not be shown
-     * in the client's Message Center. A local copy of this file will be made until the message is transmitted, at which
-     * point the temporary file will be deleted.
+     * Sends a file to the server. This file will be visible in the conversation view on the server,
+     * but will not be shown in the client's Message Center. A local copy of this file will be made
+     * until the message is transmitted, at which point the temporary file will be deleted.
      *
      * NOTICE: FILE SIZE LIMIT IS 15MB
      *
@@ -363,9 +393,9 @@ object Apptentive {
     }
 
     /**
-     * Sends a file to the server. This file will be visible in the conversation view on the server, but will not be shown
-     * in the client's Message Center. A local copy of this file will be made until the message is transmitted, at which
-     * point the temporary file will be deleted.
+     * Sends a file to the server. This file will be visible in the conversation view on the server,
+     * but will not be shown in the client's Message Center. A local copy of this file will be made
+     * until the message is transmitted, at which point the temporary file will be deleted.
      *
      * NOTICE: FILE SIZE LIMIT IS 15MB
      *
@@ -381,9 +411,9 @@ object Apptentive {
     }
 
     /**
-     * Sends a file to the server. This file will be visible in the conversation view on the server, but will not be shown
-     * in the client's Message Center. A local copy of this file will be made until the message is transmitted, at which
-     * point the temporary file will be deleted.
+     * Sends a file to the server. This file will be visible in the conversation view on the server,
+     * but will not be shown in the client's Message Center. A local copy of this file will be made
+     * until the message is transmitted, at which point the temporary file will be deleted.
      *
      * NOTICE: FILE SIZE LIMIT IS 15MB
      *
@@ -406,10 +436,10 @@ object Apptentive {
     //region Person data updates
 
     /**
-     * Sets the user's name. This name will be sent to the Apptentive server and displayed in conversations you have
-     * with this person. This name will be the definitive username for this user, unless one is provided directly by the
-     * user through an Apptentive UI. Calls to this method are idempotent. Calls to this method will overwrite any
-     * previously entered person's name.
+     * Sets the user's name. This name will be sent to the Apptentive server and displayed in
+     * conversations you have with this person. This name will be the definitive username for this
+     * user, unless one is provided directly by the user through an Apptentive UI. Calls to this
+     * method are idempotent. Calls to this method will overwrite any previously entered person's name.
      *
      * @param name The user's name.
      */
@@ -427,11 +457,12 @@ object Apptentive {
     }
 
     /**
-     * Sets the user's email address. This email address will be sent to the Apptentive server to allow out of app
-     * communication, and to help provide more context about this user. This email will be the definitive email address
-     * for this user, unless one is provided directly by the user through an Apptentive UI. Calls to this method are
-     * idempotent. Calls to this method will overwrite any previously entered email, so if you don't want to overwrite
-     * any previously entered email,
+     * Sets the user's email address. This email address will be sent to the Apptentive server to
+     * allow out of app communication, and to help provide more context about this user. This email
+     * will be the definitive email address for this user, unless one is provided directly by the
+     * user through an Apptentive UI. Calls to this method are idempotent. Calls to this method will
+     * overwrite any previously entered email, so if you don't want to overwrite any previously
+     * entered email,
      *
      * @param email The user's email address.
      */

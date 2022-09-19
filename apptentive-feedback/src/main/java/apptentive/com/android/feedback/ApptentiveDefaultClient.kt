@@ -63,6 +63,7 @@ import apptentive.com.android.network.HttpClient
 import apptentive.com.android.network.UnexpectedResponseException
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogLevel
+import apptentive.com.android.util.LogTags.EVENT
 import apptentive.com.android.util.LogTags.LIFE_CYCLE_OBSERVER
 import apptentive.com.android.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.util.LogTags.PAYLOADS
@@ -276,8 +277,11 @@ internal class ApptentiveDefaultClient(
 
     //region Engagement
 
-    override fun engage(event: Event): EngagementResult {
-        return DependencyProvider.of<EngagementContextFactory>().engagementContext().engage(event)
+    override fun engage(event: Event, customData: Map<String, Any?>?): EngagementResult {
+        return DependencyProvider.of<EngagementContextFactory>().engagementContext().engage(
+            event = event,
+            customData = filterCustomData(customData)
+        )
     }
 
     override fun sendHiddenTextMessage(message: String) {
@@ -330,13 +334,9 @@ internal class ApptentiveDefaultClient(
         }
     }
 
-    override fun showMessageCenter(customData: CustomData?): EngagementResult {
-        customData?.let {
-            val filteredCustomData = filterCustomData(customData)
-            if (filteredCustomData.content.isNotEmpty())
-                messageManager?.setCustomData(filteredCustomData)
-            else
-                Log.v(MESSAGE_CENTER, "Not setting custom data. No supported types found")
+    override fun showMessageCenter(customData: Map<String, Any?>?): EngagementResult {
+        filterCustomData(customData)?.let { filteredCustomData ->
+            messageManager?.setCustomData(filteredCustomData)
         }
         return engage(Event.internal(EVENT_MESSAGE_CENTER))
     }
@@ -357,13 +357,16 @@ internal class ApptentiveDefaultClient(
         )
     }
 
-    private fun filterCustomData(customData: CustomData): CustomData {
-        return CustomData(
-            content =
-            customData.content.filter {
-                it.value is String || it.value is Int || it.value is Double || it.value is Float || it.value is Boolean || it.value is Short
-            }
-        )
+    private fun filterCustomData(customData: Map<String, Any?>?): Map<String, Any?>? {
+        val filteredContent = customData?.filter {
+            it.value is String || it.value is Number || it.value is Boolean
+        }
+
+        return if (!filteredContent.isNullOrEmpty()) filteredContent
+        else {
+            Log.w(EVENT, "Not setting custom data. No supported types found.")
+            null
+        }
     }
 
     override fun updateDevice(customData: Pair<String, Any?>?, deleteKey: String?) {

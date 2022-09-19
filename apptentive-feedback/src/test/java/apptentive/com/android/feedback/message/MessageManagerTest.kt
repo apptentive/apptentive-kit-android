@@ -9,7 +9,6 @@ import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.MockEngagementContext
 import apptentive.com.android.feedback.model.AppRelease
 import apptentive.com.android.feedback.model.Conversation
-import apptentive.com.android.feedback.model.CustomData
 import apptentive.com.android.feedback.model.Device
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.MessageList
@@ -149,7 +148,7 @@ class MessageManagerTest : TestCase() {
 
     @Test
     fun testCustomDataCleanup() {
-        messageManager.setCustomData(CustomData())
+        messageManager.setCustomData(emptyMap())
         messageManager.sendMessage("Hello")
         assertTrue(messageManager.messageCustomData == null)
     }

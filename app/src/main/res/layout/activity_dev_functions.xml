@@ -79,7 +79,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:visibility="gone">
+                tools:visibility="visible">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/dataTypeLayout"
@@ -112,6 +112,51 @@
                     app:layout_constraintTop_toBottomOf="@id/dataTypeLayout" />
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/eventTextLayout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_4dp"
+                    android:hint="@string/enter_event_to_engage"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toStartOf="@+id/engageEventButton"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/customDataHeader">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/eventTextEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/engageEventButton"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_4dp"
+                    android:layout_marginTop="@dimen/margin_4dp"
+                    android:minHeight="@dimen/button_min_height"
+                    android:text="@string/engage"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/eventTextLayout"
+                    app:layout_constraintTop_toTopOf="@id/eventTextLayout" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/messageCenterButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_4dp"
+                    android:minHeight="@dimen/button_min_height"
+                    android:text="@string/message_center"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/eventTextLayout" />
+
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/addCustomStringKeyTextLayout"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="0dp"
@@ -121,7 +166,7 @@
                     app:layout_constraintEnd_toStartOf="@id/addCustomStringValueTextLayout"
                     app:layout_constraintHorizontal_chainStyle="spread"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/customDataHeader">
+                    app:layout_constraintTop_toBottomOf="@id/messageCenterButton">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/addCustomStringKeyEditText"
@@ -315,6 +360,16 @@
                     app:layout_constraintStart_toEndOf="@id/removeCustomValueKeyTextLayout"
                     app:layout_constraintTop_toTopOf="@id/removeCustomValueKeyTextLayout" />
 
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/customDataList"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/event_button_top_margin"
+                    android:visibility="gone"
+                    android:textSize="14sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/removeCustomValueKeyTextLayout" />
+
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/personDataLayout"
                     android:layout_width="match_parent"
@@ -329,7 +384,7 @@
                         style="@style/TextAppearance.AppCompat.Subhead"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/other_data"
+                        android:text="@string/other_person_data"
                         android:textAllCaps="true"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -405,7 +460,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/messageCenterLayout"
+                android:id="@+id/hiddenMessageLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/horizontal_spacing"
@@ -413,7 +468,8 @@
                 android:paddingBottom="@dimen/vertical_spacing"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="gone">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/hiddenMessageCenterTextLayout"
