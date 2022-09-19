@@ -2,7 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_profile"
-        android:icon="@drawable/ic_profile"
+        android:icon="@drawable/apptentive_ic_profile"
         android:title="@string/apptentive_profile"
         app:showAsAction="always"/>
 </menu>

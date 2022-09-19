@@ -7,7 +7,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/apptentive_profile_name_layout"
-        style="?attr/apptentiveMessageCenterSingleLineLayoutStyle"
+        style="?apptentiveMessageCenterSingleLineLayoutStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
@@ -16,7 +16,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/apptentive_profile_name_text"
-            style="?attr/apptentiveMessageCenterSingleLineEditTextStyle"
+            style="?apptentiveMessageCenterSingleLineEditTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
@@ -24,7 +24,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/apptentive_profile_email_layout"
-        style="?attr/apptentiveMessageCenterSingleLineLayoutStyle"
+        style="?apptentiveMessageCenterSingleLineLayoutStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
@@ -33,7 +33,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/apptentive_profile_email_text"
-            style="?attr/apptentiveMessageCenterSingleLineEditTextStyle"
+            style="?apptentiveMessageCenterSingleLineEditTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 

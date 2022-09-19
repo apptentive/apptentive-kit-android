@@ -14,7 +14,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/ic_placeholder_message_homescreen"/>
+        tools:src="@drawable/apptentive_ic_placeholder_message_homescreen"/>
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/apptentive_message_center_greeting"

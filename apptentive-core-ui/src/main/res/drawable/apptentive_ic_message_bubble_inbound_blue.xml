@@ -3,7 +3,7 @@
 
 <item>
     <shape android:shape="rectangle">
-        <solid android:color="?colorPrimary" />
+        <solid android:color="?attr/apptentiveMessageCenterInboundBubbleColor" />
         <corners android:bottomRightRadius="0dp" android:radius="20dp" />
     </shape>
 </item>

@@ -20,7 +20,8 @@
         app:layout_constraintEnd_toEndOf="@id/apptentive_attachment_bottomsheet_guideline"
         app:layout_constraintStart_toStartOf="@id/apptentive_attachment_bottomsheet_guideline"
         app:layout_constraintTop_toTopOf="@id/apptentive_preview_attachment_button"
-        tools:ignore="ContentDescription" />
+        tools:ignore="ContentDescription"
+        tools:src="@drawable/apptentive_ic_preview"/>
 
     <apptentive.com.android.feedback.messagecenter.view.custom.TextViewButton
         android:id="@+id/apptentive_preview_attachment_button"
@@ -30,7 +31,8 @@
         app:layout_constraintBottom_toTopOf="@+id/apptentive_remove_attachment_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Preview"/>
 
     <ImageView
         style="?apptentiveMessageCenterRemoveAttachmentImage"
@@ -40,7 +42,8 @@
         app:layout_constraintEnd_toEndOf="@id/apptentive_attachment_bottomsheet_guideline"
         app:layout_constraintStart_toStartOf="@id/apptentive_attachment_bottomsheet_guideline"
         app:layout_constraintTop_toTopOf="@id/apptentive_remove_attachment_button"
-        tools:ignore="ContentDescription" />
+        tools:ignore="ContentDescription"
+        tools:src="@drawable/apptentive_ic_remove"/>
 
     <apptentive.com.android.feedback.messagecenter.view.custom.TextViewButton
         android:id="@+id/apptentive_remove_attachment_button"
@@ -49,6 +52,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/apptentive_preview_attachment_button" />
+        app:layout_constraintTop_toBottomOf="@id/apptentive_preview_attachment_button"
+        tools:text="Remove"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

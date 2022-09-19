@@ -2,13 +2,13 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="?attr/apptentiveMessageCenterBubble"
+    style="?attr/apptentiveMessageCenterBubbleView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/apptentive_message_group_time_stamp"
-        style="?attr/apptentiveMessageCenterGroupTimeStamp"
+        style="?apptentiveMessageCenterGroupTimeStamp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
@@ -19,7 +19,7 @@
     <!-- Outbound message from the dashboard (Received from backend) -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/apptentive_message_outbound"
-        style="?attr/apptentiveMessageCenterOutboundBubble"
+        style="?apptentiveMessageCenterOutboundBubble"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
@@ -28,7 +28,7 @@
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/apptentive_message_outbound_sender_text"
-            style="?attr/apptentiveMessageCenterSenderText"
+            style="?attr/apptentiveMessageCenterSenderNameText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
@@ -37,7 +37,7 @@
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/apptentive_message_outbound_text"
-            style="?attr/apptentiveMessageCenterOutboundBubbleText"
+            style="?apptentiveMessageCenterOutboundBubbleText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
@@ -58,7 +58,7 @@
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/apptentive_message_outbound_time_stamp"
-            style="?attr/apptentiveMessageCenterOutboundBubbleStatusText"
+            style="?apptentiveMessageCenterOutboundBubbleStatusText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -71,7 +71,7 @@
     <!-- Inbound message to the dashboard  (Sent by us to backend) -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/apptentive_message_inbound"
-        style="?attr/apptentiveMessageCenterInboundBubble"
+        style="?apptentiveMessageCenterInboundBubble"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
@@ -79,7 +79,7 @@
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/apptentive_message_inbound_text"
-            style="?attr/apptentiveMessageCenterInboundBubbleText"
+            style="?apptentiveMessageCenterInboundBubbleText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"

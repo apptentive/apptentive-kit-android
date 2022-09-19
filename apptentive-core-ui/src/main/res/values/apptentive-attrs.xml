@@ -91,6 +91,11 @@
 
         <!-- Message Center -->
 
+        <!-- Layouts -->
+        <attr name="apptentiveMessageCenterLayoutStyle" format="reference"/>
+        <attr name="apptentiveAttachmentPreviewLayoutStyle" format="reference"/>
+        <attr name="apptentiveProfileLayoutStyle" format="reference"/>
+
         <!-- App Bars -->
         <attr name="apptentiveMessageCenterToolbarStyle" format="reference"/>
         <attr name="apptentiveMessageCenterProfileToolbarStyle" format="reference"/>
@@ -100,15 +105,17 @@
         <attr name="apptentiveMessageCenterAttachmentImageStyle" format="reference"/>
         <attr name="apptentiveMessageCenterComposerStyle" format="reference"/>
         <attr name="apptentiveMessageCenterSendImageStyle" format="reference"/>
-        <attr name="apptentiveMessageCenterComposerLayoutStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterComposerViewStyle" format="reference"/>
         <attr name="apptentiveViewSeparatorStyle" format="reference"/>
         <attr name="apptentiveMessageCenterGreetingHeaderStyle" format="reference"/>
         <attr name="apptentiveMessageCenterGreetingStyle" format="reference" />
         <attr name="apptentiveMessageCenterGreetingBodyTextStyle" format="reference"/>
         <attr name="apptentiveMessageCenterSLAText" format="reference"/>
-        <attr name="apptentiveMessageCenterBubble" format="reference"/>
+        <attr name="apptentiveMessageCenterBubbleView" format="reference"/>
         <attr name="apptentiveMessageCenterGroupTimeStamp" format="reference"/>
         <attr name="apptentiveMessageCenterOutboundBubble" format="reference"/>
+        <attr name="apptentiveProfileSubmitButtonStyle" format="reference"/>
+        <attr name="apptentiveProfileSubmitErrorStyle" format="reference"/>
         <attr name="apptentiveMessageCenterInboundBubble" format="reference"/>
         <attr name="apptentiveMessageCenterInboundBubbleText" format="reference"/>
         <attr name="apptentiveMessageCenterInboundBubbleStatusText" format="reference"/>
@@ -128,22 +135,53 @@
         <attr name="apptentiveMessageCenterPreviewAttachmentImage" format="reference"/>
         <attr name="apptentiveMessageCenterRemoveAttachmentText" format="reference"/>
         <attr name="apptentiveMessageCenterRemoveAttachmentImage" format="reference"/>
+        <attr name="apptentiveMessageCenterAttachmentProgressIndicator" format="reference"/>
+
+        <!-- Text Color/Fill color -->
+        <attr name="apptentiveMessageCenterTextColorGreetingTitle" format="color|reference"/>
+        <attr name="apptentiveMessageCenterTextColorGreetingBody" format="color|reference"/>
+        <attr name="apptentiveMessageCenterEditTextColorBody1" format="color|reference"/>
+        <attr name="apptentiveMessageCenterInboundTextColor" format="color|reference"/>
+        <attr name="apptentiveMessageCenterOutboundBubbleColor" format="color|reference"/>
+        <attr name="apptentiveMessageCenterOutboundTextColor" format="color|reference"/>
+        <attr name="apptentiveMessageCenterInboundBubbleColor" format="color|reference"/>
+        <attr name="apptentiveMessageCenterSLATextColor" format="color|reference"/>
+        <attr name="apptentiveMessageCenterColorError" format="color|reference"/>
+        <attr name="apptentiveMessageCenterDefaultAvatarColor" format="color|reference"/>
+        <attr name="apptentiveSendButtonBackgroundFillColor" format="color|reference"/>
+        <attr name="apptentiveSendButtonIconFillColor" format="color|reference"/>
+        <attr name="apptentiveAttachmentButtonBackgroundFillColor" format="color|reference"/>
+        <attr name="apptentiveAttachmentButtonIconFillColor" format="color|reference"/>
+        <attr name="apptentiveComposerOutlineColor" format="color|reference"/>
+        <attr name="apptentiveIconProfileColorDefault" format="color|reference"/>
+        <attr name="apptentiveIconBackFillColor" format="color|reference"/>
+        <attr name="apptentiveIconCloseColor" format="color|reference"/>
+        <attr name="apptentiveIconDocumentFillColor" format="color|reference"/>
+        <attr name="apptentiveIconDocumentStrokeColor" format="color|reference"/>
+        <attr name="apptentiveIconDownloadFillColor" format="color|reference"/>
+        <attr name="apptentiveIconDownloadStrokeColor" format="color|reference"/>
+        <attr name="apptentiveIconPreviewFillColor" format="color|reference"/>
+        <attr name="apptentiveIconProfileFillColor" format="color|reference"/>
+        <attr name="apptentiveIconRemoveFillColor" format="color|reference"/>
+        <attr name="apptentiveAttachmentBackGroundColor" format="color|reference"/>
 
         <!-- Other -->
         <attr name="apptentiveMessageCenterAttachmentThumbnailSpacing" format="dimension"/>
-        <attr name="apptentiveMessageCenterSenderText" format="dimension"/>
+        <attr name="apptentiveMessageCenterSenderNameText" format="dimension"/>
 
         <!-- Typeface -->
-        <attr name="apptentiveTypefaceMessageCenterGreetingTitle" format="reference"/>
-        <attr name="apptentiveTypefaceMessageCenterGreetingBody" format="reference"/>
+        <attr name="apptentiveMessageCenterTypefaceGreetingTitle" format="integer|reference"/>
+        <attr name="apptentiveMessageCenterTypefaceGreetingBody" format="integer|reference"/>
+        <attr name="apptentiveMessageCenterTypefaceBody1" format="integer|reference"/>
+        <attr name="apptentiveMessageCenterTypefaceButtonColored" format="integer|reference"/>
 
-        <!-- Text Color -->
-        <attr name="apptentiveTextColorMessageCenterGreetingTitle" format="reference"/>
-        <attr name="apptentiveTextColorMessageCenterGreetingBody" format="reference"/>
+        <!-- Font family -->
+        <attr name="apptentiveMessageCenterFontFamilyBody1" format="reference"/>
 
         <!-- Text Size -->
-        <attr name="apptentiveTextSizeMessageCenterGreetingTitle" format="reference"/>
-        <attr name="apptentiveTextSizeMessageCenterGreetingBody" format="reference"/>
+        <attr name="apptentiveTextSizeMessageCenterGreetingTitle" format="dimension|reference"/>
+        <attr name="apptentiveTextSizeMessageCenterGreetingBody" format="dimension|reference"/>
+        <attr name="apptentiveMessageCenterTextSizeBody1" format="dimension|reference"/>
 
         <!-- Message Center End -->
 

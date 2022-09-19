@@ -9,13 +9,13 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/apptentive_attachment_item"
-        style="?attr/apptentiveMessageCenterAttachmentLayoutStyle"
+        style="?apptentiveMessageCenterAttachmentLayoutStyle"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <ImageView
             android:id="@+id/apptentive_attachment_thumbnail"
-            style="?attr/apptentiveMessageCenterAttachmentThumbnailStyle"
+            style="?apptentiveMessageCenterAttachmentThumbnailStyle"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -36,7 +36,7 @@
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/apptentive_attachment_mime_text"
-            style="?attr/apptentiveMessageCenterAttachmentThumbnailTypeTextStyle"
+            style="?apptentiveMessageCenterAttachmentThumbnailTypeTextStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="@id/apptentive_attachment_thumbnail"
@@ -48,6 +48,7 @@
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/apptentive_attachment_thumbnail_download_loading"
+        style="?apptentiveMessageCenterAttachmentProgressIndicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

@@ -137,7 +137,8 @@ data class Message(
 }
 
 /**
- * Data container class for Message Sender.
+ * Data container class for Support Representative Profile.
+ * It is the info of the profile who has claimed the conversation on the dashboard.
  *
  * @param id - The sender id
  * @param name - The sender's name
