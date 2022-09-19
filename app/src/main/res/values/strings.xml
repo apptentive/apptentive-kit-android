@@ -76,5 +76,10 @@
     <string name="other_data">Other Data</string>
     <string name="deep_link_successful">Deep Link Successful</string>
 
+    <plurals name="unread_messages">
+        <item quantity="one">%d unread message</item>
+        <item quantity="other">%d unread messages</item>
+    </plurals>
+
     <!-- Debug Screen End -->
 </resources>

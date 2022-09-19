@@ -84,6 +84,15 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
             }
         }
 
+        val initialUnread = Apptentive.getUnreadMessageCount()
+        binding.unreadMessagesText.text =
+            resources.getQuantityString(R.plurals.unread_messages, initialUnread, initialUnread)
+
+        Apptentive.addUnreadMessagesListener { unreadCount ->
+            binding.unreadMessagesText.text =
+                resources.getQuantityString(R.plurals.unread_messages, unreadCount, unreadCount)
+        }
+
         binding.ratingDialogButton.setOnClickListener {
             Apptentive.engage("rating_dialog_event") { handleResult(it) }
         }

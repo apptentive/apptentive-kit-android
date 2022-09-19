@@ -341,6 +341,14 @@ internal class ApptentiveDefaultClient(
         return engage(Event.internal(EVENT_MESSAGE_CENTER))
     }
 
+    override fun getUnreadMessageCount(): Int {
+        return messageManager?.getUnreadMessageCount() ?: 0
+    }
+
+    override fun addUnreadMessagesListener(callback: (Int) -> Unit) {
+        messageManager?.addUnreadMessageListener(callback)
+    }
+
     override fun canShowMessageCenter(callback: (Boolean) -> Unit) {
         callback(
             if (this::interactionDataProvider.isInitialized) { // Check if lateinit value is set

@@ -40,7 +40,7 @@ class MessageManager(
 
     private var isMessageCenterInForeground = false
     private var lastDownloadedMessageID: String = messageRepository.getLastReceivedMessageIDFromEntries()
-    @InternalUseOnly var messageCustomData: CustomData? = null
+    var messageCustomData: CustomData? = null
 
     @VisibleForTesting
     val pollingScheduler: PollingScheduler by lazy {
@@ -48,6 +48,9 @@ class MessageManager(
     }
     private val messagesSubject: BehaviorSubject<List<Message>> = BehaviorSubject(messagesFromStorage)
     val messages: Observable<List<Message>> get() = messagesSubject
+
+    private var lastUnreadMessageCount = 0
+    private var unreadMessageCount: ((Int) -> Unit)? = null
 
     private val profileSubject: BehaviorSubject<Person?> = BehaviorSubject(null)
     val profile: Observable<Person?> get() = profileSubject
@@ -74,7 +77,6 @@ class MessageManager(
         profileSubject.value = senderProfile
     }
 
-    @InternalUseOnly
     fun setCustomData(customData: CustomData) {
         this.messageCustomData = customData
     }
@@ -83,7 +85,6 @@ class MessageManager(
         this.messageCustomData = null
     }
 
-    @InternalUseOnly
     fun fetchMessages() {
         if (!conversationId.isNullOrEmpty() && !conversationToken.isNullOrEmpty()) {
             messageCenterService.getMessages(conversationToken, conversationId, lastDownloadedMessageID) {
@@ -92,7 +93,8 @@ class MessageManager(
                     Log.d(MESSAGE_CENTER, "Fetch finished successfully")
                     // Merge the new messages with existing messages
                     val isMessageListUpdated =
-                        mergeMessages(it.data.messages ?: listOf(), it.data.endsWith)
+                        mergeMessages(it.data.messages.orEmpty(), it.data.endsWith)
+
                     // Fetch until hasMore is true & not receiving empty list
                     fetchMoreIfNeeded(it.data.hasMore ?: false, isMessageListUpdated)
                 } else {
@@ -123,10 +125,16 @@ class MessageManager(
             fetchMessages()
         } else {
             pollingScheduler.onFetchFinish()
+
+            // Update unread messages callback
+            val currentUnreadCount = getUnreadMessageCount()
+            if (lastUnreadMessageCount != currentUnreadCount) {
+                lastUnreadMessageCount = currentUnreadCount
+                unreadMessageCount?.invoke(currentUnreadCount)
+            }
         }
     }
 
-    @InternalUseOnly
     fun sendMessage(messageText: String, attachments: List<Message.Attachment> = emptyList(), isHidden: Boolean? = null) {
         val context = DependencyProvider.of<EngagementContextFactory>().engagementContext()
         val message = Message(
@@ -151,7 +159,6 @@ class MessageManager(
         }
     }
 
-    @InternalUseOnly
     fun updateProfile(name: String?, email: String?) {
         name?.let { Apptentive.setPersonName(name) }
         email?.let { Apptentive.setPersonEmail(email) }
@@ -173,7 +180,6 @@ class MessageManager(
         messageRepository.addOrUpdateMessages(messages)
     }
 
-    @InternalUseOnly
     fun sendAttachment(uri: String, isHidden: Boolean? = null) {
         val message = Message(
             type = Message.MESSAGE_TYPE_COMPOUND,
@@ -241,7 +247,6 @@ class MessageManager(
         }
     }
 
-    @InternalUseOnly
     // Listens to MessageCenterActivity's active status
     fun onMessageCenterLaunchStatusChanged(isActive: Boolean) {
         if (isActive) {
@@ -256,9 +261,16 @@ class MessageManager(
             startPolling(true)
     }
 
-    @InternalUseOnly
     // Fetches all the messages from message store
     fun getAllMessages(): List<Message> = messages.value
+
+    fun getUnreadMessageCount(): Int {
+        return getAllMessages().filter { it.read != true }.size
+    }
+
+    fun addUnreadMessageListener(callback: (Int) -> Unit) {
+        unreadMessageCount = callback
+    }
 
     @InternalUseOnly
     fun updateMessageStatus(isSuccess: Boolean, payloadData: PayloadData) {

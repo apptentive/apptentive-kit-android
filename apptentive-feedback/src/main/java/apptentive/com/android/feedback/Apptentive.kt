@@ -299,6 +299,37 @@ object Apptentive {
     }
 
     /**
+     * Add a listener to be notified when the number of unread messages in the Message Center changes.
+     *
+     * @param listener An UnreadMessagesListener that you instantiate.
+     */
+    fun addUnreadMessagesListener(listener: UnreadMessagesListener) {
+        val callbackWrapper: (Int) -> Unit = {
+            mainExecutor.execute {
+                listener.onUnreadMessageCountChanged(it)
+            }
+        }
+
+        stateExecutor.execute {
+            client.addUnreadMessagesListener(callbackWrapper)
+        }
+    }
+
+    /**
+     * Returns the number of unread messages in the Message Center.
+     *
+     * @return The number of unread messages.
+     */
+    fun getUnreadMessageCount(): Int {
+        return try {
+            client.getUnreadMessageCount()
+        } catch (e: Exception) {
+            Log.w(MESSAGE_CENTER, "Exception while getting unread message count", e)
+            0
+        }
+    }
+
+    /**
      * Sends a text message to the server. This message will be visible in the conversation view on the server, but will
      * not be shown in the client's Message Center.
      *
