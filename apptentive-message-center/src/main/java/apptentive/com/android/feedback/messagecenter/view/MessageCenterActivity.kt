@@ -23,7 +23,7 @@ import apptentive.com.android.ui.hideSoftKeyboard
 import apptentive.com.android.ui.startViewModelActivity
 import com.google.android.material.appbar.MaterialToolbar
 
-class MessageCenterActivity : BaseMessageCenterActivity() {
+internal class MessageCenterActivity : BaseMessageCenterActivity() {
     private lateinit var constraintLayout: ConstraintLayout
     private lateinit var messageText: EditText
     private lateinit var attachmentsLayout: LinearLayout

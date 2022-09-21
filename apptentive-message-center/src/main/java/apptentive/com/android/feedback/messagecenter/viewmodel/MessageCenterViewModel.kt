@@ -140,7 +140,6 @@ class MessageCenterViewModel : ViewModel() {
     }
 
     @VisibleForTesting
-    @InternalUseOnly
     fun groupMessages(messages: List<Message>): List<Message> {
         var lastGroupTimestamp: String? = null
 

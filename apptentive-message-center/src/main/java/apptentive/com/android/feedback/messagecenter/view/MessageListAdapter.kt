@@ -23,7 +23,7 @@ import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.utils.convertToDate
 import com.google.android.material.textview.MaterialTextView
 
-class MessageListAdapter(private val messageViewModel: MessageCenterViewModel) :
+internal class MessageListAdapter(private val messageViewModel: MessageCenterViewModel) :
     ListAdapter<MessageViewData, RecyclerView.ViewHolder>(DiffCallback()) {
 
     private var profileView: ProfileView? = null

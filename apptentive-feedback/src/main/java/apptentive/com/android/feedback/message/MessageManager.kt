@@ -76,7 +76,6 @@ class MessageManager(
         profileSubject.value = senderProfile
     }
 
-    @InternalUseOnly
     fun setCustomData(customData: Map<String, Any?>) {
         this.messageCustomData = customData
     }

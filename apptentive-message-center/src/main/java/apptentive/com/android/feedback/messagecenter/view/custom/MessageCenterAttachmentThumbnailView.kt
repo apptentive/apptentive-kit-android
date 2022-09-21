@@ -18,7 +18,7 @@ import apptentive.com.android.util.LogTags.MESSAGE_CENTER
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.textview.MaterialTextView
 
-class MessageCenterAttachmentThumbnailView(context: Context, attrs: AttributeSet?) :
+internal class MessageCenterAttachmentThumbnailView(context: Context, attrs: AttributeSet?) :
     FrameLayout(context, attrs) {
 
     init {

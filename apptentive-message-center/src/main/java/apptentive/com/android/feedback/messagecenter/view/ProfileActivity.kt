@@ -8,7 +8,7 @@ import apptentive.com.android.ui.ApptentiveGenericDialog
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.button.MaterialButton
 
-class ProfileActivity : BaseProfileActivity() {
+internal class ProfileActivity : BaseProfileActivity() {
 
     private lateinit var topAppBar: MaterialToolbar
     private lateinit var profileView: ProfileView

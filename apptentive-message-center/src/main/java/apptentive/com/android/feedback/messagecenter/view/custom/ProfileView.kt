@@ -9,7 +9,7 @@ import apptentive.com.android.feedback.messagecenter.R
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
-class ProfileView(context: Context, attrs: AttributeSet? = null) : ConstraintLayout(context, attrs) {
+internal class ProfileView(context: Context, attrs: AttributeSet? = null) : ConstraintLayout(context, attrs) {
 
     private var profileName: String = ""
     private var profileEmail: String = ""

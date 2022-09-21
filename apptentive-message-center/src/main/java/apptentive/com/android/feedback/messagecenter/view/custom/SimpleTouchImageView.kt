@@ -36,7 +36,7 @@ import kotlin.math.min
  * Credit to the [TouchImageView](https://github.com/MikeOrtiz/TouchImageView) library by MikeOrtiz
  */
 
-internal open class SimpleTouchImageView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
+internal class SimpleTouchImageView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     AppCompatImageView(context, attrs, defStyle) {
     /**
      * Get the current zoom. This is the zoom relative to the initial

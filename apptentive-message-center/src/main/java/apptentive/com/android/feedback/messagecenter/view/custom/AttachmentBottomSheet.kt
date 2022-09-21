@@ -10,7 +10,7 @@ import apptentive.com.android.feedback.messagecenter.view.ImagePreviewActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class AttachmentBottomSheet(
+internal class AttachmentBottomSheet(
     private val fileName: String?,
     private val filePath: String?,
     private val onDeleteCallback: () -> Unit

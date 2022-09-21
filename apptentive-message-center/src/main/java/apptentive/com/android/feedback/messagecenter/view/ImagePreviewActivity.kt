@@ -13,7 +13,7 @@ import apptentive.com.android.ui.ApptentiveActivity
 import com.google.android.material.appbar.MaterialToolbar
 import java.io.File
 
-class ImagePreviewActivity : ApptentiveActivity(), ApptentiveActivityInfo {
+internal class ImagePreviewActivity : ApptentiveActivity(), ApptentiveActivityInfo {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

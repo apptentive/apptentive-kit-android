@@ -8,7 +8,7 @@ import com.google.android.material.textview.MaterialTextView
 /**
  * Basic custom view that lets Talkback announce a TextView as a button.
  */
-class TextViewButton(context: Context, attrs: AttributeSet) : MaterialTextView(context, attrs) {
+internal class TextViewButton(context: Context, attrs: AttributeSet) : MaterialTextView(context, attrs) {
 
     init {
         isClickable = true
