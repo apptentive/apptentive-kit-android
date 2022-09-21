@@ -414,7 +414,7 @@ class MessageCenterViewModelTest : TestCase() {
             MessageViewData(
                 ListItemType.FOOTER,
                 null,
-                ProfileViewData("Email hint", "Name hint", viewModel.showProfileView),
+                ProfileViewData("Email hint", "Name hint", viewModel.shouldCollectProfileData),
                 null
             )
         )

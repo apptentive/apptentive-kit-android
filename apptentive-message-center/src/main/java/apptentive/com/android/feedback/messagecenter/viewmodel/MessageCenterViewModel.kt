@@ -68,7 +68,7 @@ class MessageCenterViewModel : ViewModel() {
     val messageSLA: String = messageCenterModel.status?.body.orEmpty()
     var messages: List<Message> = messageManager.getAllMessages().filterSortAndGroupMessages()
     var hasAutomatedMessage: Boolean = !messageCenterModel.automatedMessage?.body.isNullOrEmpty()
-    var showProfileView: Boolean = canShowProfile()
+    var shouldCollectProfileData: Boolean = isProfileViewShown()
     private var isAvatarLoading: Boolean = false
 
     private val newMessagesSubject = LiveEvent<List<MessageViewData>>()
@@ -104,7 +104,7 @@ class MessageCenterViewModel : ViewModel() {
     val automatedMessageSubject: BehaviorSubject<List<Message>> = BehaviorSubject(listOf())
 
     private val profileObserver: (Person?) -> Unit = { profile ->
-        if (profile?.email?.isNotEmpty() == true) showProfileView = false
+        if (profile?.email?.isNotEmpty() == true) shouldCollectProfileData = false
     }
 
     init {
@@ -198,10 +198,10 @@ class MessageCenterViewModel : ViewModel() {
 
     fun sendMessage(message: String, name: String? = null, email: String? = null) {
         // Validate profile only if the profile view is visible
-        if (showProfileView && validateMessageWithProfile(message, email) ||
-            !showProfileView && validateMessage(message)
+        if (shouldCollectProfileData && validateMessageWithProfile(message, email) ||
+            !shouldCollectProfileData && validateMessage(message)
         ) {
-            showProfileView = false
+            shouldCollectProfileData = false
             if (hasAutomatedMessage) {
                 messages.findLast { it.automated == true }?.let {
                     messageManager.sendMessage(it)
@@ -277,7 +277,9 @@ class MessageCenterViewModel : ViewModel() {
         }
     }
 
-    private fun canShowProfile(): Boolean = isProfileConfigured() && messages.isEmpty() || isProfileConfigured() && hasAutomatedMessageInSending()
+    fun shouldHideProfileIcon() = messages.isEmpty() || hasAutomatedMessageInSending() || !isProfileConfigured()
+
+    private fun isProfileViewShown(): Boolean = isProfileConfigured() && (messages.isEmpty() || hasAutomatedMessageInSending())
 
     private fun hasAutomatedMessageInSending(): Boolean = messages.size == 1 && messages[0].automated == true && messages[0].messageStatus == Message.Status.Sending
 
@@ -287,7 +289,7 @@ class MessageCenterViewModel : ViewModel() {
         messages.forEach { message ->
             messageViewData.add(MessageViewData(ListItemType.MESSAGE, null, null, message))
         }
-        messageViewData.add(MessageViewData(ListItemType.FOOTER, null, ProfileViewData(getEmailHint(), getNameHint(), showProfileView), null))
+        messageViewData.add(MessageViewData(ListItemType.FOOTER, null, ProfileViewData(getEmailHint(), getNameHint(), shouldCollectProfileData), null))
         return messageViewData
     }
 

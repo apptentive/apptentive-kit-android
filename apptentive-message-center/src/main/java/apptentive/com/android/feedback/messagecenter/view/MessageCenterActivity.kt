@@ -139,7 +139,7 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
                 )
             }
         }
-        if (viewModel.isProfileConfigured())
+        if (!viewModel.shouldHideProfileIcon())
             actionMenu?.findItem(R.id.action_profile)?.isVisible = true
         viewModel.handleUnreadMessages()
     }
@@ -152,7 +152,7 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
         sendButton.setOnClickListener {
             currentFocus?.clearFocus()
             it.hideSoftKeyboard()
-            if (viewModel.showProfileView)
+            if (viewModel.shouldCollectProfileData)
                 viewModel.sendMessage(messageText.text.toString(), messageListAdapter.getProfileName(), messageListAdapter.getProfileEmail())
             else
                 viewModel.sendMessage(messageText.text.toString())
@@ -245,7 +245,10 @@ class MessageCenterActivity : BaseMessageCenterActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         actionMenu = menu
         menuInflater.inflate(R.menu.message_center_action, menu)
-        if (viewModel.showProfileView || !viewModel.isProfileConfigured())
+        // Do not show profile icon if there are no messages OR
+        // there is only one automated message which is in progress OR
+        // Profile is not configured
+        if (viewModel.shouldHideProfileIcon())
             actionMenu?.findItem(R.id.action_profile)?.isVisible = false
         return true
     }

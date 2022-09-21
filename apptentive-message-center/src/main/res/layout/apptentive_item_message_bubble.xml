@@ -20,7 +20,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/apptentive_message_outbound"
         style="?apptentiveMessageCenterOutboundBubble"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
@@ -38,7 +38,7 @@
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/apptentive_message_outbound_text"
             style="?apptentiveMessageCenterOutboundBubbleText"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/apptentive_message_outbound_sender_text"
@@ -72,7 +72,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/apptentive_message_inbound"
         style="?apptentiveMessageCenterInboundBubble"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/apptentive_message_group_time_stamp">

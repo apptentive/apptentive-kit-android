@@ -116,6 +116,7 @@
         <attr name="apptentiveMessageCenterOutboundBubble" format="reference"/>
         <attr name="apptentiveProfileSubmitButtonStyle" format="reference"/>
         <attr name="apptentiveProfileSubmitErrorStyle" format="reference"/>
+        <attr name="apptentiveProfileViewStyle" format="reference"/>
         <attr name="apptentiveMessageCenterInboundBubble" format="reference"/>
         <attr name="apptentiveMessageCenterInboundBubbleText" format="reference"/>
         <attr name="apptentiveMessageCenterInboundBubbleStatusText" format="reference"/>
@@ -136,6 +137,7 @@
         <attr name="apptentiveMessageCenterRemoveAttachmentText" format="reference"/>
         <attr name="apptentiveMessageCenterRemoveAttachmentImage" format="reference"/>
         <attr name="apptentiveMessageCenterAttachmentProgressIndicator" format="reference"/>
+        <attr name="apptentiveMessageCenterMessageListLayoutStyle" format="reference"/>
 
         <!-- Text Color/Fill color -->
         <attr name="apptentiveMessageCenterTextColorGreetingTitle" format="color|reference"/>
@@ -147,6 +149,7 @@
         <attr name="apptentiveMessageCenterInboundBubbleColor" format="color|reference"/>
         <attr name="apptentiveMessageCenterSLATextColor" format="color|reference"/>
         <attr name="apptentiveMessageCenterColorError" format="color|reference"/>
+        <attr name="apptentiveMessageCenterColorGroupTimeStamp" format="color|reference"/>
         <attr name="apptentiveMessageCenterDefaultAvatarColor" format="color|reference"/>
         <attr name="apptentiveSendButtonBackgroundFillColor" format="color|reference"/>
         <attr name="apptentiveSendButtonIconFillColor" format="color|reference"/>
@@ -181,7 +184,8 @@
         <!-- Text Size -->
         <attr name="apptentiveTextSizeMessageCenterGreetingTitle" format="dimension|reference"/>
         <attr name="apptentiveTextSizeMessageCenterGreetingBody" format="dimension|reference"/>
-        <attr name="apptentiveMessageCenterTextSizeBody1" format="dimension|reference"/>
+        <attr name="apptentiveTextSizeMessageCenterBody1" format="dimension|reference"/>
+        <attr name="apptentiveTextSizeMessageCenterSLABody" format="dimension|reference"/>
 
         <!-- Message Center End -->
 
