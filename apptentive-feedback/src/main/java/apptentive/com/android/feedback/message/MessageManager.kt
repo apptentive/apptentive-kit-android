@@ -264,7 +264,7 @@ class MessageManager(
     fun getAllMessages(): List<Message> = messages.value
 
     fun getUnreadMessageCount(): Int {
-        return getAllMessages().filter { it.read != true }.size
+        return getAllMessages().filter { it.read != true && !it.inbound }.size
     }
 
     fun addUnreadMessageListener(callback: (Int) -> Unit) {

@@ -89,7 +89,7 @@ internal class PayloadSQLiteHelper(context: Context) :
             db.select(tableName = TABLE_NAME, orderBy = COL_PRIMARY_KEY)
                 .use { cursor ->
                     val result = mutableListOf<PayloadData>()
-                    while (cursor.moveToNext()) {
+                    while (db.isOpen && cursor.moveToNext()) {
                         result.add(readPayload(cursor))
                     }
                     return result

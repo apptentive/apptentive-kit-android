@@ -262,7 +262,7 @@ class MessageCenterViewModel : ViewModel() {
     fun handleUnreadMessages() {
         if (messages.any { it.read != true }) {
             messages.filter { it.read != true }.onEach {
-                onMessageCenterEvent(
+                if (!it.inbound) onMessageCenterEvent(
                     event = MessageCenterEvents.EVENT_NAME_READ,
                     data = mapOf(
                         "message_id" to it.id,
@@ -294,7 +294,7 @@ class MessageCenterViewModel : ViewModel() {
 
     fun getFirstUnreadMessagePosition(adapterItems: List<MessageViewData>): Int {
         return adapterItems.indexOfFirst {
-            it.message != null && it.message.read != true
+            it.message != null && it.message.read != true && !it.message.inbound
         }
     }
 

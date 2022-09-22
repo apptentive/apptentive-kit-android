@@ -110,9 +110,6 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
     override fun onResume() {
         super.onResume()
         Apptentive.registerApptentiveActivityInfoCallback(this)
-//        Apptentive.canShowMessageCenter {
-//            binding.messageCenterButton.isEnabled = it
-//        }
     }
 
     override fun getApptentiveActivityInfo(): Activity {
