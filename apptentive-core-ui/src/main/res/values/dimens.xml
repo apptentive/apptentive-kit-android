@@ -41,6 +41,8 @@
     <dimen name="apptentive_survey_range_label_max_height">30dp</dimen>
     <dimen name="apptentive_survey_edit_text_min_height">48dp</dimen>
     <dimen name="apptentive_survey_footers_vertical_padding_margin">16dp</dimen>
+    <dimen name="apptentive_survey_terms_conditions_horizontal_padding">16dp</dimen>
+    <dimen name="apptentive_survey_terms_conditions_vertical_padding">12dp</dimen>
     <dimen name="apptentive_bottom_app_bar_min_height">36dp</dimen>
 
     <!-- Message center -->

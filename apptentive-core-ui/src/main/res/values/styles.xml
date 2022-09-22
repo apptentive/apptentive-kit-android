@@ -455,6 +455,10 @@
         <item name="android:textColorLink">?apptentiveTextColorSurveyTermsAndConditions</item>
         <item name="android:textColor">?apptentiveTextColorSurveyTermsAndConditions</item>
         <item name="android:textSize">?apptentiveTextSizeSurveyTermsAndConditions</item>
+        <item name="android:paddingStart">@dimen/apptentive_survey_terms_conditions_horizontal_padding</item>
+        <item name="android:paddingEnd">@dimen/apptentive_survey_terms_conditions_horizontal_padding</item>
+        <item name="android:paddingTop">@dimen/apptentive_survey_terms_conditions_vertical_padding</item>
+        <item name="android:paddingBottom">@dimen/apptentive_survey_terms_conditions_vertical_padding</item>
         <item name="android:gravity">center</item>
     </style>
 
