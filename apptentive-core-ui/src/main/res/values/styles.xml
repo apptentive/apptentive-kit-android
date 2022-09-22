@@ -792,6 +792,7 @@
     <style name="Apptentive.Widget.MessageCenter.Text.MessageBody">
         <item name="android:textColor">?apptentiveMessageCenterInboundTextColor</item>
         <item name="android:textColorHighlight">@color/apptentive_color_outbound_text</item>
+        <item name="android:textColorLink">?apptentiveMessageCenterInboundTextColor</item>
         <item name="android:textIsSelectable">true</item>
         <item name="android:autoLink">all</item>
     </style>
