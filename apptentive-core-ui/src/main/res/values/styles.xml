@@ -967,7 +967,8 @@
     <style name="Apptentive.Widget.MessageCenter.MessageList" parent="">
         <item name="android:layout_marginStart">@dimen/apptentive_message_list_view_padding</item>
         <item name="android:layout_marginEnd">@dimen/apptentive_message_list_view_padding</item>
-        <item name="android:layout_marginBottom">@dimen/apptentive_message_list_view_padding</item>
+        <item name="android:paddingBottom">@dimen/apptentive_message_list_view_padding</item>
+        <item name="android:clipToPadding">false</item>
     </style>
     <!-- Message Center Widgets End -->
 

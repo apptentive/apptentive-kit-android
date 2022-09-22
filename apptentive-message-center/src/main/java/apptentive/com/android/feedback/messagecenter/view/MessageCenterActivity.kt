@@ -33,6 +33,7 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
     private lateinit var topAppBar: MaterialToolbar
     private lateinit var composerErrorView: TextView
     private var actionMenu: Menu? = null
+    private var hasScrolled = false
 
     private val selectImage =
         registerForActivityResult(ActivityResultContracts.GetContent()) { returnUri ->
@@ -59,8 +60,7 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
         messageListAdapter = MessageListAdapter(viewModel)
         messageList.adapter = messageListAdapter
         messageListAdapter.submitList(viewModel.buildMessageViewDataModel()) {
-            val lastItem = messageListAdapter.currentList.size - 1
-            if (lastItem >= 0) messageList.scrollToPosition(lastItem) // TODO Scroll to first unread
+            scrollRecyclerToFirstUnreadOrLastItem()
         }
 
         // SupportActionBar should be set before setting NavigationOnClickListener
@@ -125,19 +125,11 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
         }
     }
 
-    private var hasScrolled = false
     private fun updateMessageListAdapter() {
         messageList.visibility = View.VISIBLE
         // Update adapter
         messageListAdapter.submitList(viewModel.buildMessageViewDataModel()) {
-            val firstUnreadItem = viewModel.getFirstUnreadMessagePosition(messageListAdapter.currentList)
-            val lastItem = messageListAdapter.itemCount - 1
-            if ((lastItem >= 0 && !hasScrolled) || firstUnreadItem >= 0) {
-                hasScrolled = true
-                messageList.smoothScrollToPosition(
-                    if (firstUnreadItem >= 0) firstUnreadItem else lastItem
-                )
-            }
+            scrollRecyclerToFirstUnreadOrLastItem()
         }
         if (!viewModel.shouldHideProfileIcon())
             actionMenu?.findItem(R.id.action_profile)?.isVisible = true
@@ -227,6 +219,17 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
                 messageListAdapter.updateEmail(email)
                 messageListAdapter.updateName(name)
             }
+        }
+    }
+
+    private fun scrollRecyclerToFirstUnreadOrLastItem() {
+        val firstUnreadItem = viewModel.getFirstUnreadMessagePosition(messageListAdapter.currentList)
+        val lastItem = messageListAdapter.itemCount - 1
+        if ((lastItem >= 0 && !hasScrolled) || firstUnreadItem >= 0) {
+            hasScrolled = true
+            messageList.smoothScrollToPosition(
+                if (firstUnreadItem >= 0) firstUnreadItem else lastItem
+            )
         }
     }
 
