@@ -250,7 +250,7 @@
         <item name="apptentiveMessageCenterGroupTimeStamp">@style/Apptentive.Widget.MessageCenter.Text.GroupTimestamp</item>
         <item name="apptentiveMessageCenterOutboundBubble">@style/Apptentive.Widget.MessageCenter.Bubble.Outbound</item>
         <item name="apptentiveMessageCenterInboundBubble">@style/Apptentive.Widget.MessageCenter.Bubble.Inbound</item>
-        <item name="apptentiveMessageCenterInboundBubbleText">@style/Apptentive.Widget.MessageCenter.Text.MessageBody</item>
+        <item name="apptentiveMessageCenterInboundBubbleText">@style/Apptentive.Widget.MessageCenter.Text.MessageBody.Inbound</item>
         <item name="apptentiveMessageCenterInboundBubbleStatusText">@style/Apptentive.Widget.MessageCenter.Text.Status</item>
         <item name="apptentiveMessageCenterInboundBubbleErrorText">@style/Apptentive.Widget.MessageCenter.Text.Inbound.Error</item>
         <item name="apptentiveMessageCenterOutboundBubbleText">@style/Apptentive.Widget.MessageCenter.Text.MessageBody.Outbound</item>
@@ -790,11 +790,14 @@
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.Text.MessageBody">
-        <item name="android:textColor">?apptentiveMessageCenterInboundTextColor</item>
-        <item name="android:textColorHighlight">@color/apptentive_color_outbound_text</item>
-        <item name="android:textColorLink">?apptentiveMessageCenterInboundTextColor</item>
         <item name="android:textIsSelectable">true</item>
         <item name="android:autoLink">all</item>
+    </style>
+
+    <style name="Apptentive.Widget.MessageCenter.Text.MessageBody.Inbound">
+        <item name="android:textColor">?apptentiveMessageCenterInboundTextColor</item>
+        <item name="android:textColorLink">?apptentiveMessageCenterInboundTextColor</item>
+        <item name="android:textColorHighlight">?apptentiveMessageCenterOutboundTextColor</item>
     </style>
 
     <!-- Outbound / Gray bubble -->
@@ -810,8 +813,7 @@
 
     <style name="Apptentive.Widget.MessageCenter.Text.MessageBody.Outbound">
         <item name="android:textColor">?apptentiveMessageCenterOutboundTextColor</item>
-        <item name="android:textIsSelectable">true</item>
-        <item name="android:autoLink">all</item>
+        <item name="android:textColorLink">?apptentiveMessageCenterOutboundTextColor</item>
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.Text.Status.Outbound">
