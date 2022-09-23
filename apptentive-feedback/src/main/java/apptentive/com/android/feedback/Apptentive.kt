@@ -333,6 +333,7 @@ object Apptentive {
      *
      * @param listener An UnreadMessagesListener that you instantiate.
      */
+    @JvmStatic
     fun addUnreadMessagesListener(listener: UnreadMessagesListener) {
         val callbackWrapper: (Int) -> Unit = {
             mainExecutor.execute {
@@ -350,6 +351,7 @@ object Apptentive {
      *
      * @return The number of unread messages.
      */
+    @JvmStatic
     fun getUnreadMessageCount(): Int {
         return try {
             client.getUnreadMessageCount()
@@ -365,6 +367,7 @@ object Apptentive {
      *
      * @param text The message you wish to send.
      */
+    @JvmStatic
     fun sendAttachmentText(text: String?) {
         stateExecutor.execute {
             text?.let {
@@ -384,6 +387,7 @@ object Apptentive {
      *
      * @param uri The URI path of the local resource file.
      */
+    @JvmStatic
     fun sendAttachmentFile(uri: String?) {
         if (!uri.isNullOrBlank()) {
             stateExecutor.execute {
@@ -402,6 +406,7 @@ object Apptentive {
      * @param content  A byte array of the file contents.
      * @param mimeType The mime type of the file.
      */
+    @JvmStatic
     fun sendAttachmentFile(content: ByteArray?, mimeType: String?) {
         if (content != null && mimeType != null) {
             stateExecutor.execute {
@@ -420,6 +425,7 @@ object Apptentive {
      * @param inputStream An InputStream from the desired file.
      * @param mimeType    The mime type of the file.
      */
+    @JvmStatic
     fun sendAttachmentFile(inputStream: InputStream?, mimeType: String?) {
         if (inputStream != null && mimeType != null) {
             stateExecutor.execute {

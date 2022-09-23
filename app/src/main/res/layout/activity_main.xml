@@ -162,7 +162,7 @@
                 android:elevation="10dp"
                 android:includeFontPadding="false"
                 android:textAlignment="center"
-                android:textColor="@android:color/white"
+                android:textColor="?colorOnPrimary"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="@id/messageCenterButton"
                 app:layout_constraintEnd_toEndOf="@id/messageCenterButton"
