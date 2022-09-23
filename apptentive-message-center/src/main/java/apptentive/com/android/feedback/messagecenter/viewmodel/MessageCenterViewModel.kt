@@ -68,7 +68,7 @@ class MessageCenterViewModel : ViewModel() {
     val messageSLA: String = messageCenterModel.status?.body.orEmpty()
     var messages: List<Message> = messageManager.getAllMessages().filterSortAndGroupMessages()
     var hasAutomatedMessage: Boolean = !messageCenterModel.automatedMessage?.body.isNullOrEmpty()
-    var shouldCollectProfileData: Boolean = isProfileViewShown()
+    var shouldCollectProfileData: Boolean = isProfileViewVisible()
     private var isAvatarLoading: Boolean = false
 
     private val newMessagesSubject = LiveEvent<List<MessageViewData>>()
@@ -278,7 +278,7 @@ class MessageCenterViewModel : ViewModel() {
 
     fun shouldHideProfileIcon() = messages.isEmpty() || hasAutomatedMessageInSending() || !isProfileConfigured()
 
-    private fun isProfileViewShown(): Boolean = isProfileConfigured() && (messages.isEmpty() || hasAutomatedMessageInSending())
+    fun isProfileViewVisible(): Boolean = isProfileConfigured() && (messages.isEmpty() || hasAutomatedMessageInSending())
 
     private fun hasAutomatedMessageInSending(): Boolean = messages.size == 1 && messages[0].automated == true && messages[0].messageStatus == Message.Status.Sending
 

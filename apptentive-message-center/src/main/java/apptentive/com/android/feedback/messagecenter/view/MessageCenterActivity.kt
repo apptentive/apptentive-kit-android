@@ -1,6 +1,8 @@
 package apptentive.com.android.feedback.messagecenter.view
 
+import android.graphics.Rect
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -22,9 +24,10 @@ import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.ui.hideSoftKeyboard
 import apptentive.com.android.ui.startViewModelActivity
 import com.google.android.material.appbar.MaterialToolbar
+import kotlin.math.roundToInt
 
 internal class MessageCenterActivity : BaseMessageCenterActivity() {
-    private lateinit var constraintLayout: ConstraintLayout
+    private lateinit var rootLayout: ConstraintLayout
     private lateinit var messageText: EditText
     private lateinit var attachmentsLayout: LinearLayout
     private lateinit var attachmentButton: ImageView
@@ -49,7 +52,7 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.apptentive_activity_message_center)
 
-        constraintLayout = findViewById(R.id.apptentive_root)
+        rootLayout = findViewById(R.id.apptentive_root)
         topAppBar = findViewById(R.id.apptentive_toolbar)
         messageText = findViewById(R.id.apptentive_composer_text)
         attachmentsLayout = findViewById(R.id.apptentive_composer_attachments_layout)
@@ -158,7 +161,25 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
         attachmentButton.setOnClickListener {
             selectImage.launch("image/*")
         }
+
+        rootLayout.viewTreeObserver.addOnGlobalLayoutListener {
+            if (isKeyboardOpen() && viewModel.isProfileViewVisible()) {
+                messageList.smoothScrollToPosition(messageListAdapter.itemCount - 1)
+            }
+        }
     }
+
+    private fun isKeyboardOpen(): Boolean {
+        val visibleBounds = Rect()
+        rootLayout.getWindowVisibleDisplayFrame(visibleBounds)
+        val screenHeight: Int = rootLayout.rootView.height
+        val keypadHeight: Int = screenHeight - visibleBounds.bottom
+        val marginOfError: Int = convertDpToPx(50f).roundToInt()
+        return keypadHeight > marginOfError
+    }
+
+    private fun convertDpToPx(dp: Float): Float =
+        TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, this.resources.displayMetrics)
 
     private fun getAttachmentView(file: Message.Attachment): MessageCenterAttachmentThumbnailView {
         return MessageCenterAttachmentThumbnailView(this, null).apply {
