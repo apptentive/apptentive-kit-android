@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
@@ -252,6 +253,19 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
                 if (firstUnreadItem >= 0) firstUnreadItem else lastItem
             )
         }
+    }
+
+    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+        // We need to remove focus from any TextView when user touches outside
+        // of it. This would close the selectable clipboard menu if it is opened
+        if (event.action == MotionEvent.ACTION_DOWN) {
+            val focusedView = currentFocus
+            if (focusedView is TextView) {
+                focusedView.clearFocus()
+            }
+        }
+
+        return super.dispatchTouchEvent(event)
     }
 
     override fun onResume() {
