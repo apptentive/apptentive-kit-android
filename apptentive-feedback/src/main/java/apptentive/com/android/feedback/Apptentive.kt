@@ -17,6 +17,7 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionId
 import apptentive.com.android.feedback.platform.AndroidFileSystemProvider
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.feedback.utils.ThrottleUtils
+import apptentive.com.android.feedback.utils.sha256
 import apptentive.com.android.network.DefaultHttpClient
 import apptentive.com.android.network.DefaultHttpNetwork
 import apptentive.com.android.network.DefaultHttpRequestRetryPolicy
@@ -27,6 +28,7 @@ import apptentive.com.android.network.HttpRequest
 import apptentive.com.android.network.asString
 import apptentive.com.android.platform.SharedPrefConstants
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags
 import apptentive.com.android.util.LogTags.FEEDBACK
 import apptentive.com.android.util.LogTags.INTERACTIONS
 import apptentive.com.android.util.LogTags.MESSAGE_CENTER
@@ -141,6 +143,8 @@ object Apptentive {
             )
         )
 
+        checkSavedKeyAndSignature(application, configuration)
+
         // Save host app theme usage
         application.getSharedPreferences(SharedPrefConstants.USE_HOST_APP_THEME, Context.MODE_PRIVATE)
             .edit().putBoolean(SharedPrefConstants.USE_HOST_APP_THEME_KEY, configuration.shouldInheritAppTheme).apply()
@@ -190,6 +194,56 @@ object Apptentive {
         ).apply {
             stateExecutor.execute {
                 start(application.applicationContext, callbackWrapper)
+            }
+        }
+    }
+
+    private fun checkSavedKeyAndSignature(
+        application: Application,
+        configuration: ApptentiveConfiguration
+    ) {
+        val registrationSharedPrefs = application.getSharedPreferences(
+            SharedPrefConstants.REGISTRATION_INFO,
+            Context.MODE_PRIVATE
+        )
+        val savedKeyHash =
+            registrationSharedPrefs.getString(SharedPrefConstants.APPTENTIVE_KEY_HASH, null)
+        val savedSignatureHash =
+            registrationSharedPrefs.getString(SharedPrefConstants.APPTENTIVE_SIGNATURE_HASH, null)
+
+        if (savedKeyHash.isNullOrEmpty() && savedSignatureHash.isNullOrEmpty()) {
+            registrationSharedPrefs
+                .edit()
+                .putString(
+                    SharedPrefConstants.APPTENTIVE_KEY_HASH,
+                    configuration.apptentiveKey.sha256()
+                )
+                .putString(
+                    SharedPrefConstants.APPTENTIVE_SIGNATURE_HASH,
+                    configuration.apptentiveSignature.sha256()
+                )
+                .apply()
+            Log.d(LogTags.CONFIGURATION, "Saving current ApptentiveKey and ApptentiveSignature hash")
+        } else {
+            val newKeyHash = configuration.apptentiveKey.sha256()
+            val newSignatureHash = configuration.apptentiveSignature.sha256()
+            val errorMessage = when {
+                newKeyHash != savedKeyHash && newSignatureHash != savedSignatureHash -> {
+                    "ApptentiveKey and ApptentiveSignature do not match saved ApptentiveKey and ApptentiveSignature"
+                }
+                newKeyHash != savedKeyHash -> {
+                    "ApptentiveKey does not match saved ApptentiveKey"
+                }
+                newSignatureHash != savedSignatureHash -> {
+                    "ApptentiveSignature does not match saved ApptentiveSignature"
+                }
+                else -> {
+                    /* Key & Signature match. Do nothing */
+                    null
+                }
+            }
+            errorMessage?.let {
+                Log.w(LogTags.CONFIGURATION, errorMessage)
             }
         }
     }

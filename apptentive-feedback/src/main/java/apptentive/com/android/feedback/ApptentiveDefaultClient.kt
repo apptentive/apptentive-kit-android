@@ -358,12 +358,13 @@ internal class ApptentiveDefaultClient(
     }
 
     private fun filterCustomData(customData: Map<String, Any?>?): Map<String, Any?>? {
-        val filteredContent = customData?.filter {
+        if (customData == null) return null // No custom data set
+
+        val filteredContent = customData.filter {
             it.value is String || it.value is Number || it.value is Boolean
         }
 
-        return if (!filteredContent.isNullOrEmpty()) filteredContent
-        else {
+        return filteredContent.ifEmpty {
             Log.w(EVENT, "Not setting custom data. No supported types found.")
             null
         }

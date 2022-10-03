@@ -4,6 +4,10 @@ import apptentive.com.android.util.InternalUseOnly
 
 @InternalUseOnly
 object SharedPrefConstants {
+    const val REGISTRATION_INFO = "com.apptentive.sdk.registrationinfo"
+    const val APPTENTIVE_KEY_HASH = "apptentive_key_hash"
+    const val APPTENTIVE_SIGNATURE_HASH = "apptentive_signature_hash"
+
     const val USE_HOST_APP_THEME = "com.apptentive.sdk.hostapptheme"
     const val USE_HOST_APP_THEME_KEY = "host_app_theme_key"
 
