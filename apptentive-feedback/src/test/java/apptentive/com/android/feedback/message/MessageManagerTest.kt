@@ -213,6 +213,4 @@ private class MockMessageRepository(val messageList: List<Message> = testMessage
     override fun saveMessages() {}
 
     override fun deleteMessage(nonce: String) {}
-
-    override fun updateMessage(message: Message) {}
 }

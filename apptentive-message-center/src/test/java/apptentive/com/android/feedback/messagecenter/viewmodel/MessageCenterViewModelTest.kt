@@ -227,10 +227,9 @@ class MessageCenterViewModelTest : TestCase() {
                 automated = true,
                 inbound = false,
                 createdAt = vmAutomatedMessageCreated,
-                groupTimestamp = null
+                groupTimestamp = viewModel.automatedMessageSubject.value[0].groupTimestamp
             )
         )
-
         assertEquals(
             MessageCenterViewModel.ValidationDataModel(),
             viewModel.errorMessagesStream.value
@@ -248,7 +247,6 @@ class MessageCenterViewModelTest : TestCase() {
         assertResults(
             viewModel.groupMessages(
                 testMessageList.filterNot { it.hidden == true }
-                    .sortedBy { it.createdAt }
             )
         )
     }
@@ -286,11 +284,11 @@ class MessageCenterViewModelTest : TestCase() {
             convertToGroupDate(toSeconds(System.currentTimeMillis() - (DAY_IN_MILLIS * 365))) // MM/DD/YYYY
 
         viewModel.messages.forEach { assertTrue(isInThePast(it.createdAt)) }
-        assertEquals(yearAgo, viewModel.messages[0].groupTimestamp)
-        assertEquals(weekAgo, viewModel.messages[1].groupTimestamp)
-        assertEquals(dayAgo, viewModel.messages[2].groupTimestamp)
-        assertNull(viewModel.messages[3].groupTimestamp) // If same day, don't show group timestamp
-        assertEquals(now, viewModel.messages[4].groupTimestamp)
+        assertEquals(yearAgo, viewModel.messages[4].groupTimestamp)
+        assertEquals(weekAgo, viewModel.messages[3].groupTimestamp)
+        assertEquals(dayAgo, viewModel.messages[1].groupTimestamp)
+        assertNull(viewModel.messages[2].groupTimestamp) // If same day, don't show group timestamp
+        assertEquals(now, viewModel.messages[0].groupTimestamp)
         assertEquals(5, viewModel.messages.size)
     }
 
@@ -314,7 +312,8 @@ class MessageCenterViewModelTest : TestCase() {
         val newMessageList = viewModel.mergeMessages(listOf(newMessage, duplicateMessage))
 
         assertEquals(6, newMessageList.size)
-        assertEquals(newMessage, newMessageList[4]) // Should be second most recent
+        // new message get to last position since the sorting is only available in the MessageRepository
+        assertEquals(newMessage, newMessageList[5]) // Should be second most recent
     }
 
     @Test
@@ -474,7 +473,8 @@ class MessageCenterViewModelTest : TestCase() {
         val firstUnreadItem = viewModel
             .getFirstUnreadMessagePosition(viewModel.buildMessageViewDataModel())
 
-        assertEquals(1, firstUnreadItem)
+        // Messages are only sorted at the MessageRepository level
+        assertEquals(4, firstUnreadItem)
     }
 }
 
@@ -522,6 +522,4 @@ class MockMessageRepository : MessageRepository {
     override fun saveMessages() {}
 
     override fun deleteMessage(nonce: String) {}
-
-    override fun updateMessage(message: Message) {}
 }

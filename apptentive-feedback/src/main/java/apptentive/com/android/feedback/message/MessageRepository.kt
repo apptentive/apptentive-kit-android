@@ -11,7 +11,6 @@ import apptentive.com.android.util.generateUUID
 @InternalUseOnly
 interface MessageRepository {
     fun addOrUpdateMessages(messages: List<Message>)
-    fun updateMessage(message: Message)
     fun getAllMessages(): List<Message>
     fun getLastReceivedMessageIDFromEntries(): String
     fun deleteMessage(nonce: String)
@@ -64,6 +63,7 @@ internal class DefaultMessageRepository(val messageSerializer: MessageSerializer
                 messageEntries.add(newEntry)
             }
         }
+        messageEntries.sortedBy { it.createdAt }
         saveMessages()
     }
 
@@ -79,18 +79,6 @@ internal class DefaultMessageRepository(val messageSerializer: MessageSerializer
             Log.e(MESSAGE_CENTER, "There was an exception while deserializing the messages ${e.message}")
         }
         return messageList
-    }
-
-    override fun updateMessage(message: Message) {
-        val existing = findEntry(message.nonce)
-        if (existing != null) {
-            existing.id = message.id
-            existing.messageState = message.messageStatus.name
-            existing.messageJson = JsonConverter.toJson(message)
-            saveMessages()
-        } else {
-            Log.d(MESSAGE_CENTER, "Cannot update message. Message with nonce ${message.nonce} not found.")
-        }
     }
 
     override fun saveMessages() {

@@ -66,6 +66,7 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
         messageListAdapter.submitList(viewModel.buildMessageViewDataModel()) {
             scrollRecyclerToFirstUnreadOrLastItem()
         }
+        messageList.itemAnimator = null
 
         // SupportActionBar should be set before setting NavigationOnClickListener
         setSupportActionBar(topAppBar)

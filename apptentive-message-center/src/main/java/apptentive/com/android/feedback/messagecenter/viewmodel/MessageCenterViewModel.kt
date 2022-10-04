@@ -66,7 +66,7 @@ class MessageCenterViewModel : ViewModel() {
     private val avatarUrl: String? = messageCenterModel.greeting?.image
     val composerHint: String = messageCenterModel.composer?.hintText.orEmpty()
     val messageSLA: String = messageCenterModel.status?.body.orEmpty()
-    var messages: List<Message> = messageManager.getAllMessages().filterSortAndGroupMessages()
+    var messages: List<Message> = messageManager.getAllMessages().filterAndGroupMessages()
     var hasAutomatedMessage: Boolean = !messageCenterModel.automatedMessage?.body.isNullOrEmpty()
     var shouldCollectProfileData: Boolean = isProfileViewVisible()
     private var isAvatarLoading: Boolean = false
@@ -171,11 +171,11 @@ class MessageCenterViewModel : ViewModel() {
         mergedMessagesList.addAll(newMessages.filterNot { mergedMessagesList.contains(it) })
 
         // Filter out hidden messages, sort by createdAt time, then group by date
-        return mergedMessagesList.filterSortAndGroupMessages()
+        return mergedMessagesList.filterAndGroupMessages()
     }
 
-    private fun List<Message>.filterSortAndGroupMessages(): List<Message> =
-        groupMessages(filterNot { it.hidden == true }.sortedBy { it.createdAt })
+    private fun List<Message>.filterAndGroupMessages(): List<Message> =
+        groupMessages(filterNot { it.hidden == true })
 
     fun exitMessageCenter() {
         onMessageCenterEvent(

@@ -108,7 +108,7 @@ class MessageRepositoryTest : TestCase() {
         val messageRepository = DefaultMessageRepository(MockMessageSerializer(testMessageList))
 
         // Testing update message
-        messageRepository.updateMessage(updatedMessage)
+        messageRepository.addOrUpdateMessages(listOf(updatedMessage))
         assertEquals(
             messageRepository.getAllMessages().find { it.nonce == updatedMessage.nonce },
             updatedMessage
