@@ -3,15 +3,12 @@
     <style name="Theme.Apptentive" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/apptentive_color_primary</item>
         <item name="colorOnPrimary">@color/apptentive_color_on_primary</item>
-        <item name="colorPrimaryVariant">@color/apptentive_color_primary_variant</item>
         <item name="colorSecondary">@color/apptentive_color_secondary</item>
-        <item name="colorSecondaryVariant">@color/apptentive_color_secondary_variant</item>
         <item name="colorOnSecondary">@color/apptentive_color_on_secondary</item>
         <item name="android:colorBackground">@color/apptentive_color_background</item>
         <item name="colorOnBackground">@color/apptentive_color_on_background</item>
         <item name="colorSurface">@color/apptentive_color_surface</item>
         <item name="colorOnSurface">@color/apptentive_color_on_surface</item>
-        <item name="android:textColorSecondary">@color/apptentive_color_text_color_secondary</item>
         <item name="colorError">@color/apptentive_color_error</item>
         <item name="android:statusBarColor">@color/apptentive_color_primary</item>
         <item name="android:actionButtonStyle">?apptentiveActionButtonStyle</item>
@@ -136,6 +133,9 @@
         <!-- Activities (Like Survey) use android:colorBackground and colorOnBackground -->
         <!-- https://material.io/blog/android-material-theme-color -->
 
+        <!-- General icon background/fill color -->
+        <item name="apptentiveColorIconClose">?colorOnPrimary</item>
+
         <!-- Dialog -->
         <item name="apptentiveTextColorDialogTitleWithMessage">?colorOnSurface</item>
         <item name="apptentiveTextColorDialogTitleOrMessageOnly">?colorOnSurface</item>
@@ -156,31 +156,33 @@
         <!-- Message Center -->
         <item name="apptentiveMessageCenterTextColorGreetingTitle">?colorOnBackground</item>
         <item name="apptentiveMessageCenterTextColorGreetingBody">?colorOnBackground</item>
-        <item name="apptentiveMessageCenterEditTextColorBody1">?colorOnBackground</item>
+        <item name="apptentiveMessageCenterTextColorEditBody1">?colorOnBackground</item>
         <item name="apptentiveMessageCenterColorError">?colorError</item>
-        <item name="apptentiveMessageCenterColorGroupTimeStamp">?colorOnBackground</item>
-        <item name="apptentiveIconProfileColorDefault">?colorPrimary</item>
-        <item name="apptentiveMessageCenterInboundBubbleColor">?colorPrimary</item>
-        <item name="apptentiveMessageCenterOutboundTextColor">@color/apptentive_color_outbound_text</item>
-        <item name="apptentiveMessageCenterOutboundBubbleColor">@color/apptentive_color_outbound_bubble</item>
-        <item name="apptentiveMessageCenterSLATextColor">?colorOnBackground</item>
-        <item name="apptentiveMessageCenterInboundTextColor">?colorOnPrimary</item>
-        <item name="apptentiveSendButtonBackgroundFillColor">?colorPrimary</item>
-        <item name="apptentiveSendButtonIconFillColor">?colorOnPrimary</item>
-        <item name="apptentiveAttachmentButtonBackgroundFillColor">?colorPrimary</item>
-        <item name="apptentiveAttachmentButtonIconFillColor">?colorOnPrimary</item>
-        <item name="apptentiveComposerOutlineColor">?colorPrimary</item>
-        <item name="apptentiveMessageCenterDefaultAvatarColor">@color/apptentive_color_default_avatar</item>
-        <item name="apptentiveIconBackFillColor">?colorOnPrimary</item>
-        <item name="apptentiveIconCloseColor">?colorOnPrimary</item>
-        <item name="apptentiveIconDocumentFillColor">@color/apptentive_color_icon_default_fill</item>
-        <item name="apptentiveIconDocumentStrokeColor">?colorPrimary</item>
-        <item name="apptentiveIconDownloadFillColor">@color/apptentive_color_icon_default_fill</item>
-        <item name="apptentiveIconDownloadStrokeColor">?colorPrimary</item>
-        <item name="apptentiveIconPreviewFillColor">@color/apptentive_color_bottomsheet_icon</item>
-        <item name="apptentiveIconRemoveFillColor">@color/apptentive_color_bottomsheet_icon</item>
-        <item name="apptentiveIconProfileFillColor">?colorOnPrimary</item>
-        <item name="apptentiveAttachmentBackGroundColor">@color/apptentive_color_attachment_background</item>
+        <item name="apptentiveMessageCenterTextColorGroupTimeStamp">?colorOnBackground</item>
+        <item name="apptentiveMessageCenterColorSendIcon">?colorPrimary</item>
+        <item name="apptentiveMessageCenterBubbleColorInbound">?colorPrimary</item>
+        <item name="apptentiveMessageCenterTextColorOutbound">@color/apptentive_color_outbound_text</item>
+        <item name="apptentiveMessageCenterBubbleColorOutbound">@color/apptentive_color_outbound_bubble</item>
+        <item name="apptentiveMessageCenterTextColorSLA">?colorOnBackground</item>
+        <item name="apptentiveMessageCenterTextColorInbound">?colorOnPrimary</item>
+        <item name="apptentiveMessageCenterFillColorSendIconBackground">?colorSecondary</item>
+        <item name="apptentiveMessageCenterFillColorSendIcon">?android:colorBackground</item>
+        <item name="apptentiveMessageCenterFillColorAttachmentIconBackground">?colorSecondary</item>
+        <item name="apptentiveMessageCenterFillColorAttachmentIcon">?android:colorBackground</item>
+        <item name="apptentiveMessageCenterColorComposerOutline">?colorPrimary</item>
+        <item name="apptentiveMessageCenterColorDefaultAvatar">@color/apptentive_color_default_avatar</item>
+        <item name="apptentiveMessageCenterFillColorBackIcon">?colorOnPrimary</item>
+        <item name="apptentiveMessageCenterFillColorIconDocument">@color/apptentive_color_icon_default_fill</item>
+        <item name="apptentiveMessageCenterStrokeColorIconDocument">?colorPrimary</item>
+        <item name="apptentiveMessageCenterFillColorIconDownload">@color/apptentive_color_icon_default_fill</item>
+        <item name="apptentiveMessageCenterStrokeColorIconDownload">?colorPrimary</item>
+        <item name="apptentiveMessageCenterFillColorIconPreview">@color/apptentive_color_bottomsheet_icon</item>
+        <item name="apptentiveMessageCenterFillColorIconRemove">@color/apptentive_color_bottomsheet_icon</item>
+        <item name="apptentiveMessageCenterFillColorIcon">?colorOnPrimary</item>
+        <item name="apptentiveMessageCenterColorBackgroundAttachment">@color/apptentive_color_attachment_background</item>
+        <item name="apptentiveMessageCenterInboundTextColorLink">?attr/apptentiveMessageCenterTextColorInbound</item>
+        <item name="apptentiveMessageCenterOutboundTextColorLink">?attr/apptentiveMessageCenterTextColorOutbound</item>
+        <item name="apptentiveMessageCenterGreetingTextColorLink">?apptentiveMessageCenterTextColorGreetingBody</item>
 
         <!-- Text Color End -->
 
@@ -647,6 +649,11 @@
     <style name="Apptentive.Widget.MessageCenter.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
         <item name="navigationIcon">@drawable/apptentive_ic_close</item>
         <item name="navigationContentDescription">@string/apptentive_close</item>
+        <item name="titleTextAppearance">@style/Apptentive.Widget.MessageCenter.Toolbar.Title</item>
+    </style>
+
+    <style name="Apptentive.Widget.MessageCenter.Toolbar.Title" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="android:fontFamily">?apptentiveMessageCenterFontFamilyBody1</item>
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.Profile.Layout" parent="" />
@@ -654,6 +661,7 @@
     <style name="Apptentive.Widget.MessageCenter.Profile.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
         <item name="navigationIcon">@drawable/apptentive_ic_arrow_left</item>
         <item name="navigationContentDescription">@string/apptentive_back</item>
+        <item name="titleTextAppearance">@style/Apptentive.Widget.MessageCenter.Toolbar.Title</item>
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.ActionButton" parent="Widget.AppCompat.ActionButton">
@@ -672,7 +680,7 @@
 
     <style name="Apptentive.Widget.MessageCenter.Composer.EditText" parent="Widget.AppCompat.EditText">
         <item name="android:imeOptions">actionGo</item>
-        <item name="android:textColor">?attr/apptentiveMessageCenterEditTextColorBody1</item>
+        <item name="android:textColor">?attr/apptentiveMessageCenterTextColorEditBody1</item>
         <item name="android:fontFamily">?apptentiveMessageCenterFontFamilyBody1</item>
         <item name="android:typeface">?apptentiveMessageCenterTypefaceBody1</item>
         <item name="android:textSize">?attr/apptentiveTextSizeMessageCenterBody1</item>
@@ -686,6 +694,7 @@
         <item name="android:layout_marginStart">@dimen/apptentive_message_composer_margin_start</item>
         <item name="android:layout_marginEnd">@dimen/apptentive_message_composer_margin_end</item>
         <item name="android:layout_marginBottom">@dimen/apptentive_message_composer_margin_bottom</item>
+        <item name="layout_goneMarginStart">@dimen/apptentive_message_composer_padding_start</item>
         <item name="android:minLines">2</item>
         <item name="android:maxLines">4</item>
     </style>
@@ -715,7 +724,7 @@
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.Text" parent="Widget.MaterialComponents.TextView">
-        <item name="android:textColor">?apptentiveMessageCenterInboundTextColor</item>
+        <item name="android:textColor">?attr/apptentiveMessageCenterTextColorInbound</item>
         <item name="android:fontFamily">?apptentiveMessageCenterFontFamilyBody1</item>
         <item name="android:typeface">?apptentiveMessageCenterTypefaceBody1</item>
         <item name="android:textSize">?attr/apptentiveTextSizeMessageCenterBody1</item>
@@ -743,6 +752,7 @@
         <item name="android:fontFamily">?apptentiveMessageCenterFontFamilyBody1</item>
         <item name="android:typeface">?attr/apptentiveMessageCenterTypefaceGreetingBody</item>
         <item name="android:textAppearance">?textAppearanceBodySmall</item>
+        <item name="android:textColorLink">?apptentiveMessageCenterGreetingTextColorLink</item>
         <item name="android:textAlignment">center</item>
         <item name="android:layout_margin">@dimen/apptentive_message_greeting_body</item>
         <item name="android:textIsSelectable">true</item>
@@ -751,7 +761,8 @@
 
     <style name="Apptentive.Widget.MessageCenter.Text.SLA" parent="Widget.MaterialComponents.TextView">
         <item name="android:textSize">?apptentiveTextSizeMessageCenterSLABody</item>
-        <item name="android:textColor">?apptentiveMessageCenterSLATextColor</item>
+        <item name="android:textColor">?attr/apptentiveMessageCenterTextColorSLA</item>
+        <item name="android:fontFamily">?apptentiveMessageCenterFontFamilyBody1</item>
         <item name="android:textAppearance">?textAppearanceBodySmall</item>
         <item name="android:textAlignment">center</item>
         <item name="android:paddingTop">@dimen/apptentive_message_sla_padding</item>
@@ -768,7 +779,7 @@
 
     <style name="Apptentive.Widget.MessageCenter.Bubble.Inbound">
         <item name="layout_constraintWidth_percent">.66</item>
-        <item name="android:background">@drawable/apptentive_ic_message_bubble_inbound_blue</item>
+        <item name="android:background">@drawable/apptentive_ic_inbound_bubble</item>
         <item name="android:paddingStart">@dimen/apptentive_message_bubble_padding</item>
         <item name="android:paddingEnd">@dimen/apptentive_message_bubble_padding</item>
         <item name="android:paddingBottom">@dimen/apptentive_message_bubble_padding</item>
@@ -778,14 +789,14 @@
     <style name="Apptentive.Widget.MessageCenter.Text.GroupTimestamp">
         <item name="android:alpha">@dimen/apptentive_message_group_timestamp</item>
         <item name="android:textSize">?apptentiveTextSizeCaption</item>
-        <item name="android:textColor">?apptentiveMessageCenterColorGroupTimeStamp</item>
+        <item name="android:textColor">?attr/apptentiveMessageCenterTextColorGroupTimeStamp</item>
         <item name="android:paddingBottom">@dimen/apptentive_message_bubble_group_time_padding_bottom</item>
         <item name="android:paddingTop">@dimen/apptentive_message_bubble_group_time_padding_top</item>
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.Text.Status">
         <item name="android:textSize">?apptentiveTextSizeCaption</item>
-        <item name="android:textColor">?apptentiveMessageCenterInboundTextColor</item>
+        <item name="android:textColor">?attr/apptentiveMessageCenterTextColorInbound</item>
         <item name="android:paddingTop">@dimen/apptentive_message_bubble_status_padding_top</item>
     </style>
 
@@ -795,16 +806,16 @@
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.Text.MessageBody.Inbound">
-        <item name="android:textColor">?apptentiveMessageCenterInboundTextColor</item>
-        <item name="android:textColorLink">?apptentiveMessageCenterInboundTextColor</item>
-        <item name="android:textColorHighlight">?apptentiveMessageCenterOutboundTextColor</item>
+        <item name="android:textColor">?attr/apptentiveMessageCenterTextColorInbound</item>
+        <item name="android:textColorLink">?apptentiveMessageCenterInboundTextColorLink</item>
+        <item name="android:textColorHighlight">?attr/apptentiveMessageCenterTextColorOutbound</item>
     </style>
 
     <!-- Outbound / Gray bubble -->
 
     <style name="Apptentive.Widget.MessageCenter.Bubble.Outbound">
         <item name="layout_constraintWidth_percent">.66</item>
-        <item name="android:background">@drawable/apptentive_ic_message_bubble_outbound_gray</item>
+        <item name="android:background">@drawable/apptentive_ic_outbound_bubble</item>
         <item name="android:paddingStart">@dimen/apptentive_message_bubble_padding</item>
         <item name="android:paddingEnd">@dimen/apptentive_message_bubble_padding</item>
         <item name="android:paddingBottom">@dimen/apptentive_message_bubble_padding</item>
@@ -812,13 +823,13 @@
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.Text.MessageBody.Outbound">
-        <item name="android:textColor">?apptentiveMessageCenterOutboundTextColor</item>
-        <item name="android:textColorLink">?apptentiveMessageCenterOutboundTextColor</item>
+        <item name="android:textColor">?attr/apptentiveMessageCenterTextColorOutbound</item>
+        <item name="android:textColorLink">?apptentiveMessageCenterOutboundTextColorLink</item>
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.Text.Status.Outbound">
         <item name="android:textSize">?apptentiveTextSizeCaption</item>
-        <item name="android:textColor">?apptentiveMessageCenterOutboundTextColor</item>
+        <item name="android:textColor">?attr/apptentiveMessageCenterTextColorOutbound</item>
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.Text.Inbound"/>
@@ -832,7 +843,7 @@
 
     <style name="Apptentive.Widget.MessageCenter.Text.Sender.Outbound" parent="">
         <item name="android:textSize">?apptentiveTextSizeCaption</item>
-        <item name="android:textColor">?apptentiveMessageCenterOutboundTextColor</item>
+        <item name="android:textColor">?attr/apptentiveMessageCenterTextColorOutbound</item>
         <item name="android:paddingTop">@dimen/apptentive_message_bubble_sender_padding_top</item>
     </style>
 
@@ -858,7 +869,7 @@
 
     <style name="Apptentive.Widget.MessageCenter.SingleLine.EditText" parent="Widget.AppCompat.EditText">
         <item name="android:imeOptions">actionDone</item>
-        <item name="android:textColor">?attr/apptentiveMessageCenterEditTextColorBody1</item>
+        <item name="android:textColor">?attr/apptentiveMessageCenterTextColorEditBody1</item>
         <item name="android:fontFamily">?apptentiveMessageCenterFontFamilyBody1</item>
         <item name="android:typeface">?apptentiveMessageCenterTypefaceBody1</item>
         <item name="android:textSize">?attr/apptentiveTextSizeMessageCenterBody1</item>
@@ -875,7 +886,7 @@
 
     <!-- https://material.io/components/buttons/android#contained-button -->
     <style name="Apptentive.Widget.MessageCenter.Button.Submit" parent="Widget.MaterialComponents.Button">
-        <item name="backgroundTint">?attr/apptentiveIconProfileColorDefault</item>
+        <item name="backgroundTint">?attr/apptentiveMessageCenterColorSendIcon</item>
         <item name="android:textColor">?apptentiveTextColorButtonColored</item>
         <item name="android:fontFamily">?apptentiveFontFamilyButtonColored</item>
         <item name="android:typeface">?apptentiveMessageCenterTypefaceButtonColored</item>
@@ -915,7 +926,7 @@
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.AttachmentLayout">
-        <item name="android:background">@drawable/apptentive_message_attachment_background</item>
+        <item name="android:background">@drawable/apptentive_attachment_background</item>
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.AttachmentThumbnail">
@@ -925,7 +936,7 @@
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.Text.AttachmentType">
-        <item name="android:textColor">?attr/apptentiveIconDownloadStrokeColor</item>
+        <item name="android:textColor">?attr/apptentiveMessageCenterStrokeColorIconDownload</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">@dimen/apptentive_message_attachment_type_text_size</item>

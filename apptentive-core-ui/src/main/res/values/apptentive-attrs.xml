@@ -55,6 +55,9 @@
         <attr name="apptentiveGenericDialogPositiveButtonStyle" format="reference" />
         <attr name="apptentiveGenericDialogNegativeButtonStyle" format="reference" />
 
+        <!-- General icon background/fill color -->
+        <attr name="apptentiveColorIconClose" format="reference" />
+
         <!-- Survey Styles Start -->
         <!-- Layout -->
         <attr name="apptentiveSurveyLayoutStyle" format="reference"/>
@@ -142,31 +145,33 @@
         <!-- Text Color/Fill color -->
         <attr name="apptentiveMessageCenterTextColorGreetingTitle" format="color|reference"/>
         <attr name="apptentiveMessageCenterTextColorGreetingBody" format="color|reference"/>
-        <attr name="apptentiveMessageCenterEditTextColorBody1" format="color|reference"/>
-        <attr name="apptentiveMessageCenterInboundTextColor" format="color|reference"/>
-        <attr name="apptentiveMessageCenterOutboundBubbleColor" format="color|reference"/>
-        <attr name="apptentiveMessageCenterOutboundTextColor" format="color|reference"/>
-        <attr name="apptentiveMessageCenterInboundBubbleColor" format="color|reference"/>
-        <attr name="apptentiveMessageCenterSLATextColor" format="color|reference"/>
+        <attr name="apptentiveMessageCenterTextColorEditBody1" format="color|reference"/>
+        <attr name="apptentiveMessageCenterTextColorInbound" format="color|reference"/>
+        <attr name="apptentiveMessageCenterTextColorOutbound" format="color|reference"/>
+        <attr name="apptentiveMessageCenterBubbleColorOutbound" format="color|reference"/>
+        <attr name="apptentiveMessageCenterBubbleColorInbound" format="color|reference"/>
+        <attr name="apptentiveMessageCenterTextColorSLA" format="color|reference"/>
         <attr name="apptentiveMessageCenterColorError" format="color|reference"/>
-        <attr name="apptentiveMessageCenterColorGroupTimeStamp" format="color|reference"/>
-        <attr name="apptentiveMessageCenterDefaultAvatarColor" format="color|reference"/>
-        <attr name="apptentiveSendButtonBackgroundFillColor" format="color|reference"/>
-        <attr name="apptentiveSendButtonIconFillColor" format="color|reference"/>
-        <attr name="apptentiveAttachmentButtonBackgroundFillColor" format="color|reference"/>
-        <attr name="apptentiveAttachmentButtonIconFillColor" format="color|reference"/>
-        <attr name="apptentiveComposerOutlineColor" format="color|reference"/>
-        <attr name="apptentiveIconProfileColorDefault" format="color|reference"/>
-        <attr name="apptentiveIconBackFillColor" format="color|reference"/>
-        <attr name="apptentiveIconCloseColor" format="color|reference"/>
-        <attr name="apptentiveIconDocumentFillColor" format="color|reference"/>
-        <attr name="apptentiveIconDocumentStrokeColor" format="color|reference"/>
-        <attr name="apptentiveIconDownloadFillColor" format="color|reference"/>
-        <attr name="apptentiveIconDownloadStrokeColor" format="color|reference"/>
-        <attr name="apptentiveIconPreviewFillColor" format="color|reference"/>
-        <attr name="apptentiveIconProfileFillColor" format="color|reference"/>
-        <attr name="apptentiveIconRemoveFillColor" format="color|reference"/>
-        <attr name="apptentiveAttachmentBackGroundColor" format="color|reference"/>
+        <attr name="apptentiveMessageCenterTextColorGroupTimeStamp" format="color|reference"/>
+        <attr name="apptentiveMessageCenterColorDefaultAvatar" format="color|reference"/>
+        <attr name="apptentiveMessageCenterFillColorSendIconBackground" format="color|reference"/>
+        <attr name="apptentiveMessageCenterFillColorSendIcon" format="color|reference"/>
+        <attr name="apptentiveMessageCenterFillColorAttachmentIconBackground" format="color|reference"/>
+        <attr name="apptentiveMessageCenterFillColorAttachmentIcon" format="color|reference"/>
+        <attr name="apptentiveMessageCenterColorComposerOutline" format="color|reference"/>
+        <attr name="apptentiveMessageCenterColorSendIcon" format="color|reference"/>
+        <attr name="apptentiveMessageCenterFillColorBackIcon" format="color|reference"/>
+        <attr name="apptentiveMessageCenterFillColorIconDocument" format="color|reference"/>
+        <attr name="apptentiveMessageCenterStrokeColorIconDocument" format="color|reference"/>
+        <attr name="apptentiveMessageCenterFillColorIconDownload" format="color|reference"/>
+        <attr name="apptentiveMessageCenterStrokeColorIconDownload" format="color|reference"/>
+        <attr name="apptentiveMessageCenterFillColorIconPreview" format="color|reference"/>
+        <attr name="apptentiveMessageCenterFillColorIcon" format="color|reference"/>
+        <attr name="apptentiveMessageCenterFillColorIconRemove" format="color|reference"/>
+        <attr name="apptentiveMessageCenterColorBackgroundAttachment" format="color|reference"/>
+        <attr name="apptentiveMessageCenterInboundTextColorLink" format="color|reference"/>
+        <attr name="apptentiveMessageCenterGreetingTextColorLink" format="color|reference"/>
+        <attr name="apptentiveMessageCenterOutboundTextColorLink" format="color|reference"/>
 
         <!-- Other -->
         <attr name="apptentiveMessageCenterAttachmentThumbnailSpacing" format="dimension"/>
