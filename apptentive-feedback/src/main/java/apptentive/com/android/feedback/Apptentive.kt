@@ -121,6 +121,14 @@ object Apptentive {
         register(application, configuration, callbackFunc)
     }
 
+    /**
+     * This method registers the Apptentive SDK using the given SDK credentials in the [ApptentiveConfiguration]
+     * It must be called from the  Application#onCreate() method in the Application object defined in your app's manifest.
+     *
+     * @param application Application object.
+     * @param configuration [ApptentiveConfiguration] containing SDK initialization data.
+     * @param callback Returns a callback of an [RegisterResult].
+     */
     @Synchronized
     fun register(
         application: Application,

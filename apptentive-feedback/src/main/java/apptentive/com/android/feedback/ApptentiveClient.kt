@@ -10,7 +10,7 @@ import java.io.InputStream
 internal interface ApptentiveClient {
     fun engage(event: Event, customData: Map<String, Any?>? = null): EngagementResult
     fun showMessageCenter(customData: Map<String, Any?>?): EngagementResult
-    fun addUnreadMessagesListener(callback: (Int) -> Unit)
+    fun addUnreadMessagesListener(callback: UnreadMessageCallback)
     fun getUnreadMessageCount(): Int
     fun canShowMessageCenter(callback: (Boolean) -> Unit)
     fun sendHiddenTextMessage(message: String)
@@ -24,6 +24,8 @@ internal interface ApptentiveClient {
         val NULL: ApptentiveClient = ApptentiveNullClient()
     }
 }
+
+internal typealias UnreadMessageCallback = (Int) -> Unit
 
 private class ApptentiveNullClient : ApptentiveClient {
     override fun engage(event: Event, customData: Map<String, Any?>?): EngagementResult {
@@ -52,7 +54,7 @@ private class ApptentiveNullClient : ApptentiveClient {
         return EngagementResult.Error("Apptentive SDK is not initialized")
     }
 
-    override fun addUnreadMessagesListener(callback: (Int) -> Unit) {
+    override fun addUnreadMessagesListener(callback: UnreadMessageCallback) {
         Log.d(MESSAGE_CENTER, "Apptentive SDK is not initialized; add host unread message listener failed")
     }
 

@@ -345,7 +345,7 @@ internal class ApptentiveDefaultClient(
         return messageManager?.getUnreadMessageCount() ?: 0
     }
 
-    override fun addUnreadMessagesListener(callback: (Int) -> Unit) {
+    override fun addUnreadMessagesListener(callback: UnreadMessageCallback) {
         messageManager?.addUnreadMessageListener(callback)
     }
 

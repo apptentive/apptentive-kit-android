@@ -8,6 +8,7 @@ import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.Observable
 import apptentive.com.android.feedback.Apptentive
+import apptentive.com.android.feedback.UnreadMessageCallback
 import apptentive.com.android.feedback.backend.MessageCenterService
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.lifecycle.LifecycleListener
@@ -24,6 +25,17 @@ import apptentive.com.android.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.util.Result
 import apptentive.com.android.util.generateUUID
 import java.io.InputStream
+
+/**
+ * This class acts as a communicator between MessageCenterModule & Apptentive core components
+ * It owns [PollingScheduler],schedules and updates the polling [Configuration] depending on whether
+ * the App & MessageCenter is in the background vs foreground
+ * Fetches,sorts & groups messages
+ * Updates & maintain the cache using [MessageRepository]
+ * Sends & download attachments
+ * Supports hidden messages
+ * Provides [UnreadMessageCallback] to notify new unread messages to the app
+**/
 
 @InternalUseOnly
 class MessageManager(
@@ -267,7 +279,7 @@ class MessageManager(
         return getAllMessages().filter { it.read != true && !it.inbound }.size
     }
 
-    fun addUnreadMessageListener(callback: (Int) -> Unit) {
+    fun addUnreadMessageListener(callback: UnreadMessageCallback) {
         unreadMessageCount = callback
     }
 
