@@ -12,7 +12,7 @@
     <color name="apptentive_color_outbound_bubble">#C4C4C4</color>
     <color name="apptentive_color_outbound_text">#4A4A4A</color>
     <color name="apptentive_color_default_avatar">#40566B</color>
-    <color name="apptentive_color_icon_default_fill">#212121</color>
+    <color name="apptentive_color_icon_default_fill">#E1E1E1</color>
     <color name="apptentive_color_bottomsheet_icon">#E1E1E1</color>
     <color name="apptentive_color_attachment_background">#E1E1E1</color>
 </resources>
