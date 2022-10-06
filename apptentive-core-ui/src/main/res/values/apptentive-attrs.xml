@@ -175,6 +175,8 @@
 
         <!-- Other -->
         <attr name="apptentiveMessageCenterAttachmentThumbnailSpacing" format="dimension"/>
+        <attr name="apptentiveMessageCenterAttachmentThumbnailWidth" format="dimension"/>
+        <attr name="apptentiveMessageCenterAttachmentThumbnailHeight" format="dimension"/>
         <attr name="apptentiveMessageCenterSenderNameText" format="dimension"/>
 
         <!-- Typeface -->

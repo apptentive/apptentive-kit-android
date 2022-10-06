@@ -271,6 +271,8 @@
         <item name="apptentiveMessageCenterRemoveAttachmentText">@style/Apptentive.Widget.MessageCenter.Text.AttachmentBottomSheet.Remove</item>
         <item name="apptentiveMessageCenterRemoveAttachmentImage">@style/Apptentive.Widget.MessageCenter.Image.AttachmentBottomSheet.Remove</item>
         <item name="apptentiveMessageCenterAttachmentThumbnailSpacing">@dimen/apptentive_message_attachment_spacing</item>
+        <item name="apptentiveMessageCenterAttachmentThumbnailHeight">@dimen/apptentive_message_attachment_width_height</item>
+        <item name="apptentiveMessageCenterAttachmentThumbnailWidth">@dimen/apptentive_message_attachment_width_height</item>
         <item name="apptentiveMessageCenterSenderNameText">@style/Apptentive.Widget.MessageCenter.Text.Sender.Outbound</item>
         <item name="apptentiveProfileSubmitButtonStyle">@style/Apptentive.Widget.MessageCenter.Button.Submit</item>
         <item name="apptentiveProfileSubmitErrorStyle">@style/Apptentive.Widget.MessageCenter.Button.Submit.Error</item>
@@ -778,7 +780,7 @@
     <!-- Inbound / Blue bubble -->
 
     <style name="Apptentive.Widget.MessageCenter.Bubble.Inbound">
-        <item name="layout_constraintWidth_percent">.66</item>
+        <item name="layout_constraintWidth_percent">.75</item>
         <item name="android:background">@drawable/apptentive_ic_inbound_bubble</item>
         <item name="android:paddingStart">@dimen/apptentive_message_bubble_padding</item>
         <item name="android:paddingEnd">@dimen/apptentive_message_bubble_padding</item>
@@ -814,7 +816,7 @@
     <!-- Outbound / Gray bubble -->
 
     <style name="Apptentive.Widget.MessageCenter.Bubble.Outbound">
-        <item name="layout_constraintWidth_percent">.66</item>
+        <item name="layout_constraintWidth_percent">.75</item>
         <item name="android:background">@drawable/apptentive_ic_outbound_bubble</item>
         <item name="android:paddingStart">@dimen/apptentive_message_bubble_padding</item>
         <item name="android:paddingEnd">@dimen/apptentive_message_bubble_padding</item>

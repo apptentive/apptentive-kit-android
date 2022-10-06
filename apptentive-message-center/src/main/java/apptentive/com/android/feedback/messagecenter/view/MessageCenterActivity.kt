@@ -39,6 +39,11 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
     private var actionMenu: Menu? = null
     private var hasScrolled = false
 
+    private val sharedPrefs by lazy { // So this is only retrieved once
+        val MESSAGE_CENTER_DRAFT = "com.apptentive.sdk.messagecenter.draft"
+        getSharedPreferences(MESSAGE_CENTER_DRAFT, MODE_PRIVATE)
+    }
+
     private val selectImage =
         registerForActivityResult(ActivityResultContracts.GetContent()) { returnUri ->
             returnUri?.let { uri ->
@@ -135,10 +140,11 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
         // Update adapter
         messageListAdapter.submitList(viewModel.buildMessageViewDataModel()) {
             scrollRecyclerToFirstUnreadOrLastItem()
+            viewModel.handleUnreadMessages()
         }
-        if (!viewModel.shouldHideProfileIcon())
+        if (!viewModel.shouldHideProfileIcon()) {
             actionMenu?.findItem(R.id.action_profile)?.isVisible = true
-        viewModel.handleUnreadMessages()
+        }
     }
 
     private fun setListeners() {
@@ -198,15 +204,11 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
 
     private fun handleDraftMessage(shouldSave: Boolean) { // vs shouldRestore
         // Consts for shared prefs
-        val MESSAGE_CENTER_DRAFT = "com.apptentive.sdk.messagecenter.draft"
-
         val MESSAGE_CENTER_DRAFT_TEXT = "message.text"
         val MESSAGE_CENTER_DRAFT_ATTACHMENTS = "message.attachments"
 
         val MESSAGE_CENTER_PROFILE_NAME = "profile.name"
         val MESSAGE_CENTER_PROFILE_EMAIL = "profile.email"
-
-        val sharedPrefs = getSharedPreferences(MESSAGE_CENTER_DRAFT, MODE_PRIVATE)
 
         if (shouldSave) {
             sharedPrefs
@@ -250,9 +252,7 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
         val lastItem = messageListAdapter.itemCount - 1
         if ((lastItem >= 0 && !hasScrolled) || firstUnreadItem >= 0) {
             hasScrolled = true
-            messageList.smoothScrollToPosition(
-                if (firstUnreadItem >= 0) firstUnreadItem else lastItem
-            )
+            messageList.scrollToPosition(if (firstUnreadItem >= 0) firstUnreadItem else lastItem)
         }
     }
 

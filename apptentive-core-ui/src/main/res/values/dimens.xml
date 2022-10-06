@@ -90,6 +90,7 @@
     <dimen name="apptentive_message_list_margin">16dp</dimen>
     <dimen name="apptentive_message_error_text_margin_bottom">24dp</dimen>
     <dimen name="apptentive_message_attachment_spacing">4dp</dimen>
+    <dimen name="apptentive_message_attachment_width_height">56dp</dimen>
     <dimen name="apptentive_message_sla_padding">16dp</dimen>
     <dimen name="apptentive_message_composer_gone_margin_bottom">24dp</dimen>
     <dimen name="apptentive_message_composer_padding_start">16dp</dimen>
