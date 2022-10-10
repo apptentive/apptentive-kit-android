@@ -4,6 +4,8 @@ buildscript {
     ext {
         // ----- SDK Compile and Build Versions ----- //
 
+        // Minimum compileSDK version requirements
+        // https://support.google.com/googleplay/android-developer/answer/11926878?hl=en
         compileSdkVersion = 31
         buildToolsVersion = '30.0.3'
         minSdkVersion = 21

@@ -698,11 +698,11 @@ internal class SimpleTouchImageView @JvmOverloads constructor(context: Context, 
      * to the view's listener.
      */
     private inner class GestureListener : SimpleOnGestureListener() {
-        override fun onLongPress(e: MotionEvent?) {
+        override fun onLongPress(e: MotionEvent) {
             performLongClick()
         }
 
-        override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
+        override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
             // If a previous fling is still active, it should be cancelled so that two flings
             // are not run simultaneously.
             fling?.cancelFling()
@@ -710,7 +710,7 @@ internal class SimpleTouchImageView @JvmOverloads constructor(context: Context, 
             return super.onFling(e1, e2, velocityX, velocityY)
         }
 
-        override fun onDoubleTap(e: MotionEvent?): Boolean {
+        override fun onDoubleTap(e: MotionEvent): Boolean {
             var consumed = false
             if (e != null && isZoomEnabled) {
                 if (imageActionState == ImageActionState.NONE) {
