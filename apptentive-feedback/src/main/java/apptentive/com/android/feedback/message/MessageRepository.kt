@@ -45,6 +45,7 @@ internal class DefaultMessageRepository(val messageSerializer: MessageSerializer
                         if (!url.isNullOrBlank()) attachment.url = url
                         if (!originalName.isNullOrBlank()) attachment.originalName = originalName
                         if (size != 0L) attachment.size = size
+                        attachment.isLoading = isLoading
                     }
                 }
                 message.read = existingMessage.read ?: message.read // If already set (true), keep

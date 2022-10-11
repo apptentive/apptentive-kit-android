@@ -70,15 +70,13 @@ class MessageCenterViewModel : ViewModel() {
     var hasAutomatedMessage: Boolean = !messageCenterModel.automatedMessage?.body.isNullOrEmpty()
     var shouldCollectProfileData: Boolean = isProfileViewVisible()
     private var isAvatarLoading: Boolean = false
+    private var isSendingMessage: Boolean = false
 
-    private val newMessagesSubject = LiveEvent<List<MessageViewData>>()
-    val newMessages: LiveData<List<MessageViewData>> get() = newMessagesSubject
+    private val newMessagesEvent = LiveEvent<List<MessageViewData>>()
+    val newMessages: LiveData<List<MessageViewData>> get() = newMessagesEvent
 
-    private val draftAttachmentsEvent = MutableLiveData<List<Message.Attachment>>()
-    val draftAttachmentsStream: LiveData<List<Message.Attachment>> = draftAttachmentsEvent
-
-    private val attachmentDownloadQueueEvent = MutableLiveData<Set<Message.Attachment>>()
-    val attachmentDownloadQueueStream: LiveData<Set<Message.Attachment>> = attachmentDownloadQueueEvent
+    private val draftAttachmentsSubject = MutableLiveData<List<Message.Attachment>>()
+    val draftAttachmentsStream: LiveData<List<Message.Attachment>> = draftAttachmentsSubject
 
     private val exitEvent = LiveEvent<Boolean>()
     val exitStream: LiveData<Boolean> = exitEvent
@@ -96,7 +94,7 @@ class MessageCenterViewModel : ViewModel() {
         messages = mergeMessages(newMessageList)
 
         executors.main.execute {
-            if (messages.isNotEmpty()) newMessagesSubject.value = buildMessageViewDataModel()
+            if (messages.isNotEmpty()) newMessagesEvent.value = buildMessageViewDataModel()
         }
     }
 
@@ -139,7 +137,7 @@ class MessageCenterViewModel : ViewModel() {
         super.onCleared()
     }
 
-    @VisibleForTesting
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     fun groupMessages(messages: List<Message>): List<Message> {
         var lastGroupTimestamp: String? = null
 
@@ -197,32 +195,42 @@ class MessageCenterViewModel : ViewModel() {
 
     fun sendMessage(message: String, name: String? = null, email: String? = null) {
         // Validate profile only if the profile view is visible
-        if (shouldCollectProfileData && validateMessageWithProfile(message, email) ||
-            !shouldCollectProfileData && validateMessage(message)
+        if (!isSendingMessage &&
+            (
+                shouldCollectProfileData && validateMessageWithProfile(message, email) ||
+                    !shouldCollectProfileData && validateMessage(message)
+                )
         ) {
-            shouldCollectProfileData = false
-            if (hasAutomatedMessage) {
-                messages.findLast { it.automated == true }?.let {
-                    messageManager.sendMessage(it)
-                    hasAutomatedMessage = false
+            isSendingMessage = true
+            executors.state.execute {
+                shouldCollectProfileData = false
+                if (hasAutomatedMessage) {
+                    messages.findLast { it.automated == true }?.let {
+                        messageManager.sendMessage(it)
+                        hasAutomatedMessage = false
+                    }
                 }
-            }
 
-            messageManager.sendMessage(message, draftAttachmentsStream.value.orEmpty())
-            draftAttachmentsEvent.postValue(emptyList())
-            clearMessageEvent.postValue(true)
-            messageManager.updateProfile(name, email)
+                val draftAttachments = draftAttachmentsStream.value?.filter { it.hasLocalFile() }
+                messageManager.sendMessage(message, draftAttachments.orEmpty())
+                draftAttachmentsSubject.postValue(emptyList())
+                clearMessageEvent.postValue(true)
+                messageManager.updateProfile(name, email)
+                isSendingMessage = false
+            }
         } else {
-            Log.d(MESSAGE_CENTER, "Cannot send blank message")
+            Log.d(MESSAGE_CENTER, "Cannot send blank message or message sending")
         }
     }
 
     fun onMessageCenterEvent(event: String, data: Map<String, Any?>?) {
-        context.engage(
-            event = Event.internal(event, interaction = InteractionType.MessageCenter),
-            interactionId = messageCenterModel.interactionId,
-            data = data
-        )
+        executors.state.execute {
+            context.engage(
+                event = Event.internal(event, interaction = InteractionType.MessageCenter),
+                interactionId = messageCenterModel.interactionId,
+                data = data
+            )
+        }
     }
 
     fun onMessageViewStatusChanged(isActive: Boolean) {
@@ -256,7 +264,7 @@ class MessageCenterViewModel : ViewModel() {
 
     fun isProfileRequired(): Boolean = messageCenterModel.profile?.require == true
 
-    fun isProfileConfigured(): Boolean =
+    private fun isProfileConfigured(): Boolean =
         messageCenterModel.profile?.request == true || messageCenterModel.profile?.require == true
 
     fun handleUnreadMessages() {
@@ -305,9 +313,15 @@ class MessageCenterViewModel : ViewModel() {
     )
 
     fun addAttachment(activity: Activity, uri: Uri) {
-        FileUtil.createLocalStoredAttachment(activity, uri.toString(), generateUUID())?.let { file ->
-            val updatedAttachments = draftAttachmentsStream.value.orEmpty().plus(file)
-            draftAttachmentsEvent.value = updatedAttachments
+        val loadingAttachment = Message.Attachment(isLoading = true)
+        var updatedAttachments = draftAttachmentsStream.value.orEmpty().plus(loadingAttachment)
+        draftAttachmentsSubject.value = updatedAttachments
+
+        executors.state.execute {
+            FileUtil.createLocalStoredAttachment(activity, uri.toString(), generateUUID())?.let { file ->
+                updatedAttachments = draftAttachmentsStream.value.orEmpty().minus(loadingAttachment).plus(file)
+                executors.main.execute { draftAttachmentsSubject.value = updatedAttachments }
+            }
         }
         onMessageCenterEvent(
             event = MessageCenterEvents.EVENT_NAME_ATTACH,
@@ -317,33 +331,25 @@ class MessageCenterViewModel : ViewModel() {
 
     fun addAttachments(files: List<Message.Attachment>) {
         val updatedAttachments = draftAttachmentsStream.value.orEmpty().plus(files)
-        draftAttachmentsEvent.value = updatedAttachments
+        draftAttachmentsSubject.value = updatedAttachments
     }
 
     fun removeAttachment(file: Message.Attachment) {
         val updatedAttachments = draftAttachmentsStream.value.orEmpty().minus(file)
-        draftAttachmentsEvent.value = updatedAttachments
-        FileUtil.deleteFile(file.localFilePath)
+        draftAttachmentsSubject.value = updatedAttachments
+        executors.state.execute { FileUtil.deleteFile(file.localFilePath) }
         onMessageCenterEvent(
             event = MessageCenterEvents.EVENT_NAME_ATTACHMENT_DELETE,
             data = null
         )
     }
 
-    fun downloadFile(message: Message, file: Message.Attachment) {
-        file.url?.run {
-            val downloadQueueStartDownload = attachmentDownloadQueueStream.value.orEmpty().plus(file)
-            attachmentDownloadQueueEvent.value = downloadQueueStartDownload
-
-            messageManager.downloadAttachment(context.getAppActivity(), message, file) {
-                val downloadQueueFinishDownload = attachmentDownloadQueueStream.value.orEmpty().minus(file)
-                attachmentDownloadQueueEvent.postValue(downloadQueueFinishDownload)
+    fun downloadFile(message: Message, attachment: Message.Attachment) {
+        attachment.url?.run {
+            executors.state.execute {
+                messageManager.downloadAttachment(context.getAppActivity(), message, attachment)
             }
         }
-    }
-
-    fun isFileDownloading(file: Message.Attachment): Boolean {
-        return attachmentDownloadQueueStream.value?.contains(file) == true
     }
 
     private fun loadAvatar(imageUrl: String) {

@@ -32,6 +32,7 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
     private lateinit var messageText: EditText
     private lateinit var attachmentsLayout: LinearLayout
     private lateinit var attachmentButton: ImageView
+    private lateinit var sendButton: ImageView
     private lateinit var messageListAdapter: MessageListAdapter
     private lateinit var messageList: RecyclerView
     private lateinit var topAppBar: MaterialToolbar
@@ -62,6 +63,8 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
         topAppBar = findViewById(R.id.apptentive_toolbar)
         messageText = findViewById(R.id.apptentive_composer_text)
         attachmentsLayout = findViewById(R.id.apptentive_composer_attachments_layout)
+        attachmentButton = findViewById(R.id.apptentive_attachment_button)
+        sendButton = findViewById(R.id.apptentive_send_message_button)
         messageList = findViewById(R.id.apptentive_message_list)
         composerErrorView = findViewById(R.id.apptentive_composer_error)
         topAppBar.title = viewModel.title
@@ -110,10 +113,6 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
             }
         }
 
-        viewModel.attachmentDownloadQueueStream.observe(this) {
-            messageListAdapter.submitList(viewModel.buildMessageViewDataModel())
-        }
-
         viewModel.errorMessagesStream.observe(this) { errorMessages ->
             messageListAdapter.setEmailError(errorMessages.emailError)
             messageListAdapter.setNameError(errorMessages.nameError)
@@ -127,7 +126,7 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
         }
 
         viewModel.newMessages.observe(this) {
-            updateMessageListAdapter()
+            updateMessageListAdapter(it)
         }
 
         viewModel.avatarBitmapStream.observe(this) {
@@ -135,10 +134,10 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
         }
     }
 
-    private fun updateMessageListAdapter() {
+    private fun updateMessageListAdapter(messageViewData: List<MessageViewData>? = null) {
         messageList.visibility = View.VISIBLE
         // Update adapter
-        messageListAdapter.submitList(viewModel.buildMessageViewDataModel()) {
+        messageListAdapter.submitList(messageViewData ?: viewModel.buildMessageViewDataModel()) {
             scrollRecyclerToFirstUnreadOrLastItem()
             viewModel.handleUnreadMessages()
         }
@@ -151,7 +150,6 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
         topAppBar.setNavigationOnClickListener {
             viewModel.exitMessageCenter()
         }
-        val sendButton = findViewById<ImageView>(R.id.apptentive_send_message_button)
         sendButton.setOnClickListener {
             currentFocus?.clearFocus()
             it.hideSoftKeyboard()
@@ -165,7 +163,6 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
             composerErrorView.visibility = View.GONE
         }
 
-        attachmentButton = findViewById(R.id.apptentive_attachment_button)
         attachmentButton.setOnClickListener {
             selectImage.launch("image/*")
         }
@@ -191,7 +188,7 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
 
     private fun getAttachmentView(file: Message.Attachment): MessageCenterAttachmentThumbnailView {
         return MessageCenterAttachmentThumbnailView(this, null).apply {
-            setAttachmentView(file, false) {
+            setAttachmentView(file) {
                 val bottomSheet = AttachmentBottomSheet(file.originalName, file.localFilePath) {
                     viewModel.removeAttachment(file)
                 }
@@ -218,8 +215,8 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
                 .putString(MESSAGE_CENTER_PROFILE_EMAIL, messageListAdapter.getProfileEmail())
                 .putStringSet(
                     MESSAGE_CENTER_DRAFT_ATTACHMENTS,
-                    viewModel.draftAttachmentsStream.value?.map { file ->
-                        JsonConverter.toJson(file)
+                    viewModel.draftAttachmentsStream.value?.mapNotNull { file ->
+                        if (file.hasLocalFile()) JsonConverter.toJson(file) else null
                     }.orEmpty().toSet()
                 )
                 .apply()

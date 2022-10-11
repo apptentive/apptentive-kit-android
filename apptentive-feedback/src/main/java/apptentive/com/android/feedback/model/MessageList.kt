@@ -63,17 +63,17 @@ data class Message(
 ) {
 
     data class Attachment(
-        var id: String?,
+        var id: String? = null,
 
         // The mime type of the attachment
-        var contentType: String?,
+        var contentType: String? = null,
 
         /*
         * Bytes of saved file
         * Files from server are limited to 1MB (dashboard limitation)
         * Divide by 1024 to get kb. Divide again by 1024 to get mb
         */
-        var size: Long,
+        var size: Long = 0,
 
         /*
         * For outgoing attachment, this field is empty
@@ -85,16 +85,18 @@ data class Message(
         * *Only valid for activity session*
         * The source image uri or source image full path
         */
-        val sourceUriOrPath: String?,
+        val sourceUriOrPath: String? = null,
 
         // The full path to the on-device cache file where the source image is copied to
-        var localFilePath: String?,
+        var localFilePath: String? = null,
 
         // Creation time of original file in seconds to match backend
         var creationTime: TimeInterval = toSeconds(System.currentTimeMillis()),
 
         // Will either be the actual file name (from original file or from remote), or `file.mimeTypeExtension`
-        var originalName: String?
+        var originalName: String? = null,
+
+        var isLoading: Boolean = false
     ) {
         fun hasLocalFile() = !localFilePath.isNullOrEmpty() && File(localFilePath.orEmpty()).exists()
     }

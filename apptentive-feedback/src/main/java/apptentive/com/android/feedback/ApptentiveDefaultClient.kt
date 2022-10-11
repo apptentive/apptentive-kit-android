@@ -113,6 +113,7 @@ internal class ApptentiveDefaultClient(
         addObservers(serialPayloadSender, conversationService)
     }
 
+    @WorkerThread
     private fun getConversationToken(
         conversationService: ConversationService,
         registerCallback: ((result: RegisterResult) -> Unit)?
@@ -215,6 +216,7 @@ internal class ApptentiveDefaultClient(
         }
     }
 
+    @WorkerThread
     private fun createConversationRepository(context: Context): ConversationRepository {
         return DefaultConversationRepository(
             conversationSerializer = createConversationSerializer(),
@@ -470,20 +472,24 @@ internal class ApptentiveDefaultClient(
     //endregion
 
     companion object {
+        @WorkerThread
         private fun getConversationFile(): File {
             val conversationsDir = getConversationDir()
             return File(conversationsDir, "conversation.bin")
         }
 
+        @WorkerThread
         private fun getManifestFile(): File {
             val conversationsDir = getConversationDir()
             return File(conversationsDir, "manifest.bin")
         }
 
+        @WorkerThread
         private fun getConversationDir(): File {
             return FileUtil.getInternalDir("conversations", createIfNecessary = true)
         }
 
+        @WorkerThread
         private fun getMessagesFile(): File {
             val conversationsDir = getConversationDir()
             return File(conversationsDir, "messages.bin")

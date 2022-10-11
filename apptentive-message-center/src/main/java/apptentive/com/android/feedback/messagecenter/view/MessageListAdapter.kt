@@ -102,7 +102,7 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
                     val outboundSenderText = findViewById<MaterialTextView>(R.id.apptentive_message_outbound_sender_text)
 
                     groupTimestamp.visibility = when {
-                        // valid time stamp & a view only with an unresponded automated message
+                        // valid time stamp & a view only with an un-responded automated message
                         message?.groupTimestamp != null && itemCount == 3 &&
                             message.automated == true && message.messageStatus == Message.Status.Sending ->
                             View.INVISIBLE
@@ -113,7 +113,7 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
                     }
                     groupTimestamp.text = message?.groupTimestamp
 
-                    if (message?.inbound == true) { // Message from US to the DASHBOARD
+                    if (message?.inbound == true) { // Message from SDK to the DASHBOARD (blue bubble)
                         inboundLayout.isVisible = true
                         outboundLayout.isVisible = false
                         inboundText.text = message.body
@@ -126,7 +126,7 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
                             else message.messageStatus
                         inboundStatus.text = "$status \u2022 ${convertToDate(message.createdAt)}"
                         inboundError.isVisible = message.messageStatus == Message.Status.Failed
-                    } else { // Message from the DASHBOARD to US
+                    } else { // Message from the DASHBOARD to SDK (gray bubble)
                         inboundLayout.isVisible = false
                         inboundError.isVisible = false
                         outboundLayout.isVisible = true
@@ -176,7 +176,7 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
         message?.attachments?.forEach { file ->
             addView(
                 MessageCenterAttachmentThumbnailView(context, null).apply {
-                    setAttachmentView(file, messageViewModel.isFileDownloading(file)) {
+                    setAttachmentView(file) {
                         if (file.hasLocalFile()) {
                             context.startActivity(
                                 Intent(context, ImagePreviewActivity::class.java).apply {

@@ -236,25 +236,36 @@ class MessageManager(
         } ?: Log.e(MESSAGE_CENTER, "Issue with creating attachment file. Cannot send.")
     }
 
-    fun downloadAttachment(activity: Activity, message: Message, attachment: Message.Attachment, callback: () -> Unit) {
+    fun downloadAttachment(activity: Activity, message: Message, attachment: Message.Attachment) {
+        val loadingAttachment = message.attachments?.onEach { if (it.id == attachment.id) it.isLoading = true }
+        messageRepository.addOrUpdateMessages(listOf(message.copy(attachments = loadingAttachment)))
+        messagesSubject.value = messageRepository.getAllMessages()
+
         messageCenterService.getAttachment(attachment.url.orEmpty()) { result ->
-            if (result is Result.Success) {
+            val updatedMessage = if (result is Result.Success) {
+                Log.d(MESSAGE_CENTER, "Image fetched successfully")
+
                 val localFileLocation = FileUtil.generateCacheFilePathFromNonceOrPrefix(activity, attachment.id ?: generateUUID(), null)
                 FileUtil.writeFileData(localFileLocation, result.data)
-                val updatedMessage = message.copy(
-                    attachments = message.attachments?.also { attachments ->
-                        attachments.find {
-                            it.id == attachment.id
-                        }?.localFilePath = localFileLocation
+                message.copy(
+                    attachments = message.attachments?.onEach {
+                        if (it.id == attachment.id) {
+                            it.localFilePath = localFileLocation
+                            it.isLoading = false
+                        }
                     }
                 )
-                messageRepository.addOrUpdateMessages(listOf(updatedMessage))
-                Log.d(MESSAGE_CENTER, "Image fetched successfully")
-                callback()
             } else {
                 Log.e(MESSAGE_CENTER, "Error retrieving image", (result as Result.Error).error)
-                callback()
+                message.copy(
+                    attachments = message.attachments?.onEach {
+                        if (it.id == attachment.id) it.isLoading = false
+                    }
+                )
             }
+
+            messageRepository.addOrUpdateMessages(listOf(updatedMessage))
+            messagesSubject.value = messageRepository.getAllMessages()
         }
     }
 

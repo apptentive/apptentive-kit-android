@@ -29,7 +29,7 @@ internal class MessageCenterAttachmentThumbnailView(context: Context, attrs: Att
         return Button::class.java.name
     }
 
-    fun setAttachmentView(file: Message.Attachment, isDownloading: Boolean, onClickAttachment: () -> Unit) {
+    fun setAttachmentView(file: Message.Attachment, onClickAttachment: () -> Unit) {
         try {
             when {
                 file.hasLocalFile() -> {
@@ -41,10 +41,6 @@ internal class MessageCenterAttachmentThumbnailView(context: Context, attrs: Att
         } catch (e: Exception) {
             showNonImageThumbnail(file)
         }
-
-        // Will be true if there is no local file and the user has tapped the thumbnail
-        val progressIndicator = findViewById<CircularProgressIndicator>(R.id.apptentive_attachment_thumbnail_download_loading)
-        progressIndicator.isVisible = isDownloading
 
         /**
          * Will do 1 of 3 things.
@@ -73,7 +69,11 @@ internal class MessageCenterAttachmentThumbnailView(context: Context, attrs: Att
     private fun showDownloadableThumbnail(file: Message.Attachment) {
         val attachmentMimeType = findViewById<MaterialTextView>(R.id.apptentive_attachment_mime_text)
         attachmentMimeType.text = MimeTypeMap.getSingleton().getExtensionFromMimeType(file.contentType).orEmpty()
+
         val downloadIcon = findViewById<ImageView>(R.id.apptentive_attachment_thumbnail_download_image)
-        downloadIcon.isVisible = !file.hasLocalFile()
+        downloadIcon.isVisible = !file.url.isNullOrEmpty() && !file.hasLocalFile()
+
+        val progressIndicator = findViewById<CircularProgressIndicator>(R.id.apptentive_attachment_thumbnail_download_loading)
+        progressIndicator.isVisible = file.isLoading && !file.hasLocalFile()
     }
 }

@@ -59,7 +59,7 @@
     <dimen name="apptentive_message_composer_attachments_margin_end">32dp</dimen>
     <dimen name="apptentive_message_attachment_margin">2dp</dimen>
     <dimen name="apptentive_message_attachment_type_text_size">9dp</dimen>
-    <dimen name="apptentive_message_attachment_type_text_bottom_margin">12dp</dimen>
+    <dimen name="apptentive_message_attachment_type_text_bottom_margin">8dp</dimen>
     <dimen name="apptentive_message_attachment_bottom_sheet_min_height">64dp</dimen>
     <dimen name="apptentive_message_attachment_bottom_sheet_text_padding_start">64dp</dimen>
     <dimen name="apptentive_message_attachment_bottom_sheet_text_padding_end">48dp</dimen>
