@@ -391,27 +391,6 @@ object Apptentive {
     }
 
     /**
-     * Add a listener to be notified when the number of unread messages in the Message Center changes.
-     *
-     * This should be set after Apptentive is started. If this is set before Apptentive finishes
-     * initializing **for the first time** then it may not work.
-     *
-     * @param listener An UnreadMessagesListener that you instantiate.
-     */
-    @JvmStatic
-    fun addUnreadMessagesListener(listener: UnreadMessagesListener) {
-        val callbackWrapper: (Int) -> Unit = {
-            mainExecutor.execute {
-                listener.onUnreadMessageCountChanged(it)
-            }
-        }
-
-        stateExecutor.execute {
-            client.addUnreadMessagesListener(callbackWrapper)
-        }
-    }
-
-    /**
      * Returns the number of unread messages in the Message Center.
      *
      * This should be called after Apptentive is started. If this is called before Apptentive
