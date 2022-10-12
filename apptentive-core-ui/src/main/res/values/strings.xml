@@ -3,9 +3,9 @@
     <string name="apptentive_close">Close</string>
     <string name="apptentive_back">Back</string>
     <string name="apptentive_profile">Profile</string>
-    <string name="apptentive_message_validation_error">Message field cannot be empty.</string>
-    <string name="apptentive_email_validation_error">Email is either missing or an invalid format.</string>
-    <string name="apptentive_name_validation_error">Name cannot be empty.</string>
+    <string name="apptentive_message_validation_error">Error - Message field cannot be empty.</string>
+    <string name="apptentive_email_validation_error">Error - Email is either missing or an invalid format.</string>
+    <string name="apptentive_name_validation_error">Error - Name cannot be empty.</string>
     <string name="apptentive_profile_confirmation_dialog_title">Close Profile?</string>
     <string name="apptentive_profile_confirmation_dialog_message">The changes to your profile will not be saved.</string>
     <string name="apptentive_profile_back_to_profile">Stay</string>
