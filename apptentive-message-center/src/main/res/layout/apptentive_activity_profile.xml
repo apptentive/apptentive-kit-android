@@ -66,17 +66,6 @@
             tools:text="Submit"
             tools:textColor="@color/apptentive_color_on_primary" />
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/apptentive_profile_save_error_message"
-            style="?apptentiveProfileSubmitErrorStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/apptentive_profile_save_button"
-            tools:text="Error Text"
-            tools:textColor="@color/apptentive_color_error" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

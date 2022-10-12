@@ -275,7 +275,6 @@
         <item name="apptentiveMessageCenterAttachmentThumbnailWidth">@dimen/apptentive_message_attachment_width_height</item>
         <item name="apptentiveMessageCenterSenderNameText">@style/Apptentive.Widget.MessageCenter.Text.Sender.Outbound</item>
         <item name="apptentiveProfileSubmitButtonStyle">@style/Apptentive.Widget.MessageCenter.Button.Submit</item>
-        <item name="apptentiveProfileSubmitErrorStyle">@style/Apptentive.Widget.MessageCenter.Button.Submit.Error</item>
         <item name="apptentiveProfileViewStyle">@style/Apptentive.Widget.MessageCenter.ProfileView</item>
         <item name="apptentiveMessageCenterMessageListLayoutStyle">@style/Apptentive.Widget.MessageCenter.MessageList</item>
 
@@ -839,6 +838,7 @@
     <style name="Apptentive.Widget.MessageCenter.Text.Inbound.Error">
         <item name="android:textSize">?apptentiveTextSizeSmall</item>
         <item name="android:textColor">?apptentiveTextColorError</item>
+        <item name="android:accessibilityLiveRegion">polite</item>
         <item name="android:paddingTop">@dimen/apptentive_message_bubble_error_padding_top</item>
         <item name="android:text">@string/apptentive_failed_to_send</item>
     </style>
@@ -897,18 +897,12 @@
         <item name="android:layout_marginBottom">@dimen/apptentive_survey_footers_vertical_padding_margin</item>
     </style>
 
-    <style name="Apptentive.Widget.MessageCenter.Button.Submit.Error">
-        <item name="android:typeface">?apptentiveMessageCenterTypefaceBody1</item>
-        <item name="android:textSize">?attr/apptentiveTextSizeMessageCenterBody1</item>
-        <item name="android:fontFamily">?apptentiveMessageCenterFontFamilyBody1</item>
-        <item name="android:textAlignment">center</item>
-    </style>
-
     <style name="Apptentive.Widget.MessageCenter.Composer.EditText.Error" parent="">
         <item name="android:textColor">?apptentiveMessageCenterColorError</item>
         <item name="android:letterSpacing">@dimen/apptentive_message_error_text_spacing</item>
         <item name="android:paddingStart">@dimen/apptentive_message_error_padding_start</item>
         <item name="android:textAlignment">textStart</item>
+        <item name="android:accessibilityLiveRegion">polite</item>
         <item name="android:alpha">?apptentiveHeaderAlpha</item>
         <item name="android:fontFamily">?apptentiveMessageCenterFontFamilyBody1</item>
         <item name="android:typeface">?apptentiveMessageCenterTypefaceBody1</item>

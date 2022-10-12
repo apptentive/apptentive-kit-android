@@ -118,7 +118,6 @@
         <attr name="apptentiveMessageCenterGroupTimeStamp" format="reference"/>
         <attr name="apptentiveMessageCenterOutboundBubble" format="reference"/>
         <attr name="apptentiveProfileSubmitButtonStyle" format="reference"/>
-        <attr name="apptentiveProfileSubmitErrorStyle" format="reference"/>
         <attr name="apptentiveProfileViewStyle" format="reference"/>
         <attr name="apptentiveMessageCenterInboundBubble" format="reference"/>
         <attr name="apptentiveMessageCenterInboundBubbleText" format="reference"/>
