@@ -69,6 +69,8 @@ class MessageManager(
     private var configuration: Configuration = Configuration()
     private lateinit var senderProfile: Person
 
+    private var fetchingInProgress = false
+
     override fun onAppBackground() {
         Log.d(MESSAGE_CENTER, "App is in the background, stop polling")
         stopPolling()
@@ -97,7 +99,8 @@ class MessageManager(
     }
 
     fun fetchMessages() {
-        if (!conversationId.isNullOrEmpty() && !conversationToken.isNullOrEmpty()) {
+        if (!fetchingInProgress && !conversationId.isNullOrEmpty() && !conversationToken.isNullOrEmpty()) {
+            fetchingInProgress = true
             messageCenterService.getMessages(conversationToken, conversationId, lastDownloadedMessageID) {
                 // Store the message list
                 if (it is Result.Success) {
@@ -111,6 +114,7 @@ class MessageManager(
                 } else {
                     Log.d(MESSAGE_CENTER, "Cannot fetch messages, conversationId/conversationToken is null or empty!")
                 }
+                fetchingInProgress = false
             }
         }
     }
@@ -136,6 +140,7 @@ class MessageManager(
             fetchMessages()
         } else {
             pollingScheduler.onFetchFinish()
+            Log.d(MESSAGE_CENTER, "All messages fetched")
 
             // Update unread messages callback
             val currentUnreadCount = getUnreadMessageCount()
@@ -271,16 +276,14 @@ class MessageManager(
 
     // Listens to MessageCenterActivity's active status
     fun onMessageCenterLaunchStatusChanged(isActive: Boolean) {
-        if (isActive) {
+        if (isActive && hasSentMessage) {
             messagesSubject.value = messageRepository.getAllMessages()
-            // Fetch messages as soon as message center comes to foreground
-            fetchMessages()
+
+            // Resets polling with the right polling interval and fetches messages
+            startPolling(true)
         }
         isMessageCenterInForeground = isActive
         Log.d(MESSAGE_CENTER, "Message center foreground status $isActive")
-        // Resets polling with the right polling interval
-        if (hasSentMessage)
-            startPolling(true)
     }
 
     // Fetches all the messages from message store

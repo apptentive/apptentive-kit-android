@@ -122,7 +122,7 @@ class MessageCenterViewModel : ViewModel() {
                 )
             )
         }
-        if (!avatarUrl.isNullOrEmpty()) loadAvatar(avatarUrl)
+        getAvatar()
         if (messageSLA.isNotEmpty()) onMessageCenterEvent(
             event = MessageCenterEvents.EVENT_NAME_STATUS,
             data = null
@@ -184,11 +184,9 @@ class MessageCenterViewModel : ViewModel() {
     }
 
     private fun getAvatar(): Bitmap? {
-        if (!isAvatarLoading && avatarBitmapStream.value == null) {
+        if (!isAvatarLoading && !avatarUrl.isNullOrEmpty() && avatarBitmapStream.value == null) {
             Log.d(MESSAGE_CENTER, "Fetch message center avatar image")
-            isAvatarLoading = true
-            avatarUrl?.let { loadAvatar(avatarUrl) }
-            isAvatarLoading = false
+            loadAvatar(avatarUrl)
         }
         return avatarBitmapStream.value
     }
@@ -353,9 +351,11 @@ class MessageCenterViewModel : ViewModel() {
     }
 
     private fun loadAvatar(imageUrl: String) {
+        isAvatarLoading = true
         executors.state.execute {
             val avatarBitmap = ImageUtil.loadAvatar(imageUrl)
             avatarBitmap?.let { avatarBitmapEvent.postValue(it) }
+            isAvatarLoading = false
         }
     }
 }
