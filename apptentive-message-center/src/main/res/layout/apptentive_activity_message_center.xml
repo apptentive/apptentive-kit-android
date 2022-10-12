@@ -13,6 +13,7 @@
         android:id="@+id/apptentive_appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:touchscreenBlocksFocus="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -20,6 +21,7 @@
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/apptentive_toolbar"
             style="?apptentiveMessageCenterToolbarStyle"
+            android:touchscreenBlocksFocus="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 

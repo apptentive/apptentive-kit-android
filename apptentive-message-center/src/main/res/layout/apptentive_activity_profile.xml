@@ -12,15 +12,17 @@
         android:id="@+id/apptentive_profile_appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:touchscreenBlocksFocus="false"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/apptentive_profile_toolbar"
+            style="?apptentiveMessageCenterProfileToolbarStyle"
+            android:touchscreenBlocksFocus="false"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="?apptentiveMessageCenterProfileToolbarStyle">
+            android:layout_height="wrap_content">
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/apptentive_profile_title"
