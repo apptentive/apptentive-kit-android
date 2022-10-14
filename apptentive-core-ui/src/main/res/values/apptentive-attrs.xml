@@ -188,10 +188,10 @@
         <attr name="apptentiveMessageCenterFontFamilyBody1" format="reference"/>
 
         <!-- Text Size -->
-        <attr name="apptentiveTextSizeMessageCenterGreetingTitle" format="dimension|reference"/>
-        <attr name="apptentiveTextSizeMessageCenterGreetingBody" format="dimension|reference"/>
-        <attr name="apptentiveTextSizeMessageCenterBody1" format="dimension|reference"/>
-        <attr name="apptentiveTextSizeMessageCenterSLABody" format="dimension|reference"/>
+        <attr name="apptentiveMessageCenterTextSizeGreetingTitle" format="dimension|reference"/>
+        <attr name="apptentiveMessageCenterTextSizeGreetingBody" format="dimension|reference"/>
+        <attr name="apptentiveMessageCenterTextSizeBody1" format="dimension|reference"/>
+        <attr name="apptentiveMessageCenterTextSizeSLABody" format="dimension|reference"/>
 
         <!-- Message Center End -->
 

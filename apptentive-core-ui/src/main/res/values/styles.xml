@@ -120,10 +120,10 @@
         <item name="apptentiveTextSizeSurveyTermsAndConditions">?apptentiveTextSizeDefault</item>
 
         <!-- Message Center -->
-        <item name="apptentiveTextSizeMessageCenterGreetingTitle">@dimen/apptentive_text_size_message_center_title</item>
-        <item name="apptentiveTextSizeMessageCenterGreetingBody">?apptentiveTextSizeDefault</item>
-        <item name="apptentiveTextSizeMessageCenterBody1">?apptentiveTextSizeDefault</item>
-        <item name="apptentiveTextSizeMessageCenterSLABody">?apptentiveTextSizeDefault</item>
+        <item name="apptentiveMessageCenterTextSizeGreetingTitle">@dimen/apptentive_text_size_message_center_title</item>
+        <item name="apptentiveMessageCenterTextSizeGreetingBody">?apptentiveTextSizeDefault</item>
+        <item name="apptentiveMessageCenterTextSizeBody1">?apptentiveTextSizeDefault</item>
+        <item name="apptentiveMessageCenterTextSizeSLABody">?apptentiveTextSizeDefault</item>
         <item name="apptentiveTextSizeSmall">@dimen/apptentive_text_size_small</item>
 
         <!-- Text Size End -->
@@ -684,7 +684,7 @@
         <item name="android:textColor">?attr/apptentiveMessageCenterTextColorEditBody1</item>
         <item name="android:fontFamily">?apptentiveMessageCenterFontFamilyBody1</item>
         <item name="android:typeface">?apptentiveMessageCenterTypefaceBody1</item>
-        <item name="android:textSize">?attr/apptentiveTextSizeMessageCenterBody1</item>
+        <item name="android:textSize">?apptentiveMessageCenterTextSizeBody1</item>
         <item name="android:textColorHint">@color/apptentive_mtrl_text_box_text_color</item>
         <item name="hintTextColor">@color/apptentive_mtrl_text_box_text_color</item>
         <item name="android:paddingStart">@dimen/apptentive_message_composer_padding_start</item>
@@ -728,7 +728,7 @@
         <item name="android:textColor">?attr/apptentiveMessageCenterTextColorInbound</item>
         <item name="android:fontFamily">?apptentiveMessageCenterFontFamilyBody1</item>
         <item name="android:typeface">?apptentiveMessageCenterTypefaceBody1</item>
-        <item name="android:textSize">?attr/apptentiveTextSizeMessageCenterBody1</item>
+        <item name="android:textSize">?apptentiveMessageCenterTextSizeBody1</item>
         <item name="android:paddingTop">@dimen/apptentive_message_bubble_text_padding_top</item>
     </style>
 
@@ -736,7 +736,7 @@
 
     <style name ="Apptentive.Widget.MessageCenter.Text.Greeting.Title">
         <item name="android:textColor">?apptentiveMessageCenterTextColorGreetingTitle</item>
-        <item name="android:textSize">?apptentiveTextSizeMessageCenterGreetingTitle</item>
+        <item name="android:textSize">?apptentiveMessageCenterTextSizeGreetingTitle</item>
         <item name="android:typeface">?apptentiveMessageCenterTypefaceGreetingTitle</item>
         <item name="android:textAppearance">?textAppearanceHeadline6</item>
         <item name="android:alpha">?apptentiveHeaderAlpha</item>
@@ -748,7 +748,7 @@
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.Text.Greeting.Body">
-        <item name="android:textSize">?apptentiveTextSizeMessageCenterGreetingBody</item>
+        <item name="android:textSize">?apptentiveMessageCenterTextSizeGreetingBody</item>
         <item name="android:textColor">?attr/apptentiveMessageCenterTextColorGreetingBody</item>
         <item name="android:fontFamily">?apptentiveMessageCenterFontFamilyBody1</item>
         <item name="android:typeface">?attr/apptentiveMessageCenterTypefaceGreetingBody</item>
@@ -761,7 +761,7 @@
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.Text.SLA" parent="Widget.MaterialComponents.TextView">
-        <item name="android:textSize">?apptentiveTextSizeMessageCenterSLABody</item>
+        <item name="android:textSize">?apptentiveMessageCenterTextSizeSLABody</item>
         <item name="android:textColor">?attr/apptentiveMessageCenterTextColorSLA</item>
         <item name="android:fontFamily">?apptentiveMessageCenterFontFamilyBody1</item>
         <item name="android:textAppearance">?textAppearanceBodySmall</item>
@@ -874,7 +874,7 @@
         <item name="android:textColor">?attr/apptentiveMessageCenterTextColorEditBody1</item>
         <item name="android:fontFamily">?apptentiveMessageCenterFontFamilyBody1</item>
         <item name="android:typeface">?apptentiveMessageCenterTypefaceBody1</item>
-        <item name="android:textSize">?attr/apptentiveTextSizeMessageCenterBody1</item>
+        <item name="android:textSize">?apptentiveMessageCenterTextSizeBody1</item>
         <item name="android:textCursorDrawable">@drawable/apptentive_mtrl_text_cursor</item>
         <item name="android:minHeight">@dimen/apptentive_survey_edit_text_min_height</item>
         <item name="android:singleLine">true</item>
