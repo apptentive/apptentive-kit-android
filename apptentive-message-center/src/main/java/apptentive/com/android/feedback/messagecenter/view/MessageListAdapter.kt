@@ -143,11 +143,11 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
 
             is MessageHeaderViewHolder -> {
                 val greetingData = getItem(position).greetingData
-                holder.itemView.findViewById<TextView>(R.id.apptentive_message_center_greeting).text =
+                holder.itemView.findViewById<TextView>(R.id.apptentive_message_center_greeting_title).text =
                     greetingData?.greetingTitle
                 holder.itemView.findViewById<TextView>(R.id.apptentive_message_center_greeting_body).text =
                     greetingData?.greetingBody
-                holder.itemView.findViewById<ImageView>(R.id.apptentive_message_center_greeting_header).apply {
+                holder.itemView.findViewById<ImageView>(R.id.apptentive_message_center_greeting_image).apply {
                     greetingData?.avatarBitmap?.let { avatar ->
                         this.setImageBitmap(avatar)
                     }

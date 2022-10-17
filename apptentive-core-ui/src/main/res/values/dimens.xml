@@ -65,7 +65,7 @@
     <dimen name="apptentive_message_attachment_bottom_sheet_text_padding_end">48dp</dimen>
     <dimen name="apptentive_message_attachment_bottom_sheet_text_size">16sp</dimen>
     <dimen name="apptentive_separator_margin_bottom">24dp</dimen>
-    <dimen name="apptentive_message_header_margin">16dp</dimen>
+    <dimen name="apptentive_message_header_image_margin">16dp</dimen>
     <dimen name="apptentive_message_header_image_min_width">60dp</dimen>
     <dimen name="apptentive_message_header_image_min_height">60dp</dimen>
     <dimen name="apptentive_message_header_image_max_width">60dp</dimen>

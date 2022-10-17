@@ -110,8 +110,8 @@
         <attr name="apptentiveMessageCenterSendImageStyle" format="reference"/>
         <attr name="apptentiveMessageCenterComposerViewStyle" format="reference"/>
         <attr name="apptentiveViewSeparatorStyle" format="reference"/>
-        <attr name="apptentiveMessageCenterGreetingHeaderStyle" format="reference"/>
-        <attr name="apptentiveMessageCenterGreetingStyle" format="reference" />
+        <attr name="apptentiveMessageCenterGreetingImageStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterGreetingTitleTextStyle" format="reference" />
         <attr name="apptentiveMessageCenterGreetingBodyTextStyle" format="reference"/>
         <attr name="apptentiveMessageCenterSLAText" format="reference"/>
         <attr name="apptentiveMessageCenterBubbleView" format="reference"/>
