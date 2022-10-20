@@ -276,14 +276,16 @@ class MessageManager(
 
     // Listens to MessageCenterActivity's active status
     fun onMessageCenterLaunchStatusChanged(isActive: Boolean) {
-        if (isActive && hasSentMessage) {
+        if (isActive) {
             messagesSubject.value = messageRepository.getAllMessages()
-
-            // Resets polling with the right polling interval and fetches messages
-            startPolling(true)
+            // Fetch messages as soon as message center comes to foreground. Needed for migration
+            fetchMessages()
         }
         isMessageCenterInForeground = isActive
         Log.d(MESSAGE_CENTER, "Message center foreground status $isActive")
+        // Resets polling with the right polling interval
+        if (hasSentMessage)
+            startPolling(true)
     }
 
     // Fetches all the messages from message store
