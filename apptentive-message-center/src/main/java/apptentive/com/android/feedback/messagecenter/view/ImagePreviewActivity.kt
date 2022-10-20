@@ -11,6 +11,7 @@ import apptentive.com.android.feedback.messagecenter.view.custom.AttachmentBotto
 import apptentive.com.android.feedback.messagecenter.view.custom.SimpleTouchImageView
 import apptentive.com.android.ui.ApptentiveActivity
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.textview.MaterialTextView
 import java.io.File
 
 internal class ImagePreviewActivity : ApptentiveActivity(), ApptentiveActivityInfo {
@@ -20,8 +21,11 @@ internal class ImagePreviewActivity : ApptentiveActivity(), ApptentiveActivityIn
         setContentView(R.layout.apptentive_activity_attachment_preview)
 
         val topAppBar: MaterialToolbar = findViewById(R.id.apptentive_attachment_preview_toolbar)
+        val topAppBarTitle: MaterialTextView = findViewById(R.id.apptentive_attachment_preview_title)
         val fileName = intent.getStringExtra(APPTENTIVE_ATTACHMENT_BOTTOMSHEET_FILENAME).orEmpty()
-        topAppBar.title = fileName
+        title = fileName
+        topAppBar.title = ""
+        topAppBarTitle.text = fileName
         setSupportActionBar(topAppBar)
         topAppBar.setNavigationOnClickListener { onBackPressed() }
 

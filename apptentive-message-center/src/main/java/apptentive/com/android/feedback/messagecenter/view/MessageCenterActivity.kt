@@ -25,6 +25,7 @@ import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.ui.hideSoftKeyboard
 import apptentive.com.android.ui.startViewModelActivity
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.textview.MaterialTextView
 import kotlin.math.roundToInt
 
 internal class MessageCenterActivity : BaseMessageCenterActivity() {
@@ -36,6 +37,7 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
     private lateinit var messageListAdapter: MessageListAdapter
     private lateinit var messageList: RecyclerView
     private lateinit var topAppBar: MaterialToolbar
+    private lateinit var topAppBarTitle: MaterialTextView
     private lateinit var composerErrorView: TextView
     private var actionMenu: Menu? = null
     private var hasScrolled = false
@@ -61,13 +63,16 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
 
         rootLayout = findViewById(R.id.apptentive_root)
         topAppBar = findViewById(R.id.apptentive_toolbar)
+        topAppBarTitle = findViewById(R.id.apptentive_message_center_title)
         messageText = findViewById(R.id.apptentive_composer_text)
         attachmentsLayout = findViewById(R.id.apptentive_composer_attachments_layout)
         attachmentButton = findViewById(R.id.apptentive_attachment_button)
         sendButton = findViewById(R.id.apptentive_send_message_button)
         messageList = findViewById(R.id.apptentive_message_list)
         composerErrorView = findViewById(R.id.apptentive_composer_error)
-        topAppBar.title = viewModel.title
+        title = viewModel.title
+        topAppBar.title = ""
+        topAppBarTitle.text = viewModel.title
         messageText.hint = viewModel.composerHint
         messageListAdapter = MessageListAdapter(viewModel)
         messageList.adapter = messageListAdapter

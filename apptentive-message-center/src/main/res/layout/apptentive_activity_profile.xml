@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="?apptentiveProfileLayoutStyle"
+    style="?apptentiveMessageCenterProfileLayoutStyle"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".view.ProfileActivity">
@@ -13,30 +12,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:touchscreenBlocksFocus="false"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/apptentive_profile_toolbar"
             style="?apptentiveMessageCenterProfileToolbarStyle"
-            android:touchscreenBlocksFocus="false"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:touchscreenBlocksFocus="false">
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/apptentive_profile_title"
+                style="?apptentiveMessageCenterToolbarTitleStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:targetApi="p"
                 tools:text="Message Center" />
 
         </com.google.android.material.appbar.MaterialToolbar>
-
-        </com.google.android.material.appbar.AppBarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        style="?apptentiveProfileViewStyle"
+        style="?apptentiveMessageCenterProfileViewStyle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -50,17 +49,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/apptentive_profile_save_button"
-            style="?apptentiveProfileSubmitButtonStyle"
+            style="?apptentiveMessageCenterProfileSubmitButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/apptentive_edit_profile"
             tools:backgroundTint="@color/apptentive_color_primary"
             tools:text="Submit"

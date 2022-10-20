@@ -718,7 +718,6 @@
         <item name="navigationIcon">@drawable/apptentive_ic_close</item>
         <item name="navigationContentDescription">@string/apptentive_close</item>
         <item name="android:background">@android:color/black</item>
-        <item name="titleTextAppearance">@style/Apptentive.Widget.MessageCenter.Toolbar.Title</item>
     </style>
 
     <style name="Custom.MessageCenter.Profile.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
@@ -748,7 +747,7 @@
         <item name="android:textColor">@android:color/holo_blue_bright</item>
         <item name="android:fontFamily">?apptentiveMessageCenterFontFamilyBody1</item>
         <item name="android:typeface">?apptentiveMessageCenterTypefaceBody1</item>
-        <item name="android:textSize">?attr/apptentiveTextSizeMessageCenterBody1</item>
+        <item name="android:textSize">?attr/apptentiveMessageCenterTextSizeBody1</item>
         <item name="android:textColorHint">@color/apptentive_mtrl_text_box_text_color</item>
         <item name="hintTextColor">@color/apptentive_mtrl_text_box_text_color</item>
         <item name="android:textCursorDrawable">@drawable/apptentive_mtrl_text_cursor</item>
@@ -780,7 +779,7 @@
 
     <style name="Custom.MessageCenter.Greeting.Body" parent="Widget.MaterialComponents.TextView">
         <item name="android:textColorLink">@android:color/holo_blue_dark</item>
-        <item name="android:textSize">?apptentiveTextSizeMessageCenterGreetingBody</item>
+        <item name="android:textSize">?apptentiveMessageCenterTextSizeGreetingBody</item>
         <item name="android:textColor">@android:color/holo_green_dark</item>
         <item name="android:fontFamily">?apptentiveMessageCenterFontFamilyBody1</item>
         <item name="android:typeface">?attr/apptentiveMessageCenterTypefaceGreetingBody</item>
@@ -868,7 +867,7 @@
         <item name="android:textColor">@android:color/holo_purple</item>
         <item name="android:fontFamily">?apptentiveMessageCenterFontFamilyBody1</item>
         <item name="android:typeface">?apptentiveMessageCenterTypefaceBody1</item>
-        <item name="android:textSize">?attr/apptentiveTextSizeMessageCenterBody1</item>
+        <item name="android:textSize">?attr/apptentiveMessageCenterTextSizeBody1</item>
         <item name="android:textCursorDrawable">@drawable/apptentive_mtrl_text_cursor</item>
         <item name="android:minHeight">@dimen/apptentive_survey_edit_text_min_height</item>
         <item name="android:singleLine">true</item>
@@ -951,7 +950,7 @@
 
     <style name="Custom.MessageCenter.Button.Submit.Error" parent="">
         <item name="android:typeface">?apptentiveMessageCenterTypefaceBody1</item>
-        <item name="android:textSize">?attr/apptentiveTextSizeMessageCenterBody1</item>
+        <item name="android:textSize">?attr/apptentiveMessageCenterTextSizeBody1</item>
         <item name="android:textColor">@android:color/holo_purple</item>
         <item name="android:fontFamily">?apptentiveMessageCenterFontFamilyBody1</item>
         <item name="android:textAlignment">center</item>
