@@ -7,8 +7,8 @@
 
     <!-- Greeting group -->
     <ImageView
-        android:id="@+id/apptentive_message_center_greeting_header"
-        style="?apptentiveMessageCenterGreetingHeaderStyle"
+        android:id="@+id/apptentive_message_center_greeting_image"
+        style="?apptentiveMessageCenterGreetingImageStyle"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -17,13 +17,13 @@
         tools:src="@drawable/apptentive_ic_placeholder_message_homescreen"/>
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/apptentive_message_center_greeting"
-        style="?apptentiveMessageCenterGreetingStyle"
+        android:id="@+id/apptentive_message_center_greeting_title"
+        style="?apptentiveMessageCenterGreetingTitleTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/apptentive_message_center_greeting_header"
+        app:layout_constraintTop_toBottomOf="@id/apptentive_message_center_greeting_image"
         tools:text="Hello!"/>
 
     <com.google.android.material.textview.MaterialTextView
@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/apptentive_message_center_greeting"
+        app:layout_constraintTop_toBottomOf="@id/apptentive_message_center_greeting_title"
         tools:text="We'd love to hear from you. Please provide detailed feedback or information about your issue."/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
