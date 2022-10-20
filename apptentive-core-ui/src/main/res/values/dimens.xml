@@ -100,5 +100,6 @@
     <dimen name="apptentive_message_attachment_layout_margin_bottom">24ddp</dimen>
     <dimen name="apptentive_message_separator_alpha">0.5</dimen>
     <dimen name="apptentive_message_group_timestamp">0.8</dimen>
+    <dimen name="apptentive_message_bubble_width_percent">0.75</dimen>
     <dimen name="apptentive_profile_view_margin">16dp</dimen>
 </resources>

@@ -21,12 +21,13 @@
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/apptentive_toolbar"
             style="?apptentiveMessageCenterToolbarStyle"
-            android:touchscreenBlocksFocus="false"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:touchscreenBlocksFocus="false">
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/apptentive_message_center_title"
+                style="?apptentiveMessageCenterToolbarTitleStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:targetApi="p"
@@ -59,7 +60,7 @@
 
         <View
             android:id="@+id/apptentive_separator"
-            style="?apptentiveViewSeparatorStyle"
+            style="?apptentiveMessageCenterViewSeparatorStyle"
             android:layout_width="match_parent"
             android:layout_height="@dimen/apptentive_separator_height"
             app:layout_constraintBottom_toTopOf="@id/apptentive_composer_text"

@@ -7,10 +7,12 @@ import apptentive.com.android.feedback.messagecenter.view.custom.ProfileView
 import apptentive.com.android.ui.ApptentiveGenericDialog
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.textview.MaterialTextView
 
 internal class ProfileActivity : BaseProfileActivity() {
 
     private lateinit var topAppBar: MaterialToolbar
+    private lateinit var topAppBarTitle: MaterialTextView
     private lateinit var profileView: ProfileView
     private lateinit var saveButton: MaterialButton
 
@@ -19,10 +21,11 @@ internal class ProfileActivity : BaseProfileActivity() {
         setContentView(R.layout.apptentive_activity_profile)
 
         topAppBar = findViewById(R.id.apptentive_profile_toolbar)
+        topAppBarTitle = findViewById(R.id.apptentive_profile_title)
         profileView = findViewById(R.id.apptentive_edit_profile)
         saveButton = findViewById(R.id.apptentive_profile_save_button)
 
-        topAppBar.title = viewModel.profileTitle
+        topAppBarTitle.text = viewModel.profileTitle
         profileView.setEmailHint(viewModel.emailHint)
         profileView.setNameHint(viewModel.nameHint)
         saveButton.text = viewModel.profileSubmit

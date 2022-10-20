@@ -96,12 +96,14 @@
 
         <!-- Layouts -->
         <attr name="apptentiveMessageCenterLayoutStyle" format="reference"/>
-        <attr name="apptentiveAttachmentPreviewLayoutStyle" format="reference"/>
-        <attr name="apptentiveProfileLayoutStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterAttachmentPreviewLayoutStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterProfileLayoutStyle" format="reference"/>
 
         <!-- App Bars -->
         <attr name="apptentiveMessageCenterToolbarStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterToolbarTitleStyle" format="reference"/>
         <attr name="apptentiveMessageCenterProfileToolbarStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterProfileToolbarTitleStyle" format="reference"/>
         <attr name="apptentiveActionButtonStyle" format="reference" />
 
         <!-- Widgets -->
@@ -109,7 +111,7 @@
         <attr name="apptentiveMessageCenterComposerStyle" format="reference"/>
         <attr name="apptentiveMessageCenterSendImageStyle" format="reference"/>
         <attr name="apptentiveMessageCenterComposerViewStyle" format="reference"/>
-        <attr name="apptentiveViewSeparatorStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterViewSeparatorStyle" format="reference"/>
         <attr name="apptentiveMessageCenterGreetingImageStyle" format="reference"/>
         <attr name="apptentiveMessageCenterGreetingTitleTextStyle" format="reference" />
         <attr name="apptentiveMessageCenterGreetingBodyTextStyle" format="reference"/>
@@ -117,8 +119,8 @@
         <attr name="apptentiveMessageCenterBubbleView" format="reference"/>
         <attr name="apptentiveMessageCenterGroupTimeStamp" format="reference"/>
         <attr name="apptentiveMessageCenterOutboundBubble" format="reference"/>
-        <attr name="apptentiveProfileSubmitButtonStyle" format="reference"/>
-        <attr name="apptentiveProfileViewStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterProfileSubmitButtonStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterProfileViewStyle" format="reference"/>
         <attr name="apptentiveMessageCenterInboundBubble" format="reference"/>
         <attr name="apptentiveMessageCenterInboundBubbleText" format="reference"/>
         <attr name="apptentiveMessageCenterInboundBubbleStatusText" format="reference"/>
@@ -130,7 +132,7 @@
         <attr name="apptentiveMessageCenterErrorStyle" format="reference"/>
         <attr name="apptentiveMessageCenterComposerAttachmentsLayoutStyle" format="reference"/>
         <attr name="apptentiveMessageCenterBubbleAttachmentsLayoutStyle" format="reference"/>
-        <attr name="apptentiveMessageCenterAttachmentLayoutStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterAttachmentItemLayoutStyle" format="reference"/>
         <attr name="apptentiveMessageCenterAttachmentThumbnailStyle" format="reference"/>
         <attr name="apptentiveMessageCenterAttachmentThumbnailTypeTextStyle" format="reference"/>
         <attr name="apptentiveMessageCenterAttachmentThumbnailTypeIconStyle" format="reference"/>
@@ -142,6 +144,7 @@
         <attr name="apptentiveMessageCenterMessageListLayoutStyle" format="reference"/>
 
         <!-- Text Color/Fill color -->
+        <attr name="apptentiveMessageCenterTextColorToolbarTitle" format="color|reference"/>
         <attr name="apptentiveMessageCenterTextColorGreetingTitle" format="color|reference"/>
         <attr name="apptentiveMessageCenterTextColorGreetingBody" format="color|reference"/>
         <attr name="apptentiveMessageCenterTextColorEditBody1" format="color|reference"/>
