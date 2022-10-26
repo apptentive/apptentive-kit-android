@@ -8,7 +8,7 @@ import apptentive.com.android.util.InternalUseOnly
 class ViewModelFactory(
     private val factory: () -> ViewModel,
 ) : ViewModelProvider.Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val viewModel = factory()
         @Suppress("UNCHECKED_CAST")
         return viewModel as T

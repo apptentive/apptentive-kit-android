@@ -11,6 +11,7 @@ import apptentive.com.android.core.toSeconds
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.backend.MessageCenterService
 import apptentive.com.android.feedback.dependencyprovider.MessageCenterModelProvider
+import apptentive.com.android.feedback.dependencyprovider.createMessageCenterViewModel
 import apptentive.com.android.feedback.engagement.EngageArgs
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
@@ -198,7 +199,7 @@ class MessageCenterViewModelTest : TestCase() {
 
     @Test
     fun testBaseInitNoData() {
-        val viewModel = MessageCenterViewModel()
+        val viewModel = createMessageCenterViewModel()
 
         assertEquals(
             MessageCenterViewModel.ValidationDataModel(),
@@ -212,7 +213,7 @@ class MessageCenterViewModelTest : TestCase() {
     @Test
     fun testInitWithData() {
         DependencyProvider.register(MessageCenterModelProvider(messageCenterInteractionWithData))
-        val viewModel = MessageCenterViewModel()
+        val viewModel = createMessageCenterViewModel()
 
         val vmAutomatedMessage = viewModel.automatedMessageSubject.value.firstOrNull()
         val vmAutomatedMessageCreated =
@@ -240,7 +241,7 @@ class MessageCenterViewModelTest : TestCase() {
 
     @Test
     fun testNewMessages() {
-        val viewModel = MessageCenterViewModel()
+        val viewModel = createMessageCenterViewModel()
         val manager = DependencyProvider.of<MessageManagerFactory>().messageManager()
         manager.fetchMessages()
         addResult(viewModel.messages)
@@ -253,7 +254,7 @@ class MessageCenterViewModelTest : TestCase() {
 
     @Test
     fun testExitMessageCenter() {
-        val viewModel = MessageCenterViewModel()
+        val viewModel = createMessageCenterViewModel()
         viewModel.exitMessageCenter()
         assertResults(createCall(EVENT_NAME_CLOSE, mapOf("cause" to "menu_item")))
     }
@@ -268,13 +269,13 @@ class MessageCenterViewModelTest : TestCase() {
     @Test
     fun testAutomatedMessage() {
         DependencyProvider.register(MessageCenterModelProvider(messageCenterInteractionWithData))
-        val viewModel = MessageCenterViewModel()
+        val viewModel = createMessageCenterViewModel()
         assertTrue(viewModel.messages.last().automated!!)
     }
 
     @Test
     fun testGetAndGroupMessages() {
-        val viewModel = MessageCenterViewModel()
+        val viewModel = createMessageCenterViewModel()
         val now = convertToGroupDate(toSeconds(System.currentTimeMillis())) // DayOfWeek MM/DD
         val dayAgo =
             convertToGroupDate(toSeconds(System.currentTimeMillis() - (DAY_IN_MILLIS * 1))) // DayOfWeek MM/DD
@@ -294,7 +295,7 @@ class MessageCenterViewModelTest : TestCase() {
 
     @Test
     fun testMergeMessages() {
-        val viewModel = MessageCenterViewModel()
+        val viewModel = createMessageCenterViewModel()
 
         val newMessage = Message(
             id = "New ID",
@@ -318,7 +319,7 @@ class MessageCenterViewModelTest : TestCase() {
 
     @Test
     fun testValidation() {
-        var viewModel = MessageCenterViewModel()
+        var viewModel = createMessageCenterViewModel()
         // Require email is set
         // Empty email
         viewModel.validateMessageWithProfile("Test", "")
@@ -353,7 +354,7 @@ class MessageCenterViewModelTest : TestCase() {
                 )
             )
         )
-        viewModel = MessageCenterViewModel()
+        viewModel = createMessageCenterViewModel()
         // Request email is set
         // Empty email
         viewModel.validateMessageWithProfile("Test", "")
@@ -372,7 +373,7 @@ class MessageCenterViewModelTest : TestCase() {
 
     @Test
     fun testHandleUnreadMessages() {
-        val viewModel = MessageCenterViewModel()
+        val viewModel = createMessageCenterViewModel()
         val unreadMessages = viewModel.messages.filter { it.read != true }
 
         assertEquals(2, unreadMessages.size)
@@ -397,7 +398,7 @@ class MessageCenterViewModelTest : TestCase() {
     @Test
     fun testBuildMessageViewDataModel() {
         DependencyProvider.register(MessageCenterModelProvider(messageCenterInteractionWithData))
-        val viewModel = MessageCenterViewModel()
+        val viewModel = createMessageCenterViewModel()
 
         val expectedList = mutableListOf<MessageViewData>()
         expectedList.add(
@@ -430,7 +431,7 @@ class MessageCenterViewModelTest : TestCase() {
 
     @Test
     fun testAddAttachments() {
-        val viewModel = MessageCenterViewModel()
+        val viewModel = createMessageCenterViewModel()
 
         assertNull(viewModel.draftAttachmentsStream.value)
 
@@ -441,7 +442,7 @@ class MessageCenterViewModelTest : TestCase() {
 
     @Test
     fun testRemoveAttachment() {
-        val viewModel = MessageCenterViewModel()
+        val viewModel = createMessageCenterViewModel()
         viewModel.addAttachments(attachments)
 
         assertEquals(2, viewModel.draftAttachmentsStream.value?.size)
@@ -468,7 +469,7 @@ class MessageCenterViewModelTest : TestCase() {
     @Test
     fun testGetFirstUnreadMessagePosition() {
         DependencyProvider.register(MessageCenterModelProvider(messageCenterInteractionWithData))
-        val viewModel = MessageCenterViewModel()
+        val viewModel = createMessageCenterViewModel()
 
         val firstUnreadItem = viewModel
             .getFirstUnreadMessagePosition(viewModel.buildMessageViewDataModel())
