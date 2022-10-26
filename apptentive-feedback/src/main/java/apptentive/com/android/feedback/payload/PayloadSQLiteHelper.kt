@@ -38,10 +38,12 @@ internal class PayloadSQLiteHelper(context: Context) :
         }
 
         try {
-            writableDatabase.use { db ->
-                val result = db.insert(TABLE_NAME, null, values)
-                if (result == -1L) {
-                    throw RuntimeException("Unable to add payload: $payload")
+            synchronized(this) {
+                writableDatabase.use { db ->
+                    val result = db.insert(TABLE_NAME, null, values)
+                    if (result == -1L) {
+                        throw RuntimeException("Unable to add payload: $payload")
+                    }
                 }
             }
         } catch (e: Exception) {
@@ -50,33 +52,39 @@ internal class PayloadSQLiteHelper(context: Context) :
     }
 
     fun deletePayload(nonce: String): Boolean {
-        writableDatabase.use { db ->
-            deletePayload(db, nonce)
+        synchronized(this) {
+            writableDatabase.use { db ->
+                deletePayload(db, nonce)
+            }
         }
         return false
     }
 
     fun nextUnsentPayload(): PayloadData? {
-        writableDatabase.use { db ->
-            while (true) {
-                db.select(tableName = TABLE_NAME, orderBy = COL_PRIMARY_KEY, limit = 1)
-                    .use { cursor ->
-                        if (cursor.moveToFirst()) {
-                            try {
-                                return readPayload(cursor)
-                            } catch (e: Exception) {
-                                val nonce = cursor.getString(COL_NONCE)
-                                Log.e(PAYLOADS, "Exception reading payload. Unable to send. Deleting.", e)
-                                deletePayload(db, nonce)
+        synchronized(this) {
+            writableDatabase.use { db ->
+                while (true) {
+                    db.select(tableName = TABLE_NAME, orderBy = COL_PRIMARY_KEY, limit = 1)
+                        .use { cursor ->
+                            if (cursor.moveToFirst()) {
+                                try {
+                                    return readPayload(cursor)
+                                } catch (e: Exception) {
+                                    val nonce = cursor.getString(COL_NONCE)
+                                    Log.e(
+                                        PAYLOADS,
+                                        "Exception reading payload. Unable to send. Deleting.",
+                                        e
+                                    )
+                                    deletePayload(db, nonce)
+                                }
+                            } else {
+                                return null
                             }
-                        } else {
-                            return null
                         }
-                    }
+                }
             }
         }
-
-        return null
     }
 
     private fun deletePayload(db: SQLiteDatabase, nonce: String): Boolean {
@@ -85,15 +93,17 @@ internal class PayloadSQLiteHelper(context: Context) :
     }
 
     internal fun readPayloads(): List<PayloadData> {
-        readableDatabase.use { db ->
-            db.select(tableName = TABLE_NAME, orderBy = COL_PRIMARY_KEY)
-                .use { cursor ->
-                    val result = mutableListOf<PayloadData>()
-                    while (db.isOpen && cursor.moveToNext()) {
-                        result.add(readPayload(cursor))
+        synchronized(this) {
+            readableDatabase.use { db ->
+                db.select(tableName = TABLE_NAME, orderBy = COL_PRIMARY_KEY)
+                    .use { cursor ->
+                        val result = mutableListOf<PayloadData>()
+                        while (cursor.moveToNext()) {
+                            result.add(readPayload(cursor))
+                        }
+                        return result
                     }
-                    return result
-                }
+            }
         }
     }
 
@@ -123,22 +133,24 @@ internal class PayloadSQLiteHelper(context: Context) :
 
     @VisibleForTesting
     internal fun updatePayload(nonce: String, payloadType: String) {
-        writableDatabase.use { db ->
-            val values = ContentValues().apply {
-                put(COL_TYPE, payloadType)
-            }
+        synchronized(this) {
+            writableDatabase.use { db ->
+                val values = ContentValues().apply {
+                    put(COL_TYPE, payloadType)
+                }
 
-            val selection = "$COL_NONCE = ?"
-            val selectionArgs = arrayOf(nonce)
-            val count = db.update(
-                TABLE_NAME,
-                values,
-                selection,
-                selectionArgs
-            )
+                val selection = "$COL_NONCE = ?"
+                val selectionArgs = arrayOf(nonce)
+                val count = db.update(
+                    TABLE_NAME,
+                    values,
+                    selection,
+                    selectionArgs
+                )
 
-            if (count == -1) {
-                throw RuntimeException("Unable to update payload")
+                if (count == -1) {
+                    throw RuntimeException("Unable to update payload")
+                }
             }
         }
     }
