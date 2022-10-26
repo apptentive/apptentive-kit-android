@@ -25,6 +25,7 @@ internal class ProfileActivity : BaseProfileActivity() {
         profileView = findViewById(R.id.apptentive_edit_profile)
         saveButton = findViewById(R.id.apptentive_profile_save_button)
 
+        topAppBar.title = ""
         topAppBarTitle.text = viewModel.profileTitle
         profileView.setEmailHint(viewModel.emailHint)
         profileView.setNameHint(viewModel.nameHint)
