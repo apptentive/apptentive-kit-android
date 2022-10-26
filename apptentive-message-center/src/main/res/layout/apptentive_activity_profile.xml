@@ -25,7 +25,7 @@
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/apptentive_profile_title"
-                style="?apptentiveMessageCenterToolbarTitleStyle"
+                style="?apptentiveMessageCenterProfileToolbarTitleStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:targetApi="p"

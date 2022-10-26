@@ -666,10 +666,12 @@
         <item name="navigationContentDescription">@string/apptentive_back</item>
     </style>
 
-    <style name="Apptentive.Widget.MessageCenter.Text.ToolbarTitle">
+    <style name="Apptentive.Widget.MessageCenter.Text.ToolbarTitle" parent="Widget.MaterialComponents.TextView">
         <item name="android:textColor">?apptentiveMessageCenterTextColorToolbarTitle</item>
         <item name="android:textAppearance">?textAppearanceHeadline6</item>
         <item name="android:accessibilityHeading" tools:ignore="NewApi">true</item>
+        <item name="android:fontFamily">?apptentiveMessageCenterFontFamilyBody1</item>
+        <item name="android:typeface">?apptentiveMessageCenterTypefaceBody1</item>
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.ActionButton" parent="Widget.AppCompat.ActionButton">
