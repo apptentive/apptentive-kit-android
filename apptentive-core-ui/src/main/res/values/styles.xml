@@ -452,6 +452,7 @@
     <style name="Apptentive.TextAppearance.Caption.Survey.Error">
         <item name="android:textColor">?apptentiveTextColorError</item>
         <item name="android:importantForAccessibility">no</item>
+        <item name="android:accessibilityLiveRegion">polite</item>
         <item name="android:alpha">?apptentiveHeaderAlpha</item>
         <item name="android:layout_marginStart">@dimen/apptentive_activity_horizontal_margin_padding</item>
         <item name="android:layout_marginEnd">@dimen/apptentive_activity_horizontal_margin_padding</item>
