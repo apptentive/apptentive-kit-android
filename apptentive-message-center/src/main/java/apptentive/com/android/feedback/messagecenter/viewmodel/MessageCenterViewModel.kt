@@ -10,15 +10,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import apptentive.com.android.concurrent.Executors
 import apptentive.com.android.core.BehaviorSubject
-import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.LiveEvent
-import apptentive.com.android.feedback.dependencyprovider.MessageCenterModelFactory
 import apptentive.com.android.feedback.engagement.EngagementContext
-import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.feedback.message.MessageManager
-import apptentive.com.android.feedback.message.MessageManagerFactory
 import apptentive.com.android.feedback.messagecenter.utils.MessageCenterEvents
 import apptentive.com.android.feedback.messagecenter.view.GreetingData
 import apptentive.com.android.feedback.messagecenter.view.ListItemType
@@ -52,13 +48,13 @@ import apptentive.com.android.util.generateUUID
  */
 
 @InternalUseOnly
-class MessageCenterViewModel : ViewModel() {
-
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    val messageCenterModel = DependencyProvider.of<MessageCenterModelFactory>().messageCenterModel()
-    private val executors = DependencyProvider.of<EngagementContextFactory>().engagementContext().executors
-    private val context: EngagementContext = DependencyProvider.of<EngagementContextFactory>().engagementContext()
-    private val messageManager: MessageManager = DependencyProvider.of<MessageManagerFactory>().messageManager()
+class MessageCenterViewModel(
+    @get:VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    val messageCenterModel: MessageCenterModel,
+    private val executors: Executors,
+    private val context: EngagementContext,
+    private val messageManager: MessageManager
+) : ViewModel() {
 
     val title: String = messageCenterModel.title.orEmpty()
     private val greeting: String = messageCenterModel.greeting?.title.orEmpty()
