@@ -2,6 +2,7 @@ package apptentive.com.android.feedback.messagecenter.view
 
 import android.content.Intent
 import android.graphics.Bitmap
+import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -119,6 +120,7 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
                         inboundText.text = message.body
                         inboundText.isVisible = !message.body.isNullOrEmpty()
                         inboundText.text = message.body
+                        inboundText.movementMethod = LinkMovementMethod.getInstance()
                         inboundAttachments.removeAllViews()
                         inboundAttachments.addAttachments(message)
                         val status =
@@ -131,6 +133,7 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
                         inboundError.isVisible = false
                         outboundLayout.isVisible = true
                         outboundText.text = message?.body
+                        outboundText.movementMethod = LinkMovementMethod.getInstance()
                         outboundText.isVisible = !message?.body.isNullOrEmpty()
                         if (message?.sender?.name.isNullOrEmpty()) outboundSenderText.visibility = View.GONE
                         else outboundSenderText.text = message?.sender?.name
@@ -145,8 +148,9 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
                 val greetingData = getItem(position).greetingData
                 holder.itemView.findViewById<TextView>(R.id.apptentive_message_center_greeting_title).text =
                     greetingData?.greetingTitle
-                holder.itemView.findViewById<TextView>(R.id.apptentive_message_center_greeting_body).text =
-                    greetingData?.greetingBody
+                val greetingBodyTextView = holder.itemView.findViewById<TextView>(R.id.apptentive_message_center_greeting_body)
+                greetingBodyTextView.text = greetingData?.greetingBody
+                greetingBodyTextView.movementMethod = LinkMovementMethod.getInstance()
                 holder.itemView.findViewById<ImageView>(R.id.apptentive_message_center_greeting_image).apply {
                     greetingData?.avatarBitmap?.let { avatar ->
                         this.setImageBitmap(avatar)
@@ -160,6 +164,7 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
                 val statusView: MaterialTextView =
                     holder.itemView.findViewById(R.id.apptentive_message_center_status)
                 statusView.text = messageViewModel.messageSLA
+                statusView.movementMethod = LinkMovementMethod.getInstance()
 
                 val profileData = getItem(position).profileData
 
