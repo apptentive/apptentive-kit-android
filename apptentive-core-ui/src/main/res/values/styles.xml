@@ -452,6 +452,7 @@
     <style name="Apptentive.TextAppearance.Caption.Survey.Error">
         <item name="android:textColor">?apptentiveTextColorError</item>
         <item name="android:importantForAccessibility">no</item>
+        <item name="android:accessibilityLiveRegion">polite</item>
         <item name="android:alpha">?apptentiveHeaderAlpha</item>
         <item name="android:layout_marginStart">@dimen/apptentive_activity_horizontal_margin_padding</item>
         <item name="android:layout_marginEnd">@dimen/apptentive_activity_horizontal_margin_padding</item>
@@ -665,10 +666,12 @@
         <item name="navigationContentDescription">@string/apptentive_back</item>
     </style>
 
-    <style name="Apptentive.Widget.MessageCenter.Text.ToolbarTitle">
+    <style name="Apptentive.Widget.MessageCenter.Text.ToolbarTitle" parent="Widget.MaterialComponents.TextView">
         <item name="android:textColor">?apptentiveMessageCenterTextColorToolbarTitle</item>
         <item name="android:textAppearance">?textAppearanceHeadline6</item>
         <item name="android:accessibilityHeading" tools:ignore="NewApi">true</item>
+        <item name="android:fontFamily">?apptentiveMessageCenterFontFamilyBody1</item>
+        <item name="android:typeface">?apptentiveMessageCenterTypefaceBody1</item>
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.ActionButton" parent="Widget.AppCompat.ActionButton">

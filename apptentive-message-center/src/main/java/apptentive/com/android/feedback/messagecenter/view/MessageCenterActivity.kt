@@ -70,6 +70,7 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
         sendButton = findViewById(R.id.apptentive_send_message_button)
         messageList = findViewById(R.id.apptentive_message_list)
         composerErrorView = findViewById(R.id.apptentive_composer_error)
+        topAppBar.title = ""
         topAppBarTitle.text = viewModel.title
         messageText.hint = viewModel.composerHint
         messageListAdapter = MessageListAdapter(viewModel)

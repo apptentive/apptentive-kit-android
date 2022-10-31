@@ -23,6 +23,7 @@ internal class ImagePreviewActivity : ApptentiveActivity(), ApptentiveActivityIn
         val topAppBar: MaterialToolbar = findViewById(R.id.apptentive_attachment_preview_toolbar)
         val topAppBarTitle: MaterialTextView = findViewById(R.id.apptentive_attachment_preview_title)
         val fileName = intent.getStringExtra(APPTENTIVE_ATTACHMENT_BOTTOMSHEET_FILENAME).orEmpty()
+        topAppBar.title = ""
         topAppBarTitle.text = fileName
         setSupportActionBar(topAppBar)
         topAppBar.setNavigationOnClickListener { onBackPressed() }
