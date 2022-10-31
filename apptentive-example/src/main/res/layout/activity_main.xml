@@ -63,4 +63,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/surveyButton" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/messageCenterButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:minHeight="56dp"
+        android:text="@string/message_center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ratingButton" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

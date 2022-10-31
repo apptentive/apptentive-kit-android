@@ -5,4 +5,5 @@
     <string name="note">Note</string>
     <string name="survey">Survey</string>
     <string name="rating">Rating</string>
+    <string name="message_center">Message Center</string>
 </resources>
