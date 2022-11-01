@@ -49,9 +49,6 @@ class MainActivity : AppCompatActivity() {
 //        noteButton.setOnClickListener { Apptentive.engage("note") { handleResult(it) } }
 //        surveyButton.setOnClickListener { Apptentive.engage("survey") { handleResult(it) } }
 //        ratingButton.setOnClickListener { Apptentive.engage("rating") { handleResult(it) } }
-//        Apptentive.canShowMessageCenter { showMessageCenter ->
-//            messageCenterButton.isVisible = showMessageCenter
-//        }
 //        messageCenterButton.setOnClickListener { Apptentive.showMessageCenter { handleResult(it) } }
 
     }
