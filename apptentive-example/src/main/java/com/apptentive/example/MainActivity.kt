@@ -3,6 +3,7 @@ package com.apptentive.example
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import com.apptentive.apptentive_example.R
 
 /**
@@ -28,6 +29,7 @@ class MainActivity : AppCompatActivity() {
         val noteButton = findViewById<Button>(R.id.noteButton)
         val surveyButton = findViewById<Button>(R.id.surveyButton)
         val ratingButton = findViewById<Button>(R.id.ratingButton)
+        val messageCenterButton = findViewById<Button>(R.id.messageCenterButton)
 
         /**
          * TODO Step 9: Uncomment the on click listeners below and import
@@ -47,6 +49,8 @@ class MainActivity : AppCompatActivity() {
 //        noteButton.setOnClickListener { Apptentive.engage("note") { handleResult(it) } }
 //        surveyButton.setOnClickListener { Apptentive.engage("survey") { handleResult(it) } }
 //        ratingButton.setOnClickListener { Apptentive.engage("rating") { handleResult(it) } }
+//        messageCenterButton.setOnClickListener { Apptentive.showMessageCenter { handleResult(it) } }
+
     }
 
     // TODO Step 7: Uncomment the overridden function for the ApptentiveActivityInfo interface.
