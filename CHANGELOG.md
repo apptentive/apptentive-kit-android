@@ -1,7 +1,7 @@
-# 2022-11-01 - v6.0.0
+# 2022-11-02 - v6.0.0
 
 #### New Features
-* Interaction Response Targeting
+* Response Targeting
 * Dark mode support
 
 #### Improvements
