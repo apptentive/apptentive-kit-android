@@ -50,7 +50,8 @@ internal class SurveyInteraction(
         val link: String?
     ) {
         fun convertToLink(): Spanned {
-            val linkText = "<a href=$link>$label</a>"
+            val httpLink = if (link?.startsWith("http", true) == true) link else "http://$link"
+            val linkText = "<a href=$httpLink>$label</a>"
             return HtmlCompat.fromHtml(linkText, HtmlCompat.FROM_HTML_MODE_COMPACT)
         }
     }

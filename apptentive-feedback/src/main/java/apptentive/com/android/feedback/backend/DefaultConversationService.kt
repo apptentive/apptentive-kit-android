@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.backend
 
 import apptentive.com.android.core.getTimeSeconds
+import apptentive.com.android.feedback.BuildConfig
 import apptentive.com.android.feedback.model.AppRelease
 import apptentive.com.android.feedback.model.Configuration
 import apptentive.com.android.feedback.model.Device
@@ -10,6 +11,7 @@ import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.network.CacheControl
+import apptentive.com.android.network.HttpByteArrayResponseReader
 import apptentive.com.android.network.HttpClient
 import apptentive.com.android.network.HttpHeaders
 import apptentive.com.android.network.HttpHeaders.Companion.CACHE_CONTROL
@@ -91,17 +93,38 @@ internal class DefaultConversationService(
     override fun getMessages(
         conversationToken: String,
         conversationId: String,
+        lastMessageID: String,
         callback: (Result<MessageList>) -> Unit
     ) {
+        val debugPageSize = 5
+        val path = if (BuildConfig.DEBUG)
+            "conversations/$conversationId/messages?starts_after=$lastMessageID&page_size=$debugPageSize"
+        else
+            "conversations/$conversationId/messages?starts_after=$lastMessageID" // Takes default page size set by the server
         val request = createJsonRequest(
             method = HttpMethod.GET,
-            path = "conversations/$conversationId/messages",
+            path = path,
             headers = MutableHttpHeaders().apply {
                 this["Authorization"] = "Bearer $conversationToken"
             },
             responseReader = HttpJsonResponseReader(MessageList::class.java)
         )
         sendRequest(request, callback)
+    }
+
+    override fun getAttachment(remoteUrl: String, callback: (Result<ByteArray>) -> Unit) {
+        val request = HttpRequest
+            .Builder<ByteArray>(remoteUrl)
+            .method(HttpMethod.GET, null)
+            .responseReader(HttpByteArrayResponseReader())
+            .build()
+
+        httpClient.send(request) {
+            when (it) {
+                is Result.Success -> callback(Result.Success(it.data.payload))
+                is Result.Error -> callback(it)
+            }
+        }
     }
 
     override fun sendPayloadRequest(

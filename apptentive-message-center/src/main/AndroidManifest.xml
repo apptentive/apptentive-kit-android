@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="apptentive.com.android.feedback.messagecenter">
+
+    <application>
+        <activity
+            android:name=".view.ProfileActivity"
+            android:theme="@style/Theme.Apptentive"
+            android:exported="false" />
+        <activity
+            android:name=".view.ImagePreviewActivity"
+            android:theme="@style/Theme.Apptentive"
+            android:exported="false" />
+        <activity
+            android:name=".view.MessageCenterActivity"
+            android:theme="@style/Theme.Apptentive"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+    </application>
+
+</manifest>

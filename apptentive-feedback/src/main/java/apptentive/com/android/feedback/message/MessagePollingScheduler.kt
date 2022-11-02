@@ -43,5 +43,5 @@ internal class MessagePollingScheduler(private val executor: Executor) : Polling
         }
     }
 
-    private fun isPolling() = pollingTask != null
+    override fun isPolling() = pollingTask != null
 }

@@ -14,10 +14,10 @@ import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.format
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
-import apptentive.com.android.feedback.message.DEFAULT_INTERNAL_EVENT_NAME
 import apptentive.com.android.feedback.platform.AndroidFileSystemProvider
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.feedback.utils.ThrottleUtils
+import apptentive.com.android.feedback.utils.sha256
 import apptentive.com.android.network.DefaultHttpClient
 import apptentive.com.android.network.DefaultHttpNetwork
 import apptentive.com.android.network.DefaultHttpRequestRetryPolicy
@@ -28,12 +28,31 @@ import apptentive.com.android.network.HttpRequest
 import apptentive.com.android.network.asString
 import apptentive.com.android.platform.SharedPrefConstants
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags
 import apptentive.com.android.util.LogTags.FEEDBACK
 import apptentive.com.android.util.LogTags.INTERACTIONS
+import apptentive.com.android.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.util.LogTags.NETWORK
 import apptentive.com.android.util.LogTags.PROFILE_DATA_UPDATE
 import apptentive.com.android.util.LogTags.SYSTEM
+import java.io.InputStream
 
+/**
+ * Result class used in a callback for the `engage` function to help understand what happens.
+ *
+ * [InteractionShown]    Event was evaluated through criteria and an Apptentive Interaction
+ *                       was shown as a result. Returns with ID of interaction shown.
+ *
+ * [InteractionNotShown] Event was evaluated through criteria and an Apptentive Interaction
+ *                       was NOT shown as a result. Returns with [String] reasoning
+ *
+ * [Error]               Event was evaluated through criteria and an interaction was supposed to show,
+ *                       but an error occurred in that process. Can also show if the SDK fails to
+ *                       initialize. Returns with [String] reasoning.
+ *
+ * [Exception]           At some point in the evaluation or interaction showing process a [Throwable]
+ *                       was thrown. Returns with [String] error message and prints error stacktrace.
+ */
 sealed class EngagementResult {
     data class InteractionShown(val interactionId: InteractionId) : EngagementResult() {
         init { Log.d(INTERACTIONS, "Interaction Engaged => interactionID: $interactionId") }
@@ -58,16 +77,17 @@ object Apptentive {
     //region Initialization
 
     /**
-     * collects the [ApptentiveActivityInfo] reference which can be used to retrieve current activity context.
-     * The retrieved context is used in the apptentive interactions & it's UI elements.
+     * Collects the [ApptentiveActivityInfo] reference which can be used to retrieve the
+     * current [Activity]'s [Context].
+     * The retrieved context is used in the Apptentive interactions & its UI elements.
      *
-     * @param apptentiveActivityInfo
+     * @param apptentiveActivityInfo reference to the app's current [Activity]
      */
 
     @JvmStatic
     fun registerApptentiveActivityInfoCallback(apptentiveActivityInfo: ApptentiveActivityInfo) {
-        Log.d(FEEDBACK, "Activity info callback is registered")
-        this.activityInfoCallback = apptentiveActivityInfo
+        activityInfoCallback = apptentiveActivityInfo
+        Log.d(FEEDBACK, "Activity info callback for ${activityInfoCallback?.getApptentiveActivityInfo()?.localClassName} registered")
     }
 
     /**
@@ -75,11 +95,11 @@ object Apptentive {
      */
     @JvmStatic
     fun unregisterApptentiveActivityInfoCallback() {
-        Log.d(FEEDBACK, "Activity info callback is unregistered")
-        this.activityInfoCallback = null
+        Log.d(FEEDBACK, "Activity info callback for ${activityInfoCallback?.getApptentiveActivityInfo()?.localClassName} unregistered")
+        activityInfoCallback = null
     }
 
-    fun getApptentiveActivityCallback(): ApptentiveActivityInfo? = activityInfoCallback
+    internal fun getApptentiveActivityCallback(): ApptentiveActivityInfo? = activityInfoCallback
 
     @Suppress("MemberVisibilityCanBePrivate")
     val registered
@@ -101,6 +121,14 @@ object Apptentive {
         register(application, configuration, callbackFunc)
     }
 
+    /**
+     * This method registers the Apptentive SDK using the given SDK credentials in the [ApptentiveConfiguration]
+     * It must be called from the  Application#onCreate() method in the Application object defined in your app's manifest.
+     *
+     * @param application Application object.
+     * @param configuration [ApptentiveConfiguration] containing SDK initialization data.
+     * @param callback Returns a callback of an [RegisterResult].
+     */
     @Synchronized
     fun register(
         application: Application,
@@ -122,6 +150,8 @@ object Apptentive {
                 "apptentive.com.android.feedback"
             )
         )
+
+        checkSavedKeyAndSignature(application, configuration)
 
         // Save host app theme usage
         application.getSharedPreferences(SharedPrefConstants.USE_HOST_APP_THEME, Context.MODE_PRIVATE)
@@ -176,12 +206,68 @@ object Apptentive {
         }
     }
 
+    private fun checkSavedKeyAndSignature(
+        application: Application,
+        configuration: ApptentiveConfiguration
+    ) {
+        val registrationSharedPrefs = application.getSharedPreferences(
+            SharedPrefConstants.REGISTRATION_INFO,
+            Context.MODE_PRIVATE
+        )
+        val savedKeyHash =
+            registrationSharedPrefs.getString(SharedPrefConstants.APPTENTIVE_KEY_HASH, null)
+        val savedSignatureHash =
+            registrationSharedPrefs.getString(SharedPrefConstants.APPTENTIVE_SIGNATURE_HASH, null)
+
+        if (savedKeyHash.isNullOrEmpty() && savedSignatureHash.isNullOrEmpty()) {
+            registrationSharedPrefs
+                .edit()
+                .putString(
+                    SharedPrefConstants.APPTENTIVE_KEY_HASH,
+                    configuration.apptentiveKey.sha256()
+                )
+                .putString(
+                    SharedPrefConstants.APPTENTIVE_SIGNATURE_HASH,
+                    configuration.apptentiveSignature.sha256()
+                )
+                .apply()
+            Log.d(LogTags.CONFIGURATION, "Saving current ApptentiveKey and ApptentiveSignature hash")
+        } else {
+            val newKeyHash = configuration.apptentiveKey.sha256()
+            val newSignatureHash = configuration.apptentiveSignature.sha256()
+            val errorMessage = when {
+                newKeyHash != savedKeyHash && newSignatureHash != savedSignatureHash -> {
+                    "ApptentiveKey and ApptentiveSignature do not match saved ApptentiveKey and ApptentiveSignature"
+                }
+                newKeyHash != savedKeyHash -> {
+                    "ApptentiveKey does not match saved ApptentiveKey"
+                }
+                newSignatureHash != savedSignatureHash -> {
+                    "ApptentiveSignature does not match saved ApptentiveSignature"
+                }
+                else -> {
+                    /* Key & Signature match. Do nothing */
+                    null
+                }
+            }
+            errorMessage?.let {
+                Log.w(LogTags.CONFIGURATION, errorMessage)
+            }
+        }
+    }
+
     private fun createHttpClient(context: Context): HttpClient {
         val loggingInterceptor = object : HttpLoggingInterceptor {
             override fun intercept(request: HttpRequest<*>) {
                 Log.d(NETWORK, "--> ${request.method} ${request.url}")
                 Log.v(NETWORK, "Headers:\n${SensitiveDataUtils.hideIfSanitized(request.headers)}")
-                Log.v(NETWORK, "Request Body: ${SensitiveDataUtils.hideIfSanitized(request.requestBody?.asString())}")
+                Log.v(NETWORK, "Content-Type: ${request.requestBody?.contentType}")
+                Log.v(
+                    NETWORK,
+                    "Request Body: " +
+                        if ((request.requestBody?.asString()?.length ?: 0) < 5000) SensitiveDataUtils.hideIfSanitized(request.requestBody?.asString())
+                        else "Request body too large to print."
+                )
             }
 
             override fun intercept(response: HttpNetworkResponse) {
@@ -211,17 +297,30 @@ object Apptentive {
 
     //region Engagement
 
+    /**
+     * This method takes a unique event of type [String], stores a record of that event having been
+     * visited, determines if there is an interaction that is able to run for this event, and then
+     * runs it. Only one interaction at most will run per invocation of this method. This task is
+     * performed asynchronously.
+     *
+     * @param eventName  A unique [String] representing the line this method is called on. For instance,
+     *                   you may want to have the ability to target interactions to run after the user
+     *                   uploads a file in your app. You may then call `engage("finished_upload")`.
+     * @param customData Extra data sent with the engaged event. A Map of [String] keys to values.
+     *                   Values may be of type [String], [Number], or [Boolean].
+     * @param callback   Returns [EngagementCallback] of an [EngagementResult].
+     */
     @JvmStatic
     @JvmOverloads
-    fun engage(eventName: String, callback: EngagementCallback? = null) {
+    fun engage(eventName: String, customData: Map<String, Any?>? = null, callback: EngagementCallback? = null) {
         // the above statement would not compile without force unwrapping on Kotlin 1.4.x
         @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
         val callbackFunc: ((EngagementResult) -> Unit)? =
             if (callback != null) callback!!::onComplete else null
-        engage(eventName, callbackFunc)
+        engage(eventName, customData, callbackFunc)
     }
 
-    private fun engage(eventName: String, callback: ((EngagementResult) -> Unit)?) {
+    private fun engage(eventName: String, customData: Map<String, Any?>?, callback: ((EngagementResult) -> Unit)?) {
         // user callback should be executed on the main thread
         val callbackWrapper: ((EngagementResult) -> Unit)? = if (callback != null) {
             {
@@ -235,7 +334,7 @@ object Apptentive {
         stateExecutor.execute {
             try {
                 val event = Event.local(eventName)
-                val result = client.engage(event)
+                val result = client.engage(event, customData)
                 callbackWrapper?.invoke(result)
             } catch (e: Exception) {
                 callbackWrapper?.invoke(EngagementResult.Exception(error = e))
@@ -245,13 +344,155 @@ object Apptentive {
 
     //endregion
 
-    // region Person data updates
+    //region Message Center
 
     /**
-     * Sets the user's name. This name will be sent to the Apptentive server and displayed in conversations you have
-     * with this person. This name will be the definitive username for this user, unless one is provided directly by the
-     * user through an Apptentive UI. Calls to this method are idempotent. Calls to this method will overwrite any
-     * previously entered person's name.
+     * Opens the Apptentive Message Center.
+     * This operation is performed asynchronously.
+     *
+     * @param customData Extra data sent with messages in Message Center. A Map of [String] keys
+     *                   to values. Values may be of type [String], [Number], or [Boolean].
+     * @param callback   Returns [EngagementCallback] of an [EngagementResult]
+     */
+    @JvmStatic
+    @JvmOverloads
+    fun showMessageCenter(customData: Map<String, Any?>? = null, callback: EngagementCallback? = null) {
+        val callbackWrapper: ((EngagementResult) -> Unit)? = if (callback != null) {
+            {
+                mainExecutor.execute {
+                    callback.onComplete(it)
+                }
+            }
+        } else null
+
+        stateExecutor.execute {
+            try {
+                val result = client.showMessageCenter(customData)
+                callbackWrapper?.invoke(result)
+            } catch (e: Exception) {
+                callbackWrapper?.invoke(EngagementResult.Exception(error = e))
+            }
+        }
+    }
+
+    /**
+     * Our SDK must connect to our server at least once to download initial configuration for Message
+     * Center. Call this method to see whether or not Message Center can be displayed. This task is
+     * performed asynchronously.
+     *
+     * @param callback Called after we check to see if Message Center can be displayed, but before it
+     * is displayed. Called with true Message Center will be displayed, else false.
+     */
+    @JvmStatic
+    fun canShowMessageCenter(callback: BooleanCallback) {
+        client.canShowMessageCenter {
+            callback.onFinish(it)
+        }
+    }
+
+    /**
+     * Returns the number of unread messages in the Message Center.
+     *
+     * This should be called after Apptentive is started. If this is called before Apptentive
+     * finishes initializing **for the first time** then it may not work.
+     *
+     * @return The number of unread messages.
+     */
+    @JvmStatic
+    fun getUnreadMessageCount(): Int {
+        return try {
+            client.getUnreadMessageCount()
+        } catch (e: Exception) {
+            Log.w(MESSAGE_CENTER, "Exception while getting unread message count", e)
+            0
+        }
+    }
+
+    /**
+     * Sends a text message to the server. This message will be visible in the conversation view
+     * on the server, but will not be shown in the client's Message Center.
+     *
+     * @param text The message you wish to send.
+     */
+    @JvmStatic
+    fun sendAttachmentText(text: String?) {
+        stateExecutor.execute {
+            text?.let {
+                client.sendHiddenTextMessage(text)
+            } ?: run {
+                Log.d(MESSAGE_CENTER, "Attachment text was null")
+            }
+        }
+    }
+
+    /**
+     * Sends a file to the server. This file will be visible in the conversation view on the server,
+     * but will not be shown in the client's Message Center. A local copy of this file will be made
+     * until the message is transmitted, at which point the temporary file will be deleted.
+     *
+     * NOTICE: FILE SIZE LIMIT IS 15MB
+     *
+     * @param uri The URI path of the local resource file.
+     */
+    @JvmStatic
+    fun sendAttachmentFile(uri: String?) {
+        if (!uri.isNullOrBlank()) {
+            stateExecutor.execute {
+                client.sendHiddenAttachmentFileUri(uri)
+            }
+        } else Log.d(MESSAGE_CENTER, "URI String was null or blank. URI: $uri")
+    }
+
+    /**
+     * Sends a file to the server. This file will be visible in the conversation view on the server,
+     * but will not be shown in the client's Message Center. A local copy of this file will be made
+     * until the message is transmitted, at which point the temporary file will be deleted.
+     *
+     * NOTICE: FILE SIZE LIMIT IS 15MB
+     *
+     * @param content  A byte array of the file contents.
+     * @param mimeType The mime type of the file.
+     */
+    @JvmStatic
+    fun sendAttachmentFile(content: ByteArray?, mimeType: String?) {
+        if (content != null && mimeType != null) {
+            stateExecutor.execute {
+                client.sendHiddenAttachmentFileBytes(content, mimeType)
+            }
+        } else Log.d(MESSAGE_CENTER, "Content and Mime Type cannot be null\nContent: $content, mimeType: $mimeType")
+    }
+
+    /**
+     * Sends a file to the server. This file will be visible in the conversation view on the server,
+     * but will not be shown in the client's Message Center. A local copy of this file will be made
+     * until the message is transmitted, at which point the temporary file will be deleted.
+     *
+     * NOTICE: FILE SIZE LIMIT IS 15MB
+     *
+     * @param inputStream An InputStream from the desired file.
+     * @param mimeType    The mime type of the file.
+     */
+    @JvmStatic
+    fun sendAttachmentFile(inputStream: InputStream?, mimeType: String?) {
+        if (inputStream != null && mimeType != null) {
+            stateExecutor.execute {
+                client.sendHiddenAttachmentFileStream(inputStream, mimeType)
+            }
+        } else Log.d(
+            MESSAGE_CENTER,
+            "InputStream and Mime Type cannot be null\ninputStream: $inputStream, mimeType: $mimeType"
+        )
+    }
+
+    //endregion
+
+    //region Person data updates
+
+    /**
+     * Sets the user's name. This name will be sent to the Apptentive server and displayed in
+     * conversations you have with this person. This name will be the definitive username for this
+     * user, unless one is provided directly by the user through an Apptentive UI. Calls to this
+     * method are idempotent. Calls to this method will overwrite any previously entered person's name.
      *
      * @param name The user's name.
      */
@@ -269,11 +510,12 @@ object Apptentive {
     }
 
     /**
-     * Sets the user's email address. This email address will be sent to the Apptentive server to allow out of app
-     * communication, and to help provide more context about this user. This email will be the definitive email address
-     * for this user, unless one is provided directly by the user through an Apptentive UI. Calls to this method are
-     * idempotent. Calls to this method will overwrite any previously entered email, so if you don't want to overwrite
-     * any previously entered email,
+     * Sets the user's email address. This email address will be sent to the Apptentive server to
+     * allow out of app communication, and to help provide more context about this user. This email
+     * will be the definitive email address for this user, unless one is provided directly by the
+     * user through an Apptentive UI. Calls to this method are idempotent. Calls to this method will
+     * overwrite any previously entered email, so if you don't want to overwrite any previously
+     * entered email,
      *
      * @param email The user's email address.
      */

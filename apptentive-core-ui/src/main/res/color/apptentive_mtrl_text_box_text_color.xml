@@ -12,9 +12,9 @@
 -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Focused -->
-    <item android:color="?attr/colorSecondary" android:state_focused="true"/>
+    <item android:alpha="0.80" android:color="?attr/colorOnBackground" android:state_focused="true"/>
     <!-- Not Focused -->
-    <item android:alpha="0.60" android:color="?attr/colorOnBackground"/>
+    <item android:alpha="0.75" android:color="?attr/colorOnBackground"/>
     <!-- Disabled -->
     <item android:alpha="@dimen/material_emphasis_disabled" android:color="?attr/colorOnBackground" android:state_enabled="false"/>
 </selector>

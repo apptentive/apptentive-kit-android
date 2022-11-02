@@ -9,7 +9,7 @@ import apptentive.com.android.core.Provider
 import apptentive.com.android.feedback.backend.ConversationPayloadService
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.DefaultConversationService
-import apptentive.com.android.feedback.backend.MessageFetchService
+import apptentive.com.android.feedback.backend.MessageCenterService
 import apptentive.com.android.feedback.conversation.ConversationManager
 import apptentive.com.android.feedback.conversation.ConversationRepository
 import apptentive.com.android.feedback.conversation.ConversationSerializer
@@ -36,6 +36,9 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionModule
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.feedback.lifecycle.ApptentiveLifecycleObserver
+import apptentive.com.android.feedback.message.DefaultMessageRepository
+import apptentive.com.android.feedback.message.DefaultMessageSerializer
+import apptentive.com.android.feedback.message.EVENT_MESSAGE_CENTER
 import apptentive.com.android.feedback.message.MessageManager
 import apptentive.com.android.feedback.message.MessageManagerFactoryProvider
 import apptentive.com.android.feedback.model.Conversation
@@ -45,6 +48,7 @@ import apptentive.com.android.feedback.model.payloads.EventPayload
 import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadSender
+import apptentive.com.android.feedback.payload.PayloadType
 import apptentive.com.android.feedback.payload.PersistentPayloadQueue
 import apptentive.com.android.feedback.payload.SerialPayloadSender
 import apptentive.com.android.feedback.platform.DefaultAppReleaseFactory
@@ -59,12 +63,16 @@ import apptentive.com.android.network.HttpClient
 import apptentive.com.android.network.UnexpectedResponseException
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogLevel
+import apptentive.com.android.util.LogTags.EVENT
 import apptentive.com.android.util.LogTags.LIFE_CYCLE_OBSERVER
+import apptentive.com.android.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.util.LogTags.PAYLOADS
 import apptentive.com.android.util.Result
 import com.apptentive.android.sdk.conversation.DefaultLegacyConversationManager
 import com.apptentive.android.sdk.conversation.LegacyConversationManager
+import java.io.ByteArrayInputStream
 import java.io.File
+import java.io.InputStream
 
 internal class ApptentiveDefaultClient(
     private val apptentiveKey: String,
@@ -74,6 +82,7 @@ internal class ApptentiveDefaultClient(
 ) : ApptentiveClient {
     private lateinit var conversationManager: ConversationManager
     private lateinit var payloadSender: PayloadSender
+    private lateinit var interactionDataProvider: InteractionDataProvider
     private lateinit var interactionModules: Map<String, InteractionModule<Interaction>>
     private var messageManager: MessageManager? = null
     private var engagement: Engagement = NullEngagement()
@@ -104,6 +113,7 @@ internal class ApptentiveDefaultClient(
         addObservers(serialPayloadSender, conversationService)
     }
 
+    @WorkerThread
     private fun getConversationToken(
         conversationService: ConversationService,
         registerCallback: ((result: RegisterResult) -> Unit)?
@@ -134,12 +144,12 @@ internal class ApptentiveDefaultClient(
                     messageManager = MessageManager(
                         activeConversation.conversationId,
                         activeConversation.conversationToken,
-                        conversationService as MessageFetchService,
-                        executors.state
-                    ).also { messageManager ->
-                        messageManager.onConversationChanged(activeConversation)
-                    }
-
+                        conversationService as MessageCenterService,
+                        executors.state,
+                        DefaultMessageRepository(
+                            messageSerializer = DefaultMessageSerializer(messagesFile = getMessagesFile())
+                        )
+                    )
                     messageManager?.let {
                         DependencyProvider.register(MessageManagerFactoryProvider(it))
                     }
@@ -154,15 +164,18 @@ internal class ApptentiveDefaultClient(
                 conversation.logConversation()
             }
 
+            interactionDataProvider = createInteractionDataProvider(conversation)
+
             engagement = DefaultEngagement(
-                interactionDataProvider = createInteractionDataProvider(conversation),
+                interactionDataProvider = interactionDataProvider,
                 interactionConverter = interactionConverter,
                 interactionEngagement = createInteractionEngagement(),
                 recordEvent = ::recordEvent,
                 recordInteraction = ::recordInteraction,
                 recordInteractionResponses = ::recordInteractionResponses
             )
-
+            // register engagement context as soon as DefaultEngagement is created to make it available for MessageManager
+            DependencyProvider.register(EngagementContextProvider(engagement, payloadSender, executors))
             // once we have received conversationId and conversationToken we can setup payload sender service
             val conversationId = conversation.conversationId
             val conversationToken = conversation.conversationToken
@@ -175,6 +188,7 @@ internal class ApptentiveDefaultClient(
                     )
                 )
             }
+            messageManager?.onConversationChanged(conversation)
         }
         // add an observer to track SDK & AppRelease changes
         conversationManager.sdkAppReleaseUpdate.observe { appReleaseSDKUpdated ->
@@ -202,6 +216,7 @@ internal class ApptentiveDefaultClient(
         }
     }
 
+    @WorkerThread
     private fun createConversationRepository(context: Context): ConversationRepository {
         return DefaultConversationRepository(
             conversationSerializer = createConversationSerializer(),
@@ -264,10 +279,35 @@ internal class ApptentiveDefaultClient(
 
     //region Engagement
 
-    override fun engage(event: Event): EngagementResult {
-        DependencyProvider.register(EngagementContextProvider(engagement, payloadSender, executors))
+    override fun engage(event: Event, customData: Map<String, Any?>?): EngagementResult {
+        return DependencyProvider.of<EngagementContextFactory>().engagementContext().engage(
+            event = event,
+            customData = filterCustomData(customData)
+        )
+    }
 
-        return DependencyProvider.of<EngagementContextFactory>().engagementContext().engage(event)
+    override fun sendHiddenTextMessage(message: String) {
+        messageManager?.sendMessage(message, isHidden = true)
+    }
+
+    override fun sendHiddenAttachmentFileUri(uri: String) {
+        messageManager?.sendAttachment(uri, true)
+    }
+
+    override fun sendHiddenAttachmentFileBytes(bytes: ByteArray, mimeType: String) {
+        var inputStream: ByteArrayInputStream? = null
+        try {
+            inputStream = ByteArrayInputStream(bytes)
+            messageManager?.sendHiddenAttachmentFromInputStream(inputStream, mimeType)
+        } catch (e: Exception) {
+            Log.e(MESSAGE_CENTER, "Exception when sending attachment. Closing input stream.", e)
+        } finally {
+            FileUtil.ensureClosed(inputStream)
+        }
+    }
+
+    override fun sendHiddenAttachmentFileStream(inputStream: InputStream, mimeType: String) {
+        messageManager?.sendHiddenAttachmentFromInputStream(inputStream, mimeType)
     }
 
     override fun updatePerson(
@@ -293,6 +333,38 @@ internal class ApptentiveDefaultClient(
         if (person != newPerson) {
             conversationManager.updatePerson(newPerson)
             payloadSender.sendPayload(newPerson.toPersonPayload())
+        }
+    }
+
+    override fun showMessageCenter(customData: Map<String, Any?>?): EngagementResult {
+        filterCustomData(customData)?.let { filteredCustomData ->
+            messageManager?.setCustomData(filteredCustomData)
+        }
+        return engage(Event.internal(EVENT_MESSAGE_CENTER))
+    }
+
+    override fun getUnreadMessageCount(): Int {
+        return messageManager?.getUnreadMessageCount() ?: 0
+    }
+
+    override fun canShowMessageCenter(callback: (Boolean) -> Unit) {
+        callback(
+            if (this::interactionDataProvider.isInitialized) { // Check if lateinit value is set
+                interactionDataProvider.getInteractionData(Event.internal(EVENT_MESSAGE_CENTER)) != null
+            } else false
+        )
+    }
+
+    private fun filterCustomData(customData: Map<String, Any?>?): Map<String, Any?>? {
+        if (customData == null) return null // No custom data set
+
+        val filteredContent = customData.filter {
+            it.value is String || it.value is Number || it.value is Boolean
+        }
+
+        return filteredContent.ifEmpty {
+            Log.w(EVENT, "Not setting custom data. No supported types found.")
+            null
         }
     }
 
@@ -373,26 +445,50 @@ internal class ApptentiveDefaultClient(
     @WorkerThread
     private fun onPayloadSendFinish(result: Result<PayloadData>) {
         when (result) {
-            is Result.Success -> Log.d(PAYLOADS, "Payload of type \'${result.data.type}\' successfully sent")
-            is Result.Error -> Log.e(PAYLOADS, "Payload failed to send: ${result.error.cause?.message}")
+            is Result.Success -> {
+                val resultData = result.data
+
+                if (resultData.type == PayloadType.Message) messageManager?.updateMessageStatus(true, resultData)
+
+                Log.d(PAYLOADS, "Payload of type \'${resultData.type}\' successfully sent")
+            }
+            is Result.Error -> {
+                val resultData = result.data as? PayloadData
+                if (resultData?.type == PayloadType.Message) {
+                    messageManager?.updateMessageStatus(false, resultData)
+                    val EVENT_NAME_MESSAGE_HTTP_ERROR = "message_http_error"
+                    engage(Event.internal(EVENT_NAME_MESSAGE_HTTP_ERROR, InteractionType.MessageCenter))
+                }
+
+                Log.e(PAYLOADS, "Payload failed to send: ${result.error.cause}")
+            }
         }
     }
 
     //endregion
 
     companion object {
+        @WorkerThread
         private fun getConversationFile(): File {
             val conversationsDir = getConversationDir()
             return File(conversationsDir, "conversation.bin")
         }
 
+        @WorkerThread
         private fun getManifestFile(): File {
             val conversationsDir = getConversationDir()
             return File(conversationsDir, "manifest.bin")
         }
 
+        @WorkerThread
         private fun getConversationDir(): File {
             return FileUtil.getInternalDir("conversations", createIfNecessary = true)
+        }
+
+        @WorkerThread
+        private fun getMessagesFile(): File {
+            val conversationsDir = getConversationDir()
+            return File(conversationsDir, "messages.bin")
         }
     }
 }

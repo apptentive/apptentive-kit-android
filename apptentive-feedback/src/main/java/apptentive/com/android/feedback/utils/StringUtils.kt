@@ -1,10 +1,19 @@
 package apptentive.com.android.feedback.utils
 
+import kotlin.math.max
+
 internal fun createStringTable(rows: List<Array<Any?>>): String {
-    val columnSizes = IntArray(rows[0].size)
-    for (row in rows) {
+    val printableRows = rows.map { row ->
+        row.map { item ->
+            val itemSize = item.toString().length
+            if (itemSize > 8000) "Skipping printing of large item of size: $itemSize bytes "
+            else item
+        }
+    }
+    val columnSizes = IntArray(printableRows[0].size)
+    for (row in printableRows) {
         for (i in row.indices) {
-            columnSizes[i] = Math.max(
+            columnSizes[i] = max(
                 columnSizes[i],
                 row[i].toString().length
             )
@@ -20,13 +29,11 @@ internal fun createStringTable(rows: List<Array<Any?>>): String {
         line.append('-')
     }
     val result = StringBuilder(line)
-    for (row in rows) {
+    for (row in printableRows) {
         result.append("\n")
         for (i in row.indices) {
-            if (i > 0) {
-                result.append(" | ")
-            }
-            result.append(String.format("%-${columnSizes[i]}s", row[i]))
+            if (i > 0) result.append(" | ")
+            result.append("${row[i]}-${columnSizes[i]}s")
         }
     }
     result.append("\n").append(line)

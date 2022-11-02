@@ -12,8 +12,11 @@ typealias TimeInterval = Double
 
 internal const val UNDEFINED: Int = -1
 
-internal fun toMilliseconds(time: TimeInterval): Int = (time * 1000L).toInt()
-internal fun toSeconds(time: Long): TimeInterval = time * 0.001
+@InternalUseOnly
+fun toMilliseconds(time: TimeInterval): Long = (time * 1000).toLong()
+
+@InternalUseOnly
+fun toSeconds(time: Long): TimeInterval = time * 0.001
 
 @InternalUseOnly
 fun getTimeSeconds(): TimeInterval = toSeconds(System.currentTimeMillis())

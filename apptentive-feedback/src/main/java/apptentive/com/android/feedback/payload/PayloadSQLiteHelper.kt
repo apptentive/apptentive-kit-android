@@ -6,9 +6,12 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.annotation.VisibleForTesting
+import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.network.HttpMethod
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.PAYLOADS
+import java.io.FileNotFoundException
+import java.io.IOException
 
 internal class PayloadSQLiteHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -31,44 +34,57 @@ internal class PayloadSQLiteHelper(context: Context) :
             put(COL_METHOD, payload.method.toString())
             put(COL_MEDIA_TYPE, payload.mediaType.toString())
             put(COL_PAYLOAD_DATA, payload.data)
+            put(COL_PAYLOAD_DATA_FILE, payload.dataFilePath)
         }
 
-        writableDatabase.use { db ->
-            val result = db.insert(TABLE_NAME, null, values)
-            if (result == -1L) {
-                throw RuntimeException("Unable to add payload: $payload")
+        try {
+            synchronized(this) {
+                writableDatabase.use { db ->
+                    val result = db.insert(TABLE_NAME, null, values)
+                    if (result == -1L) {
+                        throw RuntimeException("Unable to add payload: $payload")
+                    }
+                }
             }
+        } catch (e: Exception) {
+            Log.e(PAYLOADS, "Error writing to database", e)
         }
     }
 
     fun deletePayload(nonce: String): Boolean {
-        writableDatabase.use { db ->
-            deletePayload(db, nonce)
+        synchronized(this) {
+            writableDatabase.use { db ->
+                deletePayload(db, nonce)
+            }
         }
         return false
     }
 
     fun nextUnsentPayload(): PayloadData? {
-        writableDatabase.use { db ->
-            while (true) {
-                db.select(tableName = TABLE_NAME, orderBy = COL_PRIMARY_KEY, limit = 1)
-                    .use { cursor ->
-                        if (cursor.moveToFirst()) {
-                            try {
-                                return readPayload(cursor)
-                            } catch (e: Exception) {
-                                val nonce = cursor.getString(COL_NONCE)
-                                Log.e(PAYLOADS, "Exception reading payload. Unable to send. Deleting.", e)
-                                deletePayload(db, nonce)
+        synchronized(this) {
+            writableDatabase.use { db ->
+                while (true) {
+                    db.select(tableName = TABLE_NAME, orderBy = COL_PRIMARY_KEY, limit = 1)
+                        .use { cursor ->
+                            if (cursor.moveToFirst()) {
+                                try {
+                                    return readPayload(cursor)
+                                } catch (e: Exception) {
+                                    val nonce = cursor.getString(COL_NONCE)
+                                    Log.e(
+                                        PAYLOADS,
+                                        "Exception reading payload. Unable to send. Deleting.",
+                                        e
+                                    )
+                                    deletePayload(db, nonce)
+                                }
+                            } else {
+                                return null
                             }
-                        } else {
-                            return null
                         }
-                    }
+                }
             }
         }
-
-        return null
     }
 
     private fun deletePayload(db: SQLiteDatabase, nonce: String): Boolean {
@@ -77,26 +93,35 @@ internal class PayloadSQLiteHelper(context: Context) :
     }
 
     internal fun readPayloads(): List<PayloadData> {
-        readableDatabase.use { db ->
-            db.select(tableName = TABLE_NAME, orderBy = COL_PRIMARY_KEY)
-                .use { cursor ->
-                    val result = mutableListOf<PayloadData>()
-                    while (cursor.moveToNext()) {
-                        result.add(readPayload(cursor))
+        synchronized(this) {
+            readableDatabase.use { db ->
+                db.select(tableName = TABLE_NAME, orderBy = COL_PRIMARY_KEY)
+                    .use { cursor ->
+                        val result = mutableListOf<PayloadData>()
+                        while (cursor.moveToNext()) {
+                            result.add(readPayload(cursor))
+                        }
+                        return result
                     }
-                    return result
-                }
+            }
         }
     }
 
+    @Throws(FileNotFoundException::class, IOException::class)
     private fun readPayload(cursor: Cursor): PayloadData {
+        val dataBytes = cursor.getBlob(COL_PAYLOAD_DATA)
+        val dataPath = cursor.getString(COL_PAYLOAD_DATA_FILE)
+        val payloadData = if (dataBytes.isNotEmpty()) dataBytes
+        else FileUtil.readFileData(dataPath)
+
         return PayloadData(
             nonce = cursor.getString(COL_NONCE),
             type = PayloadType.parse(cursor.getString(COL_TYPE)),
             path = cursor.getString(COL_PATH),
             method = HttpMethod.valueOf(cursor.getString(COL_METHOD)),
             mediaType = MediaType.parse(cursor.getString(COL_MEDIA_TYPE)),
-            data = cursor.getBlob(COL_PAYLOAD_DATA)
+            data = payloadData,
+            dataFilePath = dataPath
         )
     }
 
@@ -108,29 +133,31 @@ internal class PayloadSQLiteHelper(context: Context) :
 
     @VisibleForTesting
     internal fun updatePayload(nonce: String, payloadType: String) {
-        writableDatabase.use { db ->
-            val values = ContentValues().apply {
-                put(COL_TYPE, payloadType)
-            }
+        synchronized(this) {
+            writableDatabase.use { db ->
+                val values = ContentValues().apply {
+                    put(COL_TYPE, payloadType)
+                }
 
-            val selection = "$COL_NONCE = ?"
-            val selectionArgs = arrayOf(nonce)
-            val count = db.update(
-                TABLE_NAME,
-                values,
-                selection,
-                selectionArgs
-            )
+                val selection = "$COL_NONCE = ?"
+                val selectionArgs = arrayOf(nonce)
+                val count = db.update(
+                    TABLE_NAME,
+                    values,
+                    selection,
+                    selectionArgs
+                )
 
-            if (count == -1) {
-                throw RuntimeException("Unable to update payload")
+                if (count == -1) {
+                    throw RuntimeException("Unable to update payload")
+                }
             }
         }
     }
 
     companion object {
         private const val DATABASE_NAME = "payloads.db"
-        private const val DATABASE_VERSION = 1
+        private const val DATABASE_VERSION = 2
         const val TABLE_NAME = "payloads"
         private val COL_PRIMARY_KEY = Column(index = 0, name = "_ID")
         private val COL_NONCE = Column(index = 1, name = "nonce")
@@ -139,6 +166,7 @@ internal class PayloadSQLiteHelper(context: Context) :
         private val COL_METHOD = Column(index = 4, name = "method")
         private val COL_MEDIA_TYPE = Column(index = 5, name = "media_type")
         private val COL_PAYLOAD_DATA = Column(index = 6, name = "data")
+        private val COL_PAYLOAD_DATA_FILE = Column(index = 7, name = "data_file")
 
         private val SQL_QUERY_CREATE_TABLE = "CREATE TABLE $TABLE_NAME (" +
             "$COL_PRIMARY_KEY INTEGER PRIMARY KEY, " +
@@ -147,7 +175,8 @@ internal class PayloadSQLiteHelper(context: Context) :
             "$COL_PATH TEXT, " +
             "$COL_METHOD TEXT, " +
             "$COL_MEDIA_TYPE TEXT, " +
-            "$COL_PAYLOAD_DATA BLOB" +
+            "$COL_PAYLOAD_DATA BLOB, " +
+            "$COL_PAYLOAD_DATA_FILE TEXT" +
             ")"
         private const val SQL_QUERY_DROP_TABLE = "DROP TABLE IF EXISTS $TABLE_NAME"
     }

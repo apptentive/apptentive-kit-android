@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.survey.viewmodel
 
+import android.text.method.LinkMovementMethod
 import android.view.View
 import apptentive.com.android.feedback.survey.R
 import apptentive.com.android.ui.ListViewAdapter
@@ -39,6 +40,7 @@ internal class SurveyHeaderListItem(val instructions: String) : SurveyListItem(
 
         override fun bindView(item: SurveyHeaderListItem, position: Int) {
             introductionView.text = item.instructions
+            introductionView.movementMethod = LinkMovementMethod.getInstance()
         }
     }
 }

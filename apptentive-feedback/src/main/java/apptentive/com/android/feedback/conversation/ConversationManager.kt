@@ -25,6 +25,8 @@ import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.CONFIGURATION
 import apptentive.com.android.util.LogTags.CONVERSATION
 import apptentive.com.android.util.LogTags.ENGAGEMENT_MANIFEST
+import apptentive.com.android.util.LogTags.EVENT
+import apptentive.com.android.util.LogTags.INTERACTIONS
 import apptentive.com.android.util.Result
 import com.apptentive.android.sdk.conversation.LegacyConversationManager
 import com.apptentive.android.sdk.conversation.toConversation
@@ -252,6 +254,7 @@ internal class ConversationManager(
     }
 
     fun recordEvent(event: Event) {
+        Log.v(EVENT, "Recording event: $event")
         val conversation = activeConversationSubject.value
         activeConversationSubject.value = conversation.copy(
             engagementData = conversation.engagementData.addInvoke(
@@ -295,6 +298,7 @@ internal class ConversationManager(
     }
 
     fun recordInteraction(interactionId: String) {
+        Log.v(INTERACTIONS, "Recording interaction for id: $interactionId")
         val conversation = activeConversationSubject.value
         activeConversationSubject.value = conversation.copy(
             engagementData = conversation.engagementData.addInvoke(
@@ -307,6 +311,7 @@ internal class ConversationManager(
     }
 
     fun recordInteractionResponses(interactionResponses: Map<String, Set<InteractionResponse>>) {
+        Log.v(INTERACTIONS, "Recording interaction responses")
         val conversation = activeConversationSubject.value
         activeConversationSubject.value = conversation.copy(
             engagementData = conversation.engagementData.apply {

@@ -10,4 +10,4 @@ on where and how to create a very basic Apptentive integrated Android app.
 https://learn.apptentive.com/
 
 ### Android Quick Start Guide
-https://learn.apptentive.com/knowledge-base/android-quick-start/
+https://learn.apptentive.com/knowledge-base/android-quick-start-guide/

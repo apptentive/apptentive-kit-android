@@ -35,7 +35,7 @@ internal class SerialPayloadSender(
     }
 
     private fun handleSentPayload(payload: PayloadData) {
-        payloadQueue.deletePayload(payload)
+        payloadQueue.deletePayloadAndAssociatedFiles(payload)
         notifySuccess(payload)
         sendNextUnsentPayload()
     }
@@ -43,7 +43,7 @@ internal class SerialPayloadSender(
     private fun handleFailedPayload(payload: PayloadData, error: Throwable) {
         val shouldDeletePayload = shouldDeletePayload(error)
         if (shouldDeletePayload) {
-            payloadQueue.deletePayload(payload)
+            payloadQueue.deletePayloadAndAssociatedFiles(payload)
             notifyFailure(error, payload)
             sendNextUnsentPayload()
         } else {
@@ -59,7 +59,7 @@ internal class SerialPayloadSender(
             }
             else -> {
                 // Don't delete, retry on next launch
-                Log.w(PAYLOADS, "Unknown payload exception: ${error.cause}")
+                Log.w(PAYLOADS, "Unknown payload exception: $error")
                 false
             }
         }
@@ -68,23 +68,23 @@ internal class SerialPayloadSender(
     private fun sendNextUnsentPayload() {
         val service = payloadService
         if (service == null) {
-            Log.w(PAYLOADS, "unable to send payload: ${PayloadService::class.java.simpleName} is null")
+            Log.w(PAYLOADS, "Unable to send payload: ${PayloadService::class.java.simpleName} is null")
             return
         }
 
         if (!active) {
-            Log.w(PAYLOADS, "unable to send payload: payload sender is not active")
+            Log.w(PAYLOADS, "Unable to send payload: payload sender is not active")
             return
         }
 
         if (busySending) {
-            Log.d(PAYLOADS, "unable to send payload: another payload being sent")
+            Log.d(PAYLOADS, "Unable to send payload: another payload being sent")
             return
         }
 
         val nextPayload = payloadQueue.nextUnsentPayload()
         if (nextPayload == null) {
-            Log.d(PAYLOADS, "unable to send payload: payload queue is empty")
+            Log.d(PAYLOADS, "Unable to send payload: payload queue is empty")
             return
         }
 
@@ -131,9 +131,9 @@ internal class SerialPayloadSender(
     private fun notifyFailure(error: Throwable, payload: PayloadData) {
         try {
             if (error is PayloadSendException) {
-                callback(Result.Error(error))
+                callback(Result.Error(payload, error))
             } else {
-                callback(Result.Error(PayloadSendException(payload, cause = error)))
+                callback(Result.Error(payload, PayloadSendException(payload, cause = error)))
             }
         } catch (e: Exception) {
             Log.e(PAYLOADS, "Payload NOT sent with exception", e)

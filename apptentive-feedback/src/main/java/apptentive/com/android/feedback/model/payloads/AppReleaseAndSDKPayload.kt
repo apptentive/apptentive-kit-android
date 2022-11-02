@@ -38,6 +38,10 @@ internal class AppReleaseAndSDKPayload(
 
     override fun getPayloadType(): PayloadType = PayloadType.AppReleaseAndSDK
 
+    override fun getDataBytes() = toJson().toByteArray()
+
+    override fun getDataFilePath() = ""
+
     companion object {
         fun buildPayload(sdk: SDK, appRelease: AppRelease): AppReleaseAndSDKPayload {
             return AppReleaseAndSDKPayload(

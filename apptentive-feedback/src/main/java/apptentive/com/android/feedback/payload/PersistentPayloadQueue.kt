@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.payload
 
 import android.content.Context
+import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.feedback.utils.createStringTable
 import apptentive.com.android.util.Log
@@ -19,9 +20,10 @@ internal class PersistentPayloadQueue(
         return dbHelper.nextUnsentPayload()
     }
 
-    override fun deletePayload(payload: PayloadData) {
+    override fun deletePayloadAndAssociatedFiles(payload: PayloadData) {
+        FileUtil.deleteFile(payload.dataFilePath)
         dbHelper.deletePayload(payload.nonce)
-        printPayloads("Delete payload")
+        printPayloads("Delete payload and associated files")
     }
 
     private fun printPayloads(title: String) {

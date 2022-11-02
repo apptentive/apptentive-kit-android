@@ -5,4 +5,8 @@
     style="?apptentiveSurveyIntroductionStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:autoLink="all"
+    android:clickable="true"
+    android:focusable="true"
+    android:textIsSelectable="true"
     tools:text="Tell us about your experience!" />

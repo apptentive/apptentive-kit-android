@@ -49,29 +49,33 @@ internal data class DefaultEngagement(
 
         val interactionData = interactionDataProvider.getInteractionData(event)
         if (interactionData == null) {
-            return EngagementResult.InteractionNotShown("No runnable interactions for event '${event.name}'")
+            return EngagementResult.InteractionNotShown("No invocations found or criteria evaluated false for event: '${event.name}'")
         }
 
         val interaction = interactionConverter.convert(interactionData)
         if (interaction == null) {
-            return EngagementResult.Error("Unknown interaction type '${interactionData.type}' for event '${event.name}'")
+            // Cannot find module to handle interaction
+            return EngagementResult.Error("Cannot find '${interactionData.type}' module to handle event '${event.name}'")
         }
 
         return engage(context, interaction)
     }
 
+    // This engage is only used for Note actions
     override fun engage(
         context: EngagementContext,
         invocations: List<Invocation>
     ): EngagementResult {
         val interactionData = interactionDataProvider.getInteractionData(invocations)
         if (interactionData == null) {
-            return EngagementResult.InteractionNotShown("No runnable interactions")
+            // Cannot find interaction to handle Note action invocation in manifest.
+            return EngagementResult.Error("Interaction to handle $invocations NOT found")
         }
 
         val interaction = interactionConverter.convert(interactionData)
         if (interaction == null) {
-            return EngagementResult.Error("Unknown interaction type '${interactionData.type}'")
+            // Cannot find module to handle interaction for Note action
+            return EngagementResult.Error("Cannot find $interaction module to handle '$interactionData'")
         }
 
         return engage(context, interaction)
