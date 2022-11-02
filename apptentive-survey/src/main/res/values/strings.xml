@@ -11,7 +11,7 @@
     <string name="range_max_label">%1$s = %2$s</string>
     <string name="confirmation_dialog_title">Close survey?</string>
     <string name="confirmation_dialog_message">You will lose your progress if you close this survey.</string>
-    <string name="confirmation_dialog_back_to_survey">Back to survey</string>
+    <string name="confirmation_dialog_back_to_survey">Cancel</string>
     <string name="min_range_label_default">Lowest</string>
     <string name="max_range_label_default">Highest</string>
     <string name="slider_description_short">%1$s.</string>

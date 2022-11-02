@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="close">Close</string>
-    <string name="profile">Profile</string>
+    <string name="apptentive_close">Close</string>
+    <string name="apptentive_back">Back</string>
+    <string name="apptentive_profile">Profile</string>
+    <string name="apptentive_message_validation_error">Error - Message field cannot be empty.</string>
+    <string name="apptentive_email_validation_error">Error - Email is either missing or an invalid format.</string>
+    <string name="apptentive_name_validation_error">Error - Name cannot be empty.</string>
+    <string name="apptentive_profile_confirmation_dialog_title">Close Profile?</string>
+    <string name="apptentive_profile_confirmation_dialog_message">The changes to your profile will not be saved.</string>
+    <string name="apptentive_profile_back_to_profile">Cancel</string>
+    <string name="apptentive_add_attachment">Add attachment</string>
+    <string name="apptentive_attachment_thumbnail">Attachment thumbnail</string>
+    <string name="apptentive_send_message">Send message</string>
+    <string name="apptentive_preview_attachment">Preview attachment</string>
+    <string name="apptentive_remove_attachment">Remove attachment</string>
+    <string name="apptentive_failed_to_send">Failed to send. We will automatically retry later.</string>
+    <string name="apptentive_cannot_open_message_center">Message Center cannot be launched at this time. Please try again shortly.</string>
 </resources>

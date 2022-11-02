@@ -1,6 +1,5 @@
 package apptentive.com.android.feedback.model.payloads
 
-import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.payload.MediaType
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadType
@@ -15,23 +14,19 @@ abstract class Payload(val nonce: String) {
     protected abstract fun getHttpMethod(): HttpMethod
     protected abstract fun getHttpPath(): String
     protected abstract fun getContentType(): MediaType
+    protected abstract fun getDataBytes(): ByteArray
+    protected abstract fun getDataFilePath(): String
 
-    fun toJson(): String {
-        val container = getJsonContainer()
-        if (container != null) {
-            return JsonConverter.toJson(mapOf(container to this))
-        }
-        return JsonConverter.toJson(this)
-    }
+    fun toJson(): String = JsonConverter.toJson(mapOf(getJsonContainer() to this))
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
     internal fun toPayloadData() = PayloadData(
         nonce = nonce,
         type = getPayloadType(),
         path = getHttpPath(),
         method = getHttpMethod(),
         mediaType = getContentType(),
-        data = toJson().toByteArray()
+        data = getDataBytes(),
+        dataFilePath = getDataFilePath()
     )
 
     override fun equals(other: Any?): Boolean {

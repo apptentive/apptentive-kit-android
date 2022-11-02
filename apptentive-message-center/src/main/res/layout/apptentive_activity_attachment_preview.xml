@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="?apptentiveMessageCenterAttachmentPreviewLayoutStyle"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".view.MessageCenterActivity">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/apptentive_attachment_preview_toolbar"
+        style="?apptentiveMessageCenterToolbarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:touchscreenBlocksFocus="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/apptentive_attachment_preview_title"
+            style="?apptentiveMessageCenterToolbarTitleStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:targetApi="p"
+            tools:text="Message Center" />
+    </com.google.android.material.appbar.MaterialToolbar>
+
+    <apptentive.com.android.feedback.messagecenter.view.custom.SimpleTouchImageView
+        android:id="@+id/apptentive_attachment_preview_image"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/apptentive_attachment_preview_toolbar" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

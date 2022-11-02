@@ -100,7 +100,7 @@ internal class SurveyActivity : BaseSurveyActivity() {
                         positiveButton = ApptentiveGenericDialog.DialogButton(positiveButtonMessage ?: getString(R.string.confirmation_dialog_back_to_survey)) {
                             viewModel.onBackToSurveyFromConfirmationDialog()
                         },
-                        negativeButton = ApptentiveGenericDialog.DialogButton(negativeButtonMessage ?: getString(R.string.close)) {
+                        negativeButton = ApptentiveGenericDialog.DialogButton(negativeButtonMessage ?: getString(R.string.apptentive_close)) {
                             viewModel.exit(showConfirmation = false)
                         }
                     )

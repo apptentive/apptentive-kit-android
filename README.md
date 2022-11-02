@@ -74,7 +74,7 @@ Apptentive.engage("my_event") { result ->
 ```
 #### Migrating from legacy SDK 
 
-[Android SDK Migration Guide](https://docs.google.com/document/d/1ApufqajMpzIWSWtReKRo09O9aUBKB3A3di4AAVv9CiQ/edit?usp=sharing)
+[Android SDK Migration Guide](https://learn.apptentive.com/knowledge-base/android-sdk-5-x-to-6-0-migration-guide/)
 
 #### Binary releases are hosted for Maven 
 

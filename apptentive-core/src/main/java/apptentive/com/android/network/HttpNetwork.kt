@@ -35,7 +35,8 @@ class DefaultHttpNetwork(
     override fun performRequest(request: HttpRequest<*>): HttpNetworkResponse {
         val startTime = System.currentTimeMillis()
 
-        val connection = openConnection(request)
+        val connection = openConnection(request.url)
+
         try {
             // request headers
             setRequestHeaders(connection, request.headers)
@@ -63,6 +64,7 @@ class DefaultHttpNetwork(
 
             // duration
             val duration = toSeconds(System.currentTimeMillis() - startTime)
+
             return HttpNetworkResponse(
                 statusCode = responseCode,
                 statusMessage = responseMessage,
@@ -78,12 +80,12 @@ class DefaultHttpNetwork(
     //region Connection
 
     /**
-     * Opens [HttpURLConnection] for a given [request]
+     * Opens [HttpURLConnection] for a given [HttpRequest]
      */
-    private fun openConnection(request: HttpRequest<*>): HttpURLConnection {
-        val connection = createConnection(request.url)
-        connection.connectTimeout = toMilliseconds(connectTimeout)
-        connection.readTimeout = toMilliseconds(readTimeout)
+    private fun openConnection(url: URL): HttpURLConnection {
+        val connection = createConnection(url)
+        connection.connectTimeout = toMilliseconds(connectTimeout).toInt()
+        connection.readTimeout = toMilliseconds(readTimeout).toInt()
         connection.useCaches = false
         connection.doInput = true
         return connection

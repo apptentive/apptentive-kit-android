@@ -5,4 +5,4 @@ internal interface ConversationService :
     EngagementManifestService,
     ConfigurationService,
     PayloadRequestSender,
-    MessageFetchService
+    MessageCenterService

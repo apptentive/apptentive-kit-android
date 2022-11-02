@@ -248,9 +248,14 @@ private class MockConversationService(
     override fun getMessages(
         conversationToken: String,
         conversationId: String,
+        lastMessageID: String,
         callback: (Result<MessageList>) -> Unit
     ) {
         callback(Result.Success(MessageList(messages = null, endsWith = "", hasMore = false)))
+    }
+
+    override fun getAttachment(remoteUrl: String, callback: (Result<ByteArray>) -> Unit) {
+        TODO("Not yet implemented")
     }
 
     override fun sendPayloadRequest(

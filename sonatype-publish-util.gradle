@@ -7,6 +7,7 @@ task sonatypeAssembleApptentiveModules(type: GradleBuild) {
              'apptentive-in-app-review:assembleRelease',
              'apptentive-navigate-to-link:assembleRelease',
              'apptentive-notes:assembleRelease',
+             'apptentive-message-center:assembleRelease',
              'apptentive-ratings:assembleRelease',
              'apptentive-survey:assembleRelease']
 }
@@ -22,6 +23,7 @@ task sonatypePublishApptentiveModules(type: GradleBuild)  {
              'apptentive-in-app-review:publishMavenPublicationToMavenLocal',
              'apptentive-navigate-to-link:publishMavenPublicationToMavenLocal',
              'apptentive-notes:publishMavenPublicationToMavenLocal',
+             'apptentive-message-center:publishMavenPublicationToMavenLocal',
              'apptentive-ratings:publishMavenPublicationToMavenLocal',
              'apptentive-survey:publishMavenPublicationToMavenLocal']
     dependsOn sonatypeAssembleApptentiveModules

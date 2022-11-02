@@ -11,7 +11,7 @@ class MockPayloadQueue : PayloadQueue {
         return if (payloads.isEmpty()) null else payloads[0]
     }
 
-    override fun deletePayload(payload: PayloadData) {
+    override fun deletePayloadAndAssociatedFiles(payload: PayloadData) {
         val removed = payloads.remove(payload)
         if (!removed) {
             throw AssertionError("Payload was not in the queue")

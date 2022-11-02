@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="apptentive_color_primary">#2A3355</color>
-    <color name="apptentive_color_primary_variant">#000a2b</color>
-    <color name="apptentive_color_secondary">#2A3355</color>
-    <color name="apptentive_color_secondary_variant">#1d67a2</color>
     <color name="apptentive_color_on_primary">#FFFFFF</color>
-    <color name="apptentive_color_on_primary_variant">#E1E1E1</color>
+    <color name="apptentive_color_secondary">#2A3355</color>
+    <color name="apptentive_color_on_secondary">#FFFFFF</color>
     <color name="apptentive_color_background">#FFFFFF</color>
     <color name="apptentive_color_on_background">#2D2D2D</color>
     <color name="apptentive_color_surface">#FFFFFF</color>
     <color name="apptentive_color_on_surface">#2D2D2D</color>
-    <color name="apptentive_color_text_color_secondary">#858585</color>
-    <color name="apptentive_color_on_secondary">#FFFFFF</color>
     <color name="apptentive_color_error">#B00020</color>
-    <color name="apptentive_color_outbound_message">#EAEAEA</color>
+    <color name="apptentive_color_outbound_bubble">#EAEAEA</color>
     <color name="apptentive_color_outbound_text">#5D5D5D</color>
+    <color name="apptentive_color_default_avatar">#5A95D4</color>
+    <color name="apptentive_color_icon_default_fill">#00000000</color>
+    <color name="apptentive_color_bottomsheet_icon">#757575</color>
+    <color name="apptentive_color_attachment_background">#F5F5F5</color>
 </resources>
