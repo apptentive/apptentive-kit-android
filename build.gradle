@@ -106,7 +106,7 @@ buildscript {
         // Kotlin Gradle
         // https://kotlinlang.org/docs/gradle.html
         // https://kotlinlang.org/docs/releases.html#release-details
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.21"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.20"
 
         // JFrog Gradle
         // https://plugins.gradle.org/plugin/com.jfrog.artifactory

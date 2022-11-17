@@ -1,6 +1,10 @@
 package apptentive.com.android.feedback.messagecenter.view
 
+import android.app.NotificationManager
+import android.content.Context
+import android.content.Intent
 import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.Menu
@@ -15,15 +19,20 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
+import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.messagecenter.R
 import apptentive.com.android.feedback.messagecenter.utils.MessageCenterEvents
 import apptentive.com.android.feedback.messagecenter.view.custom.AttachmentBottomSheet
 import apptentive.com.android.feedback.messagecenter.view.custom.AttachmentBottomSheet.Companion.APPTENTIVE_ATTACHMENT_BOTTOMSHEET_TAG
 import apptentive.com.android.feedback.messagecenter.view.custom.MessageCenterAttachmentThumbnailView
 import apptentive.com.android.feedback.model.Message
+import apptentive.com.android.feedback.utils.SystemUtils
+import apptentive.com.android.platform.SharedPrefConstants
 import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.ui.hideSoftKeyboard
 import apptentive.com.android.ui.startViewModelActivity
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.PUSH_NOTIFICATION
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.textview.MaterialTextView
 import kotlin.math.roundToInt
@@ -42,9 +51,12 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
     private var actionMenu: Menu? = null
     private var hasScrolled = false
 
-    private val sharedPrefs by lazy { // So this is only retrieved once
-        val MESSAGE_CENTER_DRAFT = "com.apptentive.sdk.messagecenter.draft"
-        getSharedPreferences(MESSAGE_CENTER_DRAFT, MODE_PRIVATE)
+    private val draftSharedPrefs by lazy { // So this is only retrieved once
+        getSharedPreferences(SharedPrefConstants.MESSAGE_CENTER_DRAFT, MODE_PRIVATE)
+    }
+
+    private val sharedPrefsPush by lazy {
+        getSharedPreferences(SharedPrefConstants.APPTENTIVE, MODE_PRIVATE)
     }
 
     private val selectImage =
@@ -55,6 +67,15 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
                 event = MessageCenterEvents.EVENT_NAME_ATTACHMENT_CANCEL,
                 data = null
             )
+        }
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                Log.d(PUSH_NOTIFICATION, "Push notifications allowed")
+            } else {
+                Log.w(PUSH_NOTIFICATION, "Push notifications denied")
+            }
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,11 +107,17 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
 
         addObservers()
         setListeners()
+        getPushNotificationPermission()
     }
 
     private fun addObservers() {
         viewModel.exitStream.observe(this) { exit ->
-            if (exit) finish()
+            if (exit) if (isTaskRoot) {
+                // Opens the Launch Activity of app
+                packageManager.getLaunchIntentForPackage(packageName)?.let {
+                    startActivity(Intent.makeMainActivity(it.component))
+                } ?: finish()
+            } else finish()
         }
 
         viewModel.clearMessageStream.observe(this) { clearMessage ->
@@ -159,7 +186,11 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
             currentFocus?.clearFocus()
             it.hideSoftKeyboard()
             if (viewModel.shouldCollectProfileData)
-                viewModel.sendMessage(messageText.text.toString(), messageListAdapter.getProfileName(), messageListAdapter.getProfileEmail())
+                viewModel.sendMessage(
+                    messageText.text.toString(),
+                    messageListAdapter.getProfileName(),
+                    messageListAdapter.getProfileEmail()
+                )
             else
                 viewModel.sendMessage(messageText.text.toString())
         }
@@ -213,7 +244,7 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
         val MESSAGE_CENTER_PROFILE_EMAIL = "profile.email"
 
         if (shouldSave) {
-            sharedPrefs
+            draftSharedPrefs
                 .edit()
                 .putString(MESSAGE_CENTER_DRAFT_TEXT, messageText.text?.toString())
                 .putString(MESSAGE_CENTER_PROFILE_NAME, messageListAdapter.getProfileName())
@@ -227,22 +258,27 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
                 .apply()
         } else {
             // Restore draft message body
-            val draftText = sharedPrefs.getString(MESSAGE_CENTER_DRAFT_TEXT, null)
+            val draftText = draftSharedPrefs.getString(MESSAGE_CENTER_DRAFT_TEXT, null)
             messageText.setText(draftText.orEmpty())
 
             // Restore draft attachments
-            val stringSet = sharedPrefs.getStringSet(MESSAGE_CENTER_DRAFT_ATTACHMENTS, mutableSetOf()).orEmpty()
+            val stringSet =
+                draftSharedPrefs.getStringSet(MESSAGE_CENTER_DRAFT_ATTACHMENTS, mutableSetOf())
+                    .orEmpty()
             if (viewModel.draftAttachmentsStream.value.isNullOrEmpty() && stringSet.isNotEmpty()) {
                 val draftAttachments: List<Message.Attachment> = stringSet.mapNotNull {
-                    JsonConverter.fromJson(it, Message.Attachment::class.java) as? Message.Attachment
+                    JsonConverter.fromJson(
+                        it,
+                        Message.Attachment::class.java
+                    ) as? Message.Attachment
                 }
                 viewModel.addAttachments(draftAttachments)
             }
 
             // Restore profile view
             if (messageListAdapter.isProfileViewVisible()) {
-                val name = sharedPrefs.getString(MESSAGE_CENTER_PROFILE_NAME, "")
-                val email = sharedPrefs.getString(MESSAGE_CENTER_PROFILE_EMAIL, "")
+                val name = draftSharedPrefs.getString(MESSAGE_CENTER_PROFILE_NAME, "")
+                val email = draftSharedPrefs.getString(MESSAGE_CENTER_PROFILE_EMAIL, "")
                 messageListAdapter.updateEmail(email)
                 messageListAdapter.updateName(name)
             }
@@ -257,6 +293,27 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
             messageList.scrollToPosition(if (firstUnreadItem >= 0) firstUnreadItem else lastItem)
         }
     }
+
+    //region push notifications
+    private fun getPushNotificationPermission() {
+        val hasPushSetUp =
+            sharedPrefsPush.getInt(SharedPrefConstants.PREF_KEY_PUSH_PROVIDER, -1) != -1 &&
+                sharedPrefsPush.getString(SharedPrefConstants.PREF_KEY_PUSH_TOKEN, null) != null
+        if (hasPushSetUp &&
+            Build.VERSION.SDK_INT >= 33 &&
+            applicationInfo.targetSdkVersion >= 33 &&
+            !SystemUtils.hasPermission(this, SharedPrefConstants.POST_NOTIFICATIONS)
+        ) {
+            Log.d(PUSH_NOTIFICATION, "Requesting push notification")
+            requestPermissionLauncher.launch(SharedPrefConstants.POST_NOTIFICATIONS)
+        }
+    }
+
+    private fun clearNotifications() {
+        val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancel(Apptentive.APPTENTIVE_NOTIFICATION_ID)
+    }
+    //endregion
 
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
         // We need to remove focus from any TextView when user touches outside
@@ -275,6 +332,7 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
         super.onResume()
         viewModel.onMessageViewStatusChanged(true)
         handleDraftMessage(false)
+        clearNotifications()
     }
 
     override fun onStop() {
@@ -313,6 +371,12 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
             event = MessageCenterEvents.EVENT_NAME_CANCEL,
             data = mapOf("cause" to "back_button")
         )
+
+        if (isTaskRoot) packageManager.getLaunchIntentForPackage(packageName)?.let {
+            // Opens the Launch Activity of app
+            startActivity(Intent.makeMainActivity(it.component))
+        } ?: finish() else finish()
+
         super.onBackPressed()
     }
 }

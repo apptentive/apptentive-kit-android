@@ -62,6 +62,6 @@ data class Device(
         localeRaw = localeRaw,
         utcOffset = utcOffset,
         customData = customData.content,
-        integrationConfig = integrationConfig
+        integrationConfig = integrationConfig.toPayload()
     )
 }

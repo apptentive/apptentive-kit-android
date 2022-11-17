@@ -18,6 +18,7 @@ internal interface ApptentiveClient {
     fun sendHiddenAttachmentFileStream(inputStream: InputStream, mimeType: String)
     fun updateDevice(customData: Pair<String, Any?>? = null, deleteKey: String? = null)
     fun updatePerson(name: String? = null, email: String? = null, customData: Pair<String, Any?>? = null, deleteKey: String? = null)
+    fun setPushIntegration(pushProvider: Int, token: String)
 
     companion object {
         val NULL: ApptentiveClient = ApptentiveNullClient()
@@ -42,6 +43,10 @@ private class ApptentiveNullClient : ApptentiveClient {
 
     override fun sendHiddenTextMessage(message: String) {
         Log.d(MESSAGE_CENTER, "Apptentive SDK is not initialized; send attachment text failed")
+    }
+
+    override fun setPushIntegration(pushProvider: Int, token: String) {
+        Log.d(PROFILE_DATA_UPDATE, "Apptentive SDK is not initialized; set push integration")
     }
 
     override fun updateDevice(customData: Pair<String, Any?>?, deleteKey: String?) {

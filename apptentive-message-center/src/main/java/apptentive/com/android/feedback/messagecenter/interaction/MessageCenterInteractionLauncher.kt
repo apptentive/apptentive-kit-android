@@ -21,8 +21,8 @@ internal class MessageCenterInteractionLauncher : AndroidViewInteractionLauncher
     ) {
         super.launchInteraction(engagementContext, interaction)
 
-        Log.i(LogTags.INTERACTIONS, "Message center interaction launched with title: ${interaction.title}")
-        Log.v(LogTags.INTERACTIONS, "Message center interaction data: $interaction")
+        Log.i(LogTags.INTERACTIONS, "Message Center interaction launched with title: ${interaction.title}")
+        Log.v(LogTags.INTERACTIONS, "Message Center interaction data: $interaction")
 
         DependencyProvider.register(MessageCenterModelProvider(interaction))
 

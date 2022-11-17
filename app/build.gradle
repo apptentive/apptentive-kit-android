@@ -1,3 +1,13 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.google.gms:google-services:4.3.14'
+    }
+}
+
 plugins {
   id "co.riiid.gradle"
 }
@@ -6,8 +16,9 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'com.google.gms.google-services'
 
-// Set from Jenkins or Travis. Set by parent job and passed into template job.
+// Set from Jenkins. Set by parent job and passed into template job.
 def theVersionCode = System.getenv("BUILD_NUMBER") as Integer ?: 100
 def theVersionName = extractSdkVersion()
 def githubToken = System.getenv("GITHUB_TOKEN") ?: "ABC123"
@@ -88,6 +99,9 @@ dependencies {
     implementation "androidx.core:core-ktx:$core_ktx_version"
     implementation "com.google.android.material:material:$material_design_version"
     implementation "androidx.constraintlayout:constraintlayout:$constraint_layout_version"
+
+    // Firebase Messaging (For Message Center Push Notifications)
+    implementation 'com.google.firebase:firebase-messaging:23.1.0'
 
     testImplementation "androidx.test:core:$androidx_test_version"
 

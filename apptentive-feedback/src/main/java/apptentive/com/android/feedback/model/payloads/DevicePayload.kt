@@ -2,7 +2,6 @@ package apptentive.com.android.feedback.model.payloads
 
 import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.Constants.buildHttpPath
-import apptentive.com.android.feedback.model.IntegrationConfig
 import apptentive.com.android.feedback.model.SensitiveDataKey
 import apptentive.com.android.feedback.payload.MediaType
 import apptentive.com.android.feedback.payload.PayloadType
@@ -38,7 +37,7 @@ internal class DevicePayload(
     val localeRaw: String,
     val utcOffset: Int,
     @SensitiveDataKey val customData: Map<String, Any?>? = null,
-    val integrationConfig: IntegrationConfig = IntegrationConfig()
+    @SensitiveDataKey val integrationConfig: Map<String, Any?>? = null,
 ) : ConversationPayload(nonce) {
 
     override fun getPayloadType() = PayloadType.Device

@@ -1,7 +1,10 @@
 package apptentive.com.android.feedback
 
 import android.app.Application
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
+import android.os.Bundle
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.concurrent.ExecutorQueue
 import apptentive.com.android.concurrent.Executors
@@ -14,6 +17,7 @@ import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.format
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
+import apptentive.com.android.feedback.notifications.NotificationUtils
 import apptentive.com.android.feedback.platform.AndroidFileSystemProvider
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.feedback.utils.ThrottleUtils
@@ -27,6 +31,7 @@ import apptentive.com.android.network.HttpNetworkResponse
 import apptentive.com.android.network.HttpRequest
 import apptentive.com.android.network.asString
 import apptentive.com.android.platform.SharedPrefConstants
+import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags
 import apptentive.com.android.util.LogTags.FEEDBACK
@@ -34,7 +39,10 @@ import apptentive.com.android.util.LogTags.INTERACTIONS
 import apptentive.com.android.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.util.LogTags.NETWORK
 import apptentive.com.android.util.LogTags.PROFILE_DATA_UPDATE
+import apptentive.com.android.util.LogTags.PUSH_NOTIFICATION
 import apptentive.com.android.util.LogTags.SYSTEM
+import org.json.JSONException
+import org.json.JSONObject
 import java.io.InputStream
 
 /**
@@ -99,7 +107,8 @@ object Apptentive {
         activityInfoCallback = null
     }
 
-    internal fun getApptentiveActivityCallback(): ApptentiveActivityInfo? = activityInfoCallback
+    @InternalUseOnly
+    fun getApptentiveActivityCallback(): ApptentiveActivityInfo? = activityInfoCallback
 
     @Suppress("MemberVisibilityCanBePrivate")
     val registered
@@ -662,4 +671,326 @@ object Apptentive {
             }
         }
     }
+
+    //region Push Notifications
+    /**
+     * Use this ID when you call `notify` for Apptentive Push Notifications if you want
+     * notifications to be cleared when when Message Center is shown.
+     */
+    const val APPTENTIVE_NOTIFICATION_ID = 1056 // Sum of "Apptentive" to ASCII values
+
+    /**
+     * Call [setPushNotificationIntegration] with one of the below values to allow Apptentive to
+     * send push notifications to this device.
+     *
+     * * [PUSH_PROVIDER_APPTENTIVE]     - Requires a valid Firebase Cloud Messaging (FCM) configuration.
+     * * [PUSH_PROVIDER_PARSE]          - Requires a valid Parse integration.
+     * * [PUSH_PROVIDER_URBAN_AIRSHIP]  - Requires a valid Urban Airship Push integration.
+     * * [PUSH_PROVIDER_AMAZON_AWS_SNS] - Requires a valid Amazon Web Services (AWS) Simple Notification Service (SNS) integration.
+     */
+    const val PUSH_PROVIDER_APPTENTIVE = 0
+    const val PUSH_PROVIDER_PARSE = 1
+    const val PUSH_PROVIDER_URBAN_AIRSHIP = 2
+    const val PUSH_PROVIDER_AMAZON_AWS_SNS = 3
+
+    /**
+     * Sends push provider information to our server to allow us to send pushes to this device when
+     * you reply to your customers. Only one push provider is allowed to be active at a time, so you
+     * should only call this method once. Please see our
+     * [integration guide](http://www.apptentive.com/docs/android/integration-guide/#push-notifications)
+     * for instructions.
+     *
+     * @param pushProvider One of the following:
+     *  * [PUSH_PROVIDER_APPTENTIVE]
+     *  * [PUSH_PROVIDER_PARSE]
+     *  * [PUSH_PROVIDER_URBAN_AIRSHIP]
+     *  * [PUSH_PROVIDER_AMAZON_AWS_SNS]
+     *
+     * @param token The push provider token you receive from your push provider. The format is push provider specific.
+     * * Apptentive - Pass in the FCM Registration ID, which you can
+     * [access like this](https://firebase.google.com/docs/cloud-messaging/android/client#monitor-token-generation).
+     * * Urban Airship - The Urban Airship Channel ID, which you can
+     * [access like this](https://github.com/urbanairship/android-samples/blob/4569d317a48efb2f23541fd8f8f87f03b3474c72/app/src/main/java/com/urbanairship/sample/SampleAirshipReceiver.java#L49).
+     * * Parse - The Parse [deviceToken](https://docs.parseplatform.org/android/guide/#push-notifications)
+     * * Amazon AWS SNS - The FCM Registration ID, which you can [access like this](https://firebase.google.com/docs/cloud-messaging/android/client#monitor-token-generation).
+     */
+    fun setPushNotificationIntegration(context: Context, pushProvider: Int, token: String) {
+        stateExecutor.execute {
+            context
+                .getSharedPreferences(SharedPrefConstants.APPTENTIVE, Context.MODE_PRIVATE)
+                .edit()
+                .putInt(SharedPrefConstants.PREF_KEY_PUSH_PROVIDER, pushProvider)
+                .putString(SharedPrefConstants.PREF_KEY_PUSH_TOKEN, token)
+                .apply()
+
+            client.setPushIntegration(pushProvider, token)
+        }
+    }
+
+    /**
+     * Determines whether this Intent is a push notification sent from Apptentive.
+     *
+     * @param intent The received [Intent] you received in your [BroadcastReceiver].
+     * @return `true` if the [Intent] came from, and should be handled by Apptentive.
+     */
+    fun isApptentivePushNotification(intent: Intent?): Boolean {
+        try {
+            return registered && NotificationUtils.getApptentivePushNotificationData(intent) != null
+        } catch (e: Exception) {
+            Log.e(
+                PUSH_NOTIFICATION,
+                "Exception while checking for Apptentive push notification intent",
+                e
+            )
+        }
+        return false
+    }
+
+    /**
+     * Determines whether push payload data came from an Apptentive Push Notification.
+     * This method is also used for Urban Airship.
+     *
+     * @param data The push payload data obtained through FCM `onMessageReceived()`, when using FCM
+     * @return `true` if the push came from, and should be handled by Apptentive.
+     */
+    fun isApptentivePushNotification(data: Map<String, String>?): Boolean {
+        try {
+            return registered && NotificationUtils.getApptentivePushNotificationData(data) != null
+        } catch (e: Exception) {
+            Log.e(
+                PUSH_NOTIFICATION,
+                "Exception while checking for Apptentive push notification data",
+                e
+            )
+        }
+        return false
+    }
+
+    /**
+     *
+     * Use this method in your push receiver to build a [PendingIntent] when an Apptentive push
+     * notification is received. Pass the generated [PendingIntent] to
+     * [androidx.core.app.NotificationCompat.Builder.setContentIntent] to allow Apptentive
+     * to display Interactions such as Message Center. Calling this method for a push [Intent] that
+     * did not come from Apptentive will return a null object. If you receive a `null` object, your
+     * app will need to handle this notification itself.
+     *
+     * This task is performed asynchronously.
+     *
+     * This is the method you will likely need if you integrated using Urban Airship, AWS/SNS, or Parse
+     *
+     * @param callback Called after we check to see Apptentive can launch an Interaction from this
+     * push. Called with a [PendingIntent] to launch an Apptentive Interaction
+     * if the push data came from Apptentive, and an Interaction can be shown, or
+     * `null`.
+     * @param intent An [Intent] containing the Apptentive Push data. Pass in what you receive
+     * in the [Service] or [BroadcastReceiver] that is used by your chosen push provider.
+     */
+    fun buildPendingIntentFromPushNotification(context: Context, callback: PendingIntentCallback, intent: Intent) {
+        if (registered) {
+            stateExecutor.execute {
+                val apptentivePushData = NotificationUtils.getApptentivePushNotificationData(intent)
+                val pendingIntent = NotificationUtils.generatePendingIntentFromApptentivePushData(
+                    context,
+                    client as ApptentiveDefaultClient,
+                    apptentivePushData
+                )
+                mainExecutor.execute {
+                    callback.onPendingIntent(pendingIntent)
+                }
+            }
+        } else {
+            Log.w(PUSH_NOTIFICATION, "Apptentive is not registered. Cannot build Push Intent.")
+        }
+    }
+
+    /**
+     *
+     * Use this method in your push receiver to build a pending Intent when an Apptentive push
+     * notification is received. Pass the generated PendingIntent to
+     * [androidx.core.app.NotificationCompat.Builder.setContentIntent] to allow Apptentive
+     * to display Interactions such as Message Center. Calling this method for a push [Bundle] that
+     * did not come from Apptentive will return a null object. If you receive a null object, your app
+     * will need to handle this notification itself.
+     *
+     * This task is performed asynchronously.
+     *
+     * This is the method you will likely need if you integrated using Firebase Cloud Messaging
+     * or Urban Airship
+     *
+     * @param callback Called after we check to see Apptentive can launch an Interaction from this
+     * push. Called with a [PendingIntent] to launch an Apptentive Interaction if the push data
+     * came from Apptentive, and an Interaction can be shown, or `null`.
+     * @param data A [Map]<[String], [String]>; containing the Apptentive
+     * Push data. Pass in what you receive in the the Service or BroadcastReceiver
+     * that is used by your chosen push provider.
+     */
+    fun buildPendingIntentFromPushNotification(context: Context, callback: PendingIntentCallback, data: Map<String, String>) {
+        if (registered) {
+            stateExecutor.execute {
+                val apptentivePushData = NotificationUtils.getApptentivePushNotificationData(data)
+                val intent = NotificationUtils.generatePendingIntentFromApptentivePushData(
+                    context,
+                    client as ApptentiveDefaultClient,
+                    apptentivePushData
+                )
+                mainExecutor.execute {
+                    callback.onPendingIntent(intent)
+                }
+            }
+        } else {
+            Log.w(PUSH_NOTIFICATION, "Apptentive is not registered. Cannot build Push Intent.")
+        }
+    }
+
+    /**
+     * Use this method in your push receiver to get the notification title you can use to construct
+     * an [android.app.Notification] object.
+     *
+     * @param intent An [Intent] containing the Apptentive Push data. Pass in what you receive
+     * in the Service or BroadcastReceiver that is used by your chosen push provider.
+     * @return a [String] value, or `null`.
+     */
+    fun getTitleFromApptentivePush(intent: Intent?): String? {
+        return if (registered && intent != null) {
+            getTitleFromApptentivePush(intent.extras)
+        } else null
+    }
+
+    /**
+     * Use this method in your push receiver to get the notification body text you can use to
+     * construct an [android.app.Notification] object.
+     *
+     * @param intent An [Intent] containing the Apptentive Push data. Pass in what you receive
+     * in the Service or BroadcastReceiver that is used by your chosen push provider.
+     * @return a [String] value, or `null`.
+     */
+    fun getBodyFromApptentivePush(intent: Intent?): String? {
+        return if (registered && intent != null) {
+            getBodyFromApptentivePush(intent.extras)
+        } else null
+    }
+
+    /**
+     * Use this method in your push receiver to get the notification title you can use to construct a
+     * [android.app.Notification] object.
+     *
+     * @param bundle A [Bundle] containing the Apptentive Push data. Pass in what you receive in
+     * the the [Service] or [BroadcastReceiver] that is used by your chosen push provider.
+     * @return a [String] value, or `null`.
+     */
+    fun getTitleFromApptentivePush(bundle: Bundle?): String? {
+        try {
+            when {
+                !registered || bundle == null -> return null
+                bundle.containsKey(NotificationUtils.TITLE_DEFAULT) -> {
+                    return bundle.getString(NotificationUtils.TITLE_DEFAULT)
+                }
+                bundle.containsKey(NotificationUtils.PUSH_EXTRA_KEY_PARSE) -> {
+                    val parseDataString = bundle.getString(NotificationUtils.PUSH_EXTRA_KEY_PARSE)
+                    if (parseDataString != null) {
+                        return try {
+                            val parseJson = JSONObject(parseDataString)
+                            parseJson.optString(NotificationUtils.TITLE_DEFAULT)
+                        } catch (e: JSONException) {
+                            Log.e(PUSH_NOTIFICATION, "Error parsing intent data", e)
+                            null
+                        }
+                    }
+                }
+                bundle.containsKey(NotificationUtils.PUSH_EXTRA_KEY_UA) -> {
+                    val uaPushBundle = bundle.getBundle(NotificationUtils.PUSH_EXTRA_KEY_UA) ?: return null
+                    return uaPushBundle.getString(NotificationUtils.TITLE_DEFAULT)
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(PUSH_NOTIFICATION, "Exception while getting title from Apptentive push", e)
+        }
+        return null
+    }
+
+    /**
+     * Use this method in your push receiver to get the notification body text you can use to
+     * construct a [android.app.Notification] object.
+     *
+     * @param bundle A [Bundle] containing the Apptentive Push data. Pass in what you receive in
+     * the the Service or BroadcastReceiver that is used by your chosen push provider.
+     * @return a [String] value, or `null`.
+     */
+    fun getBodyFromApptentivePush(bundle: Bundle?): String? {
+        try {
+            when {
+                !registered || bundle == null -> return null
+                bundle.containsKey(NotificationUtils.BODY_DEFAULT) -> {
+                    return bundle.getString(NotificationUtils.BODY_DEFAULT)
+                }
+                else -> when {
+                    bundle.containsKey(NotificationUtils.PUSH_EXTRA_KEY_PARSE) -> {
+                        val parseDataString = bundle.getString(NotificationUtils.PUSH_EXTRA_KEY_PARSE)
+                        if (parseDataString != null) {
+                            return try {
+                                val parseJson = JSONObject(parseDataString)
+                                parseJson.optString(NotificationUtils.BODY_PARSE)
+                            } catch (e: JSONException) {
+                                Log.e(
+                                    PUSH_NOTIFICATION,
+                                    "Exception while parsing Push Notification",
+                                    e
+                                )
+                                null
+                            }
+                        }
+                    }
+                    bundle.containsKey(NotificationUtils.PUSH_EXTRA_KEY_UA) -> {
+                        val uaPushBundle = bundle.getBundle(NotificationUtils.PUSH_EXTRA_KEY_UA) ?: return null
+                        return uaPushBundle.getString(NotificationUtils.BODY_UA)
+                    }
+                    bundle.containsKey(NotificationUtils.BODY_UA) -> return bundle.getString(
+                        NotificationUtils.BODY_UA
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(PUSH_NOTIFICATION, "Exception while getting body from Apptentive push", e)
+        }
+        return null
+    }
+
+    /**
+     * Use this method in your push receiver to get the notification title you can use to construct a
+     * [android.app.Notification] object.
+     *
+     * @param data A [Map]<[String], [String]> containing the Apptentive Push
+     * data. Pass in what you receive in the the Service or BroadcastReceiver that is
+     * used by your chosen push provider.
+     * @return a [String] value, or `null`.
+     */
+    fun getTitleFromApptentivePush(data: Map<String, String>?): String? {
+        try {
+            return if (!registered) null else data?.get(NotificationUtils.TITLE_DEFAULT)
+        } catch (e: Exception) {
+            Log.e(PUSH_NOTIFICATION, "Exception while getting title from Apptentive push", e)
+        }
+        return null
+    }
+
+    /**
+     * Use this method in your push receiver to get the notification body text you can use to
+     * construct a [android.app.Notification] object.
+     *
+     * @param data A [Map]<[String], [String]> containing the Apptentive Push
+     * data. Pass in what you receive in the the Service or BroadcastReceiver that is
+     * used by your chosen push provider.
+     * @return a [String] value, or `null`.
+     */
+    fun getBodyFromApptentivePush(data: Map<String, String>?): String? {
+        try {
+            return if (!registered) null else data?.get(NotificationUtils.BODY_DEFAULT)
+        } catch (e: Exception) {
+            Log.e(PUSH_NOTIFICATION, "Exception while getting body from Apptentive push", e)
+        }
+        return null
+    }
+
+    //endregion
 }
