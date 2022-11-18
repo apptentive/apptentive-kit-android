@@ -87,8 +87,8 @@ class ApptentiveDefaultClient(
     private val httpClient: HttpClient,
     private val executors: Executors
 ) : ApptentiveClient {
-    private lateinit var conversationManager: ConversationManager
-    private lateinit var payloadSender: PayloadSender
+    internal lateinit var conversationManager: ConversationManager
+    internal lateinit var payloadSender: PayloadSender
     private lateinit var interactionDataProvider: InteractionDataProvider
     private lateinit var interactionModules: Map<String, InteractionModule<Interaction>>
     private var messageManager: MessageManager? = null
@@ -341,6 +341,14 @@ class ApptentiveDefaultClient(
             conversationManager.updatePerson(newPerson)
             payloadSender.sendPayload(newPerson.toPersonPayload())
         }
+    }
+
+    override fun getPersonName(): String? {
+        return conversationManager.getConversation().person.name
+    }
+
+    override fun getPersonEmail(): String? {
+        return conversationManager.getConversation().person.email
     }
 
     override fun showMessageCenter(customData: Map<String, Any?>?): EngagementResult {

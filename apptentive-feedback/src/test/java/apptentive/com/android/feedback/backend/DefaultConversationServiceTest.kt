@@ -96,8 +96,6 @@ class DefaultConversationServiceTest : TestCase() {
                             "version_name" to mockAppRelease.versionName
                         ),
                         "person" to mapOf(
-                            "name" to mockPerson.name,
-                            "email" to mockPerson.email,
                             "mparticle_id" to mockPerson.mParticleId,
                             "custom_data" to mapOf("person_key" to "person_value")
                         )

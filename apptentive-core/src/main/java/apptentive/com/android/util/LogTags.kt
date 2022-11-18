@@ -25,6 +25,7 @@ object LogTags {
     @JvmField val UTIL = LogTag("UTIL")
     @JvmField val SECURITY = LogTag("SECURITY")
     val PROFILE_DATA_UPDATE = LogTag("PROFILE DATA UPDATE")
+    val PROFILE_DATA_GET = LogTag("PROFILE DATA GET")
     val LIFE_CYCLE_OBSERVER = LogTag("LIFE CYCLE OBSERVER")
     val IN_APP_REVIEW = LogTag("IN APP REVIEW")
     val MESSAGE_CENTER = LogTag("MESSAGE CENTER")

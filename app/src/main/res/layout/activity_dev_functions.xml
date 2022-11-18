@@ -365,8 +365,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/event_button_top_margin"
-                    android:visibility="gone"
                     android:textSize="14sp"
+                    android:visibility="gone"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/removeCustomValueKeyTextLayout" />
 
@@ -423,6 +423,15 @@
                         app:layout_constraintStart_toEndOf="@id/addPersonNameTextLayout"
                         app:layout_constraintTop_toTopOf="@id/addPersonNameTextLayout" />
 
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/personNameText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/addPersonNameTextLayout" />
+
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/addPersonEmailTextLayout"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -433,7 +442,7 @@
                         app:layout_constraintEnd_toStartOf="@id/addPersonEmailButton"
                         app:layout_constraintHorizontal_chainStyle="spread"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/addPersonNameTextLayout">
+                        app:layout_constraintTop_toBottomOf="@id/personNameText">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/addPersonEmailEditText"
@@ -455,6 +464,15 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@id/addPersonEmailTextLayout"
                         app:layout_constraintTop_toTopOf="@id/addPersonEmailTextLayout" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/personEmailText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/addPersonEmailTextLayout" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>

@@ -265,7 +265,7 @@ object Apptentive {
         }
     }
 
-    private fun createHttpClient(context: Context): HttpClient {
+    internal fun createHttpClient(context: Context): HttpClient {
         val loggingInterceptor = object : HttpLoggingInterceptor {
             override fun intercept(request: HttpRequest<*>) {
                 Log.d(NETWORK, "--> ${request.method} ${request.url}")
@@ -502,6 +502,7 @@ object Apptentive {
      * conversations you have with this person. This name will be the definitive username for this
      * user, unless one is provided directly by the user through an Apptentive UI. Calls to this
      * method are idempotent. Calls to this method will overwrite any previously entered person's name.
+     * You can check the value with [getPersonName].
      *
      * @param name The user's name.
      */
@@ -519,12 +520,27 @@ object Apptentive {
     }
 
     /**
+     * Retrieves the user's name. This name may be set via [setPersonName],
+     * or by the user through Message Center.
+     *
+     * @return The person's name if set, else `null`.
+     */
+    @JvmStatic
+    fun getPersonName(): String? {
+        return if (registered) client.getPersonName()
+        else {
+            Log.w(LogTags.PROFILE_DATA_GET, "Apptentive not registered. Cannot get Person name.")
+            null
+        }
+    }
+
+    /**
      * Sets the user's email address. This email address will be sent to the Apptentive server to
      * allow out of app communication, and to help provide more context about this user. This email
      * will be the definitive email address for this user, unless one is provided directly by the
      * user through an Apptentive UI. Calls to this method are idempotent. Calls to this method will
      * overwrite any previously entered email, so if you don't want to overwrite any previously
-     * entered email,
+     * entered email. You can check the value with [getPersonEmail].
      *
      * @param email The user's email address.
      */
@@ -538,6 +554,21 @@ object Apptentive {
                     Log.d(PROFILE_DATA_UPDATE, "Empty/Blank strings are not supported for email")
                 }
             }
+        }
+    }
+
+    /**
+     * Retrieves the user's email address. This address may be set via [setPersonEmail],
+     * or by the user through Message Center.
+     *
+     * @return The person's email if set, else `null`.
+     */
+    @JvmStatic
+    fun getPersonEmail(): String? {
+        return if (registered) client.getPersonEmail()
+        else {
+            Log.w(LogTags.PROFILE_DATA_GET, "Apptentive not registered. Cannot get Person email.")
+            null
         }
     }
 

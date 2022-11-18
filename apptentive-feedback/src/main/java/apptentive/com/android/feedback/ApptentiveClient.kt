@@ -4,6 +4,7 @@ import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.util.LogTags.MESSAGE_CENTER_HIDDEN
+import apptentive.com.android.util.LogTags.PROFILE_DATA_GET
 import apptentive.com.android.util.LogTags.PROFILE_DATA_UPDATE
 import java.io.InputStream
 
@@ -18,6 +19,8 @@ internal interface ApptentiveClient {
     fun sendHiddenAttachmentFileStream(inputStream: InputStream, mimeType: String)
     fun updateDevice(customData: Pair<String, Any?>? = null, deleteKey: String? = null)
     fun updatePerson(name: String? = null, email: String? = null, customData: Pair<String, Any?>? = null, deleteKey: String? = null)
+    fun getPersonName(): String?
+    fun getPersonEmail(): String?
     fun setPushIntegration(pushProvider: Int, token: String)
 
     companion object {
@@ -77,5 +80,15 @@ private class ApptentiveNullClient : ApptentiveClient {
 
     override fun sendHiddenAttachmentFileStream(inputStream: InputStream, mimeType: String) {
         Log.d(MESSAGE_CENTER_HIDDEN, "Apptentive SDK is not initialized; send attachment stream failed")
+    }
+
+    override fun getPersonName(): String? {
+        Log.d(PROFILE_DATA_GET, "Apptentive SDK is not initialized; get person name failed")
+        return null
+    }
+
+    override fun getPersonEmail(): String? {
+        Log.d(PROFILE_DATA_GET, "Apptentive SDK is not initialized; get person email failed")
+        return null
     }
 }
