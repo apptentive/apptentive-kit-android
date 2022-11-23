@@ -352,11 +352,9 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
                 clearTextFields(addPersonNameEditText)
 
                 binding.personNameText.text = "Person name: ${Apptentive.getPersonName()}"
-                binding.personNameText.isVisible = Apptentive.getPersonName() != null
             }
 
             personNameText.text = "Person name: ${Apptentive.getPersonName()}"
-            personNameText.isVisible = Apptentive.getPersonName() != null
         }
     }
 
@@ -369,11 +367,9 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
                 makeToast("Person email set to \"$personEmailText\"")
                 clearTextFields(addPersonEmailEditText)
                 binding.personEmailText.text = "Person email ${Apptentive.getPersonEmail()}"
-                binding.personEmailText.isVisible = Apptentive.getPersonEmail() != null
             }
 
             personEmailText.text = "Person email ${Apptentive.getPersonEmail()}"
-            personEmailText.isVisible = Apptentive.getPersonEmail() != null
         }
     }
 
