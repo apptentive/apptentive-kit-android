@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="apptentive_close">ปิด</string>
+    <string name="apptentive_cancel">ยกเลิก</string>
+    <string name="apptentive_profile">โปรไฟล์</string>
+    <string name="apptentive_send_message">ส่งข้อความ</string>
+</resources>

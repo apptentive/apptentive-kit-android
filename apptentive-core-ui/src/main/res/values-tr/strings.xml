@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="apptentive_close">Kapat</string>
+    <string name="apptentive_cancel">İptal et</string>
+    <string name="apptentive_profile">Profil</string>
+    <string name="apptentive_send_message">Mesajı gönderir.</string>
+</resources>

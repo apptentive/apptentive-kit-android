@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="apptentive_close">閉じる</string>
+    <string name="apptentive_cancel">キャンセル</string>
+    <string name="apptentive_profile">プロフィール</string>
+    <string name="apptentive_send_message">メッセージを送信。</string>
+</resources>

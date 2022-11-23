@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="apptentive_close">Sluit</string>
+    <string name="apptentive_cancel">Anuluj</string>
+    <string name="apptentive_profile">Profiel</string>
+    <string name="apptentive_send_message">Wysyła tę wiadomość.</string>
+</resources>

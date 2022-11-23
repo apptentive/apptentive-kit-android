@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="apptentive_close">Закрыть</string>
+    <string name="apptentive_cancel">Отмена</string>
+    <string name="apptentive_profile">Профиль</string>
+    <string name="apptentive_send_message">Отправляет сообщение.</string>
+</resources>

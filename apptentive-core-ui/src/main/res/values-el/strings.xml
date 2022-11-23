@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="apptentive_close">Κλείσιμο</string>
+    <string name="apptentive_cancel">Ακύρωση</string>
+    <string name="apptentive_profile">Προφίλ</string>
+    <string name="apptentive_send_message">Sendet die Nachricht.</string>
+</resources>

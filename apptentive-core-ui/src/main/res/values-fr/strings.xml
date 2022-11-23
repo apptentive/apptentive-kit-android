@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="apptentive_close">Fermer</string>
+    <string name="apptentive_cancel">Annuler</string>
+    <string name="apptentive_profile">Profil</string>
+    <string name="apptentive_send_message">Envoie le message.</string>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="apptentive_close">إغلاق</string>
+    <string name="apptentive_cancel">إلغاء</string>
+    <string name="apptentive_profile">الملف التعريفي</string>
+    <string name="apptentive_send_message">إرسال رسالة.</string>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="apptentive_close">關閉</string>
+    <string name="apptentive_cancel">取消</string>
+    <string name="apptentive_profile">個人資料</string>
+    <string name="apptentive_send_message">傳送訊息。</string>
+</resources>
