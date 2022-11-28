@@ -97,7 +97,7 @@
     <dimen name="apptentive_message_list_view_padding">16dp</dimen>
     <dimen name="apptentive_message_error_text_spacing">0.033</dimen>
     <dimen name="apptentive_message_error_padding_start">16dp</dimen>
-    <dimen name="apptentive_message_attachment_layout_margin_bottom">24ddp</dimen>
+    <dimen name="apptentive_message_attachment_layout_margin_bottom">24dp</dimen>
     <dimen name="apptentive_message_separator_alpha">0.5</dimen>
     <dimen name="apptentive_message_group_timestamp">0.8</dimen>
     <dimen name="apptentive_message_bubble_width_percent">0.75</dimen>
