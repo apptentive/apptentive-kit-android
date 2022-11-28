@@ -504,18 +504,16 @@ object Apptentive {
      * method are idempotent. Calls to this method will overwrite any previously entered person's name.
      * You can check the value with [getPersonName].
      *
+     * `null` or blank strings will fail to be set on the server so we don't attempt.
+     *
      * @param name The user's name.
      */
 
     @JvmStatic
     fun setPersonName(name: String?) {
         stateExecutor.execute {
-            name?.let { name ->
-                client.updatePerson(name = name)
-                if (name.isBlank()) {
-                    Log.d(PROFILE_DATA_UPDATE, "Empty/Blank strings are not supported for name")
-                }
-            }
+            if (!name.isNullOrBlank()) client.updatePerson(name = name)
+            else Log.d(PROFILE_DATA_UPDATE, "Null or Empty/Blank strings are not supported for name")
         }
     }
 
@@ -542,18 +540,16 @@ object Apptentive {
      * overwrite any previously entered email, so if you don't want to overwrite any previously
      * entered email. You can check the value with [getPersonEmail].
      *
+     * `null` or blank strings will fail to be set on the server so we don't attempt.
+     *
      * @param email The user's email address.
      */
 
     @JvmStatic
     fun setPersonEmail(email: String?) {
         stateExecutor.execute {
-            email?.let { email ->
-                client.updatePerson(email = email)
-                if (email.isBlank()) {
-                    Log.d(PROFILE_DATA_UPDATE, "Empty/Blank strings are not supported for email")
-                }
-            }
+            if (!email.isNullOrBlank()) client.updatePerson(email = email)
+            else Log.d(PROFILE_DATA_UPDATE, "Null or Empty/Blank strings are not supported for email")
         }
     }
 
