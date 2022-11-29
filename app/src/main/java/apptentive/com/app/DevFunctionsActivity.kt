@@ -348,7 +348,6 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
                 val personNameText = addPersonNameEditText.text?.toString().orEmpty().trim()
 
                 Apptentive.setPersonName(personNameText)
-                makeToast("Person name set to \"$personNameText\"")
                 clearTextFields(addPersonNameEditText)
 
                 binding.personNameText.text = "Person name: ${Apptentive.getPersonName()}"
@@ -364,12 +363,11 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
                 val personEmailText = addPersonEmailEditText.text?.toString().orEmpty().trim()
 
                 Apptentive.setPersonEmail(personEmailText)
-                makeToast("Person email set to \"$personEmailText\"")
                 clearTextFields(addPersonEmailEditText)
-                binding.personEmailText.text = "Person email ${Apptentive.getPersonEmail()}"
+                binding.personEmailText.text = "Person email: ${Apptentive.getPersonEmail()}"
             }
 
-            personEmailText.text = "Person email ${Apptentive.getPersonEmail()}"
+            personEmailText.text = "Person email: ${Apptentive.getPersonEmail()}"
         }
     }
 
