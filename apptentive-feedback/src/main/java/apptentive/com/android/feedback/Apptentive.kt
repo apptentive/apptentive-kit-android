@@ -265,7 +265,7 @@ object Apptentive {
         }
     }
 
-    internal fun createHttpClient(context: Context): HttpClient {
+    private fun createHttpClient(context: Context): HttpClient {
         val loggingInterceptor = object : HttpLoggingInterceptor {
             override fun intercept(request: HttpRequest<*>) {
                 Log.d(NETWORK, "--> ${request.method} ${request.url}")
@@ -445,11 +445,15 @@ object Apptentive {
      */
     @JvmStatic
     fun sendAttachmentFile(uri: String?) {
-        if (!uri.isNullOrBlank()) {
-            stateExecutor.execute {
-                client.sendHiddenAttachmentFileUri(uri)
-            }
-        } else Log.d(MESSAGE_CENTER, "URI String was null or blank. URI: $uri")
+        try {
+            if (!uri.isNullOrBlank()) {
+                stateExecutor.execute {
+                    client.sendHiddenAttachmentFileUri(uri)
+                }
+            } else Log.d(MESSAGE_CENTER, "URI String was null or blank. URI: $uri")
+        } catch (exception: Exception) {
+            Log.e(MESSAGE_CENTER, "Exception while trying to send attachment file", exception)
+        }
     }
 
     /**
@@ -464,11 +468,18 @@ object Apptentive {
      */
     @JvmStatic
     fun sendAttachmentFile(content: ByteArray?, mimeType: String?) {
-        if (content != null && mimeType != null) {
-            stateExecutor.execute {
-                client.sendHiddenAttachmentFileBytes(content, mimeType)
-            }
-        } else Log.d(MESSAGE_CENTER, "Content and Mime Type cannot be null\nContent: $content, mimeType: $mimeType")
+        try {
+            if (content != null && mimeType != null) {
+                stateExecutor.execute {
+                    client.sendHiddenAttachmentFileBytes(content, mimeType)
+                }
+            } else Log.d(
+                MESSAGE_CENTER,
+                "Content and Mime Type cannot be null. Content: $content, mimeType: $mimeType"
+            )
+        } catch (exception: Exception) {
+            Log.e(MESSAGE_CENTER, "Exception while trying to send attachment file", exception)
+        }
     }
 
     /**
@@ -483,14 +494,18 @@ object Apptentive {
      */
     @JvmStatic
     fun sendAttachmentFile(inputStream: InputStream?, mimeType: String?) {
-        if (inputStream != null && mimeType != null) {
-            stateExecutor.execute {
-                client.sendHiddenAttachmentFileStream(inputStream, mimeType)
-            }
-        } else Log.d(
-            MESSAGE_CENTER,
-            "InputStream and Mime Type cannot be null\ninputStream: $inputStream, mimeType: $mimeType"
-        )
+        try {
+            if (inputStream != null && mimeType != null) {
+                stateExecutor.execute {
+                    client.sendHiddenAttachmentFileStream(inputStream, mimeType)
+                }
+            } else Log.d(
+                MESSAGE_CENTER,
+                "InputStream and Mime Type cannot be null\ninputStream: $inputStream, mimeType: $mimeType"
+            )
+        } catch (exception: Exception) {
+            Log.e(MESSAGE_CENTER, "Exception while trying to send attachment file", exception)
+        }
     }
 
     //endregion

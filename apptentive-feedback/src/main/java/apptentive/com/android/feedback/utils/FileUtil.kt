@@ -30,6 +30,9 @@ import java.io.OutputStream
 @InternalUseOnly
 object FileUtil {
     private val fileSystem: FileSystem by lazy { DependencyProvider.of<FileSystem>() }
+    private const val ONE_MB = 1024 * 1024 // 1MB
+    private const val MAX_FILE_SIZE = 15 * ONE_MB // 15MB
+    private const val BYTES_BUFFER = ONE_MB // 1MB
 
     @WorkerThread
     fun getInternalDir(path: String, createIfNecessary: Boolean = false): File {
@@ -59,15 +62,15 @@ object FileUtil {
      *
      * @param uriString the local file path uri
      * @param nonce     the generated nonce of the message
-     * @return null if failed, otherwise a [Message.Attachment]
+     * @return `null` if failed, otherwise a [Message.Attachment]
      */
     fun createLocalStoredAttachment(activity: Activity, uriString: String, nonce: String): Message.Attachment? {
-        val localFile = Uri.parse(uriString)
+        val localFileUri = Uri.parse(uriString)
 
         var localFilePath = generateCacheFilePathFromNonceOrPrefix(
             activity,
             nonce,
-            localFile?.lastPathSegment
+            localFileUri?.lastPathSegment
         )
         var mimeType = getMimeTypeFromUri(activity, Uri.parse(uriString))
         val mime = MimeTypeMap.getSingleton()
@@ -80,8 +83,8 @@ object FileUtil {
 
         var inputStream: InputStream? = null
         return try {
-            inputStream = if (localFile != null) {
-                activity.contentResolver.openInputStream(localFile)
+            inputStream = if (localFileUri != null) {
+                activity.contentResolver.openInputStream(localFileUri)
             } else null
             createLocalStoredAttachmentFile(activity, inputStream, uriString, localFilePath, mimeType)
         } catch (e: FileNotFoundException) {
@@ -98,7 +101,7 @@ object FileUtil {
      * @param sourceUri     the local file path uri
      * @param localFilePath the cache file path string
      * @param mimeType      the mimeType of the source input stream
-     * @return null if failed, otherwise a [Message.Attachment] object
+     * @return `null` if failed, otherwise a [Message.Attachment] object
      */
     fun createLocalStoredAttachmentFile(
         activity: Activity,
@@ -110,34 +113,35 @@ object FileUtil {
         if (inputStream == null) return null
 
         var bis: BufferedInputStream? = null
-        var cos: CountingOutputStream? = null
         var fos: FileOutputStream? = null
-        val bytesWritten: Long
+        val fileSize: Long
         try {
+            System.gc() // Clear up memory to help prevent OOM issues
+
             val localFile = File(localFilePath)
             // Local cache file name may not be unique, and can be reused, in which case, the
             //  previously created cache file need to be deleted before it is being copied over.
             if (localFile.exists()) localFile.delete()
             bis = BufferedInputStream(inputStream)
             fos = FileOutputStream(localFile)
-            cos = CountingOutputStream(fos)
-
-            System.gc() // Clear up memory to help prevent OOM issues
 
             if (isMimeTypeImage(mimeType)) {
                 val smallerImage = ImageUtil.createScaledBitmapFromLocalImageSource(activity, inputStream, sourceUri)
-                smallerImage?.compress(Bitmap.CompressFormat.JPEG, 95, cos)
-                Log.v(UTIL, "New image file size = " + (cos.bytesWritten / 1024).toString() + "k")
+                smallerImage?.compress(Bitmap.CompressFormat.JPEG, 95, fos)
                 smallerImage?.recycle()
-            } else bis.use { it.copyTo(cos) }
-            bytesWritten = cos.bytesWritten
-            Log.v(UTIL, "File saved, size = " + (cos.bytesWritten / 1024).toString() + "k")
+            } else bis.use { it.copyTo(fos) }
+
+            fileSize = localFile.length()
+            if (isValidFile(fileSize, mimeType)) Log.v(UTIL, "File successfully saved, size = ${(fileSize / 1024)}kb")
+            else {
+                localFile.delete()
+                return null
+            }
         } catch (e: IOException) {
             Log.e(UTIL, "Error creating local copy of file attachment.", e)
             return null
         } finally {
             ensureClosed(bis)
-            ensureClosed(cos)
             ensureClosed(fos)
             System.gc() // Clean up memory after done
         }
@@ -148,7 +152,7 @@ object FileUtil {
             sourceUriOrPath = sourceUri,
             localFilePath = localFilePath,
             contentType = mimeType,
-            size = bytesWritten,
+            size = fileSize,
             originalName = getFileName(activity, sourceUri, mimeType)
         )
     }
@@ -158,6 +162,54 @@ object FileUtil {
 
         val fileType = mimeType.substring(0, mimeType.indexOf("/"))
         return fileType.equals("Image", ignoreCase = true)
+    }
+
+    // https://android.googlesource.com/platform/external/mime-support/+/refs/heads/master/mime.types
+    // Supported File types
+    private const val IMAGE = "image"
+    private const val AUDIO = "audio"
+    private const val VIDEO = "video"
+    private const val TEXT = "text" // Includes text files, html, csv, rtf, tsv, contact info, calendar
+    private const val APPLICATION = "application"
+
+    // Supported Application types
+    private const val DOC = "msword"
+    private const val DOCX = "vnd.openxmlformats-officedocument.wordprocessingml.document"
+    private const val PDF = "pdf"
+    private const val XLS = "vnd.ms-excel"
+
+    private fun isValidMimeType(mimeType: String?): Boolean {
+        Log.d(UTIL, "Looking for valid mime type for $mimeType")
+        return when (mimeType?.substring(0, mimeType.indexOf("/"))) {
+            IMAGE, AUDIO, VIDEO, TEXT -> true
+            APPLICATION -> {
+                when (MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)) {
+                    DOC, DOCX, PDF, XLS -> true
+                    else -> {
+                        Log.e(UTIL, "Unable to find valid application type for mime type: $mimeType")
+                        false
+                    }
+                }
+            }
+            else -> {
+                Log.e(UTIL, "Unable to find valid type for mime type: $mimeType")
+                false
+            }
+        }
+    }
+
+    private fun isValidFileSize(fileSizeBytes: Long): Boolean {
+        val availableMemory = Runtime.getRuntime().freeMemory()
+        Log.d(UTIL, "File size: ${fileSizeBytes / 1024} kb. Memory available: ${availableMemory / 1024} kb.")
+        return if (fileSizeBytes <= availableMemory - BYTES_BUFFER && fileSizeBytes <= MAX_FILE_SIZE) true
+        else {
+            Log.e(UTIL, "File size too large: ${fileSizeBytes / 1024} kb. Memory available: ${availableMemory / 1024} kb. File size must be under 15MB")
+            false
+        }
+    }
+
+    private fun isValidFile(fileSize: Long, mimeType: String?): Boolean {
+        return isValidMimeType(mimeType) && isValidFileSize(fileSize)
     }
 
     @Throws(FileNotFoundException::class, IOException::class)
@@ -194,8 +246,10 @@ object FileUtil {
     @Throws(IOException::class)
     private fun verifyFileSize(file: File): Int {
         val fileSize = file.length()
-        if (fileSize > Int.MAX_VALUE) {
-            throw IOException("File size (" + fileSize + " bytes) for " + file.name + " too large.")
+        val availableMemory = Runtime.getRuntime().freeMemory()
+        Log.d(UTIL, "File size: ${fileSize / 1024} kb. Memory available: ${availableMemory / 1024} kb.")
+        if (fileSize > MAX_FILE_SIZE && fileSize > availableMemory + BYTES_BUFFER) {
+            throw IOException("${file.name} file size too large: ${fileSize / 1024} kb. Memory available: ${availableMemory / 1024} kb. File size must be under 15MB")
         }
         return fileSize.toInt()
     }

@@ -215,7 +215,7 @@ class MessageManager(
             it.id = message.nonce
             message.attachments = listOf(it)
             sendMessage(message)
-        } ?: Log.e(MESSAGE_CENTER, "Issue with creating attachment file. Cannot send.")
+        } ?: Log.e(MESSAGE_CENTER, "Issue with creating attachment file. Cannot send. Check logs.")
     }
 
     fun sendHiddenAttachmentFromInputStream(inputStream: InputStream, mimeType: String) {
@@ -238,7 +238,7 @@ class MessageManager(
             it.id = message.nonce
             message.attachments = listOf(it)
             sendMessage(message)
-        } ?: Log.e(MESSAGE_CENTER, "Issue with creating attachment file. Cannot send.")
+        } ?: Log.e(MESSAGE_CENTER, "Issue with creating attachment file. Cannot send. Check logs.")
     }
 
     fun downloadAttachment(activity: Activity, message: Message, attachment: Message.Attachment) {
