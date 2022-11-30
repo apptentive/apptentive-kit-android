@@ -350,6 +350,7 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
                 Apptentive.setPersonName(personNameText)
                 clearTextFields(addPersonNameEditText)
 
+                Thread.sleep(100)
                 binding.personNameText.text = "Person name: ${Apptentive.getPersonName()}"
             }
 
@@ -364,6 +365,8 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
 
                 Apptentive.setPersonEmail(personEmailText)
                 clearTextFields(addPersonEmailEditText)
+
+                Thread.sleep(100)
                 binding.personEmailText.text = "Person email: ${Apptentive.getPersonEmail()}"
             }
 
