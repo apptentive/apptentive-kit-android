@@ -4,4 +4,14 @@
     <string name="apptentive_cancel">取消</string>
     <string name="apptentive_profile">简介</string>
     <string name="apptentive_send_message">发送消息。</string>
+    <string name="apptentive_message_validation_error">错误-消息字段不能为空。</string>
+    <string name="apptentive_email_validation_error">错误-电子邮件丢失或格式无效。</string>
+    <string name="apptentive_profile_confirmation_dialog_title">关闭配置文件？</string>
+    <string name="apptentive_profile_confirmation_dialog_message">对您的配置文件所做的修改将不会被保存。</string>
+    <string name="apptentive_failed_to_send">发送失败。我们稍后将自动重试。</string>
+    <string name="apptentive_preview_attachment">预览附件</string>
+    <string name="apptentive_remove_attachment">删除附件</string>
+    <string name="apptentive_back">后退</string>
+    <string name="apptentive_add_attachment">添加附件</string>
+    <string name="apptentive_attachment_thumbnail">附件缩略图</string>
 </resources>

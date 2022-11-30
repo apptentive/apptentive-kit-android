@@ -4,4 +4,14 @@
     <string name="apptentive_cancel">Cancelar</string>
     <string name="apptentive_profile">Perfil</string>
     <string name="apptentive_send_message">Envía el mensaje.</string>
+    <string name="apptentive_message_validation_error">Error: el campo de mensaje no puede estar vacío.</string>
+    <string name="apptentive_email_validation_error">Error: falta correo electrónico o formato no válido.</string>
+    <string name="apptentive_profile_confirmation_dialog_title">¿Cerrar perfil?</string>
+    <string name="apptentive_profile_confirmation_dialog_message">Los cambios en el perfil no se guardarán.</string>
+    <string name="apptentive_failed_to_send">Error al enviar. Volveremos a intentarlo automáticamente más tarde.</string>
+    <string name="apptentive_preview_attachment">Vista previa del archivo adjunto</string>
+    <string name="apptentive_remove_attachment">Eliminar archivo adjunto</string>
+    <string name="apptentive_back">Atrás</string>
+    <string name="apptentive_add_attachment">Añadir archivo adjunto</string>
+    <string name="apptentive_attachment_thumbnail">Miniatura de archivo adjunto</string>
 </resources>

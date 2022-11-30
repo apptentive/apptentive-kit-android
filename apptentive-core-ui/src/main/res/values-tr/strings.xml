@@ -4,4 +4,14 @@
     <string name="apptentive_cancel">İptal et</string>
     <string name="apptentive_profile">Profil</string>
     <string name="apptentive_send_message">Mesajı gönderir.</string>
+    <string name="apptentive_message_validation_error">Hata - Mesaj kısmı boş olamaz.</string>
+    <string name="apptentive_email_validation_error">Hata - E-posta eksik veya geçersiz biçimde.</string>
+    <string name="apptentive_profile_confirmation_dialog_title">Profil kapatılsın mı?</string>
+    <string name="apptentive_profile_confirmation_dialog_message">Profilinde yapılan değişiklikler kaydedilmeyecek.</string>
+    <string name="apptentive_failed_to_send">Gönderilemedi. Daha sonra otomatik olarak yeniden deneyeceğiz.</string>
+    <string name="apptentive_preview_attachment">Ekli dosyayı ön görüntüle</string>
+    <string name="apptentive_remove_attachment">Ekli dosyayı kaldır</string>
+    <string name="apptentive_back">Geri</string>
+    <string name="apptentive_add_attachment">Dosya ekle</string>
+    <string name="apptentive_attachment_thumbnail">Ekli dosya ön görünümü</string>
 </resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="confirmation_dialog_message">Seu progresso será perdido se a pesquisa for fechada.</string>
+    <string name="confirmation_dialog_title">Fechar pesquisa?</string>
+    <string name="apptentive_required">Campo obrigatório</string>
+    <string name="min_range_label_default">Menor</string>
+    <string name="max_range_label_default">Maior</string>
+    <string name="apptentive_survey_header_image">Imagem do cabeçalho da pesquisa</string>
+</resources>

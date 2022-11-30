@@ -4,4 +4,14 @@
     <string name="apptentive_cancel">Annuler</string>
     <string name="apptentive_profile">Profil</string>
     <string name="apptentive_send_message">Envoie le message.</string>
+    <string name="apptentive_message_validation_error">Erreur – Le champ de message ne peut pas être vide.</string>
+    <string name="apptentive_email_validation_error">Erreur – L\'adresse e-mail manque ou son format n\'est pas valide.</string>
+    <string name="apptentive_profile_confirmation_dialog_title">Fermer le profil?</string>
+    <string name="apptentive_profile_confirmation_dialog_message">Les modifications apportées à votre profil ne seront pas enregistrées.</string>
+    <string name="apptentive_failed_to_send">Échec de l\'envoi. Nous réessayerons automatiquement plus tard.</string>
+    <string name="apptentive_preview_attachment">Aperçu de la pièce jointe</string>
+    <string name="apptentive_remove_attachment">Suppression de la pièce jointe</string>
+    <string name="apptentive_back">Retour</string>
+    <string name="apptentive_add_attachment">Ajout d\'une pièce jointe</string>
+    <string name="apptentive_attachment_thumbnail">Vignette de pièce jointe</string>
 </resources>

@@ -4,4 +4,14 @@
     <string name="apptentive_cancel">Abbrechen</string>
     <string name="apptentive_profile">Profil</string>
     <string name="apptentive_send_message">Sendet die Nachricht.</string>
+    <string name="apptentive_message_validation_error">Fehler - Nachrichtenfeld darf nicht leer sein.</string>
+    <string name="apptentive_email_validation_error">Fehler - Die E-Mail ist entweder nicht vorhanden oder hat ein ungültiges Format.</string>
+    <string name="apptentive_profile_confirmation_dialog_title">Profil schließen?</string>
+    <string name="apptentive_profile_confirmation_dialog_message">Die Änderungen an Ihrem Profil werden nicht gespeichert.</string>
+    <string name="apptentive_failed_to_send">Senden fehlgeschlagen. Wir werden es später automatisch erneut versuchen.</string>
+    <string name="apptentive_preview_attachment">Anhang-Vorschau</string>
+    <string name="apptentive_remove_attachment">Anhang entfernen</string>
+    <string name="apptentive_back">Zurück</string>
+    <string name="apptentive_add_attachment">Anhang hinzufügen</string>
+    <string name="apptentive_attachment_thumbnail">Miniaturansicht des Anhangs</string>
 </resources>

@@ -4,4 +4,14 @@
     <string name="apptentive_cancel">Отмена</string>
     <string name="apptentive_profile">Профиль</string>
     <string name="apptentive_send_message">Отправляет сообщение.</string>
+    <string name="apptentive_message_validation_error">Ошибка — поле сообщения не может быть пустым.</string>
+    <string name="apptentive_email_validation_error">Ошибка — адрес электронной почты отсутствует или имеет недопустимый формат.</string>
+    <string name="apptentive_profile_confirmation_dialog_title">Закрыть профиль?</string>
+    <string name="apptentive_profile_confirmation_dialog_message">Изменения в вашем профиле не будут сохранены.</string>
+    <string name="apptentive_failed_to_send">Не удалось отправить. Мы повторим попытку позже.</string>
+    <string name="apptentive_preview_attachment">Предпросмотр вложения</string>
+    <string name="apptentive_remove_attachment">Удалить вложение</string>
+    <string name="apptentive_back">Назад</string>
+    <string name="apptentive_add_attachment">Добавить вложение</string>
+    <string name="apptentive_attachment_thumbnail">Миниатюра вложения</string>
 </resources>

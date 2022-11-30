@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="apptentive_close">Fechar</string>
+    <string name="apptentive_cancel">Cancelar</string>
+    <string name="apptentive_profile">Perfil</string>
+    <string name="apptentive_send_message">Envia uma mensagem.</string>
+    <string name="apptentive_message_validation_error">Erro - O campo de mensagem não pode estar vazio.</string>
+    <string name="apptentive_email_validation_error">Erro - O e-mail está faltando ou está em um formato inválido.</string>
+    <string name="apptentive_profile_confirmation_dialog_title">Fechar perfil?</string>
+    <string name="apptentive_profile_confirmation_dialog_message">As alterações do seu perfil não serão salvas.</string>
+    <string name="apptentive_failed_to_send">Falha ao enviar. Tentaremos automaticamente novamente mais tarde.</string>
+    <string name="apptentive_preview_attachment">Pré-visualizar anexo</string>
+    <string name="apptentive_remove_attachment">Remover anexo</string>
+    <string name="apptentive_back">Voltar</string>
+    <string name="apptentive_add_attachment">Adicionar anexo</string>
+    <string name="apptentive_attachment_thumbnail">Miniatura do anexo</string>
+</resources>

@@ -4,4 +4,14 @@
     <string name="apptentive_cancel">Annuller</string>
     <string name="apptentive_profile">Profil</string>
     <string name="apptentive_send_message">Sender beskeden.</string>
+    <string name="apptentive_message_validation_error">Fejl - Meddelelsesfeltet kan ikke være tomt.</string>
+    <string name="apptentive_email_validation_error">Fejl - E-mail mangler eller har et ugyldigt format.</string>
+    <string name="apptentive_profile_confirmation_dialog_title">Luk profil?</string>
+    <string name="apptentive_profile_confirmation_dialog_message">Ændringerne i din profil vil ikke blive gemt.</string>
+    <string name="apptentive_failed_to_send">Kunne ikke sende. Vi vil automatisk prøve igen senere.</string>
+    <string name="apptentive_preview_attachment">Forhåndsvis vedhæftet fil</string>
+    <string name="apptentive_remove_attachment">Fjern vedhæftet fil</string>
+    <string name="apptentive_back">Tilbage</string>
+    <string name="apptentive_add_attachment">Tilføj vedhæftet fil</string>
+    <string name="apptentive_attachment_thumbnail">Vedhæftet miniaturebillede</string>
 </resources>

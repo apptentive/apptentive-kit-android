@@ -4,4 +4,14 @@
     <string name="apptentive_cancel">Annuleren</string>
     <string name="apptentive_profile">Profiel</string>
     <string name="apptentive_send_message">Wysyła tę wiadomość.</string>
+    <string name="apptentive_message_validation_error">Fout - Berichtveld mag niet leeg zijn.</string>
+    <string name="apptentive_email_validation_error">Fout - E-mailadres ontbreekt of heeft een ongeldige indeling.</string>
+    <string name="apptentive_profile_confirmation_dialog_title">Profiel sluiten?</string>
+    <string name="apptentive_profile_confirmation_dialog_message">De wijzigingen in uw profiel worden niet opgeslagen.</string>
+    <string name="apptentive_failed_to_send">Verzenden mislukt. We proberen het later automatisch opnieuw.</string>
+    <string name="apptentive_preview_attachment">Preview bijlage</string>
+    <string name="apptentive_remove_attachment">Bijlage verwijderen</string>
+    <string name="apptentive_back">Terug</string>
+    <string name="apptentive_add_attachment">Bijlage toevoegen</string>
+    <string name="apptentive_attachment_thumbnail">Bijlage thumbnail</string>
 </resources>

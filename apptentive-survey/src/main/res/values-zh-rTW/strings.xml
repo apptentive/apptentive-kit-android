@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="confirmation_dialog_message">若您關閉此調查表，您將失去您的進展。</string>
+    <string name="confirmation_dialog_title">要關閉調查表嗎？</string>
+    <string name="apptentive_required">必須</string>
+    <string name="min_range_label_default">最低</string>
+    <string name="max_range_label_default">最高</string>
+    <string name="apptentive_survey_header_image">調查表的標題圖片</string>
+</resources>

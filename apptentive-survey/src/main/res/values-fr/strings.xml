@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="confirmation_dialog_message">Vous perdrez votre progression si vous fermez cette enquête.</string>
+    <string name="confirmation_dialog_title">Fermer l\'enquête ?</string>
+    <string name="apptentive_required">Requis</string>
+    <string name="min_range_label_default">Le plus bas</string>
+    <string name="max_range_label_default">Le plus élevé</string>
+    <string name="apptentive_survey_header_image">Image d\'en-tête de l\'enquête</string>
+</resources>

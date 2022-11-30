@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="confirmation_dialog_message">Chiudendo questo sondaggio, perderai tutti i dati inseriti.</string>
+    <string name="confirmation_dialog_title">Vuoi chiudere il sondaggio?</string>
+    <string name="apptentive_required">Obbligatorio</string>
+    <string name="min_range_label_default">Il più basso</string>
+    <string name="max_range_label_default">Il più alto</string>
+    <string name="apptentive_survey_header_image">Immagine dell\'intestazione del sondaggio</string>
+</resources>

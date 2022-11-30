@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="confirmation_dialog_message">Anda akan kehilangan progres Anda jika Anda menutup survei ini.</string>
+    <string name="confirmation_dialog_title">Tutup survei?</string>
+    <string name="apptentive_required">Wajib</string>
+    <string name="min_range_label_default">Terendah</string>
+    <string name="max_range_label_default">Tertinggi</string>
+    <string name="apptentive_survey_header_image">Gambar header survei</string>
+</resources>

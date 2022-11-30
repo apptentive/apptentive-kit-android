@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="confirmation_dialog_message">U verliest uw voortgang als u deze enquête sluit.</string>
+    <string name="confirmation_dialog_title">Enquête sluiten?</string>
+    <string name="apptentive_required">Vereist</string>
+    <string name="min_range_label_default">Laagste</string>
+    <string name="max_range_label_default">Hoogste</string>
+    <string name="apptentive_survey_header_image">Kopregel van de enquête</string>
+</resources>

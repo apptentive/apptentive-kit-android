@@ -4,4 +4,14 @@
     <string name="apptentive_cancel">取消</string>
     <string name="apptentive_profile">個人資料</string>
     <string name="apptentive_send_message">傳送訊息。</string>
+    <string name="apptentive_message_validation_error">錯誤 - 訊息欄不能是空的。</string>
+    <string name="apptentive_email_validation_error">錯誤 - 缺少電子郵件或電子郵件格式無效。</string>
+    <string name="apptentive_profile_confirmation_dialog_title">要關閉個人檔案嗎？</string>
+    <string name="apptentive_profile_confirmation_dialog_message">您個人資料的修改將不會被保存。</string>
+    <string name="apptentive_failed_to_send">發送失敗。我們稍後將自動再試一次。</string>
+    <string name="apptentive_preview_attachment">預覽附件</string>
+    <string name="apptentive_remove_attachment">移除附件</string>
+    <string name="apptentive_back">上一步</string>
+    <string name="apptentive_add_attachment">添加附件</string>
+    <string name="apptentive_attachment_thumbnail">附件縮圖</string>
 </resources>

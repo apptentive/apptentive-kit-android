@@ -4,4 +4,14 @@
     <string name="apptentive_cancel">Batal</string>
     <string name="apptentive_profile">Profil</string>
     <string name="apptentive_send_message">Mengirim pesan.</string>
+    <string name="apptentive_message_validation_error">Ralat - Ruangan pesanan tidak boleh dibiarkan kosong.</string>
+    <string name="apptentive_email_validation_error">Ralat - E-mel sama ada hilang atau dalam format tidak sah.</string>
+    <string name="apptentive_profile_confirmation_dialog_title">Tutup Profil?</string>
+    <string name="apptentive_profile_confirmation_dialog_message">Perubahan kepada profil anda tidak akan disimpan.</string>
+    <string name="apptentive_failed_to_send">Gagal untuk menghantar. Kami akan mencuba semula secara automatik kemudian.</string>
+    <string name="apptentive_preview_attachment">Pratonton lampiran</string>
+    <string name="apptentive_remove_attachment">Keluarkan lampiran</string>
+    <string name="apptentive_back">Kembali</string>
+    <string name="apptentive_add_attachment">Tambah lampiran</string>
+    <string name="apptentive_attachment_thumbnail">Thumbnail lampiran</string>
 </resources>
