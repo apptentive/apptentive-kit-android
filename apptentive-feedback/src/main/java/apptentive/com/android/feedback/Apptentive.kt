@@ -44,6 +44,7 @@ import apptentive.com.android.util.LogTags.SYSTEM
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.InputStream
+import java.lang.ref.WeakReference
 
 /**
  * Result class used in a callback for the `engage` function to help understand what happens.
@@ -78,7 +79,7 @@ sealed class EngagementResult {
 
 object Apptentive {
     private var client: ApptentiveClient = ApptentiveClient.NULL
-    private var activityInfoCallback: ApptentiveActivityInfo? = null
+    private var activityInfoCallback: WeakReference<ApptentiveActivityInfo>? = null
     private lateinit var stateExecutor: Executor
     private lateinit var mainExecutor: Executor
 
@@ -94,21 +95,22 @@ object Apptentive {
 
     @JvmStatic
     fun registerApptentiveActivityInfoCallback(apptentiveActivityInfo: ApptentiveActivityInfo) {
-        activityInfoCallback = apptentiveActivityInfo
-        Log.d(FEEDBACK, "Activity info callback for ${activityInfoCallback?.getApptentiveActivityInfo()?.localClassName} registered")
+        activityInfoCallback = WeakReference(apptentiveActivityInfo)
+        Log.d(FEEDBACK, "Activity info callback for ${activityInfoCallback?.get()?.getApptentiveActivityInfo()?.localClassName} registered")
     }
 
     /**
-     * clears the [ApptentiveActivityInfo] reference
+     * Optional method:
+     * Clears the [ApptentiveActivityInfo] [WeakReference]
      */
     @JvmStatic
     fun unregisterApptentiveActivityInfoCallback() {
-        Log.d(FEEDBACK, "Activity info callback for ${activityInfoCallback?.getApptentiveActivityInfo()?.localClassName} unregistered")
+        Log.d(FEEDBACK, "Activity info callback for ${activityInfoCallback?.get()?.getApptentiveActivityInfo()?.localClassName} unregistered")
         activityInfoCallback = null
     }
 
     @InternalUseOnly
-    fun getApptentiveActivityCallback(): ApptentiveActivityInfo? = activityInfoCallback
+    fun getApptentiveActivityCallback(): ApptentiveActivityInfo? = activityInfoCallback?.get()
 
     @Suppress("MemberVisibilityCanBePrivate")
     val registered

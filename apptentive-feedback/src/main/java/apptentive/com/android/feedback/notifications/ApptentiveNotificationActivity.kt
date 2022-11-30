@@ -44,11 +44,6 @@ class ApptentiveNotificationActivity : AppCompatActivity(), ApptentiveActivityIn
         return this
     }
 
-    override fun onPause() {
-        Apptentive.unregisterApptentiveActivityInfoCallback()
-        super.onPause()
-    }
-
     companion object {
         private const val APPTENTIVE_NOTIFICATION = "notification"
         const val APPTENTIVE_NOTIFICATION_EVENT = "${APPTENTIVE_NOTIFICATION}_event"

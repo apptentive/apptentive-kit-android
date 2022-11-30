@@ -36,9 +36,4 @@ open class BaseProfileActivity : ApptentiveViewModelActivity(), ApptentiveActivi
     override fun getApptentiveActivityInfo(): Activity {
         return this
     }
-
-    override fun onPause() {
-        Apptentive.unregisterApptentiveActivityInfoCallback()
-        super.onPause()
-    }
 }

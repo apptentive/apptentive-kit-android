@@ -49,9 +49,4 @@
 //        );
 //    }
 //
-//    @Override
-//    protected void onPause() {
-//        Apptentive.unregisterApptentiveActivityInfoCallback();
-//        super.onPause();
-//    }
 //}

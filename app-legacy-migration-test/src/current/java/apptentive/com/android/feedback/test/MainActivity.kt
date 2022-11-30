@@ -32,9 +32,4 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
     override fun getApptentiveActivityInfo(): Activity {
         return this
     }
-
-    override fun onPause() {
-        Apptentive.unregisterApptentiveActivityInfoCallback()
-        super.onPause()
-    }
 }

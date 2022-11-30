@@ -591,10 +591,5 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
         return this
     }
 
-    override fun onPause() {
-        Apptentive.unregisterApptentiveActivityInfoCallback()
-        super.onPause()
-    }
-
     //endregion
 }
