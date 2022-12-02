@@ -50,11 +50,25 @@ internal object LinkNavigator {
     private const val CODE_POINT_NAVIGATE = "navigate"
 }
 
-@VisibleForTesting
-internal fun NavigateToLinkInteraction.createIntent(): Intent {
-    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+private fun NavigateToLinkInteraction.createIntent(): Intent {
+    val intentUri = Uri.parse(url)
+    val intentAction = getIntentAction(intentUri)
+
+    val intent = Intent(intentAction, intentUri)
     if (target == NavigateToLinkInteraction.Target.new) {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }
     return intent
+}
+
+private fun getIntentAction(intentUri: Uri): String {
+    val emailIntentType = "mailto"
+    val phoneIntentType = "tel"
+
+    val intentAction = when (intentUri.scheme?.lowercase()) {
+        emailIntentType -> Intent.ACTION_SENDTO
+        phoneIntentType -> Intent.ACTION_DIAL
+        else -> Intent.ACTION_VIEW
+    }
+    return intentAction
 }
