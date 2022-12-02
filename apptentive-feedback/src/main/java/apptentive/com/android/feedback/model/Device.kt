@@ -60,7 +60,6 @@ data class Device(
         localeCountryCode = localeCountryCode,
         localeLanguageCode = localeLanguageCode,
         localeRaw = localeRaw,
-        utcOffset = utcOffset,
         customData = customData.content,
         integrationConfig = integrationConfig.toPayload()
     )

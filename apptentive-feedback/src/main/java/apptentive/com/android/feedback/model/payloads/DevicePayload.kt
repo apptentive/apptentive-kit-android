@@ -1,6 +1,5 @@
 package apptentive.com.android.feedback.model.payloads
 
-import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.Constants.buildHttpPath
 import apptentive.com.android.feedback.model.SensitiveDataKey
 import apptentive.com.android.feedback.payload.MediaType
@@ -10,7 +9,6 @@ import apptentive.com.android.network.HttpMethod
 import apptentive.com.android.serialization.json.JsonConverter.toJsonObject
 import apptentive.com.android.util.generateUUID
 
-@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 internal class DevicePayload(
     nonce: String = generateUUID(),
     val osName: String,
@@ -35,7 +33,6 @@ internal class DevicePayload(
     val localeCountryCode: String,
     val localeLanguageCode: String,
     val localeRaw: String,
-    val utcOffset: Int,
     @SensitiveDataKey val customData: Map<String, Any?>? = null,
     @SensitiveDataKey val integrationConfig: Map<String, Any?>? = null,
 ) : ConversationPayload(nonce) {
@@ -70,7 +67,7 @@ internal class DevicePayload(
                 device != other.device ||
                 uuid != other.uuid ||
                 buildType != other.buildType ||
-                buildType != other.buildId ||
+                buildId != other.buildId ||
                 carrier != other.carrier ||
                 currentCarrier != other.currentCarrier ||
                 networkType != other.networkType ||
@@ -79,7 +76,6 @@ internal class DevicePayload(
                 localeCountryCode != other.localeCountryCode ||
                 localeLanguageCode != other.localeLanguageCode ||
                 localeRaw != other.localeRaw ||
-                utcOffset != other.utcOffset ||
                 customData != other.customData ||
                 integrationConfig != other.integrationConfig -> false
             else -> true
@@ -110,7 +106,6 @@ internal class DevicePayload(
         result = 31 * result + localeCountryCode.hashCode()
         result = 31 * result + localeLanguageCode.hashCode()
         result = 31 * result + localeRaw.hashCode()
-        result = 31 * result + utcOffset
         result = 31 * result + customData.hashCode()
         result = 31 * result + integrationConfig.hashCode()
         return result
