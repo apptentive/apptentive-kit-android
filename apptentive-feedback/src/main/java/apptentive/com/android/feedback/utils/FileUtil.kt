@@ -173,10 +173,20 @@ object FileUtil {
     private const val APPLICATION = "application"
 
     // Supported Application types
-    private const val DOC = "msword"
-    private const val DOCX = "vnd.openxmlformats-officedocument.wordprocessingml.document"
+    // Documents
+    private const val DOC = "doc"
+    private const val DOCX = "docx"
+
+    // PDF
     private const val PDF = "pdf"
-    private const val XLS = "vnd.ms-excel"
+
+    // Powerpoints
+    private const val PPT = "ppt"
+    private const val PPTX = "pptx"
+
+    // Spreadsheets
+    private const val XLS = "xls"
+    private const val XLSX = "xlsx"
 
     private fun isValidMimeType(mimeType: String?): Boolean {
         Log.d(UTIL, "Looking for valid mime type for $mimeType")
@@ -184,7 +194,7 @@ object FileUtil {
             IMAGE, AUDIO, VIDEO, TEXT -> true
             APPLICATION -> {
                 when (MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)) {
-                    DOC, DOCX, PDF, XLS -> true
+                    DOC, DOCX, PDF, PPT, PPTX, XLS, XLSX -> true
                     else -> {
                         Log.e(UTIL, "Unable to find valid application type for mime type: $mimeType")
                         false
