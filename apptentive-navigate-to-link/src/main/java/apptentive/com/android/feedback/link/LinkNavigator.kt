@@ -51,24 +51,9 @@ internal object LinkNavigator {
 }
 
 private fun NavigateToLinkInteraction.createIntent(): Intent {
-    val intentUri = Uri.parse(url)
-    val intentAction = getIntentAction(intentUri)
-
-    val intent = Intent(intentAction, intentUri)
+    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
     if (target == NavigateToLinkInteraction.Target.new) {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }
     return intent
-}
-
-private fun getIntentAction(intentUri: Uri): String {
-    val emailIntentType = "mailto"
-    val phoneIntentType = "tel"
-
-    val intentAction = when (intentUri.scheme?.lowercase()) {
-        emailIntentType -> Intent.ACTION_SENDTO
-        phoneIntentType -> Intent.ACTION_DIAL
-        else -> Intent.ACTION_VIEW
-    }
-    return intentAction
 }
