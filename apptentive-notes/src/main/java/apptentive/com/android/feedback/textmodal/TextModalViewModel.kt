@@ -7,12 +7,19 @@ import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
+import apptentive.com.android.feedback.utils.getInteractionBackup
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.INTERACTIONS
 
 internal class TextModalViewModel : ViewModel() {
-    val interaction = DependencyProvider.of<TextModalInteractionFactory>().getTextModalInteraction()
-    val context = DependencyProvider.of<EngagementContextFactory>().engagementContext()
+    private val context = DependencyProvider.of<EngagementContextFactory>().engagementContext()
+
+    private val interaction: TextModalInteraction = try {
+        DependencyProvider.of<TextModalInteractionFactory>().getTextModalInteraction()
+    } catch (exception: Exception) {
+        getInteractionBackup(context.getAppActivity())
+    }
+
     val title = interaction.title
     val message = interaction.body
     val actions = interaction.actions.mapIndexed { index, action ->

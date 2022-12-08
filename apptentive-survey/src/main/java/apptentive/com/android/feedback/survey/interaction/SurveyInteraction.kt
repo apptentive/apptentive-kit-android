@@ -1,7 +1,6 @@
 package apptentive.com.android.feedback.survey.interaction
 
 import android.text.Spanned
-import androidx.annotation.VisibleForTesting
 import androidx.core.text.HtmlCompat
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
@@ -26,7 +25,6 @@ internal typealias SurveyQuestionConfiguration = Map<String, Any?>
  * @param questions list of questions
  * @param termsAndConditions [TermsAndConditions] data class that contains a label and link (set on dashboard)
  */
-@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 internal class SurveyInteraction(
     id: String,
     val name: String?,

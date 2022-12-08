@@ -4,12 +4,19 @@ import androidx.lifecycle.ViewModel
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
+import apptentive.com.android.feedback.utils.getInteractionBackup
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.INTERACTIONS
 
 internal class EnjoymentDialogViewModel : ViewModel() {
     private val context = DependencyProvider.of<EngagementContextFactory>().engagementContext()
-    val interaction = DependencyProvider.of<EnjoymentDialogInteractionFactory>().getEnjoymentDialogInteraction()
+
+    private val interaction: EnjoymentDialogInteraction = try {
+        DependencyProvider.of<EnjoymentDialogInteractionFactory>().getEnjoymentDialogInteraction()
+    } catch (exception: Exception) {
+        getInteractionBackup(context.getAppActivity())
+    }
+
     val title = interaction.title
     val yesText = interaction.yesText
     val noText = interaction.noText

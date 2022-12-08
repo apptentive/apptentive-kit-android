@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.textmodal
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
@@ -10,18 +11,26 @@ import android.widget.LinearLayout
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
+import apptentive.com.android.feedback.Apptentive
+import apptentive.com.android.feedback.ApptentiveActivityInfo
 import apptentive.com.android.feedback.notes.R
 import apptentive.com.android.ui.overrideTheme
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textview.MaterialTextView
 
-internal class TextModalDialogFragment : DialogFragment() {
+internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInfo {
 
     private val viewModel by viewModels<TextModalViewModel>()
 
     @SuppressLint("UseGetLayoutInflater", "InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        if (!Apptentive.isApptentiveActivityInfoCallbackRegistered()) {
+            // Calling this in onCreateDialog in case we lose the Activity reference from the
+            // last Activity for whatever reason (garbage collection while app is in the background)
+            Apptentive.registerApptentiveActivityInfoCallback(this)
+        }
+
         val dialog = MaterialAlertDialogBuilder(requireContext()).apply {
 
             val contextWrapper = ContextThemeWrapper(requireContext(), R.style.Theme_Apptentive).apply {
@@ -93,5 +102,9 @@ internal class TextModalDialogFragment : DialogFragment() {
     override fun onCancel(dialog: DialogInterface) {
         viewModel.onCancel()
         super.onCancel(dialog)
+    }
+
+    override fun getApptentiveActivityInfo(): Activity {
+        return requireActivity()
     }
 }

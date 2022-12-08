@@ -6,6 +6,7 @@ import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
+import apptentive.com.android.feedback.survey.DefaultSurveyModelFactory
 import apptentive.com.android.feedback.survey.SurveyModelFactory
 import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion
 import apptentive.com.android.feedback.survey.model.RangeQuestion
@@ -14,6 +15,7 @@ import apptentive.com.android.feedback.survey.model.SurveyModel
 import apptentive.com.android.feedback.survey.model.SurveyQuestionAnswer
 import apptentive.com.android.feedback.survey.model.SurveyResponsePayload
 import apptentive.com.android.feedback.survey.viewmodel.SurveyViewModel
+import apptentive.com.android.feedback.utils.getInteractionBackup
 
 private const val EVENT_SUBMIT = "submit"
 private const val EVENT_CANCEL = "cancel"
@@ -22,8 +24,24 @@ private const val EVENT_CLOSE = "close"
 private const val EVENT_CONTINUE_PARTIAL = "continue_partial"
 
 internal fun createSurveyViewModel(
-    context: EngagementContext = DependencyProvider.of<EngagementContextFactory>().engagementContext(),
-    surveyModel: SurveyModel = DependencyProvider.of<SurveyModelFactory>().getSurveyModel(),
+    context: EngagementContext = DependencyProvider.of<EngagementContextFactory>().engagementContext()
+): SurveyViewModel {
+    return try {
+        createSurveyViewModel(DependencyProvider.of<SurveyModelFactory>().getSurveyModel(), context)
+    } catch (exception: Exception) {
+        createSurveyViewModel(
+            DefaultSurveyModelFactory(
+                context,
+                getInteractionBackup(context.getAppActivity())
+            ).getSurveyModel(),
+            context
+        )
+    }
+}
+
+private fun createSurveyViewModel(
+    surveyModel: SurveyModel,
+    context: EngagementContext
 ) = SurveyViewModel(
     model = surveyModel,
     executors = context.executors,

@@ -102,6 +102,11 @@ object Apptentive {
     }
 
     /**
+     * Util method to check if the [ApptentiveActivityInfo] is registered
+     */
+    fun isApptentiveActivityInfoCallbackRegistered() = activityInfoCallback != null
+
+    /**
      * Optional method:
      * Clears the [ApptentiveActivityInfo] [WeakReference]
      */
