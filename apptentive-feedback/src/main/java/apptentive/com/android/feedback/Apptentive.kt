@@ -34,10 +34,12 @@ import apptentive.com.android.platform.SharedPrefConstants
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags
+import apptentive.com.android.util.LogTags.DEVICE
 import apptentive.com.android.util.LogTags.FEEDBACK
 import apptentive.com.android.util.LogTags.INTERACTIONS
 import apptentive.com.android.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.util.LogTags.NETWORK
+import apptentive.com.android.util.LogTags.PERSON
 import apptentive.com.android.util.LogTags.PROFILE_DATA_UPDATE
 import apptentive.com.android.util.LogTags.PUSH_NOTIFICATION
 import apptentive.com.android.util.LogTags.SYSTEM
@@ -151,69 +153,89 @@ object Apptentive {
             return
         }
 
-        // register dependency providers
-        DependencyProvider.register(AndroidLoggerProvider("Apptentive"))
-        DependencyProvider.register<ApplicationInfo>(AndroidApplicationInfo(application.applicationContext))
-        DependencyProvider.register(AndroidExecutorFactoryProvider())
-        DependencyProvider.register(
-            AndroidFileSystemProvider(
-                application.applicationContext,
-                "apptentive.com.android.feedback"
+        try {
+
+            // register dependency providers
+            DependencyProvider.register(AndroidLoggerProvider("Apptentive"))
+            DependencyProvider.register<ApplicationInfo>(AndroidApplicationInfo(application.applicationContext))
+            DependencyProvider.register(AndroidExecutorFactoryProvider())
+            DependencyProvider.register(
+                AndroidFileSystemProvider(
+                    application.applicationContext,
+                    "apptentive.com.android.feedback"
+                )
             )
-        )
 
-        checkSavedKeyAndSignature(application, configuration)
+            checkSavedKeyAndSignature(application, configuration)
 
-        // Save host app theme usage
-        application.getSharedPreferences(SharedPrefConstants.USE_HOST_APP_THEME, Context.MODE_PRIVATE)
-            .edit().putBoolean(SharedPrefConstants.USE_HOST_APP_THEME_KEY, configuration.shouldInheritAppTheme).apply()
+            // Save host app theme usage
+            application.getSharedPreferences(
+                SharedPrefConstants.USE_HOST_APP_THEME,
+                Context.MODE_PRIVATE
+            )
+                .edit().putBoolean(
+                    SharedPrefConstants.USE_HOST_APP_THEME_KEY,
+                    configuration.shouldInheritAppTheme
+                ).apply()
 
-        // Set log level
-        Log.logLevel = configuration.logLevel
+            // Set log level
+            Log.logLevel = configuration.logLevel
 
-        // Set message redaction
-        SensitiveDataUtils.shouldSanitizeLogMessages = configuration.shouldSanitizeLogMessages
+            // Set message redaction
+            SensitiveDataUtils.shouldSanitizeLogMessages = configuration.shouldSanitizeLogMessages
 
-        // Set rating throttle
-        ThrottleUtils.ratingThrottleLength = configuration.ratingInteractionThrottleLength
-        ThrottleUtils.throttleSharedPrefs =
-            application.getSharedPreferences(SharedPrefConstants.THROTTLE_UTILS, Context.MODE_PRIVATE)
+            // Set rating throttle
+            ThrottleUtils.ratingThrottleLength = configuration.ratingInteractionThrottleLength
+            ThrottleUtils.throttleSharedPrefs =
+                application.getSharedPreferences(
+                    SharedPrefConstants.THROTTLE_UTILS,
+                    Context.MODE_PRIVATE
+                )
 
-        // Save alternate app store URL to be set later
-        application.getSharedPreferences(SharedPrefConstants.CUSTOM_STORE_URL, Context.MODE_PRIVATE)
-            .edit().putString(SharedPrefConstants.CUSTOM_STORE_URL_KEY, configuration.customAppStoreURL).apply()
+            // Save alternate app store URL to be set later
+            application.getSharedPreferences(
+                SharedPrefConstants.CUSTOM_STORE_URL,
+                Context.MODE_PRIVATE
+            )
+                .edit().putString(
+                    SharedPrefConstants.CUSTOM_STORE_URL_KEY,
+                    configuration.customAppStoreURL
+                ).apply()
 
-        Log.i(SYSTEM, "Registering Apptentive Android SDK ${Constants.SDK_VERSION}")
-        Log.v(
-            SYSTEM,
-            "ApptentiveKey: ${SensitiveDataUtils.hideIfSanitized(configuration.apptentiveKey)} " +
-                "ApptentiveSignature: ${SensitiveDataUtils.hideIfSanitized(configuration.apptentiveSignature)}"
-        )
+            Log.i(SYSTEM, "Registering Apptentive Android SDK ${Constants.SDK_VERSION}")
+            Log.v(
+                SYSTEM,
+                "ApptentiveKey: ${SensitiveDataUtils.hideIfSanitized(configuration.apptentiveKey)} " +
+                    "ApptentiveSignature: ${SensitiveDataUtils.hideIfSanitized(configuration.apptentiveSignature)}"
+            )
 
-        stateExecutor = ExecutorQueue.createSerialQueue("SDK Queue")
-        mainExecutor = ExecutorQueue.mainQueue
+            stateExecutor = ExecutorQueue.createSerialQueue("SDK Queue")
+            mainExecutor = ExecutorQueue.mainQueue
 
-        // wrap the callback
-        val callbackWrapper: ((RegisterResult) -> Unit)? = if (callback != null) {
-            {
-                mainExecutor.execute {
-                    callback.invoke(it)
+            // wrap the callback
+            val callbackWrapper: ((RegisterResult) -> Unit)? = if (callback != null) {
+                {
+                    mainExecutor.execute {
+                        callback.invoke(it)
+                    }
+                }
+            } else null
+
+            client = ApptentiveDefaultClient(
+                apptentiveKey = configuration.apptentiveKey,
+                apptentiveSignature = configuration.apptentiveSignature,
+                httpClient = createHttpClient(application.applicationContext),
+                executors = Executors(
+                    state = stateExecutor,
+                    main = mainExecutor
+                )
+            ).apply {
+                stateExecutor.execute {
+                    start(application.applicationContext, callbackWrapper)
                 }
             }
-        } else null
-
-        client = ApptentiveDefaultClient(
-            apptentiveKey = configuration.apptentiveKey,
-            apptentiveSignature = configuration.apptentiveSignature,
-            httpClient = createHttpClient(application.applicationContext),
-            executors = Executors(
-                state = stateExecutor,
-                main = mainExecutor
-            )
-        ).apply {
-            stateExecutor.execute {
-                start(application.applicationContext, callbackWrapper)
-            }
+        } catch (exception: Exception) {
+            Log.e(FEEDBACK, "Exception thrown in the SDK registration", exception)
         }
     }
 
@@ -325,10 +347,13 @@ object Apptentive {
     @JvmOverloads
     fun engage(eventName: String, customData: Map<String, Any?>? = null, callback: EngagementCallback? = null) {
         // the above statement would not compile without force unwrapping on Kotlin 1.4.x
-        @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
-        val callbackFunc: ((EngagementResult) -> Unit)? =
-            if (callback != null) callback!!::onComplete else null
-        engage(eventName, customData, callbackFunc)
+        try {
+            val callbackFunc: ((EngagementResult) -> Unit)? =
+                if (callback != null) callback::onComplete else null
+            engage(eventName, customData, callbackFunc)
+        } catch (exception: Exception) {
+            Log.e(FEEDBACK, "Exception when engage the event $eventName", exception)
+        }
     }
 
     private fun engage(eventName: String, customData: Map<String, Any?>?, callback: ((EngagementResult) -> Unit)?) {
@@ -347,8 +372,8 @@ object Apptentive {
                 val event = Event.local(eventName)
                 val result = client.engage(event, customData)
                 callbackWrapper?.invoke(result)
-            } catch (e: Exception) {
-                callbackWrapper?.invoke(EngagementResult.Exception(error = e))
+            } catch (exception: Exception) {
+                callbackWrapper?.invoke(EngagementResult.Exception(error = exception))
             }
         }
     }
@@ -380,8 +405,9 @@ object Apptentive {
             try {
                 val result = client.showMessageCenter(customData)
                 callbackWrapper?.invoke(result)
-            } catch (e: Exception) {
-                callbackWrapper?.invoke(EngagementResult.Exception(error = e))
+            } catch (exception: Exception) {
+                callbackWrapper?.invoke(EngagementResult.Exception(error = exception))
+                Log.e(MESSAGE_CENTER, "Exception showing the message center", exception)
             }
         }
     }
@@ -396,8 +422,12 @@ object Apptentive {
      */
     @JvmStatic
     fun canShowMessageCenter(callback: BooleanCallback) {
-        client.canShowMessageCenter {
-            callback.onFinish(it)
+        try {
+            client.canShowMessageCenter {
+                callback.onFinish(it)
+            }
+        } catch (exception: Exception) {
+            Log.e(MESSAGE_CENTER, "Exception while checking canShowMessageCenter", exception)
         }
     }
 
@@ -413,8 +443,8 @@ object Apptentive {
     fun getUnreadMessageCount(): Int {
         return try {
             client.getUnreadMessageCount()
-        } catch (e: Exception) {
-            Log.w(MESSAGE_CENTER, "Exception while getting unread message count", e)
+        } catch (exception: Exception) {
+            Log.w(MESSAGE_CENTER, "Exception while getting unread message count", exception)
             0
         }
     }
@@ -427,12 +457,16 @@ object Apptentive {
      */
     @JvmStatic
     fun sendAttachmentText(text: String?) {
-        stateExecutor.execute {
-            text?.let {
-                client.sendHiddenTextMessage(text)
-            } ?: run {
-                Log.d(MESSAGE_CENTER, "Attachment text was null")
+        try {
+            stateExecutor.execute {
+                text?.let {
+                    client.sendHiddenTextMessage(text)
+                } ?: run {
+                    Log.d(MESSAGE_CENTER, "Attachment text was null")
+                }
             }
+        } catch (exception: Exception) {
+            Log.e(MESSAGE_CENTER, "Exception sending text to server", exception)
         }
     }
 
@@ -454,7 +488,7 @@ object Apptentive {
                 }
             } else Log.d(MESSAGE_CENTER, "URI String was null or blank. URI: $uri")
         } catch (exception: Exception) {
-            Log.e(MESSAGE_CENTER, "Exception while trying to send attachment file", exception)
+            Log.e(MESSAGE_CENTER, "Exception while trying to send attachment file to server", exception)
         }
     }
 
@@ -528,9 +562,16 @@ object Apptentive {
 
     @JvmStatic
     fun setPersonName(name: String?) {
-        stateExecutor.execute {
-            if (!name.isNullOrBlank()) client.updatePerson(name = name)
-            else Log.d(PROFILE_DATA_UPDATE, "Null or Empty/Blank strings are not supported for name")
+        try {
+            stateExecutor.execute {
+                if (!name.isNullOrBlank()) client.updatePerson(name = name)
+                else Log.d(
+                    PROFILE_DATA_UPDATE,
+                    "Null or Empty/Blank strings are not supported for name"
+                )
+            }
+        } catch (exception: Exception) {
+            Log.e(PERSON, "Exception setting Person's name", exception)
         }
     }
 
@@ -542,9 +583,17 @@ object Apptentive {
      */
     @JvmStatic
     fun getPersonName(): String? {
-        return if (registered) client.getPersonName()
-        else {
-            Log.w(LogTags.PROFILE_DATA_GET, "Apptentive not registered. Cannot get Person name.")
+        return try {
+            if (registered) client.getPersonName()
+            else {
+                Log.w(
+                    LogTags.PROFILE_DATA_GET,
+                    "Apptentive not registered. Cannot get Person name."
+                )
+                null
+            }
+        } catch (exception: Exception) {
+            Log.e(PERSON, "Exception while getting Person's name", exception)
             null
         }
     }
@@ -564,9 +613,16 @@ object Apptentive {
 
     @JvmStatic
     fun setPersonEmail(email: String?) {
-        stateExecutor.execute {
-            if (!email.isNullOrBlank()) client.updatePerson(email = email)
-            else Log.d(PROFILE_DATA_UPDATE, "Null or Empty/Blank strings are not supported for email")
+        try {
+            stateExecutor.execute {
+                if (!email.isNullOrBlank()) client.updatePerson(email = email)
+                else Log.d(
+                    PROFILE_DATA_UPDATE,
+                    "Null or Empty/Blank strings are not supported for email"
+                )
+            }
+        } catch (exception: Exception) {
+            Log.e(PERSON, "Exception while setting Person's email", exception)
         }
     }
 
@@ -578,9 +634,17 @@ object Apptentive {
      */
     @JvmStatic
     fun getPersonEmail(): String? {
-        return if (registered) client.getPersonEmail()
-        else {
-            Log.w(LogTags.PROFILE_DATA_GET, "Apptentive not registered. Cannot get Person email.")
+        return try {
+            if (registered) client.getPersonEmail()
+            else {
+                Log.w(
+                    LogTags.PROFILE_DATA_GET,
+                    "Apptentive not registered. Cannot get Person email."
+                )
+                null
+            }
+        } catch (exception: Exception) {
+            Log.e(PERSON, "Exception while getting Person's email", exception)
             null
         }
     }
@@ -596,10 +660,14 @@ object Apptentive {
 
     @JvmStatic
     fun addCustomPersonData(key: String?, value: String?) {
-        stateExecutor.execute {
-            if (key != null && value != null) {
-                client.updatePerson(customData = Pair(key, value))
+        try {
+            stateExecutor.execute {
+                if (key != null && value != null) {
+                    client.updatePerson(customData = Pair(key, value))
+                }
             }
+        } catch (exception: Exception) {
+            Log.e(PERSON, "Exception while adding a String custom person data with a key $key", exception)
         }
     }
 
@@ -613,10 +681,14 @@ object Apptentive {
      */
     @JvmStatic
     fun addCustomPersonData(key: String?, value: Number?) {
-        stateExecutor.execute {
-            if (key != null && value != null) {
-                client.updatePerson(customData = Pair(key, value.toString().toDouble()))
+        try {
+            stateExecutor.execute {
+                if (key != null && value != null) {
+                    client.updatePerson(customData = Pair(key, value.toString().toDouble()))
+                }
             }
+        } catch (exception: Exception) {
+            Log.e(PERSON, "Exception while adding Number custom person data with the key $key", exception)
         }
     }
 
@@ -630,10 +702,14 @@ object Apptentive {
      */
     @JvmStatic
     fun addCustomPersonData(key: String?, value: Boolean?) {
-        stateExecutor.execute {
-            if (key != null && value != null) {
-                client.updatePerson(customData = Pair(key, value))
+        try {
+            stateExecutor.execute {
+                if (key != null && value != null) {
+                    client.updatePerson(customData = Pair(key, value))
+                }
             }
+        } catch (exception: Exception) {
+            Log.e(PERSON, "Exception while adding Boolean custom person data with the key $key", exception)
         }
     }
 
@@ -644,10 +720,14 @@ object Apptentive {
      */
     @JvmStatic
     fun removeCustomPersonData(key: String?) {
-        stateExecutor.execute {
-            if (key != null) {
-                client.updatePerson(deleteKey = key)
+        try {
+            stateExecutor.execute {
+                if (key != null) {
+                    client.updatePerson(deleteKey = key)
+                }
             }
+        } catch (exception: Exception) {
+            Log.e(PERSON, "Exception when removing a custom person data with the key $key", exception)
         }
     }
 
@@ -661,10 +741,14 @@ object Apptentive {
      */
     @JvmStatic
     fun addCustomDeviceData(key: String?, value: String?) {
-        stateExecutor.execute {
-            if (key != null && value != null) {
-                client.updateDevice(customData = Pair(key, value))
+        try {
+            stateExecutor.execute {
+                if (key != null && value != null) {
+                    client.updateDevice(customData = Pair(key, value))
+                }
             }
+        } catch (exception: Exception) {
+            Log.e(DEVICE, "Exception when adding String Device data with the key $key", exception)
         }
     }
 
@@ -678,10 +762,14 @@ object Apptentive {
      */
     @JvmStatic
     fun addCustomDeviceData(key: String?, value: Number?) {
-        stateExecutor.execute {
-            if (key != null && value != null) {
-                client.updateDevice(customData = Pair(key, value.toString().toDouble()))
+        try {
+            stateExecutor.execute {
+                if (key != null && value != null) {
+                    client.updateDevice(customData = Pair(key, value.toString().toDouble()))
+                }
             }
+        } catch (exception: Exception) {
+            Log.e(DEVICE, "Exception when adding Number Device data with the key $key", exception)
         }
     }
 
@@ -695,10 +783,14 @@ object Apptentive {
      */
     @JvmStatic
     fun addCustomDeviceData(key: String?, value: Boolean?) {
-        stateExecutor.execute {
-            if (key != null && value != null) {
-                client.updateDevice(customData = Pair(key, value))
+        try {
+            stateExecutor.execute {
+                if (key != null && value != null) {
+                    client.updateDevice(customData = Pair(key, value))
+                }
             }
+        } catch (exception: Exception) {
+            Log.e(DEVICE, "Exception when adding Boolean Device data with the key $key", exception)
         }
     }
 
@@ -709,10 +801,14 @@ object Apptentive {
      */
     @JvmStatic
     fun removeCustomDeviceData(key: String?) {
-        stateExecutor.execute {
-            if (key != null) {
-                client.updateDevice(deleteKey = key)
+        try {
+            stateExecutor.execute {
+                if (key != null) {
+                    client.updateDevice(deleteKey = key)
+                }
             }
+        } catch (exception: Exception) {
+            Log.e(DEVICE, "Exception when removing Device data with the key $key", exception)
         }
     }
 
@@ -759,15 +855,19 @@ object Apptentive {
      * * Amazon AWS SNS - The FCM Registration ID, which you can [access like this](https://firebase.google.com/docs/cloud-messaging/android/client#monitor-token-generation).
      */
     fun setPushNotificationIntegration(context: Context, pushProvider: Int, token: String) {
-        stateExecutor.execute {
-            context
-                .getSharedPreferences(SharedPrefConstants.APPTENTIVE, Context.MODE_PRIVATE)
-                .edit()
-                .putInt(SharedPrefConstants.PREF_KEY_PUSH_PROVIDER, pushProvider)
-                .putString(SharedPrefConstants.PREF_KEY_PUSH_TOKEN, token)
-                .apply()
+        try {
+            stateExecutor.execute {
+                context
+                    .getSharedPreferences(SharedPrefConstants.APPTENTIVE, Context.MODE_PRIVATE)
+                    .edit()
+                    .putInt(SharedPrefConstants.PREF_KEY_PUSH_PROVIDER, pushProvider)
+                    .putString(SharedPrefConstants.PREF_KEY_PUSH_TOKEN, token)
+                    .apply()
 
-            client.setPushIntegration(pushProvider, token)
+                client.setPushIntegration(pushProvider, token)
+            }
+        } catch (exception: Exception) {
+            Log.e(PUSH_NOTIFICATION, " Exception while setting push notification integration", exception)
         }
     }
 
@@ -780,11 +880,11 @@ object Apptentive {
     fun isApptentivePushNotification(intent: Intent?): Boolean {
         try {
             return registered && NotificationUtils.getApptentivePushNotificationData(intent) != null
-        } catch (e: Exception) {
+        } catch (exception: Exception) {
             Log.e(
                 PUSH_NOTIFICATION,
                 "Exception while checking for Apptentive push notification intent",
-                e
+                exception
             )
         }
         return false
@@ -800,11 +900,11 @@ object Apptentive {
     fun isApptentivePushNotification(data: Map<String, String>?): Boolean {
         try {
             return registered && NotificationUtils.getApptentivePushNotificationData(data) != null
-        } catch (e: Exception) {
+        } catch (exception: Exception) {
             Log.e(
                 PUSH_NOTIFICATION,
                 "Exception while checking for Apptentive push notification data",
-                e
+                exception
             )
         }
         return false
@@ -831,20 +931,26 @@ object Apptentive {
      * in the [Service] or [BroadcastReceiver] that is used by your chosen push provider.
      */
     fun buildPendingIntentFromPushNotification(context: Context, callback: PendingIntentCallback, intent: Intent) {
-        if (registered) {
-            stateExecutor.execute {
-                val apptentivePushData = NotificationUtils.getApptentivePushNotificationData(intent)
-                val pendingIntent = NotificationUtils.generatePendingIntentFromApptentivePushData(
-                    context,
-                    client as ApptentiveDefaultClient,
-                    apptentivePushData
-                )
-                mainExecutor.execute {
-                    callback.onPendingIntent(pendingIntent)
+        try {
+            if (registered) {
+                stateExecutor.execute {
+                    val apptentivePushData =
+                        NotificationUtils.getApptentivePushNotificationData(intent)
+                    val pendingIntent =
+                        NotificationUtils.generatePendingIntentFromApptentivePushData(
+                            context,
+                            client as ApptentiveDefaultClient,
+                            apptentivePushData
+                        )
+                    mainExecutor.execute {
+                        callback.onPendingIntent(pendingIntent)
+                    }
                 }
+            } else {
+                Log.w(PUSH_NOTIFICATION, "Apptentive is not registered. Cannot build Push Intent.")
             }
-        } else {
-            Log.w(PUSH_NOTIFICATION, "Apptentive is not registered. Cannot build Push Intent.")
+        } catch (exception: Exception) {
+            Log.e(PUSH_NOTIFICATION, "Exception while building pending Intent from push notification", exception)
         }
     }
 
@@ -870,20 +976,25 @@ object Apptentive {
      * that is used by your chosen push provider.
      */
     fun buildPendingIntentFromPushNotification(context: Context, callback: PendingIntentCallback, data: Map<String, String>) {
-        if (registered) {
-            stateExecutor.execute {
-                val apptentivePushData = NotificationUtils.getApptentivePushNotificationData(data)
-                val intent = NotificationUtils.generatePendingIntentFromApptentivePushData(
-                    context,
-                    client as ApptentiveDefaultClient,
-                    apptentivePushData
-                )
-                mainExecutor.execute {
-                    callback.onPendingIntent(intent)
+        try {
+            if (registered) {
+                stateExecutor.execute {
+                    val apptentivePushData =
+                        NotificationUtils.getApptentivePushNotificationData(data)
+                    val intent = NotificationUtils.generatePendingIntentFromApptentivePushData(
+                        context,
+                        client as ApptentiveDefaultClient,
+                        apptentivePushData
+                    )
+                    mainExecutor.execute {
+                        callback.onPendingIntent(intent)
+                    }
                 }
+            } else {
+                Log.w(PUSH_NOTIFICATION, "Apptentive is not registered. Cannot build Push Intent.")
             }
-        } else {
-            Log.w(PUSH_NOTIFICATION, "Apptentive is not registered. Cannot build Push Intent.")
+        } catch (exception: Exception) {
+            Log.e(PUSH_NOTIFICATION, "Exception while building pending intent from push notification", exception)
         }
     }
 
@@ -896,9 +1007,14 @@ object Apptentive {
      * @return a [String] value, or `null`.
      */
     fun getTitleFromApptentivePush(intent: Intent?): String? {
-        return if (registered && intent != null) {
-            getTitleFromApptentivePush(intent.extras)
-        } else null
+        return try {
+            if (registered && intent != null) {
+                getTitleFromApptentivePush(intent.extras)
+            } else null
+        } catch (exception: Exception) {
+            Log.e(PUSH_NOTIFICATION, "Exception while getting title from Apptentive push", exception)
+            null
+        }
     }
 
     /**
@@ -910,9 +1026,14 @@ object Apptentive {
      * @return a [String] value, or `null`.
      */
     fun getBodyFromApptentivePush(intent: Intent?): String? {
-        return if (registered && intent != null) {
-            getBodyFromApptentivePush(intent.extras)
-        } else null
+        return try {
+            if (registered && intent != null) {
+                getBodyFromApptentivePush(intent.extras)
+            } else null
+        } catch (exception: Exception) {
+            Log.e(PUSH_NOTIFICATION, "Exception while getting body from Apptentive push", exception)
+            null
+        }
     }
 
     /**
@@ -947,8 +1068,8 @@ object Apptentive {
                     return uaPushBundle.getString(NotificationUtils.TITLE_DEFAULT)
                 }
             }
-        } catch (e: Exception) {
-            Log.e(PUSH_NOTIFICATION, "Exception while getting title from Apptentive push", e)
+        } catch (exception: Exception) {
+            Log.e(PUSH_NOTIFICATION, "Exception while getting title from Apptentive push", exception)
         }
         return null
     }
@@ -994,8 +1115,8 @@ object Apptentive {
                     )
                 }
             }
-        } catch (e: Exception) {
-            Log.e(PUSH_NOTIFICATION, "Exception while getting body from Apptentive push", e)
+        } catch (exception: Exception) {
+            Log.e(PUSH_NOTIFICATION, "Exception while getting body from Apptentive push", exception)
         }
         return null
     }
@@ -1012,8 +1133,8 @@ object Apptentive {
     fun getTitleFromApptentivePush(data: Map<String, String>?): String? {
         try {
             return if (!registered) null else data?.get(NotificationUtils.TITLE_DEFAULT)
-        } catch (e: Exception) {
-            Log.e(PUSH_NOTIFICATION, "Exception while getting title from Apptentive push", e)
+        } catch (exception: Exception) {
+            Log.e(PUSH_NOTIFICATION, "Exception while getting title from Apptentive push", exception)
         }
         return null
     }
@@ -1030,8 +1151,8 @@ object Apptentive {
     fun getBodyFromApptentivePush(data: Map<String, String>?): String? {
         try {
             return if (!registered) null else data?.get(NotificationUtils.BODY_DEFAULT)
-        } catch (e: Exception) {
-            Log.e(PUSH_NOTIFICATION, "Exception while getting body from Apptentive push", e)
+        } catch (exception: Exception) {
+            Log.e(PUSH_NOTIFICATION, "Exception while getting body from Apptentive push", exception)
         }
         return null
     }
