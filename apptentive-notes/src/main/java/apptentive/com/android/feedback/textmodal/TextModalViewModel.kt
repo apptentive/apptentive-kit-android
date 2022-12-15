@@ -14,16 +14,25 @@ import apptentive.com.android.util.LogTags.INTERACTIONS
 internal class TextModalViewModel : ViewModel() {
     private val context = DependencyProvider.of<EngagementContextFactory>().engagementContext()
 
-    private val interaction: TextModalInteraction = try {
-        DependencyProvider.of<TextModalInteractionFactory>().getTextModalInteraction()
+    private val interaction: TextModalModel = try {
+        DependencyProvider.of<TextModalModelFactory>().getTextModalModel()
     } catch (exception: Exception) {
-        getInteractionBackup(context.getAppActivity())
+        val interaction: TextModalInteraction = getInteractionBackup(context.getAppActivity())
+
+        TextModalModel(
+            id = interaction.id,
+            title = interaction.title,
+            body = interaction.body,
+            actions = interaction.actions.map { action ->
+                DefaultTextModalActionConverter().convert(action)
+            }
+        )
     }
 
     val title = interaction.title
     val message = interaction.body
     val actions = interaction.actions.mapIndexed { index, action ->
-        if (action is TextModalInteraction.Action.Dismiss) {
+        if (action is TextModalModel.Action.Dismiss) {
             ActionModel.DismissActionModel(
                 title = action.label,
                 callback = {
@@ -71,9 +80,9 @@ internal class TextModalViewModel : ViewModel() {
         )
     }
 
-    private fun createActionCallback(action: TextModalInteraction.Action, index: Int): Callback =
+    private fun createActionCallback(action: TextModalModel.Action, index: Int): Callback =
         when (action) {
-            is TextModalInteraction.Action.Dismiss -> {
+            is TextModalModel.Action.Dismiss -> {
                 {
                     Log.i(INTERACTIONS, "Note dismissed")
                     // engage event
@@ -81,7 +90,7 @@ internal class TextModalViewModel : ViewModel() {
                     engageCodePoint(CODE_POINT_DISMISS, data, action.id)
                 }
             }
-            is TextModalInteraction.Action.Invoke -> {
+            is TextModalModel.Action.Invoke -> {
                 {
                     Log.i(INTERACTIONS, "Note action invoked")
 
@@ -93,7 +102,7 @@ internal class TextModalViewModel : ViewModel() {
                     engageCodePoint(CODE_POINT_INTERACTION, data, action.id)
                 }
             }
-            is TextModalInteraction.Action.Event -> {
+            is TextModalModel.Action.Event -> {
                 {
                     Log.i(INTERACTIONS, "Note event engaged")
 
@@ -141,7 +150,7 @@ internal class TextModalViewModel : ViewModel() {
         private const val DATA_ACTION_INTERACTION_ID = "invoked_interaction_id"
 
         private fun createEventData(
-            action: TextModalInteraction.Action,
+            action: TextModalModel.Action,
             actionPosition: Int,
             engagementResult: EngagementResult? = null
         ): Map<String, Any?> {

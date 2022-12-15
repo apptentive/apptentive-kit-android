@@ -13,6 +13,7 @@ import apptentive.com.android.feedback.engagement.InvocationCallback
 import apptentive.com.android.feedback.engagement.MockEngagementContext
 import apptentive.com.android.feedback.engagement.criteria.InvocationConverter
 import apptentive.com.android.feedback.model.InvocationData
+import apptentive.com.android.feedback.textmodal.TextModalActionConfiguration
 import apptentive.com.android.feedback.textmodal.TextModalInteraction
 import apptentive.com.android.feedback.textmodal.TextModalInteractionProvider
 import apptentive.com.android.feedback.textmodal.TextModalViewModel
@@ -25,26 +26,31 @@ class TextModalViewModelTest : TestCase() {
 
     private val invocations = listOf<InvocationData>()
 
+    private val actionList = listOf<TextModalActionConfiguration>(
+        mapOf(
+            "id" to ACTION_ID_INTERACTION,
+            "label" to ACTION_LABEL_INTERACTION,
+            "action" to "interaction",
+            "invokes" to invocations
+        ),
+        mapOf(
+            "id" to ACTION_ID_EVENT,
+            "label" to ACTION_LABEL_EVENT,
+            "action" to "interaction",
+            "event" to "com.apptentive#TextModal#$TARGET_EVENT"
+        ),
+        mapOf(
+            "id" to ACTION_ID_DISMISS,
+            "label" to ACTION_LABEL_DISMISS,
+            "action" to "dismiss"
+        )
+    )
+
     private val interaction = TextModalInteraction(
         id = interactionId,
         title = "Title",
         body = "Body",
-        actions = listOf(
-            TextModalInteraction.Action.Invoke(
-                id = ACTION_ID_INTERACTION,
-                label = ACTION_LABEL_INTERACTION,
-                invocations = invocations
-            ),
-            TextModalInteraction.Action.Event(
-                id = ACTION_ID_EVENT,
-                label = ACTION_LABEL_EVENT,
-                event = Event.internal(TARGET_EVENT, interaction = "TextModal")
-            ),
-            TextModalInteraction.Action.Dismiss(
-                id = ACTION_ID_DISMISS,
-                label = ACTION_LABEL_DISMISS
-            )
-        )
+        actions = actionList
     )
 
     @Before
