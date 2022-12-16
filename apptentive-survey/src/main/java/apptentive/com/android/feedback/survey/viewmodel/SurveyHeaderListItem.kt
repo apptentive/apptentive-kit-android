@@ -1,10 +1,13 @@
 package apptentive.com.android.feedback.survey.viewmodel
 
 import android.text.method.LinkMovementMethod
+import android.text.util.Linkify
 import android.view.View
 import apptentive.com.android.feedback.survey.R
 import apptentive.com.android.ui.ListViewAdapter
 import apptentive.com.android.ui.ListViewItem
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags
 import com.google.android.material.textview.MaterialTextView
 
 internal class SurveyHeaderListItem(val instructions: String) : SurveyListItem(
@@ -36,7 +39,13 @@ internal class SurveyHeaderListItem(val instructions: String) : SurveyListItem(
     }
 
     class ViewHolder(itemView: View) : ListViewAdapter.ViewHolder<SurveyHeaderListItem>(itemView) {
-        private val introductionView = itemView.findViewById<MaterialTextView>(R.id.apptentive_survey_introduction)
+        private val introductionView = itemView.findViewById<MaterialTextView>(R.id.apptentive_survey_introduction).apply {
+            try {
+                Linkify.addLinks(this, Linkify.ALL)
+            } catch (exception: Exception) {
+                Log.e(LogTags.MESSAGE_CENTER, "Couldn't add linkify to survey introduction text", exception)
+            }
+        }
 
         override fun bindView(item: SurveyHeaderListItem, position: Int) {
             introductionView.text = item.instructions

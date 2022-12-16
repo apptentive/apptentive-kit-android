@@ -3,6 +3,7 @@ package apptentive.com.android.feedback.messagecenter.view
 import android.content.Intent
 import android.graphics.Bitmap
 import android.text.method.LinkMovementMethod
+import android.text.util.Linkify
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +23,8 @@ import apptentive.com.android.feedback.messagecenter.view.custom.ProfileView
 import apptentive.com.android.feedback.messagecenter.viewmodel.MessageCenterViewModel
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.utils.convertToDate
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.MESSAGE_CENTER
 import com.google.android.material.textview.MaterialTextView
 
 internal class MessageListAdapter(private val messageViewModel: MessageCenterViewModel) :
@@ -120,7 +123,13 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
                         inboundText.text = message.body
                         inboundText.isVisible = !message.body.isNullOrEmpty()
                         inboundText.text = message.body
-                        inboundText.movementMethod = LinkMovementMethod.getInstance()
+                        try {
+                            Linkify.addLinks(inboundText, Linkify.ALL)
+                            inboundText.movementMethod = LinkMovementMethod.getInstance()
+                        } catch (exception: Exception) {
+                            Log.e(MESSAGE_CENTER, "Couldn't add linkify to inbound text", exception)
+                        }
+
                         inboundAttachments.removeAllViews()
                         inboundAttachments.addAttachments(message)
                         val status =
@@ -133,7 +142,12 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
                         inboundError.isVisible = false
                         outboundLayout.isVisible = true
                         outboundText.text = message?.body
-                        outboundText.movementMethod = LinkMovementMethod.getInstance()
+                        try {
+                            Linkify.addLinks(outboundText, Linkify.ALL)
+                            outboundText.movementMethod = LinkMovementMethod.getInstance()
+                        } catch (exception: Exception) {
+                            Log.e(MESSAGE_CENTER, "Couldn't add linkify to outbound text", exception)
+                        }
                         outboundText.isVisible = !message?.body.isNullOrEmpty()
                         if (message?.sender?.name.isNullOrEmpty()) outboundSenderText.visibility = View.GONE
                         else outboundSenderText.text = message?.sender?.name
@@ -146,15 +160,21 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
 
             is MessageHeaderViewHolder -> {
                 val greetingData = getItem(position).greetingData
-                holder.itemView.findViewById<TextView>(R.id.apptentive_message_center_greeting_title).text =
-                    greetingData?.greetingTitle
+                val greetingTitle = holder.itemView.findViewById<TextView>(R.id.apptentive_message_center_greeting_title)
                 val greetingBodyTextView = holder.itemView.findViewById<TextView>(R.id.apptentive_message_center_greeting_body)
-                greetingBodyTextView.text = greetingData?.greetingBody
-                greetingBodyTextView.movementMethod = LinkMovementMethod.getInstance()
                 holder.itemView.findViewById<ImageView>(R.id.apptentive_message_center_greeting_image).apply {
                     greetingData?.avatarBitmap?.let { avatar ->
                         this.setImageBitmap(avatar)
                     }
+                }
+                try {
+                    Linkify.addLinks(greetingTitle, Linkify.ALL)
+                    greetingTitle.text = greetingData?.greetingTitle
+                    greetingBodyTextView.text = greetingData?.greetingBody
+                    Linkify.addLinks(greetingBodyTextView, Linkify.ALL)
+                    greetingBodyTextView.movementMethod = LinkMovementMethod.getInstance()
+                } catch (exception: Exception) {
+                    Log.e(MESSAGE_CENTER, "Couldn't add linkify to greeting text", exception)
                 }
             }
 

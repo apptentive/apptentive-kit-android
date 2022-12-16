@@ -2,6 +2,7 @@ package apptentive.com.android.feedback.survey.view
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.text.util.Linkify
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,8 @@ import android.widget.LinearLayout
 import androidx.core.view.isVisible
 import apptentive.com.android.feedback.survey.R
 import apptentive.com.android.ui.getThemeColor
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags
 import com.google.android.material.textview.MaterialTextView
 
 internal class SurveyQuestionContainerView(
@@ -59,6 +62,11 @@ internal class SurveyQuestionContainerView(
         answerContainerView = contentView.findViewById(R.id.apptentive_answer_container)
         errorMessageView = contentView.findViewById(R.id.apptentive_question_error_message)
 
+        try {
+            Linkify.addLinks(titleTextView, Linkify.ALL)
+        } catch (exception: Exception) {
+            Log.e(LogTags.MESSAGE_CENTER, "Couldn't add linkify to survey title text", exception)
+        }
         titleTextViewDefaultColor = titleTextView.textColors
         instructionsTextViewDefaultColor = instructionsTextView.textColors
 
