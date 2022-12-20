@@ -169,13 +169,13 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
                 }
                 try {
                     Linkify.addLinks(greetingTitle, Linkify.ALL)
-                    greetingTitle.text = greetingData?.greetingTitle
-                    greetingBodyTextView.text = greetingData?.greetingBody
                     Linkify.addLinks(greetingBodyTextView, Linkify.ALL)
                     greetingBodyTextView.movementMethod = LinkMovementMethod.getInstance()
                 } catch (exception: Exception) {
                     Log.e(MESSAGE_CENTER, "Couldn't add linkify to greeting text", exception)
                 }
+                greetingTitle.text = greetingData?.greetingTitle
+                greetingBodyTextView.text = greetingData?.greetingBody
             }
 
             is MessageFooterViewHolder -> {
