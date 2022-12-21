@@ -167,6 +167,9 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
                         this.setImageBitmap(avatar)
                     }
                 }
+                // Assign the text value before adding the links to make sure they are rendered as links
+                greetingTitle.text = greetingData?.greetingTitle
+                greetingBodyTextView.text = greetingData?.greetingBody
                 try {
                     Linkify.addLinks(greetingTitle, Linkify.ALL)
                     Linkify.addLinks(greetingBodyTextView, Linkify.ALL)
@@ -174,8 +177,6 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
                 } catch (exception: Exception) {
                     Log.e(MESSAGE_CENTER, "Couldn't add linkify to greeting text", exception)
                 }
-                greetingTitle.text = greetingData?.greetingTitle
-                greetingBodyTextView.text = greetingData?.greetingBody
             }
 
             is MessageFooterViewHolder -> {
