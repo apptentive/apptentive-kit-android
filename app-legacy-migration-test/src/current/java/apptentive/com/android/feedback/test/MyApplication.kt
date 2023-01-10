@@ -13,6 +13,7 @@ class MyApplication: Application() {
             "98f5539e9310dc290394c68b76664e98"
         )
         configuration.logLevel = LogLevel.Verbose
+        configuration.shouldEncryptStorage = true
         Apptentive.register(this, configuration)
     }
 }

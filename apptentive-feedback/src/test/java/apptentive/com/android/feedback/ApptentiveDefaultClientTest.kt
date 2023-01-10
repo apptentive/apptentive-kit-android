@@ -3,14 +3,22 @@ package apptentive.com.android.feedback
 import apptentive.com.android.TestCase
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.concurrent.Executors
+import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.encryption.Encrypted
+import apptentive.com.android.encryption.NotEncrypted
 import apptentive.com.android.feedback.backend.ConversationCredentials
 import apptentive.com.android.feedback.conversation.createConversationManager
+import apptentive.com.android.feedback.engagement.util.MockAndroidSharedPrefDataStore
+import apptentive.com.android.feedback.engagement.util.MockFileSystem
 import apptentive.com.android.feedback.model.payloads.Payload
 import apptentive.com.android.feedback.payload.PayloadSender
+import apptentive.com.android.feedback.platform.FileSystem
 import apptentive.com.android.network.HttpClient
 import apptentive.com.android.network.HttpRequest
 import apptentive.com.android.network.HttpResponse
+import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.util.Result
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Before
@@ -40,8 +48,7 @@ class ApptentiveDefaultClientTest : TestCase() {
     @Before
     fun testSetup() {
         apptentiveClient = ApptentiveDefaultClient(
-            apptentiveKey = "",
-            apptentiveSignature = "",
+            configuration = ApptentiveConfiguration("KEY", "SIGNATURE"),
             httpClient = mockHttpClient,
             executors = Executors(
                 state = mockExecutor,
@@ -59,6 +66,11 @@ class ApptentiveDefaultClientTest : TestCase() {
 
         apptentiveClient.conversationManager = createConversationManager(fetchResponse)
         apptentiveClient.payloadSender = mockPayloadSender
+    }
+
+    @After
+    fun clean() {
+        DependencyProvider.clear()
     }
 
     @Ignore("Failing on Jenkins. Unknown reason.")
@@ -93,5 +105,36 @@ class ApptentiveDefaultClientTest : TestCase() {
         apptentiveClient.updatePerson(email = testEmail2)
 
         assertEquals(testEmail2, apptentiveClient.getPersonEmail())
+    }
+
+    @Test
+    fun testMigrationFrom600() {
+        DependencyProvider.clear()
+        // Migrating from 6.0.0, has storage but CRYPTO_ENABLED flag
+        DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore(containsKey = false))
+        DependencyProvider.register<FileSystem>(MockFileSystem())
+
+        val encryptionStatus = apptentiveClient.getPreviousEncryptionStatus()
+        assertEquals(NotEncrypted, encryptionStatus)
+    }
+
+    @Test
+    fun testNotEncryptedStatus() {
+        // Not encrypted, has storage & contains CRYPTO_ENABLED flag
+        DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore(containsKey = true))
+        DependencyProvider.register<FileSystem>(MockFileSystem(containsFile = true))
+
+        val encryptionStatus = apptentiveClient.getPreviousEncryptionStatus()
+        assertEquals(NotEncrypted, encryptionStatus)
+    }
+
+    @Test
+    fun testEncryptedStatus() {
+        // Encrypted, has storage & CRYPTO_ENABLED flag true
+        DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore(containsKey = true, isEncryptionEnabled = true))
+        DependencyProvider.register<FileSystem>(MockFileSystem(containsFile = true))
+
+        val encryptionStatus = apptentiveClient.getPreviousEncryptionStatus()
+        assertEquals(Encrypted, encryptionStatus)
     }
 }

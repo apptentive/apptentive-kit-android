@@ -3,13 +3,17 @@ package apptentive.com.android.feedback.platform
 import android.content.Context
 import androidx.annotation.WorkerThread
 import apptentive.com.android.core.Provider
+import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.CORE
 import java.io.File
 
-internal interface FileSystem {
+@InternalUseOnly
+interface FileSystem {
     @WorkerThread
     fun getInternalDir(path: String, createIfNecessary: Boolean = false): File
+
+    fun containsFile(path: String): Boolean
 }
 
 internal class AndroidFileSystemProvider(context: Context, private val domain: String) :
@@ -34,5 +38,10 @@ private class AndroidFileSystem(
             }
         }
         return internalDir
+    }
+
+    override fun containsFile(path: String): Boolean {
+        val internalDir = File(applicationContext.filesDir, "$domain/$path")
+        return internalDir.exists() && (internalDir.listFiles()?.size ?: 0) > 0
     }
 }

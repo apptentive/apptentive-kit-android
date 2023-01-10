@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.message
 
 import androidx.core.util.AtomicFile
+import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.serialization.BinaryDecoder
 import apptentive.com.android.serialization.BinaryEncoder
 import apptentive.com.android.serialization.Decoder
@@ -13,10 +14,13 @@ import apptentive.com.android.serialization.encodeNullableString
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags
 import apptentive.com.android.util.LogTags.MESSAGE_CENTER
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.io.EOFException
 import java.io.File
+import java.io.FileInputStream
 
 internal interface MessageSerializer {
     @Throws(MessageSerializerException::class)
@@ -26,7 +30,7 @@ internal interface MessageSerializer {
     fun saveMessages(messages: List<DefaultMessageRepository.MessageEntry>)
 }
 
-internal class DefaultMessageSerializer(val messagesFile: File) : MessageSerializer {
+internal class DefaultMessageSerializer(val messagesFile: File, val encryption: Encryption) : MessageSerializer {
     override fun loadMessages(): List<DefaultMessageRepository.MessageEntry> {
         return if (messagesFile.exists()) {
             Log.d(MESSAGE_CENTER, "Loading messages from MessagesFile")
@@ -41,10 +45,15 @@ internal class DefaultMessageSerializer(val messagesFile: File) : MessageSeriali
         val start = System.currentTimeMillis()
         val atomicFile = AtomicFile(messagesFile)
         val stream = atomicFile.startWrite()
+        val byteArrayOutputStream = ByteArrayOutputStream()
         try {
-            val encoder = BinaryEncoder(DataOutputStream(stream))
+            val encoder = BinaryEncoder(DataOutputStream(byteArrayOutputStream))
             messageSerializer.encode(encoder, messages)
-            atomicFile.finishWrite(stream)
+            val encryptedBytes = encryption.encrypt(byteArrayOutputStream.toByteArray())
+            stream.use {
+                stream.write(encryptedBytes)
+                atomicFile.finishWrite(stream)
+            }
         } catch (e: Exception) {
             atomicFile.failWrite(stream)
             throw MessageSerializerException("Unable to save messages", e)
@@ -53,16 +62,17 @@ internal class DefaultMessageSerializer(val messagesFile: File) : MessageSeriali
         Log.v(LogTags.CONVERSATION, "Messages saved (took ${System.currentTimeMillis() - start} ms)")
     }
 
-    private fun readMessageEntries(): List<DefaultMessageRepository.MessageEntry> {
+    private fun readMessageEntries(): List<DefaultMessageRepository.MessageEntry> =
         try {
-            return messagesFile.inputStream().use { stream ->
-                val decoder = BinaryDecoder(DataInputStream(stream))
-                messageSerializer.decode(decoder)
-            }
+            val decryptedMessage = encryption.decrypt(FileInputStream(messagesFile))
+            val inputStream = ByteArrayInputStream(decryptedMessage)
+            val decoder = BinaryDecoder(DataInputStream(inputStream))
+            messageSerializer.decode(decoder)
         } catch (e: EOFException) {
             throw MessageSerializerException("Unable to load messages: file corrupted", e)
+        } catch (e: Exception) {
+            throw MessageSerializerException("Unable to load conversation", e)
         }
-    }
 
     private val messageSerializer: TypeSerializer<List<DefaultMessageRepository.MessageEntry>> by lazy {
         object : TypeSerializer<List<DefaultMessageRepository.MessageEntry>> {

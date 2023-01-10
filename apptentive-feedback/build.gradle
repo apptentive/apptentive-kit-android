@@ -47,6 +47,7 @@ dependencies {
 
     androidTestImplementation project(':apptentive-core-test')
     androidTestImplementation project(':apptentive-feedback-test')
+    androidTestImplementation "io.mockk:mockk:$mockk_version"
     androidTestImplementation "androidx.test:runner:$androidx_test_version"
     androidTestImplementation "androidx.test:core:$androidx_test_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"

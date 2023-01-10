@@ -28,6 +28,11 @@ import apptentive.com.android.feedback.messagecenter.view.custom.MessageCenterAt
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.utils.SystemUtils
 import apptentive.com.android.platform.SharedPrefConstants
+import apptentive.com.android.platform.SharedPrefConstants.MESSAGE_CENTER_DRAFT
+import apptentive.com.android.platform.SharedPrefConstants.MESSAGE_CENTER_DRAFT_ATTACHMENTS
+import apptentive.com.android.platform.SharedPrefConstants.MESSAGE_CENTER_DRAFT_TEXT
+import apptentive.com.android.platform.SharedPrefConstants.MESSAGE_CENTER_PROFILE_EMAIL
+import apptentive.com.android.platform.SharedPrefConstants.MESSAGE_CENTER_PROFILE_NAME
 import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.ui.hideSoftKeyboard
 import apptentive.com.android.ui.startViewModelActivity
@@ -52,7 +57,7 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
     private var hasScrolled = false
 
     private val draftSharedPrefs by lazy { // So this is only retrieved once
-        getSharedPreferences(SharedPrefConstants.MESSAGE_CENTER_DRAFT, MODE_PRIVATE)
+        getSharedPreferences(MESSAGE_CENTER_DRAFT, MODE_PRIVATE)
     }
 
     private val sharedPrefsPush by lazy {
@@ -236,13 +241,6 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
     }
 
     private fun handleDraftMessage(shouldSave: Boolean) { // vs shouldRestore
-        // Consts for shared prefs
-        val MESSAGE_CENTER_DRAFT_TEXT = "message.text"
-        val MESSAGE_CENTER_DRAFT_ATTACHMENTS = "message.attachments"
-
-        val MESSAGE_CENTER_PROFILE_NAME = "profile.name"
-        val MESSAGE_CENTER_PROFILE_EMAIL = "profile.email"
-
         if (shouldSave) {
             draftSharedPrefs
                 .edit()

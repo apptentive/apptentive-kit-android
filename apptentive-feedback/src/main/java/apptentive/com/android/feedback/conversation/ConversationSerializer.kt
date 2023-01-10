@@ -2,6 +2,7 @@ package apptentive.com.android.feedback.conversation
 
 import androidx.core.util.AtomicFile
 import apptentive.com.android.core.TimeInterval
+import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.feedback.conversation.Serializers.conversationSerializer
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
@@ -45,10 +46,13 @@ import apptentive.com.android.serialization.encodeSet
 import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.CONVERSATION
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.io.EOFException
 import java.io.File
+import java.io.FileInputStream
 
 internal interface ConversationSerializer {
     @Throws(ConversationSerializationException::class)
@@ -60,7 +64,8 @@ internal interface ConversationSerializer {
 
 internal class DefaultConversationSerializer(
     private val conversationFile: File,
-    private val manifestFile: File
+    private val manifestFile: File,
+    private val encryption: Encryption?
 ) : ConversationSerializer {
     // we keep track of the last seen engagement manifest expiry date and only update storage if it changes
     private var lastKnownManifestExpiry: TimeInterval = 0.0
@@ -69,10 +74,15 @@ internal class DefaultConversationSerializer(
         val start = System.currentTimeMillis()
         val atomicFile = AtomicFile(conversationFile)
         val stream = atomicFile.startWrite()
+        val byteArrayOutputStream = ByteArrayOutputStream()
         try {
-            val encoder = BinaryEncoder(DataOutputStream(stream))
+            val encoder = BinaryEncoder(DataOutputStream(byteArrayOutputStream))
             conversationSerializer.encode(encoder, conversation)
-            atomicFile.finishWrite(stream)
+            val encryptedBytes = encryption?.encrypt(byteArrayOutputStream.toByteArray())
+            stream.use {
+                stream.write(encryptedBytes)
+                atomicFile.finishWrite(stream)
+            }
         } catch (e: Exception) {
             atomicFile.failWrite(stream)
             throw ConversationSerializationException("Unable to save conversation", e)
@@ -88,6 +98,7 @@ internal class DefaultConversationSerializer(
         }
     }
 
+    @Throws(ConversationSerializationException::class)
     override fun loadConversation(): Conversation? {
         if (conversationFile.exists()) {
             val conversation = readConversation()
@@ -102,18 +113,17 @@ internal class DefaultConversationSerializer(
         return null
     }
 
-    private fun readConversation(): Conversation {
+    private fun readConversation(): Conversation =
         try {
-            return conversationFile.inputStream().use { stream ->
-                val decoder = BinaryDecoder(DataInputStream(stream))
-                conversationSerializer.decode(decoder)
-            }
+            val decryptedMessage = encryption?.decrypt(FileInputStream(conversationFile))
+            val inputStream = ByteArrayInputStream(decryptedMessage)
+            val decoder = BinaryDecoder(DataInputStream(inputStream))
+            conversationSerializer.decode((decoder))
         } catch (e: EOFException) {
             throw ConversationSerializationException("Unable to load conversation: file corrupted", e)
         } catch (e: Exception) {
             throw ConversationSerializationException("Unable to load conversation", e)
         }
-    }
 
     private fun readEngagementManifest(): EngagementManifest? {
         try {

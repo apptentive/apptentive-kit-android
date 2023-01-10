@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import apptentive.com.android.TestCase
 import apptentive.com.android.debug.Assert.assertEqual
+import apptentive.com.android.encryption.EncryptionFactory
+import apptentive.com.android.encryption.NotEncrypted
 import apptentive.com.android.network.HttpMethod
 import org.junit.After
 import org.junit.Assert.assertNull
@@ -17,7 +19,13 @@ class PayloadSQLiteHelperTest : TestCase() {
 
     @Before
     fun setupDb() {
-        dbHelper = PayloadSQLiteHelper(context)
+        dbHelper = PayloadSQLiteHelper(
+            context,
+            EncryptionFactory.getEncryption(
+                shouldEncryptStorage = false,
+                oldEncryptionSetting = NotEncrypted
+            )
+        )
         dbHelper.deleteDatabase(context)
     }
 

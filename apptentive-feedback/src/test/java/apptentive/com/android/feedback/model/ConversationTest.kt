@@ -1,6 +1,8 @@
 package apptentive.com.android.feedback.model
 
 import apptentive.com.android.TestCase
+import apptentive.com.android.encryption.EncryptionFactory
+import apptentive.com.android.encryption.NotEncrypted
 import apptentive.com.android.feedback.conversation.DefaultConversationSerializer
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
@@ -145,7 +147,13 @@ class ConversationTest : TestCase() {
         val conversationFile = createTempFile()
         val manifestFile = createTempFile()
 
-        return DefaultConversationSerializer(conversationFile, manifestFile)
+        return DefaultConversationSerializer(
+            conversationFile, manifestFile,
+            EncryptionFactory.getEncryption(
+                shouldEncryptStorage = false,
+                oldEncryptionSetting = NotEncrypted
+            )
+        )
     }
 }
 

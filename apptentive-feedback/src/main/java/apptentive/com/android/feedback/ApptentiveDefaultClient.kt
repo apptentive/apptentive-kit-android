@@ -6,6 +6,13 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import apptentive.com.android.concurrent.Executors
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.Provider
+import apptentive.com.android.encryption.AESEncryption23
+import apptentive.com.android.encryption.Encryption
+import apptentive.com.android.encryption.EncryptionFactory
+import apptentive.com.android.encryption.EncryptionStatus
+import apptentive.com.android.encryption.NoEncryptionStatus
+import apptentive.com.android.encryption.NotEncrypted
+import apptentive.com.android.encryption.getEncryptionStatus
 import apptentive.com.android.feedback.backend.ConversationPayloadService
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.DefaultConversationService
@@ -64,10 +71,14 @@ import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.RuntimeUtils
 import apptentive.com.android.network.HttpClient
 import apptentive.com.android.network.UnexpectedResponseException
+import apptentive.com.android.platform.AndroidSharedPrefDataStore
+import apptentive.com.android.platform.SharedPrefConstants.CRYPTO_ENABLED
+import apptentive.com.android.platform.SharedPrefConstants.SDK_CORE_INFO
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogLevel
 import apptentive.com.android.util.LogTags.CONVERSATION
+import apptentive.com.android.util.LogTags.CRYPTOGRAPHY
 import apptentive.com.android.util.LogTags.EVENT
 import apptentive.com.android.util.LogTags.LIFE_CYCLE_OBSERVER
 import apptentive.com.android.util.LogTags.MESSAGE_CENTER
@@ -82,8 +93,7 @@ import java.io.InputStream
 
 @InternalUseOnly
 class ApptentiveDefaultClient(
-    private val apptentiveKey: String,
-    private val apptentiveSignature: String,
+    private val configuration: ApptentiveConfiguration,
     private val httpClient: HttpClient,
     private val executors: Executors
 ) : ApptentiveClient {
@@ -93,18 +103,23 @@ class ApptentiveDefaultClient(
     private lateinit var interactionModules: Map<String, InteractionModule<Interaction>>
     private var messageManager: MessageManager? = null
     private var engagement: Engagement = NullEngagement()
+    private val encryption: Encryption by lazy {
+        val sharedPref = DependencyProvider.of<AndroidSharedPrefDataStore>()
+        val oldEncryptionSetting = getPreviousEncryptionStatus()
+        val encryption = EncryptionFactory.getEncryption(
+            shouldEncryptStorage = configuration.shouldEncryptStorage,
+            oldEncryptionSetting = oldEncryptionSetting
+        )
+        sharedPref.putBoolean(SDK_CORE_INFO, CRYPTO_ENABLED, encryption is AESEncryption23)
+        Log.v(CRYPTOGRAPHY, "Current encryption setting is ${encryption.javaClass.simpleName}")
+        encryption
+    }
 
     //region Initialization
 
     @WorkerThread
     internal fun start(context: Context, registerCallback: ((result: RegisterResult) -> Unit)?) {
         interactionModules = loadInteractionModules()
-
-        val serialPayloadSender = SerialPayloadSender(
-            payloadQueue = PersistentPayloadQueue.create(context),
-            callback = ::onPayloadSendFinish
-        )
-        payloadSender = serialPayloadSender
 
         val conversationService = createConversationService()
         conversationManager = ConversationManager(
@@ -115,6 +130,12 @@ class ApptentiveDefaultClient(
             },
             isDebuggable = RuntimeUtils.getApplicationInfo(context).debuggable
         )
+
+        val serialPayloadSender = SerialPayloadSender(
+            payloadQueue = PersistentPayloadQueue.create(context, encryption),
+            callback = ::onPayloadSendFinish
+        )
+        payloadSender = serialPayloadSender
 
         getConversationToken(conversationService, registerCallback)
         addObservers(serialPayloadSender, conversationService)
@@ -154,7 +175,7 @@ class ApptentiveDefaultClient(
                         conversationService as MessageCenterService,
                         executors.state,
                         DefaultMessageRepository(
-                            messageSerializer = DefaultMessageSerializer(messagesFile = getMessagesFile())
+                            messageSerializer = DefaultMessageSerializer(messagesFile = getMessagesFile(), encryption)
                         )
                     )
                     messageManager?.let {
@@ -243,14 +264,15 @@ class ApptentiveDefaultClient(
     private fun createConversationSerializer(): ConversationSerializer {
         return DefaultConversationSerializer(
             conversationFile = getConversationFile(),
-            manifestFile = getManifestFile()
+            manifestFile = getManifestFile(),
+            encryption = encryption
         )
     }
 
     private fun createConversationService(): ConversationService = DefaultConversationService(
         httpClient = httpClient,
-        apptentiveKey = apptentiveKey,
-        apptentiveSignature = apptentiveSignature,
+        apptentiveKey = configuration.apptentiveKey,
+        apptentiveSignature = configuration.apptentiveSignature,
         apiVersion = Constants.API_VERSION,
         sdkVersion = Constants.SDK_VERSION,
         baseURL = Constants.SERVER_URL
@@ -496,11 +518,23 @@ class ApptentiveDefaultClient(
         }
     }
 
+    fun getPreviousEncryptionStatus(): EncryptionStatus {
+        val sharedPref = DependencyProvider.of<AndroidSharedPrefDataStore>()
+
+        return when {
+            FileUtil.containsFiles(CONVERSATION_DIR) && !sharedPref.containsKey(SDK_CORE_INFO, CRYPTO_ENABLED) -> NotEncrypted // Migrating from 6.0.0
+            sharedPref.containsKey(SDK_CORE_INFO, CRYPTO_ENABLED) -> sharedPref.getBoolean(SDK_CORE_INFO, CRYPTO_ENABLED).getEncryptionStatus()
+            else -> NoEncryptionStatus
+        }
+    }
+
     //endregion
 
     internal fun getConversationId() = conversationManager.getConversation().conversationId
 
     companion object {
+        private const val CONVERSATION_DIR = "conversations"
+
         @WorkerThread
         private fun getConversationFile(): File {
             val conversationsDir = getConversationDir()
@@ -515,7 +549,7 @@ class ApptentiveDefaultClient(
 
         @WorkerThread
         private fun getConversationDir(): File {
-            return FileUtil.getInternalDir("conversations", createIfNecessary = true)
+            return FileUtil.getInternalDir(CONVERSATION_DIR, createIfNecessary = true)
         }
 
         @WorkerThread

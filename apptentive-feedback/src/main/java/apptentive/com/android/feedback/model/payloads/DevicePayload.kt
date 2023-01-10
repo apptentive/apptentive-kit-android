@@ -2,6 +2,7 @@ package apptentive.com.android.feedback.model.payloads
 
 import apptentive.com.android.feedback.Constants.buildHttpPath
 import apptentive.com.android.feedback.model.SensitiveDataKey
+import apptentive.com.android.feedback.payload.AttachmentData
 import apptentive.com.android.feedback.payload.MediaType
 import apptentive.com.android.feedback.payload.PayloadType
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
@@ -48,7 +49,7 @@ internal class DevicePayload(
 
     override fun getDataBytes() = toJson().toByteArray()
 
-    override fun getDataFilePath() = ""
+    override fun getAttachmentDataBytes() = AttachmentData()
 
     override fun equals(other: Any?): Boolean {
         return when {

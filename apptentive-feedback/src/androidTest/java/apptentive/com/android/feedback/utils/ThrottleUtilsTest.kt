@@ -4,8 +4,11 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.test.core.app.ApplicationProvider
 import apptentive.com.android.TestCase
+import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
+import apptentive.com.android.feedback.engagement.util.MockAndroidSharedPrefDataStore
+import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import org.junit.After
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -142,5 +145,13 @@ class ThrottleUtilsTest : TestCase() {
             assertTrue(throttleUtils.shouldThrottleInteraction(surveyInteraction))
         } catch (e: Exception) {
         }
+    }
+
+    @Test
+    fun shouldThrottleResetConversationTest() {
+        DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore())
+        val result = ThrottleUtils.shouldThrottleResetConversation()
+        assertFalse(result)
+        assertTrue(ThrottleUtils.shouldThrottleResetConversation())
     }
 }

@@ -3,6 +3,7 @@ package apptentive.com.android.feedback.model.payloads
 import apptentive.com.android.feedback.Constants
 import apptentive.com.android.feedback.model.AppRelease
 import apptentive.com.android.feedback.model.SDK
+import apptentive.com.android.feedback.payload.AttachmentData
 import apptentive.com.android.feedback.payload.MediaType
 import apptentive.com.android.feedback.payload.PayloadType
 import apptentive.com.android.network.HttpMethod
@@ -40,7 +41,7 @@ internal class AppReleaseAndSDKPayload(
 
     override fun getDataBytes() = toJson().toByteArray()
 
-    override fun getDataFilePath() = ""
+    override fun getAttachmentDataBytes() = AttachmentData()
 
     companion object {
         fun buildPayload(sdk: SDK, appRelease: AppRelease): AppReleaseAndSDKPayload {

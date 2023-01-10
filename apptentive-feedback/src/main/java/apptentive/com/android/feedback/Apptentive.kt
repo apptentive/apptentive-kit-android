@@ -30,6 +30,8 @@ import apptentive.com.android.network.HttpLoggingInterceptor
 import apptentive.com.android.network.HttpNetworkResponse
 import apptentive.com.android.network.HttpRequest
 import apptentive.com.android.network.asString
+import apptentive.com.android.platform.AndroidSharedPrefDataStore
+import apptentive.com.android.platform.DefaultAndroidSharedPrefDataStore
 import apptentive.com.android.platform.SharedPrefConstants
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
@@ -170,6 +172,7 @@ object Apptentive {
                     "apptentive.com.android.feedback"
                 )
             )
+            DependencyProvider.register<AndroidSharedPrefDataStore>(DefaultAndroidSharedPrefDataStore(application.applicationContext))
 
             checkSavedKeyAndSignature(application, configuration)
 
@@ -227,8 +230,7 @@ object Apptentive {
             } else null
 
             client = ApptentiveDefaultClient(
-                apptentiveKey = configuration.apptentiveKey,
-                apptentiveSignature = configuration.apptentiveSignature,
+                configuration = configuration,
                 httpClient = createHttpClient(application.applicationContext),
                 executors = Executors(
                     state = stateExecutor,
@@ -294,7 +296,7 @@ object Apptentive {
         }
     }
 
-    private fun createHttpClient(context: Context): HttpClient {
+    internal fun createHttpClient(context: Context): HttpClient {
         val loggingInterceptor = object : HttpLoggingInterceptor {
             override fun intercept(request: HttpRequest<*>) {
                 Log.d(NETWORK, "--> ${request.method} ${request.url}")

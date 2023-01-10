@@ -4,6 +4,7 @@ import androidx.annotation.Keep
 import apptentive.com.android.feedback.Constants.buildHttpPath
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
 import apptentive.com.android.feedback.model.payloads.ConversationPayload
+import apptentive.com.android.feedback.payload.AttachmentData
 import apptentive.com.android.feedback.payload.MediaType
 import apptentive.com.android.feedback.payload.PayloadType
 import apptentive.com.android.network.HttpMethod
@@ -32,7 +33,7 @@ internal class SurveyResponsePayload(
 
     override fun getDataBytes() = toJson().toByteArray()
 
-    override fun getDataFilePath() = ""
+    override fun getAttachmentDataBytes() = AttachmentData()
 
     companion object {
         fun fromAnswers(

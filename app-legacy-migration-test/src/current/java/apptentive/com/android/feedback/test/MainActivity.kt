@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.Apptentive.engage
+import apptentive.com.android.feedback.Apptentive.showMessageCenter
 import apptentive.com.android.feedback.ApptentiveActivityInfo
 
 class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
@@ -17,7 +18,9 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
         findViewById<View>(R.id.engage).setOnClickListener {
             engage("love_dialog_test")
         }
-        findViewById<View>(R.id.message_center).setOnClickListener { notImplemented("Message center supported yet") }
+        findViewById<View>(R.id.message_center).setOnClickListener {
+            showMessageCenter()
+        }
     }
 
     override fun onResume() {

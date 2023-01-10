@@ -26,6 +26,8 @@ class MyApplication : Application() {
         // Turning off by default to get un-redacted logs
         configuration.shouldSanitizeLogMessages = prefs.getBoolean(SHOULD_SANITIZE, false)
 
+        configuration.shouldEncryptStorage = true
+
         super.onCreate()
         Apptentive.register(this, configuration) {
             when (it) {
