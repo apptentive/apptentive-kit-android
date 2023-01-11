@@ -7,6 +7,7 @@
 * Add `getPersonName` and `getPersonEmail` functions
 * Improve Note links to support email and phone numbers
 * Improve `ApptentiveActivityCallback` to allow `unregisterApptentiveActivityInfoCallback` to be optional
+* Extended localization support
 
 #### Fixes
 * Fix right-to-left language support in Message Center
