@@ -1,4 +1,4 @@
-# 2022-01-16 - v6.0.1
+# 2023-01-11 - v6.0.1
 
 #### New Features
 * Add Push Notification support for Message Center
