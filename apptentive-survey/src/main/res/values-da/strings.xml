@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="confirmation_dialog_message">Du mister, hvad du har nået, hvis du lukker undersøgelsen.</string>
+    <string name="confirmation_dialog_title">Luk undersøgelsen?</string>
+    <string name="apptentive_required">Påkrævet</string>
+    <string name="min_range_label_default">Laveste</string>
+    <string name="max_range_label_default">Højeste</string>
+    <string name="apptentive_survey_header_image">Undersøgelsens sidehovedbillede</string>
+</resources>

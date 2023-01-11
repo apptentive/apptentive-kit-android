@@ -49,11 +49,6 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
     override fun getApptentiveActivityInfo(): Activity {
         return this
     }
-
-    override fun onPause() {
-        Apptentive.unregisterApptentiveActivityInfoCallback(this)
-        super.onPause()
-    }
 }
 ```
 At various points in your app, use the `Apptentive.engage("my_event")` method to record events with Apptentive Android kit. When an event is engaged, the SDK can be configured to display an interaction, such as a Note, Survey, or Love Dialog, and you can define segments based on which events were engaged on your customer's device.

@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.enjoyment
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
@@ -8,16 +9,23 @@ import android.view.LayoutInflater
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
+import apptentive.com.android.feedback.Apptentive
+import apptentive.com.android.feedback.ApptentiveActivityInfo
 import apptentive.com.android.ui.overrideTheme
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textview.MaterialTextView
 
-internal class EnjoymentDialogFragment : DialogFragment() {
+internal class EnjoymentDialogFragment : DialogFragment(), ApptentiveActivityInfo {
     private val viewModel by viewModels<EnjoymentDialogViewModel>()
 
     @SuppressLint("UseGetLayoutInflater", "InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        if (!Apptentive.isApptentiveActivityInfoCallbackRegistered()) {
+            // Calling this in onCreateDialog in case we lose the Activity reference from the
+            // last Activity for whatever reason (garbage collection while app is in the background)
+            Apptentive.registerApptentiveActivityInfoCallback(this)
+        }
 
         val dialog = MaterialAlertDialogBuilder(requireContext()).apply {
             val ctx = ContextThemeWrapper(
@@ -75,5 +83,9 @@ internal class EnjoymentDialogFragment : DialogFragment() {
     override fun onDismiss(dialog: DialogInterface) {
         viewModel.onDismiss()
         super.onDismiss(dialog)
+    }
+
+    override fun getApptentiveActivityInfo(): Activity {
+        return requireActivity()
     }
 }

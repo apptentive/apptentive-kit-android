@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="apptentive_close">Stäng</string>
+    <string name="apptentive_cancel">Avbryt</string>
+    <string name="apptentive_profile">Profil</string>
+    <string name="apptentive_send_message">Skickar meddelandet.</string>
+    <string name="apptentive_message_validation_error">Fel - Meddelandefältet kan inte vara tomt.</string>
+    <string name="apptentive_email_validation_error">Fel - E-post saknas eller är ett ogiltigt format.</string>
+    <string name="apptentive_profile_confirmation_dialog_title">Stäng profil?</string>
+    <string name="apptentive_profile_confirmation_dialog_message">Ändringarna i din profil kommer inte att sparas.</string>
+    <string name="apptentive_failed_to_send">Det gick inte att skicka. Vi kommer automatiskt att försöka igen senare.</string>
+    <string name="apptentive_preview_attachment">Förhandsgranska bilaga</string>
+    <string name="apptentive_remove_attachment">Ta bort bifogad fil</string>
+    <string name="apptentive_back">Tillbaka</string>
+    <string name="apptentive_add_attachment">Lägg till bilaga</string>
+    <string name="apptentive_attachment_thumbnail">Bifogad miniatyrbild</string>
+</resources>

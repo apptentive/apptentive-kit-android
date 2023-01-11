@@ -19,9 +19,9 @@ internal class SurveyModelFactoryProvider(
     }
 }
 
-private class DefaultSurveyModelFactory(
-    val engagementContext: EngagementContext,
-    val interaction: SurveyInteraction
+internal class DefaultSurveyModelFactory(
+    private val engagementContext: EngagementContext,
+    private val interaction: SurveyInteraction
 ) : SurveyModelFactory {
     override fun getSurveyModel(): SurveyModel {
         return SurveyModel(

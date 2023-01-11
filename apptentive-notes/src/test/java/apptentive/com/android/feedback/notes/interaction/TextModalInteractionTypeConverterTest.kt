@@ -1,13 +1,13 @@
 package apptentive.com.android.feedback.notes.interaction
 
-import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
-import apptentive.com.android.feedback.model.InvocationData
+import apptentive.com.android.feedback.textmodal.TextModalActionConfiguration
 import apptentive.com.android.feedback.textmodal.TextModalInteraction
 import apptentive.com.android.feedback.textmodal.TextModalInteractionTypeConverter
 import apptentive.com.android.serialization.json.JsonConverter
 import com.google.common.truth.Truth
 import org.junit.Test
+import java.util.Collections.singletonList
 
 class TextModalInteractionTypeConverterTest {
     @Test
@@ -55,29 +55,30 @@ class TextModalInteractionTypeConverterTest {
             id = "id",
             title = "Title",
             body = "Body",
-            actions = listOf(
-                TextModalInteraction.Action.Invoke(
-                    id = "action_id_1",
-                    label = "Label 1",
-                    invocations = listOf(
-                        InvocationData(
-                            interactionId = "interaction_1",
-                            criteria = mapOf(
-                                "interactions/1234567890/invokes/version_name" to mapOf(
-                                    eq to 0.0
-                                )
+            actions = arrayListOf<TextModalActionConfiguration>(
+                mapOf(
+                    "id" to "action_id_1",
+                    "label" to "Label 1",
+                    "action" to "interaction",
+                    "invokes" to singletonList(
+                        mapOf(
+                            "interaction_id" to "interaction_1",
+                            "criteria" to mapOf(
+                                "interactions/1234567890/invokes/version_name" to mapOf(eq to 0.0)
                             )
                         )
                     )
                 ),
-                TextModalInteraction.Action.Dismiss(
-                    id = "action_id_2",
-                    label = "Label 2"
+                mapOf(
+                    "id" to "action_id_2",
+                    "label" to "Label 2",
+                    "action" to "dismiss"
                 ),
-                TextModalInteraction.Action.Event(
-                    id = "action_id_3",
-                    label = "Label 3",
-                    event = Event.internal("event_1", "TextModal")
+                mapOf(
+                    "id" to "action_id_3",
+                    "label" to "Label 3",
+                    "action" to "interaction",
+                    "event" to "com.apptentive#TextModal#event_1"
                 )
             )
         )
@@ -107,10 +108,11 @@ class TextModalInteractionTypeConverterTest {
             id = "id",
             title = null,
             body = null,
-            actions = listOf(
-                TextModalInteraction.Action.Dismiss(
-                    id = "action_id_1",
-                    label = "Label 1"
+            actions = arrayListOf(
+                mapOf(
+                    "id" to "action_id_1",
+                    "label" to "Label 1",
+                    "action" to "dismiss"
                 )
             )
         )

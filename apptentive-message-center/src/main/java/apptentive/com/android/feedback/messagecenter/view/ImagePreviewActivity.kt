@@ -23,6 +23,7 @@ internal class ImagePreviewActivity : ApptentiveActivity(), ApptentiveActivityIn
         val topAppBar: MaterialToolbar = findViewById(R.id.apptentive_attachment_preview_toolbar)
         val topAppBarTitle: MaterialTextView = findViewById(R.id.apptentive_attachment_preview_title)
         val fileName = intent.getStringExtra(APPTENTIVE_ATTACHMENT_BOTTOMSHEET_FILENAME).orEmpty()
+        title = fileName
         topAppBar.title = ""
         topAppBarTitle.text = fileName
         setSupportActionBar(topAppBar)
@@ -41,10 +42,5 @@ internal class ImagePreviewActivity : ApptentiveActivity(), ApptentiveActivityIn
 
     override fun getApptentiveActivityInfo(): Activity {
         return this
-    }
-
-    override fun onPause() {
-        Apptentive.unregisterApptentiveActivityInfoCallback()
-        super.onPause()
     }
 }

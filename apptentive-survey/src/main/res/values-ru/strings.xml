@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="confirmation_dialog_message">Если вы закроете опрос, ваши ответы удалятся.</string>
+    <string name="confirmation_dialog_title">Закрыть опрос?</string>
+    <string name="apptentive_required">Требуется</string>
+    <string name="min_range_label_default">Самый низкий</string>
+    <string name="max_range_label_default">Самый высокий</string>
+    <string name="apptentive_survey_header_image">Изображение заголовка опроса</string>
+</resources>

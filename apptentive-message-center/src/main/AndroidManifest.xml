@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="apptentive.com.android.feedback.messagecenter">
 
+    <!-- Optional -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
     <application>
         <activity
             android:name=".view.ProfileActivity"

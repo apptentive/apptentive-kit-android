@@ -45,13 +45,13 @@ buildscript {
 
         // AndroidX
         // https://developer.android.com/training/testing/set-up-project
-        androidx_junit_ext_version = '1.1.3'
-        androidx_test_version = '1.4.0'
+        androidx_junit_ext_version = '1.1.4'
+        androidx_test_version = '1.5.0'
         androidx_arch_core_version = '2.1.0'
 
         // Espresso
         // https://developer.android.com/training/testing/espresso
-        espresso_core_version = '3.4.0'
+        espresso_core_version = '3.5.0'
 
         // Json
         // https://mvnrepository.com/artifact/org.json/json
@@ -64,11 +64,11 @@ buildscript {
 
         // Mockk
         // https://mockk.io/
-        mockk_version = '1.12.0'
+        mockk_version = '1.13.3'
     }
 
     project.ext {
-        sonatypeVersion = '6.0.0'
+        sonatypeVersion = '6.0.1'
         jfrogVersion = '6.0.0-private09'
 
         // Change this depending on where you are publishing to
@@ -106,7 +106,7 @@ buildscript {
         // Kotlin Gradle
         // https://kotlinlang.org/docs/gradle.html
         // https://kotlinlang.org/docs/releases.html#release-details
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.21"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.20"
 
         // JFrog Gradle
         // https://plugins.gradle.org/plugin/com.jfrog.artifactory

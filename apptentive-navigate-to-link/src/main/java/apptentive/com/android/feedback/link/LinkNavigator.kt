@@ -50,8 +50,7 @@ internal object LinkNavigator {
     private const val CODE_POINT_NAVIGATE = "navigate"
 }
 
-@VisibleForTesting
-internal fun NavigateToLinkInteraction.createIntent(): Intent {
+private fun NavigateToLinkInteraction.createIntent(): Intent {
     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
     if (target == NavigateToLinkInteraction.Target.new) {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK

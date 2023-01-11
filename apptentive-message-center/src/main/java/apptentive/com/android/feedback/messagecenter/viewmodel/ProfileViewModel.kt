@@ -11,14 +11,21 @@ import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.feedback.message.MessageManager
 import apptentive.com.android.feedback.message.MessageManagerFactory
+import apptentive.com.android.feedback.model.MessageCenterModel
 import apptentive.com.android.feedback.model.Person
+import apptentive.com.android.feedback.utils.getInteractionBackup
 import apptentive.com.android.util.InternalUseOnly
 
 @InternalUseOnly
 class ProfileViewModel : ViewModel() {
     private val context: EngagementContext = DependencyProvider.of<EngagementContextFactory>().engagementContext()
-    private val model = DependencyProvider.of<MessageCenterModelFactory>().messageCenterModel()
     private val messageManager: MessageManager = DependencyProvider.of<MessageManagerFactory>().messageManager()
+
+    private val model: MessageCenterModel = try {
+        DependencyProvider.of<MessageCenterModelFactory>().messageCenterModel()
+    } catch (exception: Exception) {
+        getInteractionBackup(context.getAppActivity())
+    }
 
     val profileTitle: String = model.profile?.edit?.title ?: ""
     val profileSubmit: String = model.profile?.edit?.saveButton ?: ""

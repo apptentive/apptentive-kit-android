@@ -1,6 +1,5 @@
 package apptentive.com.android.feedback.survey.interaction
 
-import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion
 import apptentive.com.android.feedback.survey.model.RangeQuestion
 import apptentive.com.android.feedback.survey.model.SingleLineQuestion
@@ -11,7 +10,6 @@ import apptentive.com.android.util.optBoolean
 import apptentive.com.android.util.optInt
 import apptentive.com.android.util.optString
 
-@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 internal interface SurveyQuestionConverter {
     fun convert(config: SurveyQuestionConfiguration, requiredTextMessage: String): SurveyQuestion<*>
 }
@@ -28,45 +26,48 @@ internal class DefaultSurveyQuestionConverter : SurveyQuestionConverter {
         val required = config.optBoolean("required", defaultValue = false)
         val requiredText: String? = if (required) requiredTextMessage else null
         val instructionsText = config.optString("instructions")
-        return if (type == "multichoice" || type == "multiselect") {
-            MultiChoiceQuestion(
+        return when (type) {
+            "multichoice", "multiselect" -> {
+                MultiChoiceQuestion(
+                    id = id,
+                    title = title,
+                    validationError = validationError,
+                    required = required,
+                    requiredText = requiredText,
+                    instructionsText = instructionsText,
+                    minSelections = config.optInt("min_selections", defaultValue = 1),
+                    maxSelections = config.optInt("max_selections", defaultValue = 1),
+                    allowMultipleAnswers = type == "multiselect",
+                    answerChoiceConfigs = config.getList("answer_choices").map {
+                        @Suppress("UNCHECKED_CAST")
+                        convertAnswerChoices(it as Map<String, Any?>)
+                    }
+                )
+            }
+            "singleline" -> SingleLineQuestion(
                 id = id,
                 title = title,
                 validationError = validationError,
                 required = required,
                 requiredText = requiredText,
                 instructionsText = instructionsText,
-                minSelections = config.optInt("min_selections", defaultValue = 1),
-                maxSelections = config.optInt("max_selections", defaultValue = 1),
-                allowMultipleAnswers = type == "multiselect",
-                answerChoiceConfigs = config.getList("answer_choices").map {
-                    @Suppress("UNCHECKED_CAST")
-                    convertAnswerChoices(it as Map<String, Any?>)
-                }
+                freeFormHint = config.optString("freeform_hint"),
+                multiline = config.optBoolean("multiline")
             )
-        } else if (type == "singleline") SingleLineQuestion(
-            id = id,
-            title = title,
-            validationError = validationError,
-            required = required,
-            requiredText = requiredText,
-            instructionsText = instructionsText,
-            freeFormHint = config.optString("freeform_hint"),
-            multiline = config.optBoolean("multiline")
-        )
-        else if (type == "range") RangeQuestion(
-            id = id,
-            title = title,
-            validationError = validationError,
-            required = required,
-            requiredText = requiredText,
-            instructionsText = instructionsText,
-            min = config.optInt("min", defaultValue = DEFAULT_RANGE_MIN),
-            max = config.optInt("max", defaultValue = DEFAULT_RANGE_MAX),
-            minLabel = config.optString("min_label"),
-            maxLabel = config.optString("max_label")
-        )
-        else throw IllegalArgumentException("Unsupported question type: $type")
+            "range" -> RangeQuestion(
+                id = id,
+                title = title,
+                validationError = validationError,
+                required = required,
+                requiredText = requiredText,
+                instructionsText = instructionsText,
+                min = config.optInt("min", defaultValue = DEFAULT_RANGE_MIN),
+                max = config.optInt("max", defaultValue = DEFAULT_RANGE_MAX),
+                minLabel = config.optString("min_label"),
+                maxLabel = config.optString("max_label")
+            )
+            else -> throw IllegalArgumentException("Unsupported question type: $type")
+        }
     }
 
     private fun convertAnswerChoices(configuration: Map<String, Any?>) =

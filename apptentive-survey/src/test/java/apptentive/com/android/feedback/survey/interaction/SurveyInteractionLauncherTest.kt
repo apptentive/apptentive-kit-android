@@ -3,6 +3,7 @@ package apptentive.com.android.feedback.survey.interaction
 import android.text.SpannedString
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import apptentive.com.android.TestCase
+import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.GenerateUUIDRule
 import apptentive.com.android.feedback.MockTimeRule
@@ -11,6 +12,8 @@ import apptentive.com.android.feedback.engagement.EngagementCallback
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.MockEngagementContext
 import apptentive.com.android.feedback.engagement.PayloadSenderCallback
+import apptentive.com.android.feedback.survey.SurveyModelFactory
+import apptentive.com.android.feedback.survey.SurveyModelFactoryProvider
 import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion
 import apptentive.com.android.feedback.survey.model.SurveyModel
 import apptentive.com.android.feedback.survey.model.SurveyQuestion
@@ -19,6 +22,8 @@ import apptentive.com.android.feedback.survey.model.createRangeQuestion
 import apptentive.com.android.feedback.survey.model.createSingleLineQuestion
 import apptentive.com.android.feedback.survey.utils.createSurveyViewModel
 import apptentive.com.android.toProperJson
+import io.mockk.every
+import io.mockk.mockk
 import org.junit.Rule
 import org.junit.Test
 
@@ -66,10 +71,19 @@ class SurveyInteractionLauncherTest : TestCase() {
                 )
             )
         )
-        val viewModel = createSurveyViewModel(
-            context = context,
-            surveyModel = model,
-        )
+
+        val surveyModelFactory = object : SurveyModelFactory {
+            override fun getSurveyModel(): SurveyModel {
+                return model
+            }
+        }
+
+        val surveyModelFactoryProviderMock = mockk<SurveyModelFactoryProvider>()
+        every { surveyModelFactoryProviderMock.get() } returns surveyModelFactory
+
+        DependencyProvider.register(surveyModelFactoryProviderMock)
+
+        val viewModel = createSurveyViewModel(context)
 
         viewModel.submit()
 

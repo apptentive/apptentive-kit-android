@@ -160,7 +160,7 @@ class ConversationManagerTest : TestCase() {
     }
 }
 
-private fun createConversationManager(
+internal fun createConversationManager(
     fetchResponse: ConversationCredentials =
         ConversationCredentials(
             id = "id",
@@ -214,7 +214,7 @@ private object MockConversationRepository : ConversationRepository {
     )
 }
 
-private class MockConversationService(
+internal class MockConversationService(
     private val response: ConversationCredentials,
     private val testTimeInterval: TimeInterval? = null
 ) :

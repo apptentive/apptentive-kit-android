@@ -73,9 +73,7 @@ open class EngagementContext(
                 "Extend ApptentiveActivityInfo.kt, " +
                 "implement the getApptentiveActivityInfo() function, " +
                 "and call registerApptentiveActivityInfoCallback(this) " +
-                "in your Activity's onResume function. " +
-                "Also call unregisterApptentiveActivityInfoCallback() in your" +
-                "Activity's onPause function to help prevent memory leaks."
+                "in your Activity's onResume function."
         }
     }
 

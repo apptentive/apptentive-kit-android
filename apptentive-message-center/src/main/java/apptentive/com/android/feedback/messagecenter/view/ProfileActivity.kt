@@ -24,7 +24,7 @@ internal class ProfileActivity : BaseProfileActivity() {
         topAppBarTitle = findViewById(R.id.apptentive_profile_title)
         profileView = findViewById(R.id.apptentive_edit_profile)
         saveButton = findViewById(R.id.apptentive_profile_save_button)
-
+        title = viewModel.profileTitle
         topAppBar.title = ""
         topAppBarTitle.text = viewModel.profileTitle
         profileView.setEmailHint(viewModel.emailHint)
@@ -57,7 +57,7 @@ internal class ProfileActivity : BaseProfileActivity() {
                     context = this@ProfileActivity,
                     title = getString(R.string.apptentive_profile_confirmation_dialog_title),
                     message = getString(R.string.apptentive_profile_confirmation_dialog_message),
-                    positiveButton = ApptentiveGenericDialog.DialogButton(getString(R.string.apptentive_profile_back_to_profile)) {
+                    positiveButton = ApptentiveGenericDialog.DialogButton(getString(R.string.apptentive_cancel)) {
                     },
                     negativeButton = ApptentiveGenericDialog.DialogButton(getString(R.string.apptentive_close)) {
                         viewModel.onMessageCenterEvent(

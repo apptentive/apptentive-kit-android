@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="apptentive_close">Κλείσιμο</string>
+    <string name="apptentive_cancel">Ακύρωση</string>
+    <string name="apptentive_profile">Προφίλ</string>
+    <string name="apptentive_send_message">Sendet die Nachricht.</string>
+    <string name="apptentive_message_validation_error">Σφάλμα - Το πεδίο μηνύματος δεν μπορεί να είναι κενό.</string>
+    <string name="apptentive_email_validation_error">Σφάλμα - Το email είτε λείπει είτε δεν είναι σε έγκυρη μορφή.</string>
+    <string name="apptentive_profile_confirmation_dialog_title">Κλείσιμο προφίλ;</string>
+    <string name="apptentive_profile_confirmation_dialog_message">Οι αλλαγές στο προφίλ σας δεν θα αποθηκευτούν.</string>
+    <string name="apptentive_failed_to_send">Αποτυχία αποστολής. Θα προσπαθήσουμε ξανά αυτομάτως αργότερα.</string>
+    <string name="apptentive_preview_attachment">Προεπισκόπηση συνημμένου</string>
+    <string name="apptentive_remove_attachment">Αφαίρεση συνημμένου</string>
+    <string name="apptentive_back">Πίσω</string>
+    <string name="apptentive_add_attachment">Προσθήκη συνημμένου</string>
+    <string name="apptentive_attachment_thumbnail">Μικρογραφία συνημμένου</string>
+</resources>

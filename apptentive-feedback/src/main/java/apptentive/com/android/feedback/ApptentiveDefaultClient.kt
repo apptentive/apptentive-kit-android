@@ -43,9 +43,12 @@ import apptentive.com.android.feedback.message.MessageManager
 import apptentive.com.android.feedback.message.MessageManagerFactoryProvider
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.CustomData
+import apptentive.com.android.feedback.model.IntegrationConfig
+import apptentive.com.android.feedback.model.IntegrationConfigItem
 import apptentive.com.android.feedback.model.payloads.AppReleaseAndSDKPayload
 import apptentive.com.android.feedback.model.payloads.EventPayload
 import apptentive.com.android.feedback.model.payloads.ExtendedData
+import apptentive.com.android.feedback.notifications.NotificationUtils
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadSender
 import apptentive.com.android.feedback.payload.PayloadType
@@ -61,12 +64,15 @@ import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.RuntimeUtils
 import apptentive.com.android.network.HttpClient
 import apptentive.com.android.network.UnexpectedResponseException
+import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogLevel
+import apptentive.com.android.util.LogTags.CONVERSATION
 import apptentive.com.android.util.LogTags.EVENT
 import apptentive.com.android.util.LogTags.LIFE_CYCLE_OBSERVER
 import apptentive.com.android.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.util.LogTags.PAYLOADS
+import apptentive.com.android.util.LogTags.PUSH_NOTIFICATION
 import apptentive.com.android.util.Result
 import com.apptentive.android.sdk.conversation.DefaultLegacyConversationManager
 import com.apptentive.android.sdk.conversation.LegacyConversationManager
@@ -74,14 +80,15 @@ import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.InputStream
 
-internal class ApptentiveDefaultClient(
+@InternalUseOnly
+class ApptentiveDefaultClient(
     private val apptentiveKey: String,
     private val apptentiveSignature: String,
     private val httpClient: HttpClient,
     private val executors: Executors
 ) : ApptentiveClient {
-    private lateinit var conversationManager: ConversationManager
-    private lateinit var payloadSender: PayloadSender
+    internal lateinit var conversationManager: ConversationManager
+    internal lateinit var payloadSender: PayloadSender
     private lateinit var interactionDataProvider: InteractionDataProvider
     private lateinit var interactionModules: Map<String, InteractionModule<Interaction>>
     private var messageManager: MessageManager? = null
@@ -336,6 +343,14 @@ internal class ApptentiveDefaultClient(
         }
     }
 
+    override fun getPersonName(): String? {
+        return conversationManager.getConversation().person.name
+    }
+
+    override fun getPersonEmail(): String? {
+        return conversationManager.getConversation().person.email
+    }
+
     override fun showMessageCenter(customData: Map<String, Any?>?): EngagementResult {
         filterCustomData(customData)?.let { filteredCustomData ->
             messageManager?.setCustomData(filteredCustomData)
@@ -366,6 +381,22 @@ internal class ApptentiveDefaultClient(
             Log.w(EVENT, "Not setting custom data. No supported types found.")
             null
         }
+    }
+
+    override fun setPushIntegration(pushProvider: Int, token: String) {
+        Log.d(PUSH_NOTIFICATION, "Setting push provider with token $token")
+        val device = conversationManager.getConversation().device
+        val integrationConfig: IntegrationConfig = device.integrationConfig
+        val item = IntegrationConfigItem(mapOf(NotificationUtils.KEY_TOKEN to token))
+        when (pushProvider) {
+            Apptentive.PUSH_PROVIDER_APPTENTIVE -> integrationConfig.apptentive = item
+            Apptentive.PUSH_PROVIDER_PARSE -> integrationConfig.parse = item
+            Apptentive.PUSH_PROVIDER_URBAN_AIRSHIP -> integrationConfig.urbanAirship = item
+            Apptentive.PUSH_PROVIDER_AMAZON_AWS_SNS -> integrationConfig.amazonAwsSns = item
+            else -> Log.e(CONVERSATION, "Invalid pushProvider: $pushProvider")
+        }
+        conversationManager.updateDevice(device)
+        payloadSender.sendPayload(device.toDevicePayload())
     }
 
     override fun updateDevice(customData: Pair<String, Any?>?, deleteKey: String?) {
@@ -466,6 +497,8 @@ internal class ApptentiveDefaultClient(
     }
 
     //endregion
+
+    internal fun getConversationId() = conversationManager.getConversation().conversationId
 
     companion object {
         @WorkerThread

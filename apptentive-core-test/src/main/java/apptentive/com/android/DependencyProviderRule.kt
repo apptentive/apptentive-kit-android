@@ -10,13 +10,13 @@ import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 
 class DependencyProviderRule(private val enableConsoleOutput: Boolean = false) : TestWatcher() {
-    override fun starting(description: Description?) {
+    override fun starting(description: Description) {
         DependencyProvider.register(createPlatformLogger(enableConsoleOutput))
         DependencyProvider.register(createExecutionQueueFactory())
         DependencyProvider.register(createMockApplicationInfo())
     }
 
-    override fun finished(description: Description?) {
+    override fun finished(description: Description) {
         DependencyProvider.clear()
     }
 }

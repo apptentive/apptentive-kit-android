@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.survey
 
 import android.app.Activity
+import android.os.Bundle
 import androidx.activity.viewModels
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
@@ -28,6 +29,13 @@ open class BaseSurveyActivity : ApptentiveViewModelActivity(), ApptentiveActivit
         ViewModelFactory { createSurveyViewModel() }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // Calling this in onCreate in case we lose the Activity reference from the last Activity
+        // and before we can register in onResume.
+        Apptentive.registerApptentiveActivityInfoCallback(this)
+    }
+
     override fun onResume() {
         super.onResume()
         Apptentive.registerApptentiveActivityInfoCallback(this)
@@ -35,10 +43,5 @@ open class BaseSurveyActivity : ApptentiveViewModelActivity(), ApptentiveActivit
 
     override fun getApptentiveActivityInfo(): Activity {
         return this
-    }
-
-    override fun onPause() {
-        Apptentive.unregisterApptentiveActivityInfoCallback()
-        super.onPause()
     }
 }
