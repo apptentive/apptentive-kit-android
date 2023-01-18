@@ -13,6 +13,8 @@ import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
 import apptentive.com.android.feedback.EngagementResult
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags
 import apptentive.com.app.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
@@ -89,6 +91,26 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
 
         binding.clearAppDataButton.setOnClickListener {
             (getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager).clearApplicationUserData()
+        }
+
+        Apptentive.eventNotificationObservable.observe { notification ->
+            val name = notification?.name
+            val vendor = notification?.vendor
+            val interaction = notification?.interaction
+            val interactionId = notification?.interactionId?.let { id -> "\"$id\"" } ?: "`null`"
+
+            val notificationText = "Name: \"$name\". Vendor: \"$vendor\". " +
+                "Interaction: \"$interaction\". Interaction ID: $interactionId"
+            Log.d(LogTags.EVENT_NOTIFICATION, notificationText)
+
+            // Survey interaction handling
+//            if (interaction == "Survey") {
+//                when (name) {
+//                    "launch" -> { /* Survey shown */ }
+//                    "submit" -> { /* Survey completed */ }
+//                    "cancel", "cancel_partial" -> { /* Survey closed without completing */ }
+//                }
+//            }
         }
     }
 

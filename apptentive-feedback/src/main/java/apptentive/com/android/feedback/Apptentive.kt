@@ -12,11 +12,14 @@ import apptentive.com.android.core.AndroidApplicationInfo
 import apptentive.com.android.core.AndroidExecutorFactoryProvider
 import apptentive.com.android.core.AndroidLoggerProvider
 import apptentive.com.android.core.ApplicationInfo
+import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.core.Observable
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.format
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
+import apptentive.com.android.feedback.model.EventNotification
 import apptentive.com.android.feedback.notifications.NotificationUtils
 import apptentive.com.android.feedback.platform.AndroidFileSystemProvider
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
@@ -296,7 +299,7 @@ object Apptentive {
         }
     }
 
-    internal fun createHttpClient(context: Context): HttpClient {
+    private fun createHttpClient(context: Context): HttpClient {
         val loggingInterceptor = object : HttpLoggingInterceptor {
             override fun intercept(request: HttpRequest<*>) {
                 Log.d(NETWORK, "--> ${request.method} ${request.url}")
@@ -384,6 +387,20 @@ object Apptentive {
             }
         }
     }
+
+    //endregion
+
+    //region Event Notifications
+
+    /**
+     * Allows the event stream of the Apptentive SDK to be observed.
+     *
+     * See the [Event Monitoring](https://learn.apptentive.com/knowledge-base/android-integration-guide/#event-monitoring)
+     * section of the Apptentive Learn documentation for more info.
+     */
+    internal val eventNotificationSubject: BehaviorSubject<EventNotification?> = BehaviorSubject(null)
+    @JvmStatic
+    val eventNotificationObservable: Observable<EventNotification?> get() = eventNotificationSubject
 
     //endregion
 

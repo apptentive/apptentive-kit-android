@@ -2,6 +2,7 @@
 //
 //import android.app.Activity;
 //import android.os.Bundle;
+//import android.util.Log;
 //
 //import androidx.annotation.NonNull;
 //import androidx.annotation.Nullable;
@@ -9,7 +10,9 @@
 //
 //import apptentive.com.android.feedback.Apptentive;
 //import apptentive.com.android.feedback.ApptentiveActivityInfo;
+//import apptentive.com.android.feedback.model.EventNotification;
 //import apptentive.com.app.databinding.ActivityMainBinding;
+//import kotlin.Unit;
 //
 //public class MainActivity extends AppCompatActivity implements ApptentiveActivityInfo {
 //    ActivityMainBinding binding;
@@ -32,6 +35,38 @@
 //            byte[] bytes = text.getBytes();
 //            Apptentive.sendAttachmentFile(bytes, "text/plain");
 //        });
+//
+//        Apptentive.getEventNotificationObservable().observe(this::handleEventNotification);
+//    }
+//
+//    public Unit handleEventNotification(EventNotification notification) {
+//        String name = notification.getName();
+//        String vendor = notification.getVendor();
+//        String interaction = notification.getInteraction();
+//        String interactionId = notification.getInteractionId() != null ?
+//                "\"" + notification.getInteractionId() + "\"" : "`null`";
+//
+//        String notificationText = "Name: \"" + name + "\". Vendor: \"" + vendor + "\". " +
+//                "Interaction: \"" + interaction + "\". Interaction ID: " + interactionId;
+//        Log.d("APPTENTIVE_EVENT", notificationText);
+//
+//        // Survey interaction handling
+//        if (interaction.equals("Survey")) {
+//            switch (name) {
+//                case "launch":
+//                    // Survey shown
+//                    break;
+//                case "submit":
+//                    // Survey completed
+//                    break;
+//                case "cancel":
+//                case "cancel_partial":
+//                    // Survey closed without completing
+//                    break;
+//            }
+//        }
+//
+//        return Unit.INSTANCE;
 //    }
 //
 //    @NonNull
@@ -44,9 +79,6 @@
 //    protected void onResume() {
 //        super.onResume();
 //        Apptentive.registerApptentiveActivityInfoCallback(this);
-//        Apptentive.addUnreadMessagesListener(unreadMessages ->
-//                binding.unreadMessagesText.setText(getResources().getQuantityString(R.plurals.unread_messages, unreadMessages, unreadMessages))
-//        );
 //    }
 //
 //}
