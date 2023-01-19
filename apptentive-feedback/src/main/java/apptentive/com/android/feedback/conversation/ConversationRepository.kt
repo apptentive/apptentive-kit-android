@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.conversation
 
+import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.feedback.model.AppRelease
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.Device
@@ -22,6 +23,8 @@ internal interface ConversationRepository {
     fun getCurrentAppRelease(): AppRelease
 
     fun getCurrentSdk(): SDK
+
+    fun updateEncryption(encryption: Encryption)
 }
 
 internal class DefaultConversationRepository(
@@ -55,4 +58,8 @@ internal class DefaultConversationRepository(
     override fun getCurrentAppRelease(): AppRelease = appReleaseFactory.create()
 
     override fun getCurrentSdk(): SDK = sdkFactory.create()
+
+    override fun updateEncryption(encryption: Encryption) {
+        conversationSerializer.setEncryption(encryption)
+    }
 }

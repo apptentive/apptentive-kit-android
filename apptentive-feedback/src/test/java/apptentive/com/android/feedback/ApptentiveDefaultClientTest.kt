@@ -21,7 +21,6 @@ import apptentive.com.android.util.Result
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
-import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 
@@ -43,31 +42,6 @@ class ApptentiveDefaultClientTest : TestCase() {
         override fun sendPayload(payload: Payload) {}
     }
 
-    private lateinit var apptentiveClient: ApptentiveDefaultClient
-
-    @Before
-    fun testSetup() {
-        apptentiveClient = ApptentiveDefaultClient(
-            configuration = ApptentiveConfiguration("KEY", "SIGNATURE"),
-            httpClient = mockHttpClient,
-            executors = Executors(
-                state = mockExecutor,
-                main = mockExecutor
-            )
-        )
-
-        val fetchResponse = ConversationCredentials(
-            id = "id",
-            deviceId = "device_id",
-            personId = "person_id",
-            token = "token",
-            encryptionKey = "encryption_key"
-        )
-
-        apptentiveClient.conversationManager = createConversationManager(fetchResponse)
-        apptentiveClient.payloadSender = mockPayloadSender
-    }
-
     @After
     fun clean() {
         DependencyProvider.clear()
@@ -78,6 +52,8 @@ class ApptentiveDefaultClientTest : TestCase() {
     fun testUpdateAndGetPersonName() {
         val testName = "Test Name"
         val testName2 = "Name Test 2"
+
+        val apptentiveClient = getApptentiveClient()
 
         assertNull(apptentiveClient.getPersonName())
 
@@ -95,6 +71,8 @@ class ApptentiveDefaultClientTest : TestCase() {
     fun testUpdateAndGetPersonEmail() {
         val testEmail = "test@email.com"
         val testEmail2 = "email@test.com"
+
+        val apptentiveClient = getApptentiveClient()
 
         assertNull(apptentiveClient.getPersonEmail())
 
@@ -114,7 +92,8 @@ class ApptentiveDefaultClientTest : TestCase() {
         DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore(containsKey = false))
         DependencyProvider.register<FileSystem>(MockFileSystem())
 
-        val encryptionStatus = apptentiveClient.getPreviousEncryptionStatus()
+        val apptentiveClient = getApptentiveClient()
+        val encryptionStatus = apptentiveClient.getOldEncryptionSetting()
         assertEquals(NotEncrypted, encryptionStatus)
     }
 
@@ -124,7 +103,8 @@ class ApptentiveDefaultClientTest : TestCase() {
         DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore(containsKey = true))
         DependencyProvider.register<FileSystem>(MockFileSystem(containsFile = true))
 
-        val encryptionStatus = apptentiveClient.getPreviousEncryptionStatus()
+        val apptentiveClient = getApptentiveClient()
+        val encryptionStatus = apptentiveClient.getOldEncryptionSetting()
         assertEquals(NotEncrypted, encryptionStatus)
     }
 
@@ -134,7 +114,33 @@ class ApptentiveDefaultClientTest : TestCase() {
         DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore(containsKey = true, isEncryptionEnabled = true))
         DependencyProvider.register<FileSystem>(MockFileSystem(containsFile = true))
 
-        val encryptionStatus = apptentiveClient.getPreviousEncryptionStatus()
+        val apptentiveClient = getApptentiveClient()
+
+        val encryptionStatus = apptentiveClient.getOldEncryptionSetting()
         assertEquals(Encrypted, encryptionStatus)
+    }
+
+    private fun getApptentiveClient(): ApptentiveDefaultClient {
+        val apptentiveClient = ApptentiveDefaultClient(
+            configuration = ApptentiveConfiguration("KEY", "SIGNATURE"),
+            httpClient = mockHttpClient,
+            executors = Executors(
+                state = mockExecutor,
+                main = mockExecutor
+            )
+        )
+
+        val fetchResponse = ConversationCredentials(
+            id = "id",
+            deviceId = "device_id",
+            personId = "person_id",
+            token = "token",
+            encryptionKey = "encryption_key"
+        )
+
+        apptentiveClient.conversationManager = createConversationManager(fetchResponse)
+        apptentiveClient.payloadSender = mockPayloadSender
+
+        return apptentiveClient
     }
 }

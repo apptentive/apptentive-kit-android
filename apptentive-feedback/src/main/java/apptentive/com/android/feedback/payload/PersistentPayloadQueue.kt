@@ -67,8 +67,10 @@ internal class PersistentPayloadQueue(
     }
 
     companion object {
-        fun create(context: Context, encryption: Encryption) = PersistentPayloadQueue(
-            dbHelper = PayloadSQLiteHelper(context, encryption)
+        fun create(context: Context, encryption: Encryption, clearCache: Boolean) = PersistentPayloadQueue(
+            dbHelper = PayloadSQLiteHelper(context, encryption).apply {
+                if (clearCache) deleteAllCachedPayloads()
+            }
         )
     }
 }

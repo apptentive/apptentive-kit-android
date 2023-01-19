@@ -149,11 +149,14 @@ class ConversationTest : TestCase() {
 
         return DefaultConversationSerializer(
             conversationFile, manifestFile,
-            EncryptionFactory.getEncryption(
-                shouldEncryptStorage = false,
-                oldEncryptionSetting = NotEncrypted
+        ).apply {
+            setEncryption(
+                EncryptionFactory.getEncryption(
+                    shouldEncryptStorage = false,
+                    oldEncryptionSetting = NotEncrypted
+                )
             )
-        )
+        }
     }
 }
 

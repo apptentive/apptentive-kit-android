@@ -60,13 +60,17 @@ internal interface ConversationSerializer {
 
     @Throws(ConversationSerializationException::class)
     fun saveConversation(conversation: Conversation)
+
+    fun setEncryption(encryption: Encryption)
 }
 
 internal class DefaultConversationSerializer(
     private val conversationFile: File,
     private val manifestFile: File,
-    private val encryption: Encryption?
 ) : ConversationSerializer {
+
+    private lateinit var encryption: Encryption
+
     // we keep track of the last seen engagement manifest expiry date and only update storage if it changes
     private var lastKnownManifestExpiry: TimeInterval = 0.0
 
@@ -78,7 +82,7 @@ internal class DefaultConversationSerializer(
         try {
             val encoder = BinaryEncoder(DataOutputStream(byteArrayOutputStream))
             conversationSerializer.encode(encoder, conversation)
-            val encryptedBytes = encryption?.encrypt(byteArrayOutputStream.toByteArray())
+            val encryptedBytes = encryption.encrypt(byteArrayOutputStream.toByteArray())
             stream.use {
                 stream.write(encryptedBytes)
                 atomicFile.finishWrite(stream)
@@ -113,9 +117,13 @@ internal class DefaultConversationSerializer(
         return null
     }
 
+    override fun setEncryption(encryption: Encryption) {
+        this.encryption = encryption
+    }
+
     private fun readConversation(): Conversation =
         try {
-            val decryptedMessage = encryption?.decrypt(FileInputStream(conversationFile))
+            val decryptedMessage = encryption.decrypt(FileInputStream(conversationFile))
             val inputStream = ByteArrayInputStream(decryptedMessage)
             val decoder = BinaryDecoder(DataInputStream(inputStream))
             conversationSerializer.decode((decoder))

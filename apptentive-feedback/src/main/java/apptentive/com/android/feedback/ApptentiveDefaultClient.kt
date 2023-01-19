@@ -9,6 +9,7 @@ import apptentive.com.android.core.Provider
 import apptentive.com.android.encryption.AESEncryption23
 import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.encryption.EncryptionFactory
+import apptentive.com.android.encryption.EncryptionNoOp
 import apptentive.com.android.encryption.EncryptionStatus
 import apptentive.com.android.encryption.NoEncryptionStatus
 import apptentive.com.android.encryption.NotEncrypted
@@ -103,17 +104,9 @@ class ApptentiveDefaultClient(
     private lateinit var interactionModules: Map<String, InteractionModule<Interaction>>
     private var messageManager: MessageManager? = null
     private var engagement: Engagement = NullEngagement()
-    private val encryption: Encryption by lazy {
-        val sharedPref = DependencyProvider.of<AndroidSharedPrefDataStore>()
-        val oldEncryptionSetting = getPreviousEncryptionStatus()
-        val encryption = EncryptionFactory.getEncryption(
-            shouldEncryptStorage = configuration.shouldEncryptStorage,
-            oldEncryptionSetting = oldEncryptionSetting
-        )
-        sharedPref.putBoolean(SDK_CORE_INFO, CRYPTO_ENABLED, encryption is AESEncryption23)
-        Log.v(CRYPTOGRAPHY, "Current encryption setting is ${encryption.javaClass.simpleName}")
-        encryption
-    }
+    private var encryption: Encryption = setInitialEncryptionFromPastSession()
+    private var clearPayloadCache: Boolean = false
+    private var clearMessageCache: Boolean = false
 
     //region Initialization
 
@@ -131,10 +124,14 @@ class ApptentiveDefaultClient(
             isDebuggable = RuntimeUtils.getApplicationInfo(context).debuggable
         )
 
+        finalizeEncryptionFromConfiguration()
+
         val serialPayloadSender = SerialPayloadSender(
-            payloadQueue = PersistentPayloadQueue.create(context, encryption),
+            payloadQueue = PersistentPayloadQueue.create(context, encryption, clearPayloadCache),
             callback = ::onPayloadSendFinish
         )
+        clearPayloadCache = false
+
         payloadSender = serialPayloadSender
 
         getConversationToken(conversationService, registerCallback)
@@ -175,7 +172,12 @@ class ApptentiveDefaultClient(
                         conversationService as MessageCenterService,
                         executors.state,
                         DefaultMessageRepository(
-                            messageSerializer = DefaultMessageSerializer(messagesFile = getMessagesFile(), encryption)
+                            messageSerializer = DefaultMessageSerializer(messagesFile = getMessagesFile(), encryption).apply {
+                                if (clearMessageCache) {
+                                    deleteAllMessages()
+                                    clearMessageCache = false
+                                }
+                            }
                         )
                     )
                     messageManager?.let {
@@ -265,8 +267,9 @@ class ApptentiveDefaultClient(
         return DefaultConversationSerializer(
             conversationFile = getConversationFile(),
             manifestFile = getManifestFile(),
-            encryption = encryption
-        )
+        ).apply {
+            setEncryption(encryption)
+        }
     }
 
     private fun createConversationService(): ConversationService = DefaultConversationService(
@@ -518,7 +521,48 @@ class ApptentiveDefaultClient(
         }
     }
 
-    fun getPreviousEncryptionStatus(): EncryptionStatus {
+    //endregion
+
+    //region Encryption
+
+    private fun setInitialEncryptionFromPastSession(): Encryption {
+        val sharedPref = DependencyProvider.of<AndroidSharedPrefDataStore>()
+        val oldEncryptionSetting = getOldEncryptionSetting()
+        val encryption = EncryptionFactory.getEncryption(
+            shouldEncryptStorage = configuration.shouldEncryptStorage,
+            oldEncryptionSetting = oldEncryptionSetting
+        )
+        sharedPref.putBoolean(SDK_CORE_INFO, CRYPTO_ENABLED, encryption is AESEncryption23)
+        Log.d(CRYPTOGRAPHY, "Initial encryption setting is ${encryption.javaClass.simpleName}")
+        return encryption
+    }
+
+    private fun finalizeEncryptionFromConfiguration() {
+        if ((configuration.shouldEncryptStorage && (encryption is EncryptionNoOp)) ||
+            (!configuration.shouldEncryptStorage && (encryption is AESEncryption23))
+        ) {
+            onFinalEncryptionSettingsChanged()
+        }
+        Log.d(CRYPTOGRAPHY, "Final encryption setting is ${encryption.javaClass.simpleName}")
+        conversationManager.onEncryptionSetupComplete()
+    }
+
+    private fun onFinalEncryptionSettingsChanged() {
+        val sharedPref = DependencyProvider.of<AndroidSharedPrefDataStore>()
+
+        sharedPref.putBoolean(SDK_CORE_INFO, CRYPTO_ENABLED, configuration.shouldEncryptStorage)
+        encryption = EncryptionFactory.getEncryption(
+            shouldEncryptStorage = configuration.shouldEncryptStorage,
+            oldEncryptionSetting = getOldEncryptionSetting()
+        )
+
+        conversationManager.updateEncryption(encryption)
+
+        clearMessageCache = true
+        clearPayloadCache = true
+    }
+
+    fun getOldEncryptionSetting(): EncryptionStatus {
         val sharedPref = DependencyProvider.of<AndroidSharedPrefDataStore>()
 
         return when {

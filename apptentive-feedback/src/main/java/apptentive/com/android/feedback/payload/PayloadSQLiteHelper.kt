@@ -10,6 +10,7 @@ import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.network.HttpMethod
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags
 import apptentive.com.android.util.LogTags.PAYLOADS
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -97,6 +98,14 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
     private fun deletePayload(db: SQLiteDatabase, nonce: String): Boolean {
         val deletedRows = db.delete(TABLE_NAME, column = COL_NONCE, value = nonce)
         return deletedRows > 0
+    }
+
+    internal fun deleteAllCachedPayloads() {
+        writableDatabase.use { db ->
+            db.execSQL("delete from $TABLE_NAME")
+        }
+
+        Log.w(LogTags.CRYPTOGRAPHY, "Payload cache is deleted to support the new encryption setting")
     }
 
     internal fun readPayloads(): List<PayloadData> {

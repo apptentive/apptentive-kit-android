@@ -92,7 +92,7 @@ class MessageRepositoryTest : TestCase() {
     fun testAddMessages() {
         val messageRepo = DefaultMessageRepository(MockMessageSerializer(testMessageList))
         messageRepo.addOrUpdateMessages(testMessageList)
-        addResult(testMessageList)
+        addResult(testMessageList.sortedBy { it.createdAt })
         assertResults(messageRepo.getAllMessages())
     }
 
@@ -204,7 +204,10 @@ class MessageRepositoryTest : TestCase() {
         val messageRepository = DefaultMessageRepository(MockMessageSerializer(listOf()))
         messageRepository.addOrUpdateMessages(testMessageList)
         messageRepository.deleteMessage("UUID")
-        val expectedList = testMessageList.toMutableList().apply { removeAt(0) }
+        val expectedList = testMessageList.toMutableList().apply {
+            removeAt(0)
+            sortBy { it.createdAt }
+        }
         assertEquals(expectedList, messageRepository.getAllMessages())
     }
 
@@ -243,6 +246,9 @@ class MessageRepositoryTest : TestCase() {
 
         override fun saveMessages(messages: List<DefaultMessageRepository.MessageEntry>) {
             savedList = messages
+        }
+
+        override fun deleteAllMessages() {
         }
     }
 }

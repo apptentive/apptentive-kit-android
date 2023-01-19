@@ -2,6 +2,7 @@ package apptentive.com.android.feedback.message
 
 import androidx.core.util.AtomicFile
 import apptentive.com.android.encryption.Encryption
+import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.serialization.BinaryDecoder
 import apptentive.com.android.serialization.BinaryEncoder
 import apptentive.com.android.serialization.Decoder
@@ -28,6 +29,8 @@ internal interface MessageSerializer {
 
     @Throws(MessageSerializerException::class)
     fun saveMessages(messages: List<DefaultMessageRepository.MessageEntry>)
+
+    fun deleteAllMessages()
 }
 
 internal class DefaultMessageSerializer(val messagesFile: File, val encryption: Encryption) : MessageSerializer {
@@ -60,6 +63,11 @@ internal class DefaultMessageSerializer(val messagesFile: File, val encryption: 
         }
 
         Log.v(LogTags.CONVERSATION, "Messages saved (took ${System.currentTimeMillis() - start} ms)")
+    }
+
+    override fun deleteAllMessages() {
+        FileUtil.deleteFile(messagesFile.path)
+        Log.w(LogTags.CRYPTOGRAPHY, "Message cache is deleted to support the new encryption setting")
     }
 
     private fun readMessageEntries(): List<DefaultMessageRepository.MessageEntry> =

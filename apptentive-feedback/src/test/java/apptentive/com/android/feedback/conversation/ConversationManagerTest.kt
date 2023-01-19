@@ -5,6 +5,7 @@ import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.Provider
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.getTimeSeconds
+import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.feedback.backend.ConversationCredentials
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.PayloadResponse
@@ -119,6 +120,7 @@ class ConversationManagerTest : TestCase() {
     @Test
     fun testAppReleaseSDKUpdate() {
         val conversationManager = createConversationManager()
+        conversationManager.onEncryptionSetupComplete()
         conversationManager.updateAppReleaseSDK(
             mockSdk,
             mockAppRelease.copy(
@@ -234,6 +236,9 @@ private class MockConversationRepository(val throwException: Boolean = false) : 
     override fun getCurrentSdk(): SDK = mockSdk.copy(
         version = "Version updated"
     )
+
+    override fun updateEncryption(encryption: Encryption) {
+    }
 }
 
 internal class MockConversationService(

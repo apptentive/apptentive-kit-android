@@ -26,7 +26,7 @@ class EncryptionFactory {
                 }
 
                 oldEncryptionSetting == Encrypted -> {
-                    // may have encrypted storage, continue with encryption
+                    // may have encrypted storage, continue with AESEncryption
                     AESEncryption23(key)
                 }
 

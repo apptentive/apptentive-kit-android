@@ -5,6 +5,7 @@ import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.Observable
 import apptentive.com.android.core.Provider
 import apptentive.com.android.core.isInThePast
+import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.feedback.Constants
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.engagement.Event
@@ -49,6 +50,9 @@ internal class ConversationManager(
     init {
         val conversation = loadActiveConversation()
         activeConversationSubject = BehaviorSubject(conversation)
+    }
+
+    fun onEncryptionSetupComplete() {
         activeConversationSubject.observe(::saveConversation)
         activeConversation.observe(::checkForSDKAppReleaseUpdates)
     }
@@ -95,6 +99,10 @@ internal class ConversationManager(
     }
 
     fun getConversation() = activeConversation.value
+
+    fun updateEncryption(encryption: Encryption) {
+        conversationRepository.updateEncryption(encryption)
+    }
 
     @Throws(ConversationSerializationException::class)
     @WorkerThread
