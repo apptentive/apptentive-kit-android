@@ -7,6 +7,7 @@ object LogTags {
     val INJECTION = LogTag("INJECTION")
     val EVENT = LogTag("EVENT")
     val EVENT_NOTIFICATION = LogTag("EVENT_NOTIFICATION")
+    val MESSAGE_CENTER_NOTIFICATION = LogTag("MESSAGE_CENTER_NOTIFICATION")
     val CONVERSATION = LogTag("CONVERSATION")
     val DEVICE = LogTag("DEVICE")
     val PERSON = LogTag("PERSON")

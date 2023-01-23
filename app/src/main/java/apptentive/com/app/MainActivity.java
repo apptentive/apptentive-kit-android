@@ -11,6 +11,7 @@
 //import apptentive.com.android.feedback.Apptentive;
 //import apptentive.com.android.feedback.ApptentiveActivityInfo;
 //import apptentive.com.android.feedback.model.EventNotification;
+//import apptentive.com.android.feedback.model.MessageCenterNotification;
 //import apptentive.com.app.databinding.ActivityMainBinding;
 //import kotlin.Unit;
 //
@@ -37,6 +38,7 @@
 //        });
 //
 //        Apptentive.getEventNotificationObservable().observe(this::handleEventNotification);
+//        Apptentive.getMessageCenterNotificationObservable().observe(this::handleMessageCenterNotification);
 //    }
 //
 //    public Unit handleEventNotification(EventNotification notification) {
@@ -65,6 +67,21 @@
 //                    break;
 //            }
 //        }
+//
+//        return Unit.INSTANCE;
+//    }
+//
+//    public Unit handleMessageCenterNotification(MessageCenterNotification notification) {
+//        String notificationText = "Can show Message Center: " + notification.getCanShowMessageCenter() + ". " +
+//                "Unread message count: " + notification.getUnreadMessageCount() + ". " +
+//                "Person name: " + notification.getPersonName() + ". " +
+//                "Person email: " + notification.getPersonEmail();
+//
+//        Log.d("APPTENTIVE_MC_EVENT", notificationText);
+//
+//        // Message Center data handling example
+//        binding.messageCenterButton.setEnabled(notification.getCanShowMessageCenter());
+//        binding.unreadMessagesText.setText("Unread Messages: " + notification.getUnreadMessageCount());
 //
 //        return Unit.INSTANCE;
 //    }

@@ -14,6 +14,7 @@ import apptentive.com.android.encryption.EncryptionStatus
 import apptentive.com.android.encryption.NoEncryptionStatus
 import apptentive.com.android.encryption.NotEncrypted
 import apptentive.com.android.encryption.getEncryptionStatus
+import apptentive.com.android.feedback.Apptentive.messageCenterNotificationSubject
 import apptentive.com.android.feedback.backend.ConversationPayloadService
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.DefaultConversationService
@@ -53,6 +54,7 @@ import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.CustomData
 import apptentive.com.android.feedback.model.IntegrationConfig
 import apptentive.com.android.feedback.model.IntegrationConfigItem
+import apptentive.com.android.feedback.model.MessageCenterNotification
 import apptentive.com.android.feedback.model.payloads.AppReleaseAndSDKPayload
 import apptentive.com.android.feedback.model.payloads.EventPayload
 import apptentive.com.android.feedback.model.payloads.ExtendedData
@@ -102,7 +104,7 @@ class ApptentiveDefaultClient(
     internal lateinit var payloadSender: PayloadSender
     private lateinit var interactionDataProvider: InteractionDataProvider
     private lateinit var interactionModules: Map<String, InteractionModule<Interaction>>
-    private var messageManager: MessageManager? = null
+    internal var messageManager: MessageManager? = null
     private var engagement: Engagement = NullEngagement()
     private var encryption: Encryption = setInitialEncryptionFromPastSession()
     private var clearPayloadCache: Boolean = false
@@ -182,6 +184,7 @@ class ApptentiveDefaultClient(
                     )
                     messageManager?.let {
                         DependencyProvider.register(MessageManagerFactoryProvider(it))
+                        it.addUnreadMessageListener(::updateMessageCenterNotification)
                     }
                 }
             }
@@ -219,6 +222,7 @@ class ApptentiveDefaultClient(
                 )
             }
             messageManager?.onConversationChanged(conversation)
+            updateMessageCenterNotification()
         }
         // add an observer to track SDK & AppRelease changes
         conversationManager.sdkAppReleaseUpdate.observe { appReleaseSDKUpdated ->
@@ -387,12 +391,24 @@ class ApptentiveDefaultClient(
         return messageManager?.getUnreadMessageCount() ?: 0
     }
 
-    override fun canShowMessageCenter(callback: (Boolean) -> Unit) {
-        callback(
-            if (this::interactionDataProvider.isInitialized) { // Check if lateinit value is set
-                interactionDataProvider.getInteractionData(Event.internal(EVENT_MESSAGE_CENTER)) != null
-            } else false
+    override fun canShowMessageCenter(): Boolean {
+        return if (this::interactionDataProvider.isInitialized) { // Check if lateinit value is set
+            interactionDataProvider.getInteractionData(Event.internal(EVENT_MESSAGE_CENTER)) != null
+        } else false
+    }
+
+    internal fun updateMessageCenterNotification() {
+        val notification = MessageCenterNotification(
+            canShowMessageCenter = canShowMessageCenter(),
+            unreadMessageCount = getUnreadMessageCount(),
+            personName = getPersonName(),
+            personEmail = getPersonEmail()
         )
+
+        // Only update if something has changed
+        if (notification != messageCenterNotificationSubject.value) {
+            messageCenterNotificationSubject.value = notification
+        }
     }
 
     private fun filterCustomData(customData: Map<String, Any?>?): Map<String, Any?>? {

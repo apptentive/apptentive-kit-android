@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -41,7 +40,7 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
         binding.sanitizeSwitch.isChecked = shouldSanitize
         binding.sanitizeSwitch.setOnCheckedChangeListener { _, isChecked ->
             prefs.edit().putBoolean(SHOULD_SANITIZE, isChecked).apply()
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) finishAndRemoveTask()
+            finishAndRemoveTask()
         }
 
         binding.infoIcon.setOnClickListener {
@@ -111,6 +110,25 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
 //                    "cancel", "cancel_partial" -> { /* Survey closed without completing */ }
 //                }
 //            }
+        }
+
+        Apptentive.messageCenterNotificationObservable.observe { notification ->
+            val notificationText =
+                "Can Show Message Center: ${notification?.canShowMessageCenter}. " +
+                    "Unread Message Count: ${notification?.unreadMessageCount}. " +
+                    "Person Name: ${notification?.personName}. " +
+                    "Person Email: ${notification?.personEmail}"
+
+            Log.d(LogTags.MESSAGE_CENTER_NOTIFICATION, notificationText)
+
+            runOnUiThread {
+                binding.messageCenterButton.isEnabled = notification?.canShowMessageCenter == true
+
+                notification?.unreadMessageCount?.let {
+                    binding.unreadMessagesText.text =
+                        resources.getQuantityString(R.plurals.unread_messages, it, it)
+                }
+            }
         }
     }
 

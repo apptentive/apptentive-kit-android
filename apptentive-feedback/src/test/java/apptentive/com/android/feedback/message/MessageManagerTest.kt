@@ -169,6 +169,7 @@ val testMessageList: List<Message> = listOf(
         type = "MC",
         body = "Hello",
         sender = null,
+        read = null
     ),
     Message(
         id = "Test2",
@@ -180,7 +181,7 @@ val testMessageList: List<Message> = listOf(
     )
 )
 
-private class MockMessageCenterService : MessageCenterService {
+internal class MockMessageCenterService : MessageCenterService {
     override fun getMessages(
         conversationToken: String,
         conversationId: String,
@@ -195,14 +196,16 @@ private class MockMessageCenterService : MessageCenterService {
     }
 }
 
-private class MockExecutor : Executor {
+internal class MockExecutor : Executor {
     override fun execute(task: () -> Unit) {
         task()
     }
 }
 
-private class MockMessageRepository(val messageList: List<Message> = testMessageList) : MessageRepository {
-    override fun addOrUpdateMessages(messages: List<Message>) {}
+internal class MockMessageRepository(private var messageList: List<Message> = testMessageList) : MessageRepository {
+    override fun addOrUpdateMessages(messages: List<Message>) {
+        messageList = messages
+    }
 
     override fun getLastReceivedMessageIDFromEntries(): String = ""
 

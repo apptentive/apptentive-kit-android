@@ -148,6 +148,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/button_top_spacing_margin"
+                android:enabled="false"
                 android:minHeight="@dimen/button_min_height"
                 android:text="@string/message_center"
                 app:layout_constraintEnd_toEndOf="parent"

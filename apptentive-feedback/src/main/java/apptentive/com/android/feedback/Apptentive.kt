@@ -20,6 +20,7 @@ import apptentive.com.android.core.format
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
 import apptentive.com.android.feedback.model.EventNotification
+import apptentive.com.android.feedback.model.MessageCenterNotification
 import apptentive.com.android.feedback.notifications.NotificationUtils
 import apptentive.com.android.feedback.platform.AndroidFileSystemProvider
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
@@ -402,6 +403,18 @@ object Apptentive {
     @JvmStatic
     val eventNotificationObservable: Observable<EventNotification?> get() = eventNotificationSubject
 
+    /**
+     * Allows a stream of Message Center data to be observed.
+     *
+     * See the [Message Center Monitoring](TODO)
+     * section of the Apptentive Learn documentation for more info.
+     */
+    internal val messageCenterNotificationSubject = BehaviorSubject(
+        if (registered) MessageCenterNotification() else null
+    )
+    @JvmStatic
+    val messageCenterNotificationObservable: Observable<MessageCenterNotification?> get() = messageCenterNotificationSubject
+
     //endregion
 
     //region Message Center
@@ -447,12 +460,15 @@ object Apptentive {
     @JvmStatic
     fun canShowMessageCenter(callback: BooleanCallback) {
         try {
-            client.canShowMessageCenter {
-                callback.onFinish(it)
-            }
+            callback.onFinish(canShowMessageCenter())
         } catch (exception: Exception) {
             Log.e(MESSAGE_CENTER, "Exception while checking canShowMessageCenter", exception)
         }
+    }
+
+    @JvmStatic
+    fun canShowMessageCenter(): Boolean {
+        return client.canShowMessageCenter()
     }
 
     /**

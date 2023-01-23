@@ -133,23 +133,24 @@ class SurveyViewModel(
 
         updateModel {
             if (model.allRequiredAnswersAreValid) {
-                onSubmit(
-                    model.questions
-                        .filter { it.hasValidAnswer } // filter out questions with invalid answers
-                        .map { it.id to it.answer } // map question id to its answer
-                        .toMap()
-                )
-
-                if (!model.successMessage.isNullOrBlank()) {
-                    surveySubmitMessageState.postValue(
-                        SurveySubmitMessageState(
-                            model.successMessage,
-                            true
-                        )
+                executors.state.execute {
+                    onSubmit(
+                        model.questions
+                            .filter { it.hasValidAnswer }
+                            .associate { it.id to it.answer }
                     )
-                }
 
-                exit(showConfirmation = false, successfulSubmit = true)
+                    if (!model.successMessage.isNullOrBlank()) {
+                        surveySubmitMessageState.postValue(
+                            SurveySubmitMessageState(
+                                model.successMessage,
+                                true
+                            )
+                        )
+                    }
+
+                    exit(showConfirmation = false, successfulSubmit = true)
+                }
             } else {
                 // trigger error message
                 if (!model.validationError.isNullOrBlank()) {

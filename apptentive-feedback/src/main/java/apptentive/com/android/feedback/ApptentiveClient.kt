@@ -12,7 +12,7 @@ internal interface ApptentiveClient {
     fun engage(event: Event, customData: Map<String, Any?>? = null): EngagementResult
     fun showMessageCenter(customData: Map<String, Any?>?): EngagementResult
     fun getUnreadMessageCount(): Int
-    fun canShowMessageCenter(callback: (Boolean) -> Unit)
+    fun canShowMessageCenter(): Boolean
     fun sendHiddenTextMessage(message: String)
     fun sendHiddenAttachmentFileUri(uri: String)
     fun sendHiddenAttachmentFileBytes(bytes: ByteArray, mimeType: String)
@@ -66,8 +66,9 @@ private class ApptentiveNullClient : ApptentiveClient {
         return 0
     }
 
-    override fun canShowMessageCenter(callback: (Boolean) -> Unit) {
+    override fun canShowMessageCenter(): Boolean {
         Log.d(MESSAGE_CENTER, "Apptentive SDK is not initialized; can show message center check failed")
+        return false
     }
 
     override fun sendHiddenAttachmentFileUri(uri: String) {
