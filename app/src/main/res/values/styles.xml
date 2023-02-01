@@ -92,7 +92,7 @@
 <!--        <item name="apptentiveSurveyQuestionErrorStyle">@style/Custom.Survey.Question.Caption.Error</item>-->
 <!--        <item name="apptentiveSurveyRangeLabelStyle">@style/Custom.Survey.Question.Caption.RangeLabel</item>-->
 <!--        <item name="apptentiveSurveySubmitErrorStyle">@style/Custom.Survey.Error</item>-->
-<!--        <item name="apptentiveSurveyFootnoteStyle">@style/Custom.Survey.Footnote</item>-->
+<!--        <item name="apptentiveSurveyDisclaimerStyle">@style/Custom.Survey.Footnote</item>-->
 <!--        <item name="apptentiveSurveyTermsAndConditionsStyle">@style/Custom.Survey.TermsAndConditions</item>-->
 
         <!-- Widgets -->
@@ -437,6 +437,7 @@
     <style name="Custom.Survey.Footnote" parent="Custom.Text">
         <item name="android:textSize">11sp</item>
         <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/color_primary</item>
         <item name="android:text">Note: Our company policy for submission does not allow us to accept ideas or materials we have not specifically requested.</item>
     </style>
 

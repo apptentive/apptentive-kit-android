@@ -135,7 +135,8 @@ class SurveyInteractionLauncherTest : TestCase() {
             closeConfirmMessage = "All the changes will be lost",
             closeConfirmCloseText = "close",
             closeConfirmBackText = "Back to survey",
-            SpannedString("Terms & Conditions")
+            termsAndConditionsLinkText = SpannedString("Terms & Conditions"),
+            disclaimerText = "Disclaimer text"
         )
     }
 }

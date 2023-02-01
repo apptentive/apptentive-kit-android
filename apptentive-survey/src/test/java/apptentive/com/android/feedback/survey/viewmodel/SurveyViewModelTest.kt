@@ -49,7 +49,7 @@ class SurveyViewModelTest : TestCase() {
                 id = questionId2,
                 title = "title 2"
             ),
-            SurveyFooterListItem(submitText)
+            SurveyFooterListItem(submitText, null)
         )
 
         // attempt to submit the survey
@@ -70,6 +70,7 @@ class SurveyViewModelTest : TestCase() {
             ),
             SurveyFooterListItem(
                 buttonTitle = submitText,
+                disclaimerText = "disclaimer text",
                 messageState = SurveySubmitMessageState(
                     message = "validationError",
                     isValid = false
@@ -95,7 +96,7 @@ class SurveyViewModelTest : TestCase() {
                 id = questionId2,
                 title = "title 2"
             ),
-            SurveyFooterListItem(buttonTitle = submitText)
+            SurveyFooterListItem(buttonTitle = submitText, null)
         )
 
         // submit the survey
@@ -120,6 +121,7 @@ class SurveyViewModelTest : TestCase() {
             ),
             SurveyFooterListItem(
                 buttonTitle = submitText,
+                disclaimerText = "Disclaimer text",
                 messageState = SurveySubmitMessageState(message = successMessage, isValid = true)
             ),
             "close"
@@ -153,7 +155,7 @@ class SurveyViewModelTest : TestCase() {
                 id = questionId2,
                 title = "title 2"
             ),
-            SurveyFooterListItem(submitText)
+            SurveyFooterListItem(submitText, null)
         )
     }
 
@@ -181,7 +183,7 @@ class SurveyViewModelTest : TestCase() {
                 id = questionId2,
                 title = "title 2"
             ),
-            SurveyFooterListItem(submitText)
+            SurveyFooterListItem(submitText, null)
         )
 
         // attempt to submit the survey
@@ -202,6 +204,7 @@ class SurveyViewModelTest : TestCase() {
             ),
             SurveyFooterListItem(
                 buttonTitle = submitText,
+                disclaimerText = "Disclaimer text",
                 messageState = SurveySubmitMessageState(
                     message = "validationError",
                     isValid = false
@@ -225,7 +228,7 @@ class SurveyViewModelTest : TestCase() {
                 id = questionId2,
                 title = "title 2"
             ),
-            SurveyFooterListItem(buttonTitle = submitText, messageState = null)
+            SurveyFooterListItem(buttonTitle = submitText, null, null)
         )
     }
 
@@ -382,7 +385,8 @@ class SurveyViewModelTest : TestCase() {
             closeConfirmMessage = "All the changes will be lost",
             closeConfirmCloseText = "close",
             closeConfirmBackText = "Back to survey",
-            SpannedString("Terms & Conditions")
+            termsAndConditionsLinkText = SpannedString("Terms & Conditions"),
+            disclaimerText = "Disclaimer text"
         )
         return SurveyViewModel(
             model = model,

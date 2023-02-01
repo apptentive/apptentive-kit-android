@@ -44,7 +44,8 @@ internal class DefaultSurveyModelFactory(
             closeConfirmMessage = interaction.closeConfirmMessage,
             closeConfirmCloseText = interaction.closeConfirmCloseText,
             closeConfirmBackText = interaction.closeConfirmBackText,
-            termsAndConditionsLinkText = interaction.termsAndConditions?.convertToLink()
+            termsAndConditionsLinkText = interaction.termsAndConditions?.convertToLink(),
+            disclaimerText = interaction.disclaimerText
         )
     }
 }

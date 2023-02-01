@@ -31,7 +31,8 @@ internal class SurveyInteractionTypeConverter : InteractionTypeConverter<SurveyI
                 @Suppress("UNCHECKED_CAST")
                 it as SurveyQuestionConfiguration
             },
-            termsAndConditions = configuration.optMap("terms_and_conditions")?.convertTermsAndConditions()
+            termsAndConditions = configuration.optMap("terms_and_conditions")?.convertTermsAndConditions(),
+            disclaimerText = configuration.optString("disclaimer_text")
         )
     }
 

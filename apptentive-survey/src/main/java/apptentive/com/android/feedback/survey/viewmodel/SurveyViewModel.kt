@@ -232,7 +232,7 @@ class SurveyViewModel(
                 addAll(questionsListItems)
 
                 // footer
-                add(SurveyFooterListItem(model.submitText, messageState))
+                add(SurveyFooterListItem(model.submitText, model.disclaimerText, messageState))
             }
         }
 
