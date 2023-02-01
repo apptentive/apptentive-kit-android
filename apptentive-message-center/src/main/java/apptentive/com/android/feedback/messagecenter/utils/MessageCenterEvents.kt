@@ -4,6 +4,7 @@ package apptentive.com.android.feedback.messagecenter.utils
 internal object MessageCenterEvents {
     val EVENT_NAME_CLOSE = "close" // Closed from X in toolbar
     val EVENT_NAME_CANCEL = "cancel" // Closed from back button
+    val EVENT_NAME_SEND = "send" // Message was sent
     val EVENT_NAME_READ = "read" // Message was read
     val EVENT_NAME_STATUS = "status" // When there is a messageSLA
     val EVENT_NAME_PROFILE_OPEN = "profile_open" // Profile screen button pressed

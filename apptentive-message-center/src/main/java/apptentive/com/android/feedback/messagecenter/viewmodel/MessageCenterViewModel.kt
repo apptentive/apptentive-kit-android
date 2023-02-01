@@ -211,6 +211,10 @@ class MessageCenterViewModel(
                 clearMessageEvent.postValue(true)
                 messageManager.updateProfile(name, email)
                 isSendingMessage = false
+                onMessageCenterEvent(
+                    event = MessageCenterEvents.EVENT_NAME_SEND,
+                    data = null
+                )
             }
         } else {
             Log.d(MESSAGE_CENTER, "Cannot send blank message or message sending")
