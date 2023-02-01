@@ -712,7 +712,7 @@ internal class SimpleTouchImageView @JvmOverloads constructor(context: Context, 
 
         override fun onDoubleTap(e: MotionEvent): Boolean {
             var consumed = false
-            if (e != null && isZoomEnabled) {
+            if (isZoomEnabled) {
                 if (imageActionState == ImageActionState.NONE) {
                     val maxZoomScale = if (doubleTapScale == 0f) maxScale else doubleTapScale
                     val targetZoom = if (currentZoom == minScale) maxZoomScale else minScale

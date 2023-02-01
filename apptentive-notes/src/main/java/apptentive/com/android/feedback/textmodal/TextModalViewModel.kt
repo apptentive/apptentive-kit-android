@@ -123,9 +123,6 @@ internal class TextModalViewModel : ViewModel() {
                     }
                 }
             }
-            else -> {
-                throw IllegalArgumentException("Unexpected action: $action")
-            }
         }
 
     sealed class ActionModel(open val title: String, open val callback: Callback) {
