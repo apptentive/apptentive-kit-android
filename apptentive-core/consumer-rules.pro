@@ -1,1 +1,2 @@
 -keepattributes SourceFile,LineNumberTable
+-keep class apptentive.com.android.encryption.** { *; }
