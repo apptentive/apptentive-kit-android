@@ -19,6 +19,7 @@
     <dimen name="event_margin">4dp</dimen>
     <dimen name="event_button_top_margin">5dp</dimen>
     <dimen name="button_min_height">56dp</dimen>
+    <dimen name="button_min_width">44dp</dimen>
     <dimen name="section_spacing_margin">16dp</dimen>
     <dimen name="button_top_spacing_margin">2dp</dimen>
     <dimen name="dropdown_min_height">56dp</dimen>

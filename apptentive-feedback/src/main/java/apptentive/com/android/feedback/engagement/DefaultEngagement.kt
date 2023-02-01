@@ -81,7 +81,7 @@ internal data class DefaultEngagement(
         val interaction = interactionConverter.convert(interactionData)
         if (interaction == null) {
             // Cannot find module to handle interaction for Note action
-            return EngagementResult.Error("Cannot find $interaction module to handle '$interactionData'")
+            return EngagementResult.Error("Cannot find module to handle '$interactionData'")
         }
 
         return engage(context, interaction)

@@ -389,6 +389,18 @@ object Apptentive {
         }
     }
 
+    /**
+     * Returns whether or not an engage event will display an Interaction.
+     *
+     * See the [Can Show Interaction](https://learn.apptentive.com/knowledge-base/android-integration-guide/#can-show-interaction)
+     * section of the Apptentive Learn documentation for more info.
+     */
+    @JvmStatic
+    fun canShowInteraction(eventName: String): Boolean {
+        val event = Event.local(eventName)
+        return client.canShowInteraction(event)
+    }
+
     //endregion
 
     //region Event Notifications
@@ -406,7 +418,7 @@ object Apptentive {
     /**
      * Allows a stream of Message Center data to be observed.
      *
-     * See the [Message Center Monitoring](TODO)
+     * See the [Message Center Data Monitoring](https://learn.apptentive.com/knowledge-base/android-integration-guide/#message-center-data-monitoring)
      * section of the Apptentive Learn documentation for more info.
      */
     internal val messageCenterNotificationSubject = BehaviorSubject(

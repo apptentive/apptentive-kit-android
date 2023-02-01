@@ -2,6 +2,7 @@ package apptentive.com.android.feedback
 
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.EVENT
 import apptentive.com.android.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.util.LogTags.MESSAGE_CENTER_HIDDEN
 import apptentive.com.android.util.LogTags.PROFILE_DATA_GET
@@ -10,6 +11,7 @@ import java.io.InputStream
 
 internal interface ApptentiveClient {
     fun engage(event: Event, customData: Map<String, Any?>? = null): EngagementResult
+    fun canShowInteraction(event: Event): Boolean
     fun showMessageCenter(customData: Map<String, Any?>?): EngagementResult
     fun getUnreadMessageCount(): Int
     fun canShowMessageCenter(): Boolean
@@ -33,6 +35,11 @@ internal typealias UnreadMessageCallback = (Int) -> Unit
 private class ApptentiveNullClient : ApptentiveClient {
     override fun engage(event: Event, customData: Map<String, Any?>?): EngagementResult {
         return EngagementResult.Error("Apptentive SDK is not initialized")
+    }
+
+    override fun canShowInteraction(event: Event): Boolean {
+        Log.d(EVENT, "Apptentive SDK is not initialized. Cannot show interaction.")
+        return false
     }
 
     override fun updatePerson(

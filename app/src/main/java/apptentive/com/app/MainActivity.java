@@ -3,6 +3,8 @@
 //import android.app.Activity;
 //import android.os.Bundle;
 //import android.util.Log;
+//import android.view.View;
+//import android.widget.Button;
 //
 //import androidx.annotation.NonNull;
 //import androidx.annotation.Nullable;
@@ -36,6 +38,11 @@
 //            byte[] bytes = text.getBytes();
 //            Apptentive.sendAttachmentFile(bytes, "text/plain");
 //        });
+//
+//        //Button button = findViewById(R.id.survey_button);
+//        //Boolean canShowSurvey = Apptentive.canShowInteraction("survey");
+//        //button.setVisibility(canShowSurvey ? View.VISIBLE : View.GONE);
+//        //button.setOnClickListener(v -> Apptentive.engage("survey"));
 //
 //        Apptentive.getEventNotificationObservable().observe(this::handleEventNotification);
 //        Apptentive.getMessageCenterNotificationObservable().observe(this::handleMessageCenterNotification);
@@ -80,8 +87,10 @@
 //        Log.d("APPTENTIVE_MC_EVENT", notificationText);
 //
 //        // Message Center data handling example
-//        binding.messageCenterButton.setEnabled(notification.getCanShowMessageCenter());
-//        binding.unreadMessagesText.setText("Unread Messages: " + notification.getUnreadMessageCount());
+//        runOnUiThread (new Thread(() -> {
+//            binding.messageCenterButton.setEnabled(notification.getCanShowMessageCenter());
+//            binding.unreadMessagesText.setText("Unread Messages: " + notification.getUnreadMessageCount());
+//        }));
 //
 //        return Unit.INSTANCE;
 //    }

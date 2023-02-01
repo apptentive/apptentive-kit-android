@@ -2,6 +2,7 @@
     <string name="app_name">Apptentive</string>
     <string name="hint_event_name">Event name</string>
     <string name="engage">Engage</string>
+    <string name="can_show_interaction">\?</string>
     <string name="love_dialog">Love Dialog</string>
     <string name="survey">Survey</string>
     <string name="note">Note</string>

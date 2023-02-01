@@ -322,30 +322,13 @@ class ApptentiveDefaultClient(
         )
     }
 
-    override fun sendHiddenTextMessage(message: String) {
-        messageManager?.sendMessage(message, isHidden = true)
+    override fun canShowInteraction(event: Event): Boolean {
+        return if (this::interactionDataProvider.isInitialized) { // Check if lateinit value is set
+            interactionDataProvider.getInteractionData(event) != null
+        } else false
     }
 
-    override fun sendHiddenAttachmentFileUri(uri: String) {
-        messageManager?.sendAttachment(uri, true)
-    }
-
-    override fun sendHiddenAttachmentFileBytes(bytes: ByteArray, mimeType: String) {
-        var inputStream: ByteArrayInputStream? = null
-        try {
-            inputStream = ByteArrayInputStream(bytes)
-            messageManager?.sendHiddenAttachmentFromInputStream(inputStream, mimeType)
-        } catch (e: Exception) {
-            Log.e(MESSAGE_CENTER, "Exception when sending attachment. Closing input stream.", e)
-        } finally {
-            FileUtil.ensureClosed(inputStream)
-        }
-    }
-
-    override fun sendHiddenAttachmentFileStream(inputStream: InputStream, mimeType: String) {
-        messageManager?.sendHiddenAttachmentFromInputStream(inputStream, mimeType)
-    }
-
+    //region Person
     override fun updatePerson(
         name: String?,
         email: String?,
@@ -379,7 +362,9 @@ class ApptentiveDefaultClient(
     override fun getPersonEmail(): String? {
         return conversationManager.getConversation().person.email
     }
+    //endregion
 
+    //region Message Center
     override fun showMessageCenter(customData: Map<String, Any?>?): EngagementResult {
         filterCustomData(customData)?.let { filteredCustomData ->
             messageManager?.setCustomData(filteredCustomData)
@@ -410,6 +395,31 @@ class ApptentiveDefaultClient(
             messageCenterNotificationSubject.value = notification
         }
     }
+
+    override fun sendHiddenTextMessage(message: String) {
+        messageManager?.sendMessage(message, isHidden = true)
+    }
+
+    override fun sendHiddenAttachmentFileUri(uri: String) {
+        messageManager?.sendAttachment(uri, true)
+    }
+
+    override fun sendHiddenAttachmentFileBytes(bytes: ByteArray, mimeType: String) {
+        var inputStream: ByteArrayInputStream? = null
+        try {
+            inputStream = ByteArrayInputStream(bytes)
+            messageManager?.sendHiddenAttachmentFromInputStream(inputStream, mimeType)
+        } catch (e: Exception) {
+            Log.e(MESSAGE_CENTER, "Exception when sending attachment. Closing input stream.", e)
+        } finally {
+            FileUtil.ensureClosed(inputStream)
+        }
+    }
+
+    override fun sendHiddenAttachmentFileStream(inputStream: InputStream, mimeType: String) {
+        messageManager?.sendHiddenAttachmentFromInputStream(inputStream, mimeType)
+    }
+    //endregion
 
     private fun filterCustomData(customData: Map<String, Any?>?): Map<String, Any?>? {
         if (customData == null) return null // No custom data set

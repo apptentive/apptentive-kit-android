@@ -5,10 +5,12 @@ import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
+import androidx.core.content.ContextCompat
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
 import apptentive.com.android.feedback.EngagementResult
@@ -60,10 +62,23 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
                 binding.eventTextLayout.isErrorEnabled = false
                 binding.eventTextLayout.error = ""
                 binding.eventTextEditText.setText("")
+
+                val color = ContextCompat.getColor(this, R.color.color_primary)
+                binding.eventTextLayout.boxStrokeColor = color
             } else {
                 binding.eventTextLayout.isErrorEnabled = true
                 binding.eventTextLayout.error = "No event entered"
             }
+        }
+
+        binding.canShowInteractionButton.setOnClickListener {
+            if (binding.eventTextLayout.requestFocus()) {
+                window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+            }
+            binding.eventTextLayout.isErrorEnabled = false
+            val canShowInteraction = Apptentive.canShowInteraction(binding.eventTextEditText.text.toString())
+            val color = ContextCompat.getColor(this, if (canShowInteraction) R.color.color_green else R.color.color_error)
+            binding.eventTextLayout.boxStrokeColor = color
         }
 
         binding.loveDialogButton.setOnClickListener {
