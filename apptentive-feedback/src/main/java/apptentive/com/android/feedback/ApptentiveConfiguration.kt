@@ -58,12 +58,10 @@ data class ApptentiveConfiguration(
      *
      * If `false` on-device storage of Apptentive SDK is not encrypted
      *
-     * Once this flag is set to `true` changing to `false`
-     * won't be effective until the device storage for Apptentive SDK is cleared
+     * The app can use this option if it is sending any sensitive information
+     * to Apptentive SDK through custom data
      *
-     * Likewise once this flag is set to `false` changing to `true`
-     * won't be effective until the device storage for Apptentive SDK is cleared
-     *
+     * Checkout the documentation [here](https://learn.apptentive.com/knowledge-base/android-integration-guide/#device-storage-encryption)
      */
     var shouldEncryptStorage: Boolean = false
 
