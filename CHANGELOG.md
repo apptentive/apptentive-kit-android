@@ -1,3 +1,9 @@
+# 2023-02-06 - v6.0.2
+
+#### New Features
+* Device storage encryption support
+* Notification support through subscribe & publish observables for events & unread messages
+
 # 2023-01-11 - v6.0.1
 
 #### New Features
