@@ -12,13 +12,13 @@ data class PayloadData(
     val method: HttpMethod,
     val mediaType: MediaType,
     var data: ByteArray,
-    @Transient val dataFilePath: String = ""
+    @Transient val attachmentData: AttachmentData = AttachmentData()
 ) {
     fun resolvePath(conversationId: String) = path.replace(":conversation_id", conversationId)
 
     override fun toString(): String {
         return "${javaClass.simpleName}(nonce=$nonce, type=$type, mediaType=$mediaType, " +
-            "dataFilePath=$dataFilePath, data=${data.size} bytes)"
+            "dataFilePath=${attachmentData.dataFilePath}, data=${data.size} bytes)"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -32,7 +32,7 @@ data class PayloadData(
         if (path != other.path) return false
         if (method != other.method) return false
         if (mediaType != other.mediaType) return false
-        if (dataFilePath != other.dataFilePath) return false
+        if (attachmentData != other.attachmentData) return false
         if (!data.contentEquals(other.data)) return false
 
         return true
@@ -44,7 +44,7 @@ data class PayloadData(
         result = 31 * result + path.hashCode()
         result = 31 * result + method.hashCode()
         result = 31 * result + mediaType.hashCode()
-        result = 31 * result + dataFilePath.hashCode()
+        result = 31 * result + attachmentData.hashCode()
         result = 31 * result + data.contentHashCode()
         return result
     }

@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.model.payloads
 
+import apptentive.com.android.feedback.payload.AttachmentData
 import apptentive.com.android.feedback.payload.MediaType
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadType
@@ -15,7 +16,7 @@ abstract class Payload(val nonce: String) {
     protected abstract fun getHttpPath(): String
     protected abstract fun getContentType(): MediaType
     protected abstract fun getDataBytes(): ByteArray
-    protected abstract fun getDataFilePath(): String
+    protected abstract fun getAttachmentDataBytes(): AttachmentData
 
     fun toJson(): String = JsonConverter.toJson(mapOf(getJsonContainer() to this))
 
@@ -26,7 +27,7 @@ abstract class Payload(val nonce: String) {
         method = getHttpMethod(),
         mediaType = getContentType(),
         data = getDataBytes(),
-        dataFilePath = getDataFilePath()
+        attachmentData = getAttachmentDataBytes()
     )
 
     override fun equals(other: Any?): Boolean {

@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.payload
 
 import android.content.Context
+import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.feedback.utils.createStringTable
@@ -21,7 +22,7 @@ internal class PersistentPayloadQueue(
     }
 
     override fun deletePayloadAndAssociatedFiles(payload: PayloadData) {
-        FileUtil.deleteFile(payload.dataFilePath)
+        FileUtil.deleteFile(payload.attachmentData.dataFilePath)
         dbHelper.deletePayload(payload.nonce)
         printPayloads("Delete payload and associated files")
     }
@@ -66,8 +67,10 @@ internal class PersistentPayloadQueue(
     }
 
     companion object {
-        fun create(context: Context) = PersistentPayloadQueue(
-            dbHelper = PayloadSQLiteHelper(context)
+        fun create(context: Context, encryption: Encryption, clearCache: Boolean) = PersistentPayloadQueue(
+            dbHelper = PayloadSQLiteHelper(context, encryption).apply {
+                if (clearCache) deleteAllCachedPayloads()
+            }
         )
     }
 }

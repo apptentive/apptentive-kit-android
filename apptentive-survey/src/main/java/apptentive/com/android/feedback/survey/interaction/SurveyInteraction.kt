@@ -24,6 +24,7 @@ internal typealias SurveyQuestionConfiguration = Map<String, Any?>
  * @param isRequired whether to allow the user to cancel the survey
  * @param questions list of questions
  * @param termsAndConditions [TermsAndConditions] data class that contains a label and link (set on dashboard)
+ * @param disclaimerText a legal disclaimer that will display below the submit button
  */
 internal class SurveyInteraction(
     id: String,
@@ -40,7 +41,8 @@ internal class SurveyInteraction(
     val closeConfirmBackText: String?,
     val isRequired: Boolean,
     val questions: List<SurveyQuestionConfiguration>,
-    val termsAndConditions: TermsAndConditions?
+    val termsAndConditions: TermsAndConditions?,
+    val disclaimerText: String?
 ) : Interaction(id, type = InteractionType.Survey) {
 
     data class TermsAndConditions(
@@ -70,7 +72,8 @@ internal class SurveyInteraction(
             "closeConfirmBackText=\"$closeConfirmBackText\", " +
             "isRequired=$isRequired, " +
             "questions=$questions), " +
-            "termsAndConditions=$termsAndConditions"
+            "termsAndConditions=$termsAndConditions, " +
+            "disclaimerText=$disclaimerText"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -89,7 +92,8 @@ internal class SurveyInteraction(
                 closeConfirmBackText != other.closeConfirmBackText ||
                 isRequired != other.isRequired ||
                 questions != other.questions ||
-                termsAndConditions != other.termsAndConditions -> false
+                termsAndConditions != other.termsAndConditions ||
+                disclaimerText != other.disclaimerText -> false
             else -> true
         }
     }
@@ -109,6 +113,7 @@ internal class SurveyInteraction(
         result = 31 * result + isRequired.hashCode()
         result = 31 * result + questions.hashCode()
         result = 31 * result + (termsAndConditions?.hashCode() ?: 0)
+        result = 31 * result + (disclaimerText?.hashCode() ?: 0)
         return result
     }
 }

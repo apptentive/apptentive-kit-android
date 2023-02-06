@@ -11,6 +11,7 @@ import com.google.android.material.textview.MaterialTextView
 
 internal class SurveyFooterListItem(
     val buttonTitle: String?,
+    val disclaimerText: String?,
     val messageState: SurveySubmitMessageState? = null
 ) : SurveyListItem(
     id = "footer",
@@ -66,6 +67,7 @@ internal class SurveyFooterListItem(
     ) : ListViewAdapter.ViewHolder<SurveyFooterListItem>(itemView) {
         private val submitButton = itemView.findViewById<MaterialButton>(R.id.apptentive_submit_button)
         private val errorMessageView = itemView.findViewById<MaterialTextView>(R.id.apptentive_submit_error_message)
+        private val disclaimerTextView = itemView.findViewById<MaterialTextView>(R.id.apptentive_disclaimer_text)
 
         init {
             submitButton.setOnClickListener {
@@ -74,9 +76,10 @@ internal class SurveyFooterListItem(
         }
 
         override fun bindView(item: SurveyFooterListItem, position: Int) {
-            if (item.buttonTitle != null) {
-                submitButton.text = item.buttonTitle
-            }
+            // Null checks here instead of .orEmpty() so in case text is set in customization
+            if (item.buttonTitle != null) submitButton.text = item.buttonTitle
+            if (item.disclaimerText != null) disclaimerTextView.text = item.disclaimerText
+
             updateMessageState(item.messageState)
         }
 

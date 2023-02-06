@@ -84,41 +84,44 @@ internal class TextModalViewModel : ViewModel() {
         when (action) {
             is TextModalModel.Action.Dismiss -> {
                 {
-                    Log.i(INTERACTIONS, "Note dismissed")
-                    // engage event
-                    val data = createEventData(action, index)
-                    engageCodePoint(CODE_POINT_DISMISS, data, action.id)
+                    context.executors.state.execute {
+                        Log.i(INTERACTIONS, "Note dismissed")
+                        // engage event
+                        val data = createEventData(action, index)
+                        engageCodePoint(CODE_POINT_DISMISS, data, action.id)
+                    }
                 }
             }
             is TextModalModel.Action.Invoke -> {
                 {
-                    Log.i(INTERACTIONS, "Note action invoked")
+                    context.executors.state.execute {
+                        Log.i(INTERACTIONS, "Note action invoked")
 
-                    // run invocation
-                    val result = context.engage(action.invocations)
+                        // run invocation
+                        val result = context.engage(action.invocations)
 
-                    // engage event
-                    val data = createEventData(action, index, result)
-                    engageCodePoint(CODE_POINT_INTERACTION, data, action.id)
+                        // engage event
+                        val data = createEventData(action, index, result)
+                        engageCodePoint(CODE_POINT_INTERACTION, data, action.id)
+                    }
                 }
             }
             is TextModalModel.Action.Event -> {
                 {
-                    Log.i(INTERACTIONS, "Note event engaged")
+                    context.executors.state.execute {
+                        Log.i(INTERACTIONS, "Note event engaged")
 
-                    // engage target event
-                    val result = context.engage(
-                        event = action.event,
-                        interactionId = interaction.id
-                    )
+                        // engage target event
+                        val result = context.engage(
+                            event = action.event,
+                            interactionId = interaction.id
+                        )
 
-                    // engage event
-                    val data = createEventData(action, index, result)
-                    engageCodePoint(CODE_POINT_EVENT, data, action.id)
+                        // engage event
+                        val data = createEventData(action, index, result)
+                        engageCodePoint(CODE_POINT_EVENT, data, action.id)
+                    }
                 }
-            }
-            else -> {
-                throw IllegalArgumentException("Unexpected action: $action")
             }
         }
 

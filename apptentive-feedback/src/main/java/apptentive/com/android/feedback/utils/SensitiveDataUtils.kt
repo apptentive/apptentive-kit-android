@@ -62,6 +62,6 @@ internal object SensitiveDataUtils {
     @VisibleForTesting
     internal fun String.toSnakeCase(): String {
         val humps = "(?<=.)(?=\\p{Upper})".toRegex()
-        return replace(humps, "_").toLowerCase()
+        return replace(humps, "_").lowercase()
     }
 }

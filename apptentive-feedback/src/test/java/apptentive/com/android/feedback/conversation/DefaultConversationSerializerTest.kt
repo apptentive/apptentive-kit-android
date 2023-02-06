@@ -1,6 +1,8 @@
 package apptentive.com.android.feedback.conversation
 
 import apptentive.com.android.TestCase
+import apptentive.com.android.encryption.EncryptionFactory
+import apptentive.com.android.encryption.NotEncrypted
 import apptentive.com.android.feedback.createMockConversation
 import apptentive.com.android.feedback.model.EngagementManifest
 import com.google.common.truth.Truth.assertThat
@@ -22,8 +24,15 @@ class DefaultConversationSerializerTest : TestCase() {
         val conversationFile = createTempFile("conversation.bin")
         val serializer = DefaultConversationSerializer(
             conversationFile = conversationFile,
-            manifestFile = createTempFile("manifest.json")
-        )
+            manifestFile = createTempFile("manifest.json"),
+        ).apply {
+            setEncryption(
+                encryption = EncryptionFactory.getEncryption(
+                    shouldEncryptStorage = false,
+                    oldEncryptionSetting = NotEncrypted
+                )
+            )
+        }
 
         val conversation = serializer.loadConversation()
         assertThat(conversation).isNull()
@@ -33,8 +42,15 @@ class DefaultConversationSerializerTest : TestCase() {
     fun testSerialization() {
         val serializer = DefaultConversationSerializer(
             conversationFile = createTempFile("conversation.bin"),
-            manifestFile = createTempFile("manifest.json")
-        )
+            manifestFile = createTempFile("manifest.json"),
+        ).apply {
+            setEncryption(
+                encryption = EncryptionFactory.getEncryption(
+                    shouldEncryptStorage = false,
+                    oldEncryptionSetting = NotEncrypted
+                )
+            )
+        }
 
         val conversation = createMockConversation()
         serializer.saveConversation(conversation)
@@ -48,8 +64,15 @@ class DefaultConversationSerializerTest : TestCase() {
     fun testSerializationNewConversation() {
         val serializer = DefaultConversationSerializer(
             conversationFile = createTempFile("conversation.bin"),
-            manifestFile = createTempFile("manifest.json")
-        )
+            manifestFile = createTempFile("manifest.json"),
+        ).apply {
+            setEncryption(
+                encryption = EncryptionFactory.getEncryption(
+                    shouldEncryptStorage = false,
+                    oldEncryptionSetting = NotEncrypted
+                )
+            )
+        }
 
         val conversation = createMockConversation(
             engagementManifest = EngagementManifest()
@@ -65,8 +88,15 @@ class DefaultConversationSerializerTest : TestCase() {
         val manifestFile = createTempFile("manifest.json")
         val serializer = DefaultConversationSerializer(
             conversationFile = createTempFile("conversation.bin"),
-            manifestFile = manifestFile
-        )
+            manifestFile = manifestFile,
+        ).apply {
+            setEncryption(
+                encryption = EncryptionFactory.getEncryption(
+                    shouldEncryptStorage = false,
+                    oldEncryptionSetting = NotEncrypted
+                )
+            )
+        }
 
         val conversation = createMockConversation()
         serializer.saveConversation(conversation)
@@ -100,8 +130,15 @@ class DefaultConversationSerializerTest : TestCase() {
         val manifestFile = createTempFile("manifest.json")
         val serializer = DefaultConversationSerializer(
             conversationFile = conversationFile,
-            manifestFile = manifestFile
-        )
+            manifestFile = manifestFile,
+        ).apply {
+            setEncryption(
+                encryption = EncryptionFactory.getEncryption(
+                    shouldEncryptStorage = false,
+                    oldEncryptionSetting = NotEncrypted
+                )
+            )
+        }
 
         // this throws an exception
         serializer.loadConversation()
@@ -112,8 +149,15 @@ class DefaultConversationSerializerTest : TestCase() {
         val manifestFile = createTempFile("manifest.json")
         val serializer = DefaultConversationSerializer(
             conversationFile = createTempFile("conversation.bin"),
-            manifestFile = manifestFile
-        )
+            manifestFile = manifestFile,
+        ).apply {
+            setEncryption(
+                encryption = EncryptionFactory.getEncryption(
+                    shouldEncryptStorage = false,
+                    oldEncryptionSetting = NotEncrypted
+                )
+            )
+        }
 
         val conversation = createMockConversation()
         serializer.saveConversation(conversation)

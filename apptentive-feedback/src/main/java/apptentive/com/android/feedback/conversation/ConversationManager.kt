@@ -5,6 +5,7 @@ import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.Observable
 import apptentive.com.android.core.Provider
 import apptentive.com.android.core.isInThePast
+import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.feedback.Constants
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.engagement.Event
@@ -19,6 +20,8 @@ import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.model.VersionHistory
 import apptentive.com.android.feedback.model.hasConversationToken
 import apptentive.com.android.feedback.platform.AndroidUtils.currentTimeSeconds
+import apptentive.com.android.feedback.utils.FileUtil
+import apptentive.com.android.feedback.utils.ThrottleUtils
 import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
 import apptentive.com.android.util.Log
@@ -47,6 +50,9 @@ internal class ConversationManager(
     init {
         val conversation = loadActiveConversation()
         activeConversationSubject = BehaviorSubject(conversation)
+    }
+
+    fun onEncryptionSetupComplete() {
         activeConversationSubject.observe(::saveConversation)
         activeConversation.observe(::checkForSDKAppReleaseUpdates)
     }
@@ -94,11 +100,15 @@ internal class ConversationManager(
 
     fun getConversation() = activeConversation.value
 
+    fun updateEncryption(encryption: Encryption) {
+        conversationRepository.updateEncryption(encryption)
+    }
+
     @Throws(ConversationSerializationException::class)
     @WorkerThread
     private fun loadActiveConversation(): Conversation {
         // load existing conversation
-        val existingConversation = conversationRepository.loadConversation()
+        val existingConversation = loadExistingConversation()
         if (existingConversation != null) {
             Log.i(CONVERSATION, "Loaded an existing conversation")
             return existingConversation
@@ -166,6 +176,7 @@ internal class ConversationManager(
     private fun saveConversation(conversation: Conversation) {
         try {
             conversationRepository.saveConversation(conversation)
+            Log.d(CONVERSATION, "Conversation saved successfully")
         } catch (exception: Exception) {
             Log.e(CONVERSATION, "Exception while saving conversation")
         }
@@ -326,6 +337,24 @@ internal class ConversationManager(
                 }
             }
         )
+    }
+
+    internal fun loadExistingConversation(): Conversation? {
+        return try {
+            conversationRepository.loadConversation()
+        } catch (e: ConversationSerializationException) {
+            // This fix is to recover the accounts that are stuck with serialization issue.
+            // It is not recommended to reset the conversation state.
+
+            if (!ThrottleUtils.shouldThrottleResetConversation()) {
+                Log.e(CONVERSATION, "Cannot load existing conversation", e)
+                Log.d(CONVERSATION, "Deserialization failure, deleting the conversation files")
+                FileUtil.deleteUnrecoverableStorageFiles(FileUtil.getInternalDir("conversations"))
+                null
+            } else {
+                throw ConversationSerializationException("Cannot load existing conversation, conversation reset throttled", e)
+            }
+        }
     }
 
     //region Legacy Conversation

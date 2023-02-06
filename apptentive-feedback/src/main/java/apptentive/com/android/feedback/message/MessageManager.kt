@@ -61,7 +61,7 @@ class MessageManager(
     val messages: Observable<List<Message>> get() = messagesSubject
 
     private var lastUnreadMessageCount = 0
-    private var unreadMessageCount: ((Int) -> Unit)? = null
+    private var unreadMessageCountUpdate: (() -> Unit)? = null
 
     private val profileSubject: BehaviorSubject<Person?> = BehaviorSubject(null)
     val profile: Observable<Person?> get() = profileSubject
@@ -146,7 +146,7 @@ class MessageManager(
             val currentUnreadCount = getUnreadMessageCount()
             if (lastUnreadMessageCount != currentUnreadCount) {
                 lastUnreadMessageCount = currentUnreadCount
-                unreadMessageCount?.invoke(currentUnreadCount)
+                unreadMessageCountUpdate?.invoke()
             }
         }
     }
@@ -295,8 +295,8 @@ class MessageManager(
         return getAllMessages().filter { it.read != true && !it.inbound }.size
     }
 
-    fun addUnreadMessageListener(callback: UnreadMessageCallback) {
-        unreadMessageCount = callback
+    fun addUnreadMessageListener(callback: (() -> Unit)) {
+        unreadMessageCountUpdate = callback
     }
 
     @InternalUseOnly

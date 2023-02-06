@@ -87,7 +87,8 @@
         <item name="apptentiveSurveyRangeLabelStyle">@style/Apptentive.TextAppearance.Caption.Survey.RangeLabel</item>
         <item name="apptentiveSurveyTermsAndConditionsStyle">@style/Apptentive.TextAppearance.Caption.Survey.TermsAndConditions</item>
         <item name="apptentiveSurveySubmitErrorStyle">@style/Apptentive.TextAppearance.Caption.Survey.Error.Footer</item>
-        <item name="apptentiveSurveyFootnoteStyle">@style/Apptentive.TextAppearance.Footnote</item>
+        <item name="apptentiveSurveyDisclaimerStyle">?apptentiveSurveyFootnoteStyle</item>
+        <item name="apptentiveSurveyFootnoteStyle">@style/Apptentive.TextAppearance.Caption.Survey.Disclaimer</item>
 
         <!-- Widgets -->
         <item name="apptentiveSurveyHeaderImageStyle">@style/Apptentive.Widget.Survey.HeaderImage</item>
@@ -479,7 +480,18 @@
         <item name="android:layout_marginBottom">@dimen/apptentive_survey_footers_vertical_padding_margin</item>
     </style>
 
-    <style name="Apptentive.TextAppearance.Footnote" />
+    <style name="Apptentive.TextAppearance.Caption.Survey.Disclaimer">
+        <item name="android:textColor">?apptentiveTextColorBody1</item>
+        <item name="android:textSize">?apptentiveTextSizeBody1</item>
+        <item name="android:typeface">?apptentiveTypefaceBody1</item>
+        <item name="android:fontFamily">?apptentiveFontFamilyBody1</item>
+        <item name="android:alpha">?apptentiveHeaderAlpha</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:accessibilityLiveRegion">polite</item>
+        <item name="android:layout_marginStart">@dimen/apptentive_activity_horizontal_margin_padding</item>
+        <item name="android:layout_marginEnd">@dimen/apptentive_activity_horizontal_margin_padding</item>
+        <item name="android:layout_marginBottom">@dimen/apptentive_survey_footers_vertical_padding_margin</item>
+    </style>
     <!-- Survey Text Styles End -->
     <!-- Text Styles End -->
 

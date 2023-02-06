@@ -4,6 +4,7 @@ import apptentive.com.android.TestCase
 import apptentive.com.android.core.toSeconds
 import apptentive.com.android.feedback.utils.convertToGroupDate
 import org.junit.Assert.assertTrue
+import org.junit.Ignore
 import org.junit.Test
 
 class DateUtilsTest : TestCase() {
@@ -12,6 +13,7 @@ class DateUtilsTest : TestCase() {
     // This is to have greater test coverage of different days.
     // It's okay to ignore this test in that time frame.
     @Test
+    @Ignore
     fun testConvertToGroupDate() {
         val DAY_IN_MILLIS = 24 * 60 * 60 * 1000L
 

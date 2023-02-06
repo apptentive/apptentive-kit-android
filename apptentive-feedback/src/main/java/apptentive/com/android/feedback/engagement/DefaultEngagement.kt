@@ -1,11 +1,13 @@
 package apptentive.com.android.feedback.engagement
 
 import androidx.annotation.WorkerThread
+import apptentive.com.android.feedback.Apptentive.eventNotificationSubject
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.criteria.Invocation
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionDataConverter
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
+import apptentive.com.android.feedback.model.EventNotification
 import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.EVENT
@@ -43,6 +45,10 @@ internal data class DefaultEngagement(
     ): EngagementResult {
         Log.i(EVENT, "Engaged event: $event")
         Log.d(EVENT, "Engaged event interaction ID: $interactionId")
+
+        eventNotificationSubject.value =
+            EventNotification(event.name, event.vendor, event.interaction, interactionId)
+
         recordEvent(event, interactionId, data, customData, extendedData)
 
         if (interactionResponses != null) recordInteractionResponses(interactionResponses)
@@ -75,7 +81,7 @@ internal data class DefaultEngagement(
         val interaction = interactionConverter.convert(interactionData)
         if (interaction == null) {
             // Cannot find module to handle interaction for Note action
-            return EngagementResult.Error("Cannot find $interaction module to handle '$interactionData'")
+            return EngagementResult.Error("Cannot find module to handle '$interactionData'")
         }
 
         return engage(context, interaction)

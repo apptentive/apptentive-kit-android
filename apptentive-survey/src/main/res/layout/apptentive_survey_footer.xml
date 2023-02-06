@@ -24,8 +24,8 @@
         tools:textColor="@color/apptentive_color_error" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/apptentive_footnote_text"
-        style="?apptentiveSurveyFootnoteStyle"
+        android:id="@+id/apptentive_disclaimer_text"
+        style="?apptentiveSurveyDisclaimerStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:text="Footer text"

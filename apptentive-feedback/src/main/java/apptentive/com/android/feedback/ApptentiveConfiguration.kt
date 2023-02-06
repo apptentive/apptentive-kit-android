@@ -52,6 +52,20 @@ data class ApptentiveConfiguration(
     var shouldSanitizeLogMessages: Boolean = true
 
     /**
+     * Determines if the on-device storage should be encrypted.
+     *
+     * If `true` on-device storage of Apptentive SDK is encrypted
+     *
+     * If `false` on-device storage of Apptentive SDK is not encrypted
+     *
+     * The app can use this option if it is sending any sensitive information
+     * to Apptentive SDK through custom data
+     *
+     * Check out the documentation [here](https://learn.apptentive.com/knowledge-base/android-integration-guide/#device-storage-encryption)
+     */
+    var shouldEncryptStorage: Boolean = false
+
+    /**
      * A time based throttle which determines when a rating interaction can be shown again.
      * This is a safeguard on top of the criteria already set in the Apptentive Dashboard.
      * This applies to both Google In-App Review & Apptentive Rating Dialog interactions.

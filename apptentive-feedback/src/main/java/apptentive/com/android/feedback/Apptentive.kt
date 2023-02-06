@@ -12,11 +12,15 @@ import apptentive.com.android.core.AndroidApplicationInfo
 import apptentive.com.android.core.AndroidExecutorFactoryProvider
 import apptentive.com.android.core.AndroidLoggerProvider
 import apptentive.com.android.core.ApplicationInfo
+import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.core.Observable
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.format
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
+import apptentive.com.android.feedback.model.EventNotification
+import apptentive.com.android.feedback.model.MessageCenterNotification
 import apptentive.com.android.feedback.notifications.NotificationUtils
 import apptentive.com.android.feedback.platform.AndroidFileSystemProvider
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
@@ -30,6 +34,8 @@ import apptentive.com.android.network.HttpLoggingInterceptor
 import apptentive.com.android.network.HttpNetworkResponse
 import apptentive.com.android.network.HttpRequest
 import apptentive.com.android.network.asString
+import apptentive.com.android.platform.AndroidSharedPrefDataStore
+import apptentive.com.android.platform.DefaultAndroidSharedPrefDataStore
 import apptentive.com.android.platform.SharedPrefConstants
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
@@ -170,6 +176,7 @@ object Apptentive {
                     "apptentive.com.android.feedback"
                 )
             )
+            DependencyProvider.register<AndroidSharedPrefDataStore>(DefaultAndroidSharedPrefDataStore(application.applicationContext))
 
             checkSavedKeyAndSignature(application, configuration)
 
@@ -227,8 +234,7 @@ object Apptentive {
             } else null
 
             client = ApptentiveDefaultClient(
-                apptentiveKey = configuration.apptentiveKey,
-                apptentiveSignature = configuration.apptentiveSignature,
+                configuration = configuration,
                 httpClient = createHttpClient(application.applicationContext),
                 executors = Executors(
                     state = stateExecutor,
@@ -383,6 +389,44 @@ object Apptentive {
         }
     }
 
+    /**
+     * Returns whether or not an engage event will display an Interaction.
+     *
+     * See the [Can Show Interaction](https://learn.apptentive.com/knowledge-base/android-integration-guide/#can-show-interaction)
+     * section of the Apptentive Learn documentation for more info.
+     */
+    @JvmStatic
+    fun canShowInteraction(eventName: String): Boolean {
+        val event = Event.local(eventName)
+        return client.canShowInteraction(event)
+    }
+
+    //endregion
+
+    //region Event Notifications
+
+    /**
+     * Allows the event stream of the Apptentive SDK to be observed.
+     *
+     * See the [Event Monitoring](https://learn.apptentive.com/knowledge-base/android-integration-guide/#event-monitoring)
+     * section of the Apptentive Learn documentation for more info.
+     */
+    internal val eventNotificationSubject: BehaviorSubject<EventNotification?> = BehaviorSubject(null)
+    @JvmStatic
+    val eventNotificationObservable: Observable<EventNotification?> get() = eventNotificationSubject
+
+    /**
+     * Allows a stream of Message Center data to be observed.
+     *
+     * See the [Message Center Data Monitoring](https://learn.apptentive.com/knowledge-base/android-integration-guide/#message-center-data-monitoring)
+     * section of the Apptentive Learn documentation for more info.
+     */
+    internal val messageCenterNotificationSubject = BehaviorSubject(
+        if (registered) MessageCenterNotification() else null
+    )
+    @JvmStatic
+    val messageCenterNotificationObservable: Observable<MessageCenterNotification?> get() = messageCenterNotificationSubject
+
     //endregion
 
     //region Message Center
@@ -428,12 +472,15 @@ object Apptentive {
     @JvmStatic
     fun canShowMessageCenter(callback: BooleanCallback) {
         try {
-            client.canShowMessageCenter {
-                callback.onFinish(it)
-            }
+            callback.onFinish(canShowMessageCenter())
         } catch (exception: Exception) {
             Log.e(MESSAGE_CENTER, "Exception while checking canShowMessageCenter", exception)
         }
+    }
+
+    @JvmStatic
+    fun canShowMessageCenter(): Boolean {
+        return client.canShowMessageCenter()
     }
 
     /**

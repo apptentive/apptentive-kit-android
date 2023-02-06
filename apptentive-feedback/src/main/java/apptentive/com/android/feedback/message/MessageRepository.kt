@@ -64,7 +64,6 @@ internal class DefaultMessageRepository(val messageSerializer: MessageSerializer
                 messageEntries.add(newEntry)
             }
         }
-        messageEntries.sortedBy { it.createdAt }
         saveMessages()
     }
 
@@ -75,6 +74,7 @@ internal class DefaultMessageRepository(val messageSerializer: MessageSerializer
                 val message = buildMessageFromJson(entry.messageJson)
                 message.messageStatus = Message.Status.parse(entry.messageState)
                 messageList.add(message)
+                messageList.sortedBy { it.createdAt }
             }
         } catch (e: MessageSerializerException) {
             Log.e(MESSAGE_CENTER, "There was an exception while deserializing the messages ${e.message}")
@@ -84,7 +84,7 @@ internal class DefaultMessageRepository(val messageSerializer: MessageSerializer
 
     override fun saveMessages() {
         try {
-            messageSerializer.saveMessages(messages = messageEntries)
+            messageSerializer.saveMessages(messages = messageEntries.sortedBy { it.createdAt })
         } catch (e: MessageSerializerException) {
             Log.e(MESSAGE_CENTER, "Cannot save messages. A Serialization issue occurred ${e.message}")
         }

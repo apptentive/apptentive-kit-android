@@ -6,6 +6,15 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import apptentive.com.android.concurrent.Executors
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.Provider
+import apptentive.com.android.encryption.AESEncryption23
+import apptentive.com.android.encryption.Encryption
+import apptentive.com.android.encryption.EncryptionFactory
+import apptentive.com.android.encryption.EncryptionNoOp
+import apptentive.com.android.encryption.EncryptionStatus
+import apptentive.com.android.encryption.NoEncryptionStatus
+import apptentive.com.android.encryption.NotEncrypted
+import apptentive.com.android.encryption.getEncryptionStatus
+import apptentive.com.android.feedback.Apptentive.messageCenterNotificationSubject
 import apptentive.com.android.feedback.backend.ConversationPayloadService
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.DefaultConversationService
@@ -45,6 +54,7 @@ import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.CustomData
 import apptentive.com.android.feedback.model.IntegrationConfig
 import apptentive.com.android.feedback.model.IntegrationConfigItem
+import apptentive.com.android.feedback.model.MessageCenterNotification
 import apptentive.com.android.feedback.model.payloads.AppReleaseAndSDKPayload
 import apptentive.com.android.feedback.model.payloads.EventPayload
 import apptentive.com.android.feedback.model.payloads.ExtendedData
@@ -64,10 +74,14 @@ import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.RuntimeUtils
 import apptentive.com.android.network.HttpClient
 import apptentive.com.android.network.UnexpectedResponseException
+import apptentive.com.android.platform.AndroidSharedPrefDataStore
+import apptentive.com.android.platform.SharedPrefConstants.CRYPTO_ENABLED
+import apptentive.com.android.platform.SharedPrefConstants.SDK_CORE_INFO
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogLevel
 import apptentive.com.android.util.LogTags.CONVERSATION
+import apptentive.com.android.util.LogTags.CRYPTOGRAPHY
 import apptentive.com.android.util.LogTags.EVENT
 import apptentive.com.android.util.LogTags.LIFE_CYCLE_OBSERVER
 import apptentive.com.android.util.LogTags.MESSAGE_CENTER
@@ -82,8 +96,7 @@ import java.io.InputStream
 
 @InternalUseOnly
 class ApptentiveDefaultClient(
-    private val apptentiveKey: String,
-    private val apptentiveSignature: String,
+    private val configuration: ApptentiveConfiguration,
     private val httpClient: HttpClient,
     private val executors: Executors
 ) : ApptentiveClient {
@@ -91,20 +104,17 @@ class ApptentiveDefaultClient(
     internal lateinit var payloadSender: PayloadSender
     private lateinit var interactionDataProvider: InteractionDataProvider
     private lateinit var interactionModules: Map<String, InteractionModule<Interaction>>
-    private var messageManager: MessageManager? = null
+    internal var messageManager: MessageManager? = null
     private var engagement: Engagement = NullEngagement()
+    private var encryption: Encryption = setInitialEncryptionFromPastSession()
+    private var clearPayloadCache: Boolean = false
+    private var clearMessageCache: Boolean = false
 
     //region Initialization
 
     @WorkerThread
     internal fun start(context: Context, registerCallback: ((result: RegisterResult) -> Unit)?) {
         interactionModules = loadInteractionModules()
-
-        val serialPayloadSender = SerialPayloadSender(
-            payloadQueue = PersistentPayloadQueue.create(context),
-            callback = ::onPayloadSendFinish
-        )
-        payloadSender = serialPayloadSender
 
         val conversationService = createConversationService()
         conversationManager = ConversationManager(
@@ -115,6 +125,16 @@ class ApptentiveDefaultClient(
             },
             isDebuggable = RuntimeUtils.getApplicationInfo(context).debuggable
         )
+
+        finalizeEncryptionFromConfiguration()
+
+        val serialPayloadSender = SerialPayloadSender(
+            payloadQueue = PersistentPayloadQueue.create(context, encryption, clearPayloadCache),
+            callback = ::onPayloadSendFinish
+        )
+        clearPayloadCache = false
+
+        payloadSender = serialPayloadSender
 
         getConversationToken(conversationService, registerCallback)
         addObservers(serialPayloadSender, conversationService)
@@ -154,11 +174,17 @@ class ApptentiveDefaultClient(
                         conversationService as MessageCenterService,
                         executors.state,
                         DefaultMessageRepository(
-                            messageSerializer = DefaultMessageSerializer(messagesFile = getMessagesFile())
+                            messageSerializer = DefaultMessageSerializer(messagesFile = getMessagesFile(), encryption).apply {
+                                if (clearMessageCache) {
+                                    deleteAllMessages()
+                                    clearMessageCache = false
+                                }
+                            }
                         )
                     )
                     messageManager?.let {
                         DependencyProvider.register(MessageManagerFactoryProvider(it))
+                        it.addUnreadMessageListener(::updateMessageCenterNotification)
                     }
                 }
             }
@@ -196,6 +222,7 @@ class ApptentiveDefaultClient(
                 )
             }
             messageManager?.onConversationChanged(conversation)
+            updateMessageCenterNotification()
         }
         // add an observer to track SDK & AppRelease changes
         conversationManager.sdkAppReleaseUpdate.observe { appReleaseSDKUpdated ->
@@ -232,7 +259,7 @@ class ApptentiveDefaultClient(
             deviceFactory = DefaultDeviceFactory(context),
             sdkFactory = DefaultSDKFactory(
                 version = Constants.SDK_VERSION,
-                distribution = "Default",
+                distribution = context.resources.getString(R.string.apptentive_distribution),
                 distributionVersion = Constants.SDK_VERSION
             ),
             manifestFactory = DefaultEngagementManifestFactory(),
@@ -243,14 +270,16 @@ class ApptentiveDefaultClient(
     private fun createConversationSerializer(): ConversationSerializer {
         return DefaultConversationSerializer(
             conversationFile = getConversationFile(),
-            manifestFile = getManifestFile()
-        )
+            manifestFile = getManifestFile(),
+        ).apply {
+            setEncryption(encryption)
+        }
     }
 
     private fun createConversationService(): ConversationService = DefaultConversationService(
         httpClient = httpClient,
-        apptentiveKey = apptentiveKey,
-        apptentiveSignature = apptentiveSignature,
+        apptentiveKey = configuration.apptentiveKey,
+        apptentiveSignature = configuration.apptentiveSignature,
         apiVersion = Constants.API_VERSION,
         sdkVersion = Constants.SDK_VERSION,
         baseURL = Constants.SERVER_URL
@@ -293,30 +322,13 @@ class ApptentiveDefaultClient(
         )
     }
 
-    override fun sendHiddenTextMessage(message: String) {
-        messageManager?.sendMessage(message, isHidden = true)
+    override fun canShowInteraction(event: Event): Boolean {
+        return if (this::interactionDataProvider.isInitialized) { // Check if lateinit value is set
+            interactionDataProvider.getInteractionData(event) != null
+        } else false
     }
 
-    override fun sendHiddenAttachmentFileUri(uri: String) {
-        messageManager?.sendAttachment(uri, true)
-    }
-
-    override fun sendHiddenAttachmentFileBytes(bytes: ByteArray, mimeType: String) {
-        var inputStream: ByteArrayInputStream? = null
-        try {
-            inputStream = ByteArrayInputStream(bytes)
-            messageManager?.sendHiddenAttachmentFromInputStream(inputStream, mimeType)
-        } catch (e: Exception) {
-            Log.e(MESSAGE_CENTER, "Exception when sending attachment. Closing input stream.", e)
-        } finally {
-            FileUtil.ensureClosed(inputStream)
-        }
-    }
-
-    override fun sendHiddenAttachmentFileStream(inputStream: InputStream, mimeType: String) {
-        messageManager?.sendHiddenAttachmentFromInputStream(inputStream, mimeType)
-    }
-
+    //region Person
     override fun updatePerson(
         name: String?,
         email: String?,
@@ -350,7 +362,9 @@ class ApptentiveDefaultClient(
     override fun getPersonEmail(): String? {
         return conversationManager.getConversation().person.email
     }
+    //endregion
 
+    //region Message Center
     override fun showMessageCenter(customData: Map<String, Any?>?): EngagementResult {
         filterCustomData(customData)?.let { filteredCustomData ->
             messageManager?.setCustomData(filteredCustomData)
@@ -362,13 +376,50 @@ class ApptentiveDefaultClient(
         return messageManager?.getUnreadMessageCount() ?: 0
     }
 
-    override fun canShowMessageCenter(callback: (Boolean) -> Unit) {
-        callback(
-            if (this::interactionDataProvider.isInitialized) { // Check if lateinit value is set
-                interactionDataProvider.getInteractionData(Event.internal(EVENT_MESSAGE_CENTER)) != null
-            } else false
-        )
+    override fun canShowMessageCenter(): Boolean {
+        return if (this::interactionDataProvider.isInitialized) { // Check if lateinit value is set
+            interactionDataProvider.getInteractionData(Event.internal(EVENT_MESSAGE_CENTER)) != null
+        } else false
     }
+
+    internal fun updateMessageCenterNotification() {
+        val notification = MessageCenterNotification(
+            canShowMessageCenter = canShowMessageCenter(),
+            unreadMessageCount = getUnreadMessageCount(),
+            personName = getPersonName(),
+            personEmail = getPersonEmail()
+        )
+
+        // Only update if something has changed
+        if (notification != messageCenterNotificationSubject.value) {
+            messageCenterNotificationSubject.value = notification
+        }
+    }
+
+    override fun sendHiddenTextMessage(message: String) {
+        messageManager?.sendMessage(message, isHidden = true)
+    }
+
+    override fun sendHiddenAttachmentFileUri(uri: String) {
+        messageManager?.sendAttachment(uri, true)
+    }
+
+    override fun sendHiddenAttachmentFileBytes(bytes: ByteArray, mimeType: String) {
+        var inputStream: ByteArrayInputStream? = null
+        try {
+            inputStream = ByteArrayInputStream(bytes)
+            messageManager?.sendHiddenAttachmentFromInputStream(inputStream, mimeType)
+        } catch (e: Exception) {
+            Log.e(MESSAGE_CENTER, "Exception when sending attachment. Closing input stream.", e)
+        } finally {
+            FileUtil.ensureClosed(inputStream)
+        }
+    }
+
+    override fun sendHiddenAttachmentFileStream(inputStream: InputStream, mimeType: String) {
+        messageManager?.sendHiddenAttachmentFromInputStream(inputStream, mimeType)
+    }
+    //endregion
 
     private fun filterCustomData(customData: Map<String, Any?>?): Map<String, Any?>? {
         if (customData == null) return null // No custom data set
@@ -498,9 +549,62 @@ class ApptentiveDefaultClient(
 
     //endregion
 
+    //region Encryption
+
+    private fun setInitialEncryptionFromPastSession(): Encryption {
+        val sharedPref = DependencyProvider.of<AndroidSharedPrefDataStore>()
+        val oldEncryptionSetting = getOldEncryptionSetting()
+        val encryption = EncryptionFactory.getEncryption(
+            shouldEncryptStorage = configuration.shouldEncryptStorage,
+            oldEncryptionSetting = oldEncryptionSetting
+        )
+        sharedPref.putBoolean(SDK_CORE_INFO, CRYPTO_ENABLED, encryption is AESEncryption23)
+        Log.d(CRYPTOGRAPHY, "Initial encryption setting is ${encryption.javaClass.simpleName}")
+        return encryption
+    }
+
+    private fun finalizeEncryptionFromConfiguration() {
+        if ((configuration.shouldEncryptStorage && (encryption is EncryptionNoOp)) ||
+            (!configuration.shouldEncryptStorage && (encryption is AESEncryption23))
+        ) {
+            onFinalEncryptionSettingsChanged()
+        }
+        Log.d(CRYPTOGRAPHY, "Final encryption setting is ${encryption.javaClass.simpleName}")
+        conversationManager.onEncryptionSetupComplete()
+    }
+
+    private fun onFinalEncryptionSettingsChanged() {
+        val sharedPref = DependencyProvider.of<AndroidSharedPrefDataStore>()
+
+        sharedPref.putBoolean(SDK_CORE_INFO, CRYPTO_ENABLED, configuration.shouldEncryptStorage)
+        encryption = EncryptionFactory.getEncryption(
+            shouldEncryptStorage = configuration.shouldEncryptStorage,
+            oldEncryptionSetting = getOldEncryptionSetting()
+        )
+
+        conversationManager.updateEncryption(encryption)
+
+        clearMessageCache = true
+        clearPayloadCache = true
+    }
+
+    fun getOldEncryptionSetting(): EncryptionStatus {
+        val sharedPref = DependencyProvider.of<AndroidSharedPrefDataStore>()
+
+        return when {
+            FileUtil.containsFiles(CONVERSATION_DIR) && !sharedPref.containsKey(SDK_CORE_INFO, CRYPTO_ENABLED) -> NotEncrypted // Migrating from 6.0.0
+            sharedPref.containsKey(SDK_CORE_INFO, CRYPTO_ENABLED) -> sharedPref.getBoolean(SDK_CORE_INFO, CRYPTO_ENABLED).getEncryptionStatus()
+            else -> NoEncryptionStatus
+        }
+    }
+
+    //endregion
+
     internal fun getConversationId() = conversationManager.getConversation().conversationId
 
     companion object {
+        private const val CONVERSATION_DIR = "conversations"
+
         @WorkerThread
         private fun getConversationFile(): File {
             val conversationsDir = getConversationDir()
@@ -515,7 +619,7 @@ class ApptentiveDefaultClient(
 
         @WorkerThread
         private fun getConversationDir(): File {
-            return FileUtil.getInternalDir("conversations", createIfNecessary = true)
+            return FileUtil.getInternalDir(CONVERSATION_DIR, createIfNecessary = true)
         }
 
         @WorkerThread

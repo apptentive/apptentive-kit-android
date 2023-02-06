@@ -75,6 +75,7 @@
         <attr name="apptentiveSurveyQuestionErrorStyle" format="reference"/>
         <attr name="apptentiveSurveyRangeLabelStyle" format="reference"/>
         <attr name="apptentiveSurveySubmitErrorStyle" format="reference" />
+        <attr name="apptentiveSurveyDisclaimerStyle" format="reference" />
         <attr name="apptentiveSurveyFootnoteStyle" format="reference" />
         <attr name="apptentiveSurveyTermsAndConditionsStyle" format="reference" />
 

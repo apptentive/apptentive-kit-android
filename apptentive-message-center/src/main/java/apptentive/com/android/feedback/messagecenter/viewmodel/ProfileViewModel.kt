@@ -71,11 +71,13 @@ class ProfileViewModel : ViewModel() {
     fun isProfileRequired(): Boolean = model.profile?.require == true
 
     fun onMessageCenterEvent(event: String, data: Map<String, Any?>?) {
-        context.engage(
-            event = Event.internal(event, interaction = InteractionType.MessageCenter),
-            interactionId = model.interactionId,
-            data = data
-        )
+        context.executors.state.execute {
+            context.engage(
+                event = Event.internal(event, interaction = InteractionType.MessageCenter),
+                interactionId = model.interactionId,
+                data = data
+            )
+        }
     }
 
     fun exitProfileView(name: String, email: String) {

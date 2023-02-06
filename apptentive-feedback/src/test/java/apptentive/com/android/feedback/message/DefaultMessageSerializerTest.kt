@@ -1,6 +1,8 @@
 package apptentive.com.android.feedback.message
 
 import apptentive.com.android.TestCase
+import apptentive.com.android.encryption.EncryptionFactory
+import apptentive.com.android.encryption.NotEncrypted
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.Sender
 import com.google.common.truth.Truth
@@ -30,6 +32,10 @@ class DefaultMessageSerializerTest : TestCase() {
     fun testLoadingNonExistingMessages() {
         val serializer = DefaultMessageSerializer(
             messagesFile = createTempFile("messages.bin"),
+            encryption = EncryptionFactory.getEncryption(
+                shouldEncryptStorage = false,
+                oldEncryptionSetting = NotEncrypted
+            )
         )
         val messages = serializer.loadMessages()
         Truth.assertThat(messages).isEmpty()
@@ -39,6 +45,10 @@ class DefaultMessageSerializerTest : TestCase() {
     fun testSerialization() {
         val serializer = DefaultMessageSerializer(
             messagesFile = createTempFile("messages.bin"),
+            encryption = EncryptionFactory.getEncryption(
+                shouldEncryptStorage = false,
+                oldEncryptionSetting = NotEncrypted,
+            )
         )
         serializer.saveMessages(convertToMessageEntry(testMessageList))
         val actual = serializer.loadMessages()
@@ -53,6 +63,10 @@ class DefaultMessageSerializerTest : TestCase() {
 
         val serializer = DefaultMessageSerializer(
             messagesFile = messagesFile,
+            encryption = EncryptionFactory.getEncryption(
+                shouldEncryptStorage = false,
+                oldEncryptionSetting = NotEncrypted
+            )
         )
 
         // Throws MessagesSerializerException

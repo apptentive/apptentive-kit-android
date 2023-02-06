@@ -1,21 +1,21 @@
 package apptentive.com.android.core
 
-import androidx.annotation.WorkerThread
 import apptentive.com.android.util.InternalUseOnly
 
-@InternalUseOnly
 open class Observable<T>(private var _value: T) {
-    private val observers = mutableListOf<(T) -> Unit>()
+    private val observers = mutableSetOf<(T) -> Unit>()
 
     open var value: T
-        @WorkerThread get() = _value
-        @WorkerThread protected set(value) {
+        get() = _value
+        protected set(value) {
             _value = value
             notifyObservers(value)
         }
 
-    @WorkerThread
     fun observe(observer: (T) -> Unit): Subscription {
+        // Sometimes a class observes multiple times and has a different reference.
+        // Most likely this is not lifecycle aware.
+        observers.removeAll { observer.javaClass == it.javaClass }
         observers.add(observer)
         notifyObserver(observer, value)
 
@@ -26,15 +26,12 @@ open class Observable<T>(private var _value: T) {
         }
     }
 
-    @WorkerThread
     fun removeObserver(observer: (T) -> Unit) {
         observers.remove(observer)
     }
 
-    @WorkerThread
     private fun notifyObservers(value: T) {
-        val temp = observers.toList()
-        for (observer in temp) {
+        for (observer in observers) {
             notifyObserver(observer, value)
         }
     }

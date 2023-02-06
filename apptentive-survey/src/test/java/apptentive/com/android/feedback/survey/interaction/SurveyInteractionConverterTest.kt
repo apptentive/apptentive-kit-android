@@ -27,7 +27,8 @@ class SurveyInteractionConverterTest : TestCase() {
                     "terms_and_conditions": {
                         "label": "labelTest",
                         "link": "linkTest"
-                    }
+                    },
+                    "disclaimer_text": "Disclaimer text"
                 }
             }
         """
@@ -47,7 +48,8 @@ class SurveyInteractionConverterTest : TestCase() {
             closeConfirmBackText = null,
             isRequired = true,
             questions = emptyList(),
-            termsAndConditions = SurveyInteraction.TermsAndConditions("labelTest", "linkTest")
+            termsAndConditions = SurveyInteraction.TermsAndConditions("labelTest", "linkTest"),
+            disclaimerText = "Disclaimer text"
         )
 
         val data = JsonConverter.fromJson<InteractionData>(jsonString.trimIndent())

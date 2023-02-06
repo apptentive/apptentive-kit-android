@@ -109,7 +109,7 @@ val mockRandomSampling = RandomSampling(
     )
 )
 
-val mockPerson = Person(
+var mockPerson = Person(
     id = "1234567890",
     email = null,
     name = null,

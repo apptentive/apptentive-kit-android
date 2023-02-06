@@ -15,6 +15,7 @@ import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.platform.FileSystem
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.CONVERSATION
 import apptentive.com.android.util.LogTags.UTIL
 import apptentive.com.android.util.generateUUID
 import java.io.BufferedInputStream
@@ -39,18 +40,20 @@ object FileUtil {
         return fileSystem.getInternalDir(path, createIfNecessary)
     }
 
+    fun containsFiles(path: String): Boolean = fileSystem.containsFile(path)
+
     private fun getMimeTypeFromUri(context: Context, contentUri: Uri): String? {
         return context.contentResolver?.getType(contentUri) // Usually `application/TYPE`
     }
 
-    fun generateCacheFilePathFromNonceOrPrefix(activity: Activity, nonce: String, prefix: String?): String {
+    fun generateCacheFilePathFromNonceOrPrefix(activity: Context, nonce: String, prefix: String?): String {
         val fileName = prefix?.plus("-$nonce") ?: "apptentive-api-file-$nonce"
         val cacheDir = getDiskCacheDir(activity)
         val cacheFile = File(cacheDir, fileName)
         return cacheFile.path
     }
 
-    private fun getDiskCacheDir(activity: Activity): File? {
+    private fun getDiskCacheDir(activity: Context): File? {
         return if ((Environment.MEDIA_MOUNTED == Environment.getExternalStorageState() || !Environment.isExternalStorageRemovable()) &&
             SystemUtils.hasPermission(activity, WRITE_EXTERNAL_STORAGE)
         ) activity.externalCacheDir else activity.cacheDir ?: null
@@ -295,6 +298,23 @@ object FileUtil {
             } catch (e: IOException) {
                 Log.e(UTIL, "Exception while closing stream", e)
             }
+        }
+    }
+
+    fun deleteUnrecoverableStorageFiles(fileOrDirectory: File) {
+        try {
+            if (fileOrDirectory.isDirectory) {
+                for (child in requireNotNull(fileOrDirectory.listFiles())) {
+                    deleteUnrecoverableStorageFiles(child)
+                }
+            }
+            Log.d(CONVERSATION, "File/directory to be deleted " + fileOrDirectory.name)
+            fileOrDirectory.delete()
+        } catch (e: java.lang.Exception) {
+            Log.e(
+                CONVERSATION,
+                "Exception while trying to delete unrecoverable Conversation data files", e
+            )
         }
     }
 

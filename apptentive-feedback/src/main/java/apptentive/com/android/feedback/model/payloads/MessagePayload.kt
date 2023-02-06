@@ -1,10 +1,9 @@
 package apptentive.com.android.feedback.model.payloads
 
-import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.Constants
-import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.Sender
+import apptentive.com.android.feedback.payload.AttachmentData
 import apptentive.com.android.feedback.payload.MediaType
 import apptentive.com.android.feedback.payload.PayloadType
 import apptentive.com.android.feedback.utils.FileUtil
@@ -58,14 +57,9 @@ data class MessagePayload(
         private const val TWO_HYPHENS = "--"
     }
 
-    override fun getDataFilePath(): String {
-        return if (type == Message.MESSAGE_TYPE_COMPOUND) {
-            val activity = DependencyProvider.of<EngagementContextFactory>().engagementContext().getAppActivity()
-            val fileName = FileUtil.generateCacheFilePathFromNonceOrPrefix(activity, nonce, "apptentive-message-payload")
-            FileUtil.writeFileData(fileName, saveDataBytes())
-            fileName
-        } else ""
-    }
+    override fun getAttachmentDataBytes(): AttachmentData =
+        if (type == Message.MESSAGE_TYPE_COMPOUND) AttachmentData(saveDataBytes())
+        else AttachmentData()
 
     override fun getDataBytes(): ByteArray {
         return if (type == Message.MESSAGE_TYPE_TEXT) toJson().toByteArray() else ByteArray(0)

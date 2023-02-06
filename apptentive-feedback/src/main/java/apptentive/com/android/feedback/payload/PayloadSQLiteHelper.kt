@@ -6,14 +6,16 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.annotation.VisibleForTesting
+import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.network.HttpMethod
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags
 import apptentive.com.android.util.LogTags.PAYLOADS
 import java.io.FileNotFoundException
 import java.io.IOException
 
-internal class PayloadSQLiteHelper(context: Context) :
+internal class PayloadSQLiteHelper(val context: Context, val encryption: Encryption) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -27,14 +29,20 @@ internal class PayloadSQLiteHelper(context: Context) :
 
     fun addPayload(payload: PayloadData) {
         Log.v(PAYLOADS, "Saving payload body to: ${writableDatabase.path}")
+        val fileName = if (payload.attachmentData.data.isNotEmpty()) {
+            val encryptedBytes = encryption.encrypt(payload.attachmentData.data)
+            val fileName = FileUtil.generateCacheFilePathFromNonceOrPrefix(context, payload.nonce, "apptentive-message-payload")
+            FileUtil.writeFileData(fileName, encryptedBytes)
+            fileName
+        } else ""
         val values = ContentValues().apply {
             put(COL_NONCE, payload.nonce)
             put(COL_TYPE, payload.type.toString())
             put(COL_PATH, payload.path)
             put(COL_METHOD, payload.method.toString())
             put(COL_MEDIA_TYPE, payload.mediaType.toString())
-            put(COL_PAYLOAD_DATA, payload.data)
-            put(COL_PAYLOAD_DATA_FILE, payload.dataFilePath)
+            put(COL_PAYLOAD_DATA, encryption.encrypt(payload.data))
+            put(COL_PAYLOAD_DATA_FILE, fileName)
         }
 
         try {
@@ -92,6 +100,14 @@ internal class PayloadSQLiteHelper(context: Context) :
         return deletedRows > 0
     }
 
+    internal fun deleteAllCachedPayloads() {
+        writableDatabase.use { db ->
+            db.execSQL("delete from $TABLE_NAME")
+        }
+
+        Log.w(LogTags.CRYPTOGRAPHY, "Payload cache is deleted to support the new encryption setting")
+    }
+
     internal fun readPayloads(): List<PayloadData> {
         synchronized(this) {
             readableDatabase.use { db ->
@@ -109,10 +125,10 @@ internal class PayloadSQLiteHelper(context: Context) :
 
     @Throws(FileNotFoundException::class, IOException::class)
     private fun readPayload(cursor: Cursor): PayloadData {
-        val dataBytes = cursor.getBlob(COL_PAYLOAD_DATA)
+        val dataBytes = encryption.decrypt(cursor.getBlob(COL_PAYLOAD_DATA))
         val dataPath = cursor.getString(COL_PAYLOAD_DATA_FILE)
         val payloadData = if (dataBytes.isNotEmpty()) dataBytes
-        else FileUtil.readFileData(dataPath)
+        else encryption.decrypt(FileUtil.readFileData(dataPath))
 
         return PayloadData(
             nonce = cursor.getString(COL_NONCE),
@@ -121,7 +137,7 @@ internal class PayloadSQLiteHelper(context: Context) :
             method = HttpMethod.valueOf(cursor.getString(COL_METHOD)),
             mediaType = MediaType.parse(cursor.getString(COL_MEDIA_TYPE)),
             data = payloadData,
-            dataFilePath = dataPath
+            attachmentData = AttachmentData(dataFilePath = dataPath)
         )
     }
 

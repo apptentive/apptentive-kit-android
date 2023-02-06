@@ -1,12 +1,16 @@
 package apptentive.com.android.feedback.conversation
 
 import apptentive.com.android.TestCase
+import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.Provider
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.getTimeSeconds
+import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.feedback.backend.ConversationCredentials
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.PayloadResponse
+import apptentive.com.android.feedback.engagement.util.MockAndroidSharedPrefDataStore
+import apptentive.com.android.feedback.engagement.util.MockFileSystem
 import apptentive.com.android.feedback.mockAppRelease
 import apptentive.com.android.feedback.mockDevice
 import apptentive.com.android.feedback.mockPerson
@@ -23,11 +27,14 @@ import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.model.VersionHistory
 import apptentive.com.android.feedback.payload.PayloadData
+import apptentive.com.android.feedback.platform.FileSystem
+import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.util.Result
 import com.apptentive.android.sdk.conversation.ConversationData
 import com.apptentive.android.sdk.conversation.LegacyConversationManager
 import com.google.common.truth.Truth.assertThat
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Ignore
 import org.junit.Test
@@ -113,6 +120,7 @@ class ConversationManagerTest : TestCase() {
     @Test
     fun testAppReleaseSDKUpdate() {
         val conversationManager = createConversationManager()
+        conversationManager.onEncryptionSetupComplete()
         conversationManager.updateAppReleaseSDK(
             mockSdk,
             mockAppRelease.copy(
@@ -158,6 +166,20 @@ class ConversationManagerTest : TestCase() {
         conversationManager.tryFetchEngagementManifest()
         assertEquals(222.22, conversationManager.getConversation().engagementManifest.expiry, 0.0)
     }
+
+    @Test
+    fun testConversationReset() {
+        DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore())
+        DependencyProvider.register<FileSystem>(MockFileSystem())
+        // conversation serializer throws exception, checks should throttle, not throttled, anonymous conversation is created
+        val conversationManager = createConversationManager(shouldThrowException = true)
+        assertEquals(conversationManager.getConversation().device, mockDevice)
+        val expectedMessage = "Cannot load existing conversation, conversation reset throttled"
+        // calling loadExistingConversation again throws serializer exception and gets throttled and throws Conversation serializer exception
+        val exception = assertThrows(ConversationSerializationException::class.java) { conversationManager.loadExistingConversation() }
+
+        assertTrue(exception.message == expectedMessage)
+    }
 }
 
 internal fun createConversationManager(
@@ -170,10 +192,11 @@ internal fun createConversationManager(
             encryptionKey = "encryption_key"
         ),
     isDebuggable: Boolean = false,
+    shouldThrowException: Boolean = false,
     mockConversationService: MockConversationService = MockConversationService(fetchResponse)
 ): ConversationManager {
     return ConversationManager(
-        conversationRepository = MockConversationRepository,
+        conversationRepository = MockConversationRepository(shouldThrowException),
         conversationService = mockConversationService,
         legacyConversationManagerProvider = object : Provider<LegacyConversationManager> {
             override fun get() = MockLegacyConversationManager()
@@ -182,7 +205,7 @@ internal fun createConversationManager(
     )
 }
 
-private object MockConversationRepository : ConversationRepository {
+private class MockConversationRepository(val throwException: Boolean = false) : ConversationRepository {
     private var conversation: Conversation? = null
 
     override fun createConversation(): Conversation {
@@ -203,7 +226,8 @@ private object MockConversationRepository : ConversationRepository {
         this.conversation = conversation
     }
 
-    override fun loadConversation(): Conversation? = conversation
+    override fun loadConversation(): Conversation? = if (throwException) throw ConversationSerializationException("", null)
+    else conversation
 
     override fun getCurrentAppRelease(): AppRelease = mockAppRelease.copy(
         versionName = "Version name updated"
@@ -212,6 +236,9 @@ private object MockConversationRepository : ConversationRepository {
     override fun getCurrentSdk(): SDK = mockSdk.copy(
         version = "Version updated"
     )
+
+    override fun updateEncryption(encryption: Encryption) {
+    }
 }
 
 internal class MockConversationService(
