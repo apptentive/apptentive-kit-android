@@ -2,7 +2,14 @@
 
 #### New Features
 * Device storage encryption support
-* Notification support through subscribe & publish observables for events & unread messages
+* Event observer support to listen for Apptentive events
+* Message Center observer support to listen for Message Center updates 
+
+#### Improvements
+* `canShowInteraction` function to check if an event will display an interaction
+
+#### Known Issues and Limitations
+* Client authentication (login/logout) is not yet supported
 
 # 2023-01-11 - v6.0.1
 
