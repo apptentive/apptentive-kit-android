@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback
 
+import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.LogLevel
 import java.util.concurrent.TimeUnit
 
@@ -97,6 +98,38 @@ data class ApptentiveConfiguration(
      * Using ASIN         - http://amazon.com/gp/mas/dl/android?asin=B004FRX0MY
      */
     var customAppStoreURL: String? = null
+
+    //region plugin configuration
+
+    /**
+     *
+     * This field is intended for internal use only and should not be set by the app.
+     *
+     * The distributionName field identifies the type of platform on which the SDK is distributed.
+     * By default, the value is set to "Default" for native SDKs.
+     *
+     * However, this value will be overridden by plugins with their respective values.
+     * For instance, in the case of the mParticle plugin, the value should be set to "mParticle".
+     *
+     */
+
+    @InternalUseOnly var distributionName: String = "Default"
+
+    /**
+     * This field is intended for internal use only and should not be set by the app.
+     *
+     * The distributionVersion field identifies the current version of the SDK.
+     * For native SDKs, the value is set to the current version of the SDK it is pointing at.
+     *
+     * However, this value will be overridden by plugins with their respective values.
+     * For example, in the case of the mParticle plugin,
+     * the value should be set to the current version of the mParticle SDK
+     *
+     */
+
+    @InternalUseOnly var distributionVersion: String = Constants.SDK_VERSION
+
+    //endregion
 
     init {
         require(apptentiveKey.isNotEmpty()) { "apptentiveKey is null or empty" }

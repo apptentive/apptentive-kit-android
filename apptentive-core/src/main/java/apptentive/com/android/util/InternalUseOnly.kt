@@ -10,5 +10,6 @@ package apptentive.com.android.util
     AnnotationTarget.FUNCTION,
     AnnotationTarget.FIELD,
     AnnotationTarget.TYPEALIAS,
+    AnnotationTarget.PROPERTY
 )
 annotation class InternalUseOnly // Opt-in requirement annotation

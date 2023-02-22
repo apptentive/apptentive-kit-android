@@ -259,8 +259,8 @@ class ApptentiveDefaultClient(
             deviceFactory = DefaultDeviceFactory(context),
             sdkFactory = DefaultSDKFactory(
                 version = Constants.SDK_VERSION,
-                distribution = context.resources.getString(R.string.apptentive_distribution),
-                distributionVersion = Constants.SDK_VERSION
+                distribution = configuration.distributionName,
+                distributionVersion = configuration.distributionVersion
             ),
             manifestFactory = DefaultEngagementManifestFactory(),
             engagementDataFactory = DefaultEngagementDataFactory()
