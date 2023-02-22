@@ -784,6 +784,27 @@ object Apptentive {
     }
 
     /**
+     * Sets the mParticleId of the user.
+     * It is used to associate a MParticle user with a conversation in Apptentive dashboard
+     *
+     * @param id The mParticleId of the person.
+     */
+    @JvmStatic
+    fun setMParticleId(id: String) {
+        try {
+            stateExecutor.execute {
+                client.updateMParticleID(id)
+            }
+        } catch (exception: Exception) {
+            Log.e(PERSON, "Exception setting MParticle ID", exception)
+        }
+    }
+
+    //endregion
+
+    //region Device data updates
+
+    /**
      * Add a custom data String to the Device. Custom data will be sent to the server, is displayed
      * in the Conversation view, and can be used in Interaction targeting.  Calls to this method are
      * idempotent.
@@ -863,6 +884,8 @@ object Apptentive {
             Log.e(DEVICE, "Exception when removing Device data with the key $key", exception)
         }
     }
+
+    //endregion
 
     //region Push Notifications
     /**

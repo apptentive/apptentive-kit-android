@@ -355,6 +355,15 @@ class ApptentiveDefaultClient(
         }
     }
 
+    override fun updateMParticleID(id: String) {
+        val person = conversationManager.getConversation().person
+        val newPerson = person.copy(mParticleId = id)
+        if (person != newPerson) {
+            conversationManager.updatePerson(newPerson)
+            payloadSender.sendPayload(newPerson.toPersonPayload())
+        }
+    }
+
     override fun getPersonName(): String? {
         return conversationManager.getConversation().person.name
     }
