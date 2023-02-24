@@ -62,7 +62,7 @@ data class ApptentiveConfiguration(
      * The app can use this option if it is sending any sensitive information
      * to Apptentive SDK through custom data
      *
-     * Checkout the documentation [here](https://learn.apptentive.com/knowledge-base/android-integration-guide/#device-storage-encryption)
+     * Check out the documentation [here](https://learn.apptentive.com/knowledge-base/android-integration-guide/#device-storage-encryption)
      */
     var shouldEncryptStorage: Boolean = false
 
