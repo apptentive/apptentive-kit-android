@@ -1,3 +1,11 @@
+# 2023-02-24 - v6.0.3
+#### Improvements
+* Support mParticleID collection
+* Add `distributionName` and `distributionVersion` to `ApptentiveConfiguration` 
+
+#### Known Issues and Limitations
+* Client authentication (login/logout) is not yet supported
+
 # 2023-02-06 - v6.0.2
 
 #### New Features

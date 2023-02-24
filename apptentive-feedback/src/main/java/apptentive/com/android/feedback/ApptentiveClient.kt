@@ -21,6 +21,7 @@ internal interface ApptentiveClient {
     fun sendHiddenAttachmentFileStream(inputStream: InputStream, mimeType: String)
     fun updateDevice(customData: Pair<String, Any?>? = null, deleteKey: String? = null)
     fun updatePerson(name: String? = null, email: String? = null, customData: Pair<String, Any?>? = null, deleteKey: String? = null)
+    fun updateMParticleID(id: String)
     fun getPersonName(): String?
     fun getPersonEmail(): String?
     fun setPushIntegration(pushProvider: Int, token: String)
@@ -49,6 +50,10 @@ private class ApptentiveNullClient : ApptentiveClient {
         deleteKey: String?
     ) {
         Log.d(PROFILE_DATA_UPDATE, "Apptentive SDK is not initialized; update person failed")
+    }
+
+    override fun updateMParticleID(id: String) {
+        Log.d(PROFILE_DATA_UPDATE, "Apptentive SDK is not initialized; set mParticle id failed")
     }
 
     override fun sendHiddenTextMessage(message: String) {
