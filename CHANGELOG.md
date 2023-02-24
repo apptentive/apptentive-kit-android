@@ -1,7 +1,7 @@
-# 2023-02-24 - v6.0.2
+# 2023-02-24 - v6.0.3
 #### Improvements
 * Support mParticleID collection
-* Add `distributionName` and `distributionVersion` to `ApptentiveConfiguration` to use it in the plugin
+* Add `distributionName` and `distributionVersion` to `ApptentiveConfiguration` 
 
 # 2023-02-06 - v6.0.2
 
