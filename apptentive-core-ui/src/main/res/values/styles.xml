@@ -21,9 +21,9 @@
 
         <!-- Love Dialog Styles -->
         <item name="apptentiveLoveDialogLayoutStyle">@style/Apptentive.Dialog.Layout</item>
-        <item name="apptentiveLoveDialogHeaderImageStyle"/>
+        <item name="apptentiveLoveDialogHeaderImageStyle">@style/Apptentive.Empty</item>
         <item name="apptentiveLoveDialogTitleStyle">@style/Apptentive.TextAppearance.Title.Dialog.TitleOrMessageOnly</item>
-        <item name="apptentiveLoveDialogTitleImageStyle"/>
+        <item name="apptentiveLoveDialogTitleImageStyle">@style/Apptentive.Empty</item>
 
         <!-- No -> Yes Ordering (default) -->
         <item name="apptentiveLoveDialogButtonLayoutStyle">@style/Apptentive.Dialog.ButtonLayout</item>
@@ -32,16 +32,16 @@
 
         <!-- Yes -> No Ordering -->
         <item name="apptentiveLoveDialogButtonLayoutStyleAlternate">@style/Apptentive.Dialog.ButtonLayout.Alternate</item>
-        <item name="apptentiveLoveDialogYesButtonStyleAlternate"/>
-        <item name="apptentiveLoveDialogNoButtonStyleAlternate"/>
+        <item name="apptentiveLoveDialogYesButtonStyleAlternate">@style/Apptentive.Empty</item>
+        <item name="apptentiveLoveDialogNoButtonStyleAlternate">@style/Apptentive.Empty</item>
 
         <!-- Note Dialog Styles -->
         <item name="apptentiveNoteLayoutStyle">@style/Apptentive.Dialog.Layout</item>
-        <item name="apptentiveNoteHeaderImageStyle"/>
+        <item name="apptentiveNoteHeaderImageStyle">@style/Apptentive.Empty</item>
         <item name="apptentiveNoteTitleWithMessageTextStyle">@style/Apptentive.TextAppearance.Title.Dialog.WithMessage</item>
-        <item name="apptentiveNoteTitleWithMessageImageStyle"/>
+        <item name="apptentiveNoteTitleWithMessageImageStyle">@style/Apptentive.Empty</item>
         <item name="apptentiveNoteTitleOrMessageOnlyTextStyle">@style/Apptentive.TextAppearance.Title.Dialog.TitleOrMessageOnly.Note</item>
-        <item name="apptentiveNoteTitleOrMessageOnlyImageStyle"/>
+        <item name="apptentiveNoteTitleOrMessageOnlyImageStyle">@style/Apptentive.Empty</item>
         <item name="apptentiveNoteMessageTextStyle">@style/Apptentive.TextAppearance.Message.Dialog</item>
         <item name="apptentiveNoteButtonLayoutStyle">@style/Apptentive.Dialog.ButtonLayout.Note</item>
         <item name="apptentiveNoteButtonStyle">@style/Apptentive.Widget.Dialog.Button.Stacked</item>
@@ -49,9 +49,9 @@
 
         <!-- Apptentive Rating Dialog Styles -->
         <item name="apptentiveRatingDialogLayoutStyle">@style/Apptentive.Dialog.Layout</item>
-        <item name="apptentiveRatingDialogHeaderImageStyle"/>
+        <item name="apptentiveRatingDialogHeaderImageStyle">@style/Apptentive.Empty</item>
         <item name="apptentiveRatingDialogTitleTextStyle">@style/Apptentive.TextAppearance.Title.Dialog.WithMessage</item>
-        <item name="apptentiveRatingDialogTitleImageStyle"/>
+        <item name="apptentiveRatingDialogTitleImageStyle">@style/Apptentive.Empty</item>
         <item name="apptentiveRatingDialogButtonRateStyle">@style/Apptentive.Widget.Dialog.Button.Stacked.RatingDialog</item>
         <item name="apptentiveRatingDialogButtonRemindStyle">@style/Apptentive.Widget.Dialog.Button.Stacked.RatingDialog</item>
         <item name="apptentiveRatingDialogButtonDeclineStyle">@style/Apptentive.Widget.Dialog.Button.Stacked.RatingDialog</item>
@@ -60,9 +60,9 @@
         <!-- Generic Dialog Styles -->
         <!-- Currently used in: Survey & Message Center profile Close Confirmation -->
         <item name="apptentiveGenericDialogLayoutStyle">@style/Apptentive.Dialog.Layout</item>
-        <item name="apptentiveGenericDialogHeaderImageStyle"/>
+        <item name="apptentiveGenericDialogHeaderImageStyle">@style/Apptentive.Empty</item>
         <item name="apptentiveGenericDialogTitleTextStyle">@style/Apptentive.TextAppearance.Title.Dialog.WithMessage</item>
-        <item name="apptentiveGenericDialogTitleImageStyle"/>
+        <item name="apptentiveGenericDialogTitleImageStyle">@style/Apptentive.Empty</item>
         <item name="apptentiveGenericDialogMessageTextStyle">@style/Apptentive.TextAppearance.Message.Dialog</item>
         <item name="apptentiveGenericDialogButtonLayoutStyle">@style/Apptentive.Dialog.ButtonLayout</item>
         <item name="apptentiveGenericDialogPositiveButtonStyle">@style/Apptentive.Widget.Dialog.Button.SideBySide.Yes</item>
@@ -72,7 +72,7 @@
         <!-- Layout -->
         <item name="apptentiveSurveyLayoutStyle">@style/Apptentive.Survey.Layout</item>
         <item name="apptentiveSurveyQuestionLayoutStyle">@style/Apptentive.Survey.Layout.Question</item>
-        <item name="apptentiveSurveyQuestionDividerStyle"/>
+        <item name="apptentiveSurveyQuestionDividerStyle">@style/Apptentive.Empty</item>
 
         <!-- App Bars -->
         <item name="apptentiveSurveyToolbarStyle">@style/Apptentive.Widget.Survey.Toolbar</item>
@@ -294,6 +294,8 @@
 
     <!-- Interaction Layouts Start -->
     <style name="Apptentive" />
+
+    <style name="Apptentive.Empty"/>
 
     <style name="Apptentive.Dialog" />
 
