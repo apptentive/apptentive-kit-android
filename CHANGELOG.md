@@ -1,3 +1,10 @@
+# 2023-03-30 - v6.0.4
+#### Improvements
+ * Expanded support for links in survey introduction
+ 
+#### Fixes 
+ * Resolved resource linking issues
+
 # 2023-02-24 - v6.0.3
 #### Improvements
 * Support mParticleID collection
