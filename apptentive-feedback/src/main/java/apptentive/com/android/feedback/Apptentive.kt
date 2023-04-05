@@ -103,8 +103,20 @@ object Apptentive {
 
     @JvmStatic
     fun registerApptentiveActivityInfoCallback(apptentiveActivityInfo: ApptentiveActivityInfo) {
-        activityInfoCallback = WeakReference(apptentiveActivityInfo)
-        Log.d(FEEDBACK, "Activity info callback for ${activityInfoCallback?.get()?.getApptentiveActivityInfo()?.localClassName} registered")
+        if (registered) {
+            try {
+                activityInfoCallback = WeakReference(apptentiveActivityInfo)
+
+                Log.d(
+                    FEEDBACK,
+                    "Activity info callback for ${
+                    activityInfoCallback?.get()?.getApptentiveActivityInfo()?.localClassName
+                    } registered"
+                )
+            } catch (exception: Exception) {
+                Log.e(FEEDBACK, "Exception thrown while registered activity info callback", exception)
+            }
+        }
     }
 
     /**
@@ -118,8 +130,19 @@ object Apptentive {
      */
     @JvmStatic
     fun unregisterApptentiveActivityInfoCallback() {
-        Log.d(FEEDBACK, "Activity info callback for ${activityInfoCallback?.get()?.getApptentiveActivityInfo()?.localClassName} unregistered")
-        activityInfoCallback = null
+        if (registered) {
+            try {
+                Log.d(
+                    FEEDBACK,
+                    "Activity info callback for ${
+                    activityInfoCallback?.get()?.getApptentiveActivityInfo()?.localClassName
+                    } unregistered"
+                )
+                activityInfoCallback = null
+            } catch (exception: Exception) {
+                Log.e(FEEDBACK, "Exception thrown while unregistering activity info callback")
+            }
+        }
     }
 
     @InternalUseOnly

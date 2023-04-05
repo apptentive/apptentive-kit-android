@@ -39,17 +39,16 @@ internal class SurveyHeaderListItem(val instructions: String) : SurveyListItem(
     }
 
     class ViewHolder(itemView: View) : ListViewAdapter.ViewHolder<SurveyHeaderListItem>(itemView) {
-        private val introductionView = itemView.findViewById<MaterialTextView>(R.id.apptentive_survey_introduction).apply {
-            try {
-                Linkify.addLinks(this, Linkify.ALL)
-            } catch (exception: Exception) {
-                Log.e(LogTags.MESSAGE_CENTER, "Couldn't add linkify to survey introduction text", exception)
-            }
-        }
+        private val introductionView = itemView.findViewById<MaterialTextView>(R.id.apptentive_survey_introduction)
 
         override fun bindView(item: SurveyHeaderListItem, position: Int) {
             introductionView.text = item.instructions
-            introductionView.movementMethod = LinkMovementMethod.getInstance()
+            try {
+                Linkify.addLinks(introductionView, Linkify.ALL)
+                introductionView.movementMethod = LinkMovementMethod.getInstance()
+            } catch (exception: Exception) {
+                Log.e(LogTags.MESSAGE_CENTER, "Couldn't add linkify to survey introduction text", exception)
+            }
         }
     }
 }

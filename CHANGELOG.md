@@ -1,7 +1,14 @@
+# 2023-04-05 - v6.0.4
+#### Improvements
+ * Expanded support for links in survey introduction
+ 
+#### Fixes 
+ * Resolved resource linking issues
+
 # 2023-02-24 - v6.0.3
 #### Improvements
 * Support mParticleID collection
-* Add `distributionName` and `distributionVersion` to `ApptentiveConfiguration` 
+* Add `distributionName` and `distributionVersion` to `ApptentiveConfiguration`
 
 #### Known Issues and Limitations
 * Client authentication (login/logout) is not yet supported
