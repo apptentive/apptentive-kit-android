@@ -17,10 +17,9 @@ internal class EnjoymentDialogInteractionLauncher :
         Log.i(INTERACTIONS, "Love Dialog interaction launched with title: ${interaction.title}")
         Log.v(INTERACTIONS, "Love Dialog interaction data: $interaction")
 
-        saveInteractionBackup(interaction, engagementContext.getAppActivity())
-
         engagementContext.executors.main.execute {
             try {
+                saveInteractionBackup(interaction, engagementContext.getAppActivity())
                 DependencyProvider.register(EnjoymentDialogInteractionProvider(interaction))
 
                 val fragmentManager = engagementContext.getFragmentManager()
