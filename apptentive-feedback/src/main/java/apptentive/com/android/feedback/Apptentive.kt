@@ -952,6 +952,7 @@ object Apptentive {
      * * Parse - The Parse [deviceToken](https://docs.parseplatform.org/android/guide/#push-notifications)
      * * Amazon AWS SNS - The FCM Registration ID, which you can [access like this](https://firebase.google.com/docs/cloud-messaging/android/client#monitor-token-generation).
      */
+    @JvmStatic
     fun setPushNotificationIntegration(context: Context, pushProvider: Int, token: String) {
         try {
             stateExecutor.execute {
@@ -975,6 +976,7 @@ object Apptentive {
      * @param intent The received [Intent] you received in your [BroadcastReceiver].
      * @return `true` if the [Intent] came from, and should be handled by Apptentive.
      */
+    @JvmStatic
     fun isApptentivePushNotification(intent: Intent?): Boolean {
         try {
             return registered && NotificationUtils.getApptentivePushNotificationData(intent) != null
@@ -995,6 +997,7 @@ object Apptentive {
      * @param data The push payload data obtained through FCM `onMessageReceived()`, when using FCM
      * @return `true` if the push came from, and should be handled by Apptentive.
      */
+    @JvmStatic
     fun isApptentivePushNotification(data: Map<String, String>?): Boolean {
         try {
             return registered && NotificationUtils.getApptentivePushNotificationData(data) != null
@@ -1028,6 +1031,7 @@ object Apptentive {
      * @param intent An [Intent] containing the Apptentive Push data. Pass in what you receive
      * in the [Service] or [BroadcastReceiver] that is used by your chosen push provider.
      */
+    @JvmStatic
     fun buildPendingIntentFromPushNotification(context: Context, callback: PendingIntentCallback, intent: Intent) {
         try {
             if (registered) {
@@ -1073,6 +1077,7 @@ object Apptentive {
      * Push data. Pass in what you receive in the the Service or BroadcastReceiver
      * that is used by your chosen push provider.
      */
+    @JvmStatic
     fun buildPendingIntentFromPushNotification(context: Context, callback: PendingIntentCallback, data: Map<String, String>) {
         try {
             if (registered) {
@@ -1104,6 +1109,7 @@ object Apptentive {
      * in the Service or BroadcastReceiver that is used by your chosen push provider.
      * @return a [String] value, or `null`.
      */
+    @JvmStatic
     fun getTitleFromApptentivePush(intent: Intent?): String? {
         return try {
             if (registered && intent != null) {
@@ -1123,6 +1129,7 @@ object Apptentive {
      * in the Service or BroadcastReceiver that is used by your chosen push provider.
      * @return a [String] value, or `null`.
      */
+    @JvmStatic
     fun getBodyFromApptentivePush(intent: Intent?): String? {
         return try {
             if (registered && intent != null) {
@@ -1142,6 +1149,7 @@ object Apptentive {
      * the the [Service] or [BroadcastReceiver] that is used by your chosen push provider.
      * @return a [String] value, or `null`.
      */
+    @JvmStatic
     fun getTitleFromApptentivePush(bundle: Bundle?): String? {
         try {
             when {
@@ -1180,6 +1188,7 @@ object Apptentive {
      * the the Service or BroadcastReceiver that is used by your chosen push provider.
      * @return a [String] value, or `null`.
      */
+    @JvmStatic
     fun getBodyFromApptentivePush(bundle: Bundle?): String? {
         try {
             when {
@@ -1228,6 +1237,7 @@ object Apptentive {
      * used by your chosen push provider.
      * @return a [String] value, or `null`.
      */
+    @JvmStatic
     fun getTitleFromApptentivePush(data: Map<String, String>?): String? {
         try {
             return if (!registered) null else data?.get(NotificationUtils.TITLE_DEFAULT)
@@ -1246,6 +1256,7 @@ object Apptentive {
      * used by your chosen push provider.
      * @return a [String] value, or `null`.
      */
+    @JvmStatic
     fun getBodyFromApptentivePush(data: Map<String, String>?): String? {
         try {
             return if (!registered) null else data?.get(NotificationUtils.BODY_DEFAULT)
