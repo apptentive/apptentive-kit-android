@@ -59,6 +59,6 @@ private object MockLogger : Logger {
 }
 
 private object MockApplicationInfo : ApplicationInfo {
-    override val versionCode = 1000000
+    override val versionCode = 1000000L
     override val versionName = "1.0.0"
 }

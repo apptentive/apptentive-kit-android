@@ -1,28 +1,35 @@
-@file:Suppress("DEPRECATION")
-
 package apptentive.com.android.util
 
 import android.content.Context
 import android.net.ConnectivityManager
-import android.net.NetworkInfo
+import android.net.NetworkCapabilities
+import android.os.Build
 
 /**
  * Utility class for network related queries.
  */
 internal object NetworkUtils {
-    /**
-     * Indicates whether network connectivity exists or is in the process
-     * of being established.
-     */
-    fun isNetworkConnected(context: Context): Boolean {
-        return getActiveNetwork(context)?.isConnectedOrConnecting == true
-    }
 
     /**
-     * Returns active network (if present)
+     * Checks if the device is connected to a network.
+     *
+     * @param context Activity or Application context.
      */
-    private fun getActiveNetwork(context: Context): NetworkInfo? {
-        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        return cm.activeNetworkInfo
+    fun isNetworkConnected(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val networkCapabilities = connectivityManager.activeNetwork ?: return false
+            val actNw = connectivityManager.getNetworkCapabilities(networkCapabilities) ?: return false
+            actNw.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+        } else {
+            connectivityManager.activeNetworkInfo?.run {
+                when (type) {
+                    ConnectivityManager.TYPE_WIFI -> true
+                    ConnectivityManager.TYPE_MOBILE -> true
+                    ConnectivityManager.TYPE_ETHERNET -> true
+                    else -> false
+                }
+            } ?: false
+        }
     }
 }
