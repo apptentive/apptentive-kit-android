@@ -469,6 +469,7 @@
         <item name="android:paddingTop">@dimen/apptentive_survey_terms_conditions_vertical_padding</item>
         <item name="android:paddingBottom">@dimen/apptentive_survey_terms_conditions_vertical_padding</item>
         <item name="android:gravity">center</item>
+
     </style>
 
     <style name="Apptentive.TextAppearance.Caption.Survey.Error.Footer">
@@ -653,6 +654,7 @@
     <style name="Apptentive.Widget.Survey.BottomAppBar">
         <item name="android:background">?colorPrimary</item>
         <item name="android:minHeight">@dimen/apptentive_bottom_app_bar_min_height</item>
+        <item name="android:importantForAccessibility">noHideDescendants</item>
     </style>
     <!-- Survey Widgets End -->
     <!-- Widgets End -->
