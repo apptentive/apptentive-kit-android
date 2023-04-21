@@ -19,9 +19,7 @@ class EventPayload(
     val data: Map<String, Any?>? = null,
     @SensitiveDataKey val customData: Map<String, Any?>? = null,
     val extendedData: List<ExtendedData>? = null
-) : ConversationPayload(
-    nonce = nonce
-) {
+) : ConversationPayload(nonce) {
 
     //region Inheritance
 

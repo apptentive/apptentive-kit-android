@@ -20,7 +20,7 @@ abstract class Payload(val nonce: String) {
 
     fun toJson(): String = JsonConverter.toJson(mapOf(getJsonContainer() to this))
 
-    internal fun toPayloadData() = PayloadData(
+    fun toPayloadData() = PayloadData(
         nonce = nonce,
         type = getPayloadType(),
         path = getHttpPath(),

@@ -5,7 +5,6 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import apptentive.com.android.TestCase
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.EngagementResult
-import apptentive.com.android.feedback.GenerateUUIDRule
 import apptentive.com.android.feedback.MockTimeRule
 import apptentive.com.android.feedback.engagement.EngageArgs
 import apptentive.com.android.feedback.engagement.EngagementCallback
@@ -28,8 +27,6 @@ import org.junit.Rule
 import org.junit.Test
 
 class SurveyInteractionLauncherTest : TestCase() {
-    @get:Rule
-    val uuidRule = GenerateUUIDRule()
 
     @get:Rule
     val timeRule = MockTimeRule(currentTime = 1000.0, utcOffset = -18000)
@@ -90,7 +87,7 @@ class SurveyInteractionLauncherTest : TestCase() {
         assertResults(
             // survey response payload
             toProperJson(
-                "{'response':{'id':'interaction_id','answers':{'id_1':[{'value':'text'}],'id_2':[{'value':5}],'id_3':[{'id':'choice_1'},{'id':'choice_2','value':'Other'}]},'client_created_at':1000.0,'client_created_at_utc_offset':-18000,'nonce':'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'}}"
+                "{'response':{'id':'interaction_id','answers':{'id_1':[{'value':'text'}],'id_2':[{'value':5}],'id_3':[{'id':'choice_1'},{'id':'choice_2','value':'Other'}]},'session_id':'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx','client_created_at':1000.0,'client_created_at_utc_offset':-18000,'nonce':'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'}}"
             ),
 
             // "submit" event
