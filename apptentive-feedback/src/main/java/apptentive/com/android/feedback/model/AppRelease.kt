@@ -10,6 +10,12 @@ import apptentive.com.android.util.InternalUseOnly
  * @param versionCode - host application version code
  * @param versionName - host application version name
  * @param targetSdkVersion - host application target sdk version
+ * @param minSdkVersion - host application min sdk version
+ * @param debug - host application debuggable flag
+ * @param inheritStyle - host application theme inheritance flag
+ * @param overrideStyle - host application theme override flag
+ * @param appStore - host application app store
+ * @param customAppStoreURL - host application custom app store url
  */
 @InternalUseOnly
 data class AppRelease(

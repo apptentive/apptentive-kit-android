@@ -97,7 +97,17 @@ internal class DefaultConversationSerializer(
         val newExpiry = conversation.engagementManifest.expiry
         if (lastKnownManifestExpiry != newExpiry) {
             val json = JsonConverter.toJson(conversation.engagementManifest)
-            manifestFile.writeText(json)
+            val atomicManifestFile = AtomicFile(manifestFile)
+            val manifestStream = atomicManifestFile.startWrite()
+            try {
+                manifestStream.use {
+                    manifestStream.write(json.toByteArray())
+                    atomicManifestFile.finishWrite(manifestStream)
+                }
+            } catch (e: Exception) {
+                atomicManifestFile.failWrite(manifestStream)
+                throw ConversationSerializationException("Unable to save engagement manifest", e)
+            }
             lastKnownManifestExpiry = newExpiry
         }
     }
