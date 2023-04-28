@@ -102,7 +102,7 @@ internal data class DefaultTargetingState(
             is random.percent -> randomSampling.getRandomValue()
             is random.percent_with_id -> randomSampling.getOrPutRandomValue(field.randomPercentId)
 
-            else -> null
+            else -> throw IllegalArgumentException("Unknown/Unhandled field: $field")
         }
     }
 }

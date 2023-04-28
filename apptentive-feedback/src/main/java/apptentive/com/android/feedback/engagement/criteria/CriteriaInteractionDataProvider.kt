@@ -25,12 +25,17 @@ internal class CriteriaInteractionDataProvider(
 
     private fun getInteractionId(invocations: List<Invocation>): InteractionId? {
         for (invocation in invocations) {
-            if (usingCustomStoreUrlSkipInAppReviewID != invocation.interactionId) {
-                if (invocation.criteria.isMet(state, verbose = true)) {
-                    return invocation.interactionId
+            try {
+                if (usingCustomStoreUrlSkipInAppReviewID != invocation.interactionId) {
+                    if (invocation.criteria.isMet(state, verbose = true)) {
+                        return invocation.interactionId
+                    }
+                } else {
+                    Log.d(INTERACTIONS, "Alternate app store is being used. Skipping In App Review Interaction evaluation")
                 }
-            } else {
-                Log.d(INTERACTIONS, "Alternate app store is being used. Skipping In App Review Interaction evaluation")
+            } catch (e: Exception) {
+                Log.e(INTERACTIONS, "Error evaluating criteria for invocation $invocation", e)
+                continue
             }
         }
         return null
