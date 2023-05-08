@@ -14,6 +14,8 @@ import androidx.core.content.ContextCompat
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
 import apptentive.com.android.feedback.EngagementResult
+import apptentive.com.android.feedback.model.EventNotification
+import apptentive.com.android.feedback.model.MessageCenterNotification
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags
 import apptentive.com.app.databinding.ActivityMainBinding
@@ -107,17 +109,22 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
             (getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager).clearApplicationUserData()
         }
 
-        Apptentive.eventNotificationObservable.observe { notification ->
-            val name = notification?.name
-            val vendor = notification?.vendor
-            val interaction = notification?.interaction
-            val interactionId = notification?.interactionId?.let { id -> "\"$id\"" } ?: "`null`"
+        Apptentive.eventNotificationObservable.observe(::observeApptentiveEvents)
 
-            val notificationText = "Name: \"$name\". Vendor: \"$vendor\". " +
-                "Interaction: \"$interaction\". Interaction ID: $interactionId"
-            Log.d(LogTags.EVENT_NOTIFICATION, notificationText)
+        Apptentive.messageCenterNotificationObservable.observe(::observeNewMessage)
+    }
 
-            // Survey interaction handling
+    private fun observeApptentiveEvents(notification: EventNotification?) {
+        val name = notification?.name
+        val vendor = notification?.vendor
+        val interaction = notification?.interaction
+        val interactionId = notification?.interactionId?.let { id -> "\"$id\"" } ?: "`null`"
+
+        val notificationText = "Name: \"$name\". Vendor: \"$vendor\". " +
+            "Interaction: \"$interaction\". Interaction ID: $interactionId"
+        Log.d(LogTags.EVENT_NOTIFICATION, notificationText)
+
+        // Survey interaction handling
 //            if (interaction == "Survey") {
 //                when (name) {
 //                    "launch" -> { /* Survey shown */ }
@@ -125,24 +132,23 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
 //                    "cancel", "cancel_partial" -> { /* Survey closed without completing */ }
 //                }
 //            }
-        }
+    }
 
-        Apptentive.messageCenterNotificationObservable.observe { notification ->
-            val notificationText =
-                "Can Show Message Center: ${notification?.canShowMessageCenter}. " +
-                    "Unread Message Count: ${notification?.unreadMessageCount}. " +
-                    "Person Name: ${notification?.personName}. " +
-                    "Person Email: ${notification?.personEmail}"
+    private fun observeNewMessage(notification: MessageCenterNotification?) {
+        val notificationText =
+            "Can Show Message Center: ${notification?.canShowMessageCenter}. " +
+                "Unread Message Count: ${notification?.unreadMessageCount}. " +
+                "Person Name: ${notification?.personName}. " +
+                "Person Email: ${notification?.personEmail}"
 
-            Log.d(LogTags.MESSAGE_CENTER_NOTIFICATION, notificationText)
+        Log.d(LogTags.MESSAGE_CENTER_NOTIFICATION, notificationText)
 
-            runOnUiThread {
-                binding.messageCenterButton.isEnabled = notification?.canShowMessageCenter == true
+        runOnUiThread {
+            binding.messageCenterButton.isEnabled = notification?.canShowMessageCenter == true
 
-                notification?.unreadMessageCount?.let {
-                    binding.unreadMessagesText.text =
-                        resources.getQuantityString(R.plurals.unread_messages, it, it)
-                }
+            notification?.unreadMessageCount?.let {
+                binding.unreadMessagesText.text =
+                    resources.getQuantityString(R.plurals.unread_messages, it, it)
             }
         }
     }
@@ -160,14 +166,15 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
 
         val initialUnread = Apptentive.getUnreadMessageCount()
         binding.unreadMessagesText.text = resources.getQuantityString(R.plurals.unread_messages, initialUnread, initialUnread)
-
-//        Apptentive.addUnreadMessagesListener { unreadCount ->
-//            binding.unreadMessagesText.text =
-//                resources.getQuantityString(R.plurals.unread_messages, unreadCount, unreadCount)
-//        }
     }
 
     override fun getApptentiveActivityInfo(): Activity {
         return this
+    }
+
+    override fun onDestroy() {
+        Apptentive.eventNotificationObservable.removeObserver(::observeApptentiveEvents)
+        Apptentive.messageCenterNotificationObservable.removeObserver(::observeNewMessage)
+        super.onDestroy()
     }
 }
