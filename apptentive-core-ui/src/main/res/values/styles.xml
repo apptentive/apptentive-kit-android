@@ -590,6 +590,12 @@
         <item name="trackColorInactive">@color/apptentive_mtrl_slider_inactive_track_color</item>
         <item name="android:layout_marginStart">@dimen/apptentive_survey_radio_checkbox_range_horizontal_margin</item>
         <item name="android:layout_marginEnd">@dimen/apptentive_survey_radio_checkbox_range_horizontal_margin</item>
+        <item name="materialThemeOverlay">@style/Apptentive.Widget.Survey.Range.Popup</item>
+    </style>
+
+    <style name="Apptentive.Widget.Survey.Range.Popup" parent="">
+        <item name="backgroundTint">?colorSecondary</item>
+        <item name="android:textColor">?colorOnSecondary</item>
     </style>
 
     <!-- https://material.io/components/text-fields/android#outlined-text-field -->
