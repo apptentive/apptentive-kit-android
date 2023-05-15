@@ -1,3 +1,8 @@
+# 2023-05-17 - v6.0.5
+#### Fixes
+* Resolved internal observers and observables issue 
+
+
 # 2023-03-30 - v6.0.4
 #### Improvements
  * Expanded support for links in survey introduction
