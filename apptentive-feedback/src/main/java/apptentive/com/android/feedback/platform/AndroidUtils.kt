@@ -79,13 +79,7 @@ internal object AndroidUtils {
 
     //region Firmware
 
-    fun getBootloaderVersion(): String? =
-        try {
-            Build::class.java.getField("BOOTLOADER").get(null) as String
-        } catch (e: Exception) {
-            Log.e(SYSTEM, "Exception while resolving simOperatorName", e)
-            null
-        }
+    fun getBootloaderVersion(): String? = Build.BOOTLOADER
 
     /**
      * Returns the version string for the radio firmware.

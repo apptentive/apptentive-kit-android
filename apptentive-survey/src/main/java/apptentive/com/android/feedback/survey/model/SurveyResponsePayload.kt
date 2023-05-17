@@ -15,7 +15,7 @@ internal class SurveyResponsePayload(
     nonce: String = generateUUID(),
     val id: String,
     val answers: Map<String, List<AnswerData>>
-) : ConversationPayload(nonce = nonce) {
+) : ConversationPayload(nonce) {
     data class AnswerData(
         val id: String? = null,
         val value: Any? = null

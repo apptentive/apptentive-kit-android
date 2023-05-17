@@ -16,10 +16,9 @@ internal class RatingDialogInteractionLauncher : AndroidViewInteractionLauncher<
         Log.i(INTERACTIONS, "Rating Dialog interaction launched with title: ${interaction.title}")
         Log.v(INTERACTIONS, "Rating Dialog interaction data: $interaction")
 
-        saveInteractionBackup(interaction, engagementContext.getAppActivity())
-
         engagementContext.executors.main.execute {
             try {
+                saveInteractionBackup(interaction, engagementContext.getAppActivity())
                 val fragmentManager = engagementContext.getFragmentManager()
                 DependencyProvider.register(RatingDialogInteractionProvider(interaction))
                 val ratingDialog = RatingDialogFragment()

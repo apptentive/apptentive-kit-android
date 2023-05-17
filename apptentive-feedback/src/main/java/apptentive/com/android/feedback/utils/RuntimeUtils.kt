@@ -5,7 +5,6 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 
 internal object RuntimeUtils {
-    @Suppress("DEPRECATION")
     fun getApplicationInfo(context: Context): ApplicationInfo {
         val packageManager = context.packageManager
         val packageInfo = packageManager.getPackageInfo(context.packageName, 0)
@@ -20,7 +19,8 @@ internal object RuntimeUtils {
         return ApplicationInfo(
             packageName = context.packageName,
             versionName = packageInfo.versionName,
-            versionCode = packageInfo.versionCode.toLong(),
+            versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode
+            else packageInfo.versionCode.toLong(),
             targetSdkVersion = targetSdkVersion,
             minSdkVersion = minSdkVersion,
             debuggable = debuggable

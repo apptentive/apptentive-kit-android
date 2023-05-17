@@ -1,11 +1,9 @@
 package apptentive.com.android.feedback.model
 
-import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.engagement.criteria.DateTime
 import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
 
-@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 data class EngagementRecords<Key : Any>(val records: MutableMap<Key, EngagementRecord> = mutableMapOf()) {
     fun totalInvokes(key: Key): Long {
         return records[key]?.getTotalInvokes() ?: 0

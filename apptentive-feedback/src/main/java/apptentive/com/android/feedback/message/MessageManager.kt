@@ -197,48 +197,71 @@ class MessageManager(
     }
 
     fun sendAttachment(uri: String, isHidden: Boolean? = null) {
-        val message = Message(
-            type = Message.MESSAGE_TYPE_COMPOUND,
-            body = null,
-            sender = Sender(senderProfile.id, senderProfile.name, null),
-            hidden = isHidden,
-            messageStatus = Message.Status.Sending,
-            inbound = true
-        )
+        try {
+            val message = Message(
+                type = Message.MESSAGE_TYPE_COMPOUND,
+                body = null,
+                sender = Sender(senderProfile.id, senderProfile.name, null),
+                hidden = isHidden,
+                messageStatus = Message.Status.Sending,
+                inbound = true
+            )
 
-        /*
+            /*
          * Make a local copy in the cache dir. By default the file name is "apptentive-api-file + nonce"
          * If original uri is known, the name will be taken from the original uri
          */
-        val activity = DependencyProvider.of<EngagementContextFactory>().engagementContext().getAppActivity()
-        FileUtil.createLocalStoredAttachment(activity, uri, message.nonce)?.let {
-            it.id = message.nonce
-            message.attachments = listOf(it)
-            sendMessage(message)
-        } ?: Log.e(MESSAGE_CENTER, "Issue with creating attachment file. Cannot send. Check logs.")
+            val activity = DependencyProvider.of<EngagementContextFactory>().engagementContext()
+                .getAppActivity()
+            FileUtil.createLocalStoredAttachment(activity, uri, message.nonce)?.let {
+                it.id = message.nonce
+                message.attachments = listOf(it)
+                sendMessage(message)
+            } ?: Log.e(
+                MESSAGE_CENTER,
+                "Issue with creating attachment file. Cannot send. Check logs."
+            )
+        } catch (exception: Exception) {
+            Log.e(MESSAGE_CENTER, "Failed to send an attachment message", exception)
+        }
     }
 
     fun sendHiddenAttachmentFromInputStream(inputStream: InputStream, mimeType: String) {
-        val message = Message(
-            type = Message.MESSAGE_TYPE_COMPOUND,
-            body = null,
-            sender = Sender(senderProfile.id, senderProfile.name, null),
-            hidden = true,
-            messageStatus = Message.Status.Sending,
-            inbound = true
-        )
+        try {
+            val message = Message(
+                type = Message.MESSAGE_TYPE_COMPOUND,
+                body = null,
+                sender = Sender(senderProfile.id, senderProfile.name, null),
+                hidden = true,
+                messageStatus = Message.Status.Sending,
+                inbound = true
+            )
 
-        val activity = DependencyProvider.of<EngagementContextFactory>().engagementContext().getAppActivity()
-        var localFilePath: String = FileUtil.generateCacheFilePathFromNonceOrPrefix(activity, message.nonce, null)
-        val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)
-        if (!extension.isNullOrEmpty()) localFilePath += ".$extension"
+            val activity = DependencyProvider.of<EngagementContextFactory>().engagementContext()
+                .getAppActivity()
+            var localFilePath: String =
+                FileUtil.generateCacheFilePathFromNonceOrPrefix(activity, message.nonce, null)
+            val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)
+            if (!extension.isNullOrEmpty()) localFilePath += ".$extension"
 
-        // When created from InputStream, there is no source file uri or path, so just use the cache file path
-        FileUtil.createLocalStoredAttachmentFile(activity, inputStream, localFilePath, localFilePath, mimeType)?.let {
-            it.id = message.nonce
-            message.attachments = listOf(it)
-            sendMessage(message)
-        } ?: Log.e(MESSAGE_CENTER, "Issue with creating attachment file. Cannot send. Check logs.")
+            // When created from InputStream, there is no source file uri or path, so just use the cache file path
+            FileUtil.createLocalStoredAttachmentFile(
+                activity,
+                inputStream,
+                localFilePath,
+                localFilePath,
+                mimeType
+            )?.let {
+                it.id = message.nonce
+                message.attachments = listOf(it)
+                sendMessage(message)
+            } ?: Log.e(
+                MESSAGE_CENTER,
+                "Issue with creating attachment file. Cannot send. Check logs."
+            )
+        } catch (exception: Exception) {
+            Log.e(MESSAGE_CENTER, "Failed to send a hidden attachment")
+        }
     }
 
     fun downloadAttachment(activity: Activity, message: Message, attachment: Message.Attachment) {

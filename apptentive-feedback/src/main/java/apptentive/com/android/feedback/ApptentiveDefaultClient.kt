@@ -88,6 +88,7 @@ import apptentive.com.android.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.util.LogTags.PAYLOADS
 import apptentive.com.android.util.LogTags.PUSH_NOTIFICATION
 import apptentive.com.android.util.Result
+import apptentive.com.android.util.generateUUID
 import com.apptentive.android.sdk.conversation.DefaultLegacyConversationManager
 import com.apptentive.android.sdk.conversation.LegacyConversationManager
 import java.io.ByteArrayInputStream
@@ -237,12 +238,14 @@ class ApptentiveDefaultClient(
             Log.i(LIFE_CYCLE_OBSERVER, "Observing App lifecycle")
             ProcessLifecycleOwner.get().lifecycle.addObserver(
                 ApptentiveLifecycleObserver(
-                    this, executors.state, {
+                    client = this,
+                    stateExecutor = executors.state,
+                    onForeground = {
                         conversationManager.tryFetchEngagementManifest()
                         conversationManager.tryFetchAppConfiguration()
                         messageManager?.onAppForeground()
                     },
-                    {
+                    onBackground = {
                         messageManager?.onAppBackground()
                     }
                 )
@@ -612,6 +615,8 @@ class ApptentiveDefaultClient(
     internal fun getConversationId() = conversationManager.getConversation().conversationId
 
     companion object {
+        val sessionId = generateUUID()
+
         private const val CONVERSATION_DIR = "conversations"
 
         @WorkerThread

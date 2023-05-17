@@ -9,7 +9,6 @@ import java.util.UUID
 internal class DefaultDeviceFactory(
     private val context: Context
 ) : Factory<Device> {
-    @Suppress("DEPRECATION")
     override fun create(): Device {
         return Device(
             osName = "Android",
@@ -21,7 +20,7 @@ internal class DefaultDeviceFactory(
             board = Build.BOARD,
             product = Build.PRODUCT,
             brand = Build.BRAND,
-            cpu = Build.CPU_ABI,
+            cpu = Build.SUPPORTED_ABIS.firstOrNull().orEmpty(),
             device = Build.DEVICE,
             uuid = UUID.randomUUID().toString(),
             buildType = Build.TYPE,

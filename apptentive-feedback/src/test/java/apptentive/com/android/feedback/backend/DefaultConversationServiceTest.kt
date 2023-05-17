@@ -3,7 +3,6 @@ package apptentive.com.android.feedback.backend
 import apptentive.com.android.TestCase
 import apptentive.com.android.concurrent.ImmediateExecutorQueue
 import apptentive.com.android.core.TimeInterval
-import apptentive.com.android.feedback.GenerateUUIDRule
 import apptentive.com.android.feedback.mockAppRelease
 import apptentive.com.android.feedback.mockDevice
 import apptentive.com.android.feedback.mockPerson
@@ -24,13 +23,10 @@ import apptentive.com.android.serialization.json.JsonException
 import apptentive.com.android.util.Result
 import com.google.common.truth.Truth.assertThat
 import org.junit.Ignore
-import org.junit.Rule
 import org.junit.Test
 import java.io.ByteArrayOutputStream
 
 class DefaultConversationServiceTest : TestCase() {
-    @get:Rule
-    val uuidRule = GenerateUUIDRule()
 
     @Test
     fun fetchConversationToken() {

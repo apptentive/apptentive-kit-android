@@ -1,6 +1,6 @@
 package apptentive.com.android.feedback.survey.model
 
-import apptentive.com.android.feedback.GenerateUUIDRule
+import apptentive.com.android.TestCase
 import apptentive.com.android.feedback.MockTimeRule
 import apptentive.com.android.feedback.payload.MediaType
 import apptentive.com.android.feedback.payload.PayloadData
@@ -11,12 +11,9 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test
 
-class SurveyResponsePayloadTest {
+class SurveyResponsePayloadTest : TestCase() {
     @get:Rule
     val timeRule = MockTimeRule(currentTime = 1000.0, utcOffset = -18000)
-
-    @get:Rule
-    val uuidRule = GenerateUUIDRule()
 
     @Test
     fun testEventPayloadData() {
@@ -46,6 +43,7 @@ class SurveyResponsePayloadTest {
                 "'2':[{'value':5}]," +
                 "'3':[{'id':'choice_1'},{'id':'choice_3','value':'text'}]" +
                 "}," +
+                "'session_id':'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'," +
                 "'client_created_at':1000.0," +
                 "'client_created_at_utc_offset':-18000," +
                 "'nonce':'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'" +

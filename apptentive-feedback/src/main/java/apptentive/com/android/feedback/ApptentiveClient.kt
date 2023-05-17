@@ -35,7 +35,7 @@ internal typealias UnreadMessageCallback = (Int) -> Unit
 
 private class ApptentiveNullClient : ApptentiveClient {
     override fun engage(event: Event, customData: Map<String, Any?>?): EngagementResult {
-        return EngagementResult.Error("Apptentive SDK is not initialized")
+        return EngagementResult.Error("Apptentive SDK is not initialized. Cannot engage event: ${event.name}")
     }
 
     override fun canShowInteraction(event: Event): Boolean {

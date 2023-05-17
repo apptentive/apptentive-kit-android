@@ -11,8 +11,10 @@ internal class DefaultAppReleaseFactory(
 ) : Factory<AppRelease> {
     override fun create(): AppRelease {
         val applicationInfo = RuntimeUtils.getApplicationInfo(context)
-        val sharedPrefs = context.getSharedPreferences(SharedPrefConstants.CUSTOM_STORE_URL, Context.MODE_PRIVATE)
-        val customAppStoreURL = sharedPrefs.getString(SharedPrefConstants.CUSTOM_STORE_URL_KEY, null)
+        val sharedPrefsURL = context.getSharedPreferences(SharedPrefConstants.CUSTOM_STORE_URL, Context.MODE_PRIVATE)
+        val customAppStoreURL = sharedPrefsURL.getString(SharedPrefConstants.CUSTOM_STORE_URL_KEY, null)
+        val sharedPrefsTheme = context.getSharedPreferences(SharedPrefConstants.USE_HOST_APP_THEME, Context.MODE_PRIVATE)
+        val shouldInheritStyle = sharedPrefsTheme.getBoolean(SharedPrefConstants.USE_HOST_APP_THEME_KEY, true)
 
         return AppRelease(
             type = "android",
@@ -22,9 +24,9 @@ internal class DefaultAppReleaseFactory(
             targetSdkVersion = applicationInfo.targetSdkVersion.toString(),
             minSdkVersion = applicationInfo.minSdkVersion.toString(),
             debug = applicationInfo.debuggable,
-            inheritStyle = false,
-            overrideStyle = false,
-            appStore = null,
+            inheritStyle = shouldInheritStyle,
+            overrideStyle = !shouldInheritStyle,
+            appStore = if (customAppStoreURL == null) "Google" else null,
             customAppStoreURL = customAppStoreURL
         )
     }

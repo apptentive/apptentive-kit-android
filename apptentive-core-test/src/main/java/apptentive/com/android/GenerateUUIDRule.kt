@@ -1,4 +1,4 @@
-package apptentive.com.android.feedback
+package apptentive.com.android
 
 import apptentive.com.android.util.generateUUID
 import io.mockk.every
@@ -8,12 +8,12 @@ import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 
 class GenerateUUIDRule : TestWatcher() {
-    override fun starting(description: Description?) {
+    override fun starting(description: Description) {
         mockkStatic(UTIL_CLASS)
         every { generateUUID() } returns "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
     }
 
-    override fun finished(description: Description?) {
+    override fun finished(description: Description) {
         unmockkStatic(UTIL_CLASS)
     }
 

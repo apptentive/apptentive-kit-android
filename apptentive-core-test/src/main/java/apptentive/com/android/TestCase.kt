@@ -8,6 +8,9 @@ open class TestCase {
     @get:Rule
     open val dependencyRule = DependencyProviderRule()
 
+    @get:Rule
+    val uuidRule = GenerateUUIDRule()
+
     private val results = mutableListOf<Any>()
 
     //region Before/After

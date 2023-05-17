@@ -9,7 +9,6 @@ data class InteractionType(val name: String) {
     }
 
     companion object {
-        private const val UPGRADE_MESSAGE = "UpgradeMessage"
         private const val ENJOYMENT_DIALOG = "EnjoymentDialog"
         private const val RATING_DIALOG = "RatingDialog"
         private const val MESSAGE_CENTER = "MessageCenter"
@@ -19,7 +18,6 @@ data class InteractionType(val name: String) {
         private const val TEXT_MODAL = "TextModal"
         private const val NAVIGATE_TO_LINK = "NavigateToLink"
 
-        val UpgradeMessage = InteractionType(UPGRADE_MESSAGE)
         val EnjoymentDialog = InteractionType(ENJOYMENT_DIALOG)
         val RatingDialog = InteractionType(RATING_DIALOG)
         val MessageCenter = InteractionType(MESSAGE_CENTER)
@@ -30,7 +28,6 @@ data class InteractionType(val name: String) {
         val NavigateToLink = InteractionType(NAVIGATE_TO_LINK)
 
         internal fun names() = listOf(
-            UPGRADE_MESSAGE,
             ENJOYMENT_DIALOG,
             RATING_DIALOG,
             MESSAGE_CENTER,
