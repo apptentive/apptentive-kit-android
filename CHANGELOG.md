@@ -1,4 +1,13 @@
-# 2023-03-30 - v6.0.4
+# 2023-05-17 - v6.0.5
+#### Improvements
+* Added Java interoperable support for push functions
+* Improved error handling throughout the SDK
+* Added session id to the payloads
+
+#### Fixes
+* Resolved internal observers and observables issue 
+
+# 2023-04-05 - v6.0.4
 #### Improvements
  * Expanded support for links in survey introduction
  
