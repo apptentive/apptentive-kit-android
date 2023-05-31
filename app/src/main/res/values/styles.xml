@@ -1034,6 +1034,8 @@
         <item name="apptentiveRatingDialogButtonRemindStyle">@style/Cookbook1.Button.Stacked.Borderless.RatingDialog</item>
         <item name="apptentiveRatingDialogButtonDeclineStyle">@style/Cookbook1.Button.Stacked.Borderless.RatingDialog</item>
     </style>-->
+    <!-- &lt;!&ndash; MessageCenter &ndash;&gt; -->
+       <item name="apptentiveMessageCenterToolbarStyle">@style/Cookbook1.MessageCenter.Toolbar</item>
 
     <!-- General -->
     <style name="Cookbook1.Button" parent="Widget.MaterialComponents.Button">
@@ -1156,6 +1158,12 @@
     <style name="Cookbook1.Button.Stacked.Borderless.RatingDialog">
         <item name="android:layout_gravity">center</item>
         <item name="android:layout_marginTop">4dp</item>
+    </style>
+
+    <!-- Message Center -->
+
+    <style name="Cookbook1.MessageCenter.Toolbar" parent="Apptentive.Widget.MessageCenter.Toolbar">
+        <item name="android:background">@drawable/cookbook_1_message_center_toolbar_top_background</item>
     </style>
 
     <!-- Cookbook 2 -->
