@@ -1039,6 +1039,9 @@
        <item name="apptentiveMessageCenterBubbleColorInbound">#203683</item>
        <item name="apptentiveMessageCenterBubbleColorOutbound">#FFFF</item>
        <item name="apptentiveMessageCenterTextColorOutbound">#081728</item>
+       <item name="apptentiveMessageCenterColorBackgroundAttachment">#2294D4</item>
+       <item name="apptentiveMessageCenterFillColorAttachmentIcon">#FFFF</item>
+       <item name="apptentiveMessageCenterAttachmentThumbnailColor">@style/Cookbook1.MessageCenter.Attachment.Thumbnail.Color</item>
 
     <!-- General -->
     <style name="Cookbook1.Button" parent="Widget.MaterialComponents.Button">
@@ -1167,6 +1170,10 @@
 
     <style name="Cookbook1.MessageCenter.Toolbar" parent="Apptentive.Widget.MessageCenter.Toolbar">
         <item name="android:background">@drawable/cookbook_1_message_center_toolbar_top_background</item>
+    </style>
+
+    <style name="Cookbook1.MessageCenter.Attachment.Thumbnail.Color" parent="Apptentive.Widget.MessageCenter.AttachmentThumbnail">
+        <item name="android:strokeColor">#FFFF</item>
     </style>
 
     <!-- Cookbook 2 -->
