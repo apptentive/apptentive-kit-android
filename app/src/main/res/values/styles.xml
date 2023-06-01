@@ -1035,15 +1035,22 @@
         <item name="apptentiveRatingDialogButtonDeclineStyle">@style/Cookbook1.Button.Stacked.Borderless.RatingDialog</item>
     </style>-->
     <!-- &lt;!&ndash; MessageCenter &ndash;&gt; -->
-       <item name="apptentiveMessageCenterToolbarStyle">@style/Cookbook1.MessageCenter.Toolbar</item>
-       <item name="apptentiveMessageCenterBubbleColorInbound">#203683</item>
-       <item name="apptentiveMessageCenterBubbleColorOutbound">#FFFF</item>
-       <item name="apptentiveMessageCenterTextColorOutbound">#081728</item>
-       <item name="apptentiveMessageCenterColorBackgroundAttachment">#2294D4</item>
-        <item name="apptentiveMessageCenterAttachmentThumbnailTypeTextStyle">@style/Cookbook1.MessageCenter.Attachment.Thumbnail.Type.TextColor</item>
+        <item name="apptentiveMessageCenterToolbarStyle">@style/Cookbook1.MessageCenter.Toolbar</item>
+        <item name="apptentiveMessageCenterBubbleColorInbound">#203683</item>
+        <item name="apptentiveMessageCenterBubbleColorOutbound">#FFFF</item>
+        <item name="apptentiveMessageCenterTextColorOutbound">#081728</item>
+        <item name="apptentiveMessageCenterColorBackgroundAttachment">#2294D4</item>
+        <item name="apptentiveMessageCenterAttachmentThumbnailTypeTextStyle">@style/Cookbook1.MessageCenter.Attachment.Thumbnail.Type.Text.Style</item>
         <item name="apptentiveMessageCenterStrokeColorIconDocument">#FFFF</item>
         <item name="apptentiveMessageCenterStrokeColorIconDownload">#FFFF</item>
+        <item name="apptentiveMessageCenterViewSeparatorStyle">@style/Cookbook1.MessageCenter.View.Separator.Style</item>
+        <item name="apptentiveMessageCenterFillColorSendIcon">#FFFF</item>
+        <item name="apptentiveMessageCenterFillColorAttachmentIcon">#FFFF</item>
 
+        <item name="apptentiveMessageCenterFillColorAttachmentIconBackground">@drawable/cookbook_1_button_background</item>
+        <item name="apptentiveMessageCenterFillColorSendIconBackground">@drawable/cookbook_1_button_background</item>
+        <item name="apptentiveMessageCenterAttachmentImageStyle">@style/Cookbook1.MessageCenter.Attachment.Button.Style</item>
+        <item name="apptentiveMessageCenterSendImageStyle">@style/Cookbook1.MessageCenter.Attachment.Button.Style</item>
     <!-- General -->
     <style name="Cookbook1.Button" parent="Widget.MaterialComponents.Button">
         <item name="android:fontFamily">@font/mulish</item>
@@ -1173,8 +1180,17 @@
         <item name="android:background">@drawable/cookbook_1_message_center_toolbar_top_background</item>
     </style>
 
-    <style name="Cookbook1.MessageCenter.Attachment.Thumbnail.Type.TextColor" parent="Apptentive.Widget.MessageCenter.Text.AttachmentType">
+    <style name="Cookbook1.MessageCenter.Attachment.Thumbnail.Type.Text.Style" parent="Apptentive.Widget.MessageCenter.Text.AttachmentType">
         <item name="android:textColor">#FFFF</item>
+    </style>
+
+    <style name="Cookbook1.MessageCenter.View.Separator.Style" parent="Apptentive.Widget.Separator">
+        <item name="android:background">#2294D4</item>
+    </style>
+
+    <style name="Cookbook1.MessageCenter.Attachment.Button.Style" parent="Apptentive.Widget.MessageCenter.Image.Button.Attachment">
+        <item name="android:background">@drawable/cookbook_1_button_background</item>
+        <item name="android:layout_margin">10dp</item>
     </style>
 
     <!-- Cookbook 2 -->
