@@ -1033,8 +1033,8 @@
         <item name="apptentiveRatingDialogButtonRateStyle">@style/Cookbook1.Button.Stacked.RatingDialog</item>
         <item name="apptentiveRatingDialogButtonRemindStyle">@style/Cookbook1.Button.Stacked.Borderless.RatingDialog</item>
         <item name="apptentiveRatingDialogButtonDeclineStyle">@style/Cookbook1.Button.Stacked.Borderless.RatingDialog</item>
-    </style>-->
-    <!-- &lt;!&ndash; MessageCenter &ndash;&gt; -->
+
+        &lt;!&ndash; MessageCenter &ndash;&gt;
         <item name="apptentiveMessageCenterToolbarStyle">@style/Cookbook1.MessageCenter.Toolbar</item>
         <item name="apptentiveMessageCenterBubbleColorInbound">#203683</item>
         <item name="apptentiveMessageCenterBubbleColorOutbound">#FFFF</item>
@@ -1052,7 +1052,7 @@
         <item name="apptentiveMessageCenterSendImageStyle">@style/Cookbook1.MessageCenter.Send.Button.Style</item>
         <item name="apptentiveMessageCenterComposerStyle">@style/Cookbook1.MessageCenter.Composer.Style</item>
 
-</style>
+<</style>-->
     <!-- General -->
     <style name="Cookbook1.Button" parent="Widget.MaterialComponents.Button">
         <item name="android:fontFamily">@font/mulish</item>
