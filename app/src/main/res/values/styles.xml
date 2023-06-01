@@ -1046,11 +1046,12 @@
         <item name="apptentiveMessageCenterViewSeparatorStyle">@style/Cookbook1.MessageCenter.View.Separator.Style</item>
         <item name="apptentiveMessageCenterFillColorSendIcon">#FFFF</item>
         <item name="apptentiveMessageCenterFillColorAttachmentIcon">#FFFF</item>
-
         <item name="apptentiveMessageCenterFillColorAttachmentIconBackground">@drawable/cookbook_1_button_background</item>
         <item name="apptentiveMessageCenterFillColorSendIconBackground">@drawable/cookbook_1_button_background</item>
         <item name="apptentiveMessageCenterAttachmentImageStyle">@style/Cookbook1.MessageCenter.Attachment.Button.Style</item>
-        <item name="apptentiveMessageCenterSendImageStyle">@style/Cookbook1.MessageCenter.Attachment.Button.Style</item>
+        <item name="apptentiveMessageCenterSendImageStyle">@style/Cookbook1.MessageCenter.Send.Button.Style</item>
+
+</style>
     <!-- General -->
     <style name="Cookbook1.Button" parent="Widget.MaterialComponents.Button">
         <item name="android:fontFamily">@font/mulish</item>
@@ -1189,6 +1190,11 @@
     </style>
 
     <style name="Cookbook1.MessageCenter.Attachment.Button.Style" parent="Apptentive.Widget.MessageCenter.Image.Button.Attachment">
+        <item name="android:background">@drawable/cookbook_1_button_background</item>
+        <item name="android:layout_margin">10dp</item>
+    </style>
+
+    <style name="Cookbook1.MessageCenter.Send.Button.Style" parent="Apptentive.Widget.MessageCenter.Image.Button.Send">
         <item name="android:background">@drawable/cookbook_1_button_background</item>
         <item name="android:layout_margin">10dp</item>
     </style>
