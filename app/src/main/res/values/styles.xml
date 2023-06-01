@@ -1038,6 +1038,7 @@
        <item name="apptentiveMessageCenterToolbarStyle">@style/Cookbook1.MessageCenter.Toolbar</item>
        <item name="apptentiveMessageCenterBubbleColorInbound">#203683</item>
        <item name="apptentiveMessageCenterBubbleColorOutbound">#FFFF</item>
+       <item name="apptentiveMessageCenterTextColorOutbound">#081728</item>
 
     <!-- General -->
     <style name="Cookbook1.Button" parent="Widget.MaterialComponents.Button">
