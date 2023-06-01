@@ -1050,6 +1050,7 @@
         <item name="apptentiveMessageCenterFillColorSendIconBackground">@drawable/cookbook_1_button_background</item>
         <item name="apptentiveMessageCenterAttachmentImageStyle">@style/Cookbook1.MessageCenter.Attachment.Button.Style</item>
         <item name="apptentiveMessageCenterSendImageStyle">@style/Cookbook1.MessageCenter.Send.Button.Style</item>
+        <item name="apptentiveMessageCenterComposerStyle">@style/Cookbook1.MessageCenter.Composer.Style</item>
 
 </style>
     <!-- General -->
@@ -1197,6 +1198,12 @@
     <style name="Cookbook1.MessageCenter.Send.Button.Style" parent="Apptentive.Widget.MessageCenter.Image.Button.Send">
         <item name="android:background">@drawable/cookbook_1_button_background</item>
         <item name="android:layout_margin">10dp</item>
+    </style>
+
+    <style name="Cookbook1.MessageCenter.Composer.Style" parent="Apptentive.Widget.MessageCenter.Composer.EditText">
+        <item name="android:background">@drawable/cookbook_1_compose_background</item>
+        <item name="android:textColorHint">#767676</item>
+        <item name="android:textColor">#081728</item>
     </style>
 
     <!-- Cookbook 2 -->
