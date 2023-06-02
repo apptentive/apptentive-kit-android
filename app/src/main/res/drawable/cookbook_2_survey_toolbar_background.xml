@@ -7,6 +7,7 @@
             <solid android:color="?colorPrimary" />
         </shape>
     </item>
+
     <item
         android:bottom="3dp">
         <shape android:shape="rectangle">
@@ -15,4 +16,3 @@
     </item>
 
 </layer-list>
-
