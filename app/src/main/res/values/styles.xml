@@ -1268,6 +1268,7 @@
         <item name="apptentiveMessageCenterColorComposerOutline">#056E0F</item>
         <item name="apptentiveMessageCenterViewSeparatorStyle">@style/Cookbook2.MessageCenter.View.Separator.Style</item>
         <item name="apptentiveMessageCenterComposerStyle">@style/Cookbook2.MessageCenter.Composer.Style</item>
+       <item name="apptentiveMessageCenterFillColorIcon">#3A4C5F</item>
 
 
     </style> -->
