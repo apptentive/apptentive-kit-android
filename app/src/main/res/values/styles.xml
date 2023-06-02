@@ -1050,7 +1050,7 @@
         <item name="apptentiveMessageCenterFillColorSendIconBackground">@drawable/cookbook_1_message_center_button_background</item>
         <item name="apptentiveMessageCenterComposerStyle">@style/Cookbook1.MessageCenter.Composer.Style</item>
 
-</style>
+</style> -->
     <!-- General -->
     <style name="Cookbook1.Button" parent="Widget.MaterialComponents.Button">
         <item name="android:fontFamily">@font/mulish</item>
