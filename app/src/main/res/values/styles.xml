@@ -1276,6 +1276,11 @@
         <item name="apptentiveMessageCenterFillColorSendIconBackground">#056E0F</item>
         <item name="apptentiveMessageCenterFillColorAttachmentIconBackground">#056E0F</item>
         <item name="apptentiveMessageCenterBubbleColorOutbound">#F3F3F3</item>
+        <item name="apptentiveMessageCenterBubbleColorInbound">#056E0F</item>
+        <item name="apptentiveMessageCenterColorComposerOutline">#056E0F</item>
+        <item name="apptentiveMessageCenterViewSeparatorStyle">@style/Cookbook2.MessageCenter.View.Separator.Style</item>
+        <item name="apptentiveMessageCenterComposerStyle">@style/Cookbook2.MessageCenter.Composer.Style</item>
+
 
     </style>
 
@@ -1413,7 +1418,7 @@
     </style>
 
     <!-- Message Center -->
-    <style name="Cookbook2.MessageCenter.Toolbar" parent="Apptentive.Widget.Survey.Toolbar">
+    <style name="Cookbook2.MessageCenter.Toolbar" parent="Apptentive.Widget.MessageCenter.Toolbar">
         <item name="android:background">@drawable/cookbook_2_survey_toolbar_background</item>
         <item name="navigationIconTint">#3A4C5F</item>
         <item name="android:layout_gravity">center</item>
@@ -1422,6 +1427,16 @@
     <style name="Cookbook2.MessageCenter.Title" parent="">
         <item name="android:background">@drawable/cookbook_2_survey_header</item>
         <item name="android:textColor">#00000000</item>
+    </style>
+
+    <style name="Cookbook2.MessageCenter.View.Separator.Style" parent="Apptentive.Widget.Separator">
+        <item name="android:background">#3A4C5F</item>
+    </style>
+
+    <style name="Cookbook2.MessageCenter.Composer.Style" parent="Apptentive.Widget.MessageCenter.Composer.EditText">
+        <item name="android:background">@drawable/cookbook_2_compose_background</item>
+        <item name="android:textColorHint">#767676</item>
+        <item name="android:textColor">#081728</item>
     </style>
 
     <!-- Cookbook 3 -->
