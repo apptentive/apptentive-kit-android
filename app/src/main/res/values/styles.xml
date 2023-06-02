@@ -1501,15 +1501,15 @@
         <item name="apptentiveRatingDialogButtonRateStyle">@style/Cookbook3.Button.RatingDialog</item>
         <item name="apptentiveRatingDialogButtonRemindStyle">@style/Cookbook3.Button.RatingDialog</item>
         <item name="apptentiveRatingDialogButtonDeclineStyle">@style/Cookbook3.Button.Borderless.RatingDialog</item>
-    </style>-->
-       <!-- &lt;!&ndash; Apptentive Message Center &ndash;&gt; -->
+
+        &lt;!&ndash; Apptentive Message Center &ndash;&gt;
        <item name="apptentiveMessageCenterToolbarStyle">@style/Cookbook3.MessageCenter.Toolbar</item>
        <item name="apptentiveMessageCenterBubbleColorInbound">#B0243C</item>
        <item name="apptentiveMessageCenterBubbleColorOutbound">#F3F3F3</item>
        <item name="apptentiveMessageCenterColorComposerOutline">#056E0F</item>
        <item name="apptentiveMessageCenterViewSeparatorStyle">@style/Cookbook3.MessageCenter.View.Separator.Style</item>
        <item name="apptentiveMessageCenterComposerStyle">@style/Cookbook3.MessageCenter.Composer.Style</item>
-
+</style>-->
     <!-- General -->
     <style name="Cookbook3.Button" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="android:fontFamily">@font/comfortaa</item>
