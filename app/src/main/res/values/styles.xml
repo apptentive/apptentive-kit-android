@@ -1270,7 +1270,7 @@
         <item name="apptentiveRatingDialogButtonRemindStyle">@style/Cookbook2.Button.Borderless.RatingDialog</item>
         <item name="apptentiveRatingDialogButtonDeclineStyle">@style/Cookbook2.Button.Borderless.RatingDialog</item>
 
-        <!-- &lt;!&ndash; Apptentive Message Center &ndash;&gt; -->
+         &lt;!&ndash; Apptentive Message Center &ndash;&gt;
         <item name="apptentiveMessageCenterToolbarStyle">@style/Cookbook2.MessageCenter.Toolbar</item>
         <item name="apptentiveMessageCenterToolbarTitleStyle">@style/Cookbook2.MessageCenter.Title</item>
         <item name="apptentiveMessageCenterFillColorSendIconBackground">#056E0F</item>
@@ -1282,7 +1282,7 @@
         <item name="apptentiveMessageCenterComposerStyle">@style/Cookbook2.MessageCenter.Composer.Style</item>
 
 
-    </style>
+    </style> -->
 
     <!-- General -->
     <style name="Cookbook2.Button" parent="Widget.MaterialComponents.Button.OutlinedButton">
