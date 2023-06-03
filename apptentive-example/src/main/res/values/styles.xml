@@ -130,6 +130,22 @@
 <!--        <item name="apptentiveRatingDialogButtonRateStyle">@style/Cookbook1.Button.Stacked.RatingDialog</item>-->
 <!--        <item name="apptentiveRatingDialogButtonRemindStyle">@style/Cookbook1.Button.Stacked.Borderless.RatingDialog</item>-->
 <!--        <item name="apptentiveRatingDialogButtonDeclineStyle">@style/Cookbook1.Button.Stacked.Borderless.RatingDialog</item>-->
+
+<!--        &lt;!&ndash; Apptentive MessageCenter &ndash;&gt;-->
+<!--        <item name="apptentiveMessageCenterToolbarStyle">@style/Cookbook1.MessageCenter.Toolbar</item>-->
+<!--        <item name="apptentiveMessageCenterBubbleColorInbound">#203683</item>-->
+<!--        <item name="apptentiveMessageCenterBubbleColorOutbound">#FFFF</item>-->
+<!--        <item name="apptentiveMessageCenterTextColorOutbound">#081728</item>-->
+<!--        <item name="apptentiveMessageCenterColorBackgroundAttachment">#2294D4</item>-->
+<!--        <item name="apptentiveMessageCenterAttachmentThumbnailTypeTextStyle">@style/Cookbook1.MessageCenter.Attachment.Thumbnail.Type.Text.Style</item>-->
+<!--        <item name="apptentiveMessageCenterStrokeColorIconDocument">#FFFF</item>-->
+<!--        <item name="apptentiveMessageCenterStrokeColorIconDownload">#FFFF</item>-->
+<!--        <item name="apptentiveMessageCenterViewSeparatorStyle">@style/Cookbook1.MessageCenter.View.Separator.Style</item>-->
+<!--        <item name="apptentiveMessageCenterFillColorSendIcon">#FFFF</item>-->
+<!--        <item name="apptentiveMessageCenterFillColorAttachmentIcon">#FFFF</item>-->
+<!--        <item name="apptentiveMessageCenterFillColorAttachmentIconBackground">@drawable/cookbook_1_message_center_button_background</item>-->
+<!--        <item name="apptentiveMessageCenterFillColorSendIconBackground">@drawable/cookbook_1_message_center_button_background</item>-->
+<!--        <item name="apptentiveMessageCenterComposerStyle">@style/Cookbook1.MessageCenter.Composer.Style</item>-->
 <!--    </style>-->
 
 <!--    &lt;!&ndash; General &ndash;&gt;-->
@@ -255,6 +271,26 @@
 <!--        <item name="android:layout_marginTop">4dp</item>-->
 <!--    </style>-->
 
+<!--     &lt;!&ndash; Message Center &ndash;&gt;-->
+<!--    <style name="Cookbook1.MessageCenter.Toolbar" parent="Apptentive.Widget.MessageCenter.Toolbar">-->
+<!--        <item name="android:background">@drawable/cookbook_1_message_center_toolbar_top_background</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook1.MessageCenter.Attachment.Thumbnail.Type.Text.Style" parent="Apptentive.Widget.MessageCenter.Text.AttachmentType">-->
+<!--        <item name="android:textColor">#FFFF</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook1.MessageCenter.View.Separator.Style" parent="Apptentive.Widget.Separator">-->
+<!--        <item name="android:background">#2294D4</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook1.MessageCenter.Composer.Style" parent="Apptentive.Widget.MessageCenter.Composer.EditText">-->
+<!--        <item name="android:background">@drawable/cookbook_1_message_center_compose_background</item>-->
+<!--        <item name="android:textColorHint">#767676</item>-->
+<!--        <item name="android:textColor">#081728</item>-->
+<!--    </style>-->
+
+
     <!-- Cookbook 2 -->
     <!-- https://learn.apptentive.com/knowledge-base/android-ui-cookbook-design-2/ -->
 <!--    <style name="ApptentiveThemeOverride">-->
@@ -319,6 +355,18 @@
 <!--        <item name="apptentiveRatingDialogButtonRateStyle">@style/Cookbook2.Button.RatingDialog</item>-->
 <!--        <item name="apptentiveRatingDialogButtonRemindStyle">@style/Cookbook2.Button.Borderless.RatingDialog</item>-->
 <!--        <item name="apptentiveRatingDialogButtonDeclineStyle">@style/Cookbook2.Button.Borderless.RatingDialog</item>-->
+
+<!--    &lt;!&ndash; Apptentive Message Center &ndash;&gt;-->
+<!--        <item name="apptentiveMessageCenterToolbarStyle">@style/Cookbook2.MessageCenter.Toolbar</item>-->
+<!--        <item name="apptentiveMessageCenterToolbarTitleStyle">@style/Cookbook2.MessageCenter.Title</item>-->
+<!--        <item name="apptentiveMessageCenterFillColorSendIconBackground">#056E0F</item>-->
+<!--        <item name="apptentiveMessageCenterFillColorAttachmentIconBackground">#056E0F</item>-->
+<!--        <item name="apptentiveMessageCenterBubbleColorOutbound">#F3F3F3</item>-->
+<!--        <item name="apptentiveMessageCenterBubbleColorInbound">#056E0F</item>-->
+<!--        <item name="apptentiveMessageCenterColorComposerOutline">#056E0F</item>-->
+<!--        <item name="apptentiveMessageCenterViewSeparatorStyle">@style/Cookbook2.MessageCenter.View.Separator.Style</item>-->
+<!--        <item name="apptentiveMessageCenterComposerStyle">@style/Cookbook2.MessageCenter.Composer.Style</item>-->
+<!--        <item name="apptentiveMessageCenterFillColorIcon">#3A4C5F</item>-->
 <!--    </style>-->
 
 <!--    &lt;!&ndash; General &ndash;&gt;-->
@@ -454,6 +502,28 @@
 <!--        <item name="android:layout_gravity">center</item>-->
 <!--    </style>-->
 
+<!--    &lt;!&ndash; Message Center &ndash;&gt;-->
+<!--    <style name="Cookbook2.MessageCenter.Toolbar" parent="Apptentive.Widget.MessageCenter.Toolbar">-->
+<!--        <item name="android:background">@drawable/cookbook_2_survey_toolbar_background</item>-->
+<!--        <item name="navigationIconTint">#3A4C5F</item>-->
+<!--        <item name="android:layout_gravity">center</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook2.MessageCenter.Title" parent="">-->
+<!--        <item name="android:background">@drawable/cookbook_2_survey_header</item>-->
+<!--        <item name="android:textColor">#00000000</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook2.MessageCenter.View.Separator.Style" parent="Apptentive.Widget.Separator">-->
+<!--        <item name="android:background">#3A4C5F</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook2.MessageCenter.Composer.Style" parent="Apptentive.Widget.MessageCenter.Composer.EditText">-->
+<!--        <item name="android:background">@drawable/cookbook_2_message_center_compose_background</item>-->
+<!--        <item name="android:textColorHint">#767676</item>-->
+<!--        <item name="android:textColor">#081728</item>-->
+<!--    </style>-->
+
     <!-- Cookbook 3 -->
     <!-- https://learn.apptentive.com/knowledge-base/android-ui-cookbook-design-3/ -->
 <!--    <style name="ApptentiveThemeOverride">-->
@@ -517,6 +587,15 @@
 <!--        <item name="apptentiveRatingDialogButtonRateStyle">@style/Cookbook3.Button.RatingDialog</item>-->
 <!--        <item name="apptentiveRatingDialogButtonRemindStyle">@style/Cookbook3.Button.RatingDialog</item>-->
 <!--        <item name="apptentiveRatingDialogButtonDeclineStyle">@style/Cookbook3.Button.Borderless.RatingDialog</item>-->
+
+<!--        &lt;!&ndash; Apptentive Message Center &ndash;&gt;-->
+<!--        <item name="apptentiveMessageCenterToolbarStyle">@style/Cookbook3.MessageCenter.Toolbar</item>-->
+<!--        <item name="apptentiveMessageCenterBubbleColorInbound">#B0243C</item>-->
+<!--        <item name="apptentiveMessageCenterBubbleColorOutbound">#F3F3F3</item>-->
+<!--        <item name="apptentiveMessageCenterColorComposerOutline">#056E0F</item>-->
+<!--        <item name="apptentiveMessageCenterViewSeparatorStyle">@style/Cookbook3.MessageCenter.View.Separator.Style</item>-->
+<!--        <item name="apptentiveMessageCenterComposerStyle">@style/Cookbook3.MessageCenter.Composer.Style</item>-->
+
 <!--    </style>-->
 
 <!--    &lt;!&ndash; General &ndash;&gt;-->
@@ -674,6 +753,21 @@
 
 <!--    <style name="Cookbook3.Button.Borderless.RatingDialog">-->
 <!--        <item name="android:layout_gravity">center</item>-->
+<!--    </style>-->
+
+<!--    &lt;!&ndash; Message Center &ndash;&gt;-->
+<!--    <style name="Cookbook3.MessageCenter.Toolbar" parent="Apptentive.Widget.MessageCenter.Toolbar">-->
+<!--        <item name="android:background">@drawable/cookbook_3_message_center_toolbar_top </item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook3.MessageCenter.View.Separator.Style" parent="Apptentive.Widget.Separator">-->
+<!--        <item name="android:background">#414D59</item>-->
+<!--    </style>-->
+
+<!--    <style name="Cookbook3.MessageCenter.Composer.Style" parent="Apptentive.Widget.MessageCenter.Composer.EditText">-->
+<!--        <item name="android:background">@drawable/cookbook_3_message_center_compose_background</item>-->
+<!--        <item name="android:textColorHint">#414D59</item>-->
+<!--        <item name="android:textColor">#081728</item>-->
 <!--    </style>-->
 
 </resources>
