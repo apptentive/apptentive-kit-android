@@ -1,6 +1,7 @@
 package apptentive.com.android.util
 
 import androidx.annotation.VisibleForTesting
+import apptentive.com.android.core.AndroidLoggerProvider
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.Logger
 
@@ -16,7 +17,14 @@ enum class LogLevel {
 object Log {
     var logLevel: LogLevel = LogLevel.Info
     private const val CHUNK_LOG_MESSAGE_LENGTH = 3900 // Max length is 4068. 3900 gives room for additional info
-    @VisibleForTesting val logger = DependencyProvider.of<Logger>()
+    private val logger: Logger = try {
+        DependencyProvider.of()
+    } catch (e: Exception) {
+        android.util.Log.w("Apptentive", "Failed to get logger from DependencyProvider. Registering and using fallback.")
+        val loggerProvider = AndroidLoggerProvider("Apptentive")
+        DependencyProvider.register(loggerProvider)
+        loggerProvider.get()
+    }
 
     @JvmStatic fun v(tag: LogTag, message: String) = log(LogLevel.Verbose, tag, message)
     @JvmStatic fun d(tag: LogTag, message: String) = log(LogLevel.Debug, tag, message)
