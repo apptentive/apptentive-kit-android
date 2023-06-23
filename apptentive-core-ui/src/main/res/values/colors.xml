@@ -15,4 +15,5 @@
     <color name="apptentive_color_icon_default_fill">#00000000</color>
     <color name="apptentive_color_bottomsheet_icon">#757575</color>
     <color name="apptentive_color_attachment_background">#F5F5F5</color>
+    <color name="apptentive_color_focus_overlay">#80FFFFFF</color>
 </resources>

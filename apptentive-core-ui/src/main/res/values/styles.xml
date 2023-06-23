@@ -101,6 +101,7 @@
         <item name="apptentiveSurveyOtherTextFieldEditTextStyle">@style/Apptentive.Widget.Survey.OtherTextField.EditText</item>
         <item name="apptentiveSurveySubmitButtonStyle">@style/Apptentive.Widget.Survey.Button.Submit</item>
         <item name="apptentiveSurveyButtonColorDefault">?colorPrimary</item>
+        <item name="apptentiveCustomFocusForegroundStyle">@drawable/apptentive_custom_focus_overlay</item>
         <!-- Survey Styles End -->
 
         <!-- Text Size Start -->
@@ -185,6 +186,8 @@
         <item name="apptentiveMessageCenterInboundTextColorLink">?apptentiveMessageCenterTextColorInbound</item>
         <item name="apptentiveMessageCenterOutboundTextColorLink">?apptentiveMessageCenterTextColorOutbound</item>
         <item name="apptentiveMessageCenterGreetingTextColorLink">?apptentiveMessageCenterTextColorGreetingBody</item>
+        <item name="apptentiveCustomFocusForegroundColor">@color/apptentive_color_focus_overlay</item>
+
 
         <!-- Text Color End -->
 
@@ -469,7 +472,7 @@
         <item name="android:paddingTop">@dimen/apptentive_survey_terms_conditions_vertical_padding</item>
         <item name="android:paddingBottom">@dimen/apptentive_survey_terms_conditions_vertical_padding</item>
         <item name="android:gravity">center</item>
-
+        <item name="android:foreground">?attr/apptentiveCustomFocusForegroundStyle</item>
     </style>
 
     <style name="Apptentive.TextAppearance.Caption.Survey.Error.Footer">
@@ -655,6 +658,7 @@
         <item name="android:textSize">?apptentiveTextSizeButtonColored</item>
         <item name="android:layout_marginTop">@dimen/apptentive_survey_footers_vertical_padding_margin</item>
         <item name="android:layout_marginBottom">@dimen/apptentive_survey_footers_vertical_padding_margin</item>
+        <item name="android:foreground">?attr/apptentiveCustomFocusForegroundStyle</item>
     </style>
 
     <style name="Apptentive.Widget.Survey.BottomAppBar">
@@ -919,6 +923,7 @@
         <item name="android:textSize">?apptentiveTextSizeButtonColored</item>
         <item name="android:layout_marginTop">@dimen/apptentive_survey_footers_vertical_padding_margin</item>
         <item name="android:layout_marginBottom">@dimen/apptentive_survey_footers_vertical_padding_margin</item>
+        <item name="android:foreground">?apptentiveCustomFocusForegroundStyle</item>
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.Composer.EditText.Error" parent="">

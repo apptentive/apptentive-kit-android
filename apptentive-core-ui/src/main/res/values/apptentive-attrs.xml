@@ -143,6 +143,7 @@
         <attr name="apptentiveMessageCenterRemoveAttachmentImage" format="reference"/>
         <attr name="apptentiveMessageCenterAttachmentProgressIndicator" format="reference"/>
         <attr name="apptentiveMessageCenterMessageListLayoutStyle" format="reference"/>
+        <attr name="apptentiveCustomFocusForegroundStyle" format="reference" />
 
         <!-- Text Color/Fill color -->
         <attr name="apptentiveMessageCenterTextColorToolbarTitle" format="color|reference"/>
@@ -175,6 +176,7 @@
         <attr name="apptentiveMessageCenterInboundTextColorLink" format="color|reference"/>
         <attr name="apptentiveMessageCenterGreetingTextColorLink" format="color|reference"/>
         <attr name="apptentiveMessageCenterOutboundTextColorLink" format="color|reference"/>
+        <attr name="apptentiveCustomFocusForegroundColor" format="color|reference" />
 
         <!-- Other -->
         <attr name="apptentiveMessageCenterAttachmentThumbnailSpacing" format="dimension"/>
