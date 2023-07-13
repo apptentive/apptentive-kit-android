@@ -76,9 +76,20 @@
 <!--        <item name="apptentiveGenericDialogPositiveButtonStyle">@style/Custom.Dialog.Button.Note</item>-->
 <!--        <item name="apptentiveGenericDialogNegativeButtonStyle">@style/Custom.Dialog.Button.Note</item>-->
 
+        <!-- General foreground/background/fill color -->
+<!--        <item name="apptentiveCustomFocusForegroundColor">@color/color_error </item>-->
+
+
         <!-- Survey Styles Start -->
         <!-- Layout -->
 <!--        <item name="apptentiveSurveyLayoutStyle">@style/Custom.Survey.Layout</item>-->
+<!--        <item name="apptentiveSurveyLayoutPagedStyle">@style/Custom.Survey.Paged.Layout</item>-->
+<!--        <item name="apptentiveSurveyIntroductionLayoutStyle">@style/Custom.Survey.Layout.PageItem</item>-->
+<!--        <item name="apptentiveSurveySuccessLayoutStyle">@style/Custom.Survey.Layout.PageItem</item>-->
+<!--        <item name="apptentiveSurveyScrollViewLayoutStyle">@style/Custom.Survey.Layout.Question.ScrollView</item>-->
+<!--        <item name="apptentiveSurveyQuestionLayoutStyle">@style/Apptentive.Survey.Layout.Question</item>-->
+<!--        <item name="apptentiveSurveyQuestionScrollViewLayoutStyle">@style/Apptentive.Survey.Layout.Question.ScrollView</item>-->
+<!--        <item name="apptentiveSurveyQuestionDividerStyle">@style/Apptentive.Empty</item>-->
 
         <!-- App Bars -->
 <!--        <item name="apptentiveSurveyToolbarStyle">@style/Custom.Survey.Toolbar</item>-->
@@ -87,6 +98,8 @@
         <!-- TextViews -->
 <!--        <item name="apptentiveSurveyTitleStyle">@style/Custom.Survey.Title</item>-->
 <!--        <item name="apptentiveSurveyIntroductionStyle">@style/Custom.Survey.Introduction</item>-->
+<!--        <item name="apptentiveSurveySuccessStyle">@style/Custom.Survey.Introduction</item>-->
+<!--        <item name="apptentiveSurveyDisclaimerStyle">@style/Custom.Survey.Disclaimer</item>-->
 <!--        <item name="apptentiveSurveyQuestionTitleStyle">@style/Custom.Survey.Question.Title</item>-->
 <!--        <item name="apptentiveSurveyQuestionInstructionsStyle">@style/Custom.Survey.Question.Caption.Instructions</item>-->
 <!--        <item name="apptentiveSurveyQuestionErrorStyle">@style/Custom.Survey.Question.Caption.Error</item>-->
@@ -105,6 +118,17 @@
 <!--        <item name="apptentiveSurveyOtherTextFieldLayoutStyle">@style/Custom.Survey.OtherTextField.TextInputLayout</item>-->
 <!--        <item name="apptentiveSurveyOtherTextFieldEditTextStyle">@style/Custom.Survey.OtherTextField.EditText</item>-->
 <!--        <item name="apptentiveSurveySubmitButtonStyle">@style/Custom.Survey.Submit.Button</item>-->
+<!--        <item name="apptentiveSurveyNextButtonStyle">@style/Custom.Survey.Submit.Button</item>-->
+<!--        <item name="apptentiveSurveyViewPagerStyle">@style/Custom.Survey.Layout.ViewPager</item>-->
+
+<!--        <item name="apptentiveProgressBarLinearStyle">@style/Custom.Survey.ProgressBar.Linear</item>-->
+<!--        <item name="apptentiveProgressBarSegmentedStyle">@style/Custom.Survey.ProgressBar.Segmented</item>-->
+<!--        <item name="apptentiveProgressBarSegmentedItemStyle">@style/Custom.Survey.ProgressBar.Segmented.Item</item>-->
+<!--        <item name="apptentiveProgressBarPreviousIcon">@drawable/arrow_long_left</item>-->
+<!--        <item name="apptentiveProgressBarCurrentIcon">@drawable/heart</item>-->
+<!--        <item name="apptentiveProgressBarNextIcon">@drawable/arrow_long_right</item>-->
+<!--        <item name="apptentiveCustomFocusForegroundStyle">@drawable/apptentive_custom_focus_overlay</item>-->
+
         <!-- Survey Styles End -->
 
         <!-- Message Center Styles -->
@@ -156,6 +180,8 @@
         <!-- Survey -->
 <!--        <item name="apptentiveTextSizeSurveyQuestionTitle">30sp</item>-->
 <!--        <item name="apptentiveTextSizeSurveyIntroduction">30sp</item>-->
+<!--        <item name="apptentiveTextSizeSurveySuccess">20sp</item>-->
+<!--        <item name="apptentiveTextSizeSurveyDisclaimer">6sp</item>-->
 <!--        <item name="apptentiveTextSizeBody1">30sp</item>-->
 <!--        <item name="apptentiveTextSizeCaption">30sp</item>-->
 <!--        <item name="apptentiveTextSizeButtonColored">30sp</item>-->
@@ -179,10 +205,18 @@
 <!--        <item name="apptentiveTextColorError">@color/color_secondary</item>-->
 <!--        <item name="apptentiveTextColorSurveyRangeLabel">@color/color_secondary</item>-->
 <!--        <item name="apptentiveTextColorSurveyTitle">@color/color_secondary</item>-->
-<!--        <item name="apptentiveTextColorSurveyIntroduction">@color/color_secondary</item>-->
+<!--        <item name="apptentiveTextColorSurveyIntroduction">@color/color_primary</item>-->
+<!--        <item name="apptentiveTextColorSurveySuccess">@color/color_secondary</item>-->
+<!--        <item name="apptentiveTextColorSurveyDisclaimer">@color/color_error</item>-->
 <!--        <item name="apptentiveTextColorBody1">@color/color_secondary</item>-->
 <!--        <item name="apptentiveTextColorSurveyQuestionInstructions">@color/color_secondary</item>-->
 <!--        <item name="apptentiveTextColorSurveyTermsAndConditions">@color/color_secondary</item>-->
+
+<!--        <item name="apptentiveProgressBarLinearIndicatorColor">?colorSecondary</item>-->
+<!--        <item name="apptentiveProgressBarLinearTrackColor">?colorError</item>-->
+<!--        <item name="apptentiveColorProgressBarCurrent">?colorError</item>-->
+<!--        <item name="apptentiveColorProgressBarPrevious">@color/color_secondary</item>-->
+<!--        <item name="apptentiveColorProgressBarNext">?colorPrimary</item>-->
 
         <!-- Message Center -->
 <!--        <item name="apptentiveMessageCenterTextColorGreetingTitle">?colorOnBackground</item>-->
@@ -252,6 +286,8 @@
         <!-- Survey -->
 <!--        <item name="apptentiveTypefaceTitle">@integer/apptentive_typeface_monospace</item>-->
 <!--        <item name="apptentiveTypefaceSurveyIntroduction">@integer/apptentive_typeface_monospace</item>-->
+<!--        <item name="apptentiveTypefaceSurveySuccess">@integer/apptentive_typeface_monospace</item>-->
+<!--        <item name="apptentiveTypefaceSurveyDisclaimer">@integer/apptentive_typeface_monospace</item>-->
 <!--        <item name="apptentiveTypefaceBody1">@integer/apptentive_typeface_monospace</item>-->
 <!--        <item name="apptentiveTypefaceCaption">@integer/apptentive_typeface_monospace</item>-->
 <!--        <item name="apptentiveTypefaceButtonColored">@integer/apptentive_typeface_monospace</item>-->
@@ -319,6 +355,24 @@
 
     <style name="Custom.Survey.Layout">
         <item name="android:background">@color/color_primary</item>
+    </style>
+
+    <style name="Custom.Survey.Paged.Layout" parent="Apptentive.Survey.Paged.Layout">
+        <item name="android:background">?colorPrimary</item>
+    </style>
+
+    <style name="Custom.Survey.Layout.PageItem" parent="Apptentive.Survey.Layout.Question">
+        <item name="android:background">?colorPrimary</item>
+    </style>
+
+    <style name="Custom.Survey.Layout.Question.ScrollView" parent="Apptentive.Survey.Layout.Question.ScrollView">
+        <item name="android:layout_gravity">start</item>
+        <item name="android:background">?colorError</item>
+    </style>
+
+    <style name="Custom.Survey.Layout.ViewPager" parent="Apptentive.Widget.Survey.ViewPager">
+        <item name="android:paddingBottom">64dp</item>
+        <item name="android:paddingHorizontal" tools:targetApi="o">64dp</item>
     </style>
     <!-- Interaction Layouts End -->
 
@@ -404,6 +458,11 @@
     <style name="Custom.Survey.Introduction" parent="Custom.Text">
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="Custom.Survey.Disclaimer" parent="Custom.Text">
+        <item name="android:textStyle">bold|italic</item>
+        <item name="android:textSize">10sp</item>
     </style>
 
     <style name="Custom.Survey.Question.Title" parent="Custom.Text">
@@ -702,6 +761,23 @@
         <item name="android:background">?colorPrimary</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:minHeight">44dp</item>
+    </style>
+
+    <style name="Custom.Survey.ProgressBar.Linear" parent="Apptentive.Widget.ProgressBar.Linear">
+        <item name="indicatorColor">?colorSecondary</item>
+        <item name="trackColor">?colorError</item>
+        <item name="trackCornerRadius">0dp</item>
+        <item name="trackThickness">24dp</item>
+    </style>
+
+    <style name="Custom.Survey.ProgressBar.Segmented" parent="Apptentive.Widget.ProgressBar.Segmented">
+        <item name="android:minHeight">200dp</item>
+        <item name="android:gravity">bottom</item>
+    </style>
+
+    <style name="Custom.Survey.ProgressBar.Segmented.Item" parent="Apptentive.Widget.ProgressBar.Segmented.Item">
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_marginEnd">8dp</item>
     </style>
 
     <!-- Survey Widgets End -->
@@ -1013,6 +1089,7 @@
 
         <item name="apptentiveSurveyTitleStyle">@style/Cookbook1.Survey.Title</item>
         <item name="apptentiveSurveyIntroductionStyle">@style/Cookbook1.Survey.Introduction</item>
+        <item name="apptentiveSurveySuccessStyle">@style/Cookbook1.Survey.Introduction</item>
 
         <item name="apptentiveSurveySingleLineLayoutStyle">@style/Cookbook1.Survey.TextInputLayout</item>
         <item name="apptentiveSurveySingleLineEditTextStyle">@style/Cookbook1.Survey.EditText</item>
@@ -1240,6 +1317,7 @@
         <item name="apptentiveSurveyTitleStyle">@style/Cookbook2.Survey.Title</item>
         <item name="apptentiveSurveyHeaderImageStyle">@style/Cookbook2.Survey.HeaderImage</item>
         <item name="apptentiveSurveyIntroductionStyle">@style/Cookbook2.Survey.Introduction</item>
+        <item name="apptentiveSurveySuccessStyle">@style/Cookbook2.Survey.Introduction</item>
         <item name="apptentiveSurveyFootnoteStyle">@style/Cookbook2.Survey.Footnote</item>
         <item name="apptentiveSurveySubmitButtonStyle">@style/Cookbook2.Button</item>
 
@@ -1473,6 +1551,7 @@
         <item name="apptentiveSurveyTitleStyle">@style/Cookbook3.Survey.Title</item>
         <item name="apptentiveSurveyBottomAppBarStyle">@style/Cookbook3.Survey.BottomAppBar</item>
         <item name="apptentiveSurveyIntroductionStyle">@style/Cookbook3.Survey.Introduction</item>
+        <item name="apptentiveSurveySuccessStyle">@style/Cookbook3.Survey.Introduction</item>
         <item name="apptentiveSurveySubmitButtonStyle">@style/Cookbook3.Button</item>
 
         <item name="apptentiveGenericDialogLayoutStyle">@style/Cookbook3.Dialog.Layout</item>

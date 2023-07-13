@@ -4,7 +4,7 @@ import android.view.View
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import apptentive.com.android.feedback.survey.R
-import apptentive.com.android.ui.ListViewAdapter
+import apptentive.com.android.ui.ApptentiveViewHolder
 import apptentive.com.android.ui.ListViewItem
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textview.MaterialTextView
@@ -64,7 +64,7 @@ internal class SurveyFooterListItem(
     class ViewHolder(
         itemView: View,
         private val submitCallback: () -> Unit
-    ) : ListViewAdapter.ViewHolder<SurveyFooterListItem>(itemView) {
+    ) : ApptentiveViewHolder<SurveyFooterListItem>(itemView) {
         private val submitButton = itemView.findViewById<MaterialButton>(R.id.apptentive_submit_button)
         private val errorMessageView = itemView.findViewById<MaterialTextView>(R.id.apptentive_submit_error_message)
         private val disclaimerTextView = itemView.findViewById<MaterialTextView>(R.id.apptentive_disclaimer_text)

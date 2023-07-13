@@ -62,6 +62,32 @@ data class EngagementData(
                 interactionId,
                 InteractionResponseData(
                     responses = responses.union(recordedInteraction?.responses.orEmpty()),
+                    currentResponses = setOf(),
+                    record = (recordedInteraction?.record ?: EngagementRecord()).addInvoke(
+                        versionName = versionName,
+                        versionCode = versionCode,
+                        lastInvoked = lastInvoked
+                    )
+                )
+            )
+        }
+    )
+
+    fun updateCurrentAnswer(
+        interactionId: InteractionId,
+        responses: Set<InteractionResponse>,
+        versionName: VersionName,
+        versionCode: VersionCode,
+        lastInvoked: DateTime,
+        reset: Boolean
+    ) = copy(
+        interactionResponses = interactionResponses.apply {
+            val recordedInteraction = get(interactionId)
+            put(
+                interactionId,
+                InteractionResponseData(
+                    responses = recordedInteraction?.responses.orEmpty(),
+                    currentResponses = if (reset) setOf() else responses,
                     record = (recordedInteraction?.record ?: EngagementRecord()).addInvoke(
                         versionName = versionName,
                         versionCode = versionCode,

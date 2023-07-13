@@ -3,7 +3,7 @@
     <color name="apptentive_color_primary">#40566B</color>
     <color name="apptentive_color_on_primary">#E1E1E1</color>
     <color name="apptentive_color_secondary">#94A8B8</color>
-    <color name="apptentive_color_on_secondary">#E1E1E1</color>
+    <color name="apptentive_color_on_secondary">#212121</color>
     <color name="apptentive_color_background">#212121</color>
     <color name="apptentive_color_on_background">#C4C4C4</color>
     <color name="apptentive_color_surface">#212121</color>

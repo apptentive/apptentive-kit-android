@@ -2,8 +2,10 @@ package apptentive.com.android.feedback.survey.model
 
 import android.text.SpannedString
 import apptentive.com.android.TestCase
-import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion.ChoiceType
-import com.google.common.truth.Truth.assertThat
+import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.feedback.EngagementResult
+import apptentive.com.android.feedback.engagement.MockEngagementContext
+import apptentive.com.android.feedback.engagement.MockEngagementContextFactory
 import org.junit.Test
 
 class SurveyModelTest : TestCase() {
@@ -12,11 +14,11 @@ class SurveyModelTest : TestCase() {
     @Test
     fun testQuestionStream() {
         val model = createSurveyModel(
-            createSingleLineQuestion(id = "id_1"),
-            createSingleLineQuestion(id = "id_2"),
-            createSingleLineQuestion(id = "id_3")
+            createSingleLineQuestionForV12(id = "id_1"),
+            createSingleLineQuestionForV12(id = "id_2"),
+            createSingleLineQuestionForV12(id = "id_3")
         )
-        model.questionsStream.observe {
+        model.questionListSubject.observe {
             it.forEach { question ->
                 addResult(question)
             }
@@ -45,175 +47,71 @@ class SurveyModelTest : TestCase() {
 
     //endregion
 
-    //region All Valid Answers
-
     @Test
-    fun testAllValidNonRequiredAnswers() {
-        // none of the questions contains a valid answer but none is also required so it's fine
-        val model = createSurveyModel(
-            createSingleLineQuestion(),
-            createRangeQuestion(),
-            createMultiChoiceQuestion(
-                answerChoiceConfigs = listOf(
-                    MultiChoiceQuestion.AnswerChoiceConfiguration(ChoiceType.select_option, "choice_id", "value")
+    fun testIntroAndSuccessPage() {
+        val surveyModel = createSurveyModel(showSuccessMessage = false, renderAs = RenderAs.PAGED)
+        DependencyProvider.register(
+            MockEngagementContextFactory
+            {
+                MockEngagementContext(
+                    onEngage = { args ->
+                        addResult(args)
+                        EngagementResult.InteractionNotShown("No runnable interactions")
+                    },
+                    onSendPayload = {}
                 )
-            )
+            }
         )
-        assertThat(model.allRequiredAnswersAreValid).isTrue()
+
+        assert(surveyModel.currentPageID == surveyModel.introPageID)
+        assert(surveyModel.getNextQuestionSet() == null)
     }
 
     @Test
-    fun testAllValidRequiredAnswers() {
-        // all of the questions contains a valid answer and all are required
-        val model = createSurveyModel(
-            createSingleLineQuestion(answer = "text", required = true),
-            createRangeQuestion(selectedIndex = 5, required = true),
-            createMultiChoiceQuestion(
-                answerChoiceConfigs = listOf(
-                    MultiChoiceQuestion.AnswerChoiceConfiguration(ChoiceType.select_option, "choice_id", "value")
-                ),
-                answer = listOf(
-                    MultiChoiceQuestion.Answer.Choice("choice_id", checked = true)
-                ),
-                required = true
-            )
-        )
-        assertThat(model.allRequiredAnswersAreValid).isTrue()
-    }
-
-    @Test
-    fun testSomeInvalidRequiredAnswers() {
-        // some of the questions contains a valid answer and all are required
-        val model = createSurveyModel(
-            createSingleLineQuestion(answer = "text", required = true),
-            createRangeQuestion(selectedIndex = 5, required = true),
-            createMultiChoiceQuestion(
-                answerChoiceConfigs = listOf(
-                    MultiChoiceQuestion.AnswerChoiceConfiguration(ChoiceType.select_option, "choice_id", "value")
-                ),
-                required = true
-            )
-        )
-        assertThat(model.allRequiredAnswersAreValid).isFalse()
-    }
-
-    @Test
-    fun testUpdatingAnswer() {
-        val questionId = "id"
-        val model = createSurveyModel(
-            createSingleLineQuestion(id = questionId, required = true)
-        )
-
-        // a single required question contains no answer
-        assertThat(model.allRequiredAnswersAreValid).isFalse()
-
-        // update the answer
-        model.updateAnswer(
-            questionId = questionId,
-            answer = SingleLineQuestion.Answer("New Answer")
-        )
-
-        // all answers become valid
-        assertThat(model.allRequiredAnswersAreValid).isTrue()
-
-        // remove the answer
-        model.updateAnswer(
-            questionId = questionId,
-            answer = SingleLineQuestion.Answer("")
-        )
-
-        // all answers become invalid
-        assertThat(model.allRequiredAnswersAreValid).isFalse()
-
-        // update the answer
-        model.updateAnswer(
-            questionId = questionId,
-            answer = SingleLineQuestion.Answer("Another Answer")
-        )
-
-        // all answers become valid
-        assertThat(model.allRequiredAnswersAreValid).isTrue()
-    }
-
-    //endregion
-
-    //region First Invalid Index
-
-    @Test
-    fun testFirstInvalidQuestion() {
-        val model = createSurveyModel(
-            createSingleLineQuestion(id = "id_1", required = true),
-            createRangeQuestion(id = "id_2", required = true),
-            createMultiChoiceQuestion(
-                id = "id_3",
-                required = true,
-                answerChoiceConfigs = listOf(
-                    MultiChoiceQuestion.AnswerChoiceConfiguration(ChoiceType.select_option, "choice_id", "value")
+    fun testWithOutSuccessPage() {
+        val surveyModel = createSurveyModel(renderAs = RenderAs.PAGED)
+        DependencyProvider.register(
+            MockEngagementContextFactory
+            {
+                MockEngagementContext(
+                    onEngage = { args ->
+                        addResult(args)
+                        EngagementResult.InteractionNotShown("No runnable interactions")
+                    },
+                    onSendPayload = {}
                 )
-            )
+            }
         )
 
-        // all questions are invalid
-        assertThat(model.getFirstInvalidRequiredQuestionIndex()).isEqualTo(0)
-
-        // answer the first question
-        model.updateAnswer(
-            questionId = "id_1",
-            answer = SingleLineQuestion.Answer("text")
-        )
-
-        // second question becomes first invalid
-        assertThat(model.getFirstInvalidRequiredQuestionIndex()).isEqualTo(1)
-
-        // answer the third question
-        model.updateAnswer(
-            questionId = "id_3",
-            answer = MultiChoiceQuestion.Answer(
-                listOf(
-                    MultiChoiceQuestion.Answer.Choice("choice_id", checked = true)
-                )
-            )
-        )
-
-        // second question still invalid
-        assertThat(model.getFirstInvalidRequiredQuestionIndex()).isEqualTo(1)
-
-        // answer the second question
-        model.updateAnswer(
-            questionId = "id_2",
-            answer = RangeQuestion.Answer(5)
-        )
-
-        // all questions are valid now
-        assertThat(model.getFirstInvalidRequiredQuestionIndex()).isEqualTo(-1)
-
-        // remove the answer from the first question
-        model.updateAnswer(
-            questionId = "id_1",
-            answer = SingleLineQuestion.Answer("")
-        )
-
-        // first question becomes first invalid
-        assertThat(model.getFirstInvalidRequiredQuestionIndex()).isEqualTo(0)
+        assert(surveyModel.currentPageID == surveyModel.introPageID)
+        assert(surveyModel.getNextQuestionSet() == surveyModel.successPageID)
+        surveyModel.goToNextPage()
+        assert(surveyModel.currentPageID == surveyModel.successPageID)
     }
-
-    //endregion
-
-    private fun createSurveyModel(vararg questions: SurveyQuestion<*>) = SurveyModel(
-        interactionId = "interaction_id",
-        questions = questions.toList(),
-        name = "name",
-        description = "description",
-        submitText = "submitText",
-        requiredText = "requiredText",
-        validationError = "Validation error",
-        showSuccessMessage = false,
-        successMessage = "successMessage",
-        closeConfirmTitle = "Close survey?",
-        closeConfirmMessage = "All the changes will be lost",
-        closeConfirmCloseText = "close",
-        closeConfirmBackText = "Back to survey",
-        termsAndConditionsLinkText = SpannedString("Terms & Conditions"),
-        disclaimerText = "Disclaimer text"
-    )
 }
+
+internal fun createSurveyModel(
+    vararg questionSet: SurveyQuestionSet,
+    renderAs: RenderAs = RenderAs.LIST,
+    showSuccessMessage: Boolean = true,
+    surveyIntroduction: String? = "description"
+) = SurveyModel(
+    interactionId = "interaction_id",
+    questionSet = questionSet.toList(),
+    name = "name",
+    surveyIntroduction = surveyIntroduction,
+    submitText = "submitText",
+    requiredText = "requiredText",
+    validationError = "Validation error",
+    showSuccessMessage = showSuccessMessage,
+    successMessage = "successMessage",
+    closeConfirmTitle = "Close survey?",
+    closeConfirmMessage = "All the changes will be lost",
+    closeConfirmCloseText = "close",
+    closeConfirmBackText = "Back to survey",
+    termsAndConditionsLinkText = SpannedString("Terms & Conditions"),
+    disclaimerText = "Disclaimer text",
+    introButtonText = "START",
+    successButtonText = "THANK YOU",
+    renderAs = renderAs
+)

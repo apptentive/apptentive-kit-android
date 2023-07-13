@@ -1,8 +1,8 @@
 package apptentive.com.android.feedback.survey.viewmodel
 
 import android.view.LayoutInflater
-import android.view.ViewGroup
 import android.widget.CompoundButton
+import android.widget.LinearLayout
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import apptentive.com.android.feedback.survey.R
@@ -96,7 +96,7 @@ internal class MultiChoiceQuestionListItem(
         itemView: SurveyQuestionContainerView,
         private val onSelectionChanged: (questionId: String, choiceId: String, selected: Boolean, text: String?) -> Unit
     ) : SurveyQuestionListItem.ViewHolder<MultiChoiceQuestionListItem>(itemView) {
-        private val choiceContainer: ViewGroup = itemView.findViewById(R.id.apptentive_choice_container)
+        private val choiceContainer = itemView.findViewById<LinearLayout>(R.id.apptentive_choice_container)
         private lateinit var cachedViews: List<CachedViews>
 
         override fun bindView(

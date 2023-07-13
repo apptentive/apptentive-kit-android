@@ -14,7 +14,7 @@ class SingleLineQuestionTest {
     @Test
     fun testRequiredNoAnswer() {
         val question = createSingleLineQuestion(required = true)
-        assertThat(question.answerString).isNull()
+        assertThat(question.answerString).isEmpty()
         assertThat(question.hasValidAnswer).isFalse()
     }
 
@@ -30,7 +30,7 @@ class SingleLineQuestionTest {
         val question = createSingleLineQuestion(required = true)
 
         // empty by default
-        assertThat(question.answerString).isNull()
+        assertThat(question.answerString).isEmpty()
         assertThat(question.hasValidAnswer).isFalse()
 
         // set a valid answer

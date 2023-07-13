@@ -36,10 +36,17 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 
 class ConversationManagerTest : TestCase() {
+
+    @Before
+    override fun setUp() {
+        DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore())
+    }
+
     @Test
     fun getActiveConversation() {
         val fetchResponse = ConversationCredentials(
@@ -205,7 +212,8 @@ internal fun createConversationManager(
     )
 }
 
-private class MockConversationRepository(val throwException: Boolean = false) : ConversationRepository {
+private class MockConversationRepository(val throwException: Boolean = false) :
+    ConversationRepository {
     private var conversation: Conversation? = null
 
     override fun createConversation(): Conversation {

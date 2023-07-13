@@ -22,13 +22,15 @@ class SurveyResponsePayloadTest : TestCase() {
         val payload = SurveyResponsePayload.fromAnswers(
             id = surveyId,
             answers = mapOf(
-                "1" to SingleLineQuestion.Answer(value = "answer"),
-                "2" to RangeQuestion.Answer(selectedIndex = 5),
-                "3" to MultiChoiceQuestion.Answer(
-                    choices = listOf(
-                        MultiChoiceQuestion.Answer.Choice(id = "choice_1", checked = true),
-                        MultiChoiceQuestion.Answer.Choice(id = "choice_2", checked = false),
-                        MultiChoiceQuestion.Answer.Choice(id = "choice_3", value = "text", checked = true)
+                "1" to SurveyAnswerState.Answered(SingleLineQuestion.Answer(value = "answer")),
+                "2" to SurveyAnswerState.Answered(RangeQuestion.Answer(selectedIndex = 5)),
+                "3" to SurveyAnswerState.Answered(
+                    MultiChoiceQuestion.Answer(
+                        choices = listOf(
+                            MultiChoiceQuestion.Answer.Choice(id = "choice_1", checked = true),
+                            MultiChoiceQuestion.Answer.Choice(id = "choice_2", checked = false),
+                            MultiChoiceQuestion.Answer.Choice(id = "choice_3", value = "text", checked = true)
+                        )
                     )
                 )
             )
@@ -39,9 +41,22 @@ class SurveyResponsePayloadTest : TestCase() {
                 "'response':{" +
                 "'id':'$surveyId'," +
                 "'answers':{" +
-                "'1':[{'value':'answer'}]," +
-                "'2':[{'value':5}]," +
-                "'3':[{'id':'choice_1'},{'id':'choice_3','value':'text'}]" +
+                "'1':{" +
+                "'state':'answered'," +
+                "'value':[{" +
+                "'value':'answer'}]" +
+                "}," +
+                "'2':{" +
+                "'state':'answered'," +
+                "'value':[{" +
+                "'value':5}]" +
+                "}," +
+                "'3':{" +
+                "'state':'answered'," +
+                "'value':[{" +
+                "'id':'choice_1'}," +
+                "{'id':'choice_3','value':'text'}]" +
+                "}" +
                 "}," +
                 "'session_id':'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'," +
                 "'client_created_at':1000.0," +

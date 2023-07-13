@@ -23,6 +23,10 @@ internal class CriteriaInteractionDataProvider(
         return interactions[interactionId]
     }
 
+    override fun getQuestionId(invocations: List<Invocation>): String? {
+        return getInteractionId(invocations)
+    }
+
     private fun getInteractionId(invocations: List<Invocation>): InteractionId? {
         for (invocation in invocations) {
             try {

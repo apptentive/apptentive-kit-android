@@ -7,6 +7,7 @@
     <string name="confirmation_dialog_message">You will lose your progress if you close this survey.</string>
     <string name="confirmation_dialog_title">Close survey?</string>
     <string name="apptentive_required">Required</string>
+    <string name="apptentive_submit">Submit</string>
     <string name="min_range_label_default">Lowest</string>
     <string name="max_range_label_default">Highest</string>
 

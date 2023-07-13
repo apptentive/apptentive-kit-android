@@ -5,6 +5,7 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionData
 import apptentive.com.android.feedback.engagement.interactions.InteractionTypeConverter
 import apptentive.com.android.feedback.survey.interaction.SurveyInteraction.TermsAndConditions
 import apptentive.com.android.util.getList
+import apptentive.com.android.util.getString
 import apptentive.com.android.util.optBoolean
 import apptentive.com.android.util.optMap
 import apptentive.com.android.util.optString
@@ -17,7 +18,6 @@ internal class SurveyInteractionTypeConverter : InteractionTypeConverter<SurveyI
             id = data.id,
             name = configuration.optString("name"),
             description = configuration.optString("description"),
-            submitText = configuration.optString("submit_text"),
             requiredText = configuration.optString("required_text"),
             validationError = configuration.optString("validation_error"),
             showSuccessMessage = configuration.optBoolean("show_success_message"),
@@ -27,12 +27,16 @@ internal class SurveyInteractionTypeConverter : InteractionTypeConverter<SurveyI
             closeConfirmCloseText = configuration.optString("close_confirm_close_text"),
             closeConfirmBackText = configuration.optString("close_confirm_back_text"),
             isRequired = configuration.optBoolean("required"),
-            questions = configuration.getList("questions").map {
+            questionSet = configuration.getList("question_sets").map {
                 @Suppress("UNCHECKED_CAST")
-                it as SurveyQuestionConfiguration
+                it as SurveyQuestionSetConfiguration
             },
             termsAndConditions = configuration.optMap("terms_and_conditions")?.convertTermsAndConditions(),
-            disclaimerText = configuration.optString("disclaimer_text")
+            renderAs = configuration.getString("render_as"),
+            nextText = configuration.optString("next_text"),
+            introButtonText = configuration.optString("intro_button_text"),
+            successButtonText = configuration.optString("success_button_text"),
+            disclaimerText = configuration.optString("disclaimer_text"),
         )
     }
 

@@ -10,16 +10,20 @@ import apptentive.com.android.core.LiveEvent
 import apptentive.com.android.core.asLiveData
 import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion
 import apptentive.com.android.feedback.survey.model.RangeQuestion
+import apptentive.com.android.feedback.survey.model.RenderAs
 import apptentive.com.android.feedback.survey.model.SingleLineQuestion
+import apptentive.com.android.feedback.survey.model.SurveyAnswerState
 import apptentive.com.android.feedback.survey.model.SurveyModel
 import apptentive.com.android.feedback.survey.model.SurveyQuestion
-import apptentive.com.android.feedback.survey.model.SurveyQuestionAnswer
 import apptentive.com.android.feedback.survey.model.update
+import apptentive.com.android.feedback.survey.utils.END_OF_QUESTION_SET
+import apptentive.com.android.feedback.survey.utils.getValidAnsweredQuestions
+import apptentive.com.android.util.isNotNullOrEmpty
 
 /**
  * ViewModel for Surveys
  *
- * SurveyViewModel class that is responsible for preparing and managing survey data
+ * [SurveyViewModel] class that is responsible for preparing and managing survey data
  * for BaseSurveyActivity
  *
  * @property model [SurveyModel] data model that represents the survey
@@ -38,10 +42,12 @@ import apptentive.com.android.feedback.survey.model.update
  * when survey is resumed through after an attempt to close
  */
 
-class SurveyViewModel(
+internal class SurveyViewModel(
     private val model: SurveyModel,
     private val executors: Executors,
     private val onSubmit: SurveySubmitCallback,
+    private val recordCurrentAnswer: RecordCurrentAnswerCallback,
+    private val resetCurrentAnswer: ResetCurrentAnswerCallback,
     private val onCancel: SurveyCancelCallback,
     private val onCancelPartial: SurveyCancelPartialCallback,
     private val onClose: SurveyCloseCallback,
@@ -49,11 +55,17 @@ class SurveyViewModel(
 ) : ViewModel() {
     /** LiveData which transforms a list of {SurveyQuestion} into a list of {SurveyQuestionListItem} */
     private val questionsStream: LiveData<List<SurveyQuestion<*>>> =
-        model.questionsStream.asLiveData()
+        model.questionListSubject.asLiveData()
+
+    private val shownQuestions: MutableList<SurveyQuestion<*>> = mutableListOf()
 
     /** Holds an index to the first invalid question (or -1 if all questions are valid) */
     private val firstInvalidQuestionIndexEvent = LiveEvent<Int>()
     val firstInvalidQuestionIndex: LiveData<Int> = firstInvalidQuestionIndexEvent
+
+    internal val allRequiredAnswersAreValid get() = getFirstInvalidRequiredQuestionIndex() == -1
+
+    private val hasAnyAnswer get() = model.currentQuestions.any { it.hasAnswer }
 
     /** Live data which keeps track of the survey "submit" message (shown under the "submit" button) */
     private val surveySubmitMessageState = MutableLiveData<SurveySubmitMessageState>()
@@ -63,8 +75,15 @@ class SurveyViewModel(
         questionListItemFactory = DefaultSurveyQuestionListItemFactory()
     )
 
-    private val requiredTextEvent = LiveEvent<String?>()
-    val requiredText: LiveData<String?> = requiredTextEvent
+    val currentPage: LiveData<SurveyListItem> = createPageItemLiveData(
+        questionListItemFactory = DefaultSurveyQuestionListItemFactory()
+    )
+
+    private val advanceButtonTextEvent = LiveEvent<String>()
+    val advanceButtonText: LiveData<String> = advanceButtonTextEvent
+
+    private val progressBarNumberEvent = LiveEvent<Int?>()
+    val progressBarNumber: LiveData<Int?> = progressBarNumberEvent
 
     private val exitEvent = LiveEvent<Boolean>()
     val exitStream: LiveData<Boolean> = exitEvent
@@ -74,9 +93,12 @@ class SurveyViewModel(
 
     private var submitAttempted: Boolean = false
     private var anyQuestionWasAnswered: Boolean = false
+    private var surveySubmitted: Boolean = false
 
     val title = model.name
     val termsAndConditions = model.termsAndConditionsLinkText
+    val isPaged = model.renderAs == RenderAs.PAGED
+    val pageCount = model.questionSet.size
 
     val surveyCancelConfirmationDisplay = with(model) {
         SurveyCancelConfirmationDisplay(
@@ -86,20 +108,29 @@ class SurveyViewModel(
             closeConfirmCloseText
         )
     }
-
     //region Answers
 
-    fun updateAnswer(id: String, value: String) {
-        updateModel {
-            model.updateAnswer(id, SingleLineQuestion.Answer(value))
-            updateQuestionAnsweredFlag(model.hasAnyAnswer)
+    fun updateAnswer(questionId: String, value: String) {
+        val oldAnswer = (model.getQuestion(questionId) as SingleLineQuestion).answer
+        val newAnswer = SingleLineQuestion.Answer(value)
+
+        if (oldAnswer != newAnswer) {
+            updateModel {
+                model.updateAnswer(questionId, SingleLineQuestion.Answer(value))
+                updateQuestionAnsweredFlag(hasAnyAnswer)
+            }
         }
     }
 
-    fun updateAnswer(id: String, selectedIndex: Int) {
-        updateModel {
-            model.updateAnswer(id, RangeQuestion.Answer(selectedIndex))
-            updateQuestionAnsweredFlag(model.hasAnyAnswer)
+    fun updateAnswer(questionId: String, selectedIndex: Int) {
+        val oldAnswer = (model.getQuestion(questionId) as RangeQuestion).answer
+        val newAnswer = RangeQuestion.Answer(selectedIndex)
+
+        if (oldAnswer != newAnswer) {
+            updateModel {
+                model.updateAnswer(questionId, RangeQuestion.Answer(selectedIndex))
+                updateQuestionAnsweredFlag(hasAnyAnswer)
+            }
         }
     }
 
@@ -115,7 +146,7 @@ class SurveyViewModel(
             )
             if (oldAnswer != newAnswer) {
                 model.updateAnswer(questionId, newAnswer)
-                updateQuestionAnsweredFlag(model.hasAnyAnswer)
+                updateQuestionAnsweredFlag(hasAnyAnswer)
             }
         }
     }
@@ -128,47 +159,112 @@ class SurveyViewModel(
 
     //endregion
 
-    fun submit() {
+    fun submitListSurvey() {
         submitAttempted = true
-
         updateModel {
-            if (model.allRequiredAnswersAreValid) {
-                executors.state.execute {
-                    onSubmit(
-                        model.questions
-                            .filter { it.hasValidAnswer }
-                            .associate { it.id to it.answer }
-                    )
+            if (allRequiredAnswersAreValid) {
+                submitSurvey()
+                showSuccessMessage()
+                exit(showConfirmation = false, successfulSubmit = true)
+            } else {
+                updatePageErrors()
+            }
+        }
+    }
 
-                    if (!model.successMessage.isNullOrBlank()) {
-                        surveySubmitMessageState.postValue(
-                            SurveySubmitMessageState(
-                                model.successMessage,
-                                true
-                            )
-                        )
+    fun advancePage() {
+        updateModel {
+            if (allRequiredAnswersAreValid) {
+                recordCurrentAnswer()
+                when {
+                    model.currentPageID == model.successPageID -> {
+                        exit(showConfirmation = false, successfulSubmit = true)
                     }
-
-                    exit(showConfirmation = false, successfulSubmit = true)
+                    isLastQuestionInSurvey() -> {
+                        submitSurvey()
+                        showSuccessPage()
+                    }
+                    else -> {
+                        shownQuestions.addAll(model.currentQuestions)
+                        model.goToNextPage()
+                    }
                 }
             } else {
-                // trigger error message
-                if (!model.validationError.isNullOrBlank()) {
-                    surveySubmitMessageState.postValue(
-                        SurveySubmitMessageState(
-                            model.validationError,
-                            false
-                        )
-                    )
-                }
-
-                // get index of first invalid question (description puts header item before questions)
-                var firstInvalidQuestionIndex = model.getFirstInvalidRequiredQuestionIndex()
-                if (model.description != null) firstInvalidQuestionIndex++
-
-                // trigger scrolling to the first invalid question
-                firstInvalidQuestionIndexEvent.postValue(firstInvalidQuestionIndex)
+                updatePageErrors()
             }
+        }
+    }
+
+    private fun recordCurrentAnswer() {
+        recordCurrentAnswer(
+            model.currentQuestions
+                .associate { it.id to SurveyAnswerState.Answered(it.answer) }
+        )
+    }
+
+    private fun resetCurrentAnswer() {
+        resetCurrentAnswer(
+            model.getAllQuestionsInTheSurvey().associate {
+                it.id to SurveyAnswerState.Answered(it.answer)
+            }
+        )
+    }
+
+    private fun isLastQuestionInSurvey() = model.nextQuestionSetId == END_OF_QUESTION_SET || model.nextQuestionSetId == model.successPageID
+
+    private fun showSuccessPage() {
+        if (model.nextQuestionSetId == model.successPageID) {
+            model.goToNextPage()
+        } else {
+            exit(showConfirmation = false, successfulSubmit = true)
+        }
+    }
+
+    private fun updatePageErrors() {
+        // trigger error message
+        model.validationError?.let { errorMessage ->
+            surveySubmitMessageState.postValue(
+                SurveySubmitMessageState(
+                    errorMessage,
+                    false
+                )
+            )
+        }
+
+        // get index of first invalid question (description puts header item before questions)
+        var firstInvalidQuestionIndex = getFirstInvalidRequiredQuestionIndex()
+        if (model.surveyIntroduction != null && model.renderAs == RenderAs.LIST) firstInvalidQuestionIndex++
+
+        // trigger scrolling to the first invalid question
+        firstInvalidQuestionIndexEvent.postValue(firstInvalidQuestionIndex)
+    }
+
+    private fun showSuccessMessage() {
+        model.getCurrentPage().successText?.let { successMessage ->
+            surveySubmitMessageState.postValue(
+                SurveySubmitMessageState(
+                    successMessage,
+                    true
+                )
+            )
+        }
+    }
+
+    private fun submitSurvey() {
+        if (!surveySubmitted) {
+            shownQuestions.addAll(model.currentQuestions)
+            val answeredQuestions = getValidAnsweredQuestions(shownQuestions)
+            val emptyQuestions = shownQuestions.toSet() - answeredQuestions.toSet()
+            val skippedQuestions = model.getAllQuestionsInTheSurvey().filter { q -> shownQuestions.none { s -> q.id == s.id } }
+            onSubmit(
+                answeredQuestions
+                    .associate { it.id to SurveyAnswerState.Answered(it.answer) } +
+                    emptyQuestions
+                        .associate { it.id to SurveyAnswerState.Empty } +
+                    skippedQuestions
+                        .associate { it.id to SurveyAnswerState.Skipped }
+            )
+            surveySubmitted = true
         }
     }
 
@@ -178,7 +274,9 @@ class SurveyViewModel(
 
     @MainThread
     fun exit(showConfirmation: Boolean, successfulSubmit: Boolean = false) {
-        if (showConfirmation) {
+        val isSuccessPage = currentPage.value is SurveySuccessPageItem
+
+        if (showConfirmation && !isSuccessPage) {
             // When the consumer uses the X button or the back button,
             //  try to show the confirmation dialog if user interacted with the survey
             if (submitAttempted || anyQuestionWasAnswered) {
@@ -193,8 +291,11 @@ class SurveyViewModel(
             // we are already in the confirmation dialog, so no need to show confirmation again
             exitEvent.postValue(true)
             executors.state.execute {
-                if (successfulSubmit) onClose.invoke()
-                else onCancelPartial.invoke()
+                if (successfulSubmit || isSuccessPage) onClose.invoke()
+                else {
+                    resetCurrentAnswer()
+                    onCancelPartial.invoke()
+                }
             }
         }
     }
@@ -223,16 +324,17 @@ class SurveyViewModel(
                 )
             }
             return mutableListOf<SurveyListItem>().apply {
+                val currentPage = model.getCurrentPage()
                 // header
-                if (!model.description.isNullOrEmpty()) {
-                    add(SurveyHeaderListItem(model.description))
+                if (currentPage.introductionText?.isNotEmpty() == true) {
+                    add(SurveyHeaderListItem(currentPage.introductionText))
                 }
 
                 // questions
                 addAll(questionsListItems)
 
                 // footer
-                add(SurveyFooterListItem(model.submitText, model.disclaimerText, messageState))
+                add(SurveyFooterListItem(currentPage.advanceActionLabel, currentPage.disclaimerText, messageState))
             }
         }
 
@@ -243,7 +345,7 @@ class SurveyViewModel(
                 // 1. user pressed submit button
                 // 2. model provides a validation error
                 // 3. at least one of the required questions is not answered
-                val messageState: SurveySubmitMessageState? = if (submitAttempted && model.validationError != null && !model.allRequiredAnswersAreValid) {
+                val messageState: SurveySubmitMessageState? = if (submitAttempted && model.validationError != null && !allRequiredAnswersAreValid) {
                     SurveySubmitMessageState(model.validationError, false)
                 } else {
                     null
@@ -264,6 +366,70 @@ class SurveyViewModel(
             }
         }
     }
+
+    private fun createPageItemLiveData(
+        questionListItemFactory: SurveyQuestionListItemFactory
+    ): LiveData<SurveyListItem> {
+        fun createPageItem(
+            questions: List<SurveyQuestion<*>>?,
+            messageState: SurveySubmitMessageState?
+        ): SurveyListItem {
+            val questionList = questions ?: emptyList()
+            val showInvalidQuestionsFlag = messageState != null && !messageState.isValid
+            val questionsListItems = questionList.map { question ->
+                questionListItemFactory.createListItem(
+                    question,
+                    showInvalidQuestionsFlag
+                )
+            }
+
+            val currentPage = model.getCurrentPage()
+            advanceButtonTextEvent.value = currentPage.advanceActionLabel.orEmpty()
+            progressBarNumberEvent.value = currentPage.pageIndicatorValue
+
+            return when {
+                currentPage.successText.isNotNullOrEmpty() -> {
+                    SurveySuccessPageItem(
+                        currentPage.successText,
+                        currentPage.disclaimerText.orEmpty()
+                    )
+                }
+
+                currentPage.introductionText.isNotNullOrEmpty() || currentPage.disclaimerText.isNotNullOrEmpty() -> {
+                    SurveyIntroductionPageItem(
+                        currentPage.introductionText.orEmpty(),
+                        currentPage.disclaimerText.orEmpty()
+                    )
+                }
+
+                currentPage.questions.isNotNullOrEmpty() -> questionsListItems.first()
+
+                else -> throw IllegalStateException("Survey page is not valid")
+            }
+        }
+
+        return MediatorLiveData<SurveyListItem>().apply {
+            addSource(questionsStream) { questions ->
+                value = createPageItem(questions, null)
+            }
+
+            addSource(surveySubmitMessageState) { messageState ->
+                value = createPageItem(
+                    questionsStream.value,
+                    messageState
+                )
+            }
+        }
+    }
+
+    /** Returns the index of the first REQUIRED invalid question/NOT REQUIRED but cannot submit
+     *  (or -1 if all required questions are valid) */
+    internal fun getFirstInvalidRequiredQuestionIndex(): Int {
+        return model.currentQuestions.indexOfFirst {
+            (it.isRequired && !it.hasValidAnswer) ||
+                !it.canSubmitOptionalQuestion
+        }
+    }
 }
 
 internal data class SurveySubmitMessageState(
@@ -278,7 +444,9 @@ data class SurveyCancelConfirmationDisplay(
     val negativeButtonMessage: String?
 )
 
-internal typealias SurveySubmitCallback = (Map<String, SurveyQuestionAnswer>) -> Unit
+internal typealias SurveySubmitCallback = (Map<String, SurveyAnswerState>) -> Unit
+internal typealias RecordCurrentAnswerCallback = (Map<String, SurveyAnswerState>) -> Unit
+internal typealias ResetCurrentAnswerCallback = (Map<String, SurveyAnswerState>) -> Unit
 internal typealias SurveyCancelCallback = () -> Unit
 internal typealias SurveyCancelPartialCallback = () -> Unit
 internal typealias SurveyCloseCallback = () -> Unit

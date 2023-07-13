@@ -110,6 +110,7 @@
 
 <!--        <item name="apptentiveSurveyTitleStyle">@style/Cookbook1.Survey.Title</item>-->
 <!--        <item name="apptentiveSurveyIntroductionStyle">@style/Cookbook1.Survey.Introduction</item>-->
+<!--        <item name="apptentiveSurveySuccessStyle">@style/Cookbook1.Survey.Introduction</item>-->
 
 <!--        <item name="apptentiveSurveySingleLineLayoutStyle">@style/Cookbook1.Survey.TextInputLayout</item>-->
 <!--        <item name="apptentiveSurveySingleLineEditTextStyle">@style/Cookbook1.Survey.EditText</item>-->
@@ -338,6 +339,7 @@
 <!--        <item name="apptentiveSurveyTitleStyle">@style/Cookbook2.Survey.Title</item>-->
 <!--        <item name="apptentiveSurveyHeaderImageStyle">@style/Cookbook2.Survey.HeaderImage</item>-->
 <!--        <item name="apptentiveSurveyIntroductionStyle">@style/Cookbook2.Survey.Introduction</item>-->
+<!--        <item name="apptentiveSurveySuccessStyle">@style/Cookbook2.Survey.Introduction</item>-->
 <!--        <item name="apptentiveSurveyFootnoteStyle">@style/Cookbook2.Survey.Footnote</item>-->
 <!--        <item name="apptentiveSurveySubmitButtonStyle">@style/Cookbook2.Button</item>-->
 
@@ -570,6 +572,7 @@
 <!--        <item name="apptentiveSurveyTitleStyle">@style/Cookbook3.Survey.Title</item>-->
 <!--        <item name="apptentiveSurveyBottomAppBarStyle">@style/Cookbook3.Survey.BottomAppBar</item>-->
 <!--        <item name="apptentiveSurveyIntroductionStyle">@style/Cookbook3.Survey.Introduction</item>-->
+<!--        <item name="apptentiveSurveySuccessStyle">@style/Cookbook3.Survey.Introduction</item>-->
 <!--        <item name="apptentiveSurveySubmitButtonStyle">@style/Cookbook3.Button</item>-->
 
 <!--        <item name="apptentiveGenericDialogLayoutStyle">@style/Cookbook3.Dialog.Layout</item>-->

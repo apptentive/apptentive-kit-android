@@ -1,6 +1,7 @@
 package apptentive.com.android.util
 
-internal class MissingKeyException(key: String) : RuntimeException("Missing key: $key")
+@InternalUseOnly
+class MissingKeyException(key: String) : RuntimeException("Missing key: $key")
 
 @Throws(MissingKeyException::class)
 @InternalUseOnly

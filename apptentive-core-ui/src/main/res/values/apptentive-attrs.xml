@@ -61,6 +61,9 @@
         <!-- Survey Styles Start -->
         <!-- Layout -->
         <attr name="apptentiveSurveyLayoutStyle" format="reference"/>
+        <attr name="apptentiveSurveyLayoutPagedStyle" format="reference"/>
+        <attr name="apptentiveSurveyIntroductionLayoutStyle" format="reference"/>
+        <attr name="apptentiveSurveySuccessLayoutStyle" format="reference"/>
 
         <!-- App Bars -->
         <attr name="apptentiveSurveyToolbarStyle" format="reference"/>
@@ -69,7 +72,9 @@
         <!-- TextViews -->
         <attr name="apptentiveSurveyTitleStyle" format="reference"/>
         <attr name="apptentiveSurveyIntroductionStyle" format="reference"/>
+        <attr name="apptentiveSurveySuccessStyle" format="reference"/>
         <attr name="apptentiveSurveyQuestionLayoutStyle" format="reference"/>
+        <attr name="apptentiveSurveyScrollViewLayoutStyle" format="reference"/>
         <attr name="apptentiveSurveyQuestionTitleStyle" format="reference"/>
         <attr name="apptentiveSurveyQuestionInstructionsStyle" format="reference"/>
         <attr name="apptentiveSurveyQuestionErrorStyle" format="reference"/>
@@ -89,8 +94,17 @@
         <attr name="apptentiveSurveyOtherTextFieldLayoutStyle" format="reference"/>
         <attr name="apptentiveSurveyOtherTextFieldEditTextStyle" format="reference"/>
         <attr name="apptentiveSurveySubmitButtonStyle" format="reference" />
+        <attr name="apptentiveSurveyNextButtonStyle" format="reference" />
         <attr name="apptentiveSurveyButtonColorDefault" format="color|reference" />
         <attr name="apptentiveSurveyQuestionDividerStyle" format="reference" />
+        <attr name="apptentiveSurveyViewPagerStyle" format="reference"/>
+
+        <attr name="apptentiveProgressBarLinearStyle" format="reference" />
+        <attr name="apptentiveProgressBarSegmentedStyle" format="reference" />
+        <attr name="apptentiveProgressBarSegmentedItemStyle" format="reference" />
+        <attr name="apptentiveProgressBarPreviousIcon" format="reference" />
+        <attr name="apptentiveProgressBarCurrentIcon" format="reference" />
+        <attr name="apptentiveProgressBarNextIcon" format="reference" />
         <!-- Survey Styles End -->
 
         <!-- Message Center -->
@@ -207,6 +221,8 @@
         <attr name="apptentiveTextSizeDialogTitleOrMessageOnly" format="dimension|reference" />
         <attr name="apptentiveTextSizeSurveyQuestionTitle" format="dimension|reference" />
         <attr name="apptentiveTextSizeSurveyIntroduction" format="dimension|reference" />
+        <attr name="apptentiveTextSizeSurveySuccess" format="dimension|reference" />
+        <attr name="apptentiveTextSizeSurveyDisclaimer" format="dimension|reference" />
         <attr name="apptentiveTextSizeSubhead" format="dimension|reference" />
         <attr name="apptentiveTextSizeButtonBorderless" format="dimension|reference" />
         <attr name="apptentiveTextSizeBody1" format="dimension|reference" />
@@ -226,9 +242,17 @@
         <attr name="apptentiveTextColorButtonColored" format="color|reference"/>
         <attr name="apptentiveTextColorSurveyTitle" format="color|reference"/>
         <attr name="apptentiveTextColorSurveyIntroduction" format="color|reference"/>
+        <attr name="apptentiveTextColorSurveySuccess" format="color|reference"/>
+        <attr name="apptentiveTextColorSurveyDisclaimer" format="color|reference"/>
         <attr name="apptentiveTextColorSurveyRangeLabel" format="color|reference"/>
         <attr name="apptentiveTextColorSurveyQuestionInstructions" format="color|reference"/>
         <attr name="apptentiveTextColorSurveyTermsAndConditions" format="color|reference"/>
+
+        <attr name="apptentiveProgressBarLinearIndicatorColor" format="color|reference" />
+        <attr name="apptentiveProgressBarLinearTrackColor" format="color|reference" />
+        <attr name="apptentiveColorProgressBarPrevious" format="color|reference"/>
+        <attr name="apptentiveColorProgressBarNext" format="color|reference"/>
+        <attr name="apptentiveColorProgressBarCurrent" format="color|reference"/>
 
         <!-- Text Alpha -->
         <attr name="apptentiveHeaderAlpha" format="float|dimension|reference" />
@@ -252,6 +276,8 @@
         <attr name="apptentiveTypefaceToolbar" format="integer|reference" />
         <attr name="apptentiveTypefaceTitle" format="integer|reference" />
         <attr name="apptentiveTypefaceSurveyIntroduction" format="integer|reference" />
+        <attr name="apptentiveTypefaceSurveySuccess" format="integer|reference" />
+        <attr name="apptentiveTypefaceSurveyDisclaimer" format="integer|reference" />
         <attr name="apptentiveTypefaceSubhead" format="integer|reference" />
         <attr name="apptentiveTypefaceButtonBorderless" format="integer|reference" />
         <attr name="apptentiveTypefaceBody1" format="integer|reference" />

@@ -1,18 +1,16 @@
 package apptentive.com.android.ui
 
 import android.util.SparseArray
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
 import apptentive.com.android.util.InternalUseOnly
 
 @InternalUseOnly
-class ListViewAdapter : ListAdapter<ListViewItem, ListViewAdapter.ViewHolder<ListViewItem>>(DIFF) {
+class ListViewAdapter : ListAdapter<ListViewItem, ApptentiveViewHolder<ListViewItem>>(DIFF) {
     private val viewHolderFactoryLookup = SparseArray<ViewHolderFactory>()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder<ListViewItem> {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ApptentiveViewHolder<ListViewItem> {
         // resolve factory object
         val viewHolderFactory = viewHolderFactoryLookup.get(viewType)
 
@@ -21,11 +19,11 @@ class ListViewAdapter : ListAdapter<ListViewItem, ListViewAdapter.ViewHolder<Lis
 
         // create view holder
         @Suppress("UNCHECKED_CAST")
-        return viewHolderFactory.createViewHolder(itemView) as ViewHolder<ListViewItem>
+        return viewHolderFactory.createViewHolder(itemView) as ApptentiveViewHolder<ListViewItem>
     }
 
     override fun onBindViewHolder(
-        holder: ViewHolder<ListViewItem>,
+        holder: ApptentiveViewHolder<ListViewItem>,
         position: Int,
         payloads: MutableList<Any>
     ) {
@@ -37,7 +35,7 @@ class ListViewAdapter : ListAdapter<ListViewItem, ListViewAdapter.ViewHolder<Lis
         }
     }
 
-    override fun onBindViewHolder(holder: ViewHolder<ListViewItem>, position: Int) {
+    override fun onBindViewHolder(holder: ApptentiveViewHolder<ListViewItem>, position: Int) {
         holder.bindView(getItem(position), position)
     }
 
@@ -46,15 +44,7 @@ class ListViewAdapter : ListAdapter<ListViewItem, ListViewAdapter.ViewHolder<Lis
     }
 
     fun register(itemType: Int, factory: ViewHolderFactory) {
-        viewHolderFactoryLookup[itemType] = factory
-    }
-
-    abstract class ViewHolder<T : ListViewItem> constructor(itemView: View) :
-        RecyclerView.ViewHolder(itemView) {
-        abstract fun bindView(item: T, position: Int)
-        open fun updateView(item: T, position: Int, changeMask: Int) {
-            bindView(item, position)
-        }
+        viewHolderFactoryLookup.put(itemType, factory)
     }
 
     private companion object {

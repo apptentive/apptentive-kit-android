@@ -40,6 +40,7 @@ import apptentive.com.android.platform.SharedPrefConstants
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags
+import apptentive.com.android.util.LogTags.CONVERSATION
 import apptentive.com.android.util.LogTags.DEVICE
 import apptentive.com.android.util.LogTags.FEEDBACK
 import apptentive.com.android.util.LogTags.INTERACTIONS
@@ -223,7 +224,7 @@ object Apptentive {
             ThrottleUtils.ratingThrottleLength = configuration.ratingInteractionThrottleLength
             ThrottleUtils.throttleSharedPrefs =
                 application.getSharedPreferences(
-                    SharedPrefConstants.THROTTLE_UTILS,
+                    SharedPrefConstants.CORE_DATA,
                     Context.MODE_PRIVATE
                 )
 
@@ -1264,6 +1265,28 @@ object Apptentive {
             Log.e(PUSH_NOTIFICATION, "Exception while getting body from Apptentive push", exception)
         }
         return null
+    }
+
+    //endregion
+
+    // internal
+
+    @InternalUseOnly
+    fun setLocalManifest(json: String?): Boolean {
+        return try {
+            if (!json.isNullOrBlank()) {
+                stateExecutor.execute {
+                    client.setLocalManifest(json)
+                }
+                true
+            } else {
+                Log.d(CONVERSATION, "json String was null or blank. URI: $json")
+                false
+            }
+        } catch (exception: Exception) {
+            Log.e(CONVERSATION, "Exception while setting local manifest as string", exception)
+            false
+        }
     }
 
     //endregion

@@ -24,6 +24,8 @@ internal typealias RecordInteractionCallback = (interaction: Interaction) -> Uni
 
 internal typealias RecordInteractionResponsesCallback = (Map<String, Set<InteractionResponse>>) -> Unit
 
+internal typealias RecordCurrentAnswerCallback = (Map<String, Set<InteractionResponse>>, Boolean) -> Unit
+
 @Suppress("FoldInitializerAndIfToElvis")
 internal data class DefaultEngagement(
     private val interactionDataProvider: InteractionDataProvider,
@@ -31,7 +33,8 @@ internal data class DefaultEngagement(
     private val interactionEngagement: InteractionEngagement,
     private val recordEvent: RecordEventCallback,
     private val recordInteraction: RecordInteractionCallback,
-    private val recordInteractionResponses: RecordInteractionResponsesCallback
+    private val recordInteractionResponses: RecordInteractionResponsesCallback,
+    private val recordCurrentAnswer: RecordCurrentAnswerCallback
 ) : Engagement {
     @WorkerThread
     override fun engage(
@@ -85,6 +88,19 @@ internal data class DefaultEngagement(
         }
 
         return engage(context, interaction)
+    }
+
+    override fun engageToRecordCurrentAnswer(
+        interactionResponses: Map<String, Set<InteractionResponse>>,
+        reset: Boolean
+    ) {
+        recordCurrentAnswer(interactionResponses, reset)
+    }
+
+    override fun getNextQuestionSet(
+        invocations: List<Invocation>
+    ): String? {
+        return interactionDataProvider.getQuestionId(invocations)
     }
 
     private fun engage(

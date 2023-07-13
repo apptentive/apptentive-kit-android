@@ -18,6 +18,7 @@ import apptentive.com.android.feedback.ApptentiveActivityInfo
 import apptentive.com.app.databinding.ActivityDevFunctionsBinding
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import java.io.IOException
 
 class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
     lateinit var binding: ActivityDevFunctionsBinding
@@ -87,13 +88,16 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
     private fun setupFunctionTypeDropdown() {
         val CUSTOM_DATA = "CUSTOM DATA"
         val HIDDEN_MESSAGES = "HIDDEN MESSAGES"
+        val TEST_MANIFEST = "TEST MANIFEST"
 
-        val functionTypeValues = listOf(CUSTOM_DATA, HIDDEN_MESSAGES)
+        val functionTypeValues = listOf(CUSTOM_DATA, HIDDEN_MESSAGES, TEST_MANIFEST)
         val functionTypesAdapter = ArrayAdapter(this, R.layout.list_item, functionTypeValues)
 
         binding.apply {
             dataTypesLayout.isVisible = functionsTypeDropdown.text.toString() == CUSTOM_DATA
             hiddenMessageLayout.isVisible = functionsTypeDropdown.text.toString() == HIDDEN_MESSAGES
+            localManifestLayout.isVisible = functionsTypeDropdown.text.toString() == TEST_MANIFEST
+
             customDataList.isVisible = !isPersonOrDevice()
 
             functionsTypeDropdown.setAdapter(functionTypesAdapter)
@@ -101,8 +105,31 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
             functionsTypeDropdown.addTextChangedListener {
                 dataTypesLayout.isVisible = it.toString() == CUSTOM_DATA
                 hiddenMessageLayout.isVisible = it.toString() == HIDDEN_MESSAGES
+                localManifestLayout.isVisible = it.toString() == TEST_MANIFEST
             }
+
+            val buttonNames = getButtonNamesFromAssets()
+            val adapter = FileItemAdapter(buttonNames)
+            manifestFileView.adapter = adapter
         }
+    }
+
+    private fun getButtonNamesFromAssets(): Array<String> {
+        val buttonNames = mutableListOf<String>()
+
+        try {
+            val assetManager = assets
+            val files = assetManager.list("manifest/")
+
+            if (files != null) {
+                for (file in files) {
+                    buttonNames.add(file.replace(".json", ""))
+                }
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return buttonNames.toTypedArray()
     }
 
     private fun setupDataTypeDropdown() {

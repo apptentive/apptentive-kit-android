@@ -17,4 +17,8 @@ class MockInteractionDataProvider : InteractionDataProvider {
     override fun getInteractionData(invocations: List<Invocation>): InteractionData? {
         TODO("Not yet implemented")
     }
+
+    override fun getQuestionId(invocations: List<Invocation>): String? {
+        return null
+    }
 }

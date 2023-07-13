@@ -18,7 +18,7 @@ import apptentive.com.android.ui.ViewModelFactory
  *
  * ApptentiveActivityInfo added for easier integration of future features
  */
-open class BaseSurveyActivity : ApptentiveViewModelActivity(), ApptentiveActivityInfo {
+internal open class BaseSurveyActivity : ApptentiveViewModelActivity(), ApptentiveActivityInfo {
 
     /**
      * @property viewModel [SurveyViewModel] class that is responsible for preparing
@@ -26,7 +26,13 @@ open class BaseSurveyActivity : ApptentiveViewModelActivity(), ApptentiveActivit
      *
      */
     val viewModel: SurveyViewModel by viewModels {
-        ViewModelFactory { createSurveyViewModel() }
+        ViewModelFactory {
+            try {
+                createSurveyViewModel()
+            } catch (exception: Exception) {
+                throw IllegalStateException("Issue creating SurveyViewModel $exception")
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

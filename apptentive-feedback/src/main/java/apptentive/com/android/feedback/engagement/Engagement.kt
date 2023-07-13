@@ -5,6 +5,8 @@ import apptentive.com.android.feedback.engagement.criteria.Invocation
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
 import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.util.InternalUseOnly
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.SURVEY
 
 /**
  * Represents an object responsible for engaging events in a specific context.
@@ -22,6 +24,10 @@ interface Engagement {
     ): EngagementResult
 
     fun engage(context: EngagementContext, invocations: List<Invocation>): EngagementResult
+
+    fun engageToRecordCurrentAnswer(interactionResponses: Map<String, Set<InteractionResponse>>, reset: Boolean)
+
+    fun getNextQuestionSet(invocations: List<Invocation>): String?
 }
 
 /**
@@ -45,5 +51,19 @@ internal class NullEngagement : Engagement {
         invocations: List<Invocation>
     ): EngagementResult {
         return EngagementResult.Error("Unable to engage invocations: SDK is not fully initialized")
+    }
+
+    override fun engageToRecordCurrentAnswer(
+        interactionResponses: Map<String, Set<InteractionResponse>>,
+        reset: Boolean
+    ) {
+        Log.e(SURVEY, "Unable to record current answer: SDK is not fully initialized")
+    }
+
+    override fun getNextQuestionSet(
+        invocations: List<Invocation>
+    ): String? {
+        Log.e(SURVEY, "Unable to get next quest set: SDK is not fully initialized")
+        return null
     }
 }

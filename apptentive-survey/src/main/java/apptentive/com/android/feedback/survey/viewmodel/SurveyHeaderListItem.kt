@@ -4,10 +4,10 @@ import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
 import android.view.View
 import apptentive.com.android.feedback.survey.R
-import apptentive.com.android.ui.ListViewAdapter
+import apptentive.com.android.ui.ApptentiveViewHolder
 import apptentive.com.android.ui.ListViewItem
 import apptentive.com.android.util.Log
-import apptentive.com.android.util.LogTags
+import apptentive.com.android.util.LogTags.SURVEY
 import com.google.android.material.textview.MaterialTextView
 
 internal class SurveyHeaderListItem(val instructions: String) : SurveyListItem(
@@ -38,7 +38,7 @@ internal class SurveyHeaderListItem(val instructions: String) : SurveyListItem(
         return "${javaClass.simpleName}(instructions=$instructions)"
     }
 
-    class ViewHolder(itemView: View) : ListViewAdapter.ViewHolder<SurveyHeaderListItem>(itemView) {
+    class ViewHolder(itemView: View) : ApptentiveViewHolder<SurveyHeaderListItem>(itemView) {
         private val introductionView = itemView.findViewById<MaterialTextView>(R.id.apptentive_survey_introduction)
 
         override fun bindView(item: SurveyHeaderListItem, position: Int) {
@@ -47,7 +47,7 @@ internal class SurveyHeaderListItem(val instructions: String) : SurveyListItem(
                 Linkify.addLinks(introductionView, Linkify.ALL)
                 introductionView.movementMethod = LinkMovementMethod.getInstance()
             } catch (exception: Exception) {
-                Log.e(LogTags.MESSAGE_CENTER, "Couldn't add linkify to survey introduction text", exception)
+                Log.e(SURVEY, "Couldn't add linkify to survey introduction text", exception)
             }
         }
     }

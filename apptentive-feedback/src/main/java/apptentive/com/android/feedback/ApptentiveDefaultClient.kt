@@ -206,7 +206,8 @@ class ApptentiveDefaultClient(
                 interactionEngagement = createInteractionEngagement(),
                 recordEvent = ::recordEvent,
                 recordInteraction = ::recordInteraction,
-                recordInteractionResponses = ::recordInteractionResponses
+                recordInteractionResponses = ::recordInteractionResponses,
+                recordCurrentAnswer = ::recordCurrentAnswer
             )
             // register engagement context as soon as DefaultEngagement is created to make it available for MessageManager
             DependencyProvider.register(EngagementContextProvider(engagement, payloadSender, executors))
@@ -526,6 +527,10 @@ class ApptentiveDefaultClient(
         )
     }
 
+    override fun setLocalManifest(json: String) {
+        conversationManager.setTestManifestFromLocal(json)
+    }
+
     @WorkerThread
     private fun recordInteraction(interaction: Interaction) {
         conversationManager.recordInteraction(interaction.id)
@@ -534,6 +539,11 @@ class ApptentiveDefaultClient(
     @WorkerThread
     private fun recordInteractionResponses(interactionResponses: Map<String, Set<InteractionResponse>>) {
         conversationManager.recordInteractionResponses(interactionResponses)
+    }
+
+    @WorkerThread
+    private fun recordCurrentAnswer(interactionResponses: Map<String, Set<InteractionResponse>>, reset: Boolean) {
+        conversationManager.recordCurrentResponse(interactionResponses, reset)
     }
 
     @WorkerThread

@@ -95,6 +95,18 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
                 ): EngagementResult {
                     return EngagementResult.InteractionNotShown("No runnable interactions")
                 }
+
+                override fun engageToRecordCurrentAnswer(
+                    interactionResponses: Map<String, Set<InteractionResponse>>,
+                    reset: Boolean
+                ) {
+                }
+
+                override fun getNextQuestionSet(
+                    invocations: List<Invocation>
+                ): String? {
+                    return null
+                }
             },
             payloadSender = object : PayloadSender {
                 override fun sendPayload(payload: Payload) {

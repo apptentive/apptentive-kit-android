@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="margin_4dp">4dp</dimen>
+    <dimen name="margin_32">32dp</dimen>
     <dimen name="app_icon_height_width">32dp</dimen>
     <dimen name="screen_horizontal_margin">24dp</dimen>
     <dimen name="section_top_margin">16dp</dimen>

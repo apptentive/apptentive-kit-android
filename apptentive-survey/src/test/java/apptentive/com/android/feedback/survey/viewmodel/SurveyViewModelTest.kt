@@ -4,11 +4,21 @@ import android.text.SpannedString
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import apptentive.com.android.TestCase
 import apptentive.com.android.concurrent.mockExecutors
+import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion
+import apptentive.com.android.feedback.survey.model.RangeQuestion
+import apptentive.com.android.feedback.survey.model.RenderAs
 import apptentive.com.android.feedback.survey.model.SingleLineQuestion
+import apptentive.com.android.feedback.survey.model.SurveyAnswerState
 import apptentive.com.android.feedback.survey.model.SurveyModel
-import apptentive.com.android.feedback.survey.model.SurveyQuestion
-import apptentive.com.android.feedback.survey.model.createSingleLineQuestion
+import apptentive.com.android.feedback.survey.model.SurveyQuestionSet
+import apptentive.com.android.feedback.survey.model.createMultiChoiceQuestionForV12
+import apptentive.com.android.feedback.survey.model.createRangeQuestionForV12
+import apptentive.com.android.feedback.survey.model.createSingleLineQuestionForV12
+import apptentive.com.android.feedback.survey.model.createSurveyModel
+import apptentive.com.android.feedback.survey.utils.getValidAnsweredQuestions
+import com.google.common.truth.Truth.assertThat
 import org.junit.Assert.assertEquals
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
@@ -53,7 +63,7 @@ class SurveyViewModelTest : TestCase() {
         )
 
         // attempt to submit the survey
-        viewModel.submit()
+        viewModel.submitListSurvey()
 
         // check results
         assertResults(
@@ -100,13 +110,14 @@ class SurveyViewModelTest : TestCase() {
         )
 
         // submit the survey
-        viewModel.submit()
+        viewModel.submitListSurvey()
 
         // check results: unanswered question should be omitted
         assertResults(
             "submit",
             mapOf(
-                questionId1 to SingleLineQuestion.Answer("Answer")
+                questionId1 to SurveyAnswerState.Answered(SingleLineQuestion.Answer("Answer")),
+                questionId2 to SurveyAnswerState.Empty
             ),
             SurveyHeaderListItem(instructions = surveyDescription),
             SingleLineQuestionListItem(
@@ -126,6 +137,12 @@ class SurveyViewModelTest : TestCase() {
             ),
             "close"
         )
+    }
+
+    @Test
+    fun testPagedSurvey() {
+        val viewModel = createViewModel(renderAs = RenderAs.PAGED)
+        viewModel.advancePage()
     }
 
     @Test
@@ -187,7 +204,7 @@ class SurveyViewModelTest : TestCase() {
         )
 
         // attempt to submit the survey
-        viewModel.submit()
+        viewModel.submitListSurvey()
 
         // check results: First question is invalid - has validation error
         assertResults(
@@ -266,7 +283,7 @@ class SurveyViewModelTest : TestCase() {
         val viewModel = createViewModelForExitConfirmationTest()
 
         // attempt to submit the survey
-        viewModel.submit()
+        viewModel.submitListSurvey()
 
         // attempt to exit with confirmation
         viewModel.exit(showConfirmation = true)
@@ -298,7 +315,7 @@ class SurveyViewModelTest : TestCase() {
         val viewModel = createViewModelForExitConfirmationTest()
 
         // try to submit
-        viewModel.submit()
+        viewModel.submitListSurvey()
 
         // answer the question
         viewModel.updateAnswer("id_1", "My answer")
@@ -321,6 +338,226 @@ class SurveyViewModelTest : TestCase() {
 
         // back to survey event is invoked
         assertResults("back to survey")
+    }
+
+    @Test
+    fun testAllValidNonRequiredAnswers() {
+        // none of the questions contains a valid answer but none is also required so it's fine
+        val model = createSurveyModel(
+            createSingleLineQuestionForV12(),
+            createRangeQuestionForV12(),
+            createMultiChoiceQuestionForV12(
+                answerChoiceConfigs = listOf(mapOf("id" to "choice_id", "value" to "value", "type" to "select_option"))
+            )
+        )
+        val viewModel = SurveyViewModel(model, executors = mockExecutors, {}, {}, {}, {}, {}, {}, {})
+        assertThat(viewModel.allRequiredAnswersAreValid).isTrue()
+    }
+
+    @Test
+    @Ignore("Need to figure out how to pass the answer to the question set or probably figure out a different way to test this")
+    fun testAllValidRequiredAnswers() {
+        // all of the questions contains a valid answer and all are required
+        val model = createSurveyModel(
+            createSingleLineQuestionForV12(required = true),
+            createRangeQuestionForV12(selectedIndex = 5, required = true),
+            createMultiChoiceQuestionForV12(
+                answerChoiceConfigs = listOf(
+                    mapOf("id" to "choice_id", "value" to "value", "type" to "select_option")
+                ),
+                required = true
+            )
+        )
+        val viewModel = SurveyViewModel(model, executors = mockExecutors, {}, {}, {}, {}, {}, {}, {})
+        assertThat(viewModel.allRequiredAnswersAreValid).isTrue()
+    }
+
+    @Test
+    fun testSomeInvalidRequiredAnswers() {
+        // some of the questions contains a valid answer and all are required
+        val model = createSurveyModel(
+            createSingleLineQuestionForV12(required = true),
+            createRangeQuestionForV12(selectedIndex = 5, required = true),
+            createMultiChoiceQuestionForV12(
+                answerChoiceConfigs = listOf(
+                    mapOf("id" to "choice_id", "value" to "value", "type" to "select_option")
+                ),
+                required = true
+            )
+        )
+        val viewModel = SurveyViewModel(model, executors = mockExecutors, {}, {}, {}, {}, {}, {}, {})
+        assertThat(viewModel.allRequiredAnswersAreValid).isFalse()
+    }
+
+    @Test
+    fun testUpdatingAnswer() {
+        val questionId = "id"
+        val model = createSurveyModel(
+            createSingleLineQuestionForV12(id = questionId, required = true)
+        )
+
+        val viewModel = SurveyViewModel(model, executors = mockExecutors, {}, {}, {}, {}, {}, {}, {})
+
+        // a single required question contains no answer
+        assertThat(viewModel.allRequiredAnswersAreValid).isFalse()
+
+        // update the answer
+        viewModel.updateAnswer(
+            questionId = questionId,
+            value = "New Answer"
+        )
+
+        // all answers become valid
+        assertThat(viewModel.allRequiredAnswersAreValid).isTrue()
+
+        // remove the answer
+        viewModel.updateAnswer(
+            questionId = questionId,
+            value = ""
+        )
+
+        // all answers become invalid
+        assertThat(viewModel.allRequiredAnswersAreValid).isFalse()
+
+        // update the answer
+        viewModel.updateAnswer(
+            questionId = questionId,
+            value = "Another Answer"
+        )
+
+        // all answers become valid
+        assertThat(viewModel.allRequiredAnswersAreValid).isTrue()
+    }
+
+    //endregion
+
+    //region First Invalid Index
+
+    @Test
+    fun testFirstInvalidQuestion() {
+        val model = createSurveyModel(
+            createSingleLineQuestionForV12(id = "id_1", required = true),
+            createRangeQuestionForV12(id = "id_2", required = true),
+            createMultiChoiceQuestionForV12(
+                id = "id_3",
+                required = true,
+                answerChoiceConfigs = listOf(
+                    mapOf("id" to "choice_id", "value" to "value", "type" to "select_option")
+                )
+            )
+        )
+
+        val viewModel = SurveyViewModel(model, executors = mockExecutors, {}, {}, {}, {}, {}, {}, {})
+        // all questions are invalid
+        assertThat(viewModel.getFirstInvalidRequiredQuestionIndex()).isEqualTo(0)
+
+        // answer the first question
+        viewModel.updateAnswer(
+            questionId = "id_1",
+            value = "text"
+        )
+
+        // second question becomes first invalid
+        assertThat(viewModel.getFirstInvalidRequiredQuestionIndex()).isEqualTo(1)
+
+        // answer the third question
+        viewModel.updateAnswer(
+            questionId = "id_3",
+            choiceId = "choice_id",
+            selected = true,
+            text = null
+        )
+
+        // second question still invalid
+        assertThat(viewModel.getFirstInvalidRequiredQuestionIndex()).isEqualTo(1)
+
+        // answer the second question
+        viewModel.updateAnswer(
+            questionId = "id_2",
+            selectedIndex = 5
+        )
+
+        // all questions are valid now
+        assertThat(viewModel.getFirstInvalidRequiredQuestionIndex()).isEqualTo(-1)
+
+        // remove the answer from the first question
+        viewModel.updateAnswer(
+            questionId = "id_1",
+            value = ""
+        )
+
+        // first question becomes first invalid
+        assertThat(viewModel.getFirstInvalidRequiredQuestionIndex()).isEqualTo(0)
+    }
+
+    @Test
+    fun testValidAnsweredQuestions() {
+        val question1 = SingleLineQuestion(
+            id = "1",
+            title = "Question 1",
+            validationError = "Invalid answer",
+            required = true,
+            requiredText = "This question is required",
+            instructionsText = "instructions"
+        )
+        question1.answer = SingleLineQuestion.Answer(value = "Answer 1") // Answered and valid
+
+        val question2 = RangeQuestion(
+            id = "2",
+            title = "Question 2",
+            validationError = "Invalid answer",
+            required = true,
+            requiredText = "This question is required",
+            instructionsText = "instructions",
+            min = 1,
+            max = 5
+        )
+        question2.answer = RangeQuestion.Answer(selectedIndex = null) // Empty - Null selectedIndex
+
+        val question3 = MultiChoiceQuestion(
+            id = "3",
+            title = "Question 3",
+            validationError = "Invalid answer",
+            required = true,
+            requiredText = "This question is required",
+            answerChoiceConfigs = listOf(
+                MultiChoiceQuestion.AnswerChoiceConfiguration(
+                    type = MultiChoiceQuestion.ChoiceType.select_option,
+                    id = "a",
+                    title = "Option A"
+                ),
+                MultiChoiceQuestion.AnswerChoiceConfiguration(
+                    type = MultiChoiceQuestion.ChoiceType.select_option,
+                    id = "b",
+                    title = "Option B"
+                )
+            ),
+            allowMultipleAnswers = true,
+            minSelections = 1,
+            maxSelections = 1
+        )
+        question3.answer = MultiChoiceQuestion.Answer(
+            choices = listOf(
+                MultiChoiceQuestion.Answer.Choice(id = "a", checked = true)
+            )
+        )
+
+        val question4 = SingleLineQuestion(
+            id = "4",
+            title = "Question 4",
+            validationError = "Invalid answer",
+            required = true,
+            requiredText = "This question is required",
+            instructionsText = "instructions"
+        )
+        question4.answer = SingleLineQuestion.Answer(value = "") //  Empty answer value
+
+        val shownQuestions = listOf(question1, question2, question3, question4)
+
+        val validAnsweredQuestions = getValidAnsweredQuestions(shownQuestions)
+
+        val expectedValidQuestions = listOf(question1, question3)
+        assertEquals(expectedValidQuestions, validAnsweredQuestions)
     }
 
     private fun createViewModelForExitConfirmationTest(): SurveyViewModel {
@@ -347,35 +584,43 @@ class SurveyViewModelTest : TestCase() {
     }
 
     private fun createViewModel(
-        questions: List<SurveyQuestion<*>> = listOf(
-            // required question
-            createSingleLineQuestion(
-                id = "id_1",
-                title = "title 1",
-                required = true,
-                requiredText = "Required",
-                errorMessage = "Question 1 is invalid"
+        questionSet: List<SurveyQuestionSet> = listOf(
+            SurveyQuestionSet(
+                id = "First",
+                invokes = emptyList(),
+                questions = listOf(
+                    mapOf(
+                        "id" to "id_1", "value" to "title 1", "type" to "singleline", "required" to true, "error_message" to "Question 1 is invalid"
+                    )
+                ),
+                buttonText = "NEXT",
+                shouldContinue = true,
             ),
-            // non-required question
-            createSingleLineQuestion(
-                id = "id_2",
-                title = "title 2",
-                required = false,
-                errorMessage = "Question 2 is invalid"
+            SurveyQuestionSet(
+                id = "Second",
+                invokes = emptyList(),
+                questions = listOf(
+                    mapOf(
+                        "id" to "id_2", "value" to "title 2", "type" to "singleline", "required" to false, "error_message" to "Question 2 is invalid"
+                    )
+                ),
+                buttonText = "NEXT",
+                shouldContinue = true,
             )
         ),
         name: String? = "name",
         description: String? = "description",
-        submitText: String? = "submitText",
-        requiredText: String? = "requiredText",
+        submitText: String = "submitText",
+        requiredText: String = "Required",
         validationError: String? = "validationError",
-        successMessage: String? = "successMessage"
+        successMessage: String? = "successMessage",
+        renderAs: RenderAs = RenderAs.LIST
     ): SurveyViewModel {
         val model = SurveyModel(
             interactionId = "interaction_id",
-            questions = questions,
+            questionSet = questionSet,
             name = name,
-            description = description,
+            surveyIntroduction = description,
             submitText = submitText,
             requiredText = requiredText,
             validationError = validationError,
@@ -386,7 +631,10 @@ class SurveyViewModelTest : TestCase() {
             closeConfirmCloseText = "close",
             closeConfirmBackText = "Back to survey",
             termsAndConditionsLinkText = SpannedString("Terms & Conditions"),
-            disclaimerText = "Disclaimer text"
+            disclaimerText = "Disclaimer text",
+            introButtonText = "INTRO",
+            successButtonText = "THANKS!",
+            renderAs = RenderAs.LIST
         )
         return SurveyViewModel(
             model = model,
@@ -394,6 +642,8 @@ class SurveyViewModelTest : TestCase() {
             onSubmit = {
                 addResult("submit")
                 addResult(it)
+            },
+            recordCurrentAnswer = {
             },
             onCancel = {
                 addResult("cancel")
@@ -406,6 +656,8 @@ class SurveyViewModelTest : TestCase() {
             },
             onBackToSurvey = {
                 addResult("back to survey")
+            },
+            resetCurrentAnswer = {
             }
         )
     }
