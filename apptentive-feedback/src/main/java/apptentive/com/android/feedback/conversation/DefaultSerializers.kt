@@ -37,6 +37,8 @@ import apptentive.com.android.serialization.encodeList
 import apptentive.com.android.serialization.encodeMap
 import apptentive.com.android.serialization.encodeNullableString
 import apptentive.com.android.serialization.encodeSet
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.MIGRATION
 
 internal object DefaultSerializers {
     val versionCodeSerializer = LongSerializer
@@ -349,17 +351,12 @@ internal object DefaultSerializers {
                     obj = value.responses,
                     valueEncoder = interactionResponseSerializer
                 )
-                encoder.encodeSet(
-                    obj = value.currentResponses,
-                    valueEncoder = interactionResponseSerializer
-                )
                 engagementRecordSerializer.encode(encoder, value.record)
             }
 
             override fun decode(decoder: Decoder): InteractionResponseData {
                 return InteractionResponseData(
                     responses = decoder.decodeSet(interactionResponseSerializer),
-                    currentResponses = decoder.decodeSet(interactionResponseSerializer),
                     record = engagementRecordSerializer.decode(decoder),
                 )
             }
@@ -395,18 +392,23 @@ internal object DefaultSerializers {
 
             override fun decode(decoder: Decoder): InteractionResponse {
                 val responseName = decoder.decodeString()
+                val recoveredResponse = recoverResponse(responseName)
 
-                return when (responseName) {
-                    InteractionResponse.IdResponse::class.java.name -> {
+                return when {
+                    responseName == InteractionResponse.IdResponse::class.java.name ||
+                        recoveredResponse == InteractionResponse.IdResponse::class.java.name -> {
                         InteractionResponse.IdResponse(decoder.decodeString())
                     }
-                    InteractionResponse.LongResponse::class.java.name -> {
+                    responseName == InteractionResponse.LongResponse::class.java.name ||
+                        recoveredResponse == InteractionResponse.LongResponse::class.java.name -> {
                         InteractionResponse.LongResponse(decoder.decodeLong())
                     }
-                    InteractionResponse.StringResponse::class.java.name -> {
+                    responseName == InteractionResponse.StringResponse::class.java.name ||
+                        recoveredResponse == InteractionResponse.StringResponse::class.java.name -> {
                         InteractionResponse.StringResponse(decoder.decodeString())
                     }
-                    InteractionResponse.OtherResponse::class.java.name -> {
+                    responseName == InteractionResponse.OtherResponse::class.java.name ||
+                        recoveredResponse == InteractionResponse.OtherResponse::class.java.name -> {
                         InteractionResponse.OtherResponse(
                             id = decoder.decodeNullableString(),
                             response = decoder.decodeNullableString()
@@ -414,6 +416,32 @@ internal object DefaultSerializers {
                     }
                     else -> throw java.lang.Exception("Unknown InteractionResponse type: $responseName")
                 }
+            }
+
+            // Class names from 6.0.X are not saved from minification.
+            // This is a backup to handle that case assuming the class names are in the same order.
+            private fun recoverResponse(responseName: String): String = when (responseName.last()) {
+                'a' -> {
+                    Log.d(MIGRATION, "Decoding interaction response: $responseName. Recovered as IdResponse")
+                    InteractionResponse.IdResponse::class.java.name
+                }
+
+                'b' -> {
+                    Log.d(MIGRATION, "Decoding interaction response: $responseName. Recovered as LongResponse")
+                    InteractionResponse.LongResponse::class.java.name
+                }
+
+                'd' -> {
+                    Log.d(MIGRATION, "Decoding interaction response: $responseName. Recovered as StringResponse")
+                    InteractionResponse.StringResponse::class.java.name
+                }
+
+                'c' -> {
+                    Log.d(MIGRATION, "Decoding interaction response: $responseName. Recovered as OtherResponse")
+                    InteractionResponse.OtherResponse::class.java.name
+                }
+
+                else -> "Unknown or Backup not needed"
             }
         }
     }
@@ -472,12 +500,20 @@ internal object DefaultSerializers {
                 }
 
             override fun decode(decoder: Decoder): EngagementData {
-                return EngagementData(
-                    events = decodeEventRecords(decoder),
-                    interactions = decodeInteractionRecords(decoder),
-                    interactionResponses = decodeInteractionResponsesRecords(decoder),
-                    versionHistory = decodeVersionHistory(decoder)
-                )
+                val events = decodeEventRecords(decoder)
+                val interactions = decodeInteractionRecords(decoder)
+
+                return try {
+                    EngagementData(
+                        events = events,
+                        interactions = interactions,
+                        interactionResponses = decodeInteractionResponsesRecords(decoder),
+                        versionHistory = decodeVersionHistory(decoder)
+                    )
+                } catch (e: Exception) {
+                    Log.e(MIGRATION, "Failed to decode InteractionResponses. Skipping.", e)
+                    EngagementData(events, interactions)
+                }
             }
 
             private fun decodeEventRecords(decoder: Decoder): EngagementRecords<Event> {

@@ -27,7 +27,7 @@ import apptentive.com.android.feedback.utils.ThrottleUtils
 import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
-import apptentive.com.android.platform.SharedPrefConstants.CORE_DATA
+import apptentive.com.android.platform.SharedPrefConstants.SDK_CORE_INFO
 import apptentive.com.android.platform.SharedPrefConstants.SDK_VERSION
 import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.util.Log
@@ -59,7 +59,7 @@ internal class ConversationManager(
 
         // Store successful SDK version
         DependencyProvider.of<AndroidSharedPrefDataStore>()
-            .putString(CORE_DATA, SDK_VERSION, Constants.SDK_VERSION)
+            .putString(SDK_CORE_INFO, SDK_VERSION, Constants.SDK_VERSION)
 
         activeConversationSubject = BehaviorSubject(conversation)
     }
@@ -121,7 +121,7 @@ internal class ConversationManager(
     private fun loadActiveConversation(): Conversation {
         // Added in 6.1.0. Previous versions will be `null`.
         val storedSdkVersion = DependencyProvider.of<AndroidSharedPrefDataStore>()
-            .getString(CORE_DATA, SDK_VERSION).ifEmpty { null }
+            .getString(SDK_CORE_INFO, SDK_VERSION).ifEmpty { null }
 
         // load existing conversation
         val existingConversation = loadExistingConversation()

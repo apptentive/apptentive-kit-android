@@ -224,7 +224,7 @@ object Apptentive {
             ThrottleUtils.ratingThrottleLength = configuration.ratingInteractionThrottleLength
             ThrottleUtils.throttleSharedPrefs =
                 application.getSharedPreferences(
-                    SharedPrefConstants.CORE_DATA,
+                    SharedPrefConstants.THROTTLE_UTILS,
                     Context.MODE_PRIVATE
                 )
 

@@ -1,11 +1,14 @@
 package apptentive.com.android.feedback.conversation
 
 import androidx.core.util.AtomicFile
+import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.feedback.conversation.DefaultSerializers.conversationSerializer
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.EngagementManifest
+import apptentive.com.android.platform.AndroidSharedPrefDataStore
+import apptentive.com.android.platform.SharedPrefConstants
 import apptentive.com.android.serialization.BinaryDecoder
 import apptentive.com.android.serialization.BinaryEncoder
 import apptentive.com.android.serialization.json.JsonConverter
@@ -15,7 +18,6 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.DataInputStream
 import java.io.DataOutputStream
-import java.io.EOFException
 import java.io.File
 import java.io.FileInputStream
 
@@ -38,8 +40,6 @@ internal class DefaultConversationSerializer(
 
     // we keep track of the last seen engagement manifest expiry date and only update storage if it changes
     private var lastKnownManifestExpiry: TimeInterval = 0.0
-
-    private var isUsingMigrationSerializer: Boolean = false
 
     override fun saveConversation(conversation: Conversation) {
         val start = System.currentTimeMillis()
@@ -83,7 +83,12 @@ internal class DefaultConversationSerializer(
     override fun loadConversation(): Conversation? {
         if (conversationFile.exists()) {
             val conversation = readConversation()
-            val engagementManifest = if (!isUsingMigrationSerializer) readEngagementManifest() else null
+
+            // Added in 6.1.0. Previous versions will be `null`.
+            val storedSdkVersion = DependencyProvider.of<AndroidSharedPrefDataStore>()
+                .getString(SharedPrefConstants.SDK_CORE_INFO, SharedPrefConstants.SDK_VERSION).ifEmpty { null }
+
+            val engagementManifest = if (storedSdkVersion != null) readEngagementManifest() else null
             if (engagementManifest != null) {
                 return conversation.copy(engagementManifest = engagementManifest)
             }
@@ -104,19 +109,6 @@ internal class DefaultConversationSerializer(
             val inputStream = ByteArrayInputStream(decryptedMessage)
             val decoder = BinaryDecoder(DataInputStream(inputStream))
             conversationSerializer.decode((decoder))
-        } catch (e: Exception) {
-            try {
-                val decryptedMessage = encryption.decrypt(FileInputStream(conversationFile))
-                val inputStream = ByteArrayInputStream(decryptedMessage)
-                val decoder = BinaryDecoder(DataInputStream(inputStream))
-                isUsingMigrationSerializer = true
-                MigrationSerializers610.conversationSerializer.decode((decoder))
-            } catch (e: EOFException) {
-                throw ConversationSerializationException(
-                    "Unable to load conversation: file corrupted",
-                    e
-                )
-            }
         } catch (e: Exception) {
             throw ConversationSerializationException("Unable to load conversation", e)
         }

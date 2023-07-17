@@ -18,8 +18,8 @@ object SharedPrefConstants {
     const val USE_HOST_APP_THEME = "com.apptentive.sdk.hostapptheme"
     const val USE_HOST_APP_THEME_KEY = "host_app_theme_key"
 
-    const val CORE_DATA = "com.apptentive.sdk.throttle"
-    const val SDK_VERSION = "conversation_reset_throttle"
+    const val THROTTLE_UTILS = "com.apptentive.sdk.throttle"
+    const val CONVERSATION_RESET_THROTTLE = "conversation_reset_throttle"
 
     const val CUSTOM_STORE_URL = "com.apptentive.sdk.customstoreurl"
     const val CUSTOM_STORE_URL_KEY = "custom_store_url_key"
@@ -31,6 +31,7 @@ object SharedPrefConstants {
     const val MESSAGE_CENTER_PROFILE_EMAIL = "profile.email"
 
     const val SDK_CORE_INFO = "com.apptentive.sdk.coreinfo"
+    const val SDK_VERSION = "sdk_version"
     const val CRYPTO_ENABLED = "should_encrypt"
     const val CRYPTO_KEY_ALIAS = "crypto.key.alias"
 }
