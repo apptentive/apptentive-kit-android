@@ -1,5 +1,7 @@
 package apptentive.com.android.feedback.survey.model
 
+import apptentive.com.android.feedback.model.InvocationData
+
 internal fun createSingleLineQuestion(
     id: String? = null,
     title: String? = null,
@@ -75,3 +77,80 @@ internal fun createMultiChoiceQuestion(
         answer = if (answer != null) MultiChoiceQuestion.Answer(answer) else null
     )
 }
+
+internal fun createSingleLineQuestionForV12(
+    id: String? = null,
+    title: String? = null,
+    errorMessage: String? = null,
+    required: Boolean = false,
+    answer: String? = null,
+    questionSetID: String = "First",
+    invocation: List<InvocationData> = emptyList()
+) = SurveyQuestionSet(
+    id = questionSetID, invokes = invocation,
+    questions = listOf(
+        mapOf(
+            "id" to (id ?: "id"), "value" to (title ?: "title"), "type" to "singleline", "required" to required, "error_message" to (errorMessage ?: "error_message")
+        )
+    ),
+    buttonText = "NEXT",
+    shouldContinue = true,
+)
+
+internal fun createRangeQuestionForV12(
+    id: String? = null,
+    title: String? = null,
+    errorMessage: String? = null,
+    required: Boolean = false,
+    min: Int = 0,
+    max: Int = 10,
+    minLabel: String? = null,
+    maxLabel: String? = null,
+    selectedIndex: Int? = null
+) = SurveyQuestionSet(
+    id = "First", invokes = emptyList(),
+    questions = listOf(
+        mapOf(
+            "id" to (id ?: "id"),
+            "value" to (title ?: "title"),
+            "type" to "range",
+            "required" to required,
+            "error_message" to (errorMessage ?: "error_message"),
+            "min" to min,
+            "max" to max,
+            "min_label" to minLabel,
+            "max_label" to maxLabel,
+            "selected_index" to selectedIndex
+        )
+    ),
+    buttonText = "NEXT",
+    shouldContinue = true,
+)
+
+internal fun createMultiChoiceQuestionForV12(
+    id: String? = null,
+    title: String? = null,
+    errorMessage: String? = null,
+    required: Boolean = false,
+    allowMultipleAnswers: Boolean = false,
+    minSelections: Int = 1,
+    maxSelections: Int = 1,
+    answerChoiceConfigs: List<Map<String, Any?>>? = null,
+) = SurveyQuestionSet(
+    id = "First", invokes = emptyList(),
+    questions = listOf(
+        mapOf(
+            "id" to (id ?: "id"),
+            "value" to (title ?: "title"),
+            "type" to "multichoice",
+            "required" to required,
+            "error_message" to (errorMessage ?: "error_message"),
+            "min_selections" to minSelections,
+            "max_selections" to maxSelections,
+            "multiselect" to allowMultipleAnswers,
+            "answer_choices" to answerChoiceConfigs
+        )
+    ),
+    buttonText = "NEXT",
+    shouldContinue = true,
+)

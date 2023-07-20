@@ -7,14 +7,14 @@ import apptentive.com.android.ui.ViewHolderFactory
 
 internal class SurveyQuestionViewHolderFactory(
     private val layoutId: Int,
+    private val isPaged: Boolean,
     private val viewHolderCreator: (SurveyQuestionContainerView) -> SurveyQuestionListItem.ViewHolder<*>
 ) : ViewHolderFactory {
     override fun createItemView(parent: ViewGroup): View {
-        val containerView = SurveyQuestionContainerView(parent.context)
+        val containerView = SurveyQuestionContainerView(parent.context, null, 0, isPaged)
         containerView.setAnswerView(layoutId)
         return containerView
     }
 
-    override fun createViewHolder(itemView: View) =
-        viewHolderCreator(itemView as SurveyQuestionContainerView)
+    override fun createViewHolder(itemView: View) = viewHolderCreator(itemView as SurveyQuestionContainerView)
 }

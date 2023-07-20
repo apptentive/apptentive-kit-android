@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.core.widget.NestedScrollView
+        style="?attr/apptentiveSurveyScrollViewLayoutStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            style="?apptentiveSurveySuccessLayoutStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/apptentive_survey_success"
+                style="?apptentiveSurveySuccessStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Tell us about your experience!" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/apptentive_survey_disclaimer"
+                style="?apptentiveSurveyDisclaimerStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Disclaimer Text" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

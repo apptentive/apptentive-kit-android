@@ -18,8 +18,7 @@ import com.google.android.material.textfield.TextInputLayout
  * @param id question id
  * @param title question title
  * @param instructions optional instructions text (for example, "Required")
- * @param validationError contains validation error message in case if the question has an invalid
- *                        answer or <code>null</code> if the answer is valid.
+ * @param validationError contains validation error message in case if the question has an invalid answer or `null` if the answer is valid.
  * @param text user answer text
  * @param freeFormHint hint text to be displayed if user provided no answer
  * @param multiline indicates if the answer field should occupy more than a single line
@@ -29,7 +28,7 @@ internal class SingleLineQuestionListItem(
     title: String,
     instructions: String? = null,
     validationError: String? = null,
-    val text: String? = null,
+    val text: String = "",
     val freeFormHint: String? = null,
     val multiline: Boolean = false
 ) : SurveyQuestionListItem(
@@ -74,6 +73,7 @@ internal class SingleLineQuestionListItem(
     //region View Holder
     class ViewHolder(
         itemView: SurveyQuestionContainerView,
+        private val isPaged: Boolean = false,
         val onTextChanged: (id: String, text: String) -> Unit
     ) : SurveyQuestionListItem.ViewHolder<SingleLineQuestionListItem>(itemView) {
         private val answerTextInputLayout: TextInputLayout = itemView.findViewById(R.id.apptentive_answer_text_input_layout)
@@ -106,6 +106,13 @@ internal class SingleLineQuestionListItem(
             answerEditText.setText(item.text)
             answerEditText.doAfterTextChanged {
                 onTextChanged(questionId, it?.toString().orEmpty().trim())
+            }
+
+            // Fix for ViewPager adapter updating the view on error and resetting the cursor position
+            if (isPaged) {
+                answerEditText.setOnFocusChangeListener { _, hasFocus ->
+                    if (hasFocus) updateValidationError(null)
+                }
             }
         }
 

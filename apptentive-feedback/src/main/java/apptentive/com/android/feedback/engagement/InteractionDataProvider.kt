@@ -8,4 +8,6 @@ import apptentive.com.android.util.InternalUseOnly
 interface InteractionDataProvider {
     fun getInteractionData(event: Event): InteractionData?
     fun getInteractionData(invocations: List<Invocation>): InteractionData?
+
+    fun getQuestionId(invocations: List<Invocation>): String?
 }

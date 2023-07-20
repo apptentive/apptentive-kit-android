@@ -6,20 +6,20 @@ import android.text.util.Linkify
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.core.view.isVisible
 import apptentive.com.android.feedback.survey.R
 import apptentive.com.android.ui.getThemeColor
 import apptentive.com.android.util.Log
-import apptentive.com.android.util.LogTags
+import apptentive.com.android.util.LogTags.SURVEY
 import com.google.android.material.textview.MaterialTextView
 
 internal class SurveyQuestionContainerView(
     context: Context,
     attrs: AttributeSet?,
-    defStyleAttr: Int
-) : FrameLayout(context, attrs, defStyleAttr) {
+    defStyleAttr: Int,
+    isPaged: Boolean
+) : LinearLayout(context, attrs, defStyleAttr) {
     private val questionLayout: LinearLayout
     private val titleTextView: MaterialTextView
     private val instructionsTextView: MaterialTextView
@@ -50,11 +50,15 @@ internal class SurveyQuestionContainerView(
     private val errorColor: Int
 
     constructor(context: Context) : this(context, null)
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0, false)
 
     init {
         val contentView = LayoutInflater.from(context)
             .inflate(R.layout.apptentive_survey_question_container, this, true)
+
+        if (isPaged) {
+            contentView.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+        }
 
         questionLayout = contentView.findViewById(R.id.apptentive_question_layout)
         titleTextView = contentView.findViewById(R.id.apptentive_question_title)
@@ -65,7 +69,7 @@ internal class SurveyQuestionContainerView(
         try {
             Linkify.addLinks(titleTextView, Linkify.ALL)
         } catch (exception: Exception) {
-            Log.e(LogTags.MESSAGE_CENTER, "Couldn't add linkify to survey title text", exception)
+            Log.e(SURVEY, "Couldn't add linkify to survey title text", exception)
         }
         titleTextViewDefaultColor = titleTextView.textColors
         instructionsTextViewDefaultColor = instructionsTextView.textColors

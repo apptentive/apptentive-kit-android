@@ -5,6 +5,7 @@ import apptentive.com.android.feedback.messagecenter.R
 import apptentive.com.android.feedback.messagecenter.utils.MessageCenterEvents
 import apptentive.com.android.feedback.messagecenter.view.custom.ProfileView
 import apptentive.com.android.ui.ApptentiveGenericDialog
+import apptentive.com.android.ui.hideSoftKeyboard
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textview.MaterialTextView
@@ -35,6 +36,7 @@ internal class ProfileActivity : BaseProfileActivity() {
         setSupportActionBar(topAppBar)
 
         topAppBar.setNavigationOnClickListener {
+            it.hideSoftKeyboard()
             viewModel.exitProfileView(profileView.getName(), profileView.getEmail().trim())
         }
 

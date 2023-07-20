@@ -34,7 +34,7 @@ class DefaultSurveyQuestionListItemFactoryTest {
     @Test
     fun testSingleLineInvalidRequiredQuestionAndPressSubmitButton() = testSingleLineQuestion(
         required = true,
-        answer = null, // invalid answer
+        answer = "", // invalid answer
         instructionsText = "Provide your input",
         pressedSubmitButton = true,
         expectedInstructions = "Required. Provide your input",
@@ -44,7 +44,7 @@ class DefaultSurveyQuestionListItemFactoryTest {
     @Test
     fun testSingleLineInvalidRequiredQuestionAndDontPressSubmitButton() = testSingleLineQuestion(
         required = true,
-        answer = null, // invalid answer
+        answer = "", // invalid answer
         instructionsText = "Provide your input",
         pressedSubmitButton = false,
         expectedInstructions = "Required. Provide your input",
@@ -54,7 +54,7 @@ class DefaultSurveyQuestionListItemFactoryTest {
     @Test
     fun testSingleLineInvalidNonRequiredQuestionAndPressSubmitButton() = testSingleLineQuestion(
         required = false,
-        answer = null, // invalid answer
+        answer = "", // invalid answer
         instructionsText = "Provide your input",
         pressedSubmitButton = true,
         expectedInstructions = "Provide your input",
@@ -73,7 +73,7 @@ class DefaultSurveyQuestionListItemFactoryTest {
 
     private fun testSingleLineQuestion(
         required: Boolean,
-        answer: String?,
+        answer: String,
         instructionsText: String?,
         pressedSubmitButton: Boolean,
         expectedInstructions: String?,

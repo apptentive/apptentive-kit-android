@@ -3,6 +3,7 @@ package apptentive.com.android.feedback
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.EVENT
+import apptentive.com.android.util.LogTags.FEEDBACK
 import apptentive.com.android.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.util.LogTags.MESSAGE_CENTER_HIDDEN
 import apptentive.com.android.util.LogTags.PROFILE_DATA_GET
@@ -25,6 +26,7 @@ internal interface ApptentiveClient {
     fun getPersonName(): String?
     fun getPersonEmail(): String?
     fun setPushIntegration(pushProvider: Int, token: String)
+    fun setLocalManifest(json: String)
 
     companion object {
         val NULL: ApptentiveClient = ApptentiveNullClient()
@@ -103,5 +105,9 @@ private class ApptentiveNullClient : ApptentiveClient {
     override fun getPersonEmail(): String? {
         Log.d(PROFILE_DATA_GET, "Apptentive SDK is not initialized; get person email failed")
         return null
+    }
+
+    override fun setLocalManifest(uri: String) {
+        Log.d(FEEDBACK, "Apptentive SDK is not initialized; set local manifest failed ")
     }
 }

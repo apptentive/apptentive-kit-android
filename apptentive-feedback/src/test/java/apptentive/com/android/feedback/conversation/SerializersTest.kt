@@ -30,31 +30,31 @@ class SerializersTest {
     @Test
     fun versionCodeSerializer() {
         val value: VersionCode = 1234567890
-        checkSerializer(Serializers.versionCodeSerializer, value)
+        checkSerializer(DefaultSerializers.versionCodeSerializer, value)
     }
 
     @Test
     fun versionNameSerializer() {
         val versionName: VersionName = "1.2.3"
-        checkSerializer(Serializers.versionNameSerializer, versionName)
+        checkSerializer(DefaultSerializers.versionNameSerializer, versionName)
     }
 
     @Test
     fun interactionIdSerializer() {
         val interactionId: InteractionId = "1234567890"
-        checkSerializer(Serializers.interactionIdSerializer, interactionId)
+        checkSerializer(DefaultSerializers.interactionIdSerializer, interactionId)
     }
 
     @Test
     fun dateTimeSerializer() {
-        checkSerializer(Serializers.dateTimeSerializer, DateTime(1234567890.0))
+        checkSerializer(DefaultSerializers.dateTimeSerializer, DateTime(1234567890.0))
     }
 
     @Test
     fun customDataSerializer() {
-        checkSerializer(Serializers.customDataSerializer, CustomData())
+        checkSerializer(DefaultSerializers.customDataSerializer, CustomData())
         checkSerializer(
-            Serializers.customDataSerializer,
+            DefaultSerializers.customDataSerializer,
             CustomData(
                 content = mapOf(
                     "key1" to true,
@@ -73,47 +73,47 @@ class SerializersTest {
 
     @Test
     fun deviceSerializer() {
-        checkSerializer(Serializers.deviceSerializer, mockDevice)
+        checkSerializer(DefaultSerializers.deviceSerializer, mockDevice)
     }
 
     @Test
     fun personSerializer() {
-        checkSerializer(Serializers.personSerializer, Person())
-        checkSerializer(Serializers.personSerializer, mockPerson)
+        checkSerializer(DefaultSerializers.personSerializer, Person())
+        checkSerializer(DefaultSerializers.personSerializer, mockPerson)
     }
 
     @Test
     fun sdkSerializer() {
-        checkSerializer(Serializers.sdkSerializer, mockSdk)
+        checkSerializer(DefaultSerializers.sdkSerializer, mockSdk)
     }
 
     @Test
     fun appReleaseSerializer() {
-        checkSerializer(Serializers.appReleaseSerializer, mockAppRelease)
+        checkSerializer(DefaultSerializers.appReleaseSerializer, mockAppRelease)
     }
 
     @Test
     fun getEngagementRecordSerializer() {
-        checkSerializer(Serializers.engagementRecordSerializer, EngagementRecord())
+        checkSerializer(DefaultSerializers.engagementRecordSerializer, EngagementRecord())
         val record = EngagementRecord(
             totalInvokes = 3,
             versionNameLookup = mutableMapOf("1.0.0" to 2L, "1.0.1" to 1L),
             versionCodeLookup = mutableMapOf(100L to 2L, 101L to 1L),
             lastInvoked = DateTime(1234567890.0)
         )
-        checkSerializer(Serializers.engagementRecordSerializer, record)
+        checkSerializer(DefaultSerializers.engagementRecordSerializer, record)
     }
 
     @Test
     fun eventSerializer() {
-        checkSerializer(Serializers.eventSerializer, Event.local("event1"))
-        checkSerializer(Serializers.eventSerializer, Event.internal("event2"))
+        checkSerializer(DefaultSerializers.eventSerializer, Event.local("event1"))
+        checkSerializer(DefaultSerializers.eventSerializer, Event.internal("event2"))
     }
 
     @Test
     fun engagementDataSerializer() {
-        checkSerializer(Serializers.engagementDataSerializer, EngagementData())
-        checkSerializer(Serializers.engagementDataSerializer, mockEngagementData)
+        checkSerializer(DefaultSerializers.engagementDataSerializer, EngagementData())
+        checkSerializer(DefaultSerializers.engagementDataSerializer, mockEngagementData)
     }
 
     @Test
@@ -128,7 +128,7 @@ class SerializersTest {
             appRelease = mockAppRelease,
             engagementData = mockEngagementData
         )
-        checkSerializer(Serializers.conversationSerializer, conversation)
+        checkSerializer(DefaultSerializers.conversationSerializer, conversation)
     }
 
     @Test

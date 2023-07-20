@@ -2,6 +2,7 @@ package apptentive.com.android.feedback.conversation
 
 import androidx.annotation.WorkerThread
 import apptentive.com.android.core.BehaviorSubject
+import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.Observable
 import apptentive.com.android.core.Provider
 import apptentive.com.android.core.isInThePast
@@ -15,6 +16,7 @@ import apptentive.com.android.feedback.model.AppRelease
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.Device
 import apptentive.com.android.feedback.model.EngagementData
+import apptentive.com.android.feedback.model.EngagementManifest
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.model.VersionHistory
@@ -24,6 +26,10 @@ import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.ThrottleUtils
 import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
+import apptentive.com.android.platform.AndroidSharedPrefDataStore
+import apptentive.com.android.platform.SharedPrefConstants.SDK_CORE_INFO
+import apptentive.com.android.platform.SharedPrefConstants.SDK_VERSION
+import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.CONFIGURATION
 import apptentive.com.android.util.LogTags.CONVERSATION
@@ -40,6 +46,7 @@ internal class ConversationManager(
     private val legacyConversationManagerProvider: Provider<LegacyConversationManager>,
     private val isDebuggable: Boolean
 ) {
+    private var isUsingLocalManifest: Boolean = false
     private val activeConversationSubject: BehaviorSubject<Conversation>
     val activeConversation: Observable<Conversation> get() = activeConversationSubject
     private val sdkAppReleaseUpdateSubject = BehaviorSubject(false)
@@ -49,6 +56,11 @@ internal class ConversationManager(
 
     init {
         val conversation = loadActiveConversation()
+
+        // Store successful SDK version
+        DependencyProvider.of<AndroidSharedPrefDataStore>()
+            .putString(SDK_CORE_INFO, SDK_VERSION, Constants.SDK_VERSION)
+
         activeConversationSubject = BehaviorSubject(conversation)
     }
 
@@ -107,6 +119,10 @@ internal class ConversationManager(
     @Throws(ConversationSerializationException::class)
     @WorkerThread
     private fun loadActiveConversation(): Conversation {
+        // Added in 6.1.0. Previous versions will be `null`.
+        val storedSdkVersion = DependencyProvider.of<AndroidSharedPrefDataStore>()
+            .getString(SDK_CORE_INFO, SDK_VERSION).ifEmpty { null }
+
         // load existing conversation
         val existingConversation = loadExistingConversation()
         if (existingConversation != null) {
@@ -182,12 +198,25 @@ internal class ConversationManager(
         }
     }
 
+    fun setTestManifestFromLocal(json: String) {
+        if (isDebuggable) {
+            val data: EngagementManifest =
+                JsonConverter.fromJson(json, EngagementManifest::class.java) as EngagementManifest
+            Log.d(CONVERSATION, "Parsed engagement manifest $data")
+            activeConversationSubject.value = activeConversation.value.copy(
+                engagementManifest = data
+            )
+            Log.d(CONVERSATION, "USING LOCALLY DOWNLOADED MANIFEST")
+            isUsingLocalManifest = true
+        }
+    }
+
     @WorkerThread
     fun tryFetchEngagementManifest() {
         val conversation = activeConversationSubject.value
         val manifest = conversation.engagementManifest
 
-        if (isInThePast(manifest.expiry) || isDebuggable) {
+        if (isInThePast(manifest.expiry) || isDebuggable && !isUsingLocalManifest) {
             Log.d(CONVERSATION, "Fetching engagement manifest")
             val token = conversation.conversationToken
             val id = conversation.conversationId
@@ -333,6 +362,25 @@ internal class ConversationManager(
                         versionName = conversation.appRelease.versionName,
                         versionCode = conversation.appRelease.versionCode,
                         lastInvoked = DateTime.now()
+                    )
+                }
+            }
+        )
+    }
+
+    fun recordCurrentResponse(interactionResponses: Map<String, Set<InteractionResponse>>, reset: Boolean = false) {
+        val conversation = activeConversationSubject.value
+        activeConversationSubject.value = conversation.copy(
+            engagementData = conversation.engagementData.apply {
+                interactionResponses.forEach { responses ->
+                    Log.v(INTERACTIONS, "Recording interaction responses ${responses.key to responses.value}")
+                    updateCurrentAnswer(
+                        interactionId = responses.key,
+                        responses = responses.value,
+                        versionName = conversation.appRelease.versionName,
+                        versionCode = conversation.appRelease.versionCode,
+                        lastInvoked = DateTime.now(),
+                        reset = reset
                     )
                 }
             }

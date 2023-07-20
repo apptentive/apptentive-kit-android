@@ -5,7 +5,6 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import apptentive.com.android.TestCase
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.core.DependencyProvider
-import apptentive.com.android.core.Provider
 import apptentive.com.android.core.isInThePast
 import apptentive.com.android.core.toSeconds
 import apptentive.com.android.feedback.EngagementResult
@@ -13,10 +12,9 @@ import apptentive.com.android.feedback.backend.MessageCenterService
 import apptentive.com.android.feedback.dependencyprovider.MessageCenterModelProvider
 import apptentive.com.android.feedback.dependencyprovider.createMessageCenterViewModel
 import apptentive.com.android.feedback.engagement.EngageArgs
-import apptentive.com.android.feedback.engagement.EngagementContext
-import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.MockEngagementContext
+import apptentive.com.android.feedback.engagement.MockEngagementContextFactory
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.feedback.message.MessageCenterInteraction
 import apptentive.com.android.feedback.message.MessageManager
@@ -497,17 +495,6 @@ class MockMessageCenterService : MessageCenterService {
 class MockExecutor : Executor {
     override fun execute(task: () -> Unit) {
         task()
-    }
-}
-
-class MockEngagementContextFactory(val getEngagementContext: () -> EngagementContext) :
-    Provider<EngagementContextFactory> {
-    override fun get(): EngagementContextFactory {
-        return object : EngagementContextFactory {
-            override fun engagementContext(): EngagementContext {
-                return getEngagementContext()
-            }
-        }
     }
 }
 

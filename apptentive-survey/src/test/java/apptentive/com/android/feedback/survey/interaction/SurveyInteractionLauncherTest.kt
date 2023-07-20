@@ -13,12 +13,12 @@ import apptentive.com.android.feedback.engagement.MockEngagementContext
 import apptentive.com.android.feedback.engagement.PayloadSenderCallback
 import apptentive.com.android.feedback.survey.SurveyModelFactory
 import apptentive.com.android.feedback.survey.SurveyModelFactoryProvider
-import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion
+import apptentive.com.android.feedback.survey.model.RenderAs
 import apptentive.com.android.feedback.survey.model.SurveyModel
-import apptentive.com.android.feedback.survey.model.SurveyQuestion
-import apptentive.com.android.feedback.survey.model.createMultiChoiceQuestion
-import apptentive.com.android.feedback.survey.model.createRangeQuestion
-import apptentive.com.android.feedback.survey.model.createSingleLineQuestion
+import apptentive.com.android.feedback.survey.model.SurveyQuestionSet
+import apptentive.com.android.feedback.survey.model.createMultiChoiceQuestionForV12
+import apptentive.com.android.feedback.survey.model.createRangeQuestionForV12
+import apptentive.com.android.feedback.survey.model.createSingleLineQuestionForV12
 import apptentive.com.android.feedback.survey.utils.createSurveyViewModel
 import apptentive.com.android.toProperJson
 import io.mockk.every
@@ -38,34 +38,16 @@ class SurveyInteractionLauncherTest : TestCase() {
     fun testViewModel() {
         val context = createEngagementContext()
         val model = createSurveyModel(
-            listOf(
-                createSingleLineQuestion(id = "id_1", answer = "text"),
-                createRangeQuestion(id = "id_2", selectedIndex = 5),
-                createMultiChoiceQuestion(
-                    id = "id_3",
-                    answerChoiceConfigs = listOf(
-                        MultiChoiceQuestion.AnswerChoiceConfiguration(
-                            id = "choice_1",
-                            type = MultiChoiceQuestion.ChoiceType.select_option,
-                            title = "Title 1"
-                        ),
-                        MultiChoiceQuestion.AnswerChoiceConfiguration(
-                            id = "choice_2",
-                            type = MultiChoiceQuestion.ChoiceType.select_other,
-                            title = "Title 2"
-                        )
-                    ),
-                    answer = listOf(
-                        MultiChoiceQuestion.Answer.Choice(id = "choice_1", checked = true),
-                        MultiChoiceQuestion.Answer.Choice(
-                            id = "choice_2",
-                            checked = true,
-                            value = "Other"
-                        )
-                    ),
-                    minSelections = 1,
-                    maxSelections = 2
-                )
+            createSingleLineQuestionForV12(id = "id_1"),
+            createRangeQuestionForV12(id = "id_2"),
+            createMultiChoiceQuestionForV12(
+                id = "id_3",
+                answerChoiceConfigs = listOf(
+                    mapOf("id" to "choice_1", "value" to "value", "type" to "select_option", "title" to "Title 1"),
+                    mapOf("id" to "choice_2", "type" to "select_other", "title" to "Title 2", "value" to "value")
+                ),
+                minSelections = 1,
+                maxSelections = 2
             )
         )
 
@@ -82,12 +64,12 @@ class SurveyInteractionLauncherTest : TestCase() {
 
         val viewModel = createSurveyViewModel(context)
 
-        viewModel.submit()
+        viewModel.submitListSurvey()
 
         assertResults(
             // survey response payload
             toProperJson(
-                "{'response':{'id':'interaction_id','answers':{'id_1':[{'value':'text'}],'id_2':[{'value':5}],'id_3':[{'id':'choice_1'},{'id':'choice_2','value':'Other'}]},'session_id':'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx','client_created_at':1000.0,'client_created_at_utc_offset':-18000,'nonce':'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'}}"
+                "{'response':{'id':'interaction_id','answers':{'id_1':{'state':'empty'},'id_2':{'state':'empty'},'id_3':{'state':'empty'}},'session_id':'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx','client_created_at':1000.0,'client_created_at_utc_offset':-18000,'nonce':'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'}}"
             ),
 
             // "submit" event
@@ -117,12 +99,12 @@ class SurveyInteractionLauncherTest : TestCase() {
         }
     )
 
-    private fun createSurveyModel(questions: List<SurveyQuestion<*>>? = null): SurveyModel {
+    private fun createSurveyModel(vararg questionSet: SurveyQuestionSet): SurveyModel {
         return SurveyModel(
             interactionId = "interaction_id",
-            questions = questions ?: emptyList(),
+            questionSet = questionSet.toList(),
             name = "name",
-            description = "description",
+            surveyIntroduction = "description",
             submitText = "submitText",
             requiredText = "requiredText",
             validationError = null,
@@ -133,7 +115,10 @@ class SurveyInteractionLauncherTest : TestCase() {
             closeConfirmCloseText = "close",
             closeConfirmBackText = "Back to survey",
             termsAndConditionsLinkText = SpannedString("Terms & Conditions"),
-            disclaimerText = "Disclaimer text"
+            disclaimerText = "Disclaimer text",
+            introButtonText = "START",
+            renderAs = RenderAs.LIST,
+            successButtonText = "THANK YOU"
         )
     }
 }

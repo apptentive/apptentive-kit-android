@@ -1,13 +1,17 @@
 package apptentive.com.android.feedback.conversation
 
 import apptentive.com.android.TestCase
+import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.encryption.EncryptionFactory
 import apptentive.com.android.encryption.NotEncrypted
 import apptentive.com.android.feedback.createMockConversation
+import apptentive.com.android.feedback.engagement.util.MockAndroidSharedPrefDataStore
 import apptentive.com.android.feedback.model.EngagementManifest
+import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import com.google.common.truth.Truth.assertThat
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -18,6 +22,13 @@ import kotlin.random.Random
 class DefaultConversationSerializerTest : TestCase() {
     @get:Rule
     val tempFolder = TemporaryFolder()
+
+    @Before
+    override fun setUp() {
+        val mockDataStore = MockAndroidSharedPrefDataStore()
+        mockDataStore.putString("test", "test", "test")
+        DependencyProvider.register<AndroidSharedPrefDataStore>(mockDataStore)
+    }
 
     @Test
     fun testLoadingNonExistingConversation() {

@@ -50,14 +50,52 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/apptentive_survey_recycler_view"
+        android:id="@+id/apptentive_list_survey_recycler_view"
         style="?apptentiveSurveyLayoutStyle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         tools:background="@null" />
 
     <LinearLayout
+        android:id="@+id/apptentive_paged_survey_layout"
+        style="?apptentiveSurveyLayoutPagedStyle"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        tools:visibility="visible">
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/apptentive_survey_view_pager"
+            style="?apptentiveSurveyViewPagerStyle"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/apptentive_next_button"
+            style="?apptentiveSurveyNextButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Next" />
+
+        <apptentive.com.android.feedback.survey.view.SurveySegmentedProgressBar
+            android:id="@+id/apptentive_progress_bar_segmented"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/apptentive_progress_bar_linear"
+            style="?apptentiveProgressBarLinearStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+    </LinearLayout>
+
+    <LinearLayout
         style="?apptentiveSurveyBottomAppBarStyle"
+        android:id="@+id/apptentive_bottom_app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 

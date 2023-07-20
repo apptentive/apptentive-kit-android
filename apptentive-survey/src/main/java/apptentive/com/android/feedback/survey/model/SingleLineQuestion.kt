@@ -1,8 +1,5 @@
 package apptentive.com.android.feedback.survey.model
 
-import androidx.annotation.VisibleForTesting
-
-@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 internal class SingleLineQuestion(
     id: String,
     title: String,
@@ -22,13 +19,13 @@ internal class SingleLineQuestion(
     instructionsText = instructionsText,
     answer = answer ?: Answer()
 ) {
-    data class Answer(val value: String? = null) : SurveyQuestionAnswer
+    data class Answer(val value: String = "") : SurveyQuestionAnswer
 
-    val answerString: String? get() = answer.value
+    val answerString: String get() = answer.value
 
-    override fun isValidAnswer(answer: Answer) = !answer.value.isNullOrBlank()
+    override fun isValidAnswer(answer: Answer) = answer.value.isNotBlank()
 
-    override fun isAnswered(answer: Answer) = !answer.value.isNullOrEmpty()
+    override fun isAnswered(answer: Answer) = answer.value.isNotBlank()
 
     //region Equality
 

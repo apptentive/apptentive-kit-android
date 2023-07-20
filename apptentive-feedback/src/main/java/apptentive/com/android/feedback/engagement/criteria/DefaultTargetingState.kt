@@ -68,6 +68,8 @@ internal data class DefaultTargetingState(
             is interactions.last_invoked_at.total -> engagementData.interactions.lastInvoke(field.interactionId)
             is interactions.answers.id -> engagementData.interactionResponses[field.responseId]?.responses
             is interactions.answers.value -> engagementData.interactionResponses[field.responseId]?.responses
+            is interactions.current_answer.id -> engagementData.interactionResponses[field.responseId]?.currentResponses
+            is interactions.current_answer.value -> engagementData.interactionResponses[field.responseId]?.currentResponses
 
             is person.name -> person.name
             is person.email -> person.email

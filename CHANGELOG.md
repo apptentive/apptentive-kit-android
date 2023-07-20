@@ -1,3 +1,19 @@
+# 2023-07-20 - v6.1.0
+#### New Features
+* Survey skip logic
+
+#### Improvements
+* Survey terms and conditions can now be added from the dashboard
+* Survey disclaimer can now be added from the dashboard
+* Various accessibility improvements around Surveys
+* Apptentive Logger service retrieval backup
+
+#### Fixes
+* SparseArray backwards compatibility
+
+#### Known Issues and Limitations
+* Client authentication (login/logout) is not yet supported
+
 # 2023-05-17 - v6.0.5
 #### Improvements
 * Added Java interoperable support for push functions
@@ -7,6 +23,8 @@
 #### Fixes
 * Resolved internal observers and observables issue 
 
+#### Known Issues and Limitations
+* Client authentication (login/logout) is not yet supported
 
 # 2023-04-05 - v6.0.4
 #### Improvements
@@ -14,6 +32,9 @@
  
 #### Fixes 
  * Resolved resource linking issues
+
+#### Known Issues and Limitations
+* Client authentication (login/logout) is not yet supported
 
 # 2023-02-24 - v6.0.3
 #### Improvements

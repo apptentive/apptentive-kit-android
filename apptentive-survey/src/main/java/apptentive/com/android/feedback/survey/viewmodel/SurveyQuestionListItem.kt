@@ -1,8 +1,10 @@
 package apptentive.com.android.feedback.survey.viewmodel
 
+import android.view.accessibility.AccessibilityEvent
+import android.view.accessibility.AccessibilityNodeInfo
 import androidx.annotation.CallSuper
 import apptentive.com.android.feedback.survey.view.SurveyQuestionContainerView
-import apptentive.com.android.ui.ListViewAdapter
+import apptentive.com.android.ui.ApptentiveViewHolder
 import apptentive.com.android.ui.ListViewItem
 
 /**
@@ -79,7 +81,7 @@ internal abstract class SurveyQuestionListItem(
 
     internal abstract class ViewHolder<T : SurveyQuestionListItem>(
         itemView: SurveyQuestionContainerView
-    ) : ListViewAdapter.ViewHolder<T>(itemView) {
+    ) : ApptentiveViewHolder<T>(itemView) {
         private val containerView: SurveyQuestionContainerView = itemView
         private lateinit var _questionId: String
         protected val questionId get() = _questionId // disallow accidental modifications
@@ -102,6 +104,12 @@ internal abstract class SurveyQuestionListItem(
 
             // validation error
             updateValidationError(item.validationError)
+
+            // For Talkback: Sets focus to the question to read out error message
+            if (item.validationError != null) {
+                containerView.performAccessibilityAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS, null)
+                containerView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_SELECTED)
+            }
         }
 
         @CallSuper

@@ -55,6 +55,18 @@ class MockEngagementContext(
         ): EngagementResult {
             return onInvoke?.invoke(invocations) ?: EngagementResult.InteractionNotShown("No runnable interactions")
         }
+
+        override fun engageToRecordCurrentAnswer(
+            interactionResponses: Map<String, Set<InteractionResponse>>,
+            reset: Boolean
+        ) {
+        }
+
+        override fun getNextQuestionSet(
+            invocations: List<Invocation>
+        ): String? {
+            return null
+        }
     },
     payloadSender = MockPayloadSender(onSendPayload),
     executors = Executors(ImmediateExecutor, ImmediateExecutor)

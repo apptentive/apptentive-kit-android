@@ -2,45 +2,100 @@ package apptentive.com.android.feedback.survey.model
 
 import android.text.Spanned
 import androidx.annotation.WorkerThread
-import apptentive.com.android.core.BehaviorSubject
-import apptentive.com.android.core.Observable
-import apptentive.com.android.util.InternalUseOnly
+import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.core.ResettableDelegate
+import apptentive.com.android.feedback.engagement.EngagementContext
+import apptentive.com.android.feedback.engagement.EngagementContextFactory
+import apptentive.com.android.feedback.model.InvocationData
+import apptentive.com.android.feedback.survey.interaction.DefaultSurveyQuestionConverter
+import apptentive.com.android.feedback.survey.model.SurveyPageData.PageIndicatorStatus
+import apptentive.com.android.feedback.survey.utils.END_OF_QUESTION_SET
+import apptentive.com.android.feedback.survey.utils.UNSET_QUESTION_SET
+import apptentive.com.android.util.isNotNullOrEmpty
 
-@InternalUseOnly
-class SurveyModel(
+internal class SurveyModel(
     val interactionId: String,
-    questions: List<SurveyQuestion<*>>,
+    val questionSet: List<SurveyQuestionSet>,
     val name: String?,
-    val description: String?,
-    val submitText: String?,
-    val requiredText: String?,
+    val surveyIntroduction: String?,
+    val introButtonText: String?,
+    val submitText: String,
+    val requiredText: String,
     val validationError: String?,
-    val showSuccessMessage: Boolean,
-    val successMessage: String?,
+    var showSuccessMessage: Boolean,
+    var successMessage: String?,
+    val successButtonText: String?,
+    val termsAndConditionsLinkText: Spanned?,
+    val disclaimerText: String?,
+    val renderAs: RenderAs,
     val closeConfirmTitle: String?,
     val closeConfirmMessage: String?,
     val closeConfirmCloseText: String?,
     val closeConfirmBackText: String?,
-    val termsAndConditionsLinkText: Spanned?,
-    val disclaimerText: String?
 ) {
-    private val questionsSubject = QuestionListSubject(questions) // BehaviourSubject<List<SurveyQuestion<*>>>
-    val questionsStream: Observable<List<SurveyQuestion<*>>> = questionsSubject
 
-    val questions: List<SurveyQuestion<*>> get() = questionsSubject.value
+    private val pages: MutableMap<String, SurveyPageData> = mutableMapOf()
+    internal lateinit var currentPageID: String
+    private val singlePageID: String = "single"
+    internal val introPageID: String = "intro"
+    val successPageID: String = "success"
 
-    val allRequiredAnswersAreValid get() = getFirstInvalidRequiredQuestionIndex() == -1
+    init {
+        when (renderAs) {
+            RenderAs.LIST -> setListSurveyPage()
+            RenderAs.PAGED -> {
+                setIntroPage()
+                setSuccessPage()
+                setQuestionsPage()
+            }
+        }
+    }
 
-    val hasAnyAnswer get() = questions.any { it.hasAnswer }
+    val questionListSubject: QuestionListSubject =
+        QuestionListSubject(getCurrentPage().questions) // BehaviorSubject
+    val currentQuestions: List<SurveyQuestion<*>> get() = questionListSubject.value
+
+    var nextQuestionSetId: String by ResettableDelegate(UNSET_QUESTION_SET) {
+        val nextPageID = getNextQuestionSet()
+        if (nextPageID.isNullOrEmpty()) END_OF_QUESTION_SET else nextPageID
+    }
+
+    fun getCurrentPage(): SurveyPageData {
+        return pages[currentPageID] ?: throw IllegalStateException("Current page cannot be null")
+    }
+
+    fun getNextQuestionSet(): String? {
+        val context: EngagementContext =
+            DependencyProvider.of<EngagementContextFactory>().engagementContext()
+
+        val nextQuestionSet = context.getNextQuestionSet(getCurrentPage().invocations)
+
+        return if (nextQuestionSet.isNullOrEmpty()) {
+            pages.takeIf { it.contains(successPageID) && currentPageID != successPageID }?.let { successPageID }
+        } else {
+            nextQuestionSet
+        }
+    }
+
+    @WorkerThread
+    fun goToNextPage() {
+        currentPageID = nextQuestionSetId
+        nextQuestionSetId = UNSET_QUESTION_SET
+        val currentPage = pages[currentPageID]
+        if (currentPage != null) {
+            questionListSubject.value = currentPage.questions
+            questionListSubject.updateCachedList(currentPage.questions)
+        }
+    }
 
     @WorkerThread
     fun <T : SurveyQuestionAnswer> updateAnswer(questionId: String, answer: T) {
-        questionsSubject.updateAnswer(questionId, answer)
+        questionListSubject.updateAnswer(questionId, answer)
     }
 
     @WorkerThread
     fun <T : SurveyQuestion<*>> getQuestion(questionId: String): T {
-        val question = questions.find { question ->
+        val question = currentQuestions.find { question ->
             question.id == questionId
         } ?: throw IllegalArgumentException("Question not found: $questionId")
 
@@ -48,60 +103,103 @@ class SurveyModel(
         return question as T
     }
 
-    /** Returns the index of the first REQUIRED invalid question/NOT REQUIRED but cannot submit
-     *  (or -1 if all required questions are valid) */
-    fun getFirstInvalidRequiredQuestionIndex(): Int {
-        return questions.indexOfFirst { (it.isRequired && !it.hasValidAnswer) || !it.canSubmitOptionalQuestion }
+    fun getAllQuestionsInTheSurvey(): List<SurveyQuestion<*>> {
+        return questionSet.flatMap { questionSet ->
+            questionSet.questions.map { config ->
+                DefaultSurveyQuestionConverter().convert(
+                    config = config,
+                    requiredTextMessage = requiredText
+                )
+            }
+        }
+    }
+
+    private fun setListSurveyPage() {
+        val questions = getAllQuestionsInTheSurvey()
+        val singlePage = SurveyPageData(
+            singlePageID,
+            surveyIntroduction,
+            disclaimerText,
+            if (showSuccessMessage) successMessage else null,
+            questions,
+            PageIndicatorStatus.HIDE.toInt(),
+            submitText,
+            listOf(),
+        )
+        pages[singlePageID] = singlePage
+        currentPageID = singlePageID
+    }
+
+    private fun setIntroPage() {
+        val firstQuestionSetID = questionSet.firstOrNull()?.id.orEmpty()
+
+        if (surveyIntroduction.isNotNullOrEmpty() || disclaimerText.isNotNullOrEmpty()) {
+            val introPage = SurveyPageData(
+                introPageID,
+                surveyIntroduction,
+                disclaimerText,
+                null,
+                listOf(),
+                PageIndicatorStatus.SHOW_NO_PROGRESS.toInt(),
+                introButtonText,
+                listOf(InvocationData(firstQuestionSetID, mapOf())),
+            )
+            pages[introPageID] = introPage
+            currentPageID = introPageID
+        } else {
+            currentPageID = firstQuestionSetID
+        }
+    }
+
+    private fun setSuccessPage() {
+        val successMessageDescription = successMessage
+        val successButtonText = this.successButtonText
+
+        if (showSuccessMessage &&
+            successMessageDescription?.isNotEmpty() == true &&
+            successButtonText?.isNotEmpty() == true
+        ) {
+            val successPage = SurveyPageData(
+                successPageID,
+                null,
+                disclaimerText,
+                successMessageDescription,
+                listOf(),
+                PageIndicatorStatus.HIDE.toInt(),
+                successButtonText,
+                listOf(),
+            )
+            pages[successPageID] = successPage
+        }
+    }
+
+    private fun setQuestionsPage() {
+        questionSet.forEachIndexed { index, questionSet ->
+            val questions: List<SurveyQuestion<*>> = questionSet.questions.map { config ->
+                DefaultSurveyQuestionConverter().convert(
+                    config = config,
+                    requiredTextMessage = requiredText
+                )
+            }
+
+            val invocations: List<InvocationData> = questionSet.invokes
+
+            val questionPage = SurveyPageData(
+                questionSet.id,
+                null,
+                null,
+                null,
+                questions,
+                index,
+                questionSet.buttonText,
+                invocations,
+            )
+            pages[questionPage.id] = questionPage
+        }
     }
 }
 
-/**
- * Reactive stream for storing survey questions with caching
- */
-private class QuestionListSubject(
-    questions: List<SurveyQuestion<*>>
-) : BehaviorSubject<List<SurveyQuestion<*>>>(emptyList()) {
-    // We store a mutable list to avoid extra allocations
-    private val cachedList = questions.toMutableList()
-
-    init {
-        // set cached list as initial value
-        value = cachedList
-    }
-
-    @WorkerThread
-    fun <T : SurveyQuestionAnswer> updateAnswer(questionId: String, answer: T) {
-        /*
-        In the traditional reactive approach every object is readonly
-        which means you would need to create a copy of everything what
-        changed.
-
-        The code would look like this:
-
-        >   val newList = value.toMutableList()
-        >
-        >   // find the question index
-        >   val index = value.indexOfFirst { it.id == questionId }
-        >
-        >   // make a copy
-        >   newList[index] = value[index].copy(answer = answer)
-        >
-        >   // let observers know that question list has changed
-        >   value = newList
-
-        But in this case we decided to introduce some caching for
-        performance reasons (avoid unnecessary allocations). This should be
-        fine as long as we only modify the model on a dedicated thread.
-        */
-
-        // find the question index
-        val index = cachedList.indexOfFirst { it.id == questionId }
-
-        // update question's answer
-        @Suppress("UNCHECKED_CAST")
-        (cachedList[index] as SurveyQuestion<T>).answer = answer
-
-        // let observers know that question list has changed
-        value = cachedList
-    }
+enum class RenderAs {
+    PAGED,
+    LIST
 }

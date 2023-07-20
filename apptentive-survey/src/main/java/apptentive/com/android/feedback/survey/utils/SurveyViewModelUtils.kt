@@ -11,23 +11,31 @@ import apptentive.com.android.feedback.survey.SurveyModelFactory
 import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion
 import apptentive.com.android.feedback.survey.model.RangeQuestion
 import apptentive.com.android.feedback.survey.model.SingleLineQuestion
+import apptentive.com.android.feedback.survey.model.SurveyAnswerState
 import apptentive.com.android.feedback.survey.model.SurveyModel
-import apptentive.com.android.feedback.survey.model.SurveyQuestionAnswer
+import apptentive.com.android.feedback.survey.model.SurveyQuestion
 import apptentive.com.android.feedback.survey.model.SurveyResponsePayload
 import apptentive.com.android.feedback.survey.viewmodel.SurveyViewModel
 import apptentive.com.android.feedback.utils.getInteractionBackup
+import apptentive.com.android.util.MissingKeyException
+import kotlin.jvm.Throws
 
 private const val EVENT_SUBMIT = "submit"
 private const val EVENT_CANCEL = "cancel"
 private const val EVENT_CANCEL_PARTIAL = "cancel_partial"
 private const val EVENT_CLOSE = "close"
 private const val EVENT_CONTINUE_PARTIAL = "continue_partial"
+internal const val UNSET_QUESTION_SET = "unset"
+internal const val END_OF_QUESTION_SET = "end_question_set"
 
+@Throws(MissingKeyException::class)
 internal fun createSurveyViewModel(
     context: EngagementContext = DependencyProvider.of<EngagementContextFactory>().engagementContext()
 ): SurveyViewModel {
     return try {
         createSurveyViewModel(DependencyProvider.of<SurveyModelFactory>().getSurveyModel(), context)
+    } catch (exception: MissingKeyException) {
+        throw MissingKeyException("Survey interaction is missing required keys $exception")
     } catch (exception: Exception) {
         createSurveyViewModel(
             DefaultSurveyModelFactory(
@@ -57,6 +65,17 @@ private fun createSurveyViewModel(
             interactionResponses = mapAnswersToResponses(answers)
         )
     },
+    recordCurrentAnswer = { answers ->
+        context.engageToRecordCurrentAnswer(
+            interactionResponses = mapAnswersToResponses(answers)
+        )
+    },
+    resetCurrentAnswer = { answers ->
+        context.engageToRecordCurrentAnswer(
+            interactionResponses = mapAnswersToResponses(answers),
+            reset = true
+        )
+    },
     onCancel = {
         context.engage(
             event = Event.internal(EVENT_CANCEL, interaction = InteractionType.Survey),
@@ -83,12 +102,14 @@ private fun createSurveyViewModel(
     }
 )
 
-private fun mapAnswersToResponses(answers: Map<String, SurveyQuestionAnswer>): Map<String, Set<InteractionResponse>> {
-    return answers.map { answer ->
-        answer.key to when (answer.value) {
+internal fun mapAnswersToResponses(answers: Map<String, SurveyAnswerState>): Map<String, Set<InteractionResponse>> {
+
+    val questionsAnswered = answers.filter { it.value is SurveyAnswerState.Answered }
+
+    return questionsAnswered.map { item ->
+        item.key to when (val answer = (item.value as SurveyAnswerState.Answered).answer) {
             is MultiChoiceQuestion.Answer -> {
-                val responses = answer.value as MultiChoiceQuestion.Answer
-                responses.choices.mapNotNull {
+                answer.choices.mapNotNull {
                     if (it.checked) {
                         if (it.value != null) InteractionResponse.OtherResponse(it.id, it.value)
                         else InteractionResponse.IdResponse(it.id)
@@ -96,16 +117,20 @@ private fun mapAnswersToResponses(answers: Map<String, SurveyQuestionAnswer>): M
                 }.toSet()
             }
             is SingleLineQuestion.Answer -> {
-                val response = answer.value as SingleLineQuestion.Answer
-                // Should never be null at this point
-                response.value?.let { setOf(InteractionResponse.StringResponse(it)) } ?: emptySet()
+                if (answer.value.isNotEmpty())
+                    setOf(InteractionResponse.StringResponse(answer.value))
+                else
+                    emptySet()
             }
             is RangeQuestion.Answer -> {
-                val response = answer.value as RangeQuestion.Answer
                 // Should never be null at this point
-                response.selectedIndex?.let { setOf(InteractionResponse.LongResponse(it.toLong())) } ?: emptySet()
+                answer.selectedIndex?.let { setOf(InteractionResponse.LongResponse(it.toLong())) } ?: emptySet()
             }
             else -> emptySet() // Should not happen
         }
     }.toMap()
+}
+
+internal fun getValidAnsweredQuestions(shownQuestions: List<SurveyQuestion<*>>): List<SurveyQuestion<*>> {
+    return shownQuestions.filter { it.hasValidAnswer && it.hasAnswer }
 }

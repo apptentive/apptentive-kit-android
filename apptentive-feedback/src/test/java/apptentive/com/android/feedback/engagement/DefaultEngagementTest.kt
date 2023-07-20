@@ -25,7 +25,8 @@ class DefaultEngagementTest : TestCase() {
             interactionEngagement = interactionEngagement,
             recordEvent = ::recordEvent,
             recordInteraction = ::recordInteraction,
-            recordInteractionResponses = ::recordInteractionResponses
+            recordInteractionResponses = ::recordInteractionResponses,
+            recordCurrentAnswer = ::recordCurrentAnswer
         )
     }
 
@@ -68,5 +69,8 @@ class DefaultEngagementTest : TestCase() {
 
     private fun recordInteractionResponses(interactionResponses: Map<String, Set<InteractionResponse>>) {
         addResult("Interaction Responses: $interactionResponses")
+    }
+
+    private fun recordCurrentAnswer(interactionResponses: Map<String, Set<InteractionResponse>>, reset: Boolean) {
     }
 }

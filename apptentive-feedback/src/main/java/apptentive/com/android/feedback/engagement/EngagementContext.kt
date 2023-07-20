@@ -50,6 +50,14 @@ open class EngagementContext(
         invocations = invocations.map(InvocationConverter::convert)
     )
 
+    fun engageToRecordCurrentAnswer(interactionResponses: Map<String, Set<InteractionResponse>>, reset: Boolean = false) {
+        engagement.engageToRecordCurrentAnswer(interactionResponses, reset)
+    }
+
+    fun getNextQuestionSet(invocations: List<InvocationData>) = engagement.getNextQuestionSet(
+        invocations = invocations.map(InvocationConverter::convert)
+    )
+
     fun sendPayload(payload: Payload) = payloadSender.sendPayload(payload)
 
     @VisibleForTesting

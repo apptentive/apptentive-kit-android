@@ -1,8 +1,5 @@
 package apptentive.com.android.feedback.survey.model
 
-import androidx.annotation.VisibleForTesting
-
-@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 internal class MultiChoiceQuestion(
     id: String,
     title: String,

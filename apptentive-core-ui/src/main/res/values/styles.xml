@@ -71,8 +71,12 @@
         <!-- Survey Styles Start -->
         <!-- Layout -->
         <item name="apptentiveSurveyLayoutStyle">@style/Apptentive.Survey.Layout</item>
+        <item name="apptentiveSurveyLayoutPagedStyle">@style/Apptentive.Survey.Paged.Layout</item>
+        <item name="apptentiveSurveyIntroductionLayoutStyle">@style/Apptentive.Survey.Layout.PageItem</item>
+        <item name="apptentiveSurveySuccessLayoutStyle">@style/Apptentive.Survey.Layout.PageItem</item>
         <item name="apptentiveSurveyQuestionLayoutStyle">@style/Apptentive.Survey.Layout.Question</item>
         <item name="apptentiveSurveyQuestionDividerStyle">@style/Apptentive.Empty</item>
+        <item name="apptentiveSurveyScrollViewLayoutStyle">@style/Apptentive.Survey.Layout.Question.ScrollView</item>
 
         <!-- App Bars -->
         <item name="apptentiveSurveyToolbarStyle">@style/Apptentive.Widget.Survey.Toolbar</item>
@@ -81,13 +85,14 @@
         <!-- TextViews -->
         <item name="apptentiveSurveyTitleStyle">@style/Apptentive.TextAppearance.Title.Survey</item>
         <item name="apptentiveSurveyIntroductionStyle">@style/Apptentive.TextAppearance.Introduction.Survey</item>
+        <item name="apptentiveSurveySuccessStyle">@style/Apptentive.TextAppearance.Success.Survey</item>
         <item name="apptentiveSurveyQuestionTitleStyle">@style/Apptentive.TextAppearance.Title.Survey.Question</item>
         <item name="apptentiveSurveyQuestionInstructionsStyle">@style/Apptentive.TextAppearance.Caption.Survey.Instructions</item>
         <item name="apptentiveSurveyQuestionErrorStyle">@style/Apptentive.TextAppearance.Caption.Survey.Error</item>
         <item name="apptentiveSurveyRangeLabelStyle">@style/Apptentive.TextAppearance.Caption.Survey.RangeLabel</item>
         <item name="apptentiveSurveyTermsAndConditionsStyle">@style/Apptentive.TextAppearance.Caption.Survey.TermsAndConditions</item>
         <item name="apptentiveSurveySubmitErrorStyle">@style/Apptentive.TextAppearance.Caption.Survey.Error.Footer</item>
-        <item name="apptentiveSurveyDisclaimerStyle">?apptentiveSurveyFootnoteStyle</item>
+        <item name="apptentiveSurveyDisclaimerStyle">@style/Apptentive.TextAppearance.Caption.Survey.Disclaimer</item>
         <item name="apptentiveSurveyFootnoteStyle">@style/Apptentive.TextAppearance.Caption.Survey.Disclaimer</item>
 
         <!-- Widgets -->
@@ -100,7 +105,16 @@
         <item name="apptentiveSurveyOtherTextFieldLayoutStyle">@style/Apptentive.Widget.Survey.OtherTextField.TextInputLayout</item>
         <item name="apptentiveSurveyOtherTextFieldEditTextStyle">@style/Apptentive.Widget.Survey.OtherTextField.EditText</item>
         <item name="apptentiveSurveySubmitButtonStyle">@style/Apptentive.Widget.Survey.Button.Submit</item>
+        <item name="apptentiveSurveyNextButtonStyle">@style/Apptentive.Widget.Survey.Button.Submit.Paged</item>
         <item name="apptentiveSurveyButtonColorDefault">?colorPrimary</item>
+        <item name="apptentiveSurveyViewPagerStyle">@style/Apptentive.Widget.Survey.ViewPager</item>
+        <item name="apptentiveProgressBarLinearStyle">@style/Apptentive.Widget.ProgressBar.Linear</item>
+        <item name="apptentiveProgressBarSegmentedStyle">@style/Apptentive.Widget.ProgressBar.Segmented</item>
+        <item name="apptentiveProgressBarSegmentedItemStyle">@style/Apptentive.Widget.ProgressBar.Segmented.Item</item>
+        <item name="apptentiveProgressBarPreviousIcon">@drawable/apptentive_pill_previous</item>
+        <item name="apptentiveProgressBarCurrentIcon">@drawable/apptentive_pill_current</item>
+        <item name="apptentiveProgressBarNextIcon">@drawable/apptentive_pill_next</item>
+        <item name="apptentiveCustomFocusForegroundStyle">@drawable/apptentive_custom_focus_overlay</item>
         <!-- Survey Styles End -->
 
         <!-- Text Size Start -->
@@ -115,6 +129,8 @@
         <!-- Survey -->
         <item name="apptentiveTextSizeSurveyQuestionTitle">@dimen/apptentive_text_size_question_title</item>
         <item name="apptentiveTextSizeSurveyIntroduction">@dimen/apptentive_text_size_survey_introduction</item>
+        <item name="apptentiveTextSizeSurveySuccess">@dimen/apptentive_text_size_survey_success</item>
+        <item name="apptentiveTextSizeSurveyDisclaimer">@dimen/apptentive_text_size_survey_disclaimer</item>
         <item name="apptentiveTextSizeBody1">?apptentiveTextSizeDefault</item>
         <item name="apptentiveTextSizeCaption">@dimen/apptentive_text_size_caption</item>
         <item name="apptentiveTextSizeButtonColored">?apptentiveTextSizeDefault</item>
@@ -134,8 +150,9 @@
         <!-- Activities (Like Survey) use android:colorBackground and colorOnBackground -->
         <!-- https://material.io/blog/android-material-theme-color -->
 
-        <!-- General icon background/fill color -->
+        <!-- General foreground/background/fill color -->
         <item name="apptentiveColorIconClose">?colorOnPrimary</item>
+        <item name="apptentiveCustomFocusForegroundColor">@color/apptentive_color_focus_overlay</item>
 
         <!-- Dialog -->
         <item name="apptentiveTextColorDialogTitleWithMessage">?colorOnSurface</item>
@@ -149,10 +166,18 @@
         <item name="apptentiveTextColorSurveyRangeLabel">?colorOnBackground</item>
         <item name="apptentiveTextColorSurveyTitle">?colorOnPrimary</item>
         <item name="apptentiveTextColorSurveyIntroduction">?colorOnBackground</item>
+        <item name="apptentiveTextColorSurveySuccess">?colorOnBackground</item>
+        <item name="apptentiveTextColorSurveyDisclaimer">?colorOnBackground</item>
         <item name="apptentiveTextColorBody1">?colorOnBackground</item>
         <item name="apptentiveTextColorSurveyQuestionInstructions">?colorOnBackground</item>
         <item name="apptentiveTextColorButtonColored">?colorOnPrimary</item>
         <item name="apptentiveTextColorSurveyTermsAndConditions">?colorOnPrimary</item>
+
+        <item name="apptentiveProgressBarLinearIndicatorColor">?colorPrimary</item>
+        <item name="apptentiveProgressBarLinearTrackColor">@color/apptentive_color_progress_bar_next</item>
+        <item name="apptentiveColorProgressBarCurrent">?colorPrimary</item>
+        <item name="apptentiveColorProgressBarPrevious">@color/apptentive_color_progress_bar_previous</item>
+        <item name="apptentiveColorProgressBarNext">@color/apptentive_color_progress_bar_next</item>
 
         <!-- Message Center -->
         <item name="apptentiveMessageCenterTextColorToolbarTitle">?colorOnPrimary</item>
@@ -224,6 +249,8 @@
         <item name="apptentiveTypefaceTitle">?apptentiveTypefaceDefault</item>
         <item name="apptentiveTypefaceToolbar">?apptentiveTypefaceDefault</item>
         <item name="apptentiveTypefaceSurveyIntroduction">?apptentiveTypefaceDefault</item>
+        <item name="apptentiveTypefaceSurveySuccess">?apptentiveTypefaceDefault</item>
+        <item name="apptentiveTypefaceSurveyDisclaimer">?apptentiveTypefaceDefault</item>
         <item name="apptentiveTypefaceSubhead">?apptentiveTypefaceDefault</item>
         <item name="apptentiveTypefaceBody1">?apptentiveTypefaceDefault</item>
         <item name="apptentiveTypefaceCaption">?apptentiveTypefaceDefault</item>
@@ -326,14 +353,32 @@
         <item name="android:background">?android:colorBackground</item>
         <item name="android:layout_weight">1</item>
         <item name="layoutManager">androidx.recyclerview.widget.LinearLayoutManager</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <style name="Apptentive.Survey.Paged.Layout" parent="">
+        <item name="android:background">?android:colorBackground</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:visibility">gone</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:paddingBottom">@dimen/apptentive_survey_paged_layout_bottom_padding</item>
+    </style>
+
+    <style name="Apptentive.Survey.Layout.PageItem" parent="Apptentive.Survey.Layout.Question">
+        <item name="android:gravity">center</item>
     </style>
 
     <style name="Apptentive.Survey.Layout.Question" parent="">
         <item name="android:accessibilityHeading" tools:targetApi="p">true</item>
         <item name="android:gravity">start</item>
         <item name="android:orientation">vertical</item>
-        <item name="android:paddingTop">@dimen/apptentive_survey_question_top_padding</item>
-        <item name="android:paddingBottom">@dimen/apptentive_survey_question_bottom_padding</item>
+        <item name="android:layout_marginTop">@dimen/apptentive_survey_question_top_margin</item>
+        <item name="android:layout_marginBottom">@dimen/apptentive_survey_question_bottom_margin</item>
+    </style>
+
+    <style name="Apptentive.Survey.Layout.Question.ScrollView" parent="">
+        <item name="android:scrollbars">vertical</item>
+        <item name="android:layout_gravity">center</item>
     </style>
     <!-- Interaction Layouts End -->
 
@@ -404,9 +449,30 @@
         <item name="android:typeface">?apptentiveTypefaceSurveyIntroduction</item>
         <item name="android:textAppearance">?textAppearanceHeadline6</item>
         <item name="android:alpha">?apptentiveHeaderAlpha</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:textIsSelectable">true</item>
         <item name="android:textAlignment">center</item>
         <item name="android:accessibilityHeading" tools:ignore="NewApi">true</item>
-        <item name="android:padding">@dimen/apptentive_survey_introduction_padding</item>
+        <item name="android:padding">@dimen/apptentive_survey_introduction_success_padding</item>
+    </style>
+
+    <style name="Apptentive.TextAppearance.Success.Survey" parent="Apptentive.TextAppearance.Introduction.Survey">
+        <item name="android:textColor">?apptentiveTextColorSurveySuccess</item>
+        <item name="android:textSize">?apptentiveTextSizeSurveySuccess</item>
+        <item name="android:typeface">?apptentiveTypefaceSurveySuccess</item>
+    </style>
+
+    <style name="Apptentive.TextAppearance.Disclaimer.Survey" parent="Apptentive.TextAppearance">
+        <item name="android:textColor">?apptentiveTextColorSurveyDisclaimer</item>
+        <item name="android:textSize">?apptentiveTextSizeSurveyDisclaimer</item>
+        <item name="android:typeface">?apptentiveTypefaceSurveyDisclaimer</item>
+        <item name="android:alpha">?apptentiveHeaderAlpha</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:textIsSelectable">true</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:padding">@dimen/apptentive_survey_disclaimer_padding</item>
     </style>
 
     <style name="Apptentive.TextAppearance.Title.Survey.Question">
@@ -435,9 +501,8 @@
         <item name="android:focusable">true</item>
         <item name="android:alpha">?apptentiveSubheaderAlpha</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:maxHeight">@dimen/apptentive_survey_range_label_max_height</item>
         <item name="android:paddingTop">@dimen/apptentive_survey_range_label_top_padding</item>
-        <item name="android:paddingBottom">@dimen/apptentive_survey_range_label_bottom_padding</item>
+        <item name="android:layout_marginBottom">@dimen/apptentive_survey_range_label_bottom_padding</item>
         <item name="android:paddingStart">@dimen/apptentive_activity_horizontal_margin_padding</item>
         <item name="android:paddingEnd">@dimen/apptentive_activity_horizontal_margin_padding</item>
     </style>
@@ -453,11 +518,12 @@
 
     <style name="Apptentive.TextAppearance.Caption.Survey.Error">
         <item name="android:textColor">?apptentiveTextColorError</item>
-        <item name="android:importantForAccessibility">no</item>
+        <item name="android:importantForAccessibility">yes</item>
         <item name="android:accessibilityLiveRegion">polite</item>
         <item name="android:alpha">?apptentiveHeaderAlpha</item>
         <item name="android:layout_marginStart">@dimen/apptentive_activity_horizontal_margin_padding</item>
         <item name="android:layout_marginEnd">@dimen/apptentive_activity_horizontal_margin_padding</item>
+        <item name="android:layout_marginBottom">@dimen/apptentive_survey_error_button_margin</item>
     </style>
 
     <style name="Apptentive.TextAppearance.Caption.Survey.TermsAndConditions">
@@ -469,7 +535,7 @@
         <item name="android:paddingTop">@dimen/apptentive_survey_terms_conditions_vertical_padding</item>
         <item name="android:paddingBottom">@dimen/apptentive_survey_terms_conditions_vertical_padding</item>
         <item name="android:gravity">center</item>
-
+        <item name="android:foreground">?attr/apptentiveCustomFocusForegroundStyle</item>
     </style>
 
     <style name="Apptentive.TextAppearance.Caption.Survey.Error.Footer">
@@ -484,13 +550,13 @@
     </style>
 
     <style name="Apptentive.TextAppearance.Caption.Survey.Disclaimer">
-        <item name="android:textColor">?apptentiveTextColorBody1</item>
-        <item name="android:textSize">?apptentiveTextSizeBody1</item>
-        <item name="android:typeface">?apptentiveTypefaceBody1</item>
+        <item name="android:textColor">?apptentiveTextColorSurveyDisclaimer</item>
+        <item name="android:textSize">?apptentiveTextSizeSurveyDisclaimer</item>
+        <item name="android:typeface">?apptentiveTypefaceSurveyDisclaimer</item>
         <item name="android:fontFamily">?apptentiveFontFamilyBody1</item>
         <item name="android:alpha">?apptentiveHeaderAlpha</item>
         <item name="android:textAlignment">center</item>
-        <item name="android:accessibilityLiveRegion">polite</item>
+        <item name="android:importantForAccessibility">yes</item>
         <item name="android:layout_marginStart">@dimen/apptentive_activity_horizontal_margin_padding</item>
         <item name="android:layout_marginEnd">@dimen/apptentive_activity_horizontal_margin_padding</item>
         <item name="android:layout_marginBottom">@dimen/apptentive_survey_footers_vertical_padding_margin</item>
@@ -558,11 +624,12 @@
         <item name="android:fontFamily">?apptentiveFontFamilyBody1</item>
         <item name="android:typeface">?apptentiveTypefaceBody1</item>
         <item name="buttonTint">@color/apptentive_mtrl_selection_control_button_tint</item>
-        <item name="android:minHeight">@dimen/apptentive_survey_radio_checkbox_min_height</item>
         <item name="android:layout_marginStart">@dimen/apptentive_survey_radio_checkbox_range_horizontal_margin</item>
         <item name="android:layout_marginEnd">@dimen/apptentive_survey_radio_checkbox_range_horizontal_margin</item>
         <item name="android:paddingStart">@dimen/apptentive_survey_radio_checkbox_horizontal_padding</item>
         <item name="android:paddingEnd">@dimen/apptentive_survey_radio_checkbox_horizontal_padding</item>
+        <item name="android:paddingTop">@dimen/apptentive_survey_radio_checkbox_vertical_padding</item>
+        <item name="android:paddingBottom">@dimen/apptentive_survey_radio_checkbox_vertical_padding</item>
     </style>
 
     <!-- https://material.io/components/radio-buttons/android -->
@@ -572,11 +639,12 @@
         <item name="android:fontFamily">?apptentiveFontFamilyBody1</item>
         <item name="android:typeface">?apptentiveTypefaceBody1</item>
         <item name="buttonTint">@color/apptentive_mtrl_selection_control_button_tint</item>
-        <item name="android:minHeight">@dimen/apptentive_survey_radio_checkbox_min_height</item>
         <item name="android:layout_marginStart">@dimen/apptentive_survey_radio_checkbox_range_horizontal_margin</item>
         <item name="android:layout_marginEnd">@dimen/apptentive_survey_radio_checkbox_range_horizontal_margin</item>
         <item name="android:paddingStart">@dimen/apptentive_survey_radio_checkbox_horizontal_padding</item>
         <item name="android:paddingEnd">@dimen/apptentive_survey_radio_checkbox_horizontal_padding</item>
+        <item name="android:paddingTop">@dimen/apptentive_survey_radio_checkbox_vertical_padding</item>
+        <item name="android:paddingBottom">@dimen/apptentive_survey_radio_checkbox_vertical_padding</item>
     </style>
 
     <!-- https://material.io/components/sliders/android-->
@@ -655,12 +723,44 @@
         <item name="android:textSize">?apptentiveTextSizeButtonColored</item>
         <item name="android:layout_marginTop">@dimen/apptentive_survey_footers_vertical_padding_margin</item>
         <item name="android:layout_marginBottom">@dimen/apptentive_survey_footers_vertical_padding_margin</item>
+        <item name="android:foreground">?attr/apptentiveCustomFocusForegroundStyle</item>
+    </style>
+
+    <style name="Apptentive.Widget.Survey.Button.Submit.Paged">
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:layout_marginBottom">@dimen/apptentive_survey_paged_button_bottom_margin</item>
+    </style>
+
+    <style name="Apptentive.Widget.Survey.ViewPager">
+        <item name="android:layout_weight">1</item>
     </style>
 
     <style name="Apptentive.Widget.Survey.BottomAppBar">
         <item name="android:background">?colorPrimary</item>
         <item name="android:minHeight">@dimen/apptentive_bottom_app_bar_min_height</item>
-        <item name="android:importantForAccessibility">noHideDescendants</item>
+    </style>
+
+    <style name="Apptentive.Widget.ProgressBar"/>
+
+    <style name="Apptentive.Widget.ProgressBar.Linear" parent="Widget.MaterialComponents.LinearProgressIndicator">
+        <item name="android:layout_marginStart">@dimen/apptentive_progress_bar_linear_horizontal_margin</item>
+        <item name="android:layout_marginEnd">@dimen/apptentive_progress_bar_linear_horizontal_margin</item>
+        <item name="indicatorColor">?apptentiveProgressBarLinearIndicatorColor</item>
+        <item name="trackColor">?apptentiveProgressBarLinearTrackColor</item>
+        <item name="trackCornerRadius">@dimen/apptentive_progress_bar_linear_track_corner_radius</item>
+        <item name="trackThickness">@dimen/apptentive_progress_bar_linear_track_thickness</item>
+    </style>
+
+    <style name="Apptentive.Widget.ProgressBar.Segmented">
+        <item name="android:gravity">center</item>
+        <item name="android:minHeight">@dimen/apptentive_progress_bar_segmented_min_height</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="Apptentive.Widget.ProgressBar.Segmented.Item" parent="">
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginStart">@dimen/apptentive_progress_bar_segmented_item_horizontal_margin</item>
+        <item name="android:layout_marginEnd">@dimen/apptentive_progress_bar_segmented_item_horizontal_margin</item>
     </style>
     <!-- Survey Widgets End -->
     <!-- Widgets End -->
@@ -919,6 +1019,7 @@
         <item name="android:textSize">?apptentiveTextSizeButtonColored</item>
         <item name="android:layout_marginTop">@dimen/apptentive_survey_footers_vertical_padding_margin</item>
         <item name="android:layout_marginBottom">@dimen/apptentive_survey_footers_vertical_padding_margin</item>
+        <item name="android:foreground">?apptentiveCustomFocusForegroundStyle</item>
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.Composer.EditText.Error" parent="">

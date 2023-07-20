@@ -1,14 +1,23 @@
 package apptentive.com.android.feedback.model
 
 import apptentive.com.android.TestCase
+import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.encryption.EncryptionFactory
 import apptentive.com.android.encryption.NotEncrypted
 import apptentive.com.android.feedback.conversation.DefaultConversationSerializer
+import apptentive.com.android.feedback.engagement.util.MockAndroidSharedPrefDataStore
+import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import com.google.common.truth.Truth.assertThat
+import org.junit.Before
 import org.junit.Test
 import java.io.File
 
 class ConversationTest : TestCase() {
+
+    @Before
+    override fun setUp() {
+        DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore())
+    }
     @Test
     fun binaryFileSerialization() {
         val expected = Conversation(

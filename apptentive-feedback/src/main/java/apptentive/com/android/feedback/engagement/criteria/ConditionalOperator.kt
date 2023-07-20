@@ -44,9 +44,9 @@ internal interface ConditionalOperator {
         private val exists: ConditionalOperator by lazy {
             object : ConditionalOperator {
                 override fun apply(first: Any?, second: Any?): Boolean {
-                    return when (second) {
-                        null -> false
-                        !is Boolean -> false
+                    return when {
+                        second == null || second !is Boolean -> false
+                        (first is Iterable<*> && first.none()) -> !second
                         else -> {
                             val exists = first != null
                             exists == second

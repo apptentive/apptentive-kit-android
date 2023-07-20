@@ -79,7 +79,7 @@ val mockDevice = Device(
 )
 
 val mockSdk = SDK(
-    version = SDK_VERSION,
+    version = Constants.SDK_VERSION,
     platform = "Android",
     distribution = "Default",
     distributionVersion = SDK_VERSION,

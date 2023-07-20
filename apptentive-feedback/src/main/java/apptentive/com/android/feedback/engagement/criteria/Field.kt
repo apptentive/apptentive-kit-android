@@ -120,6 +120,17 @@ sealed class Field(val type: Type, val description: String) {
                 description = "answer value responseId:$responseId"
             )
         }
+
+        object current_answer {
+            data class id(val responseId: InteractionId) : Field(
+                type = Type.Any, // Can be String or Boolean
+                description = "current answer id responseId:$responseId"
+            )
+            data class value(val responseId: InteractionId) : Field(
+                type = Type.Any, // Can be String, Boolean, or Long
+                description = "current answer value responseId:$responseId"
+            )
+        }
     }
 
     object person {
@@ -329,6 +340,10 @@ sealed class Field(val type: Type, val description: String) {
                         "answers" -> when (components[3]) {
                             "id" -> return interactions.answers.id(interaction_instance_id)
                             "value" -> return interactions.answers.value(interaction_instance_id)
+                        }
+                        "current_answer" -> when (components[3]) {
+                            "id" -> return interactions.current_answer.id(interaction_instance_id)
+                            "value" -> return interactions.current_answer.value(interaction_instance_id)
                         }
                     }
                 }
