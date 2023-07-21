@@ -107,7 +107,7 @@ private class ApptentiveNullClient : ApptentiveClient {
         return null
     }
 
-    override fun setLocalManifest(uri: String) {
+    override fun setLocalManifest(json: String) {
         Log.d(FEEDBACK, "Apptentive SDK is not initialized; set local manifest failed ")
     }
 }
