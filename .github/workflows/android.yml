@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "develop" ]
   pull_request:
-    branches: [ "develop" ]
+    branches: [ "develop", "feature/multi-user-authentication" ]
     
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}

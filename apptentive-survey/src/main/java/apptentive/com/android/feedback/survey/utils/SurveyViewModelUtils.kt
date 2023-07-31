@@ -40,7 +40,7 @@ internal fun createSurveyViewModel(
         createSurveyViewModel(
             DefaultSurveyModelFactory(
                 context,
-                getInteractionBackup(context.getAppActivity())
+                getInteractionBackup()
             ).getSurveyModel(),
             context
         )

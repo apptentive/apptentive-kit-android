@@ -96,10 +96,10 @@ object Apptentive {
 
     /**
      * Collects the [ApptentiveActivityInfo] reference which can be used to retrieve the
-     * current [Activity]'s [Context].
+     * current Activity's [Context].
      * The retrieved context is used in the Apptentive interactions & its UI elements.
      *
-     * @param apptentiveActivityInfo reference to the app's current [Activity]
+     * @param apptentiveActivityInfo reference to the app's current Activity
      */
 
     @JvmStatic
@@ -202,17 +202,15 @@ object Apptentive {
             )
             DependencyProvider.register<AndroidSharedPrefDataStore>(DefaultAndroidSharedPrefDataStore(application.applicationContext))
 
-            checkSavedKeyAndSignature(application, configuration)
+            checkSavedKeyAndSignature(configuration)
 
             // Save host app theme usage
-            application.getSharedPreferences(
+
+            DependencyProvider.of<AndroidSharedPrefDataStore>().putBoolean(
                 SharedPrefConstants.USE_HOST_APP_THEME,
-                Context.MODE_PRIVATE
+                SharedPrefConstants.USE_HOST_APP_THEME_KEY,
+                configuration.shouldInheritAppTheme
             )
-                .edit().putBoolean(
-                    SharedPrefConstants.USE_HOST_APP_THEME_KEY,
-                    configuration.shouldInheritAppTheme
-                ).apply()
 
             // Set log level
             Log.logLevel = configuration.logLevel
@@ -222,21 +220,14 @@ object Apptentive {
 
             // Set rating throttle
             ThrottleUtils.ratingThrottleLength = configuration.ratingInteractionThrottleLength
-            ThrottleUtils.throttleSharedPrefs =
-                application.getSharedPreferences(
-                    SharedPrefConstants.THROTTLE_UTILS,
-                    Context.MODE_PRIVATE
-                )
 
             // Save alternate app store URL to be set later
-            application.getSharedPreferences(
+
+            DependencyProvider.of<AndroidSharedPrefDataStore>().putString(
                 SharedPrefConstants.CUSTOM_STORE_URL,
-                Context.MODE_PRIVATE
+                SharedPrefConstants.CUSTOM_STORE_URL_KEY,
+                configuration.customAppStoreURL
             )
-                .edit().putString(
-                    SharedPrefConstants.CUSTOM_STORE_URL_KEY,
-                    configuration.customAppStoreURL
-                ).apply()
 
             Log.i(SYSTEM, "Registering Apptentive Android SDK ${Constants.SDK_VERSION}")
             Log.v(
@@ -275,30 +266,28 @@ object Apptentive {
     }
 
     private fun checkSavedKeyAndSignature(
-        application: Application,
         configuration: ApptentiveConfiguration
     ) {
-        val registrationSharedPrefs = application.getSharedPreferences(
-            SharedPrefConstants.REGISTRATION_INFO,
-            Context.MODE_PRIVATE
-        )
+        val registrationSharedPrefs = DependencyProvider.of<AndroidSharedPrefDataStore>()
+
         val savedKeyHash =
-            registrationSharedPrefs.getString(SharedPrefConstants.APPTENTIVE_KEY_HASH, null)
+            registrationSharedPrefs.getNullableString(SharedPrefConstants.REGISTRATION_INFO, SharedPrefConstants.APPTENTIVE_KEY_HASH, null)
         val savedSignatureHash =
-            registrationSharedPrefs.getString(SharedPrefConstants.APPTENTIVE_SIGNATURE_HASH, null)
+            registrationSharedPrefs.getNullableString(SharedPrefConstants.REGISTRATION_INFO, SharedPrefConstants.APPTENTIVE_SIGNATURE_HASH, null)
 
         if (savedKeyHash.isNullOrEmpty() && savedSignatureHash.isNullOrEmpty()) {
             registrationSharedPrefs
-                .edit()
                 .putString(
+                    SharedPrefConstants.REGISTRATION_INFO,
                     SharedPrefConstants.APPTENTIVE_KEY_HASH,
                     configuration.apptentiveKey.sha256()
                 )
+            registrationSharedPrefs
                 .putString(
+                    SharedPrefConstants.REGISTRATION_INFO,
                     SharedPrefConstants.APPTENTIVE_SIGNATURE_HASH,
                     configuration.apptentiveSignature.sha256()
                 )
-                .apply()
             Log.d(LogTags.CONFIGURATION, "Saving current ApptentiveKey and ApptentiveSignature hash")
         } else {
             val newKeyHash = configuration.apptentiveKey.sha256()
@@ -974,7 +963,7 @@ object Apptentive {
     /**
      * Determines whether this Intent is a push notification sent from Apptentive.
      *
-     * @param intent The received [Intent] you received in your [BroadcastReceiver].
+     * @param intent The received [Intent] you received in your BroadcastReceiver.
      * @return `true` if the [Intent] came from, and should be handled by Apptentive.
      */
     @JvmStatic
@@ -1030,7 +1019,7 @@ object Apptentive {
      * if the push data came from Apptentive, and an Interaction can be shown, or
      * `null`.
      * @param intent An [Intent] containing the Apptentive Push data. Pass in what you receive
-     * in the [Service] or [BroadcastReceiver] that is used by your chosen push provider.
+     * in the Service or BroadcastReceiver that is used by your chosen push provider.
      */
     @JvmStatic
     fun buildPendingIntentFromPushNotification(context: Context, callback: PendingIntentCallback, intent: Intent) {
@@ -1147,7 +1136,7 @@ object Apptentive {
      * [android.app.Notification] object.
      *
      * @param bundle A [Bundle] containing the Apptentive Push data. Pass in what you receive in
-     * the the [Service] or [BroadcastReceiver] that is used by your chosen push provider.
+     * the the Service or BroadcastReceiver that is used by your chosen push provider.
      * @return a [String] value, or `null`.
      */
     @JvmStatic

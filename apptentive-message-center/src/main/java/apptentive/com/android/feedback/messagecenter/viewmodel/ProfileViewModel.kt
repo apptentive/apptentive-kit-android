@@ -24,7 +24,7 @@ class ProfileViewModel : ViewModel() {
     private val model: MessageCenterModel = try {
         DependencyProvider.of<MessageCenterModelFactory>().messageCenterModel()
     } catch (exception: Exception) {
-        getInteractionBackup(context.getAppActivity())
+        getInteractionBackup()
     }
 
     val profileTitle: String = model.profile?.edit?.title ?: ""
