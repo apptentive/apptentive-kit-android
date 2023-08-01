@@ -7,6 +7,7 @@ import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.encryption.Encrypted
 import apptentive.com.android.encryption.NotEncrypted
 import apptentive.com.android.feedback.backend.ConversationCredentials
+import apptentive.com.android.feedback.conversation.ConversationRoster
 import apptentive.com.android.feedback.conversation.createConversationManager
 import apptentive.com.android.feedback.engagement.util.MockAndroidSharedPrefDataStore
 import apptentive.com.android.feedback.engagement.util.MockFileSystem
@@ -40,7 +41,8 @@ class ApptentiveDefaultClientTest : TestCase() {
         "token",
         MockMessageCenterService(),
         MockExecutor(),
-        MockMessageRepository()
+        MockMessageRepository(),
+        ConversationRoster()
     )
 
     private val mockHttpClient = object : HttpClient {

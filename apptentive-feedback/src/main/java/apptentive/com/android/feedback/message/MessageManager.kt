@@ -10,6 +10,7 @@ import apptentive.com.android.core.Observable
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.UnreadMessageCallback
 import apptentive.com.android.feedback.backend.MessageCenterService
+import apptentive.com.android.feedback.conversation.ConversationRoster
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.lifecycle.LifecycleListener
 import apptentive.com.android.feedback.model.Configuration
@@ -24,6 +25,7 @@ import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.util.Result
 import apptentive.com.android.util.generateUUID
+import java.io.File
 import java.io.InputStream
 
 /**
@@ -43,7 +45,8 @@ class MessageManager(
     private val conversationToken: String?,
     private val messageCenterService: MessageCenterService,
     private val serialExecutor: Executor,
-    private val messageRepository: MessageRepository
+    private val messageRepository: MessageRepository,
+    private var conversationRoster: ConversationRoster
 ) : LifecycleListener, ConversationListener {
 
     private val messagesFromStorage: List<Message> = messageRepository.getAllMessages()
@@ -74,7 +77,7 @@ class MessageManager(
     override fun onAppBackground() {
         Log.d(MESSAGE_CENTER, "App is in the background, stop polling")
         stopPolling()
-        messageRepository.saveMessages()
+        messageRepository.saveMessages(conversationRoster)
     }
 
     override fun onAppForeground() {
@@ -90,6 +93,11 @@ class MessageManager(
         profileSubject.value = senderProfile
     }
 
+    override fun onConversationRosterChanged(conversationRoster: ConversationRoster) {
+        Log.d(MESSAGE_CENTER, "Conversation roster changed")
+        this.conversationRoster = conversationRoster
+    }
+
     fun setCustomData(customData: Map<String, Any?>) {
         this.messageCustomData = customData
     }
@@ -98,6 +106,9 @@ class MessageManager(
         this.messageCustomData = null
     }
 
+    fun updateMessageCacheFile(file: File) {
+        messageRepository.setMessageFile(file)
+    }
     fun fetchMessages() {
         if (!fetchingInProgress && !conversationId.isNullOrEmpty() && !conversationToken.isNullOrEmpty()) {
             fetchingInProgress = true
@@ -127,7 +138,8 @@ class MessageManager(
                 newMessages.map { message ->
                     message.messageStatus = Message.Status.Saved
                     message
-                }
+                },
+                conversationRoster
             )
             messagesSubject.value = messageRepository.getAllMessages()
             true
@@ -164,7 +176,7 @@ class MessageManager(
             customData = messageCustomData
         )
 
-        messageRepository.addOrUpdateMessages(listOf(message))
+        messageRepository.addOrUpdateMessages(listOf(message), conversationRoster)
         messagesSubject.value = messageRepository.getAllMessages()
 
         context.sendPayload(message.toMessagePayload())
@@ -182,7 +194,7 @@ class MessageManager(
 
     fun sendMessage(message: Message) {
         val context = DependencyProvider.of<EngagementContextFactory>().engagementContext()
-        messageRepository.addOrUpdateMessages(listOf(message))
+        messageRepository.addOrUpdateMessages(listOf(message), conversationRoster)
         messagesSubject.value = messageRepository.getAllMessages()
 
         context.sendPayload(message.toMessagePayload())
@@ -193,7 +205,7 @@ class MessageManager(
     }
 
     fun updateMessages(messages: List<Message>) {
-        messageRepository.addOrUpdateMessages(messages)
+        messageRepository.addOrUpdateMessages(messages, conversationRoster)
     }
 
     fun sendAttachment(uri: String, isHidden: Boolean? = null) {
@@ -266,7 +278,7 @@ class MessageManager(
 
     fun downloadAttachment(activity: Activity, message: Message, attachment: Message.Attachment) {
         val loadingAttachment = message.attachments?.onEach { if (it.id == attachment.id) it.isLoading = true }
-        messageRepository.addOrUpdateMessages(listOf(message.copy(attachments = loadingAttachment)))
+        messageRepository.addOrUpdateMessages(listOf(message.copy(attachments = loadingAttachment)), conversationRoster)
         messagesSubject.value = messageRepository.getAllMessages()
 
         messageCenterService.getAttachment(attachment.url.orEmpty()) { result ->
@@ -292,7 +304,7 @@ class MessageManager(
                 )
             }
 
-            messageRepository.addOrUpdateMessages(listOf(updatedMessage))
+            messageRepository.addOrUpdateMessages(listOf(updatedMessage), conversationRoster)
             messagesSubject.value = messageRepository.getAllMessages()
         }
     }
@@ -329,7 +341,7 @@ class MessageManager(
         }?.apply {
             messageStatus = if (isSuccess) Message.Status.Sent else Message.Status.Failed
         }?.also {
-            messageRepository.addOrUpdateMessages(listOf(it))
+            messageRepository.addOrUpdateMessages(listOf(it), conversationRoster)
             messagesSubject.value = messageRepository.getAllMessages()
         }
     }

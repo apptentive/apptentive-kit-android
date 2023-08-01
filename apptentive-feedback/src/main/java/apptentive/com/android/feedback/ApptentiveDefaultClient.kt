@@ -70,6 +70,7 @@ import apptentive.com.android.feedback.platform.DefaultEngagementDataFactory
 import apptentive.com.android.feedback.platform.DefaultEngagementManifestFactory
 import apptentive.com.android.feedback.platform.DefaultPersonFactory
 import apptentive.com.android.feedback.platform.DefaultSDKFactory
+import apptentive.com.android.feedback.utils.FileStorageUtils
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.RuntimeUtils
 import apptentive.com.android.network.HttpClient
@@ -92,12 +93,11 @@ import apptentive.com.android.util.generateUUID
 import com.apptentive.android.sdk.conversation.DefaultLegacyConversationManager
 import com.apptentive.android.sdk.conversation.LegacyConversationManager
 import java.io.ByteArrayInputStream
-import java.io.File
 import java.io.InputStream
 
 @InternalUseOnly
 class ApptentiveDefaultClient(
-    private val configuration: ApptentiveConfiguration,
+    internal val configuration: ApptentiveConfiguration,
     private val httpClient: HttpClient,
     private val executors: Executors
 ) : ApptentiveClient {
@@ -124,6 +124,7 @@ class ApptentiveDefaultClient(
             legacyConversationManagerProvider = object : Provider<LegacyConversationManager> {
                 override fun get() = DefaultLegacyConversationManager(context)
             },
+            configuration = this.configuration,
             isDebuggable = RuntimeUtils.getApplicationInfo(context).debuggable
         )
 
@@ -175,13 +176,15 @@ class ApptentiveDefaultClient(
                         conversationService as MessageCenterService,
                         executors.state,
                         DefaultMessageRepository(
-                            messageSerializer = DefaultMessageSerializer(messagesFile = getMessagesFile(), encryption).apply {
+                            messageSerializer = DefaultMessageSerializer(encryption).apply {
                                 if (clearMessageCache) {
                                     deleteAllMessages()
                                     clearMessageCache = false
                                 }
-                            }
-                        )
+                            },
+                            conversationRoster = conversationManager.activeConversationRoster.value
+                        ),
+                        conversationRoster = conversationManager.activeConversationRoster.value
                     )
                     messageManager?.let {
                         DependencyProvider.register(MessageManagerFactoryProvider(it))
@@ -235,6 +238,11 @@ class ApptentiveDefaultClient(
                 payloadSender.sendPayload(payload)
             }
         }
+
+        conversationManager.activeConversationRoster.observe {
+            messageManager?.onConversationRosterChanged(it)
+        }
+
         executors.main.execute {
             Log.i(LIFE_CYCLE_OBSERVER, "Observing App lifecycle")
             ProcessLifecycleOwner.get().lifecycle.addObserver(
@@ -273,8 +281,8 @@ class ApptentiveDefaultClient(
 
     private fun createConversationSerializer(): ConversationSerializer {
         return DefaultConversationSerializer(
-            conversationFile = getConversationFile(),
-            manifestFile = getManifestFile(),
+            // TODO create roster file name with SHA256 of apptentiveKey - figure out the possibility of collision
+            conversationRosterFile = FileStorageUtils.getRosterFile(configuration.apptentiveKey),
         ).apply {
             setEncryption(encryption)
         }
@@ -614,7 +622,8 @@ class ApptentiveDefaultClient(
         val sharedPref = DependencyProvider.of<AndroidSharedPrefDataStore>()
 
         return when {
-            FileUtil.containsFiles(CONVERSATION_DIR) && !sharedPref.containsKey(SDK_CORE_INFO, CRYPTO_ENABLED) -> NotEncrypted // Migrating from 6.0.0
+            // TODO revisit this logic as the folder structure would change from 6.2
+            FileUtil.containsFiles(FileStorageUtils.CONVERSATION_DIR) && !sharedPref.containsKey(SDK_CORE_INFO, CRYPTO_ENABLED) -> NotEncrypted // Migrating from 6.0.0
             sharedPref.containsKey(SDK_CORE_INFO, CRYPTO_ENABLED) -> sharedPref.getBoolean(SDK_CORE_INFO, CRYPTO_ENABLED).getEncryptionStatus()
             else -> NoEncryptionStatus
         }
@@ -626,30 +635,5 @@ class ApptentiveDefaultClient(
 
     companion object {
         val sessionId = generateUUID()
-
-        private const val CONVERSATION_DIR = "conversations"
-
-        @WorkerThread
-        private fun getConversationFile(): File {
-            val conversationsDir = getConversationDir()
-            return File(conversationsDir, "conversation.bin")
-        }
-
-        @WorkerThread
-        private fun getManifestFile(): File {
-            val conversationsDir = getConversationDir()
-            return File(conversationsDir, "manifest.bin")
-        }
-
-        @WorkerThread
-        private fun getConversationDir(): File {
-            return FileUtil.getInternalDir(CONVERSATION_DIR, createIfNecessary = true)
-        }
-
-        @WorkerThread
-        private fun getMessagesFile(): File {
-            val conversationsDir = getConversationDir()
-            return File(conversationsDir, "messages.bin")
-        }
     }
 }

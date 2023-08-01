@@ -7,6 +7,7 @@ import apptentive.com.android.core.Observable
 import apptentive.com.android.core.Provider
 import apptentive.com.android.core.isInThePast
 import apptentive.com.android.encryption.Encryption
+import apptentive.com.android.feedback.ApptentiveConfiguration
 import apptentive.com.android.feedback.Constants
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.engagement.Event
@@ -44,6 +45,7 @@ internal class ConversationManager(
     private val conversationRepository: ConversationRepository,
     private val conversationService: ConversationService,
     private val legacyConversationManagerProvider: Provider<LegacyConversationManager>,
+    private val configuration: ApptentiveConfiguration,
     private val isDebuggable: Boolean
 ) {
     private var isUsingLocalManifest: Boolean = false
@@ -54,14 +56,19 @@ internal class ConversationManager(
 
     var isSDKAppReleaseCheckDone = false
 
+    private val activeConversationRosterSubject: BehaviorSubject<ConversationRoster> =
+        BehaviorSubject(conversationRepository.initializeRepository() ?: ConversationRoster())
+    val activeConversationRoster: Observable<ConversationRoster> get() = activeConversationRosterSubject
+
     init {
         val conversation = loadActiveConversation()
 
-        // Store successful SDK version
+        // Store successful SDK version after loading conversation
         DependencyProvider.of<AndroidSharedPrefDataStore>()
             .putString(SDK_CORE_INFO, SDK_VERSION, Constants.SDK_VERSION)
 
         activeConversationSubject = BehaviorSubject(conversation)
+        updateConversationRoster()
     }
 
     fun onEncryptionSetupComplete() {
@@ -102,6 +109,7 @@ internal class ConversationManager(
                             id = it.data.personId
                         )
                     )
+                    updateConversationRoster()
 
                     // let the caller know fetching was successful
                     callback(Result.Success(Unit))
@@ -119,10 +127,6 @@ internal class ConversationManager(
     @Throws(ConversationSerializationException::class)
     @WorkerThread
     private fun loadActiveConversation(): Conversation {
-        // Added in 6.1.0. Previous versions will be `null`.
-        val storedSdkVersion = DependencyProvider.of<AndroidSharedPrefDataStore>()
-            .getString(SDK_CORE_INFO, SDK_VERSION).ifEmpty { null }
-
         // load existing conversation
         val existingConversation = loadExistingConversation()
         if (existingConversation != null) {
@@ -140,6 +144,29 @@ internal class ConversationManager(
         // no active conversations: create a new one
         Log.i(CONVERSATION, "Creating 'anonymous' conversation...")
         return conversationRepository.createConversation()
+    }
+
+    private fun updateConversationRoster() {
+        val conversationState = if (activeConversation.value.hasConversationToken) {
+            // TODO set anonymous for now and revisit once login and logout are implemented
+            Log.d(CONVERSATION, "Conversation is anonymous, added to roster")
+            ConversationState.Anonymous(
+                key = configuration.apptentiveKey,
+                signature = configuration.apptentiveSignature
+            )
+        } else {
+            // anonymous pending
+            Log.d(CONVERSATION, "TSTING Conversation is anonymous pending, added to roster")
+            ConversationState.AnonymousPending
+        }
+
+        if (activeConversationRoster.value.activeConversation?.state == ConversationState.Undefined || activeConversationRoster.value.activeConversation?.state == ConversationState.AnonymousPending) {
+            activeConversationRoster.value.activeConversation =
+                ConversationMetaData(conversationState, activeConversationRoster.value.activeConversation?.path!!)
+        } else {
+            // TODO iterate logged out conversations to see if it matches the current conversation state
+            // TODO Figure out it's current state and compare with existing activeConversation before updating
+        }
     }
 
     fun checkForSDKAppReleaseUpdates(conversation: Conversation) {
@@ -191,7 +218,7 @@ internal class ConversationManager(
     @WorkerThread
     private fun saveConversation(conversation: Conversation) {
         try {
-            conversationRepository.saveConversation(conversation)
+            conversationRepository.saveConversation(conversation, activeConversationRoster.value)
             Log.d(CONVERSATION, "Conversation saved successfully")
         } catch (exception: Exception) {
             Log.e(CONVERSATION, "Exception while saving conversation")

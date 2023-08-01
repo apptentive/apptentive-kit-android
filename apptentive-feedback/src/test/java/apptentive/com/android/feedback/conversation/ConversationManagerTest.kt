@@ -6,6 +6,7 @@ import apptentive.com.android.core.Provider
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.getTimeSeconds
 import apptentive.com.android.encryption.Encryption
+import apptentive.com.android.feedback.ApptentiveConfiguration
 import apptentive.com.android.feedback.backend.ConversationCredentials
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.PayloadResponse
@@ -208,6 +209,7 @@ internal fun createConversationManager(
         legacyConversationManagerProvider = object : Provider<LegacyConversationManager> {
             override fun get() = MockLegacyConversationManager()
         },
+        configuration = ApptentiveConfiguration("key", "signature"),
         isDebuggable
     )
 }
@@ -230,7 +232,7 @@ private class MockConversationRepository(val throwException: Boolean = false) :
         )
     }
 
-    override fun saveConversation(conversation: Conversation) {
+    override fun saveConversation(conversation: Conversation, roster: ConversationRoster) {
         this.conversation = conversation
     }
 
@@ -246,6 +248,10 @@ private class MockConversationRepository(val throwException: Boolean = false) :
     )
 
     override fun updateEncryption(encryption: Encryption) {
+    }
+
+    override fun initializeRepository(): ConversationRoster? {
+        return null
     }
 }
 

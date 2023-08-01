@@ -1,8 +1,13 @@
 package apptentive.com.android.feedback.message
 
 import androidx.core.util.AtomicFile
+import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.encryption.Encryption
+import apptentive.com.android.feedback.conversation.ConversationRoster
+import apptentive.com.android.feedback.utils.FileStorageUtils
 import apptentive.com.android.feedback.utils.FileUtil
+import apptentive.com.android.platform.AndroidSharedPrefDataStore
+import apptentive.com.android.platform.SharedPrefConstants
 import apptentive.com.android.serialization.BinaryDecoder
 import apptentive.com.android.serialization.BinaryEncoder
 import apptentive.com.android.serialization.Decoder
@@ -25,16 +30,21 @@ import java.io.FileInputStream
 
 internal interface MessageSerializer {
     @Throws(MessageSerializerException::class)
-    fun loadMessages(): List<DefaultMessageRepository.MessageEntry>
+    fun loadMessages(conversationRoster: ConversationRoster): List<DefaultMessageRepository.MessageEntry>
 
     @Throws(MessageSerializerException::class)
-    fun saveMessages(messages: List<DefaultMessageRepository.MessageEntry>)
+    fun saveMessages(messages: List<DefaultMessageRepository.MessageEntry>, conversationRoster: ConversationRoster)
 
     fun deleteAllMessages()
+
+    fun setMessageFile(file: File)
 }
 
-internal class DefaultMessageSerializer(val messagesFile: File, val encryption: Encryption) : MessageSerializer {
-    override fun loadMessages(): List<DefaultMessageRepository.MessageEntry> {
+internal class DefaultMessageSerializer(val encryption: Encryption) : MessageSerializer {
+
+    private lateinit var messagesFile: File
+    override fun loadMessages(conversationRoster: ConversationRoster): List<DefaultMessageRepository.MessageEntry> {
+        setMessagesFileFromRoster(conversationRoster)
         return if (messagesFile.exists()) {
             Log.d(MESSAGE_CENTER, "Loading messages from MessagesFile")
             readMessageEntries()
@@ -44,7 +54,16 @@ internal class DefaultMessageSerializer(val messagesFile: File, val encryption: 
         }
     }
 
-    override fun saveMessages(messages: List<DefaultMessageRepository.MessageEntry>) {
+    private fun setMessageFileFromRoster(roster: ConversationRoster) {
+        Log.d(LogTags.CONVERSATION, "Setting message file from roster: $roster")
+        roster.activeConversation?.let { activeConversation ->
+            messagesFile = FileStorageUtils.getMessagesFileForActiveUser(activeConversation.path)
+            Log.d(LogTags.CONVERSATION, "Using conversation file: $messagesFile")
+        }
+    }
+
+    override fun saveMessages(messages: List<DefaultMessageRepository.MessageEntry>, conversationRoster: ConversationRoster) {
+        setMessageFileFromRoster(conversationRoster)
         val start = System.currentTimeMillis()
         val atomicFile = AtomicFile(messagesFile)
         val stream = atomicFile.startWrite()
@@ -68,6 +87,28 @@ internal class DefaultMessageSerializer(val messagesFile: File, val encryption: 
     override fun deleteAllMessages() {
         FileUtil.deleteFile(messagesFile.path)
         Log.w(LogTags.CRYPTOGRAPHY, "Message cache is deleted to support the new encryption setting")
+    }
+
+    override fun setMessageFile(file: File) {
+        messagesFile = file
+    }
+
+    private fun setMessagesFileFromRoster(roster: ConversationRoster) {
+        val cachedSDKVersion = DependencyProvider.of<AndroidSharedPrefDataStore>()
+            .getString(SharedPrefConstants.SDK_CORE_INFO, SharedPrefConstants.SDK_VERSION).ifEmpty { null }
+
+        // Use the old messages.bin file for older SDKs < 6.2.0
+        // SDK_VERSION is added in 6.1.0. It would be null for the SDKs < 6.1.0
+
+        if (FileUtil.containsFiles(FileStorageUtils.CONVERSATION_DIR) &&
+            cachedSDKVersion == null || cachedSDKVersion == "6.1.0"
+        ) {
+            messagesFile = FileStorageUtils.getMessagesFile()
+        } else {
+            roster.activeConversation?.let { activeConversation ->
+                messagesFile = FileStorageUtils.getMessagesFileForActiveUser(activeConversation.path)
+            }
+        }
     }
 
     private fun readMessageEntries(): List<DefaultMessageRepository.MessageEntry> =

@@ -3,6 +3,7 @@ package apptentive.com.android.feedback.message
 import android.text.format.DateUtils.DAY_IN_MILLIS
 import apptentive.com.android.TestCase
 import apptentive.com.android.core.toSeconds
+import apptentive.com.android.feedback.conversation.ConversationRoster
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.Sender
 import apptentive.com.android.serialization.json.JsonConverter
@@ -10,6 +11,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Ignore
 import org.junit.Test
+import java.io.File
 
 class MessageRepositoryTest : TestCase() {
 
@@ -90,8 +92,8 @@ class MessageRepositoryTest : TestCase() {
 
     @Test
     fun testAddMessages() {
-        val messageRepo = DefaultMessageRepository(MockMessageSerializer(testMessageList))
-        messageRepo.addOrUpdateMessages(testMessageList)
+        val messageRepo = DefaultMessageRepository(MockMessageSerializer(testMessageList), ConversationRoster())
+        messageRepo.addOrUpdateMessages(testMessageList, ConversationRoster())
         addResult(testMessageList.sortedBy { it.createdAt })
         assertResults(messageRepo.getAllMessages())
     }
@@ -105,10 +107,10 @@ class MessageRepositoryTest : TestCase() {
             body = "Hi",
             sender = Sender(id = "1234", name = "John Doe", profilePhoto = null),
         )
-        val messageRepository = DefaultMessageRepository(MockMessageSerializer(testMessageList))
+        val messageRepository = DefaultMessageRepository(MockMessageSerializer(testMessageList), ConversationRoster())
 
         // Testing update message
-        messageRepository.addOrUpdateMessages(listOf(updatedMessage))
+        messageRepository.addOrUpdateMessages(listOf(updatedMessage), ConversationRoster())
         assertEquals(
             messageRepository.getAllMessages().find { it.nonce == updatedMessage.nonce },
             updatedMessage
@@ -118,7 +120,7 @@ class MessageRepositoryTest : TestCase() {
     @Test
     @Ignore("Ignoring for now because flaky when run on Jenkins")
     fun testAddOrUpdateMessage() {
-        val messageRepository = DefaultMessageRepository(MockMessageSerializer(testMessageList))
+        val messageRepository = DefaultMessageRepository(MockMessageSerializer(testMessageList), ConversationRoster())
 
         val updatedMessage = Message(
             id = "Test updated",
@@ -160,7 +162,7 @@ class MessageRepositoryTest : TestCase() {
         val newList = listOf(updatedMessage, newMessage)
         val listToUpdate = listOf(updatedMessage.copy(), newMessage.copy()) // Don't edit existing
 
-        messageRepository.addOrUpdateMessages(listToUpdate)
+        messageRepository.addOrUpdateMessages(listToUpdate, ConversationRoster())
 
         newList.forEach { message ->
             val before = testMessageList.find { it.nonce == message.nonce }
@@ -201,8 +203,8 @@ class MessageRepositoryTest : TestCase() {
 
     @Test
     fun deleteMessage() {
-        val messageRepository = DefaultMessageRepository(MockMessageSerializer(listOf()))
-        messageRepository.addOrUpdateMessages(testMessageList)
+        val messageRepository = DefaultMessageRepository(MockMessageSerializer(listOf()), ConversationRoster())
+        messageRepository.addOrUpdateMessages(testMessageList, ConversationRoster())
         messageRepository.deleteMessage("UUID")
         val expectedList = testMessageList.toMutableList().apply {
             removeAt(0)
@@ -213,7 +215,7 @@ class MessageRepositoryTest : TestCase() {
 
     @Test
     fun testLastReceivedMessageID() {
-        val messageRepository = DefaultMessageRepository(MockMessageSerializer(testMessageList))
+        val messageRepository = DefaultMessageRepository(MockMessageSerializer(testMessageList), ConversationRoster())
         val messages = listOf(
             Message(
                 id = "Test1",
@@ -232,7 +234,7 @@ class MessageRepositoryTest : TestCase() {
                 sender = Sender(id = "1234", name = "John Doe", profilePhoto = null),
             )
         )
-        messageRepository.addOrUpdateMessages(messages)
+        messageRepository.addOrUpdateMessages(messages, ConversationRoster())
         addResult("Test2")
         assertResults(messageRepository.getLastReceivedMessageIDFromEntries())
     }
@@ -240,11 +242,15 @@ class MessageRepositoryTest : TestCase() {
     private class MockMessageSerializer(testList: List<Message>) : MessageSerializer {
         var savedList: List<DefaultMessageRepository.MessageEntry> = convertToMessageEntry(testList)
 
-        override fun loadMessages(): List<DefaultMessageRepository.MessageEntry> {
+        override fun loadMessages(conversationRoster: ConversationRoster): List<DefaultMessageRepository.MessageEntry> {
             return savedList
         }
 
-        override fun saveMessages(messages: List<DefaultMessageRepository.MessageEntry>) {
+        override fun setMessageFile(file: File) {
+            TODO("Not yet implemented")
+        }
+
+        override fun saveMessages(messages: List<DefaultMessageRepository.MessageEntry>, conversationRoster: ConversationRoster) {
             savedList = messages
         }
 

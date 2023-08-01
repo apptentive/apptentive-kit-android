@@ -9,6 +9,7 @@ import apptentive.com.android.core.isInThePast
 import apptentive.com.android.core.toSeconds
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.backend.MessageCenterService
+import apptentive.com.android.feedback.conversation.ConversationRoster
 import apptentive.com.android.feedback.dependencyprovider.MessageCenterModelProvider
 import apptentive.com.android.feedback.dependencyprovider.createMessageCenterViewModel
 import apptentive.com.android.feedback.engagement.EngageArgs
@@ -42,6 +43,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
+import java.io.File
 
 private val attachments = listOf(
     Message.Attachment(
@@ -189,7 +191,8 @@ class MessageCenterViewModelTest : TestCase() {
             "token",
             MockMessageCenterService(),
             MockExecutor(),
-            MockMessageRepository()
+            MockMessageRepository(),
+            ConversationRoster(),
         )
         DependencyProvider.register(MessageCenterModelProvider(messageCenterInteractionNoData))
         DependencyProvider.register(MessageManagerFactoryProvider(messageManager))
@@ -501,13 +504,15 @@ class MockExecutor : Executor {
 class MockMessageRepository : MessageRepository {
     override fun getLastReceivedMessageIDFromEntries(): String = ""
 
-    override fun addOrUpdateMessages(messages: List<Message>) {}
+    override fun addOrUpdateMessages(messages: List<Message>, conversationRoster: ConversationRoster) {}
 
     override fun getAllMessages(): List<Message> {
         return testMessageList
     }
 
-    override fun saveMessages() {}
+    override fun saveMessages(conversationRoster: ConversationRoster) {}
+    override fun setMessageFile(file: File) {
+    }
 
     override fun deleteMessage(nonce: String) {}
 }

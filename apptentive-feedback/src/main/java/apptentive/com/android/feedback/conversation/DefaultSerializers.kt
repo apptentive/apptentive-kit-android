@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.conversation
 
+import apptentive.com.android.encryption.EncryptionKey
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
@@ -582,6 +583,99 @@ internal object DefaultSerializers {
                     engagementManifest = EngagementManifest(), // EngagementManifest is serialized separately
                     engagementData = engagementDataSerializer.decode(decoder)
                 )
+            }
+        }
+    }
+
+    val conversationRosterSerializer: TypeSerializer<ConversationRoster> by lazy {
+        object : TypeSerializer<ConversationRoster> {
+            override fun encode(encoder: Encoder, value: ConversationRoster) {
+                conversationMetadataSerializer.encode(encoder, value.activeConversation!!)
+                encoder.encodeList(value.loggedOut) {
+                    conversationMetadataSerializer.encode(encoder, it)
+                }
+            }
+
+            override fun decode(decoder: Decoder): ConversationRoster {
+                return ConversationRoster(
+                    activeConversation = conversationMetadataSerializer.decode(decoder),
+                    loggedOut = decoder.decodeList {
+                        conversationMetadataSerializer.decode(decoder)
+                    }
+                )
+            }
+        }
+    }
+
+    val conversationMetadataSerializer: TypeSerializer<ConversationMetaData> by lazy {
+        object : TypeSerializer<ConversationMetaData> {
+            override fun encode(encoder: Encoder, value: ConversationMetaData) {
+                conversationStateSerializer.encode(encoder, value.state)
+                encoder.encodeString(value.path)
+            }
+
+            override fun decode(decoder: Decoder): ConversationMetaData {
+                return ConversationMetaData(
+                    state = conversationStateSerializer.decode(decoder),
+                    path = decoder.decodeString(),
+                )
+            }
+        }
+    }
+
+    val conversationStateSerializer: TypeSerializer<ConversationState> by lazy {
+        object : TypeSerializer<ConversationState> {
+            override fun encode(encoder: Encoder, value: ConversationState) {
+                when (value) {
+                    is ConversationState.Undefined -> encoder.encodeString("Undefined")
+                    is ConversationState.LegacyPending -> encoder.encodeString("LegacyPending")
+                    is ConversationState.AnonymousPending -> encoder.encodeString("AnonymousPending")
+                    is ConversationState.Anonymous -> {
+                        encoder.encodeString("Anonymous")
+                        encoder.encodeString(value.key)
+                        encoder.encodeString(value.signature)
+                    }
+                    is ConversationState.LoggedIn -> {
+                        encoder.encodeString("LoggedIn")
+                        encoder.encodeString(value.key)
+                        encoder.encodeString(value.signature)
+                        encoder.encodeString(value.subject)
+                        // encoder.encodeString(value.encryptionKey.key)
+                        // TODO encode encryptionKey
+                    }
+                    is ConversationState.LoggedOut -> {
+                        encoder.encodeString("LoggedOut")
+                        encoder.encodeString(value.id)
+                        encoder.encodeString(value.subject)
+                    }
+                }
+            }
+
+            override fun decode(decoder: Decoder): ConversationState {
+                when (decoder.decodeString()) {
+                    "Undefined" -> return ConversationState.Undefined
+                    "LegacyPending" -> return ConversationState.LegacyPending
+                    "AnonymousPending" -> return ConversationState.AnonymousPending
+                    "Anonymous" -> {
+                        val key = decoder.decodeString()
+                        val signature = decoder.decodeString()
+                        return ConversationState.Anonymous(key, signature)
+                    }
+                    "LoggedIn" -> {
+                        val key = decoder.decodeString()
+                        val signature = decoder.decodeString()
+                        val subject = decoder.decodeString()
+                        // val encryptionKey = decoder.decodeString()
+                        // TODO decode encryptionKey
+                        return ConversationState.LoggedIn(key, signature, subject, EncryptionKey())
+                    }
+                    "LoggedOut" -> {
+                        val id = decoder.decodeString()
+                        val subject = decoder.decodeString()
+                        return ConversationState.LoggedOut(id, subject)
+                    }
+                    else -> throw Exception("Unknown ConversationState type")
+                }
             }
         }
     }

@@ -4,6 +4,7 @@ import apptentive.com.android.TestCase
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.backend.MessageCenterService
+import apptentive.com.android.feedback.conversation.ConversationRoster
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.MockEngagementContext
@@ -24,6 +25,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import java.io.File
 
 class MessageManagerTest : TestCase() {
 
@@ -44,7 +46,8 @@ class MessageManagerTest : TestCase() {
             "token",
             MockMessageCenterService(),
             MockExecutor(),
-            MockMessageRepository()
+            MockMessageRepository(),
+            ConversationRoster()
         )
         messageManager.onConversationChanged(testConversation)
     }
@@ -71,7 +74,8 @@ class MessageManagerTest : TestCase() {
             "token",
             MockMessageCenterService(),
             MockExecutor(),
-            MockMessageRepository()
+            MockMessageRepository(),
+            ConversationRoster()
         )
         messageManager.onAppForeground()
         Assert.assertTrue(messageManager.pollingScheduler.isPolling())
@@ -82,7 +86,8 @@ class MessageManagerTest : TestCase() {
             "token",
             MockMessageCenterService(),
             MockExecutor(),
-            MockMessageRepository(listOf())
+            MockMessageRepository(listOf()),
+            ConversationRoster()
         )
         messageManager.onAppForeground()
         Assert.assertFalse(messageManager.pollingScheduler.isPolling())
@@ -203,7 +208,7 @@ internal class MockExecutor : Executor {
 }
 
 internal class MockMessageRepository(private var messageList: List<Message> = testMessageList) : MessageRepository {
-    override fun addOrUpdateMessages(messages: List<Message>) {
+    override fun addOrUpdateMessages(messages: List<Message>, roster: ConversationRoster) {
         messageList = messages
     }
 
@@ -213,7 +218,11 @@ internal class MockMessageRepository(private var messageList: List<Message> = te
         return messageList
     }
 
-    override fun saveMessages() {}
+    override fun saveMessages(roster: ConversationRoster) {}
+
+    override fun setMessageFile(file: File) {
+        TODO("Not yet implemented")
+    }
 
     override fun deleteMessage(nonce: String) {}
 }

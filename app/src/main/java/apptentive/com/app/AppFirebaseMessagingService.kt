@@ -19,6 +19,7 @@ class AppFirebaseMessagingService : FirebaseMessagingService() {
             PUSH_NOTIFICATION,
             "Firebase instance token: $token"
         )
+        // TODO caused a race condition and threw lateinit property MessageManager has not been initialized
         Apptentive.setPushNotificationIntegration(this, Apptentive.PUSH_PROVIDER_APPTENTIVE, token)
     }
 
