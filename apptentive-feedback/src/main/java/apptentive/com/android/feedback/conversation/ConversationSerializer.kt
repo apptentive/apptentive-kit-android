@@ -118,12 +118,14 @@ internal class DefaultConversationSerializer(
     }
 
     internal fun saveRoster(conversationRoster: ConversationRoster) {
+
 //        if (this.conversationRoster == conversationRoster) {
 //            return
 //        }
-        if (!conversationRosterFile.exists()) {
-            return
-        }
+//        if (!conversationRosterFile.exists()) {
+//            return
+//        }
+
         Log.d(CONVERSATION, "Saving conversation roster: $conversationRoster")
         this.conversationRoster = conversationRoster
         val atomicFile = AtomicFile(conversationRosterFile)
