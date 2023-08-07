@@ -185,6 +185,7 @@ internal class SurveyActivity : BaseSurveyActivity() {
 
         nextButton.setOnClickListener {
             it.hideSoftKeyboard()
+            currentFocus?.clearFocus()
             viewModel.advancePage()
         }
     }
