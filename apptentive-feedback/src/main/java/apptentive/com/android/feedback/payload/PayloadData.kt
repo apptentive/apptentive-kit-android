@@ -7,6 +7,7 @@ import apptentive.com.android.util.generateUUID
 @InternalUseOnly
 data class PayloadData(
     val nonce: String = generateUUID(),
+    var token: String? = null,
     val type: PayloadType,
     val path: String,
     val method: HttpMethod,

@@ -43,6 +43,8 @@ internal class DefaultConversationService(
         this["X-API-Version"] = apiVersion.toString()
     }
 
+    internal var isAuthorized: Boolean = false
+
     override fun fetchConversationToken(
         device: Device,
         sdk: SDK,
@@ -137,10 +139,12 @@ internal class DefaultConversationService(
         val request = HttpRequest.Builder<PayloadResponse>(url)
             .method(payload.method, payload.data, contentType = payload.mediaType.toString())
             .headers(defaultHeaders)
-            .header("Authorization", "Bearer $conversationToken")
             .responseReader(HttpJsonResponseReader(PayloadResponse::class.java))
-            .build()
-        sendRequest(request, callback)
+
+        if (!isAuthorized) request.header("Authorization", "Bearer $conversationToken")
+        else payload.token = conversationToken
+
+        sendRequest(request.build(), callback)
     }
 
     private fun <T : Any> sendRequest(request: HttpRequest<T>, callback: (Result<T>) -> Unit) {

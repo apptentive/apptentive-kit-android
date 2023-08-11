@@ -119,6 +119,7 @@ class ApptentiveDefaultClient(
         interactionModules = loadInteractionModules()
 
         val conversationService = createConversationService()
+//        (conversationService as DefaultConversationService).isAuthorized = true // TODO Set this on login
         conversationManager = ConversationManager(
             conversationRepository = createConversationRepository(context),
             conversationService = conversationService,
