@@ -32,6 +32,7 @@ import apptentive.com.android.feedback.engagement.EngagementContextProvider
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.InteractionDataProvider
 import apptentive.com.android.feedback.engagement.InteractionEngagement
+import apptentive.com.android.feedback.engagement.InternalEvent
 import apptentive.com.android.feedback.engagement.NullEngagement
 import apptentive.com.android.feedback.engagement.criteria.CachedInvocationProvider
 import apptentive.com.android.feedback.engagement.criteria.CriteriaInteractionDataProvider
@@ -140,6 +141,8 @@ class ApptentiveDefaultClient(
 
         getConversationToken(conversationService, registerCallback)
         addObservers(serialPayloadSender, conversationService)
+
+        engage(Event.internal(InternalEvent.APP_LAUNCH.labelName))
     }
 
     @WorkerThread
