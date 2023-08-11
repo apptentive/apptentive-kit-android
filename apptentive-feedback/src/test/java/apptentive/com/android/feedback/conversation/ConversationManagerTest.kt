@@ -9,6 +9,7 @@ import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.feedback.ApptentiveConfiguration
 import apptentive.com.android.feedback.backend.ConversationCredentials
 import apptentive.com.android.feedback.backend.ConversationService
+import apptentive.com.android.feedback.backend.LoginSessionResponse
 import apptentive.com.android.feedback.backend.PayloadResponse
 import apptentive.com.android.feedback.engagement.util.MockAndroidSharedPrefDataStore
 import apptentive.com.android.feedback.engagement.util.MockFileSystem
@@ -284,6 +285,14 @@ internal class MockConversationService(
         callback: (Result<Configuration>) -> Unit
     ) {
         callback(Result.Success(Configuration(expiry = testTimeInterval ?: getTimeSeconds() + 1800)))
+    }
+
+    override fun loginSession(
+        conversationId: String,
+        jwtToken: String,
+        callback: (Result<LoginSessionResponse>) -> Unit
+    ) {
+        callback(Result.Success(LoginSessionResponse("key")))
     }
 
     override fun getMessages(

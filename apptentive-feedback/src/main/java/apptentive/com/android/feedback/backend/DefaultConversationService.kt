@@ -92,6 +92,29 @@ internal class DefaultConversationService(
         sendRequest(request, callback)
     }
 
+    /**
+     * Fetches the login session for the given conversation.
+     * Can be anonymous -> logged in
+     * or
+     * logged out -> logged in
+     *
+     * @param conversationId the conversation id
+     * @param jwtToken the customer provided JWT token
+     * @param callback the response with the encryption key
+     */
+    override fun loginSession(
+        conversationId: String,
+        jwtToken: String,
+        callback: (Result<LoginSessionResponse>) -> Unit
+    ) {
+        val request = createJsonRequest<LoginSessionResponse>(
+            method = HttpMethod.POST,
+            path = "conversations/$conversationId/session",
+            body = LoginSessionRequest(jwtToken)
+        )
+        sendRequest(request, callback)
+    }
+
     override fun getMessages(
         conversationToken: String,
         conversationId: String,

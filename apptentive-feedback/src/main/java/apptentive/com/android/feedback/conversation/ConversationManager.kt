@@ -10,6 +10,7 @@ import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.feedback.ApptentiveConfiguration
 import apptentive.com.android.feedback.Constants
 import apptentive.com.android.feedback.backend.ConversationService
+import apptentive.com.android.feedback.backend.LoginSessionResponse
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
@@ -116,6 +117,10 @@ internal class ConversationManager(
                 }
             }
         }
+    }
+
+    fun loginSession(conversationId: String, jwtToken: String, callback: (result: Result<LoginSessionResponse>) -> Unit) {
+        conversationService.loginSession(conversationId, jwtToken, callback)
     }
 
     fun getConversation() = activeConversation.value

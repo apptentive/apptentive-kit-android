@@ -199,6 +199,48 @@ class ApptentiveDefaultClient(
         }
     }
 
+    /**
+     * Starts or retrieves a logged in conversation
+     *
+     * Start a session from anonymous -> logged in
+     * or
+     * Resume a session from logged out -> logged in
+     *
+     * @param conversationId - The conversation ID retrieved from the roster
+     * @param jwtToken - The customer provided JWT token
+     */
+    internal fun loginSession(
+        conversationId: String,
+        jwtToken: String,
+    ) {
+        conversationManager.loginSession(conversationId, jwtToken) { result ->
+            when (result) {
+                is Result.Error -> {
+                    // TODO Maybe a login callback?
+                    when (val error = result.error) {
+                        is UnexpectedResponseException -> {
+                            val responseCode = error.statusCode
+                            val message = error.errorMessage
+//                            loginCallback?.invoke(
+//                                RegisterResult.Failure(
+//                                    message ?: "Failed to login", responseCode
+//                                )
+//                            )
+                        }
+//                        else -> loginCallback?.invoke(RegisterResult.Exception(result.error))
+                    }
+                }
+
+                is Result.Success -> {
+                    val encryptionKey = result.data.encryptionKey
+                    // TODO Either pass back encryption key or continue with decrypting conversation
+                    // TODO Update the roster with encryption key and logged in conversation metadata
+                    // TODO Login callback?
+                }
+            }
+        }
+    }
+
     private fun addObservers(serialPayloadSender: SerialPayloadSender, conversationService: ConversationService) {
         conversationManager.activeConversation.observe { conversation ->
             if (Log.canLog(LogLevel.Verbose)) { // avoid unnecessary computations
