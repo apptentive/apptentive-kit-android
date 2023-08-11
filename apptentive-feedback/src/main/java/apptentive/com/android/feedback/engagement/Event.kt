@@ -40,5 +40,6 @@ enum class InternalEvent(val labelName: String) {
     EVENT_NOT_SUPPORTED("not_supported"),
     EVENT_LAUNCH("launch"),
     APP_LAUNCH("launch"),
-    APP_EXIT("exit")
+    APP_EXIT("exit"),
+    EVENT_MESSAGE_HTTP_ERROR("message_http_error")
 }

@@ -43,7 +43,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
-import java.io.File
 
 private val attachments = listOf(
     Message.Attachment(
@@ -511,8 +510,6 @@ class MockMessageRepository : MessageRepository {
     }
 
     override fun saveMessages(conversationRoster: ConversationRoster) {}
-    override fun setMessageFile(file: File) {
-    }
 
     override fun deleteMessage(nonce: String) {}
 }

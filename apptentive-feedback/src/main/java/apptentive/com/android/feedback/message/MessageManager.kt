@@ -25,7 +25,6 @@ import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.util.Result
 import apptentive.com.android.util.generateUUID
-import java.io.File
 import java.io.InputStream
 
 /**
@@ -106,9 +105,6 @@ class MessageManager(
         this.messageCustomData = null
     }
 
-    fun updateMessageCacheFile(file: File) {
-        messageRepository.setMessageFile(file)
-    }
     fun fetchMessages() {
         if (!fetchingInProgress && !conversationId.isNullOrEmpty() && !conversationToken.isNullOrEmpty()) {
             fetchingInProgress = true

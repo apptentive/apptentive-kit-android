@@ -21,7 +21,7 @@ internal interface ConversationRepository {
     fun loadConversation(): Conversation?
 
     @Throws(ConversationSerializationException::class)
-    fun initializeRepository(): ConversationRoster?
+    fun initializeRepositoryWithRoster(): ConversationRoster
 
     fun getCurrentAppRelease(): AppRelease
 
@@ -58,7 +58,7 @@ internal class DefaultConversationRepository(
     @Throws(ConversationSerializationException::class)
     override fun loadConversation(): Conversation? = conversationSerializer.loadConversation()
 
-    override fun initializeRepository(): ConversationRoster? = conversationSerializer.initializeSerializer()
+    override fun initializeRepositoryWithRoster(): ConversationRoster = conversationSerializer.initializeSerializer()
 
     override fun getCurrentAppRelease(): AppRelease = appReleaseFactory.create()
 

@@ -251,8 +251,8 @@ private class MockConversationRepository(val throwException: Boolean = false) :
     override fun updateEncryption(encryption: Encryption) {
     }
 
-    override fun initializeRepository(): ConversationRoster? {
-        return null
+    override fun initializeRepositoryWithRoster(): ConversationRoster {
+        return ConversationRoster()
     }
 }
 

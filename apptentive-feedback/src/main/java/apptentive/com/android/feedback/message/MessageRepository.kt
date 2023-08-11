@@ -8,7 +8,6 @@ import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.util.generateUUID
-import java.io.File
 
 @InternalUseOnly
 interface MessageRepository {
@@ -17,8 +16,6 @@ interface MessageRepository {
     fun getLastReceivedMessageIDFromEntries(): String
     fun deleteMessage(nonce: String)
     fun saveMessages(conversationRoster: ConversationRoster)
-
-    fun setMessageFile(file: File)
 }
 
 internal class DefaultMessageRepository(
@@ -95,10 +92,6 @@ internal class DefaultMessageRepository(
         } catch (e: MessageSerializerException) {
             Log.e(MESSAGE_CENTER, "Cannot save messages. A Serialization issue occurred ${e.message}")
         }
-    }
-
-    override fun setMessageFile(file: File) {
-        messageSerializer.setMessageFile(file)
     }
 
     override fun deleteMessage(nonce: String) {

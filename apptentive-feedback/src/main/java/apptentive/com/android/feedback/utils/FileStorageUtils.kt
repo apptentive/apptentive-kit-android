@@ -1,6 +1,12 @@
 package apptentive.com.android.feedback.utils
 
 import androidx.annotation.WorkerThread
+import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.feedback.conversation.ConversationRoster
+import apptentive.com.android.platform.AndroidSharedPrefDataStore
+import apptentive.com.android.platform.SharedPrefConstants
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags
 import java.io.File
 
 internal object FileStorageUtils {
@@ -50,5 +56,22 @@ internal object FileStorageUtils {
     fun getRosterFile(id: String): File {
         val conversationsDir = getConversationDir()
         return File(conversationsDir, "roster$id.bin")
+    }
+
+    @WorkerThread
+    fun getStoredMessagesFile(roster: ConversationRoster): File? {
+        val cachedSDKVersion = DependencyProvider.of<AndroidSharedPrefDataStore>()
+            .getString(SharedPrefConstants.SDK_CORE_INFO, SharedPrefConstants.SDK_VERSION).ifEmpty { null }
+
+        // Use the old messages.bin file for older SDKs < 6.2.0
+        // SDK_VERSION is added in 6.1.0. It would be null for the SDKs < 6.1.0
+        return if (FileUtil.containsFiles(CONVERSATION_DIR) &&
+            cachedSDKVersion == null || cachedSDKVersion == "6.1.0"
+        ) {
+            getMessagesFile()
+        } else {
+            Log.d(LogTags.MESSAGE_CENTER, "Setting message file from roster meta data: $roster")
+            roster.activeConversation?.path?.let { getMessagesFileForActiveUser(it) }
+        }
     }
 }

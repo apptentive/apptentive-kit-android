@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback
 
 import android.content.Context
+import android.os.Build
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.ProcessLifecycleOwner
 import apptentive.com.android.concurrent.Executors
@@ -22,6 +23,7 @@ import apptentive.com.android.feedback.backend.MessageCenterService
 import apptentive.com.android.feedback.conversation.ConversationManager
 import apptentive.com.android.feedback.conversation.ConversationRepository
 import apptentive.com.android.feedback.conversation.ConversationSerializer
+import apptentive.com.android.feedback.conversation.ConversationState
 import apptentive.com.android.feedback.conversation.DefaultConversationRepository
 import apptentive.com.android.feedback.conversation.DefaultConversationSerializer
 import apptentive.com.android.feedback.engagement.DefaultEngagement
@@ -72,6 +74,7 @@ import apptentive.com.android.feedback.platform.DefaultEngagementManifestFactory
 import apptentive.com.android.feedback.platform.DefaultPersonFactory
 import apptentive.com.android.feedback.platform.DefaultSDKFactory
 import apptentive.com.android.feedback.utils.FileStorageUtils
+import apptentive.com.android.feedback.utils.FileStorageUtils.getStoredMessagesFile
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.RuntimeUtils
 import apptentive.com.android.network.HttpClient
@@ -130,7 +133,7 @@ class ApptentiveDefaultClient(
             isDebuggable = RuntimeUtils.getApplicationInfo(context).debuggable
         )
 
-        finalizeEncryptionFromConfiguration()
+        finalizeEncryption()
 
         val serialPayloadSender = SerialPayloadSender(
             payloadQueue = PersistentPayloadQueue.create(context, encryption, clearPayloadCache),
@@ -182,7 +185,8 @@ class ApptentiveDefaultClient(
                         DefaultMessageRepository(
                             messageSerializer = DefaultMessageSerializer(encryption).apply {
                                 if (clearMessageCache) {
-                                    deleteAllMessages()
+                                    val messageFile = getStoredMessagesFile(conversationManager.activeConversationRoster.value)
+                                    messageFile?.let { deleteFile(it) }
                                     clearMessageCache = false
                                 }
                             },
@@ -614,8 +618,7 @@ class ApptentiveDefaultClient(
                 val resultData = result.data as? PayloadData
                 if (resultData?.type == PayloadType.Message) {
                     messageManager?.updateMessageStatus(false, resultData)
-                    val EVENT_NAME_MESSAGE_HTTP_ERROR = "message_http_error"
-                    engage(Event.internal(EVENT_NAME_MESSAGE_HTTP_ERROR, InteractionType.MessageCenter))
+                    engage(Event.internal(InternalEvent.EVENT_MESSAGE_HTTP_ERROR.labelName, InteractionType.MessageCenter))
                 }
 
                 Log.e(PAYLOADS, "Payload failed to send: ${result.error.cause}")
@@ -639,8 +642,11 @@ class ApptentiveDefaultClient(
         return encryption
     }
 
-    private fun finalizeEncryptionFromConfiguration() {
-        if ((configuration.shouldEncryptStorage && (encryption is EncryptionNoOp)) ||
+    private fun finalizeEncryption() {
+        val activeConversationState = conversationManager.activeConversationRoster.value.activeConversation?.state
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && activeConversationState is ConversationState.LoggedIn) {
+            encryption = AESEncryption23(activeConversationState.encryptionKey)
+        } else if ((configuration.shouldEncryptStorage && (encryption is EncryptionNoOp)) ||
             (!configuration.shouldEncryptStorage && (encryption is AESEncryption23))
         ) {
             onFinalEncryptionSettingsChanged()
@@ -668,7 +674,7 @@ class ApptentiveDefaultClient(
         val sharedPref = DependencyProvider.of<AndroidSharedPrefDataStore>()
 
         return when {
-            // TODO revisit this logic as the folder structure would change from 6.2
+            // TODO revisit this logic if necessary as the folder structure would change from 6.2
             FileUtil.containsFiles(FileStorageUtils.CONVERSATION_DIR) && !sharedPref.containsKey(SDK_CORE_INFO, CRYPTO_ENABLED) -> NotEncrypted // Migrating from 6.0.0
             sharedPref.containsKey(SDK_CORE_INFO, CRYPTO_ENABLED) -> sharedPref.getBoolean(SDK_CORE_INFO, CRYPTO_ENABLED).getEncryptionStatus()
             else -> NoEncryptionStatus
@@ -680,6 +686,7 @@ class ApptentiveDefaultClient(
     internal fun getConversationId() = conversationManager.getConversation().conversationId
 
     companion object {
+        // Gets created on the first call to Apptentive.register() and is used to identify the session
         val sessionId = generateUUID()
     }
 }

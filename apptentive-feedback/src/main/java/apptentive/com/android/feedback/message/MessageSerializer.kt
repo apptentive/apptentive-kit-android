@@ -35,35 +35,28 @@ internal interface MessageSerializer {
     @Throws(MessageSerializerException::class)
     fun saveMessages(messages: List<DefaultMessageRepository.MessageEntry>, conversationRoster: ConversationRoster)
 
-    fun deleteAllMessages()
-
-    fun setMessageFile(file: File)
+    fun deleteFile(messageFile: File)
 }
 
 internal class DefaultMessageSerializer(val encryption: Encryption) : MessageSerializer {
 
-    private lateinit var messagesFile: File
+    // private lateinit var messagesFile: File
     override fun loadMessages(conversationRoster: ConversationRoster): List<DefaultMessageRepository.MessageEntry> {
-        setMessagesFileFromRoster(conversationRoster)
+        val messagesFile = getMessageFileCreatedBeforeMultiUser() ?: getMessageFileFromRoster(conversationRoster)
         return if (messagesFile.exists()) {
             Log.d(MESSAGE_CENTER, "Loading messages from MessagesFile")
-            readMessageEntries()
+            val messageEntries = readMessageEntries(messagesFile)
+            // Delete the old messages.bin if it exists
+            getMessageFileCreatedBeforeMultiUser()?.let { deleteFile(it) }
+            messageEntries
         } else {
             Log.d(MESSAGE_CENTER, "MessagesFile doesn't exist")
             listOf()
         }
     }
 
-    private fun setMessageFileFromRoster(roster: ConversationRoster) {
-        Log.d(LogTags.CONVERSATION, "Setting message file from roster: $roster")
-        roster.activeConversation?.let { activeConversation ->
-            messagesFile = FileStorageUtils.getMessagesFileForActiveUser(activeConversation.path)
-            Log.d(LogTags.CONVERSATION, "Using conversation file: $messagesFile")
-        }
-    }
-
     override fun saveMessages(messages: List<DefaultMessageRepository.MessageEntry>, conversationRoster: ConversationRoster) {
-        setMessageFileFromRoster(conversationRoster)
+        val messagesFile = getMessageFileFromRoster(conversationRoster)
         val start = System.currentTimeMillis()
         val atomicFile = AtomicFile(messagesFile)
         val stream = atomicFile.startWrite()
@@ -84,34 +77,33 @@ internal class DefaultMessageSerializer(val encryption: Encryption) : MessageSer
         Log.v(LogTags.CONVERSATION, "Messages saved (took ${System.currentTimeMillis() - start} ms)")
     }
 
-    override fun deleteAllMessages() {
-        FileUtil.deleteFile(messagesFile.path)
+    override fun deleteFile(messageFile: File) {
+        FileUtil.deleteFile(messageFile.path)
         Log.w(LogTags.CRYPTOGRAPHY, "Message cache is deleted to support the new encryption setting")
     }
 
-    override fun setMessageFile(file: File) {
-        messagesFile = file
+    private fun getMessageFileFromRoster(roster: ConversationRoster): File {
+        Log.d(MESSAGE_CENTER, "Setting message file from roster: $roster")
+
+        val activeConversationMetadata = roster.activeConversation
+            ?: throw MessageSerializerException("Unable to load messages: no active conversation", Throwable())
+        return FileStorageUtils.getMessagesFileForActiveUser(activeConversationMetadata.path)
     }
 
-    private fun setMessagesFileFromRoster(roster: ConversationRoster) {
+    private fun getMessageFileCreatedBeforeMultiUser(): File? {
         val cachedSDKVersion = DependencyProvider.of<AndroidSharedPrefDataStore>()
             .getString(SharedPrefConstants.SDK_CORE_INFO, SharedPrefConstants.SDK_VERSION).ifEmpty { null }
 
         // Use the old messages.bin file for older SDKs < 6.2.0
         // SDK_VERSION is added in 6.1.0. It would be null for the SDKs < 6.1.0
-
-        if (FileUtil.containsFiles(FileStorageUtils.CONVERSATION_DIR) &&
+        return if (FileUtil.containsFiles(FileStorageUtils.CONVERSATION_DIR) &&
             cachedSDKVersion == null || cachedSDKVersion == "6.1.0"
         ) {
-            messagesFile = FileStorageUtils.getMessagesFile()
-        } else {
-            roster.activeConversation?.let { activeConversation ->
-                messagesFile = FileStorageUtils.getMessagesFileForActiveUser(activeConversation.path)
-            }
-        }
+            FileStorageUtils.getMessagesFile()
+        } else null
     }
 
-    private fun readMessageEntries(): List<DefaultMessageRepository.MessageEntry> =
+    private fun readMessageEntries(messagesFile: File): List<DefaultMessageRepository.MessageEntry> =
         try {
             val decryptedMessage = encryption.decrypt(FileInputStream(messagesFile))
             val inputStream = ByteArrayInputStream(decryptedMessage)

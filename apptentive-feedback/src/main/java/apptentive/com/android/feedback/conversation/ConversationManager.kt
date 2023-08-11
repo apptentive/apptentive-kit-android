@@ -1,11 +1,13 @@
 package apptentive.com.android.feedback.conversation
 
+import android.os.Build
 import androidx.annotation.WorkerThread
 import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.Observable
 import apptentive.com.android.core.Provider
 import apptentive.com.android.core.isInThePast
+import apptentive.com.android.encryption.AESEncryption23
 import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.feedback.ApptentiveConfiguration
 import apptentive.com.android.feedback.Constants
@@ -58,7 +60,7 @@ internal class ConversationManager(
     var isSDKAppReleaseCheckDone = false
 
     private val activeConversationRosterSubject: BehaviorSubject<ConversationRoster> =
-        BehaviorSubject(conversationRepository.initializeRepository() ?: ConversationRoster())
+        BehaviorSubject(getConversationRoster())
     val activeConversationRoster: Observable<ConversationRoster> get() = activeConversationRosterSubject
 
     init {
@@ -75,6 +77,19 @@ internal class ConversationManager(
     fun onEncryptionSetupComplete() {
         activeConversationSubject.observe(::saveConversation)
         activeConversation.observe(::checkForSDKAppReleaseUpdates)
+    }
+
+    private fun getConversationRoster(): ConversationRoster {
+        val conversationRoster = conversationRepository.initializeRepositoryWithRoster()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+            conversationRoster.activeConversation?.state is ConversationState.LoggedIn
+        ) {
+            val encryptionKey =
+                (conversationRoster.activeConversation?.state as ConversationState.LoggedIn).encryptionKey
+            // TODO add @RequiresApi(23) to Login/Logout methods
+            updateEncryption(AESEncryption23(encryptionKey))
+        }
+        return conversationRoster
     }
 
     fun fetchConversationToken(callback: (result: Result<Unit>) -> Unit) {
@@ -161,7 +176,7 @@ internal class ConversationManager(
             )
         } else {
             // anonymous pending
-            Log.d(CONVERSATION, "TSTING Conversation is anonymous pending, added to roster")
+            Log.d(CONVERSATION, "Conversation is anonymous pending, added to roster")
             ConversationState.AnonymousPending
         }
 

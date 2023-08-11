@@ -246,15 +246,11 @@ class MessageRepositoryTest : TestCase() {
             return savedList
         }
 
-        override fun setMessageFile(file: File) {
-            TODO("Not yet implemented")
-        }
-
         override fun saveMessages(messages: List<DefaultMessageRepository.MessageEntry>, conversationRoster: ConversationRoster) {
             savedList = messages
         }
 
-        override fun deleteAllMessages() {
+        override fun deleteFile(messageFile: File) {
         }
     }
 }

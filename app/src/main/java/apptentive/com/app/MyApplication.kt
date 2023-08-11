@@ -20,7 +20,6 @@ val configuration = ApptentiveConfiguration(
 }
 
 class MyApplication : Application() {
-
     override fun onCreate() {
         val prefs = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
         // Turning off by default to get un-redacted logs

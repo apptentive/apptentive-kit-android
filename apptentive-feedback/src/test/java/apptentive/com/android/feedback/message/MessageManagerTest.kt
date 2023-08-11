@@ -25,7 +25,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import java.io.File
 
 class MessageManagerTest : TestCase() {
 
@@ -219,10 +218,6 @@ internal class MockMessageRepository(private var messageList: List<Message> = te
     }
 
     override fun saveMessages(roster: ConversationRoster) {}
-
-    override fun setMessageFile(file: File) {
-        TODO("Not yet implemented")
-    }
 
     override fun deleteMessage(nonce: String) {}
 }

@@ -30,7 +30,7 @@ internal interface ConversationSerializer {
     fun loadConversation(): Conversation?
 
     @Throws(ConversationSerializationException::class)
-    fun initializeSerializer(): ConversationRoster?
+    fun initializeSerializer(): ConversationRoster
 
     @Throws(ConversationSerializationException::class)
     fun saveConversation(conversation: Conversation, roster: ConversationRoster)
@@ -50,8 +50,6 @@ internal class DefaultConversationSerializer(
 
     // we keep track of the last seen engagement manifest expiry date and only update storage if it changes
     private var lastKnownManifestExpiry: TimeInterval = 0.0
-
-    private var conversationRoster: ConversationRoster? = null
 
     override fun saveConversation(conversation: Conversation, roster: ConversationRoster) {
         setConversationFileFromRoster(roster)
@@ -127,7 +125,6 @@ internal class DefaultConversationSerializer(
 //        }
 
         Log.d(CONVERSATION, "Saving conversation roster: $conversationRoster")
-        this.conversationRoster = conversationRoster
         val atomicFile = AtomicFile(conversationRosterFile)
         val stream = atomicFile.startWrite()
         try {
@@ -140,13 +137,13 @@ internal class DefaultConversationSerializer(
         }
     }
 
-    override fun initializeSerializer(): ConversationRoster? {
+    override fun initializeSerializer(): ConversationRoster {
         // TODO verify manifest can be common for all conversations
         manifestFile = FileStorageUtils.getManifestFile()
 
         Log.d(CONVERSATION, "Initializing conversation serializer, manifest file: $manifestFile")
 
-        conversationRoster = if (conversationRosterFile.exists() && conversationRosterFile.length() > 0) {
+        val conversationRoster = if (conversationRosterFile.exists() && conversationRosterFile.length() > 0) {
             Log.d(CONVERSATION, "Conversation roster file exists, loading roster")
             readConversationRoster()
         } else {
