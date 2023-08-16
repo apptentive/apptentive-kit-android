@@ -9,7 +9,7 @@ import apptentive.com.android.feedback.conversation.DefaultSerializers.conversat
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.EngagementManifest
 import apptentive.com.android.feedback.utils.FileStorageUtils
-import apptentive.com.android.feedback.utils.FileUtil
+import apptentive.com.android.feedback.utils.FileStorageUtils.hasStoragePriorToMultiUserSupport
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.platform.SharedPrefConstants
 import apptentive.com.android.serialization.BinaryDecoder
@@ -199,17 +199,11 @@ internal class DefaultConversationSerializer(
     }
 
     private fun setConversationFile(conversationRoster: ConversationRoster?) {
-        val cachedSDKVersion = DependencyProvider.of<AndroidSharedPrefDataStore>()
-            .getString(SharedPrefConstants.SDK_CORE_INFO, SharedPrefConstants.SDK_VERSION).ifEmpty { null }
-
-        // Use the old conversation.bin file for older SDKs < 6.2.0
+        // Use the old messages.bin file for older SDKs < 6.2.0
         // SDK_VERSION is added in 6.1.0. It would be null for the SDKs < 6.1.0
-
-        if (FileUtil.containsFiles(FileStorageUtils.CONVERSATION_DIR) &&
-            cachedSDKVersion == null || cachedSDKVersion == "6.1.0"
-        ) {
+        if (hasStoragePriorToMultiUserSupport()) {
             conversationFile = FileStorageUtils.getConversationFile()
-            Log.d(CONVERSATION, "Using old conversation file, cachedSDKVersion: $cachedSDKVersion, conversationFile: $conversationFile")
+            Log.d(CONVERSATION, "Using old conversation file, conversationFile: $conversationFile")
         } else {
             conversationRoster?.let { roster ->
                 setConversationFileFromRoster(roster)

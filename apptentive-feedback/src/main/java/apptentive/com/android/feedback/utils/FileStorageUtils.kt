@@ -55,23 +55,27 @@ internal object FileStorageUtils {
     @WorkerThread
     fun getRosterFile(id: String): File {
         val conversationsDir = getConversationDir()
-        return File(conversationsDir, "roster$id.bin")
+        return File(conversationsDir, "roster${id.sha256()}.bin")
     }
 
     @WorkerThread
     fun getStoredMessagesFile(roster: ConversationRoster): File? {
-        val cachedSDKVersion = DependencyProvider.of<AndroidSharedPrefDataStore>()
-            .getString(SharedPrefConstants.SDK_CORE_INFO, SharedPrefConstants.SDK_VERSION).ifEmpty { null }
-
         // Use the old messages.bin file for older SDKs < 6.2.0
         // SDK_VERSION is added in 6.1.0. It would be null for the SDKs < 6.1.0
-        return if (FileUtil.containsFiles(CONVERSATION_DIR) &&
-            cachedSDKVersion == null || cachedSDKVersion == "6.1.0"
-        ) {
+        return if (hasStoragePriorToMultiUserSupport())
             getMessagesFile()
-        } else {
+        else {
             Log.d(LogTags.MESSAGE_CENTER, "Setting message file from roster meta data: $roster")
             roster.activeConversation?.path?.let { getMessagesFileForActiveUser(it) }
         }
+    }
+
+    @WorkerThread
+    fun hasStoragePriorToMultiUserSupport(): Boolean {
+        val cachedSDKVersion = DependencyProvider.of<AndroidSharedPrefDataStore>()
+            .getString(SharedPrefConstants.SDK_CORE_INFO, SharedPrefConstants.SDK_VERSION).ifEmpty { null }
+
+        return FileUtil.containsFiles(CONVERSATION_DIR) &&
+            cachedSDKVersion == null || cachedSDKVersion == "6.1.0"
     }
 }

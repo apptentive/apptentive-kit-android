@@ -171,8 +171,8 @@ internal class ConversationManager(
             // TODO set anonymous for now and revisit once login and logout are implemented
             Log.d(CONVERSATION, "Conversation is anonymous, added to roster")
             ConversationState.Anonymous(
-                key = configuration.apptentiveKey,
-                signature = configuration.apptentiveSignature
+                id = configuration.apptentiveKey,
+                conversationToken = configuration.apptentiveSignature
             )
         } else {
             // anonymous pending

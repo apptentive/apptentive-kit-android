@@ -16,10 +16,10 @@ sealed class ConversationState {
     object AnonymousPending : ConversationState()
 
     // Conversation is created and token is fetched
-    data class Anonymous(val key: String, val signature: String) : ConversationState() // TODO key & signature is needed?
+    data class Anonymous(val id: String, val conversationToken: String) : ConversationState() // TODO id & token is needed?
 
     // Conversation is logged in
-    data class LoggedIn(val key: String, val signature: String, val subject: String, val encryptionKey: EncryptionKey) : ConversationState() // TODO key & signature is needed?
+    data class LoggedIn(val id: String, val conversationToken: String, val subject: String, val encryptionKey: EncryptionKey) : ConversationState() // TODO id & token is needed? // encryptionkey should be key alias
 
     // Conversation is logged out
     data class LoggedOut(val id: String, val subject: String) : ConversationState()

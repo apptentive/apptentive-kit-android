@@ -632,13 +632,13 @@ internal object DefaultSerializers {
                     is ConversationState.AnonymousPending -> encoder.encodeString("AnonymousPending")
                     is ConversationState.Anonymous -> {
                         encoder.encodeString("Anonymous")
-                        encoder.encodeString(value.key)
-                        encoder.encodeString(value.signature)
+                        encoder.encodeString(value.id)
+                        encoder.encodeString(value.conversationToken)
                     }
                     is ConversationState.LoggedIn -> {
                         encoder.encodeString("LoggedIn")
-                        encoder.encodeString(value.key)
-                        encoder.encodeString(value.signature)
+                        encoder.encodeString(value.id)
+                        encoder.encodeString(value.conversationToken)
                         encoder.encodeString(value.subject)
                         // encoder.encodeString(value.encryptionKey.key)
                         // TODO encode encryptionKey
