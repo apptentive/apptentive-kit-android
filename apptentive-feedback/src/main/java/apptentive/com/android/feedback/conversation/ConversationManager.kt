@@ -170,10 +170,7 @@ internal class ConversationManager(
         val conversationState = if (activeConversation.value.hasConversationToken) {
             // TODO set anonymous for now and revisit once login and logout are implemented
             Log.d(CONVERSATION, "Conversation is anonymous, added to roster")
-            ConversationState.Anonymous(
-                id = configuration.apptentiveKey,
-                conversationToken = configuration.apptentiveSignature
-            )
+            ConversationState.Anonymous
         } else {
             // anonymous pending
             Log.d(CONVERSATION, "Conversation is anonymous pending, added to roster")

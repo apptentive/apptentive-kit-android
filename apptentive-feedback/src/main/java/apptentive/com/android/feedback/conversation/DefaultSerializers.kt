@@ -628,21 +628,16 @@ internal object DefaultSerializers {
             override fun encode(encoder: Encoder, value: ConversationState) {
                 when (value) {
                     is ConversationState.Undefined -> encoder.encodeString("Undefined")
-                    is ConversationState.LegacyPending -> encoder.encodeString("LegacyPending")
                     is ConversationState.AnonymousPending -> encoder.encodeString("AnonymousPending")
                     is ConversationState.Anonymous -> {
                         encoder.encodeString("Anonymous")
-                        encoder.encodeString(value.id)
-                        encoder.encodeString(value.conversationToken)
                     }
                     is ConversationState.LoggedIn -> {
                         encoder.encodeString("LoggedIn")
-                        encoder.encodeString(value.id)
-                        encoder.encodeString(value.conversationToken)
                         encoder.encodeString(value.subject)
-                        // encoder.encodeString(value.encryptionKey.key)
                         // TODO encode encryptionKey
                     }
+
                     is ConversationState.LoggedOut -> {
                         encoder.encodeString("LoggedOut")
                         encoder.encodeString(value.id)
@@ -654,20 +649,15 @@ internal object DefaultSerializers {
             override fun decode(decoder: Decoder): ConversationState {
                 when (decoder.decodeString()) {
                     "Undefined" -> return ConversationState.Undefined
-                    "LegacyPending" -> return ConversationState.LegacyPending
                     "AnonymousPending" -> return ConversationState.AnonymousPending
                     "Anonymous" -> {
-                        val key = decoder.decodeString()
-                        val signature = decoder.decodeString()
-                        return ConversationState.Anonymous(key, signature)
+                        return ConversationState.Anonymous
                     }
                     "LoggedIn" -> {
-                        val key = decoder.decodeString()
-                        val signature = decoder.decodeString()
                         val subject = decoder.decodeString()
                         // val encryptionKey = decoder.decodeString()
                         // TODO decode encryptionKey
-                        return ConversationState.LoggedIn(key, signature, subject, EncryptionKey())
+                        return ConversationState.LoggedIn(subject, EncryptionKey())
                     }
                     "LoggedOut" -> {
                         val id = decoder.decodeString()
