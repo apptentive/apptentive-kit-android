@@ -250,7 +250,7 @@ class MessageRepositoryTest : TestCase() {
             savedList = messages
         }
 
-        override fun deleteFile(messageFile: File) {
+        override fun deleteMessageFile(messageFile: File) {
         }
     }
 }

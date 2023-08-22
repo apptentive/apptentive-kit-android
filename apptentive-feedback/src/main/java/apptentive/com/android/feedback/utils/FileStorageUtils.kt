@@ -78,4 +78,11 @@ internal object FileStorageUtils {
         return FileUtil.containsFiles(CONVERSATION_DIR) &&
             cachedSDKVersion == null || cachedSDKVersion == "6.1.0"
     }
+
+    @WorkerThread
+    fun hasStoragePriorToSkipLogic(): Boolean {
+        val storedSdkVersion = DependencyProvider.of<AndroidSharedPrefDataStore>()
+            .getString(SharedPrefConstants.SDK_CORE_INFO, SharedPrefConstants.SDK_VERSION).ifEmpty { null }
+        return storedSdkVersion == null && FileUtil.containsFiles(CONVERSATION_DIR)
+    }
 }

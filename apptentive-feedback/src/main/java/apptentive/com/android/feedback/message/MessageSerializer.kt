@@ -1,13 +1,11 @@
 package apptentive.com.android.feedback.message
 
 import androidx.core.util.AtomicFile
-import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.feedback.conversation.ConversationRoster
 import apptentive.com.android.feedback.utils.FileStorageUtils
+import apptentive.com.android.feedback.utils.FileStorageUtils.getMessagesFile
 import apptentive.com.android.feedback.utils.FileUtil
-import apptentive.com.android.platform.AndroidSharedPrefDataStore
-import apptentive.com.android.platform.SharedPrefConstants
 import apptentive.com.android.serialization.BinaryDecoder
 import apptentive.com.android.serialization.BinaryEncoder
 import apptentive.com.android.serialization.Decoder
@@ -35,19 +33,19 @@ internal interface MessageSerializer {
     @Throws(MessageSerializerException::class)
     fun saveMessages(messages: List<DefaultMessageRepository.MessageEntry>, conversationRoster: ConversationRoster)
 
-    fun deleteFile(messageFile: File)
+    fun deleteMessageFile(messageFile: File)
 }
 
 internal class DefaultMessageSerializer(val encryption: Encryption) : MessageSerializer {
 
-    // private lateinit var messagesFile: File
     override fun loadMessages(conversationRoster: ConversationRoster): List<DefaultMessageRepository.MessageEntry> {
         val messagesFile = getMessageFileCreatedBeforeMultiUser() ?: getMessageFileFromRoster(conversationRoster)
         return if (messagesFile.exists()) {
             Log.d(MESSAGE_CENTER, "Loading messages from MessagesFile")
             val messageEntries = readMessageEntries(messagesFile)
-            // Delete the old messages.bin if it exists
-            getMessageFileCreatedBeforeMultiUser()?.let { deleteFile(it) }
+            if (getMessageFileFromRoster(conversationRoster).length() == 0L) {
+                switchMessageCachingThroughRoster(messageEntries, conversationRoster)
+            }
             messageEntries
         } else {
             Log.d(MESSAGE_CENTER, "MessagesFile doesn't exist")
@@ -77,11 +75,19 @@ internal class DefaultMessageSerializer(val encryption: Encryption) : MessageSer
         Log.v(LogTags.CONVERSATION, "Messages saved (took ${System.currentTimeMillis() - start} ms)")
     }
 
-    override fun deleteFile(messageFile: File) {
+    override fun deleteMessageFile(messageFile: File) {
         FileUtil.deleteFile(messageFile.path)
         Log.w(LogTags.CRYPTOGRAPHY, "Message cache is deleted to support the new encryption setting")
     }
 
+    private fun switchMessageCachingThroughRoster(messageEntries: List<DefaultMessageRepository.MessageEntry>, conversationRoster: ConversationRoster) {
+        // Transfer the entries to new message file
+        saveMessages(messageEntries, conversationRoster)
+        // Delete old messages.bin if it exists
+        getMessageFileCreatedBeforeMultiUser()?.let { oldMessagesFile ->
+            FileUtil.deleteFile(oldMessagesFile.path)
+        }
+    }
     private fun getMessageFileFromRoster(roster: ConversationRoster): File {
         Log.d(MESSAGE_CENTER, "Setting message file from roster: $roster")
 
@@ -91,16 +97,10 @@ internal class DefaultMessageSerializer(val encryption: Encryption) : MessageSer
     }
 
     private fun getMessageFileCreatedBeforeMultiUser(): File? {
-        val cachedSDKVersion = DependencyProvider.of<AndroidSharedPrefDataStore>()
-            .getString(SharedPrefConstants.SDK_CORE_INFO, SharedPrefConstants.SDK_VERSION).ifEmpty { null }
-
-        // Use the old messages.bin file for older SDKs < 6.2.0
-        // SDK_VERSION is added in 6.1.0. It would be null for the SDKs < 6.1.0
-        return if (FileUtil.containsFiles(FileStorageUtils.CONVERSATION_DIR) &&
-            cachedSDKVersion == null || cachedSDKVersion == "6.1.0"
-        ) {
-            FileStorageUtils.getMessagesFile()
-        } else null
+        val messagesFile = getMessagesFile()
+        return if (messagesFile.exists())
+            messagesFile
+        else null
     }
 
     private fun readMessageEntries(messagesFile: File): List<DefaultMessageRepository.MessageEntry> =

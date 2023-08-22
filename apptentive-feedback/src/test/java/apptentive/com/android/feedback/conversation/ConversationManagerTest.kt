@@ -237,7 +237,7 @@ private class MockConversationRepository(val throwException: Boolean = false) :
         this.conversation = conversation
     }
 
-    override fun loadConversation(): Conversation? = if (throwException) throw ConversationSerializationException("", null)
+    override fun loadConversation(conversationRoster: ConversationRoster): Conversation? = if (throwException) throw ConversationSerializationException("", null)
     else conversation
 
     override fun getCurrentAppRelease(): AppRelease = mockAppRelease.copy(

@@ -311,7 +311,8 @@ class MessageManager(
             messagesSubject.value = messageRepository.getAllMessages()
             // Fetch messages as soon as message center comes to foreground. Needed for migration
             fetchMessages()
-        }
+        } else
+            messageRepository.saveMessages(conversationRoster)
         isMessageCenterInForeground = isActive
         Log.d(MESSAGE_CENTER, "Message center foreground status $isActive")
         // Resets polling with the right polling interval

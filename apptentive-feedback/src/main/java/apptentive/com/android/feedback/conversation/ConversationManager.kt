@@ -433,7 +433,7 @@ internal class ConversationManager(
 
     internal fun loadExistingConversation(): Conversation? {
         return try {
-            conversationRepository.loadConversation()
+            conversationRepository.loadConversation(activeConversationRoster.value)
         } catch (e: ConversationSerializationException) {
             // This fix is to recover the accounts that are stuck with serialization issue.
             // It is not recommended to reset the conversation state.

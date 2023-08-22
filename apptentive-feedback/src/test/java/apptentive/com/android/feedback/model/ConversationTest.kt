@@ -95,12 +95,12 @@ class ConversationTest : TestCase() {
         val serializer = createSerializer()
 
         // should return no conversation before anything was saved
-        assertThat(serializer.loadConversation()).isNull()
+        assertThat(serializer.loadConversation(ConversationRoster())).isNull()
 
         // save conversation
         serializer.saveConversation(expected, ConversationRoster())
 
-        val actual = serializer.loadConversation()
+        val actual = serializer.loadConversation(ConversationRoster())
         assertThat(expected).isEqualTo(actual)
     }
 
@@ -153,7 +153,7 @@ class ConversationTest : TestCase() {
         // save conversation
         serializer.saveConversation(expected, ConversationRoster())
 
-        val actual = serializer.loadConversation()
+        val actual = serializer.loadConversation(ConversationRoster())
         assertThat(expected).isEqualTo(actual)
     }
 

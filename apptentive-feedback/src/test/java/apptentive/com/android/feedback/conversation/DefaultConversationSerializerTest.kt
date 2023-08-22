@@ -49,7 +49,7 @@ class DefaultConversationSerializerTest : TestCase() {
             )
         }
 
-        val conversation = serializer.loadConversation()
+        val conversation = serializer.loadConversation(ConversationRoster())
         assertThat(conversation).isNull()
     }
 
@@ -69,7 +69,7 @@ class DefaultConversationSerializerTest : TestCase() {
         val conversation = createMockConversation()
         serializer.saveConversation(conversation, ConversationRoster())
 
-        val actual = serializer.loadConversation()
+        val actual = serializer.loadConversation(ConversationRoster())
 
         assertEquals(conversation, actual)
     }
@@ -92,7 +92,7 @@ class DefaultConversationSerializerTest : TestCase() {
         )
         serializer.saveConversation(conversation, ConversationRoster())
 
-        val actual = serializer.loadConversation()
+        val actual = serializer.loadConversation(ConversationRoster())
         assertThat(conversation).isEqualTo(actual)
     }
 
@@ -129,7 +129,7 @@ class DefaultConversationSerializerTest : TestCase() {
         serializer.saveConversation(newConversation, ConversationRoster())
 
         // successfully load the manifest
-        val actual = serializer.loadConversation()
+        val actual = serializer.loadConversation(ConversationRoster())
         assertThat(newConversation).isEqualTo(actual)
     }
 
@@ -155,7 +155,7 @@ class DefaultConversationSerializerTest : TestCase() {
         serializer.initializeSerializer()
 
         // this throws an exception
-        serializer.loadConversation()
+        serializer.loadConversation(ConversationRoster())
     }
 
     @Test
@@ -179,7 +179,7 @@ class DefaultConversationSerializerTest : TestCase() {
         manifestFile.writeText("{") // illegal json
 
         // this should still load a valid conversation
-        val actual = serializer.loadConversation()
+        val actual = serializer.loadConversation(ConversationRoster())
         assertThat(actual).isNotNull()
 
         // manifest would just be set to "default" and re-fetched next time

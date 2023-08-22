@@ -18,7 +18,7 @@ internal interface ConversationRepository {
     fun saveConversation(conversation: Conversation, conversationRoster: ConversationRoster)
 
     @Throws(ConversationSerializationException::class)
-    fun loadConversation(): Conversation?
+    fun loadConversation(conversationRoster: ConversationRoster): Conversation?
 
     @Throws(ConversationSerializationException::class)
     fun initializeRepositoryWithRoster(): ConversationRoster
@@ -56,7 +56,7 @@ internal class DefaultConversationRepository(
         conversationSerializer.saveConversation(conversation, conversationRoster)
 
     @Throws(ConversationSerializationException::class)
-    override fun loadConversation(): Conversation? = conversationSerializer.loadConversation()
+    override fun loadConversation(conversationRoster: ConversationRoster): Conversation? = conversationSerializer.loadConversation(conversationRoster)
 
     override fun initializeRepositoryWithRoster(): ConversationRoster = conversationSerializer.initializeSerializer()
 

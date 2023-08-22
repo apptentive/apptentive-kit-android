@@ -186,7 +186,7 @@ class ApptentiveDefaultClient(
                             messageSerializer = DefaultMessageSerializer(encryption).apply {
                                 if (clearMessageCache) {
                                     val messageFile = getStoredMessagesFile(conversationManager.activeConversationRoster.value)
-                                    messageFile?.let { deleteFile(it) }
+                                    messageFile?.let { deleteMessageFile(it) }
                                     clearMessageCache = false
                                 }
                             },
