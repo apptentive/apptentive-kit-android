@@ -146,11 +146,11 @@ class FieldTest : TestCase() {
     @Test
     fun convertValue() {
         // Custom data types are parsed as Any
-        assertThat(parse("device/custom_data/my_key").convertValue("String") is Any)
-        assertThat(parse("person/custom_data/my_key").convertValue(500) is Any)
+        assertThat(parse("device/custom_data/my_key").convertValue("String") is Any).isTrue()
+        assertThat(parse("person/custom_data/my_key").convertValue(500) is Any).isTrue()
         // Declared types
-        assertThat(parse("device/radio_version").convertValue(Version(30, 19, 20, 0)) is Version)
-        assertThat(parse("interactions/12345/invokes/total").convertValue(20.25) is Number)
-        assertThat(parse("interactions/12345/invokes/total").convertValue(20.25) !is String)
+        assertThat(parse("device/radio_version").convertValue(Version(30, 19, 20, 0)) is Version).isTrue()
+        assertThat(parse("interactions/12345/invokes/total").convertValue(20.25) is Number).isTrue()
+        assertThat(parse("interactions/12345/invokes/total").convertValue(20.25) !is String).isTrue()
     }
 }

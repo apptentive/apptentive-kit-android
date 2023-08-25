@@ -1,0 +1,52 @@
+{
+  "interactions": [
+    {
+      "id": "1234567890",
+      "display_type": "display_type",
+      "type": "MyInteraction",
+      "version": 1,
+      "configuration": {
+        "string_key": "value",
+        "int_key": 10,
+        "boolean_key": true,
+        "null_key": null
+      }
+    }
+  ],
+  "targets": {
+    "local#app#criteria_together": [
+      {
+        "interaction_id": "1234567890",
+        "criteria": {
+          "$and": [
+            {
+              "device/custom_data/string_qwerty": {
+                "$starts_with": "qwer",
+                "$ends_with": "erty"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "local#app#criteria_separate": [
+      {
+        "interaction_id": "1234567890",
+        "criteria": {
+          "$and": [
+            {
+              "device/custom_data/string_qwerty": {
+                "$starts_with": "qwer"
+              }
+            },
+            {
+              "device/custom_data/string_qwerty": {
+                "$ends_with": "erty"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

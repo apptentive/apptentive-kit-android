@@ -35,7 +35,7 @@ class DefaultConversationSerializerTest : TestCase() {
         val conversationFile = createTempFile("conversation.bin")
         val serializer = DefaultConversationSerializer(
             conversationFile = conversationFile,
-            manifestFile = createTempFile("manifest.json"),
+            manifestFile = createTempFile("manifest_structure_test.json"),
         ).apply {
             setEncryption(
                 encryption = EncryptionFactory.getEncryption(
@@ -53,7 +53,7 @@ class DefaultConversationSerializerTest : TestCase() {
     fun testSerialization() {
         val serializer = DefaultConversationSerializer(
             conversationFile = createTempFile("conversation.bin"),
-            manifestFile = createTempFile("manifest.json"),
+            manifestFile = createTempFile("manifest_structure_test.json"),
         ).apply {
             setEncryption(
                 encryption = EncryptionFactory.getEncryption(
@@ -75,7 +75,7 @@ class DefaultConversationSerializerTest : TestCase() {
     fun testSerializationNewConversation() {
         val serializer = DefaultConversationSerializer(
             conversationFile = createTempFile("conversation.bin"),
-            manifestFile = createTempFile("manifest.json"),
+            manifestFile = createTempFile("manifest_structure_test.json"),
         ).apply {
             setEncryption(
                 encryption = EncryptionFactory.getEncryption(
@@ -96,7 +96,7 @@ class DefaultConversationSerializerTest : TestCase() {
 
     @Test
     fun testSingleManifestSerialization() {
-        val manifestFile = createTempFile("manifest.json")
+        val manifestFile = createTempFile("manifest_structure_test.json")
         val serializer = DefaultConversationSerializer(
             conversationFile = createTempFile("conversation.bin"),
             manifestFile = manifestFile,
@@ -138,7 +138,7 @@ class DefaultConversationSerializerTest : TestCase() {
         // write random data
         conversationFile.writeBytes(Random.nextBytes(10))
 
-        val manifestFile = createTempFile("manifest.json")
+        val manifestFile = createTempFile("manifest_structure_test.json")
         val serializer = DefaultConversationSerializer(
             conversationFile = conversationFile,
             manifestFile = manifestFile,
@@ -157,7 +157,7 @@ class DefaultConversationSerializerTest : TestCase() {
 
     @Test
     fun testCorruptedManifestData() {
-        val manifestFile = createTempFile("manifest.json")
+        val manifestFile = createTempFile("manifest_structure_test.json")
         val serializer = DefaultConversationSerializer(
             conversationFile = createTempFile("conversation.bin"),
             manifestFile = manifestFile,

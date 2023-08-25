@@ -66,7 +66,7 @@ data class MessagePayload(
     }
 
     /**
-     * This is a multipart request. To accomplish this, we will create a data blog that is the entire contents
+     * This is a multipart request. To accomplish this, we will create a data blob that is the entire contents
      * of the request after the request's headers. Each part of the body includes its own headers,
      * boundary, and data, but that is all rolled into one byte array to be stored pending sending.
      *
