@@ -4,6 +4,7 @@ import android.app.Application
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.concurrent.ExecutorQueue
@@ -262,6 +263,51 @@ object Apptentive {
             }
         } catch (exception: Exception) {
             Log.e(FEEDBACK, "Exception thrown in the SDK registration", exception)
+        }
+    }
+
+    /**
+     * Starts login process asynchronously. This call returns immediately. Using this method requires
+     * you to implement JWT generation on your server. Please read about it in Apptentive's Android
+     * Integration Reference Guide.
+     *
+     * @param jwtToken A JWT signed by your server using the secret from your app's Apptentive settings.
+     * @param callback A LoginCallback, which will be called asynchronously when the login succeeds
+     *                 or fails.
+     */
+    @JvmStatic
+    @Synchronized
+    fun login(jwtToken: String, callback: LoginCallback? = null) {
+        if (Build.VERSION_CODES.M > Build.VERSION.SDK_INT) {
+            Log.w(FEEDBACK, "Login is only supported on Android M and above")
+            callback?.onComplete(LoginResult.Failure("Login is only supported on Android M and above", 0))
+        } else {
+            try {
+                stateExecutor.execute {
+                    val result = client.login(jwtToken, callback)
+                    callback?.onComplete(result)
+                }
+            } catch (e: java.lang.Exception) {
+                Log.e(FEEDBACK, "Exception thrown in the SDK login", e)
+                callback?.onComplete(LoginResult.Exception(e))
+            }
+        }
+    }
+
+    /*
+     * Starts logout process asynchronously.
+     * The current logged in user will be logged out.
+     * The SDK will stop sending events & showing interactions until a new user is logged in.
+     */
+    @JvmStatic
+    @Synchronized
+    fun logout() {
+        try {
+            stateExecutor.execute {
+                client.logout()
+            }
+        } catch (e: java.lang.Exception) {
+            Log.e(FEEDBACK, "Exception thrown in the SDK logout", e)
         }
     }
 

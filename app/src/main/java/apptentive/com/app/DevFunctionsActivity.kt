@@ -3,11 +3,13 @@ package apptentive.com.app
 import android.Manifest
 import android.app.Activity
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.webkit.MimeTypeMap
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.FileProvider
@@ -18,13 +20,19 @@ import apptentive.com.android.feedback.ApptentiveActivityInfo
 import apptentive.com.app.databinding.ActivityDevFunctionsBinding
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import io.jsonwebtoken.JwtBuilder
+import io.jsonwebtoken.Jwts
 import java.io.IOException
+import java.io.UnsupportedEncodingException
+import java.util.Date
+import javax.crypto.spec.SecretKeySpec
 
 class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
     lateinit var binding: ActivityDevFunctionsBinding
 
     private val customData: MutableMap<String, Any?> = mutableMapOf()
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -58,6 +66,9 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
         setupSendAttachmentFile()
         setupFilePicker()
         setupPhotoPicker()
+
+        // multi user
+        setupMultiUser()
     }
 
     private fun isPersonOrDevice(): Boolean {
@@ -89,14 +100,16 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
         val CUSTOM_DATA = "CUSTOM DATA"
         val HIDDEN_MESSAGES = "HIDDEN MESSAGES"
         val TEST_MANIFEST = "TEST MANIFEST"
+        val MULTI_USER = "MULTI USER"
 
-        val functionTypeValues = listOf(CUSTOM_DATA, HIDDEN_MESSAGES, TEST_MANIFEST)
+        val functionTypeValues = listOf(CUSTOM_DATA, HIDDEN_MESSAGES, TEST_MANIFEST, MULTI_USER)
         val functionTypesAdapter = ArrayAdapter(this, R.layout.list_item, functionTypeValues)
 
         binding.apply {
             dataTypesLayout.isVisible = functionsTypeDropdown.text.toString() == CUSTOM_DATA
             hiddenMessageLayout.isVisible = functionsTypeDropdown.text.toString() == HIDDEN_MESSAGES
             localManifestLayout.isVisible = functionsTypeDropdown.text.toString() == TEST_MANIFEST
+            multiUserLayout.isVisible = functionsTypeDropdown.text.toString() == MULTI_USER
 
             customDataList.isVisible = !isPersonOrDevice()
 
@@ -106,6 +119,7 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
                 dataTypesLayout.isVisible = it.toString() == CUSTOM_DATA
                 hiddenMessageLayout.isVisible = it.toString() == HIDDEN_MESSAGES
                 localManifestLayout.isVisible = it.toString() == TEST_MANIFEST
+                multiUserLayout.isVisible = it.toString() == MULTI_USER
             }
 
             val buttonNames = getButtonNamesFromAssets()
@@ -572,12 +586,70 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
         }
     }
 
+    val ONE_DAY = (1000 * 60 * 60 * 24).toLong()
+
+    private fun setupMultiUser() {
+        binding.apply {
+            login.setOnClickListener {
+                val currentTimeMillis = System.currentTimeMillis()
+
+                // JWT issued right now, expiring in 30 days
+                val thirtyDays: Long =
+                    currentTimeMillis + ONE_DAY * 30
+                it.isEnabled = false
+                logout.isEnabled = true
+                val token = generateJWT("Poorni", "ClientTeam", currentTimeMillis, thirtyDays, "38127017f4cfb4f84c8dfecd48ab98c6", null, null)
+                if (token != null)
+                    Apptentive.login(token)
+            }
+            logout.setOnClickListener {
+                Apptentive.logout()
+                login.isEnabled = true
+            }
+        }
+    }
+
+    private fun generateJWT(
+        subject: String,
+        issuer: String,
+        issuedAt: Long,
+        expiration: Long,
+        secret: String?,
+        headerParams: Map<String, Any>?,
+        bodyParams: Map<String, Any>?
+    ): String? {
+        if (secret == null || secret.length == 0) {
+            Toast.makeText(this, "Missing Secret", Toast.LENGTH_SHORT).show()
+            return null
+        }
+        val secretKey: SecretKeySpec = try {
+            SecretKeySpec(secret.toByteArray(charset("UTF-8")), "HmacSHA512")
+        } catch (e: UnsupportedEncodingException) {
+            Toast.makeText(this, "Error generating JWT: " + e.message, Toast.LENGTH_SHORT).show()
+            return null
+        }
+        val builder: JwtBuilder = Jwts.builder()
+            .setHeaderParam("typ", "JWT")
+            .claim("type", "user")
+            .setSubject(subject)
+            .setIssuer(issuer)
+            .setIssuedAt(Date(issuedAt))
+            .setExpiration(Date(expiration))
+            .setHeaderParams(headerParams)
+            .signWith(io.jsonwebtoken.SignatureAlgorithm.HS512, secretKey)
+        if (bodyParams != null) {
+            for (key in bodyParams.keys) {
+                builder.claim(key, bodyParams[key])
+            }
+        }
+        return builder.compact()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
     private val requestCameraPermissionAndTakePic =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { cameraPermissionGranted ->
             when {
                 cameraPermissionGranted -> makePhotoFileAndTakePicture()
-                shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) -> makeToast("Camera permission is required to take a photo")
-                else -> openPermissionNeededDialog(this, "Camera", "take a photo")
             }
         }
 

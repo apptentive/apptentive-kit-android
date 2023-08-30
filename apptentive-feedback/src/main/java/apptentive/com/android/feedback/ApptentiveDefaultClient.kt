@@ -2,6 +2,7 @@ package apptentive.com.android.feedback
 
 import android.content.Context
 import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.ProcessLifecycleOwner
 import apptentive.com.android.concurrent.Executors
@@ -21,6 +22,7 @@ import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.DefaultConversationService
 import apptentive.com.android.feedback.backend.MessageCenterService
 import apptentive.com.android.feedback.conversation.ConversationManager
+import apptentive.com.android.feedback.conversation.ConversationMetaData
 import apptentive.com.android.feedback.conversation.ConversationRepository
 import apptentive.com.android.feedback.conversation.ConversationSerializer
 import apptentive.com.android.feedback.conversation.ConversationState
@@ -76,6 +78,8 @@ import apptentive.com.android.feedback.platform.DefaultSDKFactory
 import apptentive.com.android.feedback.utils.FileStorageUtils
 import apptentive.com.android.feedback.utils.FileStorageUtils.getStoredMessagesFile
 import apptentive.com.android.feedback.utils.FileUtil
+import apptentive.com.android.feedback.utils.JwtResult
+import apptentive.com.android.feedback.utils.JwtUtils
 import apptentive.com.android.feedback.utils.RuntimeUtils
 import apptentive.com.android.network.HttpClient
 import apptentive.com.android.network.UnexpectedResponseException
@@ -109,6 +113,7 @@ class ApptentiveDefaultClient(
     internal lateinit var payloadSender: PayloadSender
     private lateinit var interactionDataProvider: InteractionDataProvider
     private lateinit var interactionModules: Map<String, InteractionModule<Interaction>>
+    private lateinit var conversationService: ConversationService
     internal var messageManager: MessageManager? = null
     private var engagement: Engagement = NullEngagement()
     private var encryption: Encryption = setInitialEncryptionFromPastSession()
@@ -120,8 +125,7 @@ class ApptentiveDefaultClient(
     @WorkerThread
     internal fun start(context: Context, registerCallback: ((result: RegisterResult) -> Unit)?) {
         interactionModules = loadInteractionModules()
-
-        val conversationService = createConversationService()
+        conversationService = createConversationService()
 //        (conversationService as DefaultConversationService).isAuthorized = true // TODO Set this on login
         conversationManager = ConversationManager(
             conversationRepository = createConversationRepository(context),
@@ -190,9 +194,9 @@ class ApptentiveDefaultClient(
                                     clearMessageCache = false
                                 }
                             },
-                            conversationRoster = conversationManager.activeConversationRoster.value
+                            conversationRoster = conversationManager.getActiveConversationRoster()
                         ),
-                        conversationRoster = conversationManager.activeConversationRoster.value
+                        conversationRoster = conversationManager.getActiveConversationRoster()
                     )
                     messageManager?.let {
                         DependencyProvider.register(MessageManagerFactoryProvider(it))
@@ -203,46 +207,75 @@ class ApptentiveDefaultClient(
         }
     }
 
-    /**
-     * Starts or retrieves a logged in conversation
-     *
-     * Start a session from anonymous -> logged in
-     * or
-     * Resume a session from logged out -> logged in
-     *
-     * @param conversationId - The conversation ID retrieved from the roster
-     * @param jwtToken - The customer provided JWT token
-     */
-    internal fun loginSession(
-        conversationId: String,
-        jwtToken: String,
-    ) {
-        conversationManager.loginSession(conversationId, jwtToken) { result ->
-            when (result) {
-                is Result.Error -> {
-                    // TODO Maybe a login callback?
-                    when (val error = result.error) {
-                        is UnexpectedResponseException -> {
-                            val responseCode = error.statusCode
-                            val message = error.errorMessage
-//                            loginCallback?.invoke(
-//                                RegisterResult.Failure(
-//                                    message ?: "Failed to login", responseCode
-//                                )
-//                            )
-                        }
-//                        else -> loginCallback?.invoke(RegisterResult.Exception(result.error))
-                    }
-                }
+    override fun login(jwtToken: String, callback: LoginCallback?): LoginResult {
+        // GET conversation ID from active conversation
+        val subClaim = if (JwtUtils.extractSub(jwtToken) is JwtResult.Success) {
+            (JwtUtils.extractSub(jwtToken) as JwtResult.Success).sub
+        } else {
+            return LoginResult.Error("Failed to extract sub claim from JWT token")
+        }
+        val activeConversationMetadata = getActiveConversationMetaData()
 
-                is Result.Success -> {
-                    val encryptionKey = result.data.encryptionKey
-                    // TODO Either pass back encryption key or continue with decrypting conversation
-                    // TODO Update the roster with encryption key and logged in conversation metadata
-                    // TODO Login callback?
+        when {
+            activeConversationMetadata == null -> {
+                Log.v(CONVERSATION, "No active conversation meta data found")
+                // Check if the sub claim is present in the logged out list
+                val matchingMetaData = conversationManager.getActiveConversationRoster()
+                    .loggedOut.firstOrNull {
+                        if (it.state is ConversationState.LoggedOut) {
+                            val loggedOutState = it.state as ConversationState.LoggedOut
+                            loggedOutState.subject == subClaim
+                        } else {
+                            false
+                        }
+                    }
+                if (matchingMetaData != null) {
+                    if (matchingMetaData.state is ConversationState.LoggedOut) {
+                        val conversationId = (matchingMetaData.state as ConversationState.LoggedOut).id
+                        Log.v(CONVERSATION, "Found matching conversation ID in logged out list")
+                        conversationManager.loginSession(conversationId, jwtToken, subClaim)
+                    }
+                } else {
+                    conversationManager.createConversation()
+                    getConversationToken(conversationService, null)
+                    // TODO listen to a success callback from getConversationToken and call loginSession
+                    // TODO Alternatively, use /conversations end point like in legacy
+                    loginWithActiveConversationId(jwtToken, subClaim)
                 }
             }
+
+            activeConversationMetadata.state is ConversationState.Anonymous -> {
+                Log.v(CONVERSATION, "Active conversation is anonymous")
+                loginWithActiveConversationId(jwtToken, subClaim)
+            }
+
+            activeConversationMetadata.state is ConversationState.LoggedIn -> {
+                // Check if the sub claim matches the logged in user
+                Log.v(CONVERSATION, "Already logged in. Logout before calling login")
+                LoginResult.Error("Already logged in. Logout before calling login")
+            }
+
+            else -> {
+                LoginResult.Error("Cannot login while SDK is in ${activeConversationMetadata.state}")
+            }
         }
+        return LoginResult.Success
+    }
+
+    private fun getActiveConversationMetaData(): ConversationMetaData? {
+        return conversationManager.getActiveConversationRoster().activeConversation
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun loginWithActiveConversationId(jwtToken: String, subject: String, loginCallback: LoginCallback? = null) {
+        val conversationId = conversationManager.getConversation().conversationId
+        conversationId?.let {
+            conversationManager.loginSession(it, jwtToken, subject, loginCallback)
+        }
+    }
+
+    override fun logout() {
+        conversationManager.logoutSession()
     }
 
     private fun addObservers(serialPayloadSender: SerialPayloadSender, conversationService: ConversationService) {
@@ -331,7 +364,6 @@ class ApptentiveDefaultClient(
 
     private fun createConversationSerializer(): ConversationSerializer {
         return DefaultConversationSerializer(
-            // TODO create roster file name with SHA256 of apptentiveKey - figure out the possibility of collision
             conversationRosterFile = FileStorageUtils.getRosterFile(configuration.apptentiveKey),
         ).apply {
             setEncryption(encryption)

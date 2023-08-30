@@ -77,6 +77,8 @@
     <string name="boolean_string">Boolean</string>
     <string name="other_person_data">Other Person Data</string>
     <string name="deep_link_successful">Deep Link Successful</string>
+    <string name="login">LOGIN</string>
+    <string name="logout">LOGOUT</string>
 
     <plurals name="unread_messages">
         <item quantity="one">%d unread message</item>

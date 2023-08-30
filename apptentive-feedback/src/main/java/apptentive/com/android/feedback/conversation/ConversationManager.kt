@@ -9,8 +9,13 @@ import apptentive.com.android.core.Provider
 import apptentive.com.android.core.isInThePast
 import apptentive.com.android.encryption.AESEncryption23
 import apptentive.com.android.encryption.Encryption
+import apptentive.com.android.encryption.EncryptionKey
+import apptentive.com.android.encryption.KeyResolver23
+import apptentive.com.android.encryption.getKeyFromHexString
 import apptentive.com.android.feedback.ApptentiveConfiguration
 import apptentive.com.android.feedback.Constants
+import apptentive.com.android.feedback.LoginCallback
+import apptentive.com.android.feedback.LoginResult
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.LoginSessionResponse
 import apptentive.com.android.feedback.engagement.Event
@@ -30,6 +35,7 @@ import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.ThrottleUtils
 import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
+import apptentive.com.android.network.UnexpectedResponseException
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.platform.SharedPrefConstants.SDK_CORE_INFO
 import apptentive.com.android.platform.SharedPrefConstants.SDK_VERSION
@@ -86,10 +92,110 @@ internal class ConversationManager(
         ) {
             val encryptionKey =
                 (conversationRoster.activeConversation?.state as ConversationState.LoggedIn).encryptionKey
-            // TODO add @RequiresApi(23) to Login/Logout methods
             updateEncryption(AESEncryption23(encryptionKey))
         }
         return conversationRoster
+    }
+
+    /**
+     * Starts or retrieves a logged in conversation
+     *
+     * Start a session from anonymous -> logged in
+     * or
+     * Resume a session from logged out -> logged in
+     *
+     * @param conversationId - The conversation ID retrieved from the roster
+     * @param jwtToken - The customer provided JWT token
+     */
+    internal fun loginSession(
+        conversationId: String,
+        jwtToken: String,
+        subject: String,
+        loginCallback: LoginCallback? = null
+    ) {
+        conversationService.loginSession(conversationId, jwtToken) { result ->
+            when (result) {
+                is Result.Error -> {
+                    when (val error = result.error) {
+                        is UnexpectedResponseException -> {
+                            val responseCode = error.statusCode
+                            val message = error.errorMessage
+                            loginCallback?.onComplete(LoginResult.Failure(message ?: "Failed to login", responseCode))
+                        }
+                        else -> loginCallback?.onComplete(LoginResult.Exception(result.error))
+                    }
+                }
+
+                is Result.Success -> {
+                    val encryptionKey = EncryptionKey(
+                        result.data.encryptionKey.getKeyFromHexString(),
+                        KeyResolver23.getTransformation()
+                    )
+                    Log.v(CONVERSATION, "Login session successful, encryption key: $encryptionKey")
+                    moveActiveConversationToLoggedOutState(subject, encryptionKey)
+                    loginCallback?.onComplete(LoginResult.Success)
+                    conversationRepository.updateEncryption(AESEncryption23(encryptionKey))
+                    // TODO Update Payload encryption
+                }
+            }
+        }
+    }
+
+    private fun moveActiveConversationToLoggedOutState(subject: String, encryptionKey: EncryptionKey) {
+        val conversationRoster = activeConversationRoster.value
+        val activeConversationMetaData = conversationRoster.activeConversation
+        val loggedOut = conversationRoster.loggedOut.toMutableList()
+
+        if (activeConversationMetaData != null && activeConversationMetaData.state is ConversationState.LoggedIn) {
+            loggedOut.add(activeConversationMetaData)
+        }
+
+        if (activeConversationMetaData != null && activeConversationMetaData.state is ConversationState.Anonymous) {
+            activeConversationRosterSubject.value.activeConversation =
+                ConversationMetaData(
+                    ConversationState.LoggedIn(
+                        subject,
+                        encryptionKey
+                    ),
+                    activeConversationMetaData.path
+                )
+        }
+
+        loggedOut.firstOrNull {
+            it.state is ConversationState.LoggedOut &&
+                (it.state as ConversationState.LoggedOut).subject == subject
+        }?.let {
+            loggedOut.remove(it)
+            activeConversationRosterSubject.value.activeConversation =
+                ConversationMetaData(
+                    ConversationState.LoggedIn(
+                        subject,
+                        encryptionKey
+                    ),
+                    it.path
+                )
+        }
+
+        conversationRoster.loggedOut = loggedOut
+    }
+
+    internal fun logoutSession() {
+        val activeConversationMetaData = activeConversationRoster.value.activeConversation
+        val conversationId = activeConversation.value.conversationId
+        val loggedOut = activeConversationRoster.value.loggedOut.toMutableList()
+        activeConversationMetaData?.let {
+            val convertedMetaData = ConversationMetaData(
+                ConversationState.LoggedOut(
+                    conversationId ?: "",
+                    (it.state as ConversationState.LoggedIn).subject
+                ),
+                it.path
+            )
+            loggedOut.add(convertedMetaData)
+        }
+        activeConversationRosterSubject.value.activeConversation = null
+        activeConversationRosterSubject.value.loggedOut = loggedOut
+        Log.v(CONVERSATION, "Logout session successful, logged out conversation: $loggedOut")
     }
 
     fun fetchConversationToken(callback: (result: Result<Unit>) -> Unit) {
@@ -140,6 +246,8 @@ internal class ConversationManager(
 
     fun getConversation() = activeConversation.value
 
+    fun getActiveConversationRoster() = activeConversationRoster.value
+
     fun updateEncryption(encryption: Encryption) {
         conversationRepository.updateEncryption(encryption)
     }
@@ -163,12 +271,16 @@ internal class ConversationManager(
 
         // no active conversations: create a new one
         Log.i(CONVERSATION, "Creating 'anonymous' conversation...")
+        return createConversation()
+    }
+
+    internal fun createConversation(): Conversation {
         return conversationRepository.createConversation()
     }
 
     private fun updateConversationRoster() {
+        // TODO This should be revisited after state machine is implemented
         val conversationState = if (activeConversation.value.hasConversationToken) {
-            // TODO set anonymous for now and revisit once login and logout are implemented
             Log.d(CONVERSATION, "Conversation is anonymous, added to roster")
             ConversationState.Anonymous
         } else {
@@ -180,9 +292,6 @@ internal class ConversationManager(
         if (activeConversationRoster.value.activeConversation?.state == ConversationState.Undefined || activeConversationRoster.value.activeConversation?.state == ConversationState.AnonymousPending) {
             activeConversationRoster.value.activeConversation =
                 ConversationMetaData(conversationState, activeConversationRoster.value.activeConversation?.path!!)
-        } else {
-            // TODO iterate logged out conversations to see if it matches the current conversation state
-            // TODO Figure out it's current state and compare with existing activeConversation before updating
         }
     }
 
