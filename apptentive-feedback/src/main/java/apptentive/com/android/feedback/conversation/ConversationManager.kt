@@ -177,6 +177,11 @@ internal class ConversationManager(
             Log.d(CONVERSATION, "SDK version was changed: $lastSeenSdkVersion => $currentSdkVersion")
         }
 
+        if (conversation.sdk.distribution != currentSDK.distribution || conversation.sdk.distributionVersion != currentSDK.distributionVersion) {
+            sdkChanged = true
+            Log.d(CONVERSATION, "SDK distribution was changed: ${conversation.sdk.distribution} (${conversation.sdk.distributionVersion}) => ${currentSDK.distribution} (${currentSDK.distributionVersion})")
+        }
+
         if (appReleaseChanged || sdkChanged) {
             sdkAppReleaseUpdateSubject.value = true
             val versionHistory = conversation.engagementData.versionHistory.updateVersionHistory(

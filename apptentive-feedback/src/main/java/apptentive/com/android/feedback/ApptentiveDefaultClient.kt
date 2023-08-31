@@ -129,8 +129,6 @@ class ApptentiveDefaultClient(
 
         finalizeEncryptionFromConfiguration()
 
-        updateDistributionFromConfiguration()
-
         val serialPayloadSender = SerialPayloadSender(
             payloadQueue = PersistentPayloadQueue.create(context, encryption, clearPayloadCache),
             callback = ::onPayloadSendFinish
@@ -314,23 +312,6 @@ class ApptentiveDefaultClient(
                 conversation.engagementData
             ),
             usingCustomStoreUrlSkipInAppReviewID = usingCustomStoreUrlSkipInAppReviewID
-        )
-    }
-
-    private fun updateDistributionFromConfiguration() {
-        val conversation = conversationManager.getConversation()
-
-        val updatedSDK = conversation.sdk.copy(
-            distribution = configuration.distributionName,
-            distributionVersion = configuration.distributionVersion
-        )
-
-        if (conversation.sdk == updatedSDK) return
-
-        conversationManager.updateAppReleaseSDK(
-            updatedSDK,
-            conversation.appRelease,
-            conversation.engagementData.versionHistory
         )
     }
 
