@@ -172,7 +172,7 @@ internal class ConversationManager(
 
         if (conversation.sdk != currentSDK) {
             sdkChanged = true
-            Log.d(CONVERSATION, "SDK was changed: ${conversation.sdk.version} (distribution ${conversation.sdk.distribution} ${conversation.sdk.distributionVersion}) => ${currentSDK.version} (distribution ${currentSDK.distribution} ${currentSDK.distributionVersion})")
+            Log.d(CONVERSATION, "SDK version was changed: ${conversation.sdk.version} (${conversation.sdk.distribution} ${conversation.sdk.distributionVersion}) => ${currentSDK.version} (${currentSDK.distribution} ${currentSDK.distributionVersion})")
         }
 
         if (appReleaseChanged || sdkChanged) {
