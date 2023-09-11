@@ -4,12 +4,12 @@ import android.util.Base64
 import apptentive.com.android.serialization.json.JsonConverter
 import java.lang.Exception
 
-sealed class JwtResult {
+internal sealed class JwtResult {
     data class Success(val sub: String) : JwtResult()
     data class Error(val message: String) : JwtResult()
 }
 
-object JwtUtils {
+internal object JwtUtils {
     private const val EXPECTED_JWT_PARTS = 3
     private const val JWT_PART_PAYLOAD = 1
 

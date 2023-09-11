@@ -49,7 +49,7 @@ class DefaultConversationSerializerTest : TestCase() {
             )
         }
 
-        val conversation = serializer.loadConversation(ConversationRoster())
+        val conversation = serializer.loadConversation()
         assertThat(conversation).isNull()
     }
 
@@ -67,9 +67,9 @@ class DefaultConversationSerializerTest : TestCase() {
         }
 
         val conversation = createMockConversation()
-        serializer.saveConversation(conversation, ConversationRoster())
+        serializer.saveConversation(conversation)
 
-        val actual = serializer.loadConversation(ConversationRoster())
+        val actual = serializer.loadConversation()
 
         assertEquals(conversation, actual)
     }
@@ -90,9 +90,9 @@ class DefaultConversationSerializerTest : TestCase() {
         val conversation = createMockConversation(
             engagementManifest = EngagementManifest()
         )
-        serializer.saveConversation(conversation, ConversationRoster())
+        serializer.saveConversation(conversation)
 
-        val actual = serializer.loadConversation(ConversationRoster())
+        val actual = serializer.loadConversation()
         assertThat(conversation).isEqualTo(actual)
     }
 
@@ -111,13 +111,13 @@ class DefaultConversationSerializerTest : TestCase() {
         }
 
         val conversation = createMockConversation()
-        serializer.saveConversation(conversation, ConversationRoster())
+        serializer.saveConversation(conversation)
 
         // delete manifest file
         manifestFile.delete()
 
         // save conversation one more time
-        serializer.saveConversation(conversation, ConversationRoster())
+        serializer.saveConversation(conversation)
 
         // manifest file should not be re-created
         assertFalse(manifestFile.exists())
@@ -126,10 +126,10 @@ class DefaultConversationSerializerTest : TestCase() {
         val newConversation = conversation.copy(
             engagementManifest = conversation.engagementManifest.copy(expiry = 2000.0)
         )
-        serializer.saveConversation(newConversation, ConversationRoster())
+        serializer.saveConversation(newConversation)
 
         // successfully load the manifest
-        val actual = serializer.loadConversation(ConversationRoster())
+        val actual = serializer.loadConversation()
         assertThat(newConversation).isEqualTo(actual)
     }
 
@@ -155,7 +155,7 @@ class DefaultConversationSerializerTest : TestCase() {
         serializer.initializeSerializer()
 
         // this throws an exception
-        serializer.loadConversation(ConversationRoster())
+        serializer.loadConversation()
     }
 
     @Test
@@ -173,13 +173,14 @@ class DefaultConversationSerializerTest : TestCase() {
         }
 
         val conversation = createMockConversation()
-        serializer.saveConversation(conversation, ConversationRoster(activeConversation = ConversationMetaData(ConversationState.Undefined, tempFolder.root.path)))
+        serializer.setRoster(ConversationRoster(activeConversation = ConversationMetaData(ConversationState.Undefined, tempFolder.root.path)))
+        serializer.saveConversation(conversation,)
 
         // write corrupted data
         manifestFile.writeText("{") // illegal json
 
         // this should still load a valid conversation
-        val actual = serializer.loadConversation(ConversationRoster())
+        val actual = serializer.loadConversation()
         assertThat(actual).isNotNull()
 
         // manifest would just be set to "default" and re-fetched next time

@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.message
 
 import apptentive.com.android.core.TimeInterval
+import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.feedback.conversation.ConversationRoster
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.serialization.json.JsonConverter
@@ -11,19 +12,20 @@ import apptentive.com.android.util.generateUUID
 
 @InternalUseOnly
 interface MessageRepository {
-    fun addOrUpdateMessages(messages: List<Message>, conversationRoster: ConversationRoster)
+    fun addOrUpdateMessages(messages: List<Message>)
     fun getAllMessages(): List<Message>
     fun getLastReceivedMessageIDFromEntries(): String
     fun deleteMessage(nonce: String)
-    fun saveMessages(conversationRoster: ConversationRoster)
+    fun saveMessages()
+    fun updateEncryption(encryption: Encryption)
+    fun updateConversationRoster(conversationRoster: ConversationRoster)
 }
 
 internal class DefaultMessageRepository(
     val messageSerializer: MessageSerializer,
-    val conversationRoster: ConversationRoster
 ) : MessageRepository {
 
-    private val messageEntries: MutableList<MessageEntry> = messageSerializer.loadMessages(conversationRoster).toMutableList()
+    private val messageEntries: MutableList<MessageEntry> = messageSerializer.loadMessages().toMutableList()
 
     override fun getLastReceivedMessageIDFromEntries(): String {
         return messageEntries.lastOrNull {
@@ -36,7 +38,7 @@ internal class DefaultMessageRepository(
     private fun buildMessageFromJson(json: String): Message =
         JsonConverter.fromJson(json)
 
-    override fun addOrUpdateMessages(messages: List<Message>, conversationRoster: ConversationRoster) {
+    override fun addOrUpdateMessages(messages: List<Message>) {
         for (message in messages) {
             val existing = findEntry(message.nonce)
             if (existing != null) {
@@ -68,13 +70,13 @@ internal class DefaultMessageRepository(
                 messageEntries.add(newEntry)
             }
         }
-        saveMessages(conversationRoster)
+        saveMessages()
     }
 
     override fun getAllMessages(): List<Message> {
         val messageList = mutableListOf<Message>()
         try {
-            for (entry in messageSerializer.loadMessages(conversationRoster)) {
+            for (entry in messageSerializer.loadMessages()) {
                 val message = buildMessageFromJson(entry.messageJson)
                 message.messageStatus = Message.Status.parse(entry.messageState)
                 messageList.add(message)
@@ -86,19 +88,27 @@ internal class DefaultMessageRepository(
         return messageList
     }
 
-    override fun saveMessages(conversationRoster: ConversationRoster) {
+    override fun saveMessages() {
         try {
-            messageSerializer.saveMessages(messages = messageEntries.sortedBy { it.createdAt }, conversationRoster)
+            messageSerializer.saveMessages(messages = messageEntries.sortedBy { it.createdAt })
         } catch (e: MessageSerializerException) {
             Log.e(MESSAGE_CENTER, "Cannot save messages. A Serialization issue occurred ${e.message}")
         }
+    }
+
+    override fun updateEncryption(encryption: Encryption) {
+        messageSerializer.updateEncryption(encryption)
+    }
+
+    override fun updateConversationRoster(conversationRoster: ConversationRoster) {
+        messageSerializer.updateConversionRoster(conversationRoster)
     }
 
     override fun deleteMessage(nonce: String) {
         val entry = messageEntries.filter { it.nonce == nonce }
         if (entry.isNotEmpty()) {
             messageEntries.removeAll(entry)
-            saveMessages(conversationRoster)
+            saveMessages()
         } else Log.d(MESSAGE_CENTER, "Cannot delete message. Message with nonce $nonce not found.")
     }
 

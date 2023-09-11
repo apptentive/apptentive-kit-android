@@ -24,6 +24,9 @@ import apptentive.com.android.feedback.model.EventNotification
 import apptentive.com.android.feedback.model.MessageCenterNotification
 import apptentive.com.android.feedback.notifications.NotificationUtils
 import apptentive.com.android.feedback.platform.AndroidFileSystemProvider
+import apptentive.com.android.feedback.platform.DefaultStateMachine
+import apptentive.com.android.feedback.platform.SDKEvent
+import apptentive.com.android.feedback.platform.isSDKLoading
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.feedback.utils.ThrottleUtils
 import apptentive.com.android.feedback.utils.sha256
@@ -188,6 +191,7 @@ object Apptentive {
             Log.w(SYSTEM, "Apptentive SDK already registered")
             return
         }
+        DefaultStateMachine.onEvent(SDKEvent.RegisterSDK)
 
         try {
 
@@ -255,14 +259,16 @@ object Apptentive {
                 executors = Executors(
                     state = stateExecutor,
                     main = mainExecutor
-                )
+                ),
             ).apply {
                 stateExecutor.execute {
+                    initialize(application.applicationContext)
                     start(application.applicationContext, callbackWrapper)
                 }
             }
         } catch (exception: Exception) {
             Log.e(FEEDBACK, "Exception thrown in the SDK registration", exception)
+            DefaultStateMachine.onEvent(SDKEvent.Error)
         }
     }
 
@@ -990,6 +996,13 @@ object Apptentive {
      */
     @JvmStatic
     fun setPushNotificationIntegration(context: Context, pushProvider: Int, token: String) {
+        if (DefaultStateMachine.isSDKLoading()) {
+            Log.w(
+                PUSH_NOTIFICATION,
+                "Apptentive is not initialized. Cannot set push notification integration."
+            )
+            return
+        }
         try {
             stateExecutor.execute {
                 context

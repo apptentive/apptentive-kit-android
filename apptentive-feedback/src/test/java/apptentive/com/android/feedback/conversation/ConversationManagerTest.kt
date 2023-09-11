@@ -6,7 +6,6 @@ import apptentive.com.android.core.Provider
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.getTimeSeconds
 import apptentive.com.android.encryption.Encryption
-import apptentive.com.android.feedback.ApptentiveConfiguration
 import apptentive.com.android.feedback.backend.ConversationCredentials
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.LoginSessionResponse
@@ -29,7 +28,9 @@ import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.model.VersionHistory
 import apptentive.com.android.feedback.payload.PayloadData
+import apptentive.com.android.feedback.platform.DefaultStateMachine
 import apptentive.com.android.feedback.platform.FileSystem
+import apptentive.com.android.feedback.platform.SDKEvent
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.util.Result
 import com.apptentive.android.sdk.conversation.ConversationData
@@ -47,10 +48,12 @@ class ConversationManagerTest : TestCase() {
     @Before
     override fun setUp() {
         DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore())
+        DependencyProvider.register<ConversationRepository>(MockConversationRepository())
     }
 
     @Test
     fun getActiveConversation() {
+        DefaultStateMachine.reset()
         val fetchResponse = ConversationCredentials(
             id = "id",
             deviceId = "device_id",
@@ -58,6 +61,9 @@ class ConversationManagerTest : TestCase() {
             token = "token",
             encryptionKey = "encryption_key"
         )
+
+        DefaultStateMachine.onEvent(SDKEvent.RegisterSDK)
+        DefaultStateMachine.onEvent(SDKEvent.ClientStarted)
 
         val conversationManager = createConversationManager(fetchResponse)
 
@@ -86,6 +92,9 @@ class ConversationManagerTest : TestCase() {
 
     @Test
     fun testPersonUpdate() {
+        DefaultStateMachine.reset()
+        DefaultStateMachine.onEvent(SDKEvent.RegisterSDK)
+        DefaultStateMachine.onEvent(SDKEvent.ClientStarted)
         val conversationManager = createConversationManager()
         val customData = CustomData(content = mapOf("FirstKey" to "FirstValue", "SecondKey" to 2, "ThirdKey" to true))
         val newPerson = conversationManager.getConversation().person.copy(
@@ -112,6 +121,9 @@ class ConversationManagerTest : TestCase() {
 
     @Test
     fun testDeviceUpdate() {
+        DefaultStateMachine.reset()
+        DefaultStateMachine.onEvent(SDKEvent.RegisterSDK)
+        DefaultStateMachine.onEvent(SDKEvent.ClientStarted)
         val conversationManager = createConversationManager()
         val customData = CustomData(content = mapOf("FirstKey" to "FirstValue", "SecondKey" to 2, "ThirdKey" to false))
         val newDevice = conversationManager.getConversation().device.copy(
@@ -128,6 +140,9 @@ class ConversationManagerTest : TestCase() {
 
     @Test
     fun testAppReleaseSDKUpdate() {
+        DefaultStateMachine.reset()
+        DefaultStateMachine.onEvent(SDKEvent.RegisterSDK)
+        DefaultStateMachine.onEvent(SDKEvent.ClientStarted)
         val conversationManager = createConversationManager()
         conversationManager.onEncryptionSetupComplete()
         conversationManager.updateAppReleaseSDK(
@@ -142,6 +157,9 @@ class ConversationManagerTest : TestCase() {
 
     @Test
     fun testCheckForSDKAppReleaseUpdates() {
+        DefaultStateMachine.reset()
+        DefaultStateMachine.onEvent(SDKEvent.RegisterSDK)
+        DefaultStateMachine.onEvent(SDKEvent.ClientStarted)
         val conversationManager = createConversationManager()
         conversationManager.checkForSDKAppReleaseUpdates(conversationManager.getConversation())
         /* mockAppRelease & mockSDK has updates which sets the appReleaseChanged & sdkChanged to true
@@ -154,6 +172,9 @@ class ConversationManagerTest : TestCase() {
 
     @Test
     fun testEngagementDataFetch() {
+        DefaultStateMachine.reset()
+        DefaultStateMachine.onEvent(SDKEvent.RegisterSDK)
+        DefaultStateMachine.onEvent(SDKEvent.ClientStarted)
         val fetchResponse: ConversationCredentials =
             ConversationCredentials(
                 id = "id",
@@ -178,9 +199,12 @@ class ConversationManagerTest : TestCase() {
 
     @Test
     fun testConversationReset() {
+        DefaultStateMachine.reset()
         DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore())
         DependencyProvider.register<FileSystem>(MockFileSystem())
         // conversation serializer throws exception, checks should throttle, not throttled, anonymous conversation is created
+        DefaultStateMachine.onEvent(SDKEvent.RegisterSDK)
+        DefaultStateMachine.onEvent(SDKEvent.ClientStarted)
         val conversationManager = createConversationManager(shouldThrowException = true)
         assertEquals(conversationManager.getConversation().device, mockDevice)
         val expectedMessage = "Cannot load existing conversation, conversation reset throttled"
@@ -210,12 +234,11 @@ internal fun createConversationManager(
         legacyConversationManagerProvider = object : Provider<LegacyConversationManager> {
             override fun get() = MockLegacyConversationManager()
         },
-        configuration = ApptentiveConfiguration("key", "signature"),
         isDebuggable
     )
 }
 
-private class MockConversationRepository(val throwException: Boolean = false) :
+class MockConversationRepository(val throwException: Boolean = false) :
     ConversationRepository {
     private var conversation: Conversation? = null
 
@@ -233,11 +256,11 @@ private class MockConversationRepository(val throwException: Boolean = false) :
         )
     }
 
-    override fun saveConversation(conversation: Conversation, roster: ConversationRoster) {
+    override fun saveConversation(conversation: Conversation) {
         this.conversation = conversation
     }
 
-    override fun loadConversation(conversationRoster: ConversationRoster): Conversation? = if (throwException) throw ConversationSerializationException("", null)
+    override fun loadConversation(): Conversation? = if (throwException) throw ConversationSerializationException("", null)
     else conversation
 
     override fun getCurrentAppRelease(): AppRelease = mockAppRelease.copy(
@@ -249,6 +272,9 @@ private class MockConversationRepository(val throwException: Boolean = false) :
     )
 
     override fun updateEncryption(encryption: Encryption) {
+    }
+
+    override fun updateConversationRoster(conversationRoster: ConversationRoster) {
     }
 
     override fun initializeRepositoryWithRoster(): ConversationRoster {

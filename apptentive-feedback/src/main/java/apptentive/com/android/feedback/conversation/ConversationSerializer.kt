@@ -26,15 +26,17 @@ import java.io.FileInputStream
 
 internal interface ConversationSerializer {
     @Throws(ConversationSerializationException::class)
-    fun loadConversation(conversationRoster: ConversationRoster): Conversation?
+    fun loadConversation(): Conversation?
 
     @Throws(ConversationSerializationException::class)
     fun initializeSerializer(): ConversationRoster
 
     @Throws(ConversationSerializationException::class)
-    fun saveConversation(conversation: Conversation, roster: ConversationRoster)
+    fun saveConversation(conversation: Conversation)
 
     fun setEncryption(encryption: Encryption)
+
+    fun setRoster(conversationRoster: ConversationRoster)
 }
 
 internal class DefaultConversationSerializer(
@@ -43,18 +45,20 @@ internal class DefaultConversationSerializer(
 
     private lateinit var encryption: Encryption
 
+    private lateinit var conversationRoster: ConversationRoster // TODO this should be conversation file Path instead of roster
+
     private lateinit var manifestFile: File
 
     // we keep track of the last seen engagement manifest expiry date and only update storage if it changes
     private var lastKnownManifestExpiry: TimeInterval = 0.0
 
-    override fun saveConversation(conversation: Conversation, roster: ConversationRoster) {
-        val rosterConversationFile = getConversationFileFromRoster(roster)
+    override fun saveConversation(conversation: Conversation) {
+        val rosterConversationFile = getConversationFileFromRoster(conversationRoster)
         if (rosterConversationFile == null) {
             Log.e(CONVERSATION, "No active conversation found, unable to save conversation")
             return
         }
-        saveRoster(roster)
+        saveRoster(conversationRoster)
         val start = System.currentTimeMillis()
         val atomicFile = AtomicFile(rosterConversationFile)
         val stream = atomicFile.startWrite()
@@ -93,14 +97,14 @@ internal class DefaultConversationSerializer(
     }
 
     @Throws(ConversationSerializationException::class)
-    override fun loadConversation(conversationRoster: ConversationRoster): Conversation? {
+    override fun loadConversation(): Conversation? {
         val conversationFile = loadConversationFile(conversationRoster)
         if (conversationFile?.exists() == true) {
             val conversation = readConversation(conversationFile)
 
             if (hasStoragePriorToMultiUserSupport()) {
                 // Transfer the entries to new conversation file
-                saveConversation(conversation, conversationRoster)
+                saveConversation(conversation)
                 // Delete old conversation.bin if exists
                 FileUtil.deleteFile(conversationFile.path)
             }
@@ -119,6 +123,10 @@ internal class DefaultConversationSerializer(
 
     override fun setEncryption(encryption: Encryption) {
         this.encryption = encryption
+    }
+
+    override fun setRoster(conversationRoster: ConversationRoster) {
+        this.conversationRoster = conversationRoster
     }
 
     internal fun saveRoster(conversationRoster: ConversationRoster) {

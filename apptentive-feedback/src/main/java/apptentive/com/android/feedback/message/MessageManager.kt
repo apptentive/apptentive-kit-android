@@ -10,7 +10,6 @@ import apptentive.com.android.core.Observable
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.UnreadMessageCallback
 import apptentive.com.android.feedback.backend.MessageCenterService
-import apptentive.com.android.feedback.conversation.ConversationRoster
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.lifecycle.LifecycleListener
 import apptentive.com.android.feedback.model.Configuration
@@ -45,7 +44,6 @@ class MessageManager(
     private val messageCenterService: MessageCenterService,
     private val serialExecutor: Executor,
     private val messageRepository: MessageRepository,
-    private var conversationRoster: ConversationRoster
 ) : LifecycleListener, ConversationListener {
 
     private val messagesFromStorage: List<Message> = messageRepository.getAllMessages()
@@ -76,7 +74,7 @@ class MessageManager(
     override fun onAppBackground() {
         Log.d(MESSAGE_CENTER, "App is in the background, stop polling")
         stopPolling()
-        messageRepository.saveMessages(conversationRoster)
+        messageRepository.saveMessages()
     }
 
     override fun onAppForeground() {
@@ -90,11 +88,6 @@ class MessageManager(
         configuration = conversation.configuration
         senderProfile = conversation.person
         profileSubject.value = senderProfile
-    }
-
-    override fun onConversationRosterChanged(conversationRoster: ConversationRoster) {
-        Log.d(MESSAGE_CENTER, "Conversation roster changed")
-        this.conversationRoster = conversationRoster
     }
 
     fun setCustomData(customData: Map<String, Any?>) {
@@ -135,7 +128,6 @@ class MessageManager(
                     message.messageStatus = Message.Status.Saved
                     message
                 },
-                conversationRoster
             )
             messagesSubject.value = messageRepository.getAllMessages()
             true
@@ -172,7 +164,7 @@ class MessageManager(
             customData = messageCustomData
         )
 
-        messageRepository.addOrUpdateMessages(listOf(message), conversationRoster)
+        messageRepository.addOrUpdateMessages(listOf(message))
         messagesSubject.value = messageRepository.getAllMessages()
 
         context.sendPayload(message.toMessagePayload())
@@ -190,7 +182,7 @@ class MessageManager(
 
     fun sendMessage(message: Message) {
         val context = DependencyProvider.of<EngagementContextFactory>().engagementContext()
-        messageRepository.addOrUpdateMessages(listOf(message), conversationRoster)
+        messageRepository.addOrUpdateMessages(listOf(message))
         messagesSubject.value = messageRepository.getAllMessages()
 
         context.sendPayload(message.toMessagePayload())
@@ -201,7 +193,7 @@ class MessageManager(
     }
 
     fun updateMessages(messages: List<Message>) {
-        messageRepository.addOrUpdateMessages(messages, conversationRoster)
+        messageRepository.addOrUpdateMessages(messages)
     }
 
     fun sendAttachment(uri: String, isHidden: Boolean? = null) {
@@ -274,7 +266,7 @@ class MessageManager(
 
     fun downloadAttachment(activity: Activity, message: Message, attachment: Message.Attachment) {
         val loadingAttachment = message.attachments?.onEach { if (it.id == attachment.id) it.isLoading = true }
-        messageRepository.addOrUpdateMessages(listOf(message.copy(attachments = loadingAttachment)), conversationRoster)
+        messageRepository.addOrUpdateMessages(listOf(message.copy(attachments = loadingAttachment)))
         messagesSubject.value = messageRepository.getAllMessages()
 
         messageCenterService.getAttachment(attachment.url.orEmpty()) { result ->
@@ -300,7 +292,7 @@ class MessageManager(
                 )
             }
 
-            messageRepository.addOrUpdateMessages(listOf(updatedMessage), conversationRoster)
+            messageRepository.addOrUpdateMessages(listOf(updatedMessage))
             messagesSubject.value = messageRepository.getAllMessages()
         }
     }
@@ -312,7 +304,7 @@ class MessageManager(
             // Fetch messages as soon as message center comes to foreground. Needed for migration
             fetchMessages()
         } else
-            messageRepository.saveMessages(conversationRoster)
+            messageRepository.saveMessages()
         isMessageCenterInForeground = isActive
         Log.d(MESSAGE_CENTER, "Message center foreground status $isActive")
         // Resets polling with the right polling interval
@@ -338,7 +330,7 @@ class MessageManager(
         }?.apply {
             messageStatus = if (isSuccess) Message.Status.Sent else Message.Status.Failed
         }?.also {
-            messageRepository.addOrUpdateMessages(listOf(it), conversationRoster)
+            messageRepository.addOrUpdateMessages(listOf(it))
             messagesSubject.value = messageRepository.getAllMessages()
         }
     }

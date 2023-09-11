@@ -3,6 +3,7 @@ package apptentive.com.android.feedback.message
 import apptentive.com.android.TestCase
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.feedback.backend.MessageCenterService
 import apptentive.com.android.feedback.conversation.ConversationRoster
 import apptentive.com.android.feedback.engagement.EngagementContext
@@ -46,7 +47,6 @@ class MessageManagerTest : TestCase() {
             MockMessageCenterService(),
             MockExecutor(),
             MockMessageRepository(),
-            ConversationRoster()
         )
         messageManager.onConversationChanged(testConversation)
     }
@@ -74,7 +74,6 @@ class MessageManagerTest : TestCase() {
             MockMessageCenterService(),
             MockExecutor(),
             MockMessageRepository(),
-            ConversationRoster()
         )
         messageManager.onAppForeground()
         Assert.assertTrue(messageManager.pollingScheduler.isPolling())
@@ -86,7 +85,6 @@ class MessageManagerTest : TestCase() {
             MockMessageCenterService(),
             MockExecutor(),
             MockMessageRepository(listOf()),
-            ConversationRoster()
         )
         messageManager.onAppForeground()
         Assert.assertFalse(messageManager.pollingScheduler.isPolling())
@@ -207,7 +205,7 @@ internal class MockExecutor : Executor {
 }
 
 internal class MockMessageRepository(private var messageList: List<Message> = testMessageList) : MessageRepository {
-    override fun addOrUpdateMessages(messages: List<Message>, roster: ConversationRoster) {
+    override fun addOrUpdateMessages(messages: List<Message>) {
         messageList = messages
     }
 
@@ -217,7 +215,10 @@ internal class MockMessageRepository(private var messageList: List<Message> = te
         return messageList
     }
 
-    override fun saveMessages(roster: ConversationRoster) {}
+    override fun saveMessages() {}
 
     override fun deleteMessage(nonce: String) {}
+
+    override fun updateEncryption(encryption: Encryption) {}
+    override fun updateConversationRoster(conversationRoster: ConversationRoster) {}
 }

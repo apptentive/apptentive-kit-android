@@ -45,29 +45,28 @@ class DefaultMessageSerializerTest : TestCase() {
 
     @Test
     fun testLoadingNonExistingMessages() {
-
         val serializer = DefaultMessageSerializer(
-//            messagesFile = createTempFile("messages.bin"),
             encryption = EncryptionFactory.getEncryption(
                 shouldEncryptStorage = false,
                 oldEncryptionSetting = NotEncrypted
-            )
+            ),
+            conversationRoster = ConversationRoster()
         )
-        val messages = serializer.loadMessages(ConversationRoster())
+        val messages = serializer.loadMessages()
         Truth.assertThat(messages).isEmpty()
     }
 
     @Test
     fun testSerialization() {
         val serializer = DefaultMessageSerializer(
-//            messagesFile = createTempFile("messages.bin"),
             encryption = EncryptionFactory.getEncryption(
                 shouldEncryptStorage = false,
                 oldEncryptionSetting = NotEncrypted,
-            )
+            ),
+            conversationRoster = ConversationRoster()
         )
-        serializer.saveMessages(convertToMessageEntry(testMessageList), ConversationRoster())
-        val actual = serializer.loadMessages(ConversationRoster())
+        serializer.saveMessages(convertToMessageEntry(testMessageList))
+        val actual = serializer.loadMessages()
         Assert.assertEquals(convertToMessageEntry(testMessageList), actual)
     }
 
@@ -78,15 +77,15 @@ class DefaultMessageSerializerTest : TestCase() {
         messagesFile.writeBytes(Random.nextBytes(1))
 
         val serializer = DefaultMessageSerializer(
-//            messagesFile = messagesFile,
             encryption = EncryptionFactory.getEncryption(
                 shouldEncryptStorage = false,
                 oldEncryptionSetting = NotEncrypted
-            )
+            ),
+            conversationRoster = ConversationRoster()
         )
 
         // Throws MessagesSerializerException
-        serializer.loadMessages(ConversationRoster())
+        serializer.loadMessages()
     }
 
     private fun createTempFile(name: String) = File(tempFolder.root, "${UUID.randomUUID()}-$name")

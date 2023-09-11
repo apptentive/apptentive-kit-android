@@ -7,6 +7,7 @@ import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.isInThePast
 import apptentive.com.android.core.toSeconds
+import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.backend.MessageCenterService
 import apptentive.com.android.feedback.conversation.ConversationRoster
@@ -191,7 +192,6 @@ class MessageCenterViewModelTest : TestCase() {
             MockMessageCenterService(),
             MockExecutor(),
             MockMessageRepository(),
-            ConversationRoster(),
         )
         DependencyProvider.register(MessageCenterModelProvider(messageCenterInteractionNoData))
         DependencyProvider.register(MessageManagerFactoryProvider(messageManager))
@@ -503,13 +503,17 @@ class MockExecutor : Executor {
 class MockMessageRepository : MessageRepository {
     override fun getLastReceivedMessageIDFromEntries(): String = ""
 
-    override fun addOrUpdateMessages(messages: List<Message>, conversationRoster: ConversationRoster) {}
+    override fun addOrUpdateMessages(messages: List<Message>) {}
 
     override fun getAllMessages(): List<Message> {
         return testMessageList
     }
 
-    override fun saveMessages(conversationRoster: ConversationRoster) {}
+    override fun saveMessages() {}
 
     override fun deleteMessage(nonce: String) {}
+
+    override fun updateEncryption(encryption: Encryption) {}
+
+    override fun updateConversationRoster(conversationRoster: ConversationRoster) {}
 }

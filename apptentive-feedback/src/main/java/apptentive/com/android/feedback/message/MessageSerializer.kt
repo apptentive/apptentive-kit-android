@@ -28,23 +28,27 @@ import java.io.FileInputStream
 
 internal interface MessageSerializer {
     @Throws(MessageSerializerException::class)
-    fun loadMessages(conversationRoster: ConversationRoster): List<DefaultMessageRepository.MessageEntry>
+    fun loadMessages(): List<DefaultMessageRepository.MessageEntry>
 
     @Throws(MessageSerializerException::class)
-    fun saveMessages(messages: List<DefaultMessageRepository.MessageEntry>, conversationRoster: ConversationRoster)
+    fun saveMessages(messages: List<DefaultMessageRepository.MessageEntry>)
 
     fun deleteMessageFile(messageFile: File)
+
+    fun updateEncryption(encryption: Encryption)
+
+    fun updateConversionRoster(conversationRoster: ConversationRoster)
 }
 
-internal class DefaultMessageSerializer(val encryption: Encryption) : MessageSerializer {
+internal class DefaultMessageSerializer(var encryption: Encryption, var conversationRoster: ConversationRoster) : MessageSerializer {
 
-    override fun loadMessages(conversationRoster: ConversationRoster): List<DefaultMessageRepository.MessageEntry> {
+    override fun loadMessages(): List<DefaultMessageRepository.MessageEntry> {
         val messagesFile = getMessageFileCreatedBeforeMultiUser() ?: getMessageFileFromRoster(conversationRoster)
         return if (messagesFile.exists()) {
             Log.d(MESSAGE_CENTER, "Loading messages from MessagesFile")
             val messageEntries = readMessageEntries(messagesFile)
             if (getMessageFileFromRoster(conversationRoster).length() == 0L) {
-                switchMessageCachingThroughRoster(messageEntries, conversationRoster)
+                switchMessageCachingThroughRoster(messageEntries)
             }
             messageEntries
         } else {
@@ -53,7 +57,7 @@ internal class DefaultMessageSerializer(val encryption: Encryption) : MessageSer
         }
     }
 
-    override fun saveMessages(messages: List<DefaultMessageRepository.MessageEntry>, conversationRoster: ConversationRoster) {
+    override fun saveMessages(messages: List<DefaultMessageRepository.MessageEntry>) {
         val messagesFile = getMessageFileFromRoster(conversationRoster)
         val start = System.currentTimeMillis()
         val atomicFile = AtomicFile(messagesFile)
@@ -80,14 +84,23 @@ internal class DefaultMessageSerializer(val encryption: Encryption) : MessageSer
         Log.w(LogTags.CRYPTOGRAPHY, "Message cache is deleted to support the new encryption setting")
     }
 
-    private fun switchMessageCachingThroughRoster(messageEntries: List<DefaultMessageRepository.MessageEntry>, conversationRoster: ConversationRoster) {
+    override fun updateEncryption(encryption: Encryption) {
+        this.encryption = encryption
+    }
+
+    override fun updateConversionRoster(conversationRoster: ConversationRoster) {
+        this.conversationRoster = conversationRoster
+    }
+
+    private fun switchMessageCachingThroughRoster(messageEntries: List<DefaultMessageRepository.MessageEntry>) {
         // Transfer the entries to new message file
-        saveMessages(messageEntries, conversationRoster)
+        saveMessages(messageEntries)
         // Delete old messages.bin if it exists
         getMessageFileCreatedBeforeMultiUser()?.let { oldMessagesFile ->
             FileUtil.deleteFile(oldMessagesFile.path)
         }
     }
+
     private fun getMessageFileFromRoster(roster: ConversationRoster): File {
         Log.d(MESSAGE_CENTER, "Setting message file from roster: $roster")
 

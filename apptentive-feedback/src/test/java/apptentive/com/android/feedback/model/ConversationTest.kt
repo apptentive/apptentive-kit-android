@@ -4,7 +4,6 @@ import apptentive.com.android.TestCase
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.encryption.EncryptionFactory
 import apptentive.com.android.encryption.NotEncrypted
-import apptentive.com.android.feedback.conversation.ConversationRoster
 import apptentive.com.android.feedback.conversation.DefaultConversationSerializer
 import apptentive.com.android.feedback.engagement.util.MockAndroidSharedPrefDataStore
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
@@ -95,12 +94,12 @@ class ConversationTest : TestCase() {
         val serializer = createSerializer()
 
         // should return no conversation before anything was saved
-        assertThat(serializer.loadConversation(ConversationRoster())).isNull()
+        assertThat(serializer.loadConversation()).isNull()
 
         // save conversation
-        serializer.saveConversation(expected, ConversationRoster())
+        serializer.saveConversation(expected)
 
-        val actual = serializer.loadConversation(ConversationRoster())
+        val actual = serializer.loadConversation()
         assertThat(expected).isEqualTo(actual)
     }
 
@@ -151,9 +150,9 @@ class ConversationTest : TestCase() {
         val serializer = createSerializer()
 
         // save conversation
-        serializer.saveConversation(expected, ConversationRoster())
+        serializer.saveConversation(expected)
 
-        val actual = serializer.loadConversation(ConversationRoster())
+        val actual = serializer.loadConversation()
         assertThat(expected).isEqualTo(actual)
     }
 

@@ -1,23 +1,19 @@
 package apptentive.com.android.feedback.conversation
 
-import android.os.Build
 import androidx.annotation.WorkerThread
 import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.Observable
 import apptentive.com.android.core.Provider
 import apptentive.com.android.core.isInThePast
-import apptentive.com.android.encryption.AESEncryption23
 import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.encryption.EncryptionKey
 import apptentive.com.android.encryption.KeyResolver23
 import apptentive.com.android.encryption.getKeyFromHexString
-import apptentive.com.android.feedback.ApptentiveConfiguration
 import apptentive.com.android.feedback.Constants
 import apptentive.com.android.feedback.LoginCallback
 import apptentive.com.android.feedback.LoginResult
 import apptentive.com.android.feedback.backend.ConversationService
-import apptentive.com.android.feedback.backend.LoginSessionResponse
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
@@ -31,6 +27,8 @@ import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.model.VersionHistory
 import apptentive.com.android.feedback.model.hasConversationToken
 import apptentive.com.android.feedback.platform.AndroidUtils.currentTimeSeconds
+import apptentive.com.android.feedback.platform.DefaultStateMachine
+import apptentive.com.android.feedback.platform.SDKEvent
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.ThrottleUtils
 import apptentive.com.android.feedback.utils.VersionCode
@@ -54,7 +52,6 @@ internal class ConversationManager(
     private val conversationRepository: ConversationRepository,
     private val conversationService: ConversationService,
     private val legacyConversationManagerProvider: Provider<LegacyConversationManager>,
-    private val configuration: ApptentiveConfiguration,
     private val isDebuggable: Boolean
 ) {
     private var isUsingLocalManifest: Boolean = false
@@ -65,10 +62,6 @@ internal class ConversationManager(
 
     var isSDKAppReleaseCheckDone = false
 
-    private val activeConversationRosterSubject: BehaviorSubject<ConversationRoster> =
-        BehaviorSubject(getConversationRoster())
-    val activeConversationRoster: Observable<ConversationRoster> get() = activeConversationRosterSubject
-
     init {
         val conversation = loadActiveConversation()
 
@@ -77,24 +70,11 @@ internal class ConversationManager(
             .putString(SDK_CORE_INFO, SDK_VERSION, Constants.SDK_VERSION)
 
         activeConversationSubject = BehaviorSubject(conversation)
-        updateConversationRoster()
     }
 
     fun onEncryptionSetupComplete() {
         activeConversationSubject.observe(::saveConversation)
         activeConversation.observe(::checkForSDKAppReleaseUpdates)
-    }
-
-    private fun getConversationRoster(): ConversationRoster {
-        val conversationRoster = conversationRepository.initializeRepositoryWithRoster()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-            conversationRoster.activeConversation?.state is ConversationState.LoggedIn
-        ) {
-            val encryptionKey =
-                (conversationRoster.activeConversation?.state as ConversationState.LoggedIn).encryptionKey
-            updateEncryption(AESEncryption23(encryptionKey))
-        }
-        return conversationRoster
     }
 
     /**
@@ -132,70 +112,23 @@ internal class ConversationManager(
                         KeyResolver23.getTransformation()
                     )
                     Log.v(CONVERSATION, "Login session successful, encryption key: $encryptionKey")
-                    moveActiveConversationToLoggedOutState(subject, encryptionKey)
+                    DefaultStateMachine.onEvent(SDKEvent.LoggedIn(subject, encryptionKey))
                     loginCallback?.onComplete(LoginResult.Success)
-                    conversationRepository.updateEncryption(AESEncryption23(encryptionKey))
                     // TODO Update Payload encryption
                 }
             }
         }
     }
 
-    private fun moveActiveConversationToLoggedOutState(subject: String, encryptionKey: EncryptionKey) {
-        val conversationRoster = activeConversationRoster.value
-        val activeConversationMetaData = conversationRoster.activeConversation
-        val loggedOut = conversationRoster.loggedOut.toMutableList()
-
-        if (activeConversationMetaData != null && activeConversationMetaData.state is ConversationState.LoggedIn) {
-            loggedOut.add(activeConversationMetaData)
-        }
-
-        if (activeConversationMetaData != null && activeConversationMetaData.state is ConversationState.Anonymous) {
-            activeConversationRosterSubject.value.activeConversation =
-                ConversationMetaData(
-                    ConversationState.LoggedIn(
-                        subject,
-                        encryptionKey
-                    ),
-                    activeConversationMetaData.path
-                )
-        }
-
-        loggedOut.firstOrNull {
-            it.state is ConversationState.LoggedOut &&
-                (it.state as ConversationState.LoggedOut).subject == subject
-        }?.let {
-            loggedOut.remove(it)
-            activeConversationRosterSubject.value.activeConversation =
-                ConversationMetaData(
-                    ConversationState.LoggedIn(
-                        subject,
-                        encryptionKey
-                    ),
-                    it.path
-                )
-        }
-
-        conversationRoster.loggedOut = loggedOut
-    }
-
     internal fun logoutSession() {
-        val activeConversationMetaData = activeConversationRoster.value.activeConversation
         val conversationId = activeConversation.value.conversationId
-        val loggedOut = activeConversationRoster.value.loggedOut.toMutableList()
-        activeConversationMetaData?.let {
-            val convertedMetaData = ConversationMetaData(
-                ConversationState.LoggedOut(
-                    conversationId ?: "",
-                    (it.state as ConversationState.LoggedIn).subject
-                ),
-                it.path
-            )
-            loggedOut.add(convertedMetaData)
+        if (conversationId == null) {
+            Log.e(CONVERSATION, "Cannot logout session, conversation id is null")
+            return
+        } else {
+            DefaultStateMachine.onEvent(SDKEvent.Logout(conversationId))
+            Log.v(CONVERSATION, "Logout session successful, logged out conversation")
         }
-        activeConversationRosterSubject.value.activeConversation = null
-        activeConversationRosterSubject.value.loggedOut = loggedOut
-        Log.v(CONVERSATION, "Logout session successful, logged out conversation: $loggedOut")
     }
 
     fun fetchConversationToken(callback: (result: Result<Unit>) -> Unit) {
@@ -218,10 +151,12 @@ internal class ConversationManager(
             when (it) {
                 is Result.Error -> {
                     Log.e(CONVERSATION, "Unable to fetch conversation token: ${it.error}")
+                    DefaultStateMachine.onEvent(SDKEvent.Error)
                     callback(it)
                 }
                 is Result.Success -> {
                     Log.v(CONVERSATION, "Conversation token fetched successfully")
+                    DefaultStateMachine.onEvent(SDKEvent.ConversationLoaded)
                     // update current conversation
                     val currentConversation = activeConversationSubject.value
                     activeConversationSubject.value = currentConversation.copy(
@@ -231,7 +166,6 @@ internal class ConversationManager(
                             id = it.data.personId
                         )
                     )
-                    updateConversationRoster()
 
                     // let the caller know fetching was successful
                     callback(Result.Success(Unit))
@@ -240,13 +174,7 @@ internal class ConversationManager(
         }
     }
 
-    fun loginSession(conversationId: String, jwtToken: String, callback: (result: Result<LoginSessionResponse>) -> Unit) {
-        conversationService.loginSession(conversationId, jwtToken, callback)
-    }
-
     fun getConversation() = activeConversation.value
-
-    fun getActiveConversationRoster() = activeConversationRoster.value
 
     fun updateEncryption(encryption: Encryption) {
         conversationRepository.updateEncryption(encryption)
@@ -255,6 +183,7 @@ internal class ConversationManager(
     @Throws(ConversationSerializationException::class)
     @WorkerThread
     private fun loadActiveConversation(): Conversation {
+        DefaultStateMachine.onEvent(SDKEvent.LoadingConversation)
         // load existing conversation
         val existingConversation = loadExistingConversation()
         if (existingConversation != null) {
@@ -270,29 +199,13 @@ internal class ConversationManager(
         }
 
         // no active conversations: create a new one
-        Log.i(CONVERSATION, "Creating 'anonymous' conversation...")
+//        Log.i(CONVERSATION, "Creating 'anonymous' conversation...")
         return createConversation()
     }
 
     internal fun createConversation(): Conversation {
+        DefaultStateMachine.onEvent(SDKEvent.PendingToken)
         return conversationRepository.createConversation()
-    }
-
-    private fun updateConversationRoster() {
-        // TODO This should be revisited after state machine is implemented
-        val conversationState = if (activeConversation.value.hasConversationToken) {
-            Log.d(CONVERSATION, "Conversation is anonymous, added to roster")
-            ConversationState.Anonymous
-        } else {
-            // anonymous pending
-            Log.d(CONVERSATION, "Conversation is anonymous pending, added to roster")
-            ConversationState.AnonymousPending
-        }
-
-        if (activeConversationRoster.value.activeConversation?.state == ConversationState.Undefined || activeConversationRoster.value.activeConversation?.state == ConversationState.AnonymousPending) {
-            activeConversationRoster.value.activeConversation =
-                ConversationMetaData(conversationState, activeConversationRoster.value.activeConversation?.path!!)
-        }
     }
 
     fun checkForSDKAppReleaseUpdates(conversation: Conversation) {
@@ -344,7 +257,7 @@ internal class ConversationManager(
     @WorkerThread
     private fun saveConversation(conversation: Conversation) {
         try {
-            conversationRepository.saveConversation(conversation, activeConversationRoster.value)
+            conversationRepository.saveConversation(conversation)
             Log.d(CONVERSATION, "Conversation saved successfully")
         } catch (exception: Exception) {
             Log.e(CONVERSATION, "Exception while saving conversation")
@@ -542,7 +455,7 @@ internal class ConversationManager(
 
     internal fun loadExistingConversation(): Conversation? {
         return try {
-            conversationRepository.loadConversation(activeConversationRoster.value)
+            conversationRepository.loadConversation()
         } catch (e: ConversationSerializationException) {
             // This fix is to recover the accounts that are stuck with serialization issue.
             // It is not recommended to reset the conversation state.

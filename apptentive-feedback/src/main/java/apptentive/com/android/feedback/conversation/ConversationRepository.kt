@@ -15,10 +15,10 @@ internal interface ConversationRepository {
     fun createConversation(): Conversation
 
     @Throws(ConversationSerializationException::class)
-    fun saveConversation(conversation: Conversation, conversationRoster: ConversationRoster)
+    fun saveConversation(conversation: Conversation)
 
     @Throws(ConversationSerializationException::class)
-    fun loadConversation(conversationRoster: ConversationRoster): Conversation?
+    fun loadConversation(): Conversation?
 
     @Throws(ConversationSerializationException::class)
     fun initializeRepositoryWithRoster(): ConversationRoster
@@ -28,6 +28,8 @@ internal interface ConversationRepository {
     fun getCurrentSdk(): SDK
 
     fun updateEncryption(encryption: Encryption)
+
+    fun updateConversationRoster(conversationRoster: ConversationRoster)
 }
 
 internal class DefaultConversationRepository(
@@ -52,11 +54,11 @@ internal class DefaultConversationRepository(
     }
 
     @Throws(ConversationSerializationException::class)
-    override fun saveConversation(conversation: Conversation, conversationRoster: ConversationRoster) =
-        conversationSerializer.saveConversation(conversation, conversationRoster)
+    override fun saveConversation(conversation: Conversation) =
+        conversationSerializer.saveConversation(conversation)
 
     @Throws(ConversationSerializationException::class)
-    override fun loadConversation(conversationRoster: ConversationRoster): Conversation? = conversationSerializer.loadConversation(conversationRoster)
+    override fun loadConversation(): Conversation? = conversationSerializer.loadConversation()
 
     override fun initializeRepositoryWithRoster(): ConversationRoster = conversationSerializer.initializeSerializer()
 
@@ -66,5 +68,9 @@ internal class DefaultConversationRepository(
 
     override fun updateEncryption(encryption: Encryption) {
         conversationSerializer.setEncryption(encryption)
+    }
+
+    override fun updateConversationRoster(conversationRoster: ConversationRoster) {
+        conversationSerializer.setRoster(conversationRoster)
     }
 }

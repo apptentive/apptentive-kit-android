@@ -55,6 +55,7 @@ import apptentive.com.android.feedback.message.DefaultMessageSerializer
 import apptentive.com.android.feedback.message.EVENT_MESSAGE_CENTER
 import apptentive.com.android.feedback.message.MessageManager
 import apptentive.com.android.feedback.message.MessageManagerFactoryProvider
+import apptentive.com.android.feedback.message.MessageRepository
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.CustomData
 import apptentive.com.android.feedback.model.IntegrationConfig
@@ -75,6 +76,8 @@ import apptentive.com.android.feedback.platform.DefaultEngagementDataFactory
 import apptentive.com.android.feedback.platform.DefaultEngagementManifestFactory
 import apptentive.com.android.feedback.platform.DefaultPersonFactory
 import apptentive.com.android.feedback.platform.DefaultSDKFactory
+import apptentive.com.android.feedback.platform.DefaultStateMachine
+import apptentive.com.android.feedback.platform.SDKEvent
 import apptentive.com.android.feedback.utils.FileStorageUtils
 import apptentive.com.android.feedback.utils.FileStorageUtils.getStoredMessagesFile
 import apptentive.com.android.feedback.utils.FileUtil
@@ -107,7 +110,7 @@ import java.io.InputStream
 class ApptentiveDefaultClient(
     internal val configuration: ApptentiveConfiguration,
     private val httpClient: HttpClient,
-    private val executors: Executors
+    private val executors: Executors,
 ) : ApptentiveClient {
     internal lateinit var conversationManager: ConversationManager
     internal lateinit var payloadSender: PayloadSender
@@ -122,33 +125,36 @@ class ApptentiveDefaultClient(
 
     //region Initialization
 
-    @WorkerThread
-    internal fun start(context: Context, registerCallback: ((result: RegisterResult) -> Unit)?) {
+    internal fun initialize(context: Context) {
+        // TODO DI register at SDK start and move it out of the ConversationManager constructor
+        // Consider moving other parameters out of the constructor as well
         interactionModules = loadInteractionModules()
         conversationService = createConversationService()
-//        (conversationService as DefaultConversationService).isAuthorized = true // TODO Set this on login
+        DependencyProvider.register(createConversationRepository(context))
+    }
+
+    @WorkerThread
+    internal fun start(context: Context, registerCallback: ((result: RegisterResult) -> Unit)?) {
+        DefaultStateMachine.onEvent(SDKEvent.ClientStarted)
         conversationManager = ConversationManager(
-            conversationRepository = createConversationRepository(context),
+            conversationRepository = DependencyProvider.of(),
             conversationService = conversationService,
             legacyConversationManagerProvider = object : Provider<LegacyConversationManager> {
                 override fun get() = DefaultLegacyConversationManager(context)
             },
-            configuration = this.configuration,
             isDebuggable = RuntimeUtils.getApplicationInfo(context).debuggable
         )
 
         finalizeEncryption()
 
-        val serialPayloadSender = SerialPayloadSender(
+        payloadSender = SerialPayloadSender(
             payloadQueue = PersistentPayloadQueue.create(context, encryption, clearPayloadCache),
             callback = ::onPayloadSendFinish
         )
         clearPayloadCache = false
 
-        payloadSender = serialPayloadSender
-
         getConversationToken(conversationService, registerCallback)
-        addObservers(serialPayloadSender, conversationService)
+        addObservers(payloadSender as SerialPayloadSender, conversationService)
 
         engage(Event.internal(InternalEvent.APP_LAUNCH.labelName))
     }
@@ -161,6 +167,7 @@ class ApptentiveDefaultClient(
         conversationManager.fetchConversationToken { result ->
             when (result) {
                 is Result.Error -> {
+                    DefaultStateMachine.onEvent(SDKEvent.Error)
                     when (val error = result.error) {
                         is UnexpectedResponseException -> {
                             val responseCode = error.statusCode
@@ -181,22 +188,24 @@ class ApptentiveDefaultClient(
                     if (activeConversation.conversationId != null && activeConversation.conversationToken != null) {
                         registerCallback?.invoke(RegisterResult.Success)
                     }
+                    val messageRepository = DefaultMessageRepository(
+                        messageSerializer = DefaultMessageSerializer(encryption, DefaultStateMachine.conversationRoster).apply {
+                            if (clearMessageCache) {
+                                val messageFile = getStoredMessagesFile(DefaultStateMachine.conversationRoster)
+                                messageFile?.let { deleteMessageFile(it) }
+                                clearMessageCache = false
+                            }
+                        },
+                    )
+
+                    DependencyProvider.register(messageRepository as MessageRepository)
+
                     messageManager = MessageManager(
                         activeConversation.conversationId,
                         activeConversation.conversationToken,
                         conversationService as MessageCenterService,
                         executors.state,
-                        DefaultMessageRepository(
-                            messageSerializer = DefaultMessageSerializer(encryption).apply {
-                                if (clearMessageCache) {
-                                    val messageFile = getStoredMessagesFile(conversationManager.activeConversationRoster.value)
-                                    messageFile?.let { deleteMessageFile(it) }
-                                    clearMessageCache = false
-                                }
-                            },
-                            conversationRoster = conversationManager.getActiveConversationRoster()
-                        ),
-                        conversationRoster = conversationManager.getActiveConversationRoster()
+                        DependencyProvider.of<MessageRepository>(),
                     )
                     messageManager?.let {
                         DependencyProvider.register(MessageManagerFactoryProvider(it))
@@ -220,15 +229,14 @@ class ApptentiveDefaultClient(
             activeConversationMetadata == null -> {
                 Log.v(CONVERSATION, "No active conversation meta data found")
                 // Check if the sub claim is present in the logged out list
-                val matchingMetaData = conversationManager.getActiveConversationRoster()
-                    .loggedOut.firstOrNull {
-                        if (it.state is ConversationState.LoggedOut) {
-                            val loggedOutState = it.state as ConversationState.LoggedOut
-                            loggedOutState.subject == subClaim
-                        } else {
-                            false
-                        }
+                val matchingMetaData = DefaultStateMachine.conversationRoster.loggedOut.firstOrNull {
+                    if (it.state is ConversationState.LoggedOut) {
+                        val loggedOutState = it.state as ConversationState.LoggedOut
+                        loggedOutState.subject == subClaim
+                    } else {
+                        false
                     }
+                }
                 if (matchingMetaData != null) {
                     if (matchingMetaData.state is ConversationState.LoggedOut) {
                         val conversationId = (matchingMetaData.state as ConversationState.LoggedOut).id
@@ -263,7 +271,7 @@ class ApptentiveDefaultClient(
     }
 
     private fun getActiveConversationMetaData(): ConversationMetaData? {
-        return conversationManager.getActiveConversationRoster().activeConversation
+        return DefaultStateMachine.conversationRoster.activeConversation
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -320,10 +328,6 @@ class ApptentiveDefaultClient(
                 val payload = AppReleaseAndSDKPayload.buildPayload(sdk = sdk, appRelease = appRelease)
                 payloadSender.sendPayload(payload)
             }
-        }
-
-        conversationManager.activeConversationRoster.observe {
-            messageManager?.onConversationRosterChanged(it)
         }
 
         executors.main.execute {
@@ -675,7 +679,7 @@ class ApptentiveDefaultClient(
     }
 
     private fun finalizeEncryption() {
-        val activeConversationState = conversationManager.activeConversationRoster.value.activeConversation?.state
+        val activeConversationState = DefaultStateMachine.conversationRoster.activeConversation?.state
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && activeConversationState is ConversationState.LoggedIn) {
             encryption = AESEncryption23(activeConversationState.encryptionKey)
         } else if ((configuration.shouldEncryptStorage && (encryption is EncryptionNoOp)) ||
