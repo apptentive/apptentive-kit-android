@@ -167,7 +167,7 @@ class MessageManager(
         messageRepository.addOrUpdateMessages(listOf(message))
         messagesSubject.value = messageRepository.getAllMessages()
 
-        context.sendPayload(message.toMessagePayload())
+        context.enqueuePayload(message.toMessagePayload())
         clearCustomData()
         if (!hasSentMessage) {
             hasSentMessage = true
@@ -185,7 +185,7 @@ class MessageManager(
         messageRepository.addOrUpdateMessages(listOf(message))
         messagesSubject.value = messageRepository.getAllMessages()
 
-        context.sendPayload(message.toMessagePayload())
+        context.enqueuePayload(message.toMessagePayload())
         if (!hasSentMessage) {
             hasSentMessage = true
             startPolling()
