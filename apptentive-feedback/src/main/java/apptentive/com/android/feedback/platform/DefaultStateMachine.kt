@@ -7,6 +7,7 @@ import apptentive.com.android.feedback.conversation.ConversationState
 import apptentive.com.android.feedback.utils.RosterUtils.initializeRoster
 import apptentive.com.android.feedback.utils.RosterUtils.updateRosterForLogin
 import apptentive.com.android.feedback.utils.RosterUtils.updateRosterForLogout
+import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.STATE_MACHINE
 
@@ -17,6 +18,7 @@ internal object DefaultStateMachine : StateMachine(SDKState.UNINITIALIZED) {
     val readyState = listOf(SDKState.READY, SDKState.ANONYMOUS, SDKState.LOGGED_IN)
     val loadingState = listOf(SDKState.UNINITIALIZED, SDKState.LOADING_APPTENTIVE_CLIENT_DEPENDENCIES, SDKState.LOADING_CONVERSATION_MANAGER_DEPENDENCIES, SDKState.LOADING_CONVERSATION, SDKState.PENDING_TOKEN)
     val errorState = listOf(SDKState.ERROR)
+    var conversationCredentials: ConversationCredentials? = null
 
     init {
         onState(SDKState.UNINITIALIZED) {
@@ -44,7 +46,8 @@ internal object DefaultStateMachine : StateMachine(SDKState.UNINITIALIZED) {
             initState {
                 Log.d(STATE_MACHINE, "LOADING_CONVERSATION")
             }
-            transition(SDKEvent.ConversationLoaded.name, SDKState.READY)
+            transition(SDKEvent.ConversationLoaded.name, SDKState.ANONYMOUS)
+            transition(SDKEvent.LoggedIn.name, SDKState.LOGGED_IN)
             transition(SDKEvent.PendingToken.name, SDKState.PENDING_TOKEN)
             transition(SDKEvent.Error.name, SDKState.ERROR)
         }
@@ -57,21 +60,16 @@ internal object DefaultStateMachine : StateMachine(SDKState.UNINITIALIZED) {
             transition(SDKEvent.ConversationLoaded.name, SDKState.ANONYMOUS)
             transition(SDKEvent.Error.name, SDKState.ERROR)
         }
-        onState(SDKState.READY) {
-            initState {
-                when (conversationRoster.activeConversation?.state) {
-                    is ConversationState.Anonymous -> transition(SDKEvent.Ready.name, SDKState.ANONYMOUS)
-                    is ConversationState.LoggedIn -> transition(SDKEvent.Ready.name, SDKState.LOGGED_IN)
-                    is ConversationState.LoggedOut -> transition(SDKEvent.Ready.name, SDKState.LOGGED_OUT)
-                    else -> transition(SDKEvent.Ready.name, SDKState.ERROR)
-                }
-                Log.d(STATE_MACHINE, "READY")
-            }
-        }
         onState(SDKState.ANONYMOUS) {
             initState {
                 conversationRoster.activeConversation =
                     conversationRoster.activeConversation?.copy(state = ConversationState.Anonymous)
+                if (it is SDKEvent.ConversationLoaded) {
+                    conversationCredentials = ConversationCredentials(
+                        conversationId = it.conversationId,
+                        conversationToken = it.conversationToken
+                    )
+                }
                 Log.d(STATE_MACHINE, "ANONYMOUS")
             }
             transition(SDKEvent.LoggedIn.name, SDKState.LOGGED_IN)
@@ -82,6 +80,10 @@ internal object DefaultStateMachine : StateMachine(SDKState.UNINITIALIZED) {
                 Log.d(STATE_MACHINE, "LOGGED_IN")
                 if (it is SDKEvent.LoggedIn) {
                     updateRosterForLogin(it.subject, it.encryption)
+//                    conversationCredentials = ConversationCredentials(
+//                        conversationId = it.conversationId,
+//                        conversationToken = it.conversationToken
+//                    )
                 }
             }
             transition(SDKEvent.Logout.name, SDKState.LOGGED_OUT)
@@ -105,6 +107,7 @@ internal object DefaultStateMachine : StateMachine(SDKState.UNINITIALIZED) {
     }
 }
 
+@InternalUseOnly
 enum class SDKState {
     // SDK is uninitialized. register is not called
     UNINITIALIZED,
@@ -133,7 +136,7 @@ enum class SDKState {
     ERROR
 }
 
-sealed class SDKEvent {
+internal sealed class SDKEvent {
     // register process started
     object RegisterSDK : SDKEvent()
     // starting apptentive client
@@ -143,9 +146,14 @@ sealed class SDKEvent {
     // conversation token fetch request is sent
     object PendingToken : SDKEvent()
     // conversation is loaded
-    object ConversationLoaded : SDKEvent()
-    // all the dependencies are loaded
-    object Ready : SDKEvent()
+    data class ConversationLoaded(
+        val conversationId: String,
+        val conversationToken: String
+    ) : SDKEvent() {
+        companion object {
+            const val name = "ConversationLoaded"
+        }
+    }
     // log out completed
     data class Logout(val conversationId: String) : SDKEvent() {
         companion object {
@@ -153,7 +161,10 @@ sealed class SDKEvent {
         }
     }
     // logged in completed
-    data class LoggedIn(val subject: String, val encryption: EncryptionKey) : SDKEvent() {
+    data class LoggedIn(
+        val subject: String,
+        val encryption: EncryptionKey
+    ) : SDKEvent() {
         companion object {
             const val name = "LoggedIn"
         }
@@ -163,6 +174,8 @@ sealed class SDKEvent {
 
     val name = this::class.simpleName ?: ""
 }
+
+data class ConversationCredentials(val conversationId: String, val conversationToken: String)
 
 internal fun DefaultStateMachine.isSDKReady() = readyState.contains(state)
 internal fun DefaultStateMachine.isSDKLoading() = loadingState.contains(state)

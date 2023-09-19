@@ -6,7 +6,7 @@ internal interface LoginSessionService {
     fun loginSession(
         conversationId: String,
         jwtToken: String,
-        callback: (Result<LoginSessionResponse>) -> Unit
+        callback: (Result<ConversationCredentials>) -> Unit
     )
 }
 

@@ -590,7 +590,9 @@ internal object DefaultSerializers {
     val conversationRosterSerializer: TypeSerializer<ConversationRoster> by lazy {
         object : TypeSerializer<ConversationRoster> {
             override fun encode(encoder: Encoder, value: ConversationRoster) {
-                conversationMetadataSerializer.encode(encoder, value.activeConversation!!)
+                value.activeConversation?.let {
+                    conversationMetadataSerializer.encode(encoder, it)
+                }
                 encoder.encodeList(value.loggedOut) {
                     conversationMetadataSerializer.encode(encoder, it)
                 }

@@ -77,7 +77,7 @@ class DefaultStateMachineTest : TestCase() {
         DefaultStateMachine.onEvent(SDKEvent.RegisterSDK)
         DefaultStateMachine.onEvent(SDKEvent.ClientStarted)
         DefaultStateMachine.onEvent(SDKEvent.LoadingConversation)
-        DefaultStateMachine.onEvent(SDKEvent.ConversationLoaded)
+        DefaultStateMachine.onEvent(SDKEvent.ConversationLoaded("", ""))
         assertEquals(DefaultStateMachine.state, SDKState.READY)
     }
 
@@ -100,7 +100,7 @@ class DefaultStateMachineTest : TestCase() {
         DefaultStateMachine.onEvent(SDKEvent.ClientStarted)
         DefaultStateMachine.onEvent(SDKEvent.LoadingConversation)
         DefaultStateMachine.onEvent(SDKEvent.PendingToken)
-        DefaultStateMachine.onEvent(SDKEvent.ConversationLoaded)
+        DefaultStateMachine.onEvent(SDKEvent.ConversationLoaded("", ""))
         assertEquals(DefaultStateMachine.state, SDKState.ANONYMOUS)
         DefaultStateMachine.onEvent(SDKEvent.LoggedIn("test", EncryptionKey()))
         assertEquals(DefaultStateMachine.state, SDKState.LOGGED_IN)
@@ -114,7 +114,7 @@ class DefaultStateMachineTest : TestCase() {
         DefaultStateMachine.onEvent(SDKEvent.ClientStarted)
         DefaultStateMachine.onEvent(SDKEvent.LoadingConversation)
         DefaultStateMachine.onEvent(SDKEvent.PendingToken)
-        DefaultStateMachine.onEvent(SDKEvent.ConversationLoaded)
+        DefaultStateMachine.onEvent(SDKEvent.ConversationLoaded("", ""))
         assertEquals(DefaultStateMachine.state, SDKState.ANONYMOUS)
         DefaultStateMachine.onEvent(SDKEvent.LoggedIn("test", EncryptionKey()))
         assertEquals(DefaultStateMachine.state, SDKState.LOGGED_IN)

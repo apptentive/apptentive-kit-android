@@ -30,6 +30,8 @@ internal interface ConversationRepository {
     fun updateEncryption(encryption: Encryption)
 
     fun updateConversationRoster(conversationRoster: ConversationRoster)
+
+    fun saveRoster(conversationRoster: ConversationRoster)
 }
 
 internal class DefaultConversationRepository(
@@ -72,5 +74,9 @@ internal class DefaultConversationRepository(
 
     override fun updateConversationRoster(conversationRoster: ConversationRoster) {
         conversationSerializer.setRoster(conversationRoster)
+    }
+
+    override fun saveRoster(conversationRoster: ConversationRoster) {
+        conversationSerializer.saveRoster(conversationRoster)
     }
 }

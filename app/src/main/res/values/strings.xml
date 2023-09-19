@@ -79,6 +79,7 @@
     <string name="deep_link_successful">Deep Link Successful</string>
     <string name="login">LOGIN</string>
     <string name="logout">LOGOUT</string>
+    <string name="login2">LOGIN_2</string>
 
     <plurals name="unread_messages">
         <item quantity="one">%d unread message</item>

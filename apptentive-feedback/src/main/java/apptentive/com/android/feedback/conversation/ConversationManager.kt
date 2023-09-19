@@ -1,5 +1,7 @@
 package apptentive.com.android.feedback.conversation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.annotation.WorkerThread
 import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.DependencyProvider
@@ -11,7 +13,6 @@ import apptentive.com.android.encryption.EncryptionKey
 import apptentive.com.android.encryption.KeyResolver23
 import apptentive.com.android.encryption.getKeyFromHexString
 import apptentive.com.android.feedback.Constants
-import apptentive.com.android.feedback.LoginCallback
 import apptentive.com.android.feedback.LoginResult
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.engagement.Event
@@ -25,10 +26,10 @@ import apptentive.com.android.feedback.model.EngagementManifest
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.model.VersionHistory
-import apptentive.com.android.feedback.model.hasConversationToken
 import apptentive.com.android.feedback.platform.AndroidUtils.currentTimeSeconds
 import apptentive.com.android.feedback.platform.DefaultStateMachine
 import apptentive.com.android.feedback.platform.SDKEvent
+import apptentive.com.android.feedback.platform.SDKState
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.ThrottleUtils
 import apptentive.com.android.feedback.utils.VersionCode
@@ -77,6 +78,64 @@ internal class ConversationManager(
         activeConversation.observe(::checkForSDKAppReleaseUpdates)
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
+    internal fun createConversationAndLogin(jwtToken: String, subject: String, loginCallback: ((result: LoginResult) -> Unit)? = null) {
+        val conversation = createConversation()
+        conversationService.fetchLoginConversation(
+            conversation.device,
+            conversation.sdk,
+            conversation.appRelease,
+            conversation.person,
+            jwtToken
+        ) {
+            when (it) {
+                is Result.Error -> {
+                    when (val error = it.error) {
+                        is UnexpectedResponseException -> {
+                            val responseCode = error.statusCode
+                            val message = error.errorMessage
+                            loginCallback?.invoke(LoginResult.Failure(message ?: "Failed to login", responseCode))
+                        }
+                        else -> loginCallback?.invoke(LoginResult.Exception(it.error))
+                    }
+                }
+
+                is Result.Success -> {
+                    tryFetchEngagementManifest()
+                    tryFetchAppConfiguration()
+                    val encryptionKey = EncryptionKey(
+                        it.data.encryptionKey.getKeyFromHexString(),
+                        KeyResolver23.getTransformation()
+                    )
+
+                    activeConversationSubject.value = conversation.copy(
+                        conversationToken = it.data.token,
+                        conversationId = it.data.id,
+                        person = conversation.person.copy(
+                            id = it.data.personId
+                        )
+                    )
+                    Log.v(
+                        CONVERSATION,
+                        "Login session successful, " +
+                            "encryption key: $encryptionKey, " +
+                            "conversationId: ${it.data.id}, " +
+                            "token: ${it.data.token}, " +
+                            "jwtToken: $jwtToken"
+                    )
+                    DefaultStateMachine.onEvent(
+                        SDKEvent.LoggedIn(
+                            subject,
+                            encryptionKey
+                        )
+                    )
+                    loginCallback?.invoke(LoginResult.Success)
+                    // TODO Update Payload encryption
+                }
+            }
+        }
+    }
+
     /**
      * Starts or retrieves a logged in conversation
      *
@@ -87,11 +146,12 @@ internal class ConversationManager(
      * @param conversationId - The conversation ID retrieved from the roster
      * @param jwtToken - The customer provided JWT token
      */
+    @RequiresApi(Build.VERSION_CODES.M)
     internal fun loginSession(
         conversationId: String,
         jwtToken: String,
         subject: String,
-        loginCallback: LoginCallback? = null
+        loginCallback: ((result: LoginResult) -> Unit)? = null
     ) {
         conversationService.loginSession(conversationId, jwtToken) { result ->
             when (result) {
@@ -100,21 +160,30 @@ internal class ConversationManager(
                         is UnexpectedResponseException -> {
                             val responseCode = error.statusCode
                             val message = error.errorMessage
-                            loginCallback?.onComplete(LoginResult.Failure(message ?: "Failed to login", responseCode))
+                            loginCallback?.invoke(LoginResult.Failure(message ?: "Failed to login", responseCode))
                         }
-                        else -> loginCallback?.onComplete(LoginResult.Exception(result.error))
+                        else -> loginCallback?.invoke(LoginResult.Exception(result.error))
                     }
                 }
 
                 is Result.Success -> {
-                    val encryptionKey = EncryptionKey(
-                        result.data.encryptionKey.getKeyFromHexString(),
-                        KeyResolver23.getTransformation()
+                    Log.v(CONVERSATION, "Login session successful, encryption key: ${result.data.encryptionKey.getKeyFromHexString()}")
+                    tryFetchEngagementManifest()
+                    tryFetchAppConfiguration()
+                    val previousState = DefaultStateMachine.state
+                    DefaultStateMachine.onEvent(
+                        SDKEvent.LoggedIn(
+                            subject,
+                            EncryptionKey(
+                                result.data.encryptionKey.getKeyFromHexString(),
+                                KeyResolver23.getTransformation()
+                            )
+                        )
                     )
-                    Log.v(CONVERSATION, "Login session successful, encryption key: $encryptionKey")
-                    DefaultStateMachine.onEvent(SDKEvent.LoggedIn(subject, encryptionKey))
-                    loginCallback?.onComplete(LoginResult.Success)
-                    // TODO Update Payload encryption
+                    if (previousState == SDKState.LOGGED_OUT) {
+                        loadExistingConversation() // Don't re-load conversation that was upgraded from anonymous to logged in
+                    }
+                    loginCallback?.invoke(LoginResult.Success)
                 }
             }
         }
@@ -127,16 +196,51 @@ internal class ConversationManager(
             return
         } else {
             DefaultStateMachine.onEvent(SDKEvent.Logout(conversationId))
+            setManifestExpired()
             Log.v(CONVERSATION, "Logout session successful, logged out conversation")
         }
     }
 
+    private fun setManifestExpired() {
+        val conversation = activeConversationSubject.value
+        activeConversationSubject.value = conversation.copy(
+            engagementManifest = conversation.engagementManifest.copy(
+                expiry = 0.0 // set to 0 to force a fetch
+            )
+        )
+    }
+
     fun fetchConversationToken(callback: (result: Result<Unit>) -> Unit) {
         val conversation = activeConversation.value
-
-        // if we have a conversation token - we're good
-        if (conversation.hasConversationToken) {
+        val conversationToken = conversation.conversationToken
+        val conversationId = conversation.conversationId
+        if (conversationToken != null && conversationId != null) {
             Log.v(CONVERSATION, "Conversation token already exists")
+            when (DefaultStateMachine.conversationRoster.activeConversation?.state) {
+                is ConversationState.LoggedIn -> {
+                    Log.v(CONVERSATION, "Identified as logged in conversation")
+                    val loggedIn = DefaultStateMachine.conversationRoster.activeConversation?.state as ConversationState.LoggedIn
+                    DefaultStateMachine.onEvent(
+                        SDKEvent.LoggedIn(
+                            loggedIn.subject,
+                            loggedIn.encryptionKey,
+                        )
+                    )
+                }
+                is ConversationState.Anonymous -> {
+                    Log.v(CONVERSATION, "Identified as anonymous conversation")
+                    DefaultStateMachine.onEvent(
+                        SDKEvent.ConversationLoaded(
+                            conversation.conversationId,
+                            conversation.conversationToken
+                        )
+                    )
+                }
+                else -> {
+                    Log.v(CONVERSATION, "Conversation token already exists, but not logged in")
+                    DefaultStateMachine.onEvent(SDKEvent.Error)
+                }
+            }
             callback(Result.Success(Unit))
             return
         }
@@ -156,7 +260,7 @@ internal class ConversationManager(
                 }
                 is Result.Success -> {
                     Log.v(CONVERSATION, "Conversation token fetched successfully")
-                    DefaultStateMachine.onEvent(SDKEvent.ConversationLoaded)
+                    DefaultStateMachine.onEvent(SDKEvent.ConversationLoaded(it.data.id, it.data.token))
                     // update current conversation
                     val currentConversation = activeConversationSubject.value
                     activeConversationSubject.value = currentConversation.copy(
@@ -287,27 +391,7 @@ internal class ConversationManager(
             val token = conversation.conversationToken
             val id = conversation.conversationId
             if (token != null && id != null) {
-                conversationService.fetchEngagementManifest(
-                    conversationToken = token,
-                    conversationId = id
-                ) {
-                    when (it) {
-                        is Result.Success -> {
-                            Log.d(CONVERSATION, "Engagement manifest successfully fetched")
-                            Log.v(ENGAGEMENT_MANIFEST, it.data.toString())
-                            activeConversationSubject.value = activeConversationSubject.value.copy(
-                                engagementManifest = it.data
-                            )
-                        }
-                        is Result.Error -> {
-                            Log.e(
-                                CONVERSATION,
-                                "Error while fetching engagement manifest",
-                                it.error
-                            )
-                        }
-                    }
-                }
+                fetchEngagementManifest(id, token)
             } else {
                 Log.d(
                     CONVERSATION,
@@ -317,6 +401,31 @@ internal class ConversationManager(
             }
         } else {
             Log.d(CONVERSATION, "Engagement manifest up to date")
+        }
+    }
+
+    private fun fetchEngagementManifest(conversationId: String, conversationToken: String) {
+        conversationService.fetchEngagementManifest(
+            conversationToken = conversationToken,
+            conversationId = conversationId
+        ) {
+            when (it) {
+                is Result.Success -> {
+                    Log.d(CONVERSATION, "Engagement manifest successfully fetched")
+                    Log.v(ENGAGEMENT_MANIFEST, it.data.toString())
+                    activeConversationSubject.value = activeConversationSubject.value.copy(
+                        engagementManifest = it.data
+                    )
+                }
+
+                is Result.Error -> {
+                    Log.e(
+                        CONVERSATION,
+                        "Error while fetching engagement manifest",
+                        it.error
+                    )
+                }
+            }
         }
     }
 

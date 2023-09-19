@@ -57,7 +57,6 @@ internal object RosterUtils {
     }
 
     fun updateRosterForLogin(subject: String, encryptionKey: EncryptionKey) {
-        if (AndroidSDKVersion.getSDKVersion() < Build.VERSION_CODES.M) return
         val conversationRoster = DefaultStateMachine.conversationRoster
         val loggedOut = conversationRoster.loggedOut.toMutableList()
         val loggedInConversation = ConversationMetaData(ConversationState.LoggedIn(subject, encryptionKey), "")
@@ -80,7 +79,9 @@ internal object RosterUtils {
         val encryption = AESEncryption23(encryptionKey)
         conversationRoster.loggedOut = loggedOut
         DefaultStateMachine.encryption = encryption
+        DefaultStateMachine.conversationRoster = conversationRoster
         updateRepositories(conversationRoster, encryption)
+        conversationRepository.saveRoster(conversationRoster)
     }
 
     private fun removeFromLoggedOut(loggedOut: MutableList<ConversationMetaData>, subject: String): ConversationMetaData? {

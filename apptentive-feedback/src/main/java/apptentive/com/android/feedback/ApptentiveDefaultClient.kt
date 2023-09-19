@@ -81,7 +81,7 @@ import apptentive.com.android.feedback.platform.SDKEvent
 import apptentive.com.android.feedback.utils.FileStorageUtils
 import apptentive.com.android.feedback.utils.FileStorageUtils.getStoredMessagesFile
 import apptentive.com.android.feedback.utils.FileUtil
-import apptentive.com.android.feedback.utils.JwtResult
+import apptentive.com.android.feedback.utils.JwtString
 import apptentive.com.android.feedback.utils.JwtUtils
 import apptentive.com.android.feedback.utils.RuntimeUtils
 import apptentive.com.android.network.HttpClient
@@ -201,8 +201,6 @@ class ApptentiveDefaultClient(
                     DependencyProvider.register(messageRepository as MessageRepository)
 
                     messageManager = MessageManager(
-                        activeConversation.conversationId,
-                        activeConversation.conversationToken,
                         conversationService as MessageCenterService,
                         executors.state,
                         DependencyProvider.of<MessageRepository>(),
@@ -216,58 +214,46 @@ class ApptentiveDefaultClient(
         }
     }
 
-    override fun login(jwtToken: String, callback: LoginCallback?): LoginResult {
-        // GET conversation ID from active conversation
-        val subClaim = if (JwtUtils.extractSub(jwtToken) is JwtResult.Success) {
-            (JwtUtils.extractSub(jwtToken) as JwtResult.Success).sub
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun login(jwtToken: JwtString, callback: ((result: LoginResult) -> Unit)?) {
+        val subClaim = JwtUtils.extractSub(jwtToken)
+
+        if (subClaim == null) {
+            callback?.invoke(LoginResult.Error("Invalid JWT token"))
         } else {
-            return LoginResult.Error("Failed to extract sub claim from JWT token")
-        }
-        val activeConversationMetadata = getActiveConversationMetaData()
+            val activeConversationMetaData = getActiveConversationMetaData()
+                ?: return handleNoActiveConversation(subClaim, jwtToken, callback)
 
-        when {
-            activeConversationMetadata == null -> {
-                Log.v(CONVERSATION, "No active conversation meta data found")
-                // Check if the sub claim is present in the logged out list
-                val matchingMetaData = DefaultStateMachine.conversationRoster.loggedOut.firstOrNull {
-                    if (it.state is ConversationState.LoggedOut) {
-                        val loggedOutState = it.state as ConversationState.LoggedOut
-                        loggedOutState.subject == subClaim
-                    } else {
-                        false
-                    }
+            when (val currentState = activeConversationMetaData.state) {
+                is ConversationState.Anonymous -> {
+                    Log.v(CONVERSATION, "Active conversation is anonymous")
+                    loginAnonymousConversation(jwtToken, subClaim, callback)
                 }
-                if (matchingMetaData != null) {
-                    if (matchingMetaData.state is ConversationState.LoggedOut) {
-                        val conversationId = (matchingMetaData.state as ConversationState.LoggedOut).id
-                        Log.v(CONVERSATION, "Found matching conversation ID in logged out list")
-                        conversationManager.loginSession(conversationId, jwtToken, subClaim)
-                    }
-                } else {
-                    conversationManager.createConversation()
-                    getConversationToken(conversationService, null)
-                    // TODO listen to a success callback from getConversationToken and call loginSession
-                    // TODO Alternatively, use /conversations end point like in legacy
-                    loginWithActiveConversationId(jwtToken, subClaim)
+                is ConversationState.LoggedIn -> {
+                    Log.v(CONVERSATION, "Already logged in. Logout before calling login")
+                    callback?.invoke(LoginResult.Error("Already logged in. Logout before calling login"))
+                }
+                else -> {
+                    Log.v(CONVERSATION, "Cannot login while SDK is in $currentState")
+                    callback?.invoke(LoginResult.Error("Cannot login while SDK is in $currentState"))
                 }
             }
-
-            activeConversationMetadata.state is ConversationState.Anonymous -> {
-                Log.v(CONVERSATION, "Active conversation is anonymous")
-                loginWithActiveConversationId(jwtToken, subClaim)
-            }
-
-            activeConversationMetadata.state is ConversationState.LoggedIn -> {
-                // Check if the sub claim matches the logged in user
-                Log.v(CONVERSATION, "Already logged in. Logout before calling login")
-                LoginResult.Error("Already logged in. Logout before calling login")
-            }
-
-            else -> {
-                LoginResult.Error("Cannot login while SDK is in ${activeConversationMetadata.state}")
-            }
         }
-        return LoginResult.Success
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun handleNoActiveConversation(subClaim: JwtString, jwtToken: String, callback: ((result: LoginResult) -> Unit)?) {
+        val matchingMetaData = DefaultStateMachine.conversationRoster.loggedOut.firstOrNull {
+            it.state is ConversationState.LoggedOut && (it.state as ConversationState.LoggedOut).subject == subClaim
+        }
+
+        if (matchingMetaData != null && matchingMetaData.state is ConversationState.LoggedOut) {
+            val conversationId = (matchingMetaData.state as ConversationState.LoggedOut).id
+            Log.v(CONVERSATION, "Found matching conversation ID in logged out list")
+            conversationManager.loginSession(conversationId, jwtToken, subClaim)
+        } else {
+            conversationManager.createConversationAndLogin(jwtToken, subClaim, callback)
+        }
     }
 
     private fun getActiveConversationMetaData(): ConversationMetaData? {
@@ -275,7 +261,7 @@ class ApptentiveDefaultClient(
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    private fun loginWithActiveConversationId(jwtToken: String, subject: String, loginCallback: LoginCallback? = null) {
+    private fun loginAnonymousConversation(jwtToken: JwtString, subject: String, loginCallback: ((result: LoginResult) -> Unit)? = null) {
         val conversationId = conversationManager.getConversation().conversationId
         conversationId?.let {
             conversationManager.loginSession(it, jwtToken, subject, loginCallback)
@@ -421,7 +407,7 @@ class ApptentiveDefaultClient(
     }
 
     override fun canShowInteraction(event: Event): Boolean {
-        return if (this::interactionDataProvider.isInitialized) { // Check if lateinit value is set
+        return if (this::interactionDataProvider.isInitialized) {
             interactionDataProvider.getInteractionData(event) != null
         } else false
     }
@@ -484,7 +470,7 @@ class ApptentiveDefaultClient(
     }
 
     override fun canShowMessageCenter(): Boolean {
-        return if (this::interactionDataProvider.isInitialized) { // Check if lateinit value is set
+        return if (this::interactionDataProvider.isInitialized) {
             interactionDataProvider.getInteractionData(Event.internal(EVENT_MESSAGE_CENTER)) != null
         } else false
     }
