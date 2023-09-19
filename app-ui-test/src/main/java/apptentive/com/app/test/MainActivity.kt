@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
                 }
             },
             payloadSender = object : PayloadSender {
-                override fun sendPayload(payload: Payload) {
+                override fun enqueuePayload(payload: Payload) {
                 }
             },
             executors = Executors(ImmediateExecutor, ImmediateExecutor),
