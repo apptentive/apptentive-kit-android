@@ -64,6 +64,12 @@ internal object DefaultStateMachine : StateMachine(SDKState.UNINITIALIZED) {
             initState {
                 conversationRoster.activeConversation =
                     conversationRoster.activeConversation?.copy(state = ConversationState.Anonymous)
+                if (it is SDKEvent.ConversationLoaded) {
+                    conversationCredentials = ConversationCredentials(
+                        conversationId = it.conversationId,
+                        conversationToken = it.conversationToken
+                    )
+                }
                 Log.d(STATE_MACHINE, "ANONYMOUS")
             }
             transition(SDKEvent.LoggedIn.name, SDKState.LOGGED_IN)
@@ -74,6 +80,10 @@ internal object DefaultStateMachine : StateMachine(SDKState.UNINITIALIZED) {
                 Log.d(STATE_MACHINE, "LOGGED_IN")
                 if (it is SDKEvent.LoggedIn) {
                     updateRosterForLogin(it.subject, it.encryption)
+//                    conversationCredentials = ConversationCredentials(
+//                        conversationId = it.conversationId,
+//                        conversationToken = it.conversationToken
+//                    )
                 }
             }
             transition(SDKEvent.Logout.name, SDKState.LOGGED_OUT)

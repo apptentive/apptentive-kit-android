@@ -266,7 +266,7 @@ internal class ConversationManager(
                 }
                 is Result.Success -> {
                     Log.v(CONVERSATION, "Conversation token fetched successfully")
-                    DefaultStateMachine.onEvent(SDKEvent.ConversationLoaded)
+                    DefaultStateMachine.onEvent(SDKEvent.ConversationLoaded(it.data.id, it.data.token))
                     // update current conversation
                     val currentConversation = activeConversationSubject.value
                     activeConversationSubject.value = currentConversation.copy(

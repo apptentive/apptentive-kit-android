@@ -41,8 +41,6 @@ import org.junit.Test
 
 class ApptentiveDefaultClientTest : TestCase() {
     private var messageManager = MessageManager(
-        "1234",
-        "token",
         MockMessageCenterService(),
         MockExecutor(),
         MockMessageRepository(),
