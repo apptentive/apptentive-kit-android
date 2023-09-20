@@ -42,8 +42,6 @@ class MessageManagerTest : TestCase() {
         }
         DependencyProvider.register(engagementContextFactory as EngagementContextFactory)
         messageManager = MessageManager(
-            "1234",
-            "token",
             MockMessageCenterService(),
             MockExecutor(),
             MockMessageRepository(),
@@ -69,8 +67,6 @@ class MessageManagerTest : TestCase() {
     fun testHasSentMessage() {
         // App launched with at least one message in the storage
         var messageManager = MessageManager(
-            "1234",
-            "token",
             MockMessageCenterService(),
             MockExecutor(),
             MockMessageRepository(),
@@ -80,8 +76,6 @@ class MessageManagerTest : TestCase() {
 
         // App is launched with no messages in the storage
         messageManager = MessageManager(
-            "1234",
-            "token",
             MockMessageCenterService(),
             MockExecutor(),
             MockMessageRepository(listOf()),

@@ -18,6 +18,7 @@ import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.Sender
 import apptentive.com.android.feedback.payload.PayloadData
+import apptentive.com.android.feedback.platform.DefaultStateMachine
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
@@ -39,8 +40,6 @@ import java.io.InputStream
 
 @InternalUseOnly
 class MessageManager(
-    private val conversationId: String?,
-    private val conversationToken: String?,
     private val messageCenterService: MessageCenterService,
     private val serialExecutor: Executor,
     private val messageRepository: MessageRepository,
@@ -99,9 +98,13 @@ class MessageManager(
     }
 
     fun fetchMessages() {
-        if (!fetchingInProgress && !conversationId.isNullOrEmpty() && !conversationToken.isNullOrEmpty()) {
+        val conversationCredentials = DefaultStateMachine.conversationCredentials
+        if (!fetchingInProgress && conversationCredentials != null &&
+            conversationCredentials.conversationId.isNotEmpty() &&
+            conversationCredentials.conversationToken.isNotEmpty()
+        ) {
             fetchingInProgress = true
-            messageCenterService.getMessages(conversationToken, conversationId, lastDownloadedMessageID) {
+            messageCenterService.getMessages(conversationCredentials.conversationToken, conversationCredentials.conversationId, lastDownloadedMessageID) {
                 // Store the message list
                 if (it is Result.Success) {
                     Log.d(MESSAGE_CENTER, "Fetch finished successfully")

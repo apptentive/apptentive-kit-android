@@ -37,6 +37,8 @@ internal interface ConversationSerializer {
     fun setEncryption(encryption: Encryption)
 
     fun setRoster(conversationRoster: ConversationRoster)
+
+    fun saveRoster(conversationRoster: ConversationRoster)
 }
 
 internal class DefaultConversationSerializer(
@@ -45,7 +47,7 @@ internal class DefaultConversationSerializer(
 
     private lateinit var encryption: Encryption
 
-    private lateinit var conversationRoster: ConversationRoster // TODO this should be conversation file Path instead of roster
+    private lateinit var conversationRoster: ConversationRoster
 
     private lateinit var manifestFile: File
 
@@ -127,20 +129,7 @@ internal class DefaultConversationSerializer(
 
     override fun setRoster(conversationRoster: ConversationRoster) {
         this.conversationRoster = conversationRoster
-    }
-
-    internal fun saveRoster(conversationRoster: ConversationRoster) {
-        Log.d(CONVERSATION, "Saving conversation roster: $conversationRoster")
-        val atomicFile = AtomicFile(conversationRosterFile)
-        val stream = atomicFile.startWrite()
-        try {
-            val encoder = BinaryEncoder(DataOutputStream(stream))
-            conversationRosterSerializer.encode(encoder, conversationRoster)
-            atomicFile.finishWrite(stream)
-        } catch (e: Exception) {
-            atomicFile.failWrite(stream)
-            throw ConversationSerializationException("Unable to save conversation roster", e)
-        }
+        saveRoster(conversationRoster)
     }
 
     override fun initializeSerializer(): ConversationRoster {
@@ -159,6 +148,20 @@ internal class DefaultConversationSerializer(
             ConversationRoster(activeConversation = ConversationMetaData(ConversationState.Undefined, path = path))
         }
         return conversationRoster
+    }
+
+    override fun saveRoster(conversationRoster: ConversationRoster) {
+        Log.d(CONVERSATION, "Saving conversation roster: $conversationRoster")
+        val atomicFile = AtomicFile(conversationRosterFile)
+        val stream = atomicFile.startWrite()
+        try {
+            val encoder = BinaryEncoder(DataOutputStream(stream))
+            conversationRosterSerializer.encode(encoder, conversationRoster)
+            atomicFile.finishWrite(stream)
+        } catch (e: Exception) {
+            atomicFile.failWrite(stream)
+            throw ConversationSerializationException("Unable to save conversation roster", e)
+        }
     }
 
     private fun readConversation(rosterConversationFile: File): Conversation =

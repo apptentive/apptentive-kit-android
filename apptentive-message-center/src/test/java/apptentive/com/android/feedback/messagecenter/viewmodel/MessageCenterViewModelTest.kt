@@ -187,8 +187,6 @@ class MessageCenterViewModelTest : TestCase() {
             }
         )
         val messageManager = MessageManager(
-            "conversationId",
-            "token",
             MockMessageCenterService(),
             MockExecutor(),
             MockMessageRepository(),

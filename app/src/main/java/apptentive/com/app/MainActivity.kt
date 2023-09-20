@@ -144,8 +144,9 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
         Log.d(LogTags.MESSAGE_CENTER_NOTIFICATION, notificationText)
 
         runOnUiThread {
-            binding.messageCenterButton.isEnabled = notification?.canShowMessageCenter == true
+            //     binding.messageCenterButton.isEnabled = notification?.canShowMessageCenter == true
 
+            binding.messageCenterButton.isEnabled = true
             notification?.unreadMessageCount?.let {
                 binding.unreadMessagesText.text =
                     resources.getQuantityString(R.plurals.unread_messages, it, it)

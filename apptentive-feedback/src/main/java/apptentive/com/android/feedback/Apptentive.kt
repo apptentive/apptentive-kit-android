@@ -26,6 +26,7 @@ import apptentive.com.android.feedback.notifications.NotificationUtils
 import apptentive.com.android.feedback.platform.AndroidFileSystemProvider
 import apptentive.com.android.feedback.platform.DefaultStateMachine
 import apptentive.com.android.feedback.platform.SDKEvent
+import apptentive.com.android.feedback.platform.SDKState
 import apptentive.com.android.feedback.platform.isSDKLoading
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.feedback.utils.ThrottleUtils
@@ -283,19 +284,29 @@ object Apptentive {
      */
     @JvmStatic
     @Synchronized
-    fun login(jwtToken: String, callback: LoginCallback? = null) {
-        if (Build.VERSION_CODES.M > Build.VERSION.SDK_INT) {
-            Log.w(FEEDBACK, "Login is only supported on Android M and above")
-            callback?.onComplete(LoginResult.Failure("Login is only supported on Android M and above", 0))
-        } else {
-            try {
-                stateExecutor.execute {
-                    val result = client.login(jwtToken, callback)
-                    callback?.onComplete(result)
+    fun login(jwtToken: String, callback: ((result: LoginResult) -> Unit)? = null) {
+        when {
+            Build.VERSION_CODES.M > Build.VERSION.SDK_INT -> {
+                Log.w(FEEDBACK, "Login is only supported on Android M and above")
+                callback?.invoke(LoginResult.Error("Login is only supported on Android M and above"))
+            }
+            DefaultStateMachine.state == SDKState.LOGGED_IN -> {
+                Log.w(FEEDBACK, "The SDK is already logged in. Logout first to login again")
+                callback?.invoke(LoginResult.Error("The SDK is already logged in. Logout first to login again"))
+            }
+            DefaultStateMachine.state == SDKState.UNINITIALIZED -> {
+                Log.w(FEEDBACK, "The SDK is not initialized yet. Please register the SDK first")
+                callback?.invoke(LoginResult.Error("The SDK is not initialized yet. Please register the SDK first"))
+            }
+            else -> {
+                try {
+                    stateExecutor.execute {
+                        client.login(jwtToken, callback)
+                    }
+                } catch (e: java.lang.Exception) {
+                    Log.e(FEEDBACK, "Exception thrown in the SDK login", e)
+                    callback?.invoke(LoginResult.Exception(e))
                 }
-            } catch (e: java.lang.Exception) {
-                Log.e(FEEDBACK, "Exception thrown in the SDK login", e)
-                callback?.onComplete(LoginResult.Exception(e))
             }
         }
     }
@@ -315,6 +326,11 @@ object Apptentive {
         } catch (e: java.lang.Exception) {
             Log.e(FEEDBACK, "Exception thrown in the SDK logout", e)
         }
+    }
+
+    @InternalUseOnly
+    fun getCurrentState(): SDKState {
+        return DefaultStateMachine.state
     }
 
     private fun checkSavedKeyAndSignature(
@@ -429,6 +445,7 @@ object Apptentive {
             engage(eventName, customData, callbackFunc)
         } catch (exception: Exception) {
             Log.e(FEEDBACK, "Exception when engage the event $eventName", exception)
+            callback?.onComplete(EngagementResult.Error("There was an exception when engaging the event $eventName"))
         }
     }
 
@@ -441,15 +458,19 @@ object Apptentive {
                 }
             }
         } else null
-
-        // all the SDK related operations should be executed on the state executor
-        stateExecutor.execute {
-            try {
-                val event = Event.local(eventName)
-                val result = client.engage(event, customData)
-                callbackWrapper?.invoke(result)
-            } catch (exception: Exception) {
-                callbackWrapper?.invoke(EngagementResult.Exception(error = exception))
+        if (DefaultStateMachine.state == SDKState.LOGGED_OUT) {
+            Log.w(FEEDBACK, "SDK is in logged out state. Please login to engage an event")
+            callbackWrapper?.invoke(EngagementResult.Error("SDK is in logged out state. Please login to engage an event"))
+        } else {
+            // all the SDK related operations should be executed on the state executor
+            stateExecutor.execute {
+                try {
+                    val event = Event.local(eventName)
+                    val result = client.engage(event, customData)
+                    callbackWrapper?.invoke(result)
+                } catch (exception: Exception) {
+                    callbackWrapper?.invoke(EngagementResult.Exception(error = exception))
+                }
             }
         }
     }
@@ -515,13 +536,18 @@ object Apptentive {
             }
         } else null
 
-        stateExecutor.execute {
-            try {
-                val result = client.showMessageCenter(customData)
-                callbackWrapper?.invoke(result)
-            } catch (exception: Exception) {
-                callbackWrapper?.invoke(EngagementResult.Exception(error = exception))
-                Log.e(MESSAGE_CENTER, "Exception showing the message center", exception)
+        if (DefaultStateMachine.state == SDKState.LOGGED_OUT) {
+            Log.w(FEEDBACK, "SDK is in logged out state. Please login to show message center")
+            callbackWrapper?.invoke(EngagementResult.Error("SDK is in logged out state. Please login to show message center"))
+        } else {
+            stateExecutor.execute {
+                try {
+                    val result = client.showMessageCenter(customData)
+                    callbackWrapper?.invoke(result)
+                } catch (exception: Exception) {
+                    callbackWrapper?.invoke(EngagementResult.Exception(error = exception))
+                    Log.e(MESSAGE_CENTER, "Exception showing the message center", exception)
+                }
             }
         }
     }
@@ -559,6 +585,12 @@ object Apptentive {
     @JvmStatic
     fun getUnreadMessageCount(): Int {
         return try {
+            if (DefaultStateMachine.state == SDKState.LOGGED_OUT) {
+                Log.w(FEEDBACK, "SDK is in logged out state. Please login to get unread message count")
+                0
+            } else {
+                client.getUnreadMessageCount()
+            }
             client.getUnreadMessageCount()
         } catch (exception: Exception) {
             Log.w(MESSAGE_CENTER, "Exception while getting unread message count", exception)
@@ -576,10 +608,14 @@ object Apptentive {
     fun sendAttachmentText(text: String?) {
         try {
             stateExecutor.execute {
-                text?.let {
-                    client.sendHiddenTextMessage(text)
-                } ?: run {
-                    Log.d(MESSAGE_CENTER, "Attachment text was null")
+                if (DefaultStateMachine.state == SDKState.LOGGED_OUT) {
+                    Log.w(FEEDBACK, "SDK is in logged out state. Please login to get unread message count")
+                } else {
+                    text?.let {
+                        client.sendHiddenTextMessage(text)
+                    } ?: run {
+                        Log.d(MESSAGE_CENTER, "Attachment text was null")
+                    }
                 }
             }
         } catch (exception: Exception) {
@@ -601,7 +637,11 @@ object Apptentive {
         try {
             if (!uri.isNullOrBlank()) {
                 stateExecutor.execute {
-                    client.sendHiddenAttachmentFileUri(uri)
+                    if (DefaultStateMachine.state == SDKState.LOGGED_OUT) {
+                        Log.w(FEEDBACK, "SDK is in logged out state. Please login to send attachment file")
+                    } else {
+                        client.sendHiddenAttachmentFileUri(uri)
+                    }
                 }
             } else Log.d(MESSAGE_CENTER, "URI String was null or blank. URI: $uri")
         } catch (exception: Exception) {
@@ -624,7 +664,11 @@ object Apptentive {
         try {
             if (content != null && mimeType != null) {
                 stateExecutor.execute {
-                    client.sendHiddenAttachmentFileBytes(content, mimeType)
+                    if (DefaultStateMachine.state == SDKState.LOGGED_OUT) {
+                        Log.w(FEEDBACK, "SDK is in logged out state. Please login to send attachment file")
+                    } else {
+                        client.sendHiddenAttachmentFileBytes(content, mimeType)
+                    }
                 }
             } else Log.d(
                 MESSAGE_CENTER,
@@ -650,7 +694,11 @@ object Apptentive {
         try {
             if (inputStream != null && mimeType != null) {
                 stateExecutor.execute {
-                    client.sendHiddenAttachmentFileStream(inputStream, mimeType)
+                    if (DefaultStateMachine.state == SDKState.LOGGED_OUT) {
+                        Log.w(FEEDBACK, "SDK is in logged out state. Please login to send attachment file")
+                    } else {
+                        client.sendHiddenAttachmentFileStream(inputStream, mimeType)
+                    }
                 }
             } else Log.d(
                 MESSAGE_CENTER,
@@ -681,11 +729,16 @@ object Apptentive {
     fun setPersonName(name: String?) {
         try {
             stateExecutor.execute {
-                if (!name.isNullOrBlank()) client.updatePerson(name = name)
-                else Log.d(
-                    PROFILE_DATA_UPDATE,
-                    "Null or Empty/Blank strings are not supported for name"
-                )
+                when {
+                    DefaultStateMachine.state == SDKState.LOGGED_OUT -> {
+                        Log.w(FEEDBACK, "SDK is in logged out state. Please login to set person name")
+                    }
+                    !name.isNullOrBlank() -> client.updatePerson(name = name)
+                    else -> Log.d(
+                        PROFILE_DATA_UPDATE,
+                        "Null or Empty/Blank strings are not supported for name"
+                    )
+                }
             }
         } catch (exception: Exception) {
             Log.e(PERSON, "Exception setting Person's name", exception)
@@ -701,13 +754,19 @@ object Apptentive {
     @JvmStatic
     fun getPersonName(): String? {
         return try {
-            if (registered) client.getPersonName()
-            else {
-                Log.w(
-                    LogTags.PROFILE_DATA_GET,
-                    "Apptentive not registered. Cannot get Person name."
-                )
-                null
+            when {
+                DefaultStateMachine.state == SDKState.LOGGED_OUT -> {
+                    Log.w(FEEDBACK, "SDK is in logged out state. Please login to get person name")
+                    null
+                }
+                registered -> client.getPersonName()
+                else -> {
+                    Log.w(
+                        LogTags.PROFILE_DATA_GET,
+                        "Apptentive not registered. Cannot get Person name."
+                    )
+                    null
+                }
             }
         } catch (exception: Exception) {
             Log.e(PERSON, "Exception while getting Person's name", exception)

@@ -8,7 +8,6 @@ import apptentive.com.android.core.getTimeSeconds
 import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.feedback.backend.ConversationCredentials
 import apptentive.com.android.feedback.backend.ConversationService
-import apptentive.com.android.feedback.backend.LoginSessionResponse
 import apptentive.com.android.feedback.backend.PayloadResponse
 import apptentive.com.android.feedback.engagement.util.MockAndroidSharedPrefDataStore
 import apptentive.com.android.feedback.engagement.util.MockFileSystem
@@ -277,6 +276,9 @@ class MockConversationRepository(val throwException: Boolean = false) :
     override fun updateConversationRoster(conversationRoster: ConversationRoster) {
     }
 
+    override fun saveRoster(conversationRoster: ConversationRoster) {
+    }
+
     override fun initializeRepositoryWithRoster(): ConversationRoster {
         return ConversationRoster()
     }
@@ -295,6 +297,16 @@ internal class MockConversationService(
         callback: (Result<ConversationCredentials>) -> Unit
     ) {
         callback(Result.Success(response))
+    }
+
+    override fun fetchLoginConversation(
+        device: Device,
+        sdk: SDK,
+        appRelease: AppRelease,
+        person: Person,
+        token: String,
+        callback: (Result<ConversationCredentials>) -> Unit
+    ) {
     }
 
     override fun fetchEngagementManifest(
@@ -316,9 +328,9 @@ internal class MockConversationService(
     override fun loginSession(
         conversationId: String,
         jwtToken: String,
-        callback: (Result<LoginSessionResponse>) -> Unit
+        callback: (Result<ConversationCredentials>) -> Unit
     ) {
-        callback(Result.Success(LoginSessionResponse("key")))
+        callback(Result.Success(ConversationCredentials(id = "", deviceId = "", personId = "", token = "", encryptionKey = "key")))
     }
 
     override fun getMessages(

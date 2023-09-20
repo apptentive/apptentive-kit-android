@@ -17,6 +17,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
+import apptentive.com.android.feedback.platform.SDKState
 import apptentive.com.app.databinding.ActivityDevFunctionsBinding
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -565,6 +566,7 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
             } ?: makeToast("Picker cancelled")
         }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun setupPhotoPicker() {
         binding.apply {
             photoPickerButton.setOnClickListener {
@@ -590,6 +592,9 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
 
     private fun setupMultiUser() {
         binding.apply {
+            login.isEnabled = Apptentive.getCurrentState() != SDKState.LOGGED_IN
+            login2.isEnabled = Apptentive.getCurrentState() != SDKState.LOGGED_IN
+            logout.isEnabled = Apptentive.getCurrentState() == SDKState.LOGGED_IN
             login.setOnClickListener {
                 val currentTimeMillis = System.currentTimeMillis()
 
@@ -597,14 +602,28 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
                 val thirtyDays: Long =
                     currentTimeMillis + ONE_DAY * 30
                 it.isEnabled = false
+                login2.isEnabled = false
                 logout.isEnabled = true
                 val token = generateJWT("Poorni", "ClientTeam", currentTimeMillis, thirtyDays, "38127017f4cfb4f84c8dfecd48ab98c6", null, null)
+                if (token != null)
+                    Apptentive.login(token)
+            }
+            login2.setOnClickListener {
+                val currentTimeMillis = System.currentTimeMillis()
+                val thirtyDays: Long =
+                    currentTimeMillis + ONE_DAY * 30
+                it.isEnabled = false
+                login.isEnabled = false
+                logout.isEnabled = true
+                val token = generateJWT("Chase", "ClientTeam", currentTimeMillis, thirtyDays, "38127017f4cfb4f84c8dfecd48ab98c6", null, null)
                 if (token != null)
                     Apptentive.login(token)
             }
             logout.setOnClickListener {
                 Apptentive.logout()
                 login.isEnabled = true
+                login2.isEnabled = true
+                logout.isEnabled = false
             }
         }
     }
@@ -618,7 +637,7 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
         headerParams: Map<String, Any>?,
         bodyParams: Map<String, Any>?
     ): String? {
-        if (secret == null || secret.length == 0) {
+        if (secret.isNullOrEmpty()) {
             Toast.makeText(this, "Missing Secret", Toast.LENGTH_SHORT).show()
             return null
         }
@@ -677,6 +696,7 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
         photoUri?.apply { takePhoto.launch(this) } ?: makeToast("Error occurred while creating image file")
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun launchCamera() {
         requestCameraPermissionAndTakePic.launch(Manifest.permission.CAMERA)
     }

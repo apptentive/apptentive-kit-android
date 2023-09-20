@@ -27,7 +27,7 @@ internal interface ApptentiveClient {
     fun getPersonEmail(): String?
     fun setPushIntegration(pushProvider: Int, token: String)
     fun setLocalManifest(json: String)
-    fun login(jwtToken: String, callback: LoginCallback? = null): LoginResult
+    fun login(jwtToken: String, callback: ((result: LoginResult) -> Unit)? = null)
     fun logout()
 
     companion object {
@@ -113,9 +113,8 @@ private class ApptentiveNullClient : ApptentiveClient {
         Log.d(FEEDBACK, "Apptentive SDK is not initialized; set local manifest failed ")
     }
 
-    override fun login(jwtToken: String, callback: LoginCallback?): LoginResult {
+    override fun login(jwtToken: String, callback: ((result: LoginResult) -> Unit)?) {
         Log.d(FEEDBACK, "Apptentive SDK is not initialized; login failed")
-        return LoginResult.Failure("Apptentive SDK is not initialized", 0)
     }
 
     override fun logout() {

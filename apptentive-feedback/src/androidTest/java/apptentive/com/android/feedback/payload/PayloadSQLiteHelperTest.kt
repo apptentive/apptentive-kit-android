@@ -3,10 +3,13 @@ package apptentive.com.android.feedback.payload
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import apptentive.com.android.TestCase
+import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.debug.Assert.assertEqual
 import apptentive.com.android.encryption.EncryptionFactory
 import apptentive.com.android.encryption.NotEncrypted
+import apptentive.com.android.feedback.engagement.util.MockAndroidSharedPrefDataStore
 import apptentive.com.android.network.HttpMethod
+import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import org.junit.After
 import org.junit.Assert.assertNull
 import org.junit.Before
@@ -19,6 +22,7 @@ class PayloadSQLiteHelperTest : TestCase() {
 
     @Before
     fun setupDb() {
+        DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore())
         dbHelper = PayloadSQLiteHelper(
             context,
             EncryptionFactory.getEncryption(
