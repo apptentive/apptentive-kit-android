@@ -1,7 +1,7 @@
 package apptentive.com.android.feedback.survey.utils
 
 import apptentive.com.android.core.DependencyProvider
-import apptentive.com.android.encryption.EncryptionNoOp
+import apptentive.com.android.encryption.EncryptionNoOp // FIXME: Can likely remove after credential provider work.
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event

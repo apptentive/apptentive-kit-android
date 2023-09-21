@@ -7,7 +7,7 @@ import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.Observable
-import apptentive.com.android.encryption.EncryptionNoOp
+import apptentive.com.android.encryption.EncryptionNoOp // FIXME: Can likely remove after credential provider
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.UnreadMessageCallback
 import apptentive.com.android.feedback.backend.MessageCenterService
