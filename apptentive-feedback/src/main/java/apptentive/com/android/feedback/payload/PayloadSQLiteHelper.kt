@@ -120,7 +120,7 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
     private fun invalidateToken(db: SQLiteDatabase, tag: String): Boolean {
         val contentValues = ContentValues()
         contentValues.putNull(COL_TOKEN.toString())
-        val updatedRows = db.update(TABLE_NAME, contentValues,"COL_TAG = ?", arrayOf(tag))
+        val updatedRows = db.update(TABLE_NAME, contentValues, "COL_TAG = ?", arrayOf(tag))
         return updatedRows > 0
     }
 
@@ -273,7 +273,6 @@ private fun SQLiteDatabase.select(tableName: String, where: String? = null, orde
         limit?.toString()
     )
 }
-
 
 private fun SQLiteDatabase.delete(tableName: String, column: Column, value: String) =
     delete(tableName, "${column.name} = ?", arrayOf(value))
