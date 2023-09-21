@@ -169,6 +169,10 @@ class DefaultConversationServiceTest : TestCase() {
         val payload = PayloadData(
             nonce = nonce,
             type = PayloadType.Event,
+            tag = "test-tag",
+            token = "test-token",
+            conversationId = "test-conversation-id",
+            isEncrypted = false,
             path = "/conversations/:conversation_id/events",
             method = HttpMethod.POST,
             mediaType = MediaType.applicationJson,
@@ -215,6 +219,10 @@ class DefaultConversationServiceTest : TestCase() {
         val payload = PayloadData(
             nonce = nonce,
             type = PayloadType.Event,
+            tag = "test-tag",
+            token = "test-token",
+            conversationId = "test-conversation_id",
+            isEncrypted = false,
             path = "/conversations/:conversation_id/events",
             method = HttpMethod.POST,
             mediaType = MediaType.applicationJson,

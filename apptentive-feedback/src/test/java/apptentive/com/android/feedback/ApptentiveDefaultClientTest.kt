@@ -22,6 +22,7 @@ import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.MessageCenterNotification
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.payloads.Payload
+import apptentive.com.android.feedback.payload.PayloadContext
 import apptentive.com.android.feedback.payload.PayloadSender
 import apptentive.com.android.feedback.platform.DefaultStateMachine
 import apptentive.com.android.feedback.platform.FileSystem
@@ -60,7 +61,7 @@ class ApptentiveDefaultClientTest : TestCase() {
     }
 
     private val mockPayloadSender = object : PayloadSender {
-        override fun enqueuePayload(payload: Payload) {}
+        override fun enqueuePayload(payload: Payload, context: PayloadContext) {}
     }
 
     @Before

@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.payload
 
 import apptentive.com.android.TestCase
+import apptentive.com.android.encryption.EncryptionNoOp
 import apptentive.com.android.feedback.model.payloads.EventPayload
 import apptentive.com.android.util.Result
 import org.junit.Test
@@ -19,10 +20,10 @@ class SerialPayloadSenderTest : TestCase() {
         val payload2 = createPayload("payload-2")
 
         sender.setPayloadService(service)
-        sender.enqueuePayload(payload1)
+        sender.enqueuePayload(payload1, PayloadContext("test-tag", "test-conversation_id", "test-token", EncryptionNoOp(), "test-session-id"))
         sender.pauseSending()
 
-        sender.enqueuePayload(payload2)
+        sender.enqueuePayload(payload2, PayloadContext("test-tag", "test-conversation_id", "test-token", EncryptionNoOp(), "test-session-id"))
 
         assertResults("success: ${payload1.nonce}")
 
@@ -37,7 +38,7 @@ class SerialPayloadSenderTest : TestCase() {
         val service = MockPayloadService {
             when (it.nonce) {
                 "payload-2" -> Result.Error(
-                    data = payload2.toPayloadData(),
+                    data = payload2.toPayloadData(PayloadContext("test-tag", "test-conversation_id", "test-token", EncryptionNoOp(), "test-session-id")),
                     error = PayloadSendException(it)
                 )
                 else -> Result.Success(it)
@@ -53,9 +54,10 @@ class SerialPayloadSenderTest : TestCase() {
 
         sender.setPayloadService(service)
 
-        sender.enqueuePayload(payload1)
-        sender.enqueuePayload(payload2)
-        sender.enqueuePayload(payload3)
+        val payloadContext = PayloadContext("test-tag", "test-conversation_id", "test-token", EncryptionNoOp(), "test-session-id")
+        sender.enqueuePayload(payload1, payloadContext)
+        sender.enqueuePayload(payload2, payloadContext)
+        sender.enqueuePayload(payload3, payloadContext)
 
         assertResults(
             "success: ${payload1.nonce}",
