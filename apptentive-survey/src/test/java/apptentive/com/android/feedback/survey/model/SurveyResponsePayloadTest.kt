@@ -1,8 +1,10 @@
 package apptentive.com.android.feedback.survey.model
 
 import apptentive.com.android.TestCase
+import apptentive.com.android.encryption.EncryptionNoOp
 import apptentive.com.android.feedback.MockTimeRule
 import apptentive.com.android.feedback.payload.MediaType
+import apptentive.com.android.feedback.payload.PayloadContext
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadType
 import apptentive.com.android.network.HttpMethod
@@ -69,12 +71,16 @@ class SurveyResponsePayloadTest : TestCase() {
         val expected = PayloadData(
             nonce = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
             type = PayloadType.SurveyResponse,
+            tag = "test-tag",
+            token = "test-token",
+            conversationId = "test-conversation-id",
+            isEncrypted = false,
             path = "/conversations/:conversation_id/surveys/$surveyId/responses",
             method = HttpMethod.POST,
             mediaType = MediaType.applicationJson,
             data = expectedJson.toByteArray()
         )
-        val actual = payload.toPayloadData()
+        val actual = payload.toPayloadData(PayloadContext("test-tag", "test-conversation-id", "test-token", EncryptionNoOp(), "test-session-id"))
         assertThat(actual).isEqualTo(expected)
     }
 }

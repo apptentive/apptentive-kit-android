@@ -170,7 +170,7 @@ class DefaultConversationServiceTest : TestCase() {
             nonce = nonce,
             type = PayloadType.Event,
             tag = "test-tag",
-            token = "test-token",
+            token = null,
             conversationId = "test-conversation-id",
             isEncrypted = false,
             path = "/conversations/:conversation_id/events",
