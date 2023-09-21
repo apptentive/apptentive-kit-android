@@ -27,8 +27,7 @@ import apptentive.com.android.util.InternalUseOnly
 open class EngagementContext(
     private val engagement: Engagement,
     private val payloadSender: PayloadSender,
-    val executors: Executors,
-    var payloadContext: PayloadContext
+    val executors: Executors
 ) {
     fun engage(
         event: Event,
@@ -60,7 +59,9 @@ open class EngagementContext(
         invocations = invocations.map(InvocationConverter::convert)
     )
 
-    fun enqueuePayload(payload: Payload) = payloadSender.enqueuePayload(payload, payloadContext)
+    fun enqueuePayload(payload: Payload, context: PayloadContext) {
+        payloadSender.enqueuePayload(payload, context)
+    }
 
     @VisibleForTesting
     fun getEngagement() = engagement

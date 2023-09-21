@@ -115,7 +115,6 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
                 }
             },
             executors = Executors(ImmediateExecutor, ImmediateExecutor),
-            payloadContext = PayloadContext("test", "test", "test", EncryptionNoOp(), "test")
         )
     }
 

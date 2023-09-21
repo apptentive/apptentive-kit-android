@@ -71,6 +71,5 @@ class MockEngagementContext(
         }
     },
     payloadSender = MockPayloadSender(onSendPayload),
-    executors = Executors(ImmediateExecutor, ImmediateExecutor),
-    payloadContext = PayloadContext("test-tag", "test-conversation-id", "test-token", EncryptionNoOp(), "test-session-id")
+    executors = Executors(ImmediateExecutor, ImmediateExecutor)
 )

@@ -15,11 +15,10 @@ internal class EngagementContextProvider(
     private val engagement: Engagement,
     private val payloadSender: PayloadSender,
     private val executor: Executors,
-    private val payloadContext: PayloadContext
 ) : Provider<EngagementContextFactory> {
     override fun get(): EngagementContextFactory = object : EngagementContextFactory {
         override fun engagementContext(): EngagementContext {
-            return EngagementContext(engagement, payloadSender, executor, payloadContext)
+            return EngagementContext(engagement, payloadSender, executor)
         }
     }
 }
