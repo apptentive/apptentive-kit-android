@@ -7,7 +7,6 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.concurrent.Executors
-import apptentive.com.android.encryption.EncryptionNoOp
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
 import apptentive.com.android.feedback.EngagementResult
