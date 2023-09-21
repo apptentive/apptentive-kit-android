@@ -5,5 +5,5 @@ import apptentive.com.android.util.InternalUseOnly
 
 @InternalUseOnly
 interface PayloadSender {
-    fun sendPayload(payload: Payload)
+    fun enqueuePayload(payload: Payload)
 }

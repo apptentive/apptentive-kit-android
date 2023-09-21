@@ -19,10 +19,10 @@ class SerialPayloadSenderTest : TestCase() {
         val payload2 = createPayload("payload-2")
 
         sender.setPayloadService(service)
-        sender.sendPayload(payload1)
+        sender.enqueuePayload(payload1)
         sender.pauseSending()
 
-        sender.sendPayload(payload2)
+        sender.enqueuePayload(payload2)
 
         assertResults("success: ${payload1.nonce}")
 
@@ -53,9 +53,9 @@ class SerialPayloadSenderTest : TestCase() {
 
         sender.setPayloadService(service)
 
-        sender.sendPayload(payload1)
-        sender.sendPayload(payload2)
-        sender.sendPayload(payload3)
+        sender.enqueuePayload(payload1)
+        sender.enqueuePayload(payload2)
+        sender.enqueuePayload(payload3)
 
         assertResults(
             "success: ${payload1.nonce}",

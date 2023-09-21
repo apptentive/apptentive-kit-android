@@ -312,7 +312,7 @@ class ApptentiveDefaultClient(
                 val sdk = conversationManager.getConversation().sdk
                 val appRelease = conversationManager.getConversation().appRelease
                 val payload = AppReleaseAndSDKPayload.buildPayload(sdk = sdk, appRelease = appRelease)
-                payloadSender.sendPayload(payload)
+                payloadSender.enqueuePayload(payload)
             }
         }
 
@@ -435,7 +435,7 @@ class ApptentiveDefaultClient(
         }
         if (person != newPerson) {
             conversationManager.updatePerson(newPerson)
-            payloadSender.sendPayload(newPerson.toPersonPayload())
+            payloadSender.enqueuePayload(newPerson.toPersonPayload())
         }
     }
 
@@ -444,7 +444,7 @@ class ApptentiveDefaultClient(
         val newPerson = person.copy(mParticleId = id)
         if (person != newPerson) {
             conversationManager.updatePerson(newPerson)
-            payloadSender.sendPayload(newPerson.toPersonPayload())
+            payloadSender.enqueuePayload(newPerson.toPersonPayload())
         }
     }
 
@@ -540,7 +540,7 @@ class ApptentiveDefaultClient(
             else -> Log.e(CONVERSATION, "Invalid pushProvider: $pushProvider")
         }
         conversationManager.updateDevice(device)
-        payloadSender.sendPayload(device.toDevicePayload())
+        payloadSender.enqueuePayload(device.toDevicePayload())
     }
 
     override fun updateDevice(customData: Pair<String, Any?>?, deleteKey: String?) {
@@ -558,7 +558,7 @@ class ApptentiveDefaultClient(
         }
         if (device != newDevice) {
             conversationManager.updateDevice(newDevice)
-            payloadSender.sendPayload(newDevice.toDevicePayload())
+            payloadSender.enqueuePayload(newDevice.toDevicePayload())
         }
     }
 
@@ -596,7 +596,7 @@ class ApptentiveDefaultClient(
         conversationManager.recordEvent(event)
 
         // send event to the backend
-        payloadSender.sendPayload(
+        payloadSender.enqueuePayload(
             EventPayload(
                 label = event.fullName,
                 interactionId = interactionId,

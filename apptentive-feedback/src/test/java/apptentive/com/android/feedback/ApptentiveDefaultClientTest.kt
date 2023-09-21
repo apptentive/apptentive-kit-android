@@ -60,7 +60,7 @@ class ApptentiveDefaultClientTest : TestCase() {
     }
 
     private val mockPayloadSender = object : PayloadSender {
-        override fun sendPayload(payload: Payload) {}
+        override fun enqueuePayload(payload: Payload) {}
     }
 
     @Before

@@ -13,7 +13,7 @@ internal class SerialPayloadSender(
     private var busySending: Boolean = false
     private var payloadService: PayloadService? = null
 
-    override fun sendPayload(payload: Payload) {
+    override fun enqueuePayload(payload: Payload) {
         Log.v(PAYLOADS, "Adding Payload to queue: $payload")
         val payloadData = getPayloadData(payload)
         if (payloadData != null) {

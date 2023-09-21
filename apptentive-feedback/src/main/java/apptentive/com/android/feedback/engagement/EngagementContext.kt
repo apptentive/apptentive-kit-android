@@ -58,7 +58,7 @@ open class EngagementContext(
         invocations = invocations.map(InvocationConverter::convert)
     )
 
-    fun sendPayload(payload: Payload) = payloadSender.sendPayload(payload)
+    fun enqueuePayload(payload: Payload) = payloadSender.enqueuePayload(payload)
 
     @VisibleForTesting
     fun getEngagement() = engagement

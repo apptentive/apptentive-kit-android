@@ -6,7 +6,7 @@ class MockPayloadSender(
     private val callback: ((Payload) -> Unit)? = null,
     var payload: Payload? = null
 ) : PayloadSender {
-    override fun sendPayload(payload: Payload) {
+    override fun enqueuePayload(payload: Payload) {
         this.payload = payload
         callback?.invoke(payload)
     }
