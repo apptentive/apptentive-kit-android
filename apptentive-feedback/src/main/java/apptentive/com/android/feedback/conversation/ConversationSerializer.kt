@@ -54,12 +54,10 @@ internal class DefaultConversationSerializer(
     // we keep track of the last seen engagement manifest expiry date and only update storage if it changes
     private var lastKnownManifestExpiry: TimeInterval = 0.0
 
+    @Throws(ConversationSerializationException::class)
     override fun saveConversation(conversation: Conversation) {
         val rosterConversationFile = getConversationFileFromRoster(conversationRoster)
-        if (rosterConversationFile == null) {
-            Log.e(CONVERSATION, "No active conversation found, unable to save conversation")
-            return
-        }
+            ?: throw ConversationSerializationException("No active conversation metadata found, unable to save conversation", null)
         saveRoster(conversationRoster)
         val start = System.currentTimeMillis()
         val atomicFile = AtomicFile(rosterConversationFile)

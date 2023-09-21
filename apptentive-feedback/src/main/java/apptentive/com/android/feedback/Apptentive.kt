@@ -328,6 +328,7 @@ object Apptentive {
         }
     }
 
+    // Not a public API, internal use only
     @InternalUseOnly
     fun getCurrentState(): SDKState {
         return DefaultStateMachine.state

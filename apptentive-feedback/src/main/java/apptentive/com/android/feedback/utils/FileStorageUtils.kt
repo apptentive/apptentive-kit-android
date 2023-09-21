@@ -3,6 +3,7 @@ package apptentive.com.android.feedback.utils
 import androidx.annotation.WorkerThread
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.conversation.ConversationRoster
+import apptentive.com.android.feedback.platform.DefaultStateMachine
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.platform.SharedPrefConstants
 import apptentive.com.android.util.Log
@@ -84,5 +85,11 @@ internal object FileStorageUtils {
         val storedSdkVersion = DependencyProvider.of<AndroidSharedPrefDataStore>()
             .getString(SharedPrefConstants.SDK_CORE_INFO, SharedPrefConstants.SDK_VERSION).ifEmpty { null }
         return storedSdkVersion == null && FileUtil.containsFiles(CONVERSATION_DIR)
+    }
+
+    @WorkerThread
+    fun deleteMessageFile() {
+        val messageFile = getStoredMessagesFile(DefaultStateMachine.conversationRoster)
+        messageFile?.let { FileUtil.deleteFile(it.path) }
     }
 }

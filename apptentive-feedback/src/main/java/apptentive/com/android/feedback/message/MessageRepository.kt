@@ -19,6 +19,7 @@ interface MessageRepository {
     fun saveMessages()
     fun updateEncryption(encryption: Encryption)
     fun updateConversationRoster(conversationRoster: ConversationRoster)
+    fun logout()
 }
 
 internal class DefaultMessageRepository(
@@ -102,6 +103,11 @@ internal class DefaultMessageRepository(
 
     override fun updateConversationRoster(conversationRoster: ConversationRoster) {
         messageSerializer.updateConversionRoster(conversationRoster)
+    }
+
+    override fun logout() {
+        saveMessages()
+        messageEntries.clear()
     }
 
     override fun deleteMessage(nonce: String) {

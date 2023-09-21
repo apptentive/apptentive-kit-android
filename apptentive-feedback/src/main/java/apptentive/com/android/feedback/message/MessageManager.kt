@@ -18,7 +18,6 @@ import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.Sender
 import apptentive.com.android.feedback.payload.PayloadData
-import apptentive.com.android.feedback.platform.DefaultStateMachine
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
@@ -40,6 +39,8 @@ import java.io.InputStream
 
 @InternalUseOnly
 class MessageManager(
+    private var conversationId: String?,
+    private var conversationToken: String?,
     private val messageCenterService: MessageCenterService,
     private val serialExecutor: Executor,
     private val messageRepository: MessageRepository,
@@ -86,7 +87,15 @@ class MessageManager(
     override fun onConversationChanged(conversation: Conversation) {
         configuration = conversation.configuration
         senderProfile = conversation.person
+        conversationId = conversation.conversationId
+        conversationToken = conversation.conversationToken
         profileSubject.value = senderProfile
+        Log.i(MESSAGE_CENTER, "Conversation changed: ${conversation.conversationId}, ${conversation.conversationToken}")
+    }
+
+    fun logout() {
+        pollingScheduler.stopPolling()
+        messageRepository.logout()
     }
 
     fun setCustomData(customData: Map<String, Any?>) {
@@ -98,13 +107,11 @@ class MessageManager(
     }
 
     fun fetchMessages() {
-        val conversationCredentials = DefaultStateMachine.conversationCredentials
-        if (!fetchingInProgress && conversationCredentials != null &&
-            conversationCredentials.conversationId.isNotEmpty() &&
-            conversationCredentials.conversationToken.isNotEmpty()
-        ) {
+        val token = conversationToken
+        val id = conversationId
+        if (!fetchingInProgress && !id.isNullOrEmpty() && !token.isNullOrEmpty()) {
             fetchingInProgress = true
-            messageCenterService.getMessages(conversationCredentials.conversationToken, conversationCredentials.conversationId, lastDownloadedMessageID) {
+            messageCenterService.getMessages(token, id, lastDownloadedMessageID) {
                 // Store the message list
                 if (it is Result.Success) {
                     Log.d(MESSAGE_CENTER, "Fetch finished successfully")
