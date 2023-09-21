@@ -65,6 +65,7 @@ import apptentive.com.android.feedback.model.payloads.AppReleaseAndSDKPayload
 import apptentive.com.android.feedback.model.payloads.EventPayload
 import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.feedback.notifications.NotificationUtils
+import apptentive.com.android.feedback.payload.PayloadContext
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadSender
 import apptentive.com.android.feedback.payload.PayloadType
@@ -337,8 +338,6 @@ class ApptentiveDefaultClient(
                 (payloadSender as SerialPayloadSender).setPayloadService(
                     service = ConversationPayloadService(
                         requestSender = conversationService,
-                        conversationId = conversationId,
-                        conversationToken = conversationToken
                     )
                 )
             }
@@ -353,7 +352,7 @@ class ApptentiveDefaultClient(
                 val sdk = conversationManager.getConversation().sdk
                 val appRelease = conversationManager.getConversation().appRelease
                 val payload = AppReleaseAndSDKPayload.buildPayload(sdk = sdk, appRelease = appRelease)
-                payloadSender.enqueuePayload(payload)
+                payloadSender.enqueuePayload(payload, payloadContext)
             }
         }
 
@@ -476,7 +475,7 @@ class ApptentiveDefaultClient(
         }
         if (person != newPerson) {
             conversationManager.updatePerson(newPerson)
-            payloadSender.enqueuePayload(newPerson.toPersonPayload())
+            payloadSender.enqueuePayload(newPerson.toPersonPayload(), payloadContext)
         }
     }
 
@@ -485,7 +484,7 @@ class ApptentiveDefaultClient(
         val newPerson = person.copy(mParticleId = id)
         if (person != newPerson) {
             conversationManager.updatePerson(newPerson)
-            payloadSender.enqueuePayload(newPerson.toPersonPayload())
+            payloadSender.enqueuePayload(newPerson.toPersonPayload(), payloadContext)
         }
     }
 
@@ -581,7 +580,7 @@ class ApptentiveDefaultClient(
             else -> Log.e(CONVERSATION, "Invalid pushProvider: $pushProvider")
         }
         conversationManager.updateDevice(device)
-        payloadSender.enqueuePayload(device.toDevicePayload())
+        payloadSender.enqueuePayload(device.toDevicePayload(), payloadContext)
     }
 
     override fun updateDevice(customData: Pair<String, Any?>?, deleteKey: String?) {
@@ -599,7 +598,7 @@ class ApptentiveDefaultClient(
         }
         if (device != newDevice) {
             conversationManager.updateDevice(newDevice)
-            payloadSender.enqueuePayload(newDevice.toDevicePayload())
+            payloadSender.enqueuePayload(newDevice.toDevicePayload(), payloadContext)
         }
     }
 
@@ -644,7 +643,8 @@ class ApptentiveDefaultClient(
                 data = data,
                 customData = customData,
                 extendedData = extendedData
-            )
+            ),
+            payloadContext
         )
     }
 
@@ -745,6 +745,21 @@ class ApptentiveDefaultClient(
     }
 
     //endregion
+
+    private val payloadContext: PayloadContext
+        get() {
+            val tag = DefaultStateMachine.conversationRoster.activeConversation?.path
+            val credentials = DefaultStateMachine.conversationCredentials
+            val encryption = DefaultStateMachine.encryption
+
+            return PayloadContext(
+                tag = tag ?: "placeholder",
+                token = credentials?.conversationToken,
+                conversationId = credentials?.conversationId,
+                encryption = encryption,
+                sessionId = sessionId
+            )
+        }
 
     internal fun getConversationId() = conversationManager.getConversation().conversationId
 

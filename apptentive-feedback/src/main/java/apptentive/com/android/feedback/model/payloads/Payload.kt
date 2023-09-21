@@ -1,7 +1,9 @@
 package apptentive.com.android.feedback.model.payloads
 
+import apptentive.com.android.encryption.EncryptionNoOp
 import apptentive.com.android.feedback.payload.AttachmentData
 import apptentive.com.android.feedback.payload.MediaType
+import apptentive.com.android.feedback.payload.PayloadContext
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadType
 import apptentive.com.android.network.HttpMethod
@@ -20,9 +22,13 @@ abstract class Payload(val nonce: String) {
 
     fun toJson(): String = JsonConverter.toJson(mapOf(getJsonContainer() to this))
 
-    fun toPayloadData() = PayloadData(
+    fun toPayloadData(context: PayloadContext) = PayloadData(
         nonce = nonce,
         type = getPayloadType(),
+        tag = context.tag,
+        token = context.token,
+        conversationId = context.conversationId,
+        isEncrypted = context.encryption !is EncryptionNoOp,
         path = getHttpPath(),
         method = getHttpMethod(),
         mediaType = getContentType(),

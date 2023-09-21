@@ -2,12 +2,14 @@ package apptentive.com.android.feedback.engagement
 
 import apptentive.com.android.concurrent.Executors
 import apptentive.com.android.concurrent.ImmediateExecutor
+import apptentive.com.android.encryption.EncryptionNoOp
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.criteria.Invocation
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
 import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.feedback.model.payloads.Payload
 import apptentive.com.android.feedback.payload.MockPayloadSender
+import apptentive.com.android.feedback.payload.PayloadContext
 
 data class EngageArgs(
     val event: Event,
@@ -69,5 +71,6 @@ class MockEngagementContext(
         }
     },
     payloadSender = MockPayloadSender(onSendPayload),
-    executors = Executors(ImmediateExecutor, ImmediateExecutor)
+    executors = Executors(ImmediateExecutor, ImmediateExecutor),
+    payloadContext = PayloadContext("test-tag", "test-conversation-id", "test-token", EncryptionNoOp(), "test-session-id")
 )

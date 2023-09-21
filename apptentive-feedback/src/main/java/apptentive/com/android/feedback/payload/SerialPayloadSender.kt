@@ -13,9 +13,9 @@ internal class SerialPayloadSender(
     private var busySending: Boolean = false
     private var payloadService: PayloadService? = null
 
-    override fun enqueuePayload(payload: Payload) {
+    override fun enqueuePayload(payload: Payload, context: PayloadContext) {
         Log.v(PAYLOADS, "Adding Payload to queue: $payload")
-        val payloadData = getPayloadData(payload)
+        val payloadData = getPayloadData(payload, context)
         if (payloadData != null) {
             payloadQueue.enqueuePayload(payloadData)
         }
@@ -110,9 +110,9 @@ internal class SerialPayloadSender(
 
     val hasPayloadService get() = payloadService != null
 
-    private fun getPayloadData(payload: Payload): PayloadData? {
+    private fun getPayloadData(payload: Payload, context: PayloadContext): PayloadData? {
         try {
-            return payload.toPayloadData()
+            return payload.toPayloadData(context)
         } catch (e: Exception) {
             Log.e(PAYLOADS, "Exception while creating payload data: $payload", e)
         }

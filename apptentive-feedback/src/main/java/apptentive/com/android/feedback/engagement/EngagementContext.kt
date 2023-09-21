@@ -14,6 +14,7 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionRespon
 import apptentive.com.android.feedback.model.InvocationData
 import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.feedback.model.payloads.Payload
+import apptentive.com.android.feedback.payload.PayloadContext
 import apptentive.com.android.feedback.payload.PayloadSender
 import apptentive.com.android.util.InternalUseOnly
 
@@ -26,7 +27,8 @@ import apptentive.com.android.util.InternalUseOnly
 open class EngagementContext(
     private val engagement: Engagement,
     private val payloadSender: PayloadSender,
-    val executors: Executors
+    val executors: Executors,
+    var payloadContext: PayloadContext
 ) {
     fun engage(
         event: Event,
@@ -58,7 +60,7 @@ open class EngagementContext(
         invocations = invocations.map(InvocationConverter::convert)
     )
 
-    fun enqueuePayload(payload: Payload) = payloadSender.enqueuePayload(payload)
+    fun enqueuePayload(payload: Payload) = payloadSender.enqueuePayload(payload, payloadContext)
 
     @VisibleForTesting
     fun getEngagement() = engagement

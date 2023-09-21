@@ -7,6 +7,7 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.concurrent.Executors
+import apptentive.com.android.encryption.EncryptionNoOp
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
 import apptentive.com.android.feedback.EngagementResult
@@ -21,6 +22,7 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionModule
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
 import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.feedback.model.payloads.Payload
+import apptentive.com.android.feedback.payload.PayloadContext
 import apptentive.com.android.feedback.payload.PayloadSender
 import apptentive.com.android.serialization.json.JsonConverter
 
@@ -109,10 +111,11 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
                 }
             },
             payloadSender = object : PayloadSender {
-                override fun enqueuePayload(payload: Payload) {
+                override fun enqueuePayload(payload: Payload, context: PayloadContext) {
                 }
             },
             executors = Executors(ImmediateExecutor, ImmediateExecutor),
+            payloadContext = PayloadContext("test", "test", "test", EncryptionNoOp(), "test")
         )
     }
 
