@@ -752,7 +752,6 @@ class ApptentiveDefaultClient(
         payloadSender.enqueuePayload(payload, conversationCredentials)
     }
 
-
     companion object {
         // Gets created on the first call to Apptentive.register() and is used to identify the session
         val sessionId = generateUUID()
