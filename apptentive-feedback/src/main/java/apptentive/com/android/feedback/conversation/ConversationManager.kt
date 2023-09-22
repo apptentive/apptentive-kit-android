@@ -109,7 +109,7 @@ internal class ConversationManager(
                         KeyResolver23.getTransformation()
                     )
                     DefaultStateMachine.onEvent(SDKEvent.LoggedIn(subject, encryptionKey))
-                    updateConversationCredentialsProvider(it.data.id, it.data.token, encryptionKey)
+                    updateConversationCredentialProvider(it.data.id, it.data.token, encryptionKey)
                     activeConversationSubject.value = conversation.copy(
                         conversationToken = it.data.token,
                         conversationId = it.data.id,
@@ -168,7 +168,7 @@ internal class ConversationManager(
                     DefaultStateMachine.onEvent(SDKEvent.LoggedIn(subject, encryptionKey))
                     if (previousState == SDKState.LOGGED_OUT) {
                         loadExistingConversation()?.let { // TODO handle if null
-                            updateConversationCredentialsProvider(it.conversationId, it.conversationToken, encryptionKey)
+                            updateConversationCredentialProvider(it.conversationId, it.conversationToken, encryptionKey)
                             activeConversationSubject.value = it
                             tryFetchEngagementManifest()
                             tryFetchAppConfiguration()
@@ -201,7 +201,7 @@ internal class ConversationManager(
         }
     }
 
-    private fun updateConversationCredentialsProvider(id: String?, token: String?, encryptionKey: EncryptionKey?) {
+    private fun updateConversationCredentialProvider(id: String?, token: String?, encryptionKey: EncryptionKey?) {
         DependencyProvider.register<ConversationCredentialProvider> (
             ConversationCredential(
                 conversationId = id,
@@ -240,7 +240,7 @@ internal class ConversationManager(
             activeConversation == null -> {
                 Log.v(CONVERSATION, "No login/anonymous conversation found") // SDK unlikely to get this state as the conversation is loaded already
                 DefaultStateMachine.onEvent(SDKEvent.Error)
-                updateConversationCredentialsProvider(null, null, null)
+                updateConversationCredentialProvider(null, null, null)
             }
             activeConversation.state is ConversationState.LoggedIn -> {
                 Log.v(CONVERSATION, "Identified as logged in conversation")
@@ -252,12 +252,12 @@ internal class ConversationManager(
                     )
                 )
                 val encryptionKey = (getActiveConversationMetaData()?.state as? ConversationState.LoggedIn)?.encryptionKey
-                updateConversationCredentialsProvider(conversationId, conversationToken, encryptionKey)
+                updateConversationCredentialProvider(conversationId, conversationToken, encryptionKey)
             }
             activeConversation.state is ConversationState.Anonymous -> {
                 Log.v(CONVERSATION, "Identified as anonymous conversation")
                 DefaultStateMachine.onEvent(SDKEvent.ConversationLoaded)
-                updateConversationCredentialsProvider(conversationId, conversationToken, null)
+                updateConversationCredentialProvider(conversationId, conversationToken, null)
             }
         }
         callback(Result.Success(Unit))
@@ -283,7 +283,7 @@ internal class ConversationManager(
                     DefaultStateMachine.onEvent(SDKEvent.ConversationLoaded)
                     // update current conversation
                     val currentConversation = activeConversationSubject.value
-                    updateConversationCredentialsProvider(it.data.id, it.data.token, null)
+                    updateConversationCredentialProvider(it.data.id, it.data.token, null)
                     activeConversationSubject.value = currentConversation.copy(
                         conversationToken = it.data.token,
                         conversationId = it.data.id,

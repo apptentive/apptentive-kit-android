@@ -3,7 +3,7 @@ package apptentive.com.android.feedback.payload
 import apptentive.com.android.TestCase
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
-import apptentive.com.android.feedback.conversation.MockConversationCredentials
+import apptentive.com.android.feedback.conversation.MockConversationCredential
 import apptentive.com.android.feedback.model.payloads.EventPayload
 import apptentive.com.android.util.Result
 import org.junit.Test
@@ -13,7 +13,7 @@ class SerialPayloadSenderTest : TestCase() {
     fun testSendingPayload() {
         val service = MockPayloadService.success()
 
-        DependencyProvider.register<ConversationCredentialProvider>(MockConversationCredentials())
+        DependencyProvider.register<ConversationCredentialProvider>(MockConversationCredential())
 
         val sender = SerialPayloadSender(
             payloadQueue = MockPayloadQueue(),
@@ -37,7 +37,7 @@ class SerialPayloadSenderTest : TestCase() {
 
     @Test
     fun testFailedPayload() {
-        DependencyProvider.register<ConversationCredentialProvider>(MockConversationCredentials())
+        DependencyProvider.register<ConversationCredentialProvider>(MockConversationCredential())
 
         val payload2 = createPayload("payload-2")
 

@@ -120,9 +120,9 @@ class MessageManager(
     }
 
     fun fetchMessages() {
-        val conversationCredentials = DependencyProvider.of<ConversationCredentialProvider>()
-        val token = conversationCredentials.conversationToken
-        val id = conversationCredentials.conversationId
+        val conversationCredential = DependencyProvider.of<ConversationCredentialProvider>()
+        val token = conversationCredential.conversationToken
+        val id = conversationCredential.conversationId
         if (!fetchingInProgress && !id.isNullOrEmpty() && !token.isNullOrEmpty()) {
             fetchingInProgress = true
             messageCenterService.getMessages(token, id, lastDownloadedMessageID) {

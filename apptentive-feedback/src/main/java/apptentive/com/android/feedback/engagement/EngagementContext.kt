@@ -61,8 +61,8 @@ open class EngagementContext(
     )
 
     fun enqueuePayload(payload: Payload) {
-        val conversationCredentials = DependencyProvider.of<ConversationCredentialProvider>()
-        payloadSender.enqueuePayload(payload, conversationCredentials)
+        val conversationCredential = DependencyProvider.of<ConversationCredentialProvider>()
+        payloadSender.enqueuePayload(payload, conversationCredential)
     }
 
     @VisibleForTesting

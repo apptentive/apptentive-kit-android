@@ -21,13 +21,13 @@ abstract class Payload(val nonce: String) {
 
     fun toJson(): String = JsonConverter.toJson(mapOf(getJsonContainer() to this))
 
-    fun toPayloadData(credentialsProvider: ConversationCredentialProvider) = PayloadData(
+    fun toPayloadData(credentialProvider: ConversationCredentialProvider) = PayloadData(
         nonce = nonce,
         type = getPayloadType(),
-        tag = credentialsProvider.conversationPath ?: "placeholder",
-        token = credentialsProvider.conversationToken,
-        conversationId = credentialsProvider.conversationId,
-        isEncrypted = credentialsProvider.payloadEncryptionKey != null,
+        tag = credentialProvider.conversationPath ?: "placeholder",
+        token = credentialProvider.conversationToken,
+        conversationId = credentialProvider.conversationId,
+        isEncrypted = credentialProvider.payloadEncryptionKey != null,
         path = getHttpPath(),
         method = getHttpMethod(),
         mediaType = getContentType(),

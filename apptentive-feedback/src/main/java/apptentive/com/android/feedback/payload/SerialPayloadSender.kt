@@ -14,9 +14,9 @@ internal class SerialPayloadSender(
     private var busySending: Boolean = false
     private var payloadService: PayloadService? = null
 
-    override fun enqueuePayload(payload: Payload, credentialsProvider: ConversationCredentialProvider) {
+    override fun enqueuePayload(payload: Payload, credentialProvider: ConversationCredentialProvider) {
         Log.v(PAYLOADS, "Adding Payload to queue: $payload")
-        val payloadData = getPayloadData(payload, credentialsProvider)
+        val payloadData = getPayloadData(payload, credentialProvider)
         if (payloadData != null) {
             payloadQueue.enqueuePayload(payloadData)
         }
@@ -111,9 +111,9 @@ internal class SerialPayloadSender(
 
     val hasPayloadService get() = payloadService != null
 
-    private fun getPayloadData(payload: Payload, credentialsProvider: ConversationCredentialProvider): PayloadData? {
+    private fun getPayloadData(payload: Payload, credentialProvider: ConversationCredentialProvider): PayloadData? {
         try {
-            return payload.toPayloadData(credentialsProvider)
+            return payload.toPayloadData(credentialProvider)
         } catch (e: Exception) {
             Log.e(PAYLOADS, "Exception while creating payload data: $payload", e)
         }

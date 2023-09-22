@@ -10,7 +10,7 @@ import apptentive.com.android.encryption.NotEncrypted
 import apptentive.com.android.feedback.backend.ConversationFetchResponse
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.conversation.ConversationRepository
-import apptentive.com.android.feedback.conversation.MockConversationCredentials
+import apptentive.com.android.feedback.conversation.MockConversationCredential
 import apptentive.com.android.feedback.conversation.MockConversationRepository
 import apptentive.com.android.feedback.conversation.createConversationManager
 import apptentive.com.android.feedback.engagement.util.MockAndroidSharedPrefDataStore
@@ -62,14 +62,14 @@ class ApptentiveDefaultClientTest : TestCase() {
     }
 
     private val mockPayloadSender = object : PayloadSender {
-        override fun enqueuePayload(payload: Payload, credentialsProvider: ConversationCredentialProvider) {}
+        override fun enqueuePayload(payload: Payload, credentialProvider: ConversationCredentialProvider) {}
     }
 
     @Before
     fun setup() {
         DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore())
         DependencyProvider.register<FileSystem>(MockFileSystem())
-        DependencyProvider.register<ConversationCredentialProvider>(MockConversationCredentials())
+        DependencyProvider.register<ConversationCredentialProvider>(MockConversationCredential())
         Apptentive.messageCenterNotificationSubject.value = null
     }
 

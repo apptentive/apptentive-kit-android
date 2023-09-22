@@ -744,8 +744,8 @@ class ApptentiveDefaultClient(
     internal fun getConversationId() = conversationManager.getConversation().conversationId
 
     private fun enqueuePayload(payload: Payload) {
-        val conversationCredentials = DependencyProvider.of<ConversationCredentialProvider>()
-        payloadSender.enqueuePayload(payload, conversationCredentials)
+        val conversationCredential = DependencyProvider.of<ConversationCredentialProvider>()
+        payloadSender.enqueuePayload(payload, conversationCredential)
     }
 
     companion object {

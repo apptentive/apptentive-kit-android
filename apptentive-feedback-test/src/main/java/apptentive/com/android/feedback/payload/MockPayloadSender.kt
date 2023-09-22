@@ -6,11 +6,11 @@ import apptentive.com.android.feedback.model.payloads.Payload
 class MockPayloadSender(
     private val callback: ((Payload) -> Unit)? = null,
     var payload: Payload? = null,
-    var credentialsProvider: ConversationCredentialProvider? = null
+    var credentialProvider: ConversationCredentialProvider? = null
 ) : PayloadSender {
-    override fun enqueuePayload(payload: Payload, credentialsProvider: ConversationCredentialProvider) {
+    override fun enqueuePayload(payload: Payload, credentialProvider: ConversationCredentialProvider) {
         this.payload = payload
-        this.credentialsProvider = credentialsProvider
+        this.credentialProvider = credentialProvider
         callback?.invoke(payload)
     }
 }

@@ -4,7 +4,7 @@ import apptentive.com.android.TestCase
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.MockTimeRule
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
-import apptentive.com.android.feedback.conversation.MockConversationCredentials
+import apptentive.com.android.feedback.conversation.MockConversationCredential
 import apptentive.com.android.feedback.payload.MediaType
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadType
@@ -22,7 +22,7 @@ class SurveyResponsePayloadTest : TestCase() {
     fun testEventPayloadData() {
         val surveyId = "survey_id"
 
-        DependencyProvider.register<ConversationCredentialProvider>(MockConversationCredentials())
+        DependencyProvider.register<ConversationCredentialProvider>(MockConversationCredential())
 
         val payload = SurveyResponsePayload.fromAnswers(
             id = surveyId,

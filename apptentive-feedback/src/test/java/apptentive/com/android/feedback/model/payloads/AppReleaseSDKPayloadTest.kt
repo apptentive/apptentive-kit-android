@@ -4,7 +4,7 @@ import apptentive.com.android.GenerateUUIDRule
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.MockTimeRule
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
-import apptentive.com.android.feedback.conversation.MockConversationCredentials
+import apptentive.com.android.feedback.conversation.MockConversationCredential
 import apptentive.com.android.feedback.payload.MediaType
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadType
@@ -25,7 +25,7 @@ class AppReleaseSDKPayloadTest {
     @Ignore("Passes locally. Failing on backend because of the UUID generation for session id.")
     @Test
     fun testAppReleaseAndSDKPayload() {
-        DependencyProvider.register<ConversationCredentialProvider>(MockConversationCredentials())
+        DependencyProvider.register<ConversationCredentialProvider>(MockConversationCredential())
 
         val payload = AppReleaseAndSDKPayload(
             nonce = "nonce",
