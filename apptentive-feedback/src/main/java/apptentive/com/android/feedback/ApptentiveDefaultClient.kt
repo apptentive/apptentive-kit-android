@@ -22,7 +22,6 @@ import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.DefaultConversationService
 import apptentive.com.android.feedback.backend.MessageCenterService
 import apptentive.com.android.feedback.conversation.ConversationManager
-import apptentive.com.android.feedback.conversation.ConversationMetaData
 import apptentive.com.android.feedback.conversation.ConversationRepository
 import apptentive.com.android.feedback.conversation.ConversationSerializer
 import apptentive.com.android.feedback.conversation.ConversationState
@@ -84,6 +83,7 @@ import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.JwtString
 import apptentive.com.android.feedback.utils.JwtUtils
 import apptentive.com.android.feedback.utils.RuntimeUtils
+import apptentive.com.android.feedback.utils.getActiveConversationMetaData
 import apptentive.com.android.network.HttpClient
 import apptentive.com.android.network.UnexpectedResponseException
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
@@ -153,7 +153,7 @@ class ApptentiveDefaultClient(
         )
         clearPayloadCache = false
 
-        getConversationToken(conversationService, registerCallback)
+        getConversationToken(registerCallback)
         addObservers(conversationService)
 
         engage(Event.internal(InternalEvent.APP_LAUNCH.labelName))
@@ -161,10 +161,9 @@ class ApptentiveDefaultClient(
 
     @WorkerThread
     private fun getConversationToken(
-        conversationService: ConversationService,
         registerCallback: ((result: RegisterResult) -> Unit)?
     ) {
-        conversationManager.fetchConversationToken { result ->
+        conversationManager.tryFetchConversationToken { result ->
             when (result) {
                 is Result.Error -> {
                     DefaultStateMachine.onEvent(SDKEvent.Error)
@@ -182,34 +181,15 @@ class ApptentiveDefaultClient(
                     }
                 }
                 is Result.Success -> {
+                    val activeConversation = conversationManager.activeConversation.value
                     conversationManager.tryFetchEngagementManifest()
                     conversationManager.tryFetchAppConfiguration()
-                    val activeConversation = conversationManager.activeConversation.value
                     if (activeConversation.conversationId != null && activeConversation.conversationToken != null) {
                         registerCallback?.invoke(RegisterResult.Success)
+                    } else {
+                        registerCallback?.invoke(RegisterResult.Failure("Failed to fetch conversation token", 0))
                     }
-                    val messageRepository = DefaultMessageRepository(
-                        messageSerializer = DefaultMessageSerializer(encryption, DefaultStateMachine.conversationRoster).apply {
-                            if (clearMessageCache) {
-                                deleteMessageFile()
-                                clearMessageCache = false
-                            }
-                        },
-                    )
-
-                    DependencyProvider.register(messageRepository as MessageRepository)
-
-                    messageManager = MessageManager( // TODO clean up after the credentials refactor
-                        activeConversation.conversationId,
-                        activeConversation.conversationToken,
-                        conversationService as MessageCenterService,
-                        executors.state,
-                        DependencyProvider.of<MessageRepository>(),
-                    )
-                    messageManager?.let {
-                        DependencyProvider.register(MessageManagerFactoryProvider(it))
-                        it.addUnreadMessageListener(::updateMessageCenterNotification)
-                    }
+                    createMessageManager()
                 }
             }
         }
@@ -245,8 +225,10 @@ class ApptentiveDefaultClient(
     @RequiresApi(Build.VERSION_CODES.M)
     private fun loginAnonymousConversation(jwtToken: JwtString, subject: String, loginCallback: ((result: LoginResult) -> Unit)? = null) {
         val conversationId = conversationManager.getConversation().conversationId
-        conversationId?.let {
-            conversationManager.loginSession(it, jwtToken, subject, loginCallback)
+        conversationId?.let { id ->
+            conversationManager.loginSession(id, jwtToken, subject) { result ->
+                handleLoginResult(result, loginCallback)
+            }
         }
     }
 
@@ -273,19 +255,10 @@ class ApptentiveDefaultClient(
         when (result) {
             is LoginResult.Success -> {
                 Log.v(CONVERSATION, "Successfully logged in")
-                // Recreate message manager with new conversationId and conversationToken
-                val conversation = conversationManager.getConversation()
-                messageManager = MessageManager(
-                    conversation.conversationId,
-                    conversation.conversationToken,
-                    conversationService as MessageCenterService,
-                    executors.state,
-                    DependencyProvider.of<MessageRepository>(),
-                )
-                messageManager?.let {
-                    DependencyProvider.register(MessageManagerFactoryProvider(it))
-                    it.addUnreadMessageListener(::updateMessageCenterNotification)
+                if (messageManager == null) {
+                    createMessageManager()
                 }
+                messageManager?.login()
                 callback?.invoke(LoginResult.Success)
             }
             is LoginResult.Error -> {
@@ -303,13 +276,35 @@ class ApptentiveDefaultClient(
         }
     }
 
-    private fun getActiveConversationMetaData(): ConversationMetaData? {
-        return DefaultStateMachine.conversationRoster.activeConversation
+    private fun createMessageManager() {
+        if (!DependencyProvider.isRegistered<MessageRepository>()) {
+            val messageRepository = DefaultMessageRepository(
+                messageSerializer = DefaultMessageSerializer(
+                    encryption,
+                    DefaultStateMachine.conversationRoster
+                ).apply {
+                    if (clearMessageCache) {
+                        deleteMessageFile()
+                        clearMessageCache = false
+                    }
+                },
+            )
+            DependencyProvider.register(messageRepository as MessageRepository)
+            Log.d(CONVERSATION, "MessageRepository registered")
+        }
+        messageManager = MessageManager(
+            conversationService as MessageCenterService,
+            executors.state,
+            DependencyProvider.of<MessageRepository>(),
+        )
+        messageManager?.let {
+            DependencyProvider.register(MessageManagerFactoryProvider(it))
+            it.addUnreadMessageListener(::updateMessageCenterNotification)
+        }
     }
 
     override fun logout() {
         messageManager?.logout()
-        messageManager = null
         conversationManager.logoutSession()
     }
 
@@ -333,12 +328,10 @@ class ApptentiveDefaultClient(
             // once we have received conversationId and conversationToken we can setup payload sender service
             val conversationId = conversation.conversationId
             val conversationToken = conversation.conversationToken
-            if (conversationId != null && conversationToken != null) { // && !serialPayloadSender.hasPayloadService) { //TODO add it back after the credentials provider refactor
+            if (conversationId != null && conversationToken != null && !(payloadSender as SerialPayloadSender).hasPayloadService) {
                 (payloadSender as SerialPayloadSender).setPayloadService(
                     service = ConversationPayloadService(
                         requestSender = conversationService,
-                        conversationId = conversationId,
-                        conversationToken = conversationToken
                     )
                 )
             }

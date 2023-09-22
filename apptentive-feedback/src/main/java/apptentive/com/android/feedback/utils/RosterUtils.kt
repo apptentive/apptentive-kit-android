@@ -110,3 +110,7 @@ internal object AndroidSDKVersion {
         return Build.VERSION.SDK_INT
     }
 }
+
+fun getActiveConversationMetaData(): ConversationMetaData? {
+    return DefaultStateMachine.conversationRoster.activeConversation
+}

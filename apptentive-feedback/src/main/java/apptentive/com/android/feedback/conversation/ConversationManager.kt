@@ -36,6 +36,7 @@ import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.ThrottleUtils
 import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
+import apptentive.com.android.feedback.utils.getActiveConversationMetaData
 import apptentive.com.android.network.UnexpectedResponseException
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.platform.SharedPrefConstants.SDK_CORE_INFO
@@ -107,7 +108,8 @@ internal class ConversationManager(
                         it.data.encryptionKey.getKeyFromHexString(),
                         KeyResolver23.getTransformation()
                     )
-
+                    DefaultStateMachine.onEvent(SDKEvent.LoggedIn(subject, encryptionKey))
+                    updateConversationCredentialsProvider(it.data.id, it.data.token, encryptionKey)
                     activeConversationSubject.value = conversation.copy(
                         conversationToken = it.data.token,
                         conversationId = it.data.id,
@@ -119,17 +121,8 @@ internal class ConversationManager(
                     tryFetchEngagementManifest()
                     tryFetchAppConfiguration()
 
-                    Log.v(
-                        CONVERSATION,
-                        "Login session successful, " +
-                            "encryption key: $encryptionKey, " +
-                            "conversationId: ${it.data.id}, " +
-                            "token: ${it.data.token}, " +
-                            "jwtToken: $jwtToken"
-                    )
-                    DefaultStateMachine.onEvent(SDKEvent.LoggedIn(subject, encryptionKey))
+                    Log.d(CONVERSATION, "Login session successful, " + "conversationId: ${it.data.id}")
                     loginCallback?.invoke(LoginResult.Success)
-                    // TODO Update Payload encryption
                 }
             }
         }
@@ -168,17 +161,14 @@ internal class ConversationManager(
                 is Result.Success -> {
                     Log.v(CONVERSATION, "Login session successful, encryption key: ${result.data.encryptionKey.getKeyFromHexString()}")
                     val previousState = DefaultStateMachine.state
-                    DefaultStateMachine.onEvent(
-                        SDKEvent.LoggedIn(
-                            subject,
-                            EncryptionKey(
-                                result.data.encryptionKey.getKeyFromHexString(),
-                                KeyResolver23.getTransformation()
-                            )
-                        )
+                    val encryptionKey = EncryptionKey(
+                        result.data.encryptionKey.getKeyFromHexString(),
+                        KeyResolver23.getTransformation()
                     )
+                    DefaultStateMachine.onEvent(SDKEvent.LoggedIn(subject, encryptionKey))
                     if (previousState == SDKState.LOGGED_OUT) {
                         loadExistingConversation()?.let { // TODO handle if null
+                            updateConversationCredentialsProvider(it.conversationId, it.conversationToken, encryptionKey)
                             activeConversationSubject.value = it
                             tryFetchEngagementManifest()
                             tryFetchAppConfiguration()
@@ -211,6 +201,17 @@ internal class ConversationManager(
         }
     }
 
+    private fun updateConversationCredentialsProvider(id: String?, token: String?, encryptionKey: EncryptionKey?) {
+        DependencyProvider.register<ConversationCredentialProvider> (
+            ConversationCredential(
+                conversationId = id,
+                conversationToken = token,
+                payloadEncryptionKey = encryptionKey,
+                conversationPath = DefaultStateMachine.conversationRoster.activeConversation?.path
+            )
+        )
+    }
+
     private fun setManifestExpired() {
         val conversation = activeConversationSubject.value
         activeConversationSubject.value = conversation.copy(
@@ -220,38 +221,51 @@ internal class ConversationManager(
         )
     }
 
-    fun fetchConversationToken(callback: (result: Result<Unit>) -> Unit) {
+    fun tryFetchConversationToken(callback: (result: Result<Unit>) -> Unit) {
         val conversation = activeConversation.value
         val conversationToken = conversation.conversationToken
         val conversationId = conversation.conversationId
         if (conversationToken != null && conversationId != null) {
-            Log.v(CONVERSATION, "Conversation token already exists")
-            when (DefaultStateMachine.conversationRoster.activeConversation?.state) {
-                is ConversationState.LoggedIn -> {
-                    Log.v(CONVERSATION, "Identified as logged in conversation")
-                    val loggedIn = DefaultStateMachine.conversationRoster.activeConversation?.state as ConversationState.LoggedIn
-                    DefaultStateMachine.onEvent(
-                        SDKEvent.LoggedIn(
-                            loggedIn.subject,
-                            loggedIn.encryptionKey,
-                        )
-                    )
-                }
-                is ConversationState.Anonymous -> {
-                    Log.v(CONVERSATION, "Identified as anonymous conversation")
-                    DefaultStateMachine.onEvent(SDKEvent.ConversationLoaded)
-                }
-                // TODO should I handle this else case?
-                else -> {
-                    Log.v(CONVERSATION, "Conversation token already exists, but not logged in")
-                    DefaultStateMachine.onEvent(SDKEvent.Error)
-                }
-            }
-            callback(Result.Success(Unit))
-            return
+            // conversation token already exists
+            updateCurrentState(conversationId, conversationToken, callback)
+        } else {
+            fetchNewConversationToken(callback)
         }
+    }
 
+    private fun updateCurrentState(conversationId: String, conversationToken: String, callback: (result: Result<Unit>) -> Unit) {
+        Log.v(CONVERSATION, "Conversation token already exists")
+        val activeConversation = getActiveConversationMetaData()
+        when {
+            activeConversation == null -> {
+                Log.v(CONVERSATION, "No login/anonymous conversation found") // SDK unlikely to get this state as the conversation is loaded already
+                DefaultStateMachine.onEvent(SDKEvent.Error)
+                updateConversationCredentialsProvider(null, null, null)
+            }
+            activeConversation.state is ConversationState.LoggedIn -> {
+                Log.v(CONVERSATION, "Identified as logged in conversation")
+                val loggedIn = DefaultStateMachine.conversationRoster.activeConversation?.state as ConversationState.LoggedIn
+                DefaultStateMachine.onEvent(
+                    SDKEvent.LoggedIn(
+                        loggedIn.subject,
+                        loggedIn.encryptionKey,
+                    )
+                )
+                val encryptionKey = (getActiveConversationMetaData()?.state as? ConversationState.LoggedIn)?.encryptionKey
+                updateConversationCredentialsProvider(conversationId, conversationToken, encryptionKey)
+            }
+            activeConversation.state is ConversationState.Anonymous -> {
+                Log.v(CONVERSATION, "Identified as anonymous conversation")
+                DefaultStateMachine.onEvent(SDKEvent.ConversationLoaded)
+                updateConversationCredentialsProvider(conversationId, conversationToken, null)
+            }
+        }
+        callback(Result.Success(Unit))
+    }
+
+    private fun fetchNewConversationToken(callback: (result: Result<Unit>) -> Unit) {
         Log.v(CONVERSATION, "Fetching conversation token...")
+        val conversation = activeConversation.value
         conversationService.fetchConversationToken(
             device = conversation.device,
             sdk = conversation.sdk,
@@ -269,6 +283,7 @@ internal class ConversationManager(
                     DefaultStateMachine.onEvent(SDKEvent.ConversationLoaded)
                     // update current conversation
                     val currentConversation = activeConversationSubject.value
+                    updateConversationCredentialsProvider(it.data.id, it.data.token, null)
                     activeConversationSubject.value = currentConversation.copy(
                         conversationToken = it.data.token,
                         conversationId = it.data.id,
@@ -276,8 +291,6 @@ internal class ConversationManager(
                             id = it.data.personId
                         )
                     )
-
-                    // let the caller know fetching was successful
                     callback(Result.Success(Unit))
                 }
             }
@@ -309,7 +322,7 @@ internal class ConversationManager(
         }
 
         // no active conversations: create a new one
-        Log.i(CONVERSATION, "Creating 'anonymous' conversation...")
+//        Log.i(CONVERSATION, "Creating 'anonymous' conversation...")
         return createConversation()
     }
 
@@ -369,6 +382,8 @@ internal class ConversationManager(
         try {
             conversationRepository.saveConversation(conversation)
             Log.d(CONVERSATION, "Conversation saved successfully")
+        } catch (e: ConversationLoggedOutException) {
+            Log.e(CONVERSATION, "No active conversation found in the roster, cannot save conversation", e)
         } catch (exception: Exception) {
             Log.e(CONVERSATION, "Exception while saving conversation")
         }

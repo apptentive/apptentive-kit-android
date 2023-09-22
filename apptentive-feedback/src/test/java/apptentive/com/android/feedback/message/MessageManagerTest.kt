@@ -5,7 +5,9 @@ import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.feedback.backend.MessageCenterService
+import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.conversation.ConversationRoster
+import apptentive.com.android.feedback.conversation.MockConversationCredential
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.MockEngagementContext
@@ -42,8 +44,6 @@ class MessageManagerTest : TestCase() {
         }
         DependencyProvider.register(engagementContextFactory as EngagementContextFactory)
         messageManager = MessageManager(
-            "1234",
-            "token",
             MockMessageCenterService(),
             MockExecutor(),
             MockMessageRepository(),
@@ -69,8 +69,6 @@ class MessageManagerTest : TestCase() {
     fun testHasSentMessage() {
         // App launched with at least one message in the storage
         var messageManager = MessageManager(
-            "1234",
-            "token",
             MockMessageCenterService(),
             MockExecutor(),
             MockMessageRepository(),
@@ -80,8 +78,6 @@ class MessageManagerTest : TestCase() {
 
         // App is launched with no messages in the storage
         messageManager = MessageManager(
-            "1234",
-            "token",
             MockMessageCenterService(),
             MockExecutor(),
             MockMessageRepository(listOf()),
@@ -98,6 +94,7 @@ class MessageManagerTest : TestCase() {
 
     @Test
     fun testNewMessages() {
+        DependencyProvider.register<ConversationCredentialProvider>(MockConversationCredential())
         messageManager.fetchMessages()
         addResult(messageManager.messages.value)
         assertResults(testMessageList)
