@@ -48,9 +48,9 @@ class AppReleaseSDKPayloadTest {
         val expected = PayloadData(
             nonce = "nonce",
             type = PayloadType.AppReleaseAndSDK,
-            tag = "test-tag",
-            token = "test-token",
-            conversationId = "test-conversation_id",
+            tag = "mockedConversationPath",
+            token = "mockedConversationToken",
+            conversationId = "mockedConversationId",
             isEncrypted = false,
             path = "/conversations/:conversation_id/app_release",
             method = HttpMethod.PUT,
