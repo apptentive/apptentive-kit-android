@@ -7,7 +7,10 @@ import apptentive.com.android.util.generateUUID
 @InternalUseOnly
 data class PayloadData(
     val nonce: String = generateUUID(),
+    val tag: String,
     var token: String? = null,
+    var conversationId: String? = null,
+    var isEncrypted: Boolean = false,
     val type: PayloadType,
     val path: String,
     val method: HttpMethod,
@@ -18,7 +21,8 @@ data class PayloadData(
     fun resolvePath(conversationId: String) = path.replace(":conversation_id", conversationId)
 
     override fun toString(): String {
-        return "${javaClass.simpleName}(nonce=$nonce, type=$type, mediaType=$mediaType, " +
+        return "${javaClass.simpleName}(nonce=$nonce, type=$type, tag=$tag, token=$token, " +
+            "conversationId = $conversationId, isEncrypted=$isEncrypted, mediaType=$mediaType, " +
             "dataFilePath=${attachmentData.dataFilePath}, data=${data.size} bytes)"
     }
 
@@ -29,6 +33,10 @@ data class PayloadData(
         other as PayloadData
 
         if (nonce != other.nonce) return false
+        if (tag != other.tag) return false
+        if (token != other.token) return false
+        if (conversationId != other.conversationId) return false
+        if (isEncrypted != other.isEncrypted) return false
         if (type != other.type) return false
         if (path != other.path) return false
         if (method != other.method) return false
@@ -42,6 +50,10 @@ data class PayloadData(
     override fun hashCode(): Int {
         var result = nonce.hashCode()
         result = 31 * result + type.hashCode()
+        result = 31 * result + tag.hashCode()
+        result = 31 * result + token.hashCode()
+        result = 31 * result + conversationId.hashCode()
+        result = 31 * result + isEncrypted.hashCode()
         result = 31 * result + path.hashCode()
         result = 31 * result + method.hashCode()
         result = 31 * result + mediaType.hashCode()

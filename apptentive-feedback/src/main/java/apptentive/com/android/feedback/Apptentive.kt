@@ -588,7 +588,6 @@ object Apptentive {
         return try {
             if (DefaultStateMachine.state == SDKState.LOGGED_OUT) {
                 Log.w(FEEDBACK, "SDK is in logged out state. Please login to get unread message count")
-                0
             } else {
                 client.getUnreadMessageCount()
             }

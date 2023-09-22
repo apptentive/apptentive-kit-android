@@ -1,8 +1,6 @@
 package apptentive.com.android.feedback.backend
 
 import androidx.annotation.Keep
-import apptentive.com.android.core.DependencyProvider
-import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadSendException
 import apptentive.com.android.feedback.payload.PayloadService
@@ -25,9 +23,8 @@ internal class ConversationPayloadService(
     private val requestSender: PayloadRequestSender
 ) : PayloadService {
     override fun sendPayload(payload: PayloadData, callback: (Result<PayloadData>) -> Unit) {
-        val conversationCredentials = DependencyProvider.of<ConversationCredentialProvider>()
-        val conversationId = conversationCredentials.conversationId
-        val conversationToken = conversationCredentials.conversationToken
+        val conversationId = payload.conversationId
+        val conversationToken = payload.token
         if (conversationId == null || conversationToken == null) {
             callback(Result.Error(payload, PayloadSendException(payload, cause = null)))
         } else {

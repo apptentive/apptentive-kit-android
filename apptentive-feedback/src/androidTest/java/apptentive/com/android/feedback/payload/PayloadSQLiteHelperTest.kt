@@ -110,6 +110,10 @@ class PayloadSQLiteHelperTest : TestCase() {
         return PayloadData(
             nonce = nonce,
             type = type,
+            tag = "test-tag", // TODO: pass a context and use that?
+            token = "test-token",
+            conversationId = "test-conversation-id",
+            isEncrypted = false,
             path = path,
             method = method,
             mediaType = mediaType,

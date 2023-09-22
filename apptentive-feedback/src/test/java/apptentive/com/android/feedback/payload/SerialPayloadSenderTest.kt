@@ -1,6 +1,9 @@
 package apptentive.com.android.feedback.payload
 
 import apptentive.com.android.TestCase
+import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
+import apptentive.com.android.feedback.conversation.MockConversationCredential
 import apptentive.com.android.feedback.model.payloads.EventPayload
 import apptentive.com.android.util.Result
 import org.junit.Test
@@ -9,6 +12,8 @@ class SerialPayloadSenderTest : TestCase() {
     @Test
     fun testSendingPayload() {
         val service = MockPayloadService.success()
+
+        DependencyProvider.register<ConversationCredentialProvider>(MockConversationCredential())
 
         val sender = SerialPayloadSender(
             payloadQueue = MockPayloadQueue(),
@@ -19,10 +24,10 @@ class SerialPayloadSenderTest : TestCase() {
         val payload2 = createPayload("payload-2")
 
         sender.setPayloadService(service)
-        sender.enqueuePayload(payload1)
+        sender.enqueuePayload(payload1, DependencyProvider.of<ConversationCredentialProvider>())
         sender.pauseSending()
 
-        sender.enqueuePayload(payload2)
+        sender.enqueuePayload(payload2, DependencyProvider.of<ConversationCredentialProvider>())
 
         assertResults("success: ${payload1.nonce}")
 
@@ -32,12 +37,14 @@ class SerialPayloadSenderTest : TestCase() {
 
     @Test
     fun testFailedPayload() {
+        DependencyProvider.register<ConversationCredentialProvider>(MockConversationCredential())
+
         val payload2 = createPayload("payload-2")
 
         val service = MockPayloadService {
             when (it.nonce) {
                 "payload-2" -> Result.Error(
-                    data = payload2.toPayloadData(),
+                    data = payload2.toPayloadData(DependencyProvider.of<ConversationCredentialProvider>()),
                     error = PayloadSendException(it)
                 )
                 else -> Result.Success(it)
@@ -53,9 +60,10 @@ class SerialPayloadSenderTest : TestCase() {
 
         sender.setPayloadService(service)
 
-        sender.enqueuePayload(payload1)
-        sender.enqueuePayload(payload2)
-        sender.enqueuePayload(payload3)
+        val credentialProvider = DependencyProvider.of<ConversationCredentialProvider>()
+        sender.enqueuePayload(payload1, credentialProvider)
+        sender.enqueuePayload(payload2, credentialProvider)
+        sender.enqueuePayload(payload3, credentialProvider)
 
         assertResults(
             "success: ${payload1.nonce}",

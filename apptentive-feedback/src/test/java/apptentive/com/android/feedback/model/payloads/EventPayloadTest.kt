@@ -1,7 +1,9 @@
 package apptentive.com.android.feedback.model.payloads
 
 import apptentive.com.android.GenerateUUIDRule
+import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.MockTimeRule
+import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.payload.MediaType
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadType
@@ -40,12 +42,16 @@ class EventPayloadTest {
         val expected = PayloadData(
             nonce = "nonce",
             type = PayloadType.Event,
+            tag = "test-tag",
+            token = "test-token",
+            conversationId = "test-conversation_id",
+            isEncrypted = false,
             path = "/conversations/:conversation_id/events",
             method = HttpMethod.POST,
             mediaType = MediaType.applicationJson,
             data = expectedJson.toByteArray()
         )
-        val actual = payload.toPayloadData()
+        val actual = payload.toPayloadData(DependencyProvider.of<ConversationCredentialProvider>())
         assertEquals(expected, actual)
     }
 

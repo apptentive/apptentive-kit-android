@@ -50,7 +50,7 @@ class JwtUtilsTest {
         )
         for ((index, jwt) in jwtList.withIndex()) {
             val result = JwtUtils.extractSub(jwt)
-            assertEquals(JwtResult.Success(expectedSubList[index]), result)
+            assertEquals(expectedSubList[index], result)
         }
     }
 
@@ -65,7 +65,7 @@ class JwtUtilsTest {
         )
         for (jwt in jwtList) {
             val result = JwtUtils.extractSub(jwt)
-            assertEquals(JwtResult.Error("JWT payload does not contain 'sub' claim"), result)
+            assertNull(result)
         }
     }
 
@@ -74,6 +74,6 @@ class JwtUtilsTest {
         val jwt =
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ"
         val result = JwtUtils.extractSub(jwt)
-        assertEquals(JwtResult.Error("Invalid JWT format: expected 3 parts, found 2"), result)
+        assertNull(result)
     }
 }
