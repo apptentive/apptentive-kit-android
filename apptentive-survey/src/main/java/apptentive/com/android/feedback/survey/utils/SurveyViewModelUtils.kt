@@ -1,13 +1,11 @@
 package apptentive.com.android.feedback.survey.utils
 
 import apptentive.com.android.core.DependencyProvider
-import apptentive.com.android.encryption.EncryptionNoOp // FIXME: Can likely remove after credential provider work.
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
-import apptentive.com.android.feedback.payload.PayloadContext
 import apptentive.com.android.feedback.survey.DefaultSurveyModelFactory
 import apptentive.com.android.feedback.survey.SurveyModelFactory
 import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion
@@ -58,7 +56,7 @@ private fun createSurveyViewModel(
     onSubmit = { answers ->
 
         // send response
-        context.enqueuePayload(SurveyResponsePayload.fromAnswers(surveyModel.interactionId, answers), PayloadContext("test-tag", "test-conversation_id", "test-token", EncryptionNoOp(), "test-session-id")) // FIXME: Get from credentials provider
+        context.enqueuePayload(SurveyResponsePayload.fromAnswers(surveyModel.interactionId, answers))
 
         // engage 'submit' event
         context.engage(

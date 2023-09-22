@@ -11,6 +11,7 @@ import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.InteractionModuleComponent
+import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.engagement.Engagement
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.Event
@@ -21,7 +22,6 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionModule
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
 import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.feedback.model.payloads.Payload
-import apptentive.com.android.feedback.payload.PayloadContext
 import apptentive.com.android.feedback.payload.PayloadSender
 import apptentive.com.android.serialization.json.JsonConverter
 
@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
                 }
             },
             payloadSender = object : PayloadSender {
-                override fun enqueuePayload(payload: Payload, context: PayloadContext) {
+                override fun enqueuePayload(payload: Payload, credentialProvider: ConversationCredentialProvider) {
                 }
             },
             executors = Executors(ImmediateExecutor, ImmediateExecutor),

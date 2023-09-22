@@ -43,6 +43,8 @@ class MessageManagerTest : TestCase() {
             }
         }
         DependencyProvider.register(engagementContextFactory as EngagementContextFactory)
+        DependencyProvider.register<ConversationCredentialProvider>(MockConversationCredentials())
+
         messageManager = MessageManager(
             MockMessageCenterService(),
             MockExecutor(),
@@ -94,7 +96,6 @@ class MessageManagerTest : TestCase() {
 
     @Test
     fun testNewMessages() {
-        DependencyProvider.register<ConversationCredentialProvider>(MockConversationCredentials())
         messageManager.fetchMessages()
         addResult(messageManager.messages.value)
         assertResults(testMessageList)

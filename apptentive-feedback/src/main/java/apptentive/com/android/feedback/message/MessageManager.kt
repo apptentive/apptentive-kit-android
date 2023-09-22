@@ -7,7 +7,6 @@ import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.Observable
-import apptentive.com.android.encryption.EncryptionNoOp // FIXME: Can likely remove after credential provider
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.UnreadMessageCallback
 import apptentive.com.android.feedback.backend.MessageCenterService
@@ -19,9 +18,7 @@ import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.Sender
-import apptentive.com.android.feedback.payload.PayloadContext
 import apptentive.com.android.feedback.payload.PayloadData
-import apptentive.com.android.feedback.platform.DefaultStateMachine
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
@@ -194,7 +191,7 @@ class MessageManager(
         messageRepository.addOrUpdateMessages(listOf(message))
         messagesSubject.value = messageRepository.getAllMessages()
 
-        context.enqueuePayload(message.toMessagePayload(), PayloadContext("test-tag", "test-conversation_id", "test-token", EncryptionNoOp(), "test-session-id")) // FIXME: Get from credentials provider
+        context.enqueuePayload(message.toMessagePayload())
         clearCustomData()
         if (!hasSentMessage) {
             hasSentMessage = true
@@ -212,7 +209,7 @@ class MessageManager(
         messageRepository.addOrUpdateMessages(listOf(message))
         messagesSubject.value = messageRepository.getAllMessages()
 
-        context.enqueuePayload(message.toMessagePayload(), PayloadContext("test-tag", "test-conversation_id", "test-token", EncryptionNoOp(), "test-session-id")) // FIXME: Get from credentials provider)
+        context.enqueuePayload(message.toMessagePayload())
         if (!hasSentMessage) {
             hasSentMessage = true
             startPolling()

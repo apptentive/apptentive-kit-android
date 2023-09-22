@@ -21,6 +21,7 @@ import apptentive.com.android.feedback.backend.ConversationPayloadService
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.DefaultConversationService
 import apptentive.com.android.feedback.backend.MessageCenterService
+import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.conversation.ConversationManager
 import apptentive.com.android.feedback.conversation.ConversationMetaData
 import apptentive.com.android.feedback.conversation.ConversationRepository
@@ -64,8 +65,8 @@ import apptentive.com.android.feedback.model.MessageCenterNotification
 import apptentive.com.android.feedback.model.payloads.AppReleaseAndSDKPayload
 import apptentive.com.android.feedback.model.payloads.EventPayload
 import apptentive.com.android.feedback.model.payloads.ExtendedData
+import apptentive.com.android.feedback.model.payloads.Payload
 import apptentive.com.android.feedback.notifications.NotificationUtils
-import apptentive.com.android.feedback.payload.PayloadContext
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadSender
 import apptentive.com.android.feedback.payload.PayloadType
@@ -351,7 +352,7 @@ class ApptentiveDefaultClient(
                 val sdk = conversationManager.getConversation().sdk
                 val appRelease = conversationManager.getConversation().appRelease
                 val payload = AppReleaseAndSDKPayload.buildPayload(sdk = sdk, appRelease = appRelease)
-                payloadSender.enqueuePayload(payload, payloadContext)
+                enqueuePayload(payload)
             }
         }
 
@@ -474,7 +475,7 @@ class ApptentiveDefaultClient(
         }
         if (person != newPerson) {
             conversationManager.updatePerson(newPerson)
-            payloadSender.enqueuePayload(newPerson.toPersonPayload(), payloadContext)
+            enqueuePayload(newPerson.toPersonPayload())
         }
     }
 
@@ -483,7 +484,7 @@ class ApptentiveDefaultClient(
         val newPerson = person.copy(mParticleId = id)
         if (person != newPerson) {
             conversationManager.updatePerson(newPerson)
-            payloadSender.enqueuePayload(newPerson.toPersonPayload(), payloadContext)
+            enqueuePayload(newPerson.toPersonPayload())
         }
     }
 
@@ -579,7 +580,7 @@ class ApptentiveDefaultClient(
             else -> Log.e(CONVERSATION, "Invalid pushProvider: $pushProvider")
         }
         conversationManager.updateDevice(device)
-        payloadSender.enqueuePayload(device.toDevicePayload(), payloadContext)
+        enqueuePayload(device.toDevicePayload())
     }
 
     override fun updateDevice(customData: Pair<String, Any?>?, deleteKey: String?) {
@@ -597,7 +598,7 @@ class ApptentiveDefaultClient(
         }
         if (device != newDevice) {
             conversationManager.updateDevice(newDevice)
-            payloadSender.enqueuePayload(newDevice.toDevicePayload(), payloadContext)
+            enqueuePayload(newDevice.toDevicePayload())
         }
     }
 
@@ -635,15 +636,14 @@ class ApptentiveDefaultClient(
         conversationManager.recordEvent(event)
 
         // send event to the backend
-        payloadSender.enqueuePayload(
+        enqueuePayload(
             EventPayload(
                 label = event.fullName,
                 interactionId = interactionId,
                 data = data,
                 customData = customData,
                 extendedData = extendedData
-            ),
-            payloadContext
+            )
         )
     }
 
@@ -745,22 +745,13 @@ class ApptentiveDefaultClient(
 
     //endregion
 
-    private val payloadContext: PayloadContext
-        get() {
-            val tag = DefaultStateMachine.conversationRoster.activeConversation?.path
-            val credentials = DefaultStateMachine.conversationCredentials
-            val encryption = DefaultStateMachine.encryption
-
-            return PayloadContext(
-                tag = tag ?: "placeholder",
-                token = credentials?.conversationToken,
-                conversationId = credentials?.conversationId,
-                encryption = encryption,
-                sessionId = sessionId
-            )
-        }
-
     internal fun getConversationId() = conversationManager.getConversation().conversationId
+
+    private fun enqueuePayload(payload: Payload) {
+        val conversationCredentials = DependencyProvider.of<ConversationCredentialProvider>()
+        payloadSender.enqueuePayload(payload, conversationCredentials)
+    }
+
 
     companion object {
         // Gets created on the first call to Apptentive.register() and is used to identify the session

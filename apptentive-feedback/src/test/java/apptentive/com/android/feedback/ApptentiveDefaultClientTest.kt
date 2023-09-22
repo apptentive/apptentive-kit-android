@@ -8,7 +8,9 @@ import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.encryption.Encrypted
 import apptentive.com.android.encryption.NotEncrypted
 import apptentive.com.android.feedback.backend.ConversationFetchResponse
+import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.conversation.ConversationRepository
+import apptentive.com.android.feedback.conversation.MockConversationCredentials
 import apptentive.com.android.feedback.conversation.MockConversationRepository
 import apptentive.com.android.feedback.conversation.createConversationManager
 import apptentive.com.android.feedback.engagement.util.MockAndroidSharedPrefDataStore
@@ -22,7 +24,6 @@ import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.MessageCenterNotification
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.payloads.Payload
-import apptentive.com.android.feedback.payload.PayloadContext
 import apptentive.com.android.feedback.payload.PayloadSender
 import apptentive.com.android.feedback.platform.DefaultStateMachine
 import apptentive.com.android.feedback.platform.FileSystem
@@ -61,13 +62,14 @@ class ApptentiveDefaultClientTest : TestCase() {
     }
 
     private val mockPayloadSender = object : PayloadSender {
-        override fun enqueuePayload(payload: Payload, context: PayloadContext) {}
+        override fun enqueuePayload(payload: Payload, credentialsProvider: ConversationCredentialProvider) {}
     }
 
     @Before
     fun setup() {
         DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore())
         DependencyProvider.register<FileSystem>(MockFileSystem())
+        DependencyProvider.register<ConversationCredentialProvider>(MockConversationCredentials())
         Apptentive.messageCenterNotificationSubject.value = null
     }
 

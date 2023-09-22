@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.payload
 
+import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.model.payloads.Payload
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.PAYLOADS
@@ -13,9 +14,9 @@ internal class SerialPayloadSender(
     private var busySending: Boolean = false
     private var payloadService: PayloadService? = null
 
-    override fun enqueuePayload(payload: Payload, context: PayloadContext) {
+    override fun enqueuePayload(payload: Payload, credentialsProvider: ConversationCredentialProvider) {
         Log.v(PAYLOADS, "Adding Payload to queue: $payload")
-        val payloadData = getPayloadData(payload, context)
+        val payloadData = getPayloadData(payload, credentialsProvider)
         if (payloadData != null) {
             payloadQueue.enqueuePayload(payloadData)
         }
@@ -110,9 +111,9 @@ internal class SerialPayloadSender(
 
     val hasPayloadService get() = payloadService != null
 
-    private fun getPayloadData(payload: Payload, context: PayloadContext): PayloadData? {
+    private fun getPayloadData(payload: Payload, credentialsProvider: ConversationCredentialProvider): PayloadData? {
         try {
-            return payload.toPayloadData(context)
+            return payload.toPayloadData(credentialsProvider)
         } catch (e: Exception) {
             Log.e(PAYLOADS, "Exception while creating payload data: $payload", e)
         }
