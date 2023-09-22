@@ -11,6 +11,7 @@ import apptentive.com.android.encryption.EncryptionNoOp // FIXME: Can likely rem
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.UnreadMessageCallback
 import apptentive.com.android.feedback.backend.MessageCenterService
+import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.lifecycle.LifecycleListener
 import apptentive.com.android.feedback.model.Configuration
@@ -42,19 +43,18 @@ import java.io.InputStream
 
 @InternalUseOnly
 class MessageManager(
-    private var conversationId: String?,
-    private var conversationToken: String?,
     private val messageCenterService: MessageCenterService,
     private val serialExecutor: Executor,
     private val messageRepository: MessageRepository,
 ) : LifecycleListener, ConversationListener {
 
-    private val messagesFromStorage: List<Message> = messageRepository.getAllMessages()
+    private var messagesFromStorage: List<Message> = messageRepository.getAllMessages()
     private var hasSentMessage: Boolean = messagesFromStorage.isNotEmpty() // True after the first non hidden message is sent from mc client
 
     private var isMessageCenterInForeground = false
     private var lastDownloadedMessageID: String = messageRepository.getLastReceivedMessageIDFromEntries()
     var messageCustomData: Map<String, Any?>? = null
+    var isLoggedOut: Boolean = false
 
     @VisibleForTesting
     val pollingScheduler: PollingScheduler by lazy {
@@ -90,8 +90,6 @@ class MessageManager(
     override fun onConversationChanged(conversation: Conversation) {
         configuration = conversation.configuration
         senderProfile = conversation.person
-        conversationId = conversation.conversationId
-        conversationToken = conversation.conversationToken
         profileSubject.value = senderProfile
         Log.i(MESSAGE_CENTER, "Conversation changed: ${conversation.conversationId}, ${conversation.conversationToken}")
     }
@@ -99,6 +97,21 @@ class MessageManager(
     fun logout() {
         pollingScheduler.stopPolling()
         messageRepository.logout()
+        messagesFromStorage = emptyList()
+        messagesSubject.value = emptyList()
+        hasSentMessage = false
+        isMessageCenterInForeground = false
+        lastDownloadedMessageID = ""
+        messageCustomData = null
+        isLoggedOut = true
+    }
+
+    fun login() {
+        messagesFromStorage = messageRepository.getAllMessages()
+        hasSentMessage = messagesFromStorage.isNotEmpty()
+        lastDownloadedMessageID = messageRepository.getLastReceivedMessageIDFromEntries()
+        messagesSubject.value = messagesFromStorage
+        isLoggedOut = false
     }
 
     fun setCustomData(customData: Map<String, Any?>) {
@@ -110,8 +123,9 @@ class MessageManager(
     }
 
     fun fetchMessages() {
-        val token = conversationToken
-        val id = conversationId
+        val conversationCredentials = DependencyProvider.of<ConversationCredentialProvider>()
+        val token = conversationCredentials.conversationToken
+        val id = conversationCredentials.conversationId
         if (!fetchingInProgress && !id.isNullOrEmpty() && !token.isNullOrEmpty()) {
             fetchingInProgress = true
             messageCenterService.getMessages(token, id, lastDownloadedMessageID) {

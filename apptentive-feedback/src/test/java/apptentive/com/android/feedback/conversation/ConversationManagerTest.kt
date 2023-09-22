@@ -6,7 +6,7 @@ import apptentive.com.android.core.Provider
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.getTimeSeconds
 import apptentive.com.android.encryption.Encryption
-import apptentive.com.android.feedback.backend.ConversationCredentials
+import apptentive.com.android.feedback.backend.ConversationFetchResponse
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.PayloadResponse
 import apptentive.com.android.feedback.engagement.util.MockAndroidSharedPrefDataStore
@@ -53,7 +53,7 @@ class ConversationManagerTest : TestCase() {
     @Test
     fun getActiveConversation() {
         DefaultStateMachine.reset()
-        val fetchResponse = ConversationCredentials(
+        val fetchResponse = ConversationFetchResponse(
             id = "id",
             deviceId = "device_id",
             personId = "person_id",
@@ -174,8 +174,8 @@ class ConversationManagerTest : TestCase() {
         DefaultStateMachine.reset()
         DefaultStateMachine.onEvent(SDKEvent.RegisterSDK)
         DefaultStateMachine.onEvent(SDKEvent.ClientStarted)
-        val fetchResponse: ConversationCredentials =
-            ConversationCredentials(
+        val fetchResponse: ConversationFetchResponse =
+            ConversationFetchResponse(
                 id = "id",
                 deviceId = "device_id",
                 personId = "person_id",
@@ -215,8 +215,8 @@ class ConversationManagerTest : TestCase() {
 }
 
 internal fun createConversationManager(
-    fetchResponse: ConversationCredentials =
-        ConversationCredentials(
+    fetchResponse: ConversationFetchResponse =
+        ConversationFetchResponse(
             id = "id",
             deviceId = "device_id",
             personId = "person_id",
@@ -285,7 +285,7 @@ class MockConversationRepository(val throwException: Boolean = false) :
 }
 
 internal class MockConversationService(
-    private val response: ConversationCredentials,
+    private val response: ConversationFetchResponse,
     private val testTimeInterval: TimeInterval? = null
 ) :
     ConversationService {
@@ -294,7 +294,7 @@ internal class MockConversationService(
         sdk: SDK,
         appRelease: AppRelease,
         person: Person,
-        callback: (Result<ConversationCredentials>) -> Unit
+        callback: (Result<ConversationFetchResponse>) -> Unit
     ) {
         callback(Result.Success(response))
     }
@@ -305,7 +305,7 @@ internal class MockConversationService(
         appRelease: AppRelease,
         person: Person,
         token: String,
-        callback: (Result<ConversationCredentials>) -> Unit
+        callback: (Result<ConversationFetchResponse>) -> Unit
     ) {
     }
 
@@ -328,9 +328,9 @@ internal class MockConversationService(
     override fun loginSession(
         conversationId: String,
         jwtToken: String,
-        callback: (Result<ConversationCredentials>) -> Unit
+        callback: (Result<ConversationFetchResponse>) -> Unit
     ) {
-        callback(Result.Success(ConversationCredentials(id = "", deviceId = "", personId = "", token = "", encryptionKey = "key")))
+        callback(Result.Success(ConversationFetchResponse(id = "", deviceId = "", personId = "", token = "", encryptionKey = "key")))
     }
 
     override fun getMessages(

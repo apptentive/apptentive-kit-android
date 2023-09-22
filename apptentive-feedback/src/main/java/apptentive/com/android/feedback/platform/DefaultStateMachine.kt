@@ -18,7 +18,6 @@ internal object DefaultStateMachine : StateMachine(SDKState.UNINITIALIZED) {
     val readyState = listOf(SDKState.READY, SDKState.ANONYMOUS, SDKState.LOGGED_IN)
     val loadingState = listOf(SDKState.UNINITIALIZED, SDKState.LOADING_APPTENTIVE_CLIENT_DEPENDENCIES, SDKState.LOADING_CONVERSATION_MANAGER_DEPENDENCIES, SDKState.LOADING_CONVERSATION, SDKState.PENDING_TOKEN)
     val errorState = listOf(SDKState.ERROR)
-    var conversationCredentials: ConversationCredentials? = null
 
     init {
         onState(SDKState.UNINITIALIZED) {
@@ -157,8 +156,6 @@ internal sealed class SDKEvent {
 
     val name = this::class.simpleName ?: ""
 }
-
-data class ConversationCredentials(val conversationId: String, val conversationToken: String)
 
 internal fun DefaultStateMachine.isSDKReady() = readyState.contains(state)
 internal fun DefaultStateMachine.isSDKLoading() = loadingState.contains(state)

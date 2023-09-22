@@ -25,28 +25,32 @@ internal class ConversationPayloadService(
     override fun sendPayload(payload: PayloadData, callback: (Result<PayloadData>) -> Unit) {
         val conversationId = payload.conversationId
         val conversationToken = payload.token
-
         if (conversationId == null || conversationToken == null) {
-            callback(Result.Error(payload, IllegalStateException("No conversation credentials")))
-            return
-        }
+            callback(Result.Error(payload, PayloadSendException(payload, cause = null)))
+        } else {
+            requestSender.sendPayloadRequest(
+                payload = payload,
+                conversationId = conversationId,
+                conversationToken = conversationToken
+            ) { result ->
+                when (result) {
+                    is Result.Success -> callback(Result.Success(payload))
+                    is Result.Error -> {
+                        when (result.error) {
+                            is SendErrorException -> {
+                                // Convert to more specific Exception
+                                callback(
+                                    Result.Error(
+                                        payload,
+                                        PayloadSendException(payload, cause = result.error)
+                                    )
+                                )
+                            }
 
-        requestSender.sendPayloadRequest(
-            payload = payload,
-            conversationId = conversationId,
-            conversationToken = conversationToken
-        ) { result ->
-            when (result) {
-                is Result.Success -> callback(Result.Success(payload))
-                is Result.Error -> {
-                    when (result.error) {
-                        is SendErrorException -> {
-                            // Convert to more specific Exception
-                            callback(Result.Error(payload, PayloadSendException(payload, cause = result.error)))
-                        }
-                        else -> {
-                            // Unexpected Exception type
-                            callback(Result.Error(payload, result.error))
+                            else -> {
+                                // Unexpected Exception type
+                                callback(Result.Error(payload, result.error))
+                            }
                         }
                     }
                 }
