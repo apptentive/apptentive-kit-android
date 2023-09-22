@@ -10,7 +10,7 @@ import apptentive.com.android.core.Observable
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.UnreadMessageCallback
 import apptentive.com.android.feedback.backend.MessageCenterService
-import apptentive.com.android.feedback.conversation.ConversationCredentials
+import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.lifecycle.LifecycleListener
 import apptentive.com.android.feedback.model.Configuration
@@ -120,8 +120,9 @@ class MessageManager(
     }
 
     fun fetchMessages() {
-        val token = DependencyProvider.of<ConversationCredentials>().conversationToken
-        val id = DependencyProvider.of<ConversationCredentials>().conversationId
+        val conversationCredentials = DependencyProvider.of<ConversationCredentialProvider>()
+        val token = conversationCredentials.conversationToken
+        val id = conversationCredentials.conversationId
         if (!fetchingInProgress && !id.isNullOrEmpty() && !token.isNullOrEmpty()) {
             fetchingInProgress = true
             messageCenterService.getMessages(token, id, lastDownloadedMessageID) {

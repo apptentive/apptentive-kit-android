@@ -2,11 +2,16 @@ package apptentive.com.android.feedback.conversation
 
 import apptentive.com.android.encryption.EncryptionKey
 
-interface ConversationCredentialProvider
+interface ConversationCredentialProvider {
+    val conversationToken: String?
+    val conversationId: String?
+    val payloadEncryptionKey: EncryptionKey?
+    val conversationPath: String?
+}
 
 data class ConversationCredentials(
-    val conversationToken: String? = null,
-    val conversationId: String? = null,
-    val payloadEncryptionKey: EncryptionKey? = null,
-    val conversationPath: String? = null
+    override val conversationToken: String? = null,
+    override val conversationId: String? = null,
+    override val payloadEncryptionKey: EncryptionKey? = null,
+    override val conversationPath: String? = null
 ) : ConversationCredentialProvider

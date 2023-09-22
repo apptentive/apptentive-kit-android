@@ -201,12 +201,14 @@ internal class ConversationManager(
     }
 
     private fun updateConversationCredentialsProvider(id: String?, token: String?, encryptionKey: EncryptionKey?) {
-        DependencyProvider.register(ConversationCredentials(
-            conversationId = id,
-            conversationToken = token,
-            payloadEncryptionKey = encryptionKey,
-            conversationPath = DefaultStateMachine.conversationRoster.activeConversation?.path
-        ))
+        DependencyProvider.register(
+            ConversationCredentials(
+                conversationId = id,
+                conversationToken = token,
+                payloadEncryptionKey = encryptionKey,
+                conversationPath = DefaultStateMachine.conversationRoster.activeConversation?.path
+            )
+        )
     }
 
     private fun setManifestExpired() {

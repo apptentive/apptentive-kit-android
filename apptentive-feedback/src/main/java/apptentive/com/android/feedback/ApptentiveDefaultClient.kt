@@ -227,7 +227,7 @@ class ApptentiveDefaultClient(
         val conversationId = conversationManager.getConversation().conversationId
         conversationId?.let { id ->
             conversationManager.loginSession(id, jwtToken, subject) { result ->
-               handleLoginResult(result, loginCallback)
+                handleLoginResult(result, loginCallback)
             }
         }
     }
