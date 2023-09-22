@@ -107,7 +107,8 @@ internal class ConversationManager(
                         it.data.encryptionKey.getKeyFromHexString(),
                         KeyResolver23.getTransformation()
                     )
-
+                    DefaultStateMachine.onEvent(SDKEvent.LoggedIn(subject, encryptionKey))
+                    updateConversationIdentifierProvider(it.data.id, it.data.token, encryptionKey)
                     activeConversationSubject.value = conversation.copy(
                         conversationToken = it.data.token,
                         conversationId = it.data.id,
@@ -119,17 +120,8 @@ internal class ConversationManager(
                     tryFetchEngagementManifest()
                     tryFetchAppConfiguration()
 
-                    Log.v(
-                        CONVERSATION,
-                        "Login session successful, " +
-                            "encryption key: $encryptionKey, " +
-                            "conversationId: ${it.data.id}, " +
-                            "token: ${it.data.token}, " +
-                            "jwtToken: $jwtToken"
-                    )
-                    DefaultStateMachine.onEvent(SDKEvent.LoggedIn(subject, encryptionKey))
+                    Log.d(CONVERSATION, "Login session successful, " + "conversationId: ${it.data.id}")
                     loginCallback?.invoke(LoginResult.Success)
-                    // TODO Update Payload encryption
                 }
             }
         }
@@ -168,17 +160,14 @@ internal class ConversationManager(
                 is Result.Success -> {
                     Log.v(CONVERSATION, "Login session successful, encryption key: ${result.data.encryptionKey.getKeyFromHexString()}")
                     val previousState = DefaultStateMachine.state
-                    DefaultStateMachine.onEvent(
-                        SDKEvent.LoggedIn(
-                            subject,
-                            EncryptionKey(
-                                result.data.encryptionKey.getKeyFromHexString(),
-                                KeyResolver23.getTransformation()
-                            )
-                        )
+                    val encryptionKey = EncryptionKey(
+                        result.data.encryptionKey.getKeyFromHexString(),
+                        KeyResolver23.getTransformation()
                     )
+                    DefaultStateMachine.onEvent(SDKEvent.LoggedIn(subject, encryptionKey))
                     if (previousState == SDKState.LOGGED_OUT) {
                         loadExistingConversation()?.let { // TODO handle if null
+                            updateConversationIdentifierProvider(it.conversationId, it.conversationToken, encryptionKey)
                             activeConversationSubject.value = it
                             tryFetchEngagementManifest()
                             tryFetchAppConfiguration()
@@ -209,6 +198,15 @@ internal class ConversationManager(
             )
             Log.v(CONVERSATION, "Logout session successful, logged out conversation")
         }
+    }
+
+    private fun updateConversationIdentifierProvider(id: String?, token: String?, encryptionKey: EncryptionKey?) {
+        DependencyProvider.register(ConversationCredentials(
+            conversationId = id,
+            conversationToken = token,
+            payloadEncryptionKey = encryptionKey,
+            conversationPath = DefaultStateMachine.conversationRoster.activeConversation?.path
+        ))
     }
 
     private fun setManifestExpired() {
@@ -269,6 +267,7 @@ internal class ConversationManager(
                     DefaultStateMachine.onEvent(SDKEvent.ConversationLoaded)
                     // update current conversation
                     val currentConversation = activeConversationSubject.value
+                    updateConversationIdentifierProvider(it.data.id, it.data.token, null)
                     activeConversationSubject.value = currentConversation.copy(
                         conversationToken = it.data.token,
                         conversationId = it.data.id,
@@ -276,8 +275,6 @@ internal class ConversationManager(
                             id = it.data.personId
                         )
                     )
-
-                    // let the caller know fetching was successful
                     callback(Result.Success(Unit))
                 }
             }
@@ -309,7 +306,7 @@ internal class ConversationManager(
         }
 
         // no active conversations: create a new one
-        Log.i(CONVERSATION, "Creating 'anonymous' conversation...")
+//        Log.i(CONVERSATION, "Creating 'anonymous' conversation...")
         return createConversation()
     }
 

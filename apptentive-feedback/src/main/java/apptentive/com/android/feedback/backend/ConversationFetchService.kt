@@ -17,7 +17,7 @@ internal interface ConversationFetchService {
         sdk: SDK,
         appRelease: AppRelease,
         person: Person,
-        callback: (Result<ConversationCredentials>) -> Unit
+        callback: (Result<ConversationFetchResponse>) -> Unit
     )
 
     fun fetchLoginConversation(
@@ -26,7 +26,7 @@ internal interface ConversationFetchService {
         appRelease: AppRelease,
         person: Person,
         token: String,
-        callback: (Result<ConversationCredentials>) -> Unit
+        callback: (Result<ConversationFetchResponse>) -> Unit
     )
 }
 
@@ -207,7 +207,7 @@ private data class PersonRequestData(
 }
 
 @Keep
-internal data class ConversationCredentials(
+internal data class ConversationFetchResponse(
     val id: String,
     val deviceId: String,
     val personId: String,

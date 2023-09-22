@@ -7,7 +7,7 @@ import apptentive.com.android.core.AndroidLoggerProvider
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.encryption.Encrypted
 import apptentive.com.android.encryption.NotEncrypted
-import apptentive.com.android.feedback.backend.ConversationCredentials
+import apptentive.com.android.feedback.backend.ConversationFetchResponse
 import apptentive.com.android.feedback.conversation.ConversationRepository
 import apptentive.com.android.feedback.conversation.MockConversationRepository
 import apptentive.com.android.feedback.conversation.createConversationManager
@@ -41,8 +41,6 @@ import org.junit.Test
 
 class ApptentiveDefaultClientTest : TestCase() {
     private var messageManager = MessageManager(
-        "1234",
-        "token",
         MockMessageCenterService(),
         MockExecutor(),
         MockMessageRepository(),
@@ -283,7 +281,7 @@ class ApptentiveDefaultClientTest : TestCase() {
             )
         )
 
-        val fetchResponse = ConversationCredentials(
+        val fetchResponse = ConversationFetchResponse(
             id = "id",
             deviceId = "device_id",
             personId = "person_id",

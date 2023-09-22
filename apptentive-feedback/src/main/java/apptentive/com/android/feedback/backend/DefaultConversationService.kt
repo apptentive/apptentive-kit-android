@@ -50,9 +50,9 @@ internal class DefaultConversationService(
         sdk: SDK,
         appRelease: AppRelease,
         person: Person,
-        callback: (Result<ConversationCredentials>) -> Unit
+        callback: (Result<ConversationFetchResponse>) -> Unit
     ) {
-        val request = createJsonRequest<ConversationCredentials>(
+        val request = createJsonRequest<ConversationFetchResponse>(
             method = HttpMethod.POST,
             path = "conversation",
             body = ConversationTokenRequestData.from(device, sdk, appRelease, person),
@@ -66,9 +66,9 @@ internal class DefaultConversationService(
         appRelease: AppRelease,
         person: Person,
         token: String,
-        callback: (Result<ConversationCredentials>) -> Unit
+        callback: (Result<ConversationFetchResponse>) -> Unit
     ) {
-        val request = createJsonRequest<ConversationCredentials>(
+        val request = createJsonRequest<ConversationFetchResponse>(
             method = HttpMethod.POST,
             path = "conversations",
             body = LoginConversationRequestData.from(device, sdk, appRelease, person, token),
@@ -121,9 +121,9 @@ internal class DefaultConversationService(
     override fun loginSession(
         conversationId: String,
         jwtToken: String,
-        callback: (Result<ConversationCredentials>) -> Unit
+        callback: (Result<ConversationFetchResponse>) -> Unit
     ) {
-        val request = createJsonRequest<ConversationCredentials>(
+        val request = createJsonRequest<ConversationFetchResponse>(
             method = HttpMethod.POST,
             path = "conversations/$conversationId/session",
             body = LoginSessionRequest(jwtToken)

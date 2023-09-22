@@ -10,6 +10,8 @@ import apptentive.com.android.core.toSeconds
 import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.backend.MessageCenterService
+import apptentive.com.android.feedback.conversation.ConversationCredentials
+import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.conversation.ConversationRoster
 import apptentive.com.android.feedback.dependencyprovider.MessageCenterModelProvider
 import apptentive.com.android.feedback.dependencyprovider.createMessageCenterViewModel
@@ -187,8 +189,6 @@ class MessageCenterViewModelTest : TestCase() {
             }
         )
         val messageManager = MessageManager(
-            "conversationId",
-            "token",
             MockMessageCenterService(),
             MockExecutor(),
             MockMessageRepository(),
