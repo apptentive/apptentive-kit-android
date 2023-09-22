@@ -4,7 +4,6 @@ import androidx.annotation.Keep
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadSendException
 import apptentive.com.android.feedback.payload.PayloadService
-import apptentive.com.android.feedback.platform.DefaultStateMachine
 import apptentive.com.android.network.SendErrorException
 import apptentive.com.android.util.Result
 
@@ -26,18 +25,10 @@ internal class ConversationPayloadService(
     private val conversationToken: String
 ) : PayloadService {
     override fun sendPayload(payload: PayloadData, callback: (Result<PayloadData>) -> Unit) {
-        val currentConversationId = DefaultStateMachine.conversationCredentials?.conversationId
-        val currentConversationToken = DefaultStateMachine.conversationCredentials?.conversationToken
-
-        if (currentConversationId == null || currentConversationToken == null) {
-            callback(Result.Error(payload, IllegalStateException("No conversation credentials")))
-            return
-        }
-
         requestSender.sendPayloadRequest(
             payload = payload,
-            conversationId = currentConversationId,
-            conversationToken = currentConversationToken
+            conversationId = conversationId,
+            conversationToken = conversationToken
         ) { result ->
             when (result) {
                 is Result.Success -> callback(Result.Success(payload))

@@ -187,6 +187,8 @@ class MessageCenterViewModelTest : TestCase() {
             }
         )
         val messageManager = MessageManager(
+            "conversationId",
+            "token",
             MockMessageCenterService(),
             MockExecutor(),
             MockMessageRepository(),
@@ -514,4 +516,6 @@ class MockMessageRepository : MessageRepository {
     override fun updateEncryption(encryption: Encryption) {}
 
     override fun updateConversationRoster(conversationRoster: ConversationRoster) {}
+
+    override fun logout() {}
 }

@@ -79,7 +79,7 @@ import apptentive.com.android.feedback.platform.DefaultSDKFactory
 import apptentive.com.android.feedback.platform.DefaultStateMachine
 import apptentive.com.android.feedback.platform.SDKEvent
 import apptentive.com.android.feedback.utils.FileStorageUtils
-import apptentive.com.android.feedback.utils.FileStorageUtils.getStoredMessagesFile
+import apptentive.com.android.feedback.utils.FileStorageUtils.deleteMessageFile
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.JwtString
 import apptentive.com.android.feedback.utils.JwtUtils
@@ -154,7 +154,7 @@ class ApptentiveDefaultClient(
         clearPayloadCache = false
 
         getConversationToken(conversationService, registerCallback)
-        addObservers(payloadSender as SerialPayloadSender, conversationService)
+        addObservers(conversationService)
 
         engage(Event.internal(InternalEvent.APP_LAUNCH.labelName))
     }
@@ -191,8 +191,7 @@ class ApptentiveDefaultClient(
                     val messageRepository = DefaultMessageRepository(
                         messageSerializer = DefaultMessageSerializer(encryption, DefaultStateMachine.conversationRoster).apply {
                             if (clearMessageCache) {
-                                val messageFile = getStoredMessagesFile(DefaultStateMachine.conversationRoster)
-                                messageFile?.let { deleteMessageFile(it) }
+                                deleteMessageFile()
                                 clearMessageCache = false
                             }
                         },
@@ -200,7 +199,9 @@ class ApptentiveDefaultClient(
 
                     DependencyProvider.register(messageRepository as MessageRepository)
 
-                    messageManager = MessageManager(
+                    messageManager = MessageManager( // TODO clean up after the credentials refactor
+                        activeConversation.conversationId,
+                        activeConversation.conversationToken,
                         conversationService as MessageCenterService,
                         executors.state,
                         DependencyProvider.of<MessageRepository>(),
@@ -242,6 +243,14 @@ class ApptentiveDefaultClient(
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
+    private fun loginAnonymousConversation(jwtToken: JwtString, subject: String, loginCallback: ((result: LoginResult) -> Unit)? = null) {
+        val conversationId = conversationManager.getConversation().conversationId
+        conversationId?.let {
+            conversationManager.loginSession(it, jwtToken, subject, loginCallback)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun handleNoActiveConversation(subClaim: JwtString, jwtToken: String, callback: ((result: LoginResult) -> Unit)?) {
         val matchingMetaData = DefaultStateMachine.conversationRoster.loggedOut.firstOrNull {
             it.state is ConversationState.LoggedOut && (it.state as ConversationState.LoggedOut).subject == subClaim
@@ -250,9 +259,47 @@ class ApptentiveDefaultClient(
         if (matchingMetaData != null && matchingMetaData.state is ConversationState.LoggedOut) {
             val conversationId = (matchingMetaData.state as ConversationState.LoggedOut).id
             Log.v(CONVERSATION, "Found matching conversation ID in logged out list")
-            conversationManager.loginSession(conversationId, jwtToken, subClaim)
+            conversationManager.loginSession(conversationId, jwtToken, subClaim) { result ->
+                handleLoginResult(result, callback)
+            }
         } else {
-            conversationManager.createConversationAndLogin(jwtToken, subClaim, callback)
+            conversationManager.createConversationAndLogin(jwtToken, subClaim) { result ->
+                handleLoginResult(result, callback)
+            }
+        }
+    }
+
+    private fun handleLoginResult(result: LoginResult, callback: ((result: LoginResult) -> Unit)?) {
+        when (result) {
+            is LoginResult.Success -> {
+                Log.v(CONVERSATION, "Successfully logged in")
+                // Recreate message manager with new conversationId and conversationToken
+                val conversation = conversationManager.getConversation()
+                messageManager = MessageManager(
+                    conversation.conversationId,
+                    conversation.conversationToken,
+                    conversationService as MessageCenterService,
+                    executors.state,
+                    DependencyProvider.of<MessageRepository>(),
+                )
+                messageManager?.let {
+                    DependencyProvider.register(MessageManagerFactoryProvider(it))
+                    it.addUnreadMessageListener(::updateMessageCenterNotification)
+                }
+                callback?.invoke(LoginResult.Success)
+            }
+            is LoginResult.Error -> {
+                Log.v(CONVERSATION, "Failed to login")
+                callback?.invoke(LoginResult.Error("Failed to login"))
+            }
+            is LoginResult.Failure -> {
+                Log.v(CONVERSATION, "Failed to login")
+                callback?.invoke(LoginResult.Failure("Failed to login", result.responseCode))
+            }
+            is LoginResult.Exception -> {
+                Log.v(CONVERSATION, "Failed to login")
+                callback?.invoke(LoginResult.Exception(result.error))
+            }
         }
     }
 
@@ -260,19 +307,13 @@ class ApptentiveDefaultClient(
         return DefaultStateMachine.conversationRoster.activeConversation
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun loginAnonymousConversation(jwtToken: JwtString, subject: String, loginCallback: ((result: LoginResult) -> Unit)? = null) {
-        val conversationId = conversationManager.getConversation().conversationId
-        conversationId?.let {
-            conversationManager.loginSession(it, jwtToken, subject, loginCallback)
-        }
-    }
-
     override fun logout() {
+        messageManager?.logout()
+        messageManager = null
         conversationManager.logoutSession()
     }
 
-    private fun addObservers(serialPayloadSender: SerialPayloadSender, conversationService: ConversationService) {
+    private fun addObservers(conversationService: ConversationService) {
         conversationManager.activeConversation.observe { conversation ->
             if (Log.canLog(LogLevel.Verbose)) { // avoid unnecessary computations
                 conversation.logConversation()
@@ -289,13 +330,11 @@ class ApptentiveDefaultClient(
                 recordInteractionResponses = ::recordInteractionResponses,
                 recordCurrentAnswer = ::recordCurrentAnswer
             )
-            // register engagement context as soon as DefaultEngagement is created to make it available for MessageManager
-            DependencyProvider.register(EngagementContextProvider(engagement, payloadSender, executors))
             // once we have received conversationId and conversationToken we can setup payload sender service
             val conversationId = conversation.conversationId
             val conversationToken = conversation.conversationToken
-            if (conversationId != null && conversationToken != null && !serialPayloadSender.hasPayloadService) {
-                serialPayloadSender.setPayloadService(
+            if (conversationId != null && conversationToken != null) { // && !serialPayloadSender.hasPayloadService) { //TODO add it back after the credentials provider refactor
+                (payloadSender as SerialPayloadSender).setPayloadService(
                     service = ConversationPayloadService(
                         requestSender = conversationService,
                         conversationId = conversationId,
@@ -303,6 +342,8 @@ class ApptentiveDefaultClient(
                     )
                 )
             }
+            // register engagement context as soon as DefaultEngagement is created to make it available for MessageManager
+            DependencyProvider.register(EngagementContextProvider(engagement, payloadSender, executors))
             messageManager?.onConversationChanged(conversation)
             updateMessageCenterNotification()
         }
