@@ -108,7 +108,7 @@ internal class ConversationManager(
                         KeyResolver23.getTransformation()
                     )
                     DefaultStateMachine.onEvent(SDKEvent.LoggedIn(subject, encryptionKey))
-                    updateConversationIdentifierProvider(it.data.id, it.data.token, encryptionKey)
+                    updateConversationCredentialsProvider(it.data.id, it.data.token, encryptionKey)
                     activeConversationSubject.value = conversation.copy(
                         conversationToken = it.data.token,
                         conversationId = it.data.id,
@@ -167,7 +167,7 @@ internal class ConversationManager(
                     DefaultStateMachine.onEvent(SDKEvent.LoggedIn(subject, encryptionKey))
                     if (previousState == SDKState.LOGGED_OUT) {
                         loadExistingConversation()?.let { // TODO handle if null
-                            updateConversationIdentifierProvider(it.conversationId, it.conversationToken, encryptionKey)
+                            updateConversationCredentialsProvider(it.conversationId, it.conversationToken, encryptionKey)
                             activeConversationSubject.value = it
                             tryFetchEngagementManifest()
                             tryFetchAppConfiguration()
@@ -200,7 +200,7 @@ internal class ConversationManager(
         }
     }
 
-    private fun updateConversationIdentifierProvider(id: String?, token: String?, encryptionKey: EncryptionKey?) {
+    private fun updateConversationCredentialsProvider(id: String?, token: String?, encryptionKey: EncryptionKey?) {
         DependencyProvider.register(ConversationCredentials(
             conversationId = id,
             conversationToken = token,
@@ -267,7 +267,7 @@ internal class ConversationManager(
                     DefaultStateMachine.onEvent(SDKEvent.ConversationLoaded)
                     // update current conversation
                     val currentConversation = activeConversationSubject.value
-                    updateConversationIdentifierProvider(it.data.id, it.data.token, null)
+                    updateConversationCredentialsProvider(it.data.id, it.data.token, null)
                     activeConversationSubject.value = currentConversation.copy(
                         conversationToken = it.data.token,
                         conversationId = it.data.id,
