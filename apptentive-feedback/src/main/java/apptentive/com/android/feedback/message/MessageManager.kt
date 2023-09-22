@@ -78,7 +78,7 @@ class MessageManager(
     }
 
     override fun onAppForeground() {
-        if (hasSentMessage) {
+        if (hasSentMessage && !isLoggedOut) {
             Log.d(MESSAGE_CENTER, "App is in the foreground & hasSentMessage is true, start polling")
             startPolling()
         }

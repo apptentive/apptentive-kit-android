@@ -7,7 +7,7 @@ import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.feedback.backend.MessageCenterService
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.conversation.ConversationRoster
-import apptentive.com.android.feedback.conversation.MockConversationCredentials
+import apptentive.com.android.feedback.conversation.MockConversationCredential
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.MockEngagementContext
@@ -96,6 +96,7 @@ class MessageManagerTest : TestCase() {
 
     @Test
     fun testNewMessages() {
+        DependencyProvider.register<ConversationCredentialProvider>(MockConversationCredential())
         messageManager.fetchMessages()
         addResult(messageManager.messages.value)
         assertResults(testMessageList)

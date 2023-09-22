@@ -57,7 +57,7 @@ internal class DefaultConversationSerializer(
     @Throws(ConversationSerializationException::class)
     override fun saveConversation(conversation: Conversation) {
         val rosterConversationFile = getConversationFileFromRoster(conversationRoster)
-            ?: throw ConversationSerializationException("No active conversation metadata found, unable to save conversation", null)
+            ?: throw ConversationLoggedOutException("No active conversation metadata found, unable to save conversation", null)
         saveRoster(conversationRoster)
         val start = System.currentTimeMillis()
         val atomicFile = AtomicFile(rosterConversationFile)

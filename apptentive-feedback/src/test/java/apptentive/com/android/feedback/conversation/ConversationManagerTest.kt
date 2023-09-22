@@ -67,7 +67,7 @@ class ConversationManagerTest : TestCase() {
         val conversationManager = createConversationManager(fetchResponse)
 
         var result: Result<Unit>? = null
-        conversationManager.fetchConversationToken {
+        conversationManager.tryFetchConversationToken {
             result = it
         }
 
@@ -190,7 +190,7 @@ class ConversationManagerTest : TestCase() {
                 testTimeInterval = 222.22
             )
         )
-        conversationManager.fetchConversationToken {}
+        conversationManager.tryFetchConversationToken {}
         assertEquals(0.0, conversationManager.getConversation().engagementManifest.expiry, 0.0)
         conversationManager.tryFetchEngagementManifest()
         assertEquals(222.22, conversationManager.getConversation().engagementManifest.expiry, 0.0)

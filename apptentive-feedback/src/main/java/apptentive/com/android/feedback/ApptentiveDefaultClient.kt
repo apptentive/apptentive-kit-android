@@ -23,7 +23,6 @@ import apptentive.com.android.feedback.backend.DefaultConversationService
 import apptentive.com.android.feedback.backend.MessageCenterService
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.conversation.ConversationManager
-import apptentive.com.android.feedback.conversation.ConversationMetaData
 import apptentive.com.android.feedback.conversation.ConversationRepository
 import apptentive.com.android.feedback.conversation.ConversationSerializer
 import apptentive.com.android.feedback.conversation.ConversationState
@@ -86,6 +85,7 @@ import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.JwtString
 import apptentive.com.android.feedback.utils.JwtUtils
 import apptentive.com.android.feedback.utils.RuntimeUtils
+import apptentive.com.android.feedback.utils.getActiveConversationMetaData
 import apptentive.com.android.network.HttpClient
 import apptentive.com.android.network.UnexpectedResponseException
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
@@ -165,7 +165,7 @@ class ApptentiveDefaultClient(
     private fun getConversationToken(
         registerCallback: ((result: RegisterResult) -> Unit)?
     ) {
-        conversationManager.fetchConversationToken { result ->
+        conversationManager.tryFetchConversationToken { result ->
             when (result) {
                 is Result.Error -> {
                     DefaultStateMachine.onEvent(SDKEvent.Error)
@@ -303,10 +303,6 @@ class ApptentiveDefaultClient(
             DependencyProvider.register(MessageManagerFactoryProvider(it))
             it.addUnreadMessageListener(::updateMessageCenterNotification)
         }
-    }
-
-    private fun getActiveConversationMetaData(): ConversationMetaData? {
-        return DefaultStateMachine.conversationRoster.activeConversation
     }
 
     override fun logout() {

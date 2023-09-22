@@ -12,7 +12,7 @@ import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.backend.MessageCenterService
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.conversation.ConversationRoster
-import apptentive.com.android.feedback.conversation.MockConversationCredentials
+import apptentive.com.android.feedback.conversation.MockConversationCredential
 import apptentive.com.android.feedback.dependencyprovider.MessageCenterModelProvider
 import apptentive.com.android.feedback.dependencyprovider.createMessageCenterViewModel
 import apptentive.com.android.feedback.engagement.EngageArgs
@@ -243,7 +243,7 @@ class MessageCenterViewModelTest : TestCase() {
     fun testNewMessages() {
         val viewModel = createMessageCenterViewModel()
         val manager = DependencyProvider.of<MessageManagerFactory>().messageManager()
-        DependencyProvider.register<ConversationCredentialProvider>(MockConversationCredentials())
+        DependencyProvider.register<ConversationCredentialProvider>(MockConversationCredential())
         manager.fetchMessages()
         addResult(viewModel.messages)
         assertResults(
