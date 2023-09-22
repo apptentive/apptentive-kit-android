@@ -331,8 +331,6 @@ class ApptentiveDefaultClient(
                 recordInteractionResponses = ::recordInteractionResponses,
                 recordCurrentAnswer = ::recordCurrentAnswer
             )
-            // register engagement context as soon as DefaultEngagement is created to make it available for MessageManager
-            DependencyProvider.register(EngagementContextProvider(engagement, payloadSender, executors))
             // once we have received conversationId and conversationToken we can setup payload sender service
             val conversationId = conversation.conversationId
             val conversationToken = conversation.conversationToken
