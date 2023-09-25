@@ -73,6 +73,7 @@ internal class ConversationManager(
         DependencyProvider.of<AndroidSharedPrefDataStore>()
             .putString(SDK_CORE_INFO, SDK_VERSION, Constants.SDK_VERSION)
 
+        updateConversationCredentialProvider(conversation.conversationId, conversation.conversationToken, null)
         activeConversationSubject = BehaviorSubject(conversation)
     }
 
@@ -117,6 +118,7 @@ internal class ConversationManager(
                             id = it.data.personId
                         )
                     )
+                    saveConversation(activeConversation.value)
 
                     tryFetchEngagementManifest()
                     tryFetchAppConfiguration()
@@ -166,14 +168,17 @@ internal class ConversationManager(
                         KeyResolver23.getTransformation()
                     )
                     DefaultStateMachine.onEvent(SDKEvent.LoggedIn(subject, encryptionKey))
+                    // Don't re-load conversation that was upgraded from anonymous to logged in
                     if (previousState == SDKState.LOGGED_OUT) {
                         loadExistingConversation()?.let { // TODO handle if null
                             updateConversationCredentialProvider(it.conversationId, it.conversationToken, encryptionKey)
                             activeConversationSubject.value = it
                             tryFetchEngagementManifest()
                             tryFetchAppConfiguration()
-                        } // Don't re-load conversation that was upgraded from anonymous to logged in
+                        }
                     }
+                    // Save existing conversation to ensure the existing cache is updated with the new encryption key
+                    saveConversation(activeConversation.value)
                     loginCallback?.invoke(LoginResult.Success)
                 }
             }
@@ -201,12 +206,12 @@ internal class ConversationManager(
         }
     }
 
-    private fun updateConversationCredentialProvider(id: String?, token: String?, encryptionKey: EncryptionKey?) {
+    private fun updateConversationCredentialProvider(id: String?, token: String?, payloadEncryptionKey: EncryptionKey?) {
         DependencyProvider.register<ConversationCredentialProvider> (
             ConversationCredential(
                 conversationId = id,
                 conversationToken = token,
-                payloadEncryptionKey = encryptionKey,
+                payloadEncryptionKey = payloadEncryptionKey,
                 conversationPath = DefaultStateMachine.conversationRoster.activeConversation?.path
             )
         )
@@ -383,7 +388,7 @@ internal class ConversationManager(
             conversationRepository.saveConversation(conversation)
             Log.d(CONVERSATION, "Conversation saved successfully")
         } catch (e: ConversationLoggedOutException) {
-            Log.e(CONVERSATION, "No active conversation found in the roster, cannot save conversation", e)
+            Log.w(CONVERSATION, "No active conversation found in the roster, cannot save conversation")
         } catch (exception: Exception) {
             Log.e(CONVERSATION, "Exception while saving conversation")
         }
