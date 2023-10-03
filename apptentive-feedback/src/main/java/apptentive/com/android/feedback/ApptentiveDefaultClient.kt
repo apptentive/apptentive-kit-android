@@ -13,6 +13,7 @@ import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.encryption.EncryptionFactory
 import apptentive.com.android.encryption.EncryptionNoOp
 import apptentive.com.android.encryption.EncryptionStatus
+import apptentive.com.android.encryption.KeyResolverFactory
 import apptentive.com.android.encryption.NoEncryptionStatus
 import apptentive.com.android.encryption.NotEncrypted
 import apptentive.com.android.encryption.getEncryptionStatus
@@ -21,8 +22,10 @@ import apptentive.com.android.feedback.backend.ConversationPayloadService
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.DefaultConversationService
 import apptentive.com.android.feedback.backend.MessageCenterService
+import apptentive.com.android.feedback.conversation.ConversationCredential
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.conversation.ConversationManager
+import apptentive.com.android.feedback.conversation.ConversationMetaData
 import apptentive.com.android.feedback.conversation.ConversationRepository
 import apptentive.com.android.feedback.conversation.ConversationSerializer
 import apptentive.com.android.feedback.conversation.ConversationState
@@ -86,6 +89,7 @@ import apptentive.com.android.feedback.utils.JwtString
 import apptentive.com.android.feedback.utils.JwtUtils
 import apptentive.com.android.feedback.utils.RuntimeUtils
 import apptentive.com.android.feedback.utils.getActiveConversationMetaData
+import apptentive.com.android.feedback.utils.toEncryptionKey
 import apptentive.com.android.network.HttpClient
 import apptentive.com.android.network.UnexpectedResponseException
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
@@ -128,7 +132,6 @@ class ApptentiveDefaultClient(
     //region Initialization
 
     internal fun initialize(context: Context) {
-        // TODO DI register at SDK start and move it out of the ConversationManager constructor
         // Consider moving other parameters out of the constructor as well
         interactionModules = loadInteractionModules()
         conversationService = createConversationService()
@@ -183,131 +186,13 @@ class ApptentiveDefaultClient(
                     }
                 }
                 is Result.Success -> {
-                    val activeConversation = conversationManager.activeConversation.value
                     conversationManager.tryFetchEngagementManifest()
                     conversationManager.tryFetchAppConfiguration()
-                    if (activeConversation.conversationId != null && activeConversation.conversationToken != null) {
-                        registerCallback?.invoke(RegisterResult.Success)
-                    } else {
-                        registerCallback?.invoke(RegisterResult.Failure("Failed to fetch conversation token", 0))
-                    }
                     createMessageManager()
+                    registerCallback?.invoke(RegisterResult.Success)
                 }
             }
         }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.M)
-    override fun login(jwtToken: JwtString, callback: ((result: LoginResult) -> Unit)?) {
-        val subClaim = JwtUtils.extractSub(jwtToken)
-
-        if (subClaim == null) {
-            callback?.invoke(LoginResult.Error("Invalid JWT token"))
-        } else {
-            val activeConversationMetaData = getActiveConversationMetaData()
-                ?: return handleNoActiveConversation(subClaim, jwtToken, callback)
-
-            when (val currentState = activeConversationMetaData.state) {
-                is ConversationState.Anonymous -> {
-                    Log.v(CONVERSATION, "Active conversation is anonymous")
-                    loginAnonymousConversation(jwtToken, subClaim, callback)
-                }
-                is ConversationState.LoggedIn -> {
-                    Log.v(CONVERSATION, "Already logged in. Logout before calling login")
-                    callback?.invoke(LoginResult.Error("Already logged in. Logout before calling login"))
-                }
-                else -> {
-                    Log.v(CONVERSATION, "Cannot login while SDK is in $currentState")
-                    callback?.invoke(LoginResult.Error("Cannot login while SDK is in $currentState"))
-                }
-            }
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun loginAnonymousConversation(jwtToken: JwtString, subject: String, loginCallback: ((result: LoginResult) -> Unit)? = null) {
-        val conversationId = conversationManager.getConversation().conversationId
-        conversationId?.let { id ->
-            conversationManager.loginSession(id, jwtToken, subject) { result ->
-                handleLoginResult(result, loginCallback)
-            }
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun handleNoActiveConversation(subClaim: JwtString, jwtToken: String, callback: ((result: LoginResult) -> Unit)?) {
-        val matchingMetaData = DefaultStateMachine.conversationRoster.loggedOut.firstOrNull {
-            it.state is ConversationState.LoggedOut && (it.state as ConversationState.LoggedOut).subject == subClaim
-        }
-
-        if (matchingMetaData != null && matchingMetaData.state is ConversationState.LoggedOut) {
-            val conversationId = (matchingMetaData.state as ConversationState.LoggedOut).id
-            Log.v(CONVERSATION, "Found matching conversation ID in logged out list")
-            conversationManager.loginSession(conversationId, jwtToken, subClaim) { result ->
-                handleLoginResult(result, callback)
-            }
-        } else {
-            conversationManager.createConversationAndLogin(jwtToken, subClaim) { result ->
-                handleLoginResult(result, callback)
-            }
-        }
-    }
-
-    private fun handleLoginResult(result: LoginResult, callback: ((result: LoginResult) -> Unit)?) {
-        when (result) {
-            is LoginResult.Success -> {
-                Log.v(CONVERSATION, "Successfully logged in")
-                if (messageManager == null) {
-                    createMessageManager()
-                }
-                messageManager?.login()
-                callback?.invoke(LoginResult.Success)
-            }
-            is LoginResult.Error -> {
-                Log.v(CONVERSATION, "Failed to login")
-                callback?.invoke(LoginResult.Error("Failed to login"))
-            }
-            is LoginResult.Failure -> {
-                Log.v(CONVERSATION, "Failed to login")
-                callback?.invoke(LoginResult.Failure("Failed to login", result.responseCode))
-            }
-            is LoginResult.Exception -> {
-                Log.v(CONVERSATION, "Failed to login")
-                callback?.invoke(LoginResult.Exception(result.error))
-            }
-        }
-    }
-
-    private fun createMessageManager() {
-        if (!DependencyProvider.isRegistered<MessageRepository>()) {
-            val messageRepository = DefaultMessageRepository(
-                messageSerializer = DefaultMessageSerializer(
-                    encryption,
-                    DefaultStateMachine.conversationRoster
-                ).apply {
-                    if (clearMessageCache) {
-                        deleteMessageFile()
-                        clearMessageCache = false
-                    }
-                },
-            )
-            DependencyProvider.register(messageRepository as MessageRepository)
-            Log.d(CONVERSATION, "MessageRepository registered")
-        }
-        messageManager = MessageManager(
-            conversationService as MessageCenterService,
-            executors.state,
-            DependencyProvider.of<MessageRepository>(),
-        )
-        messageManager?.let {
-            DependencyProvider.register(MessageManagerFactoryProvider(it))
-            it.addUnreadMessageListener(::updateMessageCenterNotification)
-        }
-    }
-
-    override fun logout() {
-        messageManager?.logout()
-        conversationManager.logoutSession()
     }
 
     private fun addObservers(conversationService: ConversationService) {
@@ -369,6 +254,128 @@ class ApptentiveDefaultClient(
                 )
             )
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun login(jwtToken: JwtString, callback: ((result: LoginResult) -> Unit)?) {
+        val activeConversationMetaData = getActiveConversationMetaData()
+        val subClaim = JwtUtils.extractSub(jwtToken)
+
+        if (subClaim == null) {
+            callback?.invoke(LoginResult.Error("Invalid JWT token"))
+            return
+        }
+
+        when {
+            activeConversationMetaData == null -> {
+                Log.v(CONVERSATION, "No active conversation found")
+                handleNoActiveConversation(subClaim, jwtToken, callback)
+            }
+            activeConversationMetaData.state is ConversationState.Anonymous -> {
+                Log.v(CONVERSATION, "Active conversation is anonymous")
+                loginAnonymousConversation(jwtToken, subClaim, callback)
+            }
+            activeConversationMetaData.state is ConversationState.LoggedIn -> {
+                Log.v(CONVERSATION, "Already logged in. Logout before calling login")
+                callback?.invoke(LoginResult.Error("Already logged in. Logout before calling login"))
+            }
+            else -> {
+                Log.v(CONVERSATION, "Cannot login while SDK is in ${activeConversationMetaData.state}")
+                callback?.invoke(LoginResult.Error("Cannot login while SDK is in ${activeConversationMetaData.state}"))
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun handleNoActiveConversation(subClaim: JwtString, jwtToken: String, callback: ((result: LoginResult) -> Unit)?) {
+        val matchingMetaData = findMatchingMetaData(subClaim)
+        val conversationId = (matchingMetaData?.state as? ConversationState.LoggedOut)?.id
+
+        if (conversationId != null) {
+            Log.v(CONVERSATION, "Found matching conversation ID in logged out list")
+            conversationManager.loginSession(conversationId, jwtToken, subClaim) { result ->
+                handleLoginResult(result, callback)
+            }
+        } else {
+            conversationManager.createConversationAndLogin(jwtToken, subClaim) { result ->
+                handleLoginResult(result, callback)
+            }
+        }
+    }
+
+    private fun findMatchingMetaData(subClaim: JwtString): ConversationMetaData? {
+        val matchingMetaData = DefaultStateMachine.conversationRoster.loggedOut.firstOrNull {
+            it.state is ConversationState.LoggedOut && (it.state as ConversationState.LoggedOut).subject == subClaim
+        }
+        return matchingMetaData
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun loginAnonymousConversation(jwtToken: JwtString, subject: String, loginCallback: ((result: LoginResult) -> Unit)? = null) {
+        val conversationId = conversationManager.getConversation().conversationId
+        conversationId?.let { id ->
+            conversationManager.loginSession(id, jwtToken, subject) { result ->
+                handleLoginResult(result, loginCallback)
+            }
+        }
+    }
+
+    private fun handleLoginResult(result: LoginResult, callback: ((result: LoginResult) -> Unit)?) {
+        when (result) {
+            is LoginResult.Success -> {
+                Log.v(CONVERSATION, "Successfully logged in")
+                if (messageManager == null) {
+                    createMessageManager()
+                }
+                messageManager?.login()
+                messageManager?.addUnreadMessageListener(::updateMessageCenterNotification)
+                callback?.invoke(LoginResult.Success)
+            }
+            is LoginResult.Error -> {
+                Log.v(CONVERSATION, "Failed to login")
+                callback?.invoke(LoginResult.Error("Failed to login"))
+            }
+            is LoginResult.Failure -> {
+                Log.v(CONVERSATION, "Failed to login")
+                callback?.invoke(LoginResult.Failure("Failed to login", result.responseCode))
+            }
+            is LoginResult.Exception -> {
+                Log.v(CONVERSATION, "Failed to login")
+                callback?.invoke(LoginResult.Exception(result.error))
+            }
+        }
+    }
+
+    private fun createMessageManager() {
+        if (!DependencyProvider.isRegistered<MessageRepository>()) {
+            val messageRepository = DefaultMessageRepository(
+                messageSerializer = DefaultMessageSerializer(
+                    encryption,
+                    DefaultStateMachine.conversationRoster
+                ).apply {
+                    if (clearMessageCache) {
+                        deleteMessageFile()
+                        clearMessageCache = false
+                    }
+                },
+            )
+            DependencyProvider.register(messageRepository as MessageRepository)
+            Log.d(CONVERSATION, "MessageRepository registered")
+        }
+        messageManager = MessageManager(
+            conversationService as MessageCenterService,
+            executors.state,
+            DependencyProvider.of<MessageRepository>(),
+        )
+        messageManager?.let {
+            DependencyProvider.register(MessageManagerFactoryProvider(it))
+            it.addUnreadMessageListener(::updateMessageCenterNotification)
+        }
+    }
+
+    override fun logout() {
+        messageManager?.logout()
+        conversationManager.logoutSession()
     }
 
     @WorkerThread
@@ -703,7 +710,11 @@ class ApptentiveDefaultClient(
     private fun finalizeEncryption() {
         val activeConversationState = DefaultStateMachine.conversationRoster.activeConversation?.state
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && activeConversationState is ConversationState.LoggedIn) {
-            encryption = AESEncryption23(activeConversationState.encryptionKey)
+            val wrapperEncryptionBytes = activeConversationState.encryptionWrapperBytes
+            val encryptionKey = KeyResolverFactory.getKeyResolver().resolveMultiUserWrapperKey(activeConversationState.subject)
+            AESEncryption23(encryptionKey).decrypt(wrapperEncryptionBytes).let {
+                encryption = AESEncryption23(it.toEncryptionKey())
+            }
         } else if ((configuration.shouldEncryptStorage && (encryption is EncryptionNoOp)) ||
             (!configuration.shouldEncryptStorage && (encryption is AESEncryption23))
         ) {
@@ -744,7 +755,9 @@ class ApptentiveDefaultClient(
     internal fun getConversationId() = conversationManager.getConversation().conversationId
 
     private fun enqueuePayload(payload: Payload) {
-        val conversationCredential = DependencyProvider.of<ConversationCredentialProvider>()
+        val conversationCredential = if (DependencyProvider.isRegistered<ConversationCredentialProvider>()) {
+            DependencyProvider.of<ConversationCredentialProvider>()
+        } else ConversationCredential()
         payloadSender.enqueuePayload(payload, conversationCredential)
     }
 

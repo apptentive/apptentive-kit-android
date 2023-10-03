@@ -7,6 +7,7 @@ import apptentive.com.android.feedback.conversation.ConversationState
 import apptentive.com.android.feedback.utils.RosterUtils.initializeRoster
 import apptentive.com.android.feedback.utils.RosterUtils.updateRosterForLogin
 import apptentive.com.android.feedback.utils.RosterUtils.updateRosterForLogout
+import apptentive.com.android.feedback.utils.isMarshmallowOrGreater
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.STATE_MACHINE
@@ -35,7 +36,7 @@ internal object DefaultStateMachine : StateMachine(SDKState.UNINITIALIZED) {
         onState(SDKState.LOADING_CONVERSATION_MANAGER_DEPENDENCIES) {
             initState {
                 Log.d(STATE_MACHINE, "LOADING_CONVERSATION_MANAGER_DEPENDENCIES")
-                conversationRoster = initializeRoster()
+                initializeRoster()
             }
             transition(SDKEvent.LoadingConversation.name, SDKState.LOADING_CONVERSATION)
             transition(SDKEvent.Logout.name, SDKState.LOGGED_OUT)
@@ -45,8 +46,9 @@ internal object DefaultStateMachine : StateMachine(SDKState.UNINITIALIZED) {
             initState {
                 Log.d(STATE_MACHINE, "LOADING_CONVERSATION")
             }
-            transition(SDKEvent.ConversationLoaded.name, SDKState.ANONYMOUS)
-            transition(SDKEvent.LoggedIn.name, SDKState.LOGGED_IN)
+            transition(SDKEvent.ConversationAnonymous.name, SDKState.ANONYMOUS)
+            transition(SDKEvent.SDKLaunchedAsLoggedIn.name, SDKState.LOGGED_IN)
+            transition(SDKEvent.SDKLaunchedAsLoggedOut.name, SDKState.LOGGED_OUT)
             transition(SDKEvent.PendingToken.name, SDKState.PENDING_TOKEN)
             transition(SDKEvent.Error.name, SDKState.ERROR)
         }
@@ -56,7 +58,7 @@ internal object DefaultStateMachine : StateMachine(SDKState.UNINITIALIZED) {
                     conversationRoster.activeConversation?.copy(state = ConversationState.AnonymousPending)
                 Log.d(STATE_MACHINE, "PENDING_TOKEN")
             }
-            transition(SDKEvent.ConversationLoaded.name, SDKState.ANONYMOUS)
+            transition(SDKEvent.ConversationAnonymous.name, SDKState.ANONYMOUS)
             transition(SDKEvent.Error.name, SDKState.ERROR)
         }
         onState(SDKState.ANONYMOUS) {
@@ -72,7 +74,9 @@ internal object DefaultStateMachine : StateMachine(SDKState.UNINITIALIZED) {
             initState {
                 Log.d(STATE_MACHINE, "LOGGED_IN")
                 if (it is SDKEvent.LoggedIn) {
-                    updateRosterForLogin(it.subject, it.encryption)
+                    if (isMarshmallowOrGreater()) {
+                        updateRosterForLogin(it.subject, it.encryption, it.wrapperEncryption)
+                    }
                 }
             }
             transition(SDKEvent.Logout.name, SDKState.LOGGED_OUT)
@@ -134,21 +138,47 @@ internal sealed class SDKEvent {
     object LoadingConversation : SDKEvent()
     // conversation token fetch request is sent
     object PendingToken : SDKEvent()
-    // conversation is loaded
-    object ConversationLoaded : SDKEvent()
+    // conversation is loaded and in anonymous state
+    object ConversationAnonymous : SDKEvent()
     // log out completed
     data class Logout(val conversationId: String) : SDKEvent() {
         companion object {
             const val name = "Logout"
         }
     }
+    // SDK launched as logged out
+    object SDKLaunchedAsLoggedOut : SDKEvent()
+    // SDK launched as logged in
+    object SDKLaunchedAsLoggedIn : SDKEvent()
+
     // logged in completed
     data class LoggedIn(
         val subject: String,
-        val encryption: EncryptionKey
+        val encryption: EncryptionKey,
+        val wrapperEncryption: ByteArray
     ) : SDKEvent() {
         companion object {
             const val name = "LoggedIn"
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as LoggedIn
+
+            if (subject != other.subject) return false
+            if (encryption != other.encryption) return false
+            if (!wrapperEncryption.contentEquals(other.wrapperEncryption)) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = subject.hashCode()
+            result = 31 * result + encryption.hashCode()
+            result = 31 * result + wrapperEncryption.contentHashCode()
+            return result
         }
     }
     // an error occurred

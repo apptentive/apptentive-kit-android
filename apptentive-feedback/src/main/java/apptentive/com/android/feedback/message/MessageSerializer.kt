@@ -43,6 +43,10 @@ internal interface MessageSerializer {
 internal class DefaultMessageSerializer(var encryption: Encryption, var conversationRoster: ConversationRoster) : MessageSerializer {
 
     override fun loadMessages(): List<DefaultMessageRepository.MessageEntry> {
+        if (conversationRoster.activeConversation == null) {
+            Log.w(MESSAGE_CENTER, "No active conversation found")
+            return listOf()
+        }
         val messagesFile = getMessageFileCreatedBeforeMultiUser() ?: getMessageFileFromRoster(conversationRoster)
         return if (messagesFile.exists()) {
             Log.d(MESSAGE_CENTER, "Loading messages from MessagesFile")
@@ -125,7 +129,7 @@ internal class DefaultMessageSerializer(var encryption: Encryption, var conversa
         } catch (e: EOFException) {
             throw MessageSerializerException("Unable to load messages: file corrupted", e)
         } catch (e: Exception) {
-            throw MessageSerializerException("Unable to load conversation", e)
+            throw MessageSerializerException("Unable to load messages", e)
         }
 
     private val messageSerializer: TypeSerializer<List<DefaultMessageRepository.MessageEntry>> by lazy {

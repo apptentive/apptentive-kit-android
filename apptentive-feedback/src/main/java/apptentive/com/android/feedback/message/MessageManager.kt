@@ -88,7 +88,6 @@ class MessageManager(
         configuration = conversation.configuration
         senderProfile = conversation.person
         profileSubject.value = senderProfile
-        Log.i(MESSAGE_CENTER, "Conversation changed: ${conversation.conversationId}, ${conversation.conversationToken}")
     }
 
     fun logout() {
@@ -101,6 +100,7 @@ class MessageManager(
         lastDownloadedMessageID = ""
         messageCustomData = null
         isLoggedOut = true
+        unreadMessageCountUpdate = null
     }
 
     fun login() {

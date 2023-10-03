@@ -1,7 +1,5 @@
 package apptentive.com.android.feedback.conversation
 
-import apptentive.com.android.encryption.EncryptionKey
-
 data class ConversationMetaData(var state: ConversationState, var path: String)
 
 sealed class ConversationState {
@@ -15,8 +13,29 @@ sealed class ConversationState {
     // Conversation is created and token is fetched
     object Anonymous : ConversationState()
 
+    // null Conversation state - used for serialization
+    object Null : ConversationState()
+
     // Conversation is logged in
-    data class LoggedIn(val subject: String, val encryptionKey: EncryptionKey) : ConversationState() // TODO encryptionkey should be key alias
+    data class LoggedIn(val subject: String, val encryptionWrapperBytes: ByteArray) : ConversationState() { // TODO encryption key should be key alias
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as LoggedIn
+
+            if (subject != other.subject) return false
+            if (!encryptionWrapperBytes.contentEquals(other.encryptionWrapperBytes)) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = subject.hashCode()
+            result = 31 * result + encryptionWrapperBytes.contentHashCode()
+            return result
+        }
+    }
 
     // Conversation is logged out
     data class LoggedOut(val id: String, val subject: String) : ConversationState()

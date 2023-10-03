@@ -32,7 +32,7 @@ class RosterUtilsTest {
     fun testUpdateRosterForLogout() {
         val conversationRoster = ConversationRoster()
         val activeConversationMetaData = ConversationMetaData(
-            ConversationState.LoggedIn("user123", EncryptionKey()),
+            ConversationState.LoggedIn("user123", ByteArray(0)),
             "path123"
         )
         conversationRoster.activeConversation = activeConversationMetaData
@@ -63,12 +63,11 @@ class RosterUtilsTest {
         val subject = "subject123"
         val encryptionKey = EncryptionKey()
 
-        RosterUtils.updateRosterForLogin(subject, encryptionKey)
+        RosterUtils.updateRosterForLogin(subject, encryptionKey, ByteArray(0))
 
         assertEquals(0, conversationRoster.loggedOut.size)
         val activeConversation = conversationRoster.activeConversation
         assertTrue(activeConversation?.state is ConversationState.LoggedIn)
         assertEquals(subject, (activeConversation?.state as ConversationState.LoggedIn).subject)
-        assertEquals(encryptionKey, (activeConversation.state as ConversationState.LoggedIn).encryptionKey)
     }
 }

@@ -23,18 +23,19 @@ internal object RosterUtils {
         DependencyProvider.of<MessageRepository>()
     }
 
-    fun initializeRoster(): ConversationRoster {
+    fun initializeRoster() {
         val conversationRoster = conversationRepository.initializeRepositoryWithRoster()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-            conversationRoster.activeConversation?.state is ConversationState.LoggedIn
-        ) {
-            val encryptionKey =
-                (conversationRoster.activeConversation?.state as ConversationState.LoggedIn).encryptionKey
+
+        val loggedInState = conversationRoster.activeConversation?.state as? ConversationState.LoggedIn
+
+        if (isMarshmallowOrGreater() && loggedInState != null) {
+            val wrapperEncryptionBytes = loggedInState.encryptionWrapperBytes
+            val encryptionKey = wrapperEncryptionBytes.getEncryptionKey(loggedInState.subject)
             DefaultStateMachine.encryption = AESEncryption23(encryptionKey)
             conversationRepository.updateEncryption(DefaultStateMachine.encryption)
         }
+        DefaultStateMachine.conversationRoster = conversationRoster
         conversationRepository.updateConversationRoster(conversationRoster)
-        return conversationRoster
     }
 
     fun updateRosterForLogout(conversationId: String) {
@@ -54,21 +55,29 @@ internal object RosterUtils {
         conversationRoster.activeConversation = null
         conversationRoster.loggedOut = loggedOut
         updateRepositories(conversationRoster, EncryptionNoOp())
+        conversationRepository.saveRoster(conversationRoster)
     }
 
-    fun updateRosterForLogin(subject: String, encryptionKey: EncryptionKey) {
+    fun updateRosterForLogin(subject: String, encryptionKey: EncryptionKey, wrapperEncryption: ByteArray) {
+        if (!isMarshmallowOrGreater()) return
         val conversationRoster = DefaultStateMachine.conversationRoster
-        val loggedOut = conversationRoster.loggedOut.toMutableList()
-        val loggedInConversation = ConversationMetaData(ConversationState.LoggedIn(subject, encryptionKey), "")
         val activeConversationMetaData = conversationRoster.activeConversation
-        val loggedInConversationFromLogout = removeFromLoggedOut(loggedOut, subject)
+        val loggedOut = conversationRoster.loggedOut.toMutableList()
+        val loggedInConversation = ConversationMetaData(ConversationState.LoggedIn(subject, wrapperEncryption), "")
+        val matchingLoggedOutConversation = findAndRemoveMatchingLoggedOutConversation(loggedOut, subject)
 
         when {
+            // Previous state was anonymous
             activeConversationMetaData != null && activeConversationMetaData.state is ConversationState.Anonymous -> {
                 conversationRoster.activeConversation = loggedInConversation.copy(path = activeConversationMetaData.path)
             }
-            activeConversationMetaData == null && loggedInConversationFromLogout != null -> {
-                conversationRoster.activeConversation = loggedInConversation.copy(path = loggedInConversationFromLogout.path)
+            // Previous state was logged out. No active conversation state
+            activeConversationMetaData == null && matchingLoggedOutConversation != null -> {
+                conversationRoster.activeConversation = loggedInConversation.copy(path = matchingLoggedOutConversation.path)
+            }
+            // Previous state was logged in. It is a session restart now
+            activeConversationMetaData != null && activeConversationMetaData.state is ConversationState.LoggedIn -> {
+                conversationRoster.activeConversation = loggedInConversation.copy(path = activeConversationMetaData.path)
             }
             else -> {
                 conversationRoster.activeConversation =
@@ -84,7 +93,7 @@ internal object RosterUtils {
         conversationRepository.saveRoster(conversationRoster)
     }
 
-    private fun removeFromLoggedOut(loggedOut: MutableList<ConversationMetaData>, subject: String): ConversationMetaData? {
+    private fun findAndRemoveMatchingLoggedOutConversation(loggedOut: MutableList<ConversationMetaData>, subject: String): ConversationMetaData? {
         val conversationToRemove = loggedOut.firstOrNull {
             it.state is ConversationState.LoggedOut && (it.state as ConversationState.LoggedOut).subject == subject
         }

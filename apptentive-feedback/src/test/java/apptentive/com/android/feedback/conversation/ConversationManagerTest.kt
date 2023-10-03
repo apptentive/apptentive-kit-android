@@ -2,10 +2,12 @@ package apptentive.com.android.feedback.conversation
 
 import apptentive.com.android.TestCase
 import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.core.Logger
 import apptentive.com.android.core.Provider
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.getTimeSeconds
 import apptentive.com.android.encryption.Encryption
+import apptentive.com.android.feedback.MockAndroidLoggerProvider
 import apptentive.com.android.feedback.backend.ConversationFetchResponse
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.PayloadResponse
@@ -48,6 +50,7 @@ class ConversationManagerTest : TestCase() {
     override fun setUp() {
         DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore())
         DependencyProvider.register<ConversationRepository>(MockConversationRepository())
+        DependencyProvider.register<Logger>(MockAndroidLoggerProvider())
     }
 
     @Test
@@ -199,7 +202,6 @@ class ConversationManagerTest : TestCase() {
     @Test
     fun testConversationReset() {
         DefaultStateMachine.reset()
-        DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore())
         DependencyProvider.register<FileSystem>(MockFileSystem())
         // conversation serializer throws exception, checks should throttle, not throttled, anonymous conversation is created
         DefaultStateMachine.onEvent(SDKEvent.RegisterSDK)

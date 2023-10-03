@@ -7,6 +7,7 @@ import androidx.annotation.RequiresApi
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.platform.SharedPrefConstants.CRYPTO_KEY_ALIAS
+import apptentive.com.android.platform.SharedPrefConstants.CRYPTO_KEY_WRAPPER_ALIAS
 import apptentive.com.android.platform.SharedPrefConstants.SDK_CORE_INFO
 import apptentive.com.android.util.InternalUseOnly
 import java.security.KeyStore
@@ -26,6 +27,23 @@ class KeyResolver23 : KeyResolver {
     @Throws(EncryptionException::class)
     override fun resolveKey(): EncryptionKey {
         return EncryptionKey(getKey(), getTransformation())
+    }
+
+    override fun resolveMultiUserWrapperKey(user: String): EncryptionKey {
+        return EncryptionKey(getWrapperKey(user), getTransformation())
+    }
+
+    private fun getWrapperKey(user: String): SecretKey {
+        val keyAlias = androidProxy.getString(SDK_CORE_INFO, user + CRYPTO_KEY_WRAPPER_ALIAS)
+        val exitingKey = keyStore.getEntry(keyAlias, null) as? KeyStore.SecretKeyEntry
+
+        return if (exitingKey?.secretKey == null) {
+            val newKeyAlias = KEY_ALIAS + UUID.randomUUID()
+            androidProxy.putString(SDK_CORE_INFO, user + CRYPTO_KEY_WRAPPER_ALIAS, newKeyAlias)
+            createKey(newKeyAlias)
+        } else {
+            exitingKey.secretKey
+        }
     }
 
     @Throws(EncryptionException::class)

@@ -1,6 +1,5 @@
 package apptentive.com.android.feedback.conversation
 
-import apptentive.com.android.encryption.EncryptionKey
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
@@ -590,8 +589,12 @@ internal object DefaultSerializers {
     val conversationRosterSerializer: TypeSerializer<ConversationRoster> by lazy {
         object : TypeSerializer<ConversationRoster> {
             override fun encode(encoder: Encoder, value: ConversationRoster) {
-                value.activeConversation?.let {
-                    conversationMetadataSerializer.encode(encoder, it)
+                if (value.activeConversation == null) {
+                    conversationMetadataSerializer.encode(encoder, ConversationMetaData(ConversationState.Null, ""))
+                } else {
+                    value.activeConversation?.let {
+                        conversationMetadataSerializer.encode(encoder, it)
+                    }
                 }
                 encoder.encodeList(value.loggedOut) {
                     conversationMetadataSerializer.encode(encoder, it)
@@ -599,8 +602,10 @@ internal object DefaultSerializers {
             }
 
             override fun decode(decoder: Decoder): ConversationRoster {
+                val activeConversation = conversationMetadataSerializer.decode(decoder)
                 return ConversationRoster(
-                    activeConversation = conversationMetadataSerializer.decode(decoder),
+                    activeConversation = if (activeConversation.state == ConversationState.Null) null
+                    else activeConversation,
                     loggedOut = decoder.decodeList {
                         conversationMetadataSerializer.decode(decoder)
                     }
@@ -637,7 +642,7 @@ internal object DefaultSerializers {
                     is ConversationState.LoggedIn -> {
                         encoder.encodeString("LoggedIn")
                         encoder.encodeString(value.subject)
-                        // TODO encode encryptionKey
+                        encodeByteArray(encoder, value.encryptionWrapperBytes)
                     }
 
                     is ConversationState.LoggedOut -> {
@@ -645,6 +650,8 @@ internal object DefaultSerializers {
                         encoder.encodeString(value.id)
                         encoder.encodeString(value.subject)
                     }
+
+                    is ConversationState.Null -> encoder.encodeString("Null")
                 }
             }
 
@@ -657,17 +664,32 @@ internal object DefaultSerializers {
                     }
                     "LoggedIn" -> {
                         val subject = decoder.decodeString()
-                        // val encryptionKey = decoder.decodeString()
-                        // TODO decode encryptionKey
-                        return ConversationState.LoggedIn(subject, EncryptionKey())
+                        return ConversationState.LoggedIn(subject, decodeByteArray(decoder))
                     }
                     "LoggedOut" -> {
                         val id = decoder.decodeString()
                         val subject = decoder.decodeString()
                         return ConversationState.LoggedOut(id, subject)
                     }
+                    "Null" -> return ConversationState.Null
                     else -> throw Exception("Unknown ConversationState type")
                 }
+            }
+
+            private fun encodeByteArray(encoder: Encoder, value: ByteArray) {
+                encoder.encodeInt(value.size)
+                for (byte in value) {
+                    encoder.encodeByte(byte)
+                }
+            }
+
+            private fun decodeByteArray(decoder: Decoder): ByteArray {
+                val encryptionWrapperByteSize = decoder.decodeInt()
+                val byteArray = ByteArray(encryptionWrapperByteSize)
+                for (i in 0 until encryptionWrapperByteSize) {
+                    byteArray[i] = decoder.decodeByte()
+                }
+                return byteArray
             }
         }
     }
