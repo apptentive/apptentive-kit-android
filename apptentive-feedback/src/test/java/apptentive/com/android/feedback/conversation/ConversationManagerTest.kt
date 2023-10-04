@@ -350,8 +350,6 @@ internal class MockConversationService(
 
     override fun sendPayloadRequest(
         payload: PayloadData,
-        conversationId: String,
-        conversationToken: String,
         callback: (Result<PayloadResponse>) -> Unit
     ) {
         TODO("Not yet implemented")

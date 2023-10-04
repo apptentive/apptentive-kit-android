@@ -170,8 +170,8 @@ class DefaultConversationServiceTest : TestCase() {
             nonce = nonce,
             type = PayloadType.Event,
             tag = "test-tag",
-            token = null,
-            conversationId = "test-conversation-id",
+            token = conversationToken,
+            conversationId = conversationId,
             isEncrypted = false,
             path = "/conversations/:conversation_id/events",
             method = HttpMethod.POST,
@@ -182,14 +182,12 @@ class DefaultConversationServiceTest : TestCase() {
         val service = createConversationService(network) as DefaultConversationService
         service.isAuthorized = false
         service.sendPayloadRequest(
-            payload = payload,
-            conversationToken = conversationToken,
-            conversationId = conversationId
+            payload = payload
         ) {
             assertThat(it is Result.Success).isTrue()
         }
 
-        assertThat(payload.token).isNull()
+        assertThat(payload.token).isEqualTo(conversationToken)
     }
 
     @Test
@@ -220,9 +218,9 @@ class DefaultConversationServiceTest : TestCase() {
             nonce = nonce,
             type = PayloadType.Event,
             tag = "test-tag",
-            token = "test-token",
-            conversationId = "test-conversation_id",
-            isEncrypted = false,
+            token = conversationToken,
+            conversationId = conversationId,
+            isEncrypted = true,
             path = "/conversations/:conversation_id/events",
             method = HttpMethod.POST,
             mediaType = MediaType.applicationJson,
@@ -232,14 +230,12 @@ class DefaultConversationServiceTest : TestCase() {
         val service = createConversationService(network) as DefaultConversationService
         service.isAuthorized = true
         service.sendPayloadRequest(
-            payload = payload,
-            conversationToken = conversationToken,
-            conversationId = conversationId
+            payload = payload
         ) {
             assertThat(it is Result.Success).isTrue()
         }
 
-        assertThat(payload.token).isEqualTo(conversationToken)
+        assertThat(payload.token).isEqualTo(conversationToken) // TODO: Ensure null once encryption in place
     }
 
     private fun createConversationService(network: MockHttpNetwork): ConversationService {

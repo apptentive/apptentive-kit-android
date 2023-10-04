@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.model.payloads
 
+import apptentive.com.android.encryption.EncryptionKey
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.payload.AttachmentData
 import apptentive.com.android.feedback.payload.MediaType
@@ -30,10 +31,22 @@ abstract class Payload(val nonce: String) {
         isEncrypted = credentialProvider.payloadEncryptionKey != null,
         path = getHttpPath(),
         method = getHttpMethod(),
-        mediaType = getContentType(),
-        data = getDataBytes(),
+        mediaType = getFinalContentType(credentialProvider.payloadEncryptionKey != null),
+        data = getFinalDataBytes(credentialProvider.payloadEncryptionKey),
         attachmentData = getAttachmentDataBytes()
     )
+
+    private fun getFinalContentType(isEncrypted: Boolean): MediaType {
+        return if (isEncrypted) {
+            MediaType.applicationOctetStream // TODO: Handle multipart
+        } else {
+            getContentType()
+        }
+    }
+
+    private fun getFinalDataBytes(payloadEncryptionKey: EncryptionKey?): ByteArray {
+        return getDataBytes() // FIXME: Handle encryption
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

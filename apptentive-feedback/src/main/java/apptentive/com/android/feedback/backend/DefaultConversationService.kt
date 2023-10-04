@@ -10,6 +10,7 @@ import apptentive.com.android.feedback.model.MessageList
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.payload.PayloadData
+import apptentive.com.android.feedback.payload.PayloadSendException
 import apptentive.com.android.network.CacheControl
 import apptentive.com.android.network.HttpByteArrayResponseReader
 import apptentive.com.android.network.HttpClient
@@ -170,20 +171,24 @@ internal class DefaultConversationService(
 
     override fun sendPayloadRequest(
         payload: PayloadData,
-        conversationId: String,
-        conversationToken: String,
         callback: (Result<PayloadResponse>) -> Unit
     ) {
-        val url = createURL(payload.resolvePath(conversationId))
-        val request = HttpRequest.Builder<PayloadResponse>(url)
-            .method(payload.method, payload.data, contentType = payload.mediaType.toString())
-            .headers(defaultHeaders)
-            .responseReader(HttpJsonResponseReader(PayloadResponse::class.java))
+        val conversationId = payload.conversationId
+        val conversationToken = payload.token
+        if (conversationId == null || (conversationToken == null && !payload.isEncrypted)) {
+            callback(Result.Error(payload, PayloadSendException(payload, cause = null)))
+        } else {
+            val url = createURL(payload.resolvePath(conversationId))
+            val request = HttpRequest.Builder<PayloadResponse>(url)
+                .method(payload.method, payload.data, contentType = payload.mediaType.toString())
+                .headers(defaultHeaders)
+                .responseReader(HttpJsonResponseReader(PayloadResponse::class.java))
 
-        if (!isAuthorized) request.header("Authorization", "Bearer $conversationToken")
-        else payload.token = conversationToken
+            if (payload.isEncrypted) request.header("APPTENTIVE-ENCRYPTED", "true")
+            else request.header("Authorization", "Bearer $conversationToken")
 
-        sendRequest(request.build(), callback)
+            sendRequest(request.build(), callback)
+        }
     }
 
     private fun <T : Any> sendRequest(request: HttpRequest<T>, callback: (Result<T>) -> Unit) {
