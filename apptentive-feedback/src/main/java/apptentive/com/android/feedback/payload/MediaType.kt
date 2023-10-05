@@ -28,7 +28,7 @@ data class MediaType(
 
         val applicationJson = MediaType("application", "json")
         val applicationOctetStream = MediaType("application", "octet-stream")
-        fun multipartUnauthenticated(boundary: String) = MediaType("multipart", "mixed", boundary)
+        fun multipartMixed(boundary: String) = MediaType("multipart", "mixed", boundary)
         fun multipartEncrypted(boundary: String) = MediaType("multipart", "encrypted", boundary)
     }
 }
