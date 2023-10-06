@@ -105,11 +105,8 @@ class MessageManagerTest : TestCase() {
     @Test
     fun testSendHiddenMessage() {
         val expectedPayload = MessagePayload(
-            type = Message.MESSAGE_TYPE_TEXT,
-            sender = Sender("123", "Tester", null),
             body = "ABC Hidden",
             hidden = true,
-            boundary = generateUUID(),
             messageNonce = generateUUID(),
             automated = null,
             attachments = emptyList()
@@ -118,8 +115,6 @@ class MessageManagerTest : TestCase() {
         messageManager.sendMessage("ABC Hidden", isHidden = true)
 
         val actualPayload = payloadSender.payload as MessagePayload?
-        assertEquals(expectedPayload.sender, actualPayload?.sender)
-        assertEquals(expectedPayload.type, actualPayload?.type)
         assertEquals(expectedPayload.body, actualPayload?.body)
         assertEquals(expectedPayload.hidden, actualPayload?.hidden)
     }
@@ -128,11 +123,8 @@ class MessageManagerTest : TestCase() {
     fun testSendMessage() {
         val payloadSender = engagementContext.getPayloadSender() as MockPayloadSender
         val expectedPayload = MessagePayload(
-            type = Message.MESSAGE_TYPE_TEXT,
-            sender = Sender("123", "Tester", null),
             body = "ABC",
             hidden = null,
-            boundary = generateUUID(),
             messageNonce = generateUUID(),
             automated = null,
             attachments = emptyList()
@@ -141,8 +133,6 @@ class MessageManagerTest : TestCase() {
         messageManager.sendMessage("ABC")
 
         val actualPayload = payloadSender.payload as MessagePayload?
-        assertEquals(expectedPayload.sender, actualPayload?.sender)
-        assertEquals(expectedPayload.type, actualPayload?.type)
         assertEquals(expectedPayload.body, actualPayload?.body)
         assertEquals(expectedPayload.hidden, actualPayload?.hidden)
     }

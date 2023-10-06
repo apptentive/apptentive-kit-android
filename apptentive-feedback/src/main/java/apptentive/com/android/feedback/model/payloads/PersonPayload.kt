@@ -27,12 +27,6 @@ internal class PersonPayload(
 
     override fun getHttpPath() = buildHttpPath("person")
 
-    override fun getContentType() = MediaType.applicationJson
-
-    override fun getDataBytes() = toJson().toByteArray()
-
-    override fun getAttachmentDataBytes() = AttachmentData()
-
     override fun equals(other: Any?): Boolean {
         return when {
             this === other -> true

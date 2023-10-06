@@ -39,17 +39,12 @@ internal class DevicePayload(
 ) : ConversationPayload(nonce) {
 
     override fun getPayloadType() = PayloadType.Device
+
     override fun getJsonContainer() = "device"
 
     override fun getHttpMethod() = HttpMethod.PUT
 
     override fun getHttpPath() = buildHttpPath("device")
-
-    override fun getContentType() = MediaType.applicationJson
-
-    override fun getDataBytes() = toJson().toByteArray()
-
-    override fun getAttachmentDataBytes() = AttachmentData()
 
     override fun equals(other: Any?): Boolean {
         return when {

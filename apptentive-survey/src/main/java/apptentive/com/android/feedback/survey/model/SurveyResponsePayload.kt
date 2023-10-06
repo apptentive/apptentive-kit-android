@@ -37,12 +37,6 @@ internal class SurveyResponsePayload(
 
     override fun getHttpPath() = buildHttpPath("surveys/$id/responses")
 
-    override fun getContentType() = MediaType.applicationJson
-
-    override fun getDataBytes() = toJson().toByteArray()
-
-    override fun getAttachmentDataBytes() = AttachmentData()
-
     companion object {
         fun fromAnswers(
             id: InteractionId,
