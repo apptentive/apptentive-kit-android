@@ -163,7 +163,7 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
             isEncrypted = cursor.getInt(COL_ENCRYPTED) == 1,
             path = cursor.getString(COL_PATH),
             method = HttpMethod.valueOf(cursor.getString(COL_METHOD)),
-            mediaType = MediaType.parse(cursor.getString(COL_MEDIA_TYPE)),
+            mediaType = cursor.getString(COL_MEDIA_TYPE),
             data = payloadData,
             attachmentData = AttachmentData(dataFilePath = dataPath)
         )

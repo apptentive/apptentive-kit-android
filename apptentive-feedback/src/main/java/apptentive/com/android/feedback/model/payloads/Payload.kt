@@ -28,10 +28,16 @@ abstract class Payload(
     protected abstract fun getHttpMethod(): HttpMethod
     protected abstract fun getHttpPath(): String
 
-    open fun toJson(): String = JsonConverter.toJson(mapOf(getJsonContainer() to this))
-
+    fun toJson(includeContentKey: Boolean): String {
+        return if (includeContentKey) {
+            JsonConverter.toJson(mapOf(getJsonContainer() to this))
+        } else {
+            JsonConverter.toJson(this)
+        }
+    }
     fun toPayloadData(credentialProvider: ConversationCredentialProvider): PayloadData {
-        val parts = getParts()
+        val isEncrypted = credentialProvider.payloadEncryptionKey != null
+        val parts = getParts(isEncrypted)
         val boundary = nonce.replace("-", "")
 
         return PayloadData(
@@ -40,7 +46,7 @@ abstract class Payload(
             tag = credentialProvider.conversationPath ?: "placeholder",
             token = credentialProvider.conversationToken,
             conversationId = credentialProvider.conversationId,
-            isEncrypted = credentialProvider.payloadEncryptionKey != null,
+            isEncrypted = isEncrypted,
             path = getHttpPath(),
             method = getHttpMethod(),
             mediaType = getContentType(parts, boundary, credentialProvider),
@@ -48,18 +54,18 @@ abstract class Payload(
         )
     }
 
-    open fun getParts(): List<PayloadPart> {
-        return listOf(JSONPayloadPart(toJson(), getJsonContainer()))
+    open fun getParts(isEncrypted: Boolean): List<PayloadPart> {
+        return listOf(JSONPayloadPart(toJson(true), getJsonContainer()))
     }
 
-    private fun getContentType(parts: List<PayloadPart>, boundary: String, credentialProvider: ConversationCredentialProvider): MediaType? {
+    private fun getContentType(parts: List<PayloadPart>, boundary: String, credentialProvider: ConversationCredentialProvider): String? {
         val isEncrypted = credentialProvider.payloadEncryptionKey != null
 
         return when (parts.size) {
             0 -> null
             1 -> parts[0].contentType
-            else -> if (isEncrypted) MediaType.multipartEncrypted(boundary)
-            else MediaType.multipartMixed(boundary)
+            else -> if (isEncrypted) MediaType.multipartEncrypted(boundary).toString()
+            else MediaType.multipartMixed(boundary).toString()
         }
     }
 
@@ -90,8 +96,8 @@ abstract class Payload(
 
         parts.forEach { part ->
             data.write("${Payload.TWO_HYPHENS}$boundary${Payload.LINE_END}".toByteArray())
-            data.write("Content-Type: ${part.contentType}${Payload.LINE_END}".toByteArray())
             data.write("Content-Disposition: ${part.contentDisposition}${Payload.LINE_END}".toByteArray())
+            data.write("Content-Type: ${part.contentType}${Payload.LINE_END}".toByteArray())
             data.write(Payload.LINE_END.toByteArray())
             data.write(part.content)
             data.write(Payload.LINE_END.toByteArray())

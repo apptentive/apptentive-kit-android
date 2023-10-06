@@ -46,16 +46,15 @@ data class MessagePayload(
 
     override fun getJsonContainer(): String = "message"
 
-    override fun toJson(): String = JsonConverter.toJson(this)
-
-    override fun getParts(): List<PayloadPart> {
-        var parts: MutableList<PayloadPart> = mutableListOf(JSONPayloadPart(toJson(), getJsonContainer()))
+    override fun getParts(isEncrypted: Boolean): List<PayloadPart> {
+        val includeContentKey = attachments.isEmpty() && !isEncrypted
+        var parts: MutableList<PayloadPart> = mutableListOf(JSONPayloadPart(toJson(includeContentKey), getJsonContainer()))
 
         for (attachment in attachments) {
             val attachmentStream = ByteArrayOutputStream()
             try {
                 retrieveAndWriteFileToStream(attachment, attachmentStream)
-                parts.add(AttachmentPayloadPart(attachmentStream.toByteArray(), attachment.contentType?.let { MediaType.parse(it) } ?: MediaType.applicationOctetStream, attachment.originalName))
+                parts.add(AttachmentPayloadPart(attachmentStream.toByteArray(), attachment.contentType?.let { it } ?: MediaType.applicationOctetStream.toString(), attachment.originalName))
             } finally {
                 FileUtil.ensureClosed(attachmentStream)
             }

@@ -48,7 +48,7 @@ class EventPayloadTest {
             isEncrypted = false,
             path = "/conversations/:conversation_id/events",
             method = HttpMethod.POST,
-            mediaType = MediaType.applicationJson,
+            mediaType = MediaType.applicationJson.toString(),
             data = expectedJson.toByteArray()
         )
         val actual = payload.toPayloadData(DependencyProvider.of<ConversationCredentialProvider>())
@@ -71,7 +71,7 @@ class EventPayloadTest {
         )
 
         val expected = toProperJson("{'event':{'label':'label','interaction_id':'interactionId','data':{'key':'value'},'custom_data':{'custom_key':'custom_value'},'session_id':'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx','client_created_at':1000.0,'client_created_at_utc_offset':-18000,'nonce':'nonce'}}")
-        val actual = payload.toJson()
+        val actual = payload.toJson(true)
         assertEquals(expected, actual)
     }
 
@@ -84,7 +84,7 @@ class EventPayloadTest {
         )
 
         val expected = toProperJson("{'event':{'label':'label','session_id':'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx','client_created_at':1000.0,'client_created_at_utc_offset':-18000,'nonce':'nonce'}}")
-        val actual = payload.toJson()
+        val actual = payload.toJson(true)
         assertEquals(expected, actual)
     }
 

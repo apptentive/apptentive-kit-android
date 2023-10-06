@@ -175,7 +175,7 @@ class DefaultConversationServiceTest : TestCase() {
             isEncrypted = false,
             path = "/conversations/:conversation_id/events",
             method = HttpMethod.POST,
-            mediaType = MediaType.applicationJson,
+            mediaType = MediaType.applicationJson.toString(),
             data = "Payload Data".toByteArray()
         )
 
@@ -223,7 +223,7 @@ class DefaultConversationServiceTest : TestCase() {
             isEncrypted = true,
             path = "/conversations/:conversation_id/events",
             method = HttpMethod.POST,
-            mediaType = MediaType.applicationJson,
+            mediaType = MediaType.applicationJson.toString(),
             data = "Payload Data".toByteArray()
         )
 

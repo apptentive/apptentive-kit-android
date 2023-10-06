@@ -14,7 +14,7 @@ data class PayloadData(
     val type: PayloadType,
     val path: String,
     val method: HttpMethod,
-    val mediaType: MediaType?,
+    val mediaType: String?,
     var data: ByteArray,
     @Transient val attachmentData: AttachmentData = AttachmentData()
 ) {
