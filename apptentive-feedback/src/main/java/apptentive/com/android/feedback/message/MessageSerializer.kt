@@ -3,8 +3,8 @@ package apptentive.com.android.feedback.message
 import androidx.core.util.AtomicFile
 import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.feedback.conversation.ConversationRoster
-import apptentive.com.android.feedback.utils.FileStorageUtils
-import apptentive.com.android.feedback.utils.FileStorageUtils.getMessagesFile
+import apptentive.com.android.feedback.utils.FileStorageUtil
+import apptentive.com.android.feedback.utils.FileStorageUtil.getMessagesFile
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.serialization.BinaryDecoder
 import apptentive.com.android.serialization.BinaryEncoder
@@ -110,7 +110,7 @@ internal class DefaultMessageSerializer(var encryption: Encryption, var conversa
 
         val activeConversationMetadata = roster.activeConversation
             ?: throw MessageSerializerException("Unable to load messages: no active conversation", Throwable())
-        return FileStorageUtils.getMessagesFileForActiveUser(activeConversationMetadata.path)
+        return FileStorageUtil.getMessagesFileForActiveUser(activeConversationMetadata.path)
     }
 
     private fun getMessageFileCreatedBeforeMultiUser(): File? {

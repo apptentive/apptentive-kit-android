@@ -10,7 +10,7 @@ import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags
 import java.io.File
 
-internal object FileStorageUtils {
+internal object FileStorageUtil {
 
     const val CONVERSATION_DIR = "conversations"
 
