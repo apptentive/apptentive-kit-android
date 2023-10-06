@@ -82,8 +82,8 @@ import apptentive.com.android.feedback.platform.DefaultPersonFactory
 import apptentive.com.android.feedback.platform.DefaultSDKFactory
 import apptentive.com.android.feedback.platform.DefaultStateMachine
 import apptentive.com.android.feedback.platform.SDKEvent
-import apptentive.com.android.feedback.utils.FileStorageUtils
-import apptentive.com.android.feedback.utils.FileStorageUtils.deleteMessageFile
+import apptentive.com.android.feedback.utils.FileStorageUtil
+import apptentive.com.android.feedback.utils.FileStorageUtil.deleteMessageFile
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.JwtString
 import apptentive.com.android.feedback.utils.JwtUtils
@@ -378,6 +378,10 @@ class ApptentiveDefaultClient(
         conversationManager.logoutSession()
     }
 
+    override fun updateToken(jwtToken: JwtString, callback: ((result: LoginResult) -> Unit)?) {
+        conversationManager.updateToken(jwtToken, callback)
+    }
+
     @WorkerThread
     private fun createConversationRepository(context: Context): ConversationRepository {
         return DefaultConversationRepository(
@@ -397,7 +401,7 @@ class ApptentiveDefaultClient(
 
     private fun createConversationSerializer(): ConversationSerializer {
         return DefaultConversationSerializer(
-            conversationRosterFile = FileStorageUtils.getRosterFile(configuration.apptentiveKey),
+            conversationRosterFile = FileStorageUtil.getRosterFile(configuration.apptentiveKey),
         ).apply {
             setEncryption(encryption)
         }
@@ -744,7 +748,7 @@ class ApptentiveDefaultClient(
 
         return when {
             // TODO revisit this logic if necessary as the folder structure would change from 6.2
-            FileUtil.containsFiles(FileStorageUtils.CONVERSATION_DIR) && !sharedPref.containsKey(SDK_CORE_INFO, CRYPTO_ENABLED) -> NotEncrypted // Migrating from 6.0.0
+            FileUtil.containsFiles(FileStorageUtil.CONVERSATION_DIR) && !sharedPref.containsKey(SDK_CORE_INFO, CRYPTO_ENABLED) -> NotEncrypted // Migrating from 6.0.0
             sharedPref.containsKey(SDK_CORE_INFO, CRYPTO_ENABLED) -> sharedPref.getBoolean(SDK_CORE_INFO, CRYPTO_ENABLED).getEncryptionStatus()
             else -> NoEncryptionStatus
         }

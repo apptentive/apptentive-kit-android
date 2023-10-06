@@ -30,6 +30,7 @@ import apptentive.com.android.feedback.platform.SDKState
 import apptentive.com.android.feedback.platform.isSDKLoading
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.feedback.utils.ThrottleUtils
+import apptentive.com.android.feedback.utils.isMarshmallowOrGreater
 import apptentive.com.android.feedback.utils.sha256
 import apptentive.com.android.network.DefaultHttpClient
 import apptentive.com.android.network.DefaultHttpNetwork
@@ -325,6 +326,37 @@ object Apptentive {
             }
         } catch (e: java.lang.Exception) {
             Log.e(FEEDBACK, "Exception thrown in the SDK logout", e)
+        }
+    }
+
+    /*
+     * Refreshes the auth token for the logged in user
+     *
+     * @param jwtToken A JWT signed by your server using the secret from your app's Apptentive settings.
+     * @param callback A LoginCallback, which will be called asynchronously when the login succeeds
+     */
+    @JvmStatic
+    @Synchronized
+    fun updateToken(jwtToken: String, callback: ((result: LoginResult) -> Unit)? = null) {
+        when {
+            !isMarshmallowOrGreater() -> {
+                Log.w(FEEDBACK, "Login is only supported on Android M and above")
+                callback?.invoke(LoginResult.Error("Login is only supported on Android M and above"))
+            }
+            DefaultStateMachine.state != SDKState.LOGGED_IN -> {
+                Log.w(FEEDBACK, "Need to login first to update token")
+                callback?.invoke(LoginResult.Error("Need to login first to update token"))
+            }
+            else -> {
+                try {
+                    stateExecutor.execute {
+                        client.updateToken(jwtToken, callback)
+                    }
+                } catch (e: java.lang.Exception) {
+                    Log.e(FEEDBACK, "Exception thrown in the SDK udpate token", e)
+                    callback?.invoke(LoginResult.Exception(e))
+                }
+            }
         }
     }
 

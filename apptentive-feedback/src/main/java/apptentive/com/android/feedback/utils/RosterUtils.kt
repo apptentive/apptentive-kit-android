@@ -1,6 +1,8 @@
 package apptentive.com.android.feedback.utils
 
 import android.os.Build
+import androidx.annotation.ChecksSdkIntAtLeast
+import androidx.annotation.RequiresApi
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.encryption.AESEncryption23
 import apptentive.com.android.encryption.Encryption
@@ -12,6 +14,7 @@ import apptentive.com.android.feedback.conversation.ConversationRoster
 import apptentive.com.android.feedback.conversation.ConversationState
 import apptentive.com.android.feedback.message.MessageRepository
 import apptentive.com.android.feedback.platform.DefaultStateMachine
+import apptentive.com.android.feedback.utils.AndroidSDKVersion.getSDKVersion
 import apptentive.com.android.util.generateUUID
 
 internal object RosterUtils {
@@ -58,8 +61,9 @@ internal object RosterUtils {
         conversationRepository.saveRoster(conversationRoster)
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     fun updateRosterForLogin(subject: String, encryptionKey: EncryptionKey, wrapperEncryption: ByteArray) {
-        if (!isMarshmallowOrGreater()) return
+        if (getSDKVersion() < Build.VERSION_CODES.M) return
         val conversationRoster = DefaultStateMachine.conversationRoster
         val activeConversationMetaData = conversationRoster.activeConversation
         val loggedOut = conversationRoster.loggedOut.toMutableList()
@@ -123,3 +127,7 @@ internal object AndroidSDKVersion {
 fun getActiveConversationMetaData(): ConversationMetaData? {
     return DefaultStateMachine.conversationRoster.activeConversation
 }
+
+@ChecksSdkIntAtLeast(api = Build.VERSION_CODES.M)
+internal fun isMarshmallowOrGreater(): Boolean =
+    Build.VERSION.SDK_INT >= Build.VERSION_CODES.M

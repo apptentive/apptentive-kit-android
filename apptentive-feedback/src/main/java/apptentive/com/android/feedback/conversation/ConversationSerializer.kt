@@ -7,9 +7,10 @@ import apptentive.com.android.feedback.conversation.DefaultSerializers.conversat
 import apptentive.com.android.feedback.conversation.DefaultSerializers.conversationSerializer
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.EngagementManifest
-import apptentive.com.android.feedback.utils.FileStorageUtils
-import apptentive.com.android.feedback.utils.FileStorageUtils.hasStoragePriorToMultiUserSupport
-import apptentive.com.android.feedback.utils.FileStorageUtils.hasStoragePriorToSkipLogic
+import apptentive.com.android.feedback.utils.FileStorageUtil
+import apptentive.com.android.feedback.utils.FileStorageUtil.getManifestFile
+import apptentive.com.android.feedback.utils.FileStorageUtil.hasStoragePriorToMultiUserSupport
+import apptentive.com.android.feedback.utils.FileStorageUtil.hasStoragePriorToSkipLogic
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.serialization.BinaryDecoder
 import apptentive.com.android.serialization.BinaryEncoder
@@ -49,7 +50,7 @@ internal class DefaultConversationSerializer(
 
     private lateinit var conversationRoster: ConversationRoster
 
-    private lateinit var manifestFile: File
+    private var manifestFile: File = getManifestFile()
 
     // we keep track of the last seen engagement manifest expiry date and only update storage if it changes
     private var lastKnownManifestExpiry: TimeInterval = 0.0
@@ -110,7 +111,7 @@ internal class DefaultConversationSerializer(
             }
 
             // By setting engagementManifest null it will be refreshed for the users returning from < v6.1.0
-            val engagementManifest = if (hasStoragePriorToSkipLogic()) readEngagementManifest() else null
+            val engagementManifest = if (hasStoragePriorToSkipLogic()) null else readEngagementManifest()
             if (engagementManifest != null) {
                 return conversation.copy(engagementManifest = engagementManifest)
             }
@@ -131,11 +132,6 @@ internal class DefaultConversationSerializer(
     }
 
     override fun initializeSerializer(): ConversationRoster {
-        // TODO verify manifest can be common for all conversations
-        manifestFile = FileStorageUtils.getManifestFile()
-
-        Log.d(CONVERSATION, "Initializing conversation serializer, manifest file: $manifestFile")
-
         val conversationRoster = if (conversationRosterFile.exists() && conversationRosterFile.length() > 0) {
             Log.d(CONVERSATION, "Conversation roster file exists, loading roster")
             readConversationRoster()
@@ -199,7 +195,7 @@ internal class DefaultConversationSerializer(
         Log.d(CONVERSATION, "Setting conversation file from roster: $roster")
         return roster.activeConversation?.let { activeConversation ->
             Log.d(CONVERSATION, "Using conversation file: ${activeConversation.path}")
-            FileStorageUtils.getConversationFileForActiveUser(activeConversation.path)
+            FileStorageUtil.getConversationFileForActiveUser(activeConversation.path)
         }
     }
 
@@ -208,7 +204,7 @@ internal class DefaultConversationSerializer(
         // SDK_VERSION is added in 6.1.0. It would be null for the SDKs < 6.1.0
         return if (hasStoragePriorToMultiUserSupport()) {
             Log.d(CONVERSATION, "Using old conversation file")
-            FileStorageUtils.getConversationFile()
+            FileStorageUtil.getConversationFile()
         } else {
             conversationRoster?.let { roster ->
                 getConversationFileFromRoster(roster)

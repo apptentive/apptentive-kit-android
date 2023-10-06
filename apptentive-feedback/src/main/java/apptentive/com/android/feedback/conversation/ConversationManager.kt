@@ -30,8 +30,10 @@ import apptentive.com.android.feedback.platform.AndroidUtils.currentTimeSeconds
 import apptentive.com.android.feedback.platform.DefaultStateMachine
 import apptentive.com.android.feedback.platform.SDKEvent
 import apptentive.com.android.feedback.platform.SDKState
-import apptentive.com.android.feedback.utils.FileStorageUtils
+import apptentive.com.android.feedback.utils.FileStorageUtil
 import apptentive.com.android.feedback.utils.FileUtil
+import apptentive.com.android.feedback.utils.JwtString
+import apptentive.com.android.feedback.utils.JwtUtils
 import apptentive.com.android.feedback.utils.ThrottleUtils
 import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
@@ -211,17 +213,23 @@ internal class ConversationManager(
                     DefaultStateMachine.onEvent(SDKEvent.LoggedIn(subject, encryptionKey, encryptedBytes))
                     // Don't re-load conversation that was upgraded from anonymous
                     if (previousState == SDKState.LOGGED_OUT) {
-                        loadExistingConversation()?.let { // TODO handle if null, could happen if the deserialization fails, connect with a ticket
-                            updateConversationCredentialProvider(it.conversationId, it.conversationToken, encryptionKey)
-                            activeConversationSubject.value = it
+                        try {
+                            val conversation = loadExistingConversation() ?: createConversation() // This can be done only once per version through throttling
+                            updateConversationCredentialProvider(conversationId, jwtToken, encryptionKey)
+                            activeConversationSubject.value = conversation.copy(
+                                conversationId = conversation.conversationId,
+                                conversationToken = jwtToken
+                            )
                             tryFetchEngagementManifest()
                             tryFetchAppConfiguration()
+                        } catch (e: ConversationSerializationException) {
+                            Log.e(CONVERSATION, "Failed to load conversation from cache", e)
+                            DefaultStateMachine.onEvent(SDKEvent.Error)
+                            loginCallback?.invoke(LoginResult.Exception(e))
                         }
                     } else {
-                        FileStorageUtils.deleteMessageFile() // delete previously stored message file as it would be cached with different encryption setting
+                        FileStorageUtil.deleteMessageFile() // delete previously stored message file as it would be cached with different encryption setting
                     }
-                    // Save existing conversation to ensure the existing cache is updated with the new encryption key
-                    saveConversation(activeConversation.value) // TODO find why this has to be explicitly called. Save conversation should be called with change in activeConversationSubject
                     loginCallback?.invoke(LoginResult.Success)
                 }
             }
@@ -270,18 +278,41 @@ internal class ConversationManager(
                     DefaultStateMachine.onEvent(SDKEvent.LoggedIn(subject, encryptionKey, encryptedBytes))
                     updateConversationCredentialProvider(it.data.id, it.data.token, encryptionKey)
                     activeConversationSubject.value = conversation.copy(
-                        conversationToken = it.data.token,
+                        conversationToken = jwtToken,
                         conversationId = it.data.id,
                         person = conversation.person.copy(
                             id = it.data.personId
                         )
                     )
-                    saveConversation(activeConversation.value) // TODO find why this has to be explicitly called. Save conversation should be called with change in activeConversationSubject
                     tryFetchEngagementManifest()
                     tryFetchAppConfiguration()
                     loginCallback?.invoke(LoginResult.Success)
                 }
             }
+        }
+    }
+
+    internal fun updateToken(jwtToken: JwtString, callback: ((result: LoginResult) -> Unit)? = null) {
+        val activeConversationMetaData = getActiveConversationMetaData()
+        val subClaim = JwtUtils.extractSub(jwtToken)
+
+        if (subClaim == null) {
+            callback?.invoke(LoginResult.Error("Invalid JWT token"))
+            return
+        }
+
+        if (activeConversationMetaData?.state is ConversationState.LoggedIn && (activeConversationMetaData.state as ConversationState.LoggedIn).subject == subClaim) {
+            Log.d(CONVERSATION, "Refreshing the auth token for the user with subject: $subClaim")
+            val conversationCredential = DependencyProvider.of<ConversationCredentialProvider>()
+            updateConversationCredentialProvider(conversationCredential.conversationId, jwtToken, conversationCredential.payloadEncryptionKey)
+            activeConversationSubject.value = getConversation().copy(
+                conversationToken = jwtToken,
+            )
+            // TODO update the token for enqueued payloads/failed payloads
+            callback?.invoke(LoginResult.Success)
+        } else {
+            Log.d(CONVERSATION, "Cannot refresh the auth token for the user with subject: $subClaim")
+            callback?.invoke(LoginResult.Error("Cannot refresh the auth token for the user with subject: $subClaim"))
         }
     }
 

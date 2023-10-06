@@ -7,7 +7,6 @@ import apptentive.com.android.encryption.AESEncryption23
 import apptentive.com.android.encryption.EncryptionKey
 import apptentive.com.android.encryption.KeyResolver23
 import apptentive.com.android.encryption.KeyResolverFactory
-import apptentive.com.android.feedback.utils.AndroidSDKVersion.getSDKVersion
 import java.math.BigInteger
 import java.security.MessageDigest
 import javax.crypto.SecretKey
@@ -45,6 +44,3 @@ internal fun SecretKey.toSecretKeyBytes(user: String): SecretKeyBytes {
     val keyWrapperAlias = KeyResolverFactory.getKeyResolver().resolveMultiUserWrapperKey(user)
     return AESEncryption23(keyWrapperAlias).encrypt(this.toByteArray())
 }
-
-internal fun isMarshmallowOrGreater(): Boolean =
-    getSDKVersion() >= Build.VERSION_CODES.M

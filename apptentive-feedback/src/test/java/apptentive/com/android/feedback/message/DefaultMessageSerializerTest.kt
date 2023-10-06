@@ -4,17 +4,21 @@ import apptentive.com.android.TestCase
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.encryption.EncryptionFactory
 import apptentive.com.android.encryption.NotEncrypted
+import apptentive.com.android.feedback.conversation.ConversationMetaData
 import apptentive.com.android.feedback.conversation.ConversationRoster
+import apptentive.com.android.feedback.conversation.ConversationState
 import apptentive.com.android.feedback.engagement.util.MockAndroidSharedPrefDataStore
 import apptentive.com.android.feedback.engagement.util.MockFileSystem
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.Sender
 import apptentive.com.android.feedback.platform.FileSystem
+import apptentive.com.android.feedback.utils.FileStorageUtil
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import com.google.common.truth.Truth
+import io.mockk.every
+import io.mockk.mockkObject
 import org.junit.Assert
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -22,7 +26,6 @@ import java.io.File
 import java.util.UUID
 import kotlin.random.Random
 
-@Ignore("TODO: Fix this test before MUA release.")
 class DefaultMessageSerializerTest : TestCase() {
     @get:Rule
     val tempFolder = TemporaryFolder()
@@ -39,8 +42,16 @@ class DefaultMessageSerializerTest : TestCase() {
     @Before
     override fun setUp() {
         super.setUp()
+        val messageFile = createTempFile("messages.bin")
         DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore())
         DependencyProvider.register<FileSystem>(MockFileSystem())
+        mockkObject(FileStorageUtil)
+        every {
+            FileStorageUtil.getMessagesFileForActiveUser(any())
+        } returns messageFile
+        every {
+            FileStorageUtil.getMessagesFile()
+        } returns messageFile
     }
 
     @Test
@@ -63,7 +74,11 @@ class DefaultMessageSerializerTest : TestCase() {
                 shouldEncryptStorage = false,
                 oldEncryptionSetting = NotEncrypted,
             ),
-            conversationRoster = ConversationRoster()
+            conversationRoster = ConversationRoster(
+                activeConversation = ConversationMetaData(
+                    ConversationState.Undefined, tempFolder.root.path
+                )
+            )
         )
         serializer.saveMessages(convertToMessageEntry(testMessageList))
         val actual = serializer.loadMessages()
@@ -72,16 +87,24 @@ class DefaultMessageSerializerTest : TestCase() {
 
     @Test(expected = MessageSerializerException::class)
     fun testCorruptedMessageData() {
-        val messagesFile = createTempFile("messages.bin")
+        val corruptedMessagesFile = createTempFile("corrupted-messages.bin")
         // write random data
-        messagesFile.writeBytes(Random.nextBytes(1))
+        corruptedMessagesFile.writeBytes(Random.nextBytes(1))
+
+        every {
+            FileStorageUtil.getMessagesFile()
+        } returns corruptedMessagesFile
 
         val serializer = DefaultMessageSerializer(
             encryption = EncryptionFactory.getEncryption(
                 shouldEncryptStorage = false,
                 oldEncryptionSetting = NotEncrypted
             ),
-            conversationRoster = ConversationRoster()
+            conversationRoster = ConversationRoster(
+                activeConversation = ConversationMetaData(
+                    ConversationState.Undefined, tempFolder.root.path
+                )
+            )
         )
 
         // Throws MessagesSerializerException
