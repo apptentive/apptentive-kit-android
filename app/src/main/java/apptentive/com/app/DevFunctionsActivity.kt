@@ -589,11 +589,13 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
     }
 
     val ONE_DAY = (1000 * 60 * 60 * 24).toLong()
+    val ONE_MINUTE = (1000 * 60).toLong()
 
     private fun setupMultiUser() {
         binding.apply {
             login.isEnabled = Apptentive.getCurrentState() != SDKState.LOGGED_IN
             login2.isEnabled = Apptentive.getCurrentState() != SDKState.LOGGED_IN
+            login3.isEnabled = Apptentive.getCurrentState() != SDKState.LOGGED_IN
             logout.isEnabled = Apptentive.getCurrentState() == SDKState.LOGGED_IN
             login.setOnClickListener {
                 val currentTimeMillis = System.currentTimeMillis()
@@ -603,6 +605,7 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
                     currentTimeMillis + ONE_DAY * 30
                 it.isEnabled = false
                 login2.isEnabled = false
+                login3.isEnabled = false
                 logout.isEnabled = true
                 val token = generateJWT("Poorni", "ClientTeam", currentTimeMillis, thirtyDays, "38127017f4cfb4f84c8dfecd48ab98c6", null, null)
                 if (token != null)
@@ -614,8 +617,21 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
                     currentTimeMillis + ONE_DAY * 30
                 it.isEnabled = false
                 login.isEnabled = false
+                login3.isEnabled = false
                 logout.isEnabled = true
                 val token = generateJWT("Chase", "ClientTeam", currentTimeMillis, thirtyDays, "38127017f4cfb4f84c8dfecd48ab98c6", null, null)
+                if (token != null)
+                    Apptentive.login(token)
+            }
+            login3.setOnClickListener {
+                val currentTimeMillis = System.currentTimeMillis()
+                val oneDay: Long =
+                    currentTimeMillis + ONE_MINUTE
+                it.isEnabled = false
+                login.isEnabled = false
+                login2.isEnabled = false
+                logout.isEnabled = true
+                val token = generateJWT("Frank", "ClientTeam", currentTimeMillis, oneDay, "38127017f4cfb4f84c8dfecd48ab98c6", null, null)
                 if (token != null)
                     Apptentive.login(token)
             }

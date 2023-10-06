@@ -378,6 +378,10 @@ class ApptentiveDefaultClient(
         conversationManager.logoutSession()
     }
 
+    override fun updateToken(jwtToken: JwtString, callback: ((result: LoginResult) -> Unit)?) {
+        conversationManager.updateToken(jwtToken, callback)
+    }
+
     @WorkerThread
     private fun createConversationRepository(context: Context): ConversationRepository {
         return DefaultConversationRepository(

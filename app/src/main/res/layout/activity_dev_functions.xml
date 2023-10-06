@@ -735,6 +735,16 @@
                     app:layout_constraintTop_toBottomOf="@+id/login"/>
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/login3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/login3"
+                    android:enabled="true"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/login2"/>
+
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/logout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -742,7 +752,7 @@
                     android:enabled="false"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/login2"
+                    app:layout_constraintTop_toBottomOf="@id/login3"
                     app:layout_constraintBottom_toBottomOf="parent"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
