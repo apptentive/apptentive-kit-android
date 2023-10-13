@@ -93,7 +93,10 @@ import apptentive.com.android.feedback.utils.toEncryptionKey
 import apptentive.com.android.network.HttpClient
 import apptentive.com.android.network.UnexpectedResponseException
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
+import apptentive.com.android.platform.SharedPrefConstants.APPTENTIVE
 import apptentive.com.android.platform.SharedPrefConstants.CRYPTO_ENABLED
+import apptentive.com.android.platform.SharedPrefConstants.PREF_KEY_PUSH_PROVIDER
+import apptentive.com.android.platform.SharedPrefConstants.PREF_KEY_PUSH_TOKEN
 import apptentive.com.android.platform.SharedPrefConstants.SDK_CORE_INFO
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
@@ -328,6 +331,10 @@ class ApptentiveDefaultClient(
                 }
                 messageManager?.login()
                 messageManager?.addUnreadMessageListener(::updateMessageCenterNotification)
+                val sharedPrefDataStore = DependencyProvider.of<AndroidSharedPrefDataStore>()
+                val pushProvider = sharedPrefDataStore.getInt(APPTENTIVE, PREF_KEY_PUSH_PROVIDER)
+                val pushProviderName = sharedPrefDataStore.getString(APPTENTIVE, PREF_KEY_PUSH_TOKEN)
+                setPushIntegration(pushProvider, pushProviderName)
                 callback?.invoke(LoginResult.Success)
             }
             is LoginResult.Error -> {

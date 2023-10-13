@@ -15,6 +15,9 @@ class DefaultAndroidSharedPrefDataStore(val context: Context) : AndroidSharedPre
     override fun getBoolean(file: String, keyEntry: String, defaultValue: Boolean): Boolean =
         context.getSharedPreferences(file, Context.MODE_PRIVATE).getBoolean(keyEntry, defaultValue)
 
+    override fun getInt(file: String, keyEntry: String, defaultValue: Int): Int =
+        context.getSharedPreferences(file, Context.MODE_PRIVATE).getInt(keyEntry, defaultValue)
+
     override fun getString(file: String, keyEntry: String, defaultValue: String): String =
         context.getSharedPreferences(file, Context.MODE_PRIVATE).getString(keyEntry, defaultValue) ?: ""
 
@@ -42,6 +45,13 @@ class DefaultAndroidSharedPrefDataStore(val context: Context) : AndroidSharedPre
         context.getSharedPreferences(file, Context.MODE_PRIVATE)
             .edit()
             .putLong(keyEntry, value)
+            .apply()
+    }
+
+    override fun putInt(file: String, keyEntry: String, value: Int) {
+        context.getSharedPreferences(file, Context.MODE_PRIVATE)
+            .edit()
+            .putInt(keyEntry, value)
             .apply()
     }
 }
