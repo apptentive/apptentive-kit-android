@@ -127,7 +127,6 @@ class ApptentiveDefaultClient(
     private var engagement: Engagement = NullEngagement()
     private var encryption: Encryption = setInitialEncryptionFromPastSession()
     private var clearPayloadCache: Boolean = false
-    private var clearMessageCache: Boolean = false
 
     //region Initialization
 
@@ -352,12 +351,7 @@ class ApptentiveDefaultClient(
                 messageSerializer = DefaultMessageSerializer(
                     encryption,
                     DefaultStateMachine.conversationRoster
-                ).apply {
-                    if (clearMessageCache) {
-                        deleteMessageFile()
-                        clearMessageCache = false
-                    }
-                },
+                )
             )
             DependencyProvider.register(messageRepository as MessageRepository)
             Log.d(CONVERSATION, "MessageRepository registered")
@@ -739,7 +733,8 @@ class ApptentiveDefaultClient(
 
         conversationManager.updateEncryption(encryption)
 
-        clearMessageCache = true
+        deleteMessageFile() // delete message file to force re-encryption
+
         clearPayloadCache = true
     }
 
