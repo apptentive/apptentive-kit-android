@@ -32,6 +32,7 @@ import apptentive.com.android.feedback.platform.SDKEvent
 import apptentive.com.android.feedback.platform.SDKState
 import apptentive.com.android.feedback.utils.FileStorageUtil
 import apptentive.com.android.feedback.utils.FileUtil
+import apptentive.com.android.feedback.utils.FileUtil.isConversationCacheInNewFormat
 import apptentive.com.android.feedback.utils.JwtString
 import apptentive.com.android.feedback.utils.JwtUtils
 import apptentive.com.android.feedback.utils.ThrottleUtils
@@ -55,7 +56,10 @@ import apptentive.com.android.util.LogTags.INTERACTIONS
 import apptentive.com.android.util.Result
 import apptentive.com.android.util.isAllNull
 import com.apptentive.android.sdk.conversation.LegacyConversationManager
+import com.apptentive.android.sdk.conversation.LegacyConversationMetadataItem
 import com.apptentive.android.sdk.conversation.toConversation
+import com.apptentive.android.sdk.conversation.toConversationRoster
+import java.io.File
 
 internal class ConversationManager(
     private val conversationRepository: ConversationRepository,
@@ -214,7 +218,23 @@ internal class ConversationManager(
                     // Don't re-load conversation that was upgraded from anonymous
                     if (previousState == SDKState.LOGGED_OUT) {
                         try {
-                            val conversation = loadExistingConversation() ?: createConversation() // This can be done only once per version through throttling
+                            // TODO migrate if the existing conversation is in legacy format
+                            val conversationFilePath = getActiveConversationMetaData()?.path
+                            val conversation = if (conversationFilePath != null && isConversationCacheInNewFormat(conversationFilePath)) {
+                                loadExistingConversation() ?: createConversation()
+                            } else {
+                                // Conversation cache is still in legacy format, should try to migrate that
+                                tryMigrateEncryptedLoggedOutLegacyConversation(
+                                    LegacyConversationMetadataItem(
+                                        conversationId,
+                                        jwtToken,
+                                        File(conversationFilePath),
+                                        result.data.encryptionKey,
+                                        subject,
+                                    )
+                                )
+                            }
+                            // val conversation = loadExistingConversation() ?: createConversation() // This can be done only once per version through throttling
                             updateConversationCredentialProvider(conversationId, jwtToken, encryptionKey)
                             activeConversationSubject.value = conversation.copy(
                                 conversationId = conversation.conversationId,
@@ -615,15 +635,33 @@ internal class ConversationManager(
     private fun tryMigrateLegacyConversation(): Conversation? {
         try {
             val legacyConversationManager = legacyConversationManagerProvider.get()
-            val legacyConversationData = legacyConversationManager.loadLegacyConversationData()
-            if (legacyConversationData != null) {
-                return legacyConversationData.toConversation()
+            val legacyConversationMetaData = legacyConversationManager.loadLegacyConversationMetadata()
+            if (legacyConversationMetaData != null) {
+                val roster = legacyConversationMetaData.toConversationRoster()
+                DefaultStateMachine.onEvent(SDKEvent.FoundLegacyConversation(roster))
+                val legacyConversationData = legacyConversationManager.loadLegacyConversationData(legacyConversationMetaData)
+                if (legacyConversationData != null) {
+                    return legacyConversationData.toConversation()
+                }
             }
         } catch (e: Exception) {
             Log.e(CONVERSATION, "Unable to migrate legacy conversation", e)
         }
 
         return null
+    }
+
+    private fun tryMigrateEncryptedLoggedOutLegacyConversation(conversationMetaDataItem: LegacyConversationMetadataItem): Conversation {
+        try {
+            val legacyConversationManager = legacyConversationManagerProvider.get()
+            val legacyConversationData = legacyConversationManager.loadEncryptedLegacyConversationData(conversationMetaDataItem)
+            if (legacyConversationData != null) {
+                return legacyConversationData.toConversation()
+            }
+        } catch (e: Exception) {
+            Log.e(CONVERSATION, "Unable to login legacy conversation, creating a new conversation", e)
+        }
+        return createConversation()
     }
 
     //endregion

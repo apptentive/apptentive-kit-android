@@ -12,6 +12,7 @@ import apptentive.com.android.feedback.utils.FileStorageUtil.getManifestFile
 import apptentive.com.android.feedback.utils.FileStorageUtil.hasStoragePriorToMultiUserSupport
 import apptentive.com.android.feedback.utils.FileStorageUtil.hasStoragePriorToSkipLogic
 import apptentive.com.android.feedback.utils.FileUtil
+import apptentive.com.android.feedback.utils.SensitiveDataUtils.hideIfSanitized
 import apptentive.com.android.serialization.BinaryDecoder
 import apptentive.com.android.serialization.BinaryEncoder
 import apptentive.com.android.serialization.json.JsonConverter
@@ -145,7 +146,7 @@ internal class DefaultConversationSerializer(
     }
 
     override fun saveRoster(conversationRoster: ConversationRoster) {
-        Log.d(CONVERSATION, "Saving conversation roster: $conversationRoster")
+        Log.d(CONVERSATION, "Saving conversation roster: ${hideIfSanitized(conversationRoster)}")
         val atomicFile = AtomicFile(conversationRosterFile)
         val stream = atomicFile.startWrite()
         try {
@@ -192,7 +193,7 @@ internal class DefaultConversationSerializer(
     }
 
     private fun getConversationFileFromRoster(roster: ConversationRoster): File? {
-        Log.d(CONVERSATION, "Setting conversation file from roster: $roster")
+        Log.d(CONVERSATION, "Setting conversation file from roster")
         return roster.activeConversation?.let { activeConversation ->
             Log.d(CONVERSATION, "Using conversation file: ${activeConversation.path}")
             FileStorageUtil.getConversationFileForActiveUser(activeConversation.path)

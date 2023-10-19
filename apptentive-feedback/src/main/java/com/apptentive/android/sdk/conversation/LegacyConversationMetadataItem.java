@@ -91,6 +91,18 @@ public class LegacyConversationMetadataItem implements SerializableObject {
 		userId = readNullableUTF(in);
 	}
 
+	// Using this constructor to migrate the logged out legacy conversation
+	public LegacyConversationMetadataItem(@Nullable String conversationId, @Nullable String conversationToken, File dataFile, @Nullable String conversationEncryptionKey, @Nullable String userId) {
+		this.localConversationId = "";
+		this.conversationId = conversationId;
+		this.conversationToken = conversationToken;
+		this.dataFile = dataFile;
+		this.messagesFile = new File("messages");
+		this.conversationState = ConversationState.LOGGED_IN;
+		this.conversationEncryptionKey = conversationEncryptionKey;
+		this.userId = userId;
+	}
+
 	@Override
 	public void writeExternal(DataOutput out) throws IOException {
 		out.writeUTF(localConversationId);

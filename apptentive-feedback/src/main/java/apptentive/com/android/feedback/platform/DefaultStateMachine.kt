@@ -4,6 +4,7 @@ import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.encryption.EncryptionKey
 import apptentive.com.android.feedback.conversation.ConversationRoster
 import apptentive.com.android.feedback.conversation.ConversationState
+import apptentive.com.android.feedback.utils.RosterUtils
 import apptentive.com.android.feedback.utils.RosterUtils.initializeRoster
 import apptentive.com.android.feedback.utils.RosterUtils.updateRosterForLogin
 import apptentive.com.android.feedback.utils.RosterUtils.updateRosterForLogout
@@ -46,12 +47,28 @@ internal object DefaultStateMachine : StateMachine(SDKState.UNINITIALIZED) {
             initState {
                 Log.d(STATE_MACHINE, "LOADING_CONVERSATION")
             }
+            transition(SDKEvent.FoundLegacyConversation.name, SDKState.LOADING_LEGACY_ROSTER)
             transition(SDKEvent.ConversationAnonymous.name, SDKState.ANONYMOUS)
             transition(SDKEvent.SDKLaunchedAsLoggedIn.name, SDKState.LOGGED_IN)
             transition(SDKEvent.SDKLaunchedAsLoggedOut.name, SDKState.LOGGED_OUT)
             transition(SDKEvent.PendingToken.name, SDKState.PENDING_TOKEN)
             transition(SDKEvent.Error.name, SDKState.ERROR)
         }
+
+        onState(SDKState.LOADING_LEGACY_ROSTER) {
+            initState { fromLegacy ->
+                Log.d(STATE_MACHINE, "LOADING_LEGACY_ROSTER")
+                if (fromLegacy is SDKEvent.FoundLegacyConversation) {
+                    RosterUtils.mergeLegacyRoster(fromLegacy.roster)
+                }
+            }
+            transition(SDKEvent.ConversationAnonymous.name, SDKState.ANONYMOUS)
+            transition(SDKEvent.SDKLaunchedAsLoggedIn.name, SDKState.LOGGED_IN)
+            transition(SDKEvent.SDKLaunchedAsLoggedOut.name, SDKState.LOGGED_OUT)
+            transition(SDKEvent.PendingToken.name, SDKState.PENDING_TOKEN)
+            transition(SDKEvent.Error.name, SDKState.ERROR)
+        }
+
         onState(SDKState.PENDING_TOKEN) {
             initState {
                 conversationRoster.activeConversation =
@@ -110,6 +127,8 @@ enum class SDKState {
     LOADING_CONVERSATION_MANAGER_DEPENDENCIES,
     // Loading conversation file or creates new ones
     LOADING_CONVERSATION,
+    // legacy conversation is found. Roster is being migrated
+    LOADING_LEGACY_ROSTER,
     // new conversation is created. Conversation token fetch request is sent and waiting for the response
     PENDING_TOKEN,
     // conversation token is received. Conversation is ready to be used
@@ -136,6 +155,12 @@ internal sealed class SDKEvent {
     object ClientStarted : SDKEvent()
     // conversation loading process started
     object LoadingConversation : SDKEvent()
+    // migrating legacy conversation
+    data class FoundLegacyConversation(val roster: ConversationRoster) : SDKEvent() {
+        companion object {
+            const val name = "FoundLegacyConversation"
+        }
+    }
     // conversation token fetch request is sent
     object PendingToken : SDKEvent()
     // conversation is loaded and in anonymous state

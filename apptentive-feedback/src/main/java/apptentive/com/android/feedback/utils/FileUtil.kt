@@ -344,4 +344,7 @@ object FileUtil {
                 file.delete()
         }
     }
+
+    fun isConversationCacheInNewFormat(filePath: String): Boolean =
+        filePath.contains("apptentive.com.android.feedback")
 }

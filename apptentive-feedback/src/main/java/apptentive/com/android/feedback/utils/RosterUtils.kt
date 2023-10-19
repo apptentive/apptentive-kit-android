@@ -41,6 +41,14 @@ internal object RosterUtils {
         conversationRepository.updateConversationRoster(conversationRoster)
     }
 
+    fun mergeLegacyRoster(legacyRoster: ConversationRoster) {
+        val currentRoster = DefaultStateMachine.conversationRoster
+        currentRoster.activeConversation = legacyRoster.activeConversation
+        currentRoster.loggedOut = legacyRoster.loggedOut + currentRoster.loggedOut
+        DefaultStateMachine.conversationRoster = currentRoster
+        conversationRepository.updateConversationRoster(currentRoster)
+    }
+
     fun updateRosterForLogout(conversationId: String) {
         val conversationRoster = DefaultStateMachine.conversationRoster
         val activeConversationMetaData = conversationRoster.activeConversation

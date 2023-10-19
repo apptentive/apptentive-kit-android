@@ -66,7 +66,7 @@ internal object FileStorageUtil {
         return if (hasStoragePriorToMultiUserSupport())
             getMessagesFile()
         else {
-            Log.d(LogTags.MESSAGE_CENTER, "Setting message file from roster meta data: $roster")
+            Log.d(LogTags.MESSAGE_CENTER, "Setting message file from roster meta data: ${roster.activeConversation?.path}")
             roster.activeConversation?.path?.let { getMessagesFileForActiveUser(it) }
         }
     }

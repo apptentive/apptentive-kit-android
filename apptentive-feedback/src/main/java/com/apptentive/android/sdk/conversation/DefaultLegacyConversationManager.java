@@ -71,16 +71,41 @@ public class DefaultLegacyConversationManager implements LegacyConversationManag
 	//region Conversations
 
 	@Override
-	public @Nullable ConversationData loadLegacyConversationData() {
+	public @Nullable ConversationData loadLegacyConversationData(LegacyConversationMetadata conversationMetadata) {
 		try {
-			// resolving metadata
+			final LegacyConversation conversation = loadActiveConversationGuarded(conversationMetadata);
+			if (conversation != null) {
+				return conversation.getConversationData();
+			}
+		} catch (Exception e) {
+			Log.e(MIGRATION, "Exception while loading active conversation", e);
+		}
+
+		return null;
+	}
+
+	@Nullable
+	@Override
+	public LegacyConversationMetadata loadLegacyConversationMetadata() {
+		try {
 			Log.v(MIGRATION, "Resolving metadata...");
 			LegacyConversationMetadata conversationMetadata = resolveMetadata();
 			if (Log.canLog(LogLevel.Verbose)) {
 				printMetadata(conversationMetadata, "Loaded Metadata");
 			}
+			// TODO delete Legacy conversation metadata file
+			return conversationMetadata;
+		} catch (Exception e) {
+			Log.e(MIGRATION, "Exception while loading conversation metadata", e);
+		}
+		return new LegacyConversationMetadata();
+	}
 
-			final LegacyConversation conversation = loadActiveConversationGuarded(conversationMetadata);
+	@Nullable
+	@Override
+	public ConversationData loadEncryptedLegacyConversationData(LegacyConversationMetadataItem conversationMetadataItem) {
+		try {
+			final LegacyConversation conversation = loadConversation(conversationMetadataItem);
 			if (conversation != null) {
 				return conversation.getConversationData();
 			}
@@ -99,7 +124,7 @@ public class DefaultLegacyConversationManager implements LegacyConversationManag
 				return loadConversationFromMetadata(conversationMetadata);
 			}
 		} catch (Exception e) {
-			Log.e(MIGRATION, "Exception while loading conversation", e);
+			Log.e(MIGRATION, "Exception while loading logged out conversation", e);
 
 			// do not re-create a conversation if the last loading was unsuccessful
 			throw new ConversationLoadException("Unable to load conversation", e);
