@@ -24,8 +24,10 @@ import java.io.File;
 import java.util.List;
 
 import apptentive.com.android.feedback.utils.SensitiveDataUtils;
+import apptentive.com.android.util.InternalUseOnly;
 import apptentive.com.android.util.Log;
 import apptentive.com.android.util.LogLevel;
+import apptentive.com.android.util.LogTags;
 
 import static com.apptentive.android.sdk.conversation.ConversationState.ANONYMOUS;
 import static com.apptentive.android.sdk.conversation.ConversationState.LOGGED_IN;
@@ -38,6 +40,7 @@ import static apptentive.com.android.util.LogTags.MIGRATION;
  * Represents a modified version of legacy [ConversationManager] class (read-only). Used in legacy data migration.
  * See: https://github.com/apptentive/apptentive-android/blob/master/apptentive/src/main/java/com/apptentive/android/sdk/conversation/ConversationManager.java
  */
+@InternalUseOnly
 public class DefaultLegacyConversationManager implements LegacyConversationManager {
 	private static final String LEGACY_CONVERSATIONS_DIR = "apptentive/conversations";
 
@@ -80,7 +83,6 @@ public class DefaultLegacyConversationManager implements LegacyConversationManag
 		} catch (Exception e) {
 			Log.e(MIGRATION, "Exception while loading active conversation", e);
 		}
-
 		return null;
 	}
 
@@ -205,13 +207,14 @@ public class DefaultLegacyConversationManager implements LegacyConversationManag
 			// attempt to load the legacy metadata file
 			metaFile = new File(conversationsStorageDir, CONVERSATION_METADATA_FILE_LEGACY_V1);
 			if (metaFile.exists()) {
-				Log.v(MIGRATION, "Loading legacy v1 metadata file: %s", metaFile);
-				return ObjectSerialization.deserialize(metaFile, LegacyConversationMetadata.class);
+				Log.v(LogTags.MIGRATION, "Loading legacy v1 metadata file: %s", metaFile);
+				LegacyConversationMetadata metadata = ObjectSerialization.deserialize(metaFile, LegacyConversationMetadata.class);
+				metaFile.delete(); // delete the legacy metadata file
+				return metadata;
 			}
-
-			Log.v(MIGRATION, "No metadata files");
+			Log.v(LogTags.MIGRATION, "No metadata files");
 		} catch (Exception e) {
-			Log.e(MIGRATION, "Exception while loading conversation metadata", e);
+			Log.e(LogTags.MIGRATION, "Exception while loading conversation metadata", e);
 
 			// if we fail to load the metadata - we would not create a new one - just throw an exception
 			throw new ConversationMetadataLoadException("Unable to load metadata", e);
@@ -227,7 +230,7 @@ public class DefaultLegacyConversationManager implements LegacyConversationManag
 	private void printMetadata(LegacyConversationMetadata metadata, String title) {
 		List<LegacyConversationMetadataItem> items = metadata.getItems();
 		if (items.isEmpty()) {
-			Log.v(MIGRATION, "%s (%d item(s))", title, items.size());
+			Log.v(LogTags.MIGRATION, "%s (%d item(s))", title, items.size());
 			return;
 		}
 
@@ -256,7 +259,7 @@ public class DefaultLegacyConversationManager implements LegacyConversationManag
 			};
 		}
 
-		Log.v(MIGRATION, "%s (%d item(s))\n%s", title, items.size(), StringUtils.table(rows));
+		Log.v(LogTags.MIGRATION, "%s (%d item(s))\n%s", title, items.size(), StringUtils.table(rows));
 	}
 
 	//endregion

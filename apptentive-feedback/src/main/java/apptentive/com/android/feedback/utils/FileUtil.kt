@@ -346,5 +346,8 @@ object FileUtil {
     }
 
     fun isConversationCacheInNewFormat(filePath: String): Boolean =
-        filePath.contains("apptentive.com.android.feedback")
+        filePath.contains("apptentive.com.android.feedback") // TODO add internal directory path to the ConversationRoster path
+
+    fun isConversationCacheStoredInLegacyFormat(filePath: String): Boolean =
+        filePath.contains("apptentive/conversations")
 }

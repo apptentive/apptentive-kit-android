@@ -180,7 +180,8 @@ internal sealed class SDKEvent {
     data class LoggedIn(
         val subject: String,
         val encryption: EncryptionKey,
-        val wrapperEncryption: ByteArray
+        val wrapperEncryption: ByteArray,
+        val migratingFromLegacy: Boolean = false
     ) : SDKEvent() {
         companion object {
             const val name = "LoggedIn"
@@ -195,6 +196,7 @@ internal sealed class SDKEvent {
             if (subject != other.subject) return false
             if (encryption != other.encryption) return false
             if (!wrapperEncryption.contentEquals(other.wrapperEncryption)) return false
+            if (migratingFromLegacy != other.migratingFromLegacy) return false
 
             return true
         }
@@ -203,9 +205,11 @@ internal sealed class SDKEvent {
             var result = subject.hashCode()
             result = 31 * result + encryption.hashCode()
             result = 31 * result + wrapperEncryption.contentHashCode()
+            result = 31 * result + migratingFromLegacy.hashCode()
             return result
         }
     }
+
     // an error occurred
     object Error : SDKEvent()
 
