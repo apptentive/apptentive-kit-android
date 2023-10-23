@@ -19,7 +19,7 @@ sealed class ConversationState {
     object Null : ConversationState()
 
     // Conversation is logged in
-    data class LoggedIn(val subject: String, @SensitiveDataKey val encryptionWrapperBytes: ByteArray) : ConversationState() { // TODO encryption key should be key alias
+    data class LoggedIn(val subject: String, @SensitiveDataKey val encryptionWrapperBytes: ByteArray) : ConversationState() {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (javaClass != other?.javaClass) return false

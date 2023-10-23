@@ -95,7 +95,6 @@ public class DefaultLegacyConversationManager implements LegacyConversationManag
 			if (Log.canLog(LogLevel.Verbose)) {
 				printMetadata(conversationMetadata, "Loaded Metadata");
 			}
-			// TODO delete Legacy conversation metadata file
 			return conversationMetadata;
 		} catch (Exception e) {
 			Log.e(MIGRATION, "Exception while loading conversation metadata", e);
