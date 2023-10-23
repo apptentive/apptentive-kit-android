@@ -72,7 +72,7 @@ buildscript {
         jfrogVersion = '6.2.0-migration02'
 
         // Change this depending on where you are publishing to
-        repoVersion = jfrogVersion
+        repoVersion = sonatypeVersion
     }
 
     repositories {
