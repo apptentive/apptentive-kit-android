@@ -27,6 +27,7 @@ class AppFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
         val data = remoteMessage.data
+        Log.d(PUSH_NOTIFICATION, "Received push notification: $data")
         if (isAppInBackground() && Apptentive.isApptentivePushNotification(data)) {
             Apptentive.buildPendingIntentFromPushNotification(this, { pendingIntent ->
                 if (pendingIntent != null) {

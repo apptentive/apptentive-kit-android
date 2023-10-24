@@ -37,6 +37,13 @@ class MockAndroidSharedPrefDataStore(private val containsKey: Boolean = true, pr
         return containsKey
     }
 
+    override fun getInt(file: String, keyEntry: String, defaultValue: Int): Int {
+        return 0
+    }
+
+    override fun putInt(file: String, keyEntry: String, value: Int) {
+    }
+
     override fun getLong(file: String, keyEntry: String, defaultValue: Long): Long {
         return 0
     }

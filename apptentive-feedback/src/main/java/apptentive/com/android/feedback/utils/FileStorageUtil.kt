@@ -89,7 +89,11 @@ internal object FileStorageUtil {
 
     @WorkerThread
     fun deleteMessageFile() {
+        Log.w(LogTags.CRYPTOGRAPHY, "Message cache is deleted to support the new encryption setting")
         val messageFile = getStoredMessagesFile(DefaultStateMachine.conversationRoster)
-        messageFile?.let { FileUtil.deleteFile(it.path) }
+        val messageFilePriorToMUSupport = getMessagesFile()
+        FileUtil.deleteFile(messageFilePriorToMUSupport.path)
+        val currentMessageFile = getStoredMessagesFile(DefaultStateMachine.conversationRoster)
+        messageFile?.let { FileUtil.deleteFile(currentMessageFile?.path) }
     }
 }
