@@ -245,7 +245,7 @@ class MockConversationRepository(val throwException: Boolean = false) :
     ConversationRepository {
     private var conversation: Conversation? = null
 
-    override fun createConversation(): Conversation {
+    override fun createConversation(conversationId: String?, conversationToken: String?): Conversation {
         return Conversation(
             localIdentifier = "localIdentifier",
             conversationToken = null,

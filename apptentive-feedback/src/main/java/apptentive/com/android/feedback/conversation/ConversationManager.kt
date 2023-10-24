@@ -219,7 +219,7 @@ internal class ConversationManager(
                     if (previousState == SDKState.LOGGED_OUT) {
                         try {
                             val conversation = if (legacyConversationPath == null) {
-                                loadExistingConversation() ?: createConversation() // TODO if load existing conversation fails, creating new conversation with the same conversationId is not possible. Find out how iOS is dealing this
+                                loadExistingConversation() ?: createConversation(conversationId, jwtToken)
                             } else {
                                 // Conversation cache is still in legacy format, should try to migrate that
                                 tryMigrateEncryptedLoggedOutLegacyConversation(
@@ -353,8 +353,8 @@ internal class ConversationManager(
         )
     }
 
-    private fun createConversation(): Conversation {
-        return conversationRepository.createConversation()
+    private fun createConversation(conversationId: String? = null, conversationToken: String? = null): Conversation {
+        return conversationRepository.createConversation(conversationId, conversationToken)
     }
 
     fun checkForSDKAppReleaseUpdates(conversation: Conversation) {
@@ -639,6 +639,8 @@ internal class ConversationManager(
                 val legacyConversationData = legacyConversationManager.loadLegacyConversationData(legacyConversationMetaData)
                 if (legacyConversationData != null) {
                     return legacyConversationData.toConversation()
+                } else {
+                    Log.e(CONVERSATION, "Unable to migrate legacy conversation")
                 }
             }
         } catch (e: Exception) {
@@ -654,11 +656,13 @@ internal class ConversationManager(
             val legacyConversationData = legacyConversationManager.loadEncryptedLegacyConversationData(conversationMetaDataItem)
             if (legacyConversationData != null) {
                 return legacyConversationData.toConversation()
+            } else {
+                Log.e(CONVERSATION, "Unable to login legacy conversation, creating a new conversation")
             }
         } catch (e: Exception) {
             Log.e(CONVERSATION, "Unable to login legacy conversation, creating a new conversation", e)
         }
-        return createConversation()
+        return createConversation(conversationMetaDataItem.conversationId, conversationMetaDataItem.conversationToken)
     }
 
     //endregion
