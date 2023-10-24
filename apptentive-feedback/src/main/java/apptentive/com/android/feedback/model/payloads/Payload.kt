@@ -37,7 +37,7 @@ abstract class Payload(
     }
     fun toPayloadData(credentialProvider: ConversationCredentialProvider): PayloadData {
         val isEncrypted = credentialProvider.payloadEncryptionKey != null
-        val parts = getParts(isEncrypted)
+        val parts = maybeEncryptParts(getParts(isEncrypted), credentialProvider)
         val boundary = nonce.replace("-", "")
 
         return PayloadData(
@@ -49,8 +49,8 @@ abstract class Payload(
             isEncrypted = isEncrypted,
             path = getHttpPath(),
             method = getHttpMethod(),
-            mediaType = getContentType(parts, boundary, credentialProvider),
-            data = getDataBytes(parts, boundary, credentialProvider)
+            mediaType = getContentType(parts, boundary, isEncrypted),
+            data = getDataBytes(parts, boundary)
         )
     }
 
@@ -58,18 +58,7 @@ abstract class Payload(
         return listOf(JSONPayloadPart(toJson(true), getJsonContainer()))
     }
 
-    private fun getContentType(parts: List<PayloadPart>, boundary: String, credentialProvider: ConversationCredentialProvider): String? {
-        val isEncrypted = credentialProvider.payloadEncryptionKey != null
-
-        return when (parts.size) {
-            0 -> null
-            1 -> parts[0].contentType
-            else -> if (isEncrypted) MediaType.multipartEncrypted(boundary).toString()
-            else MediaType.multipartMixed(boundary).toString()
-        }
-    }
-
-    private fun getDataBytes(parts: List<PayloadPart>, boundary: String, credentialProvider: ConversationCredentialProvider): ByteArray {
+    private fun maybeEncryptParts(parts: List<PayloadPart>, credentialProvider: ConversationCredentialProvider): List<PayloadPart> {
         var maybeEncryptedParts: List<PayloadPart> = parts
         val encryptionKey = credentialProvider.payloadEncryptionKey
 
@@ -79,10 +68,23 @@ abstract class Payload(
             }
         }
 
+        return maybeEncryptedParts
+    }
+
+    private fun getContentType(parts: List<PayloadPart>, boundary: String, isEncrypted: Boolean): String? {
+        return when (parts.size) {
+            0 -> null
+            1 -> parts[0].contentType
+            else -> if (isEncrypted) MediaType.multipartEncrypted(boundary).toString()
+            else MediaType.multipartMixed(boundary).toString()
+        }
+    }
+
+    private fun getDataBytes(parts: List<PayloadPart>, boundary: String): ByteArray {
         return when (parts.size) {
             0 -> byteArrayOf()
-            1 -> maybeEncryptedParts[0].content
-            else -> assembleMultipart(maybeEncryptedParts, boundary)
+            1 -> parts[0].content
+            else -> assembleMultipart(parts, boundary)
         }
     }
 

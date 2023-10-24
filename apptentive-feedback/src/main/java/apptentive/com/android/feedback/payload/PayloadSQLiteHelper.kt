@@ -149,7 +149,8 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
 
     @Throws(FileNotFoundException::class, IOException::class)
     private fun readPayload(cursor: Cursor): PayloadData {
-        val dataBytes = encryption.decrypt(cursor.getBlob(COL_PAYLOAD_DATA))
+        val dataBytes = cursor.getBlob(COL_PAYLOAD_DATA)
+//        val dataBytes = encryption.decrypt(cursor.getBlob(COL_PAYLOAD_DATA))
         val dataPath = cursor.getString(COL_PAYLOAD_DATA_FILE)
         val payloadData = if (dataBytes.isNotEmpty()) dataBytes
         else encryption.decrypt(FileUtil.readFileData(dataPath))
