@@ -31,14 +31,31 @@ internal object RosterUtils {
 
         val loggedInState = conversationRoster.activeConversation?.state as? ConversationState.LoggedIn
 
-        if (isMarshmallowOrGreater() && loggedInState != null) {
-            val wrapperEncryptionBytes = loggedInState.encryptionWrapperBytes
-            val encryptionKey = wrapperEncryptionBytes.getEncryptionKey(loggedInState.subject)
-            DefaultStateMachine.encryption = AESEncryption23(encryptionKey)
-            conversationRepository.updateEncryption(DefaultStateMachine.encryption)
-        }
+        loggedInState?.let { updateEncryptionForLoggedInConversation(it) }
         DefaultStateMachine.conversationRoster = conversationRoster
         conversationRepository.updateConversationRoster(conversationRoster)
+    }
+
+    fun mergeLegacyRoster(legacyRoster: ConversationRoster) {
+        val currentRoster = DefaultStateMachine.conversationRoster
+        currentRoster.activeConversation = legacyRoster.activeConversation
+        currentRoster.loggedOut = legacyRoster.loggedOut + currentRoster.loggedOut
+        currentRoster.activeConversation?.let {
+            if (it.state is ConversationState.LoggedIn) {
+                updateEncryptionForLoggedInConversation(it.state as ConversationState.LoggedIn)
+            }
+        }
+        DefaultStateMachine.conversationRoster = currentRoster
+        conversationRepository.updateConversationRoster(currentRoster)
+    }
+
+    private fun updateEncryptionForLoggedInConversation(loggedInState: ConversationState.LoggedIn) {
+        if (!isMarshmallowOrGreater()) return
+
+        val wrapperEncryptionBytes = loggedInState.encryptionWrapperBytes
+        val encryptionKey = wrapperEncryptionBytes.getEncryptionKey(loggedInState.subject)
+        DefaultStateMachine.encryption = AESEncryption23(encryptionKey)
+        conversationRepository.updateEncryption(DefaultStateMachine.encryption)
     }
 
     fun updateRosterForLogout(conversationId: String) {
@@ -75,14 +92,15 @@ internal object RosterUtils {
             activeConversationMetaData != null && activeConversationMetaData.state is ConversationState.Anonymous -> {
                 conversationRoster.activeConversation = loggedInConversation.copy(path = activeConversationMetaData.path)
             }
-            // Previous state was logged out. No active conversation state
-            activeConversationMetaData == null && matchingLoggedOutConversation != null -> {
+            // Previous state was logged out && not in legacy format. No active conversation state
+            activeConversationMetaData == null && matchingLoggedOutConversation != null && !FileUtil.isConversationCacheStoredInLegacyFormat(matchingLoggedOutConversation.path) -> {
                 conversationRoster.activeConversation = loggedInConversation.copy(path = matchingLoggedOutConversation.path)
             }
             // Previous state was logged in. It is a session restart now
             activeConversationMetaData != null && activeConversationMetaData.state is ConversationState.LoggedIn -> {
                 conversationRoster.activeConversation = loggedInConversation.copy(path = activeConversationMetaData.path)
             }
+            // New login conversation or previous state was logged out and in LEGACY format.
             else -> {
                 conversationRoster.activeConversation =
                     loggedInConversation.copy(path = "conversations/${generateUUID()}")

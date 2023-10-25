@@ -66,7 +66,7 @@ internal object FileStorageUtil {
         return if (hasStoragePriorToMultiUserSupport())
             getMessagesFile()
         else {
-            Log.d(LogTags.MESSAGE_CENTER, "Setting message file from roster meta data: $roster")
+            Log.d(LogTags.MESSAGE_CENTER, "Setting message file from roster meta data: ${roster.activeConversation?.path}")
             roster.activeConversation?.path?.let { getMessagesFileForActiveUser(it) }
         }
     }
@@ -76,7 +76,7 @@ internal object FileStorageUtil {
         val cachedSDKVersion = DependencyProvider.of<AndroidSharedPrefDataStore>()
             .getString(SharedPrefConstants.SDK_CORE_INFO, SharedPrefConstants.SDK_VERSION).ifEmpty { null }
 
-        return FileUtil.containsFiles(CONVERSATION_DIR) &&
+        return FileUtil.containsFiles(CONVERSATION_DIR) && // FIXME TODO this is true even for a new user
             cachedSDKVersion == null || cachedSDKVersion == "6.1.0"
     }
 

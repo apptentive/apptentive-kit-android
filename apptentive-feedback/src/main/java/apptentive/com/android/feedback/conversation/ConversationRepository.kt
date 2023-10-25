@@ -12,7 +12,7 @@ import apptentive.com.android.util.Factory
 import apptentive.com.android.util.generateUUID
 
 internal interface ConversationRepository {
-    fun createConversation(): Conversation
+    fun createConversation(conversationId: String? = null, conversationToken: String? = null): Conversation
 
     @Throws(ConversationSerializationException::class)
     fun saveConversation(conversation: Conversation)
@@ -43,9 +43,11 @@ internal class DefaultConversationRepository(
     private val manifestFactory: Factory<EngagementManifest>,
     private val engagementDataFactory: Factory<EngagementData>
 ) : ConversationRepository {
-    override fun createConversation(): Conversation {
+    override fun createConversation(conversationId: String?, conversationToken: String?): Conversation {
         return Conversation(
             localIdentifier = generateUUID(),
+            conversationId = conversationId,
+            conversationToken = conversationToken,
             person = personFactory.create(),
             device = deviceFactory.create(),
             appRelease = appReleaseFactory.create(),
