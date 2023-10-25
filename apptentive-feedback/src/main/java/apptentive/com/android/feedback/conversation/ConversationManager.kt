@@ -55,7 +55,10 @@ import apptentive.com.android.util.LogTags.INTERACTIONS
 import apptentive.com.android.util.Result
 import apptentive.com.android.util.isAllNull
 import com.apptentive.android.sdk.conversation.LegacyConversationManager
+import com.apptentive.android.sdk.conversation.LegacyConversationMetadataItem
 import com.apptentive.android.sdk.conversation.toConversation
+import com.apptentive.android.sdk.conversation.toConversationRoster
+import java.io.File
 
 internal class ConversationManager(
     private val conversationRepository: ConversationRepository,
@@ -188,6 +191,7 @@ internal class ConversationManager(
         conversationId: String,
         jwtToken: String,
         subject: String,
+        legacyConversationPath: String? = null,
         loginCallback: ((result: LoginResult) -> Unit)? = null
     ) {
         conversationService.loginSession(conversationId, jwtToken) { result ->
@@ -214,7 +218,20 @@ internal class ConversationManager(
                     // Don't re-load conversation that was upgraded from anonymous
                     if (previousState == SDKState.LOGGED_OUT) {
                         try {
-                            val conversation = loadExistingConversation() ?: createConversation() // This can be done only once per version through throttling
+                            val conversation = if (legacyConversationPath == null) {
+                                loadExistingConversation() ?: createConversation(conversationId, jwtToken)
+                            } else {
+                                // Conversation cache is still in legacy format, should try to migrate that
+                                tryMigrateEncryptedLoggedOutLegacyConversation(
+                                    LegacyConversationMetadataItem(
+                                        conversationId,
+                                        jwtToken,
+                                        File(legacyConversationPath),
+                                        result.data.encryptionKey,
+                                        subject,
+                                    )
+                                )
+                            }
                             updateConversationCredentialProvider(conversationId, jwtToken, encryptionKey)
                             activeConversationSubject.value = conversation.copy(
                                 conversationId = conversation.conversationId,
@@ -336,8 +353,8 @@ internal class ConversationManager(
         )
     }
 
-    private fun createConversation(): Conversation {
-        return conversationRepository.createConversation()
+    private fun createConversation(conversationId: String? = null, conversationToken: String? = null): Conversation {
+        return conversationRepository.createConversation(conversationId, conversationToken)
     }
 
     fun checkForSDKAppReleaseUpdates(conversation: Conversation) {
@@ -615,15 +632,37 @@ internal class ConversationManager(
     private fun tryMigrateLegacyConversation(): Conversation? {
         try {
             val legacyConversationManager = legacyConversationManagerProvider.get()
-            val legacyConversationData = legacyConversationManager.loadLegacyConversationData()
-            if (legacyConversationData != null) {
-                return legacyConversationData.toConversation()
+            val legacyConversationMetaData = legacyConversationManager.loadLegacyConversationMetadata()
+            if (legacyConversationMetaData != null && legacyConversationMetaData.hasItems()) {
+                val roster = legacyConversationMetaData.toConversationRoster()
+                DefaultStateMachine.onEvent(SDKEvent.FoundLegacyConversation(roster))
+                val legacyConversationData = legacyConversationManager.loadLegacyConversationData(legacyConversationMetaData)
+                if (legacyConversationData != null) {
+                    return legacyConversationData.toConversation()
+                } else {
+                    Log.e(CONVERSATION, "Unable to migrate legacy conversation")
+                }
             }
         } catch (e: Exception) {
             Log.e(CONVERSATION, "Unable to migrate legacy conversation", e)
         }
 
         return null
+    }
+
+    private fun tryMigrateEncryptedLoggedOutLegacyConversation(conversationMetaDataItem: LegacyConversationMetadataItem): Conversation {
+        try {
+            val legacyConversationManager = legacyConversationManagerProvider.get()
+            val legacyConversationData = legacyConversationManager.loadEncryptedLegacyConversationData(conversationMetaDataItem)
+            if (legacyConversationData != null) {
+                return legacyConversationData.toConversation()
+            } else {
+                Log.e(CONVERSATION, "Unable to login legacy conversation, creating a new conversation")
+            }
+        } catch (e: Exception) {
+            Log.e(CONVERSATION, "Unable to login legacy conversation, creating a new conversation", e)
+        }
+        return createConversation(conversationMetaDataItem.conversationId, conversationMetaDataItem.conversationToken)
     }
 
     //endregion

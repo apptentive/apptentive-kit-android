@@ -295,7 +295,11 @@ class ApptentiveDefaultClient(
 
         if (conversationId != null) {
             Log.v(CONVERSATION, "Found matching conversation ID in logged out list")
-            conversationManager.loginSession(conversationId, jwtToken, subClaim) { result ->
+            val legacyConversationPath = if (FileUtil.isConversationCacheStoredInLegacyFormat(matchingMetaData.path)) {
+                Log.v(CONVERSATION, "Conversation cache is in legacy format.")
+                matchingMetaData.path
+            } else null
+            conversationManager.loginSession(conversationId, jwtToken, subClaim, legacyConversationPath) { result ->
                 handleLoginResult(result, callback)
             }
         } else {

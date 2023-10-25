@@ -36,6 +36,8 @@ import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.util.Result
 import com.apptentive.android.sdk.conversation.ConversationData
 import com.apptentive.android.sdk.conversation.LegacyConversationManager
+import com.apptentive.android.sdk.conversation.LegacyConversationMetadata
+import com.apptentive.android.sdk.conversation.LegacyConversationMetadataItem
 import com.google.common.truth.Truth.assertThat
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
@@ -243,7 +245,7 @@ class MockConversationRepository(val throwException: Boolean = false) :
     ConversationRepository {
     private var conversation: Conversation? = null
 
-    override fun createConversation(): Conversation {
+    override fun createConversation(conversationId: String?, conversationToken: String?): Conversation {
         return Conversation(
             localIdentifier = "localIdentifier",
             conversationToken = null,
@@ -359,7 +361,15 @@ internal class MockConversationService(
 }
 
 private class MockLegacyConversationManager(val result: ConversationData? = null) : LegacyConversationManager {
-    override fun loadLegacyConversationData(): ConversationData? {
+    override fun loadLegacyConversationData(conversationMetadata: LegacyConversationMetadata?): ConversationData? {
         return result
+    }
+
+    override fun loadLegacyConversationMetadata(): LegacyConversationMetadata? {
+        return null
+    }
+
+    override fun loadEncryptedLegacyConversationData(conversationMetadataItem: LegacyConversationMetadataItem?): ConversationData? {
+        return null
     }
 }

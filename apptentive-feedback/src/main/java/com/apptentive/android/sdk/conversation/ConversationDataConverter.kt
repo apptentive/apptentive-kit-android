@@ -1,5 +1,9 @@
 package com.apptentive.android.sdk.conversation
 
+import apptentive.com.android.encryption.getKeyFromHexString
+import apptentive.com.android.feedback.conversation.ConversationMetaData
+import apptentive.com.android.feedback.conversation.ConversationRoster
+import apptentive.com.android.feedback.conversation.ConversationState
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
 import apptentive.com.android.feedback.engagement.criteria.Version
@@ -17,7 +21,12 @@ import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.model.VersionHistory
 import apptentive.com.android.feedback.model.VersionHistoryItem
+import apptentive.com.android.feedback.utils.isMarshmallowOrGreater
 import apptentive.com.android.feedback.utils.parseInt
+import apptentive.com.android.feedback.utils.toSecretKeyBytes
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.MIGRATION
+import apptentive.com.android.util.generateUUID
 import java.io.Serializable
 
 internal typealias LegacyConversationData = ConversationData
@@ -34,6 +43,7 @@ internal typealias LegacyIntegrationConfigItem = com.apptentive.android.sdk.stor
 internal typealias LegacyDateTime = com.apptentive.android.sdk.DateTime
 internal typealias LegacyVersion = com.apptentive.android.sdk.Version
 internal typealias LegacyVersionHistoryItem = com.apptentive.android.sdk.storage.VersionHistoryItem
+internal typealias LegacyConversationState = com.apptentive.android.sdk.conversation.ConversationState
 
 /**
  * Converts legacy SDK conversation data into the current [Conversation] data format.
@@ -143,6 +153,47 @@ internal fun LegacyEventData.toEngagementData(versionHistory: LegacyVersionHisto
     versionHistory = versionHistory?.toLatestFormat()
         ?: VersionHistory()
 )
+
+internal fun LegacyConversationMetadata.toConversationRoster(): ConversationRoster {
+    val roster = ConversationRoster()
+    for (item in this.items) {
+        Log.v(MIGRATION, "Migrating conversation metadata: $item")
+        val subject = item.userId
+        val key = item.conversationEncryptionKey
+        val conversationId = item.conversationId
+        when {
+            item.conversationState == LegacyConversationState.LOGGED_IN &&
+                isMarshmallowOrGreater() && subject != null && key?.getKeyFromHexString() != null -> {
+                val encryptedBytes = key.getKeyFromHexString().toSecretKeyBytes(subject)
+                val newConversationMetaData = ConversationMetaData(
+                    state = ConversationState.LoggedIn(subject = subject, encryptionWrapperBytes = encryptedBytes),
+                    path = "conversations/${generateUUID()}"
+                ) // Logged in conversation will be migrated and should be assigned a new path
+                roster.activeConversation = newConversationMetaData
+            }
+            item.conversationState == LegacyConversationState.LOGGED_OUT &&
+                conversationId != null && subject != null -> {
+                val newConversationMetaData = ConversationMetaData(
+                    state = ConversationState.LoggedOut(id = conversationId, subject = subject),
+                    path = item.dataFile.path
+                )
+                roster.loggedOut = roster.loggedOut + newConversationMetaData
+            }
+            item.conversationState == LegacyConversationState.ANONYMOUS -> {
+                val newConversationMetaData = ConversationMetaData(
+                    state = ConversationState.Anonymous,
+                    path = "conversations/${generateUUID()}"
+                ) // Anonymous conversation will be migrated and should be assigned a new path
+                roster.activeConversation = newConversationMetaData
+            }
+            // Any other state is not supported
+            else -> {
+                // Do nothing
+            }
+        }
+    }
+    return roster
+}
 
 internal fun Map<String, LegacyEventRecord>.toEngagementEventsRecords(): EngagementRecords<Event> =
     EngagementRecords(
