@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import androidx.annotation.RequiresApi
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.concurrent.ExecutorQueue
 import apptentive.com.android.concurrent.Executors
@@ -39,7 +40,6 @@ import apptentive.com.android.network.HttpClient
 import apptentive.com.android.network.HttpLoggingInterceptor
 import apptentive.com.android.network.HttpNetworkResponse
 import apptentive.com.android.network.HttpRequest
-import apptentive.com.android.network.asString
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.platform.DefaultAndroidSharedPrefDataStore
 import apptentive.com.android.platform.SharedPrefConstants
@@ -60,6 +60,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.InputStream
 import java.lang.ref.WeakReference
+import java.util.Base64
 
 /**
  * Result class used in a callback for the `engage` function to help understand what happens.
@@ -416,16 +417,36 @@ object Apptentive {
 
     private fun createHttpClient(context: Context): HttpClient {
         val loggingInterceptor = object : HttpLoggingInterceptor {
+            @RequiresApi(Build.VERSION_CODES.O)
             override fun intercept(request: HttpRequest<*>) {
                 Log.d(NETWORK, "--> ${request.method} ${request.url}")
                 Log.v(NETWORK, "Headers:\n${SensitiveDataUtils.hideIfSanitized(request.headers)}")
                 Log.v(NETWORK, "Content-Type: ${request.requestBody?.contentType}")
+
+//                val stringBody = request.requestBody?.asString()
+//                if ((stringBody?.length ?: 0) < 5000) {
+//                    if (request.requestBody?.contentType?.startsWith("application/json") == true) {
+//                        Log.v(
+//                            NETWORK,
+//                            "Request Body: " + SensitiveDataUtils.hideIfSanitized(stringBody)
+//                        )
+//                    } else {
+//                        Log.v(
+//                            NETWORK,
+//                            "Request Body Bytes: " + Base64.getEncoder()
+//                                .encodeToString((request.requestBody ?: byteArrayOf()) as ByteArray?)
+//                        )
+//                    }
+//                } else {
+//                    Log.v(NETWORK, "Request body too large to print.")
+//                }
                 Log.v(
                     NETWORK,
                     "Request Body: " +
-                        if ((request.requestBody?.asString()?.length ?: 0) < 5000) SensitiveDataUtils.hideIfSanitized(request.requestBody?.asString())
-                        else "Request body too large to print."
+                            if ((request.requestBody?.asString()?.length ?: 0) < 5000) SensitiveDataUtils.hideIfSanitized(request.requestBody?.asString())
+                            else "Request body too large to print."
                 )
+
             }
 
             override fun intercept(response: HttpNetworkResponse) {

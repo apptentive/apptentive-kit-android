@@ -6,8 +6,11 @@ import apptentive.com.android.encryption.AESEncryption23
 import apptentive.com.android.encryption.EncryptionFactory
 import apptentive.com.android.encryption.EncryptionKey
 import apptentive.com.android.feedback.model.payloads.Payload
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
+import java.util.Base64
 
 interface PayloadPart {
     val contentType: String get() = MediaType.applicationOctetStream.toString()
@@ -47,8 +50,13 @@ class EncryptedPayloadPart(private val payloadPart: PayloadPart, val encryptionK
             data.write(Payload.LINE_END.toByteArray())
         }
 
+        Log.v(LogTags.NETWORK, "plaintext: ${Base64.getEncoder().encodeToString(payloadPart.content)}")
         data.write(AESEncryption23(encryptionKey).encrypt(payloadPart.content))
 
-        return data.toByteArray()
+        val result = data.toByteArray()
+
+        Log.v(LogTags.NETWORK, "ciphertext: ${Base64.getEncoder().encodeToString(result)}")
+
+        return result
     }
 }
