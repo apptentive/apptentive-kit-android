@@ -9,7 +9,8 @@ enum class PayloadType {
     AppReleaseAndSDK,
     Message,
     Event,
-    SurveyResponse;
+    SurveyResponse,
+    Logout;
 
     companion object {
         fun parse(value: String) = valueOf(value)

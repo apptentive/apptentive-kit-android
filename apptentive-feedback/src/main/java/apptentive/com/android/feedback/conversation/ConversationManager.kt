@@ -253,15 +253,17 @@ internal class ConversationManager(
         }
     }
 
-    internal fun logoutSession() {
+    internal fun logoutSession(callback: (Result<Unit>) -> Unit) {
         val conversationId = activeConversation.value.conversationId
         if (conversationId == null) {
             Log.e(CONVERSATION, "Cannot logout session, conversation id is null")
-            return
+            callback(Result.Error("Cannot logout session, conversation id is null", Exception()))
         } else {
+            callback(Result.Success(Unit)) // Callback immediately to send the logout event and payload before encryption is removed.
             DefaultStateMachine.onEvent(SDKEvent.Logout(conversationId))
             setManifestExpired()
             activeConversationSubject.value = conversationRepository.createConversation()
+            updateConversationCredentialProvider(null, null, null)
             Log.v(CONVERSATION, "Logout session successful, logged out conversation")
         }
     }
