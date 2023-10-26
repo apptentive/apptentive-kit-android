@@ -40,23 +40,22 @@ class EncryptedPayloadPart(private val payloadPart: PayloadPart, val encryptionK
     override val parameterName get() = payloadPart.parameterName
     override val content: ByteArray @RequiresApi(Build.VERSION_CODES.M)
     get() {
-        val data = ByteArrayOutputStream()
+        val plaintextData = ByteArrayOutputStream()
+        val encryptedData = ByteArrayOutputStream()
 
         if (includeHeaders) { // Required when part of our multipart/encrypted encoding
-            data.write("Content-Type: ${payloadPart.contentType}${Payload.LINE_END}".toByteArray())
-            data.write("Content-Disposition: ${payloadPart.contentDisposition}${Payload.LINE_END}".toByteArray())
-            data.write(Payload.LINE_END.toByteArray())
-            data.write(payloadPart.content)
-            data.write(Payload.LINE_END.toByteArray())
+            plaintextData.write("Content-Disposition: ${payloadPart.contentDisposition}${Payload.LINE_END}".toByteArray())
+            plaintextData.write("Content-Type: ${payloadPart.contentType}${Payload.LINE_END}".toByteArray())
+            plaintextData.write(Payload.LINE_END.toByteArray())
+            plaintextData.write(payloadPart.content)
+            // plaintextData.write(Payload.LINE_END.toByteArray()) // TODO: Add this back once API is fixed.
+        } else {
+            plaintextData.write(payloadPart.content)
         }
 
-        Log.v(LogTags.NETWORK, "plaintext: ${Base64.getEncoder().encodeToString(payloadPart.content)}")
-        data.write(AESEncryption23(encryptionKey).encrypt(payloadPart.content))
+        Log.v(LogTags.NETWORK, "encryptionKey: ${Base64.getEncoder().encodeToString(encryptionKey.key?.encoded)}")
+        encryptedData.write(AESEncryption23(encryptionKey).encryptPayloadData(plaintextData.toByteArray()))
 
-        val result = data.toByteArray()
-
-        Log.v(LogTags.NETWORK, "ciphertext: ${Base64.getEncoder().encodeToString(result)}")
-
-        return result
+        return encryptedData.toByteArray()
     }
 }

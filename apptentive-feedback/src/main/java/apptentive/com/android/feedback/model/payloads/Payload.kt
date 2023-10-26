@@ -28,23 +28,32 @@ abstract class Payload(
     protected abstract fun getHttpMethod(): HttpMethod
     protected abstract fun getHttpPath(): String
 
-    fun toJson(includeContentKey: Boolean): String {
+    fun toJson(includeContentKey: Boolean, embeddedToken: String?): String {
         return if (includeContentKey) {
-            JsonConverter.toJson(mapOf(getJsonContainer() to this))
+            val jsonObject = mutableMapOf<String?, Any>(getJsonContainer() to this)
+            if (embeddedToken != null) {
+                jsonObject["token"] = embeddedToken
+            }
+            JsonConverter.toJson(jsonObject)
         } else {
-            JsonConverter.toJson(this)
+            var jsonObject = this.toJsonObject()
+            if (embeddedToken != null) {
+                jsonObject.put("token", embeddedToken)
+            }
+            return jsonObject.toString()
         }
     }
     fun toPayloadData(credentialProvider: ConversationCredentialProvider): PayloadData {
         val isEncrypted = credentialProvider.payloadEncryptionKey != null
-        val parts = maybeEncryptParts(getParts(isEncrypted), credentialProvider)
+        val embeddedToken = if (isEncrypted) credentialProvider.conversationToken else null
+        val parts = maybeEncryptParts(getParts(isEncrypted, embeddedToken), credentialProvider)
         val boundary = nonce.replace("-", "")
 
         return PayloadData(
             nonce = nonce,
             type = getPayloadType(),
             tag = credentialProvider.conversationPath ?: "placeholder",
-            token = credentialProvider.conversationToken,
+            token = if (isEncrypted) "embedded" else credentialProvider.conversationToken,
             conversationId = credentialProvider.conversationId,
             isEncrypted = isEncrypted,
             path = getHttpPath(),
@@ -54,11 +63,11 @@ abstract class Payload(
         )
     }
 
-    open fun getParts(isEncrypted: Boolean): List<PayloadPart> {
-        return listOf(JSONPayloadPart(toJson(true), getJsonContainer()))
+    open fun getParts(isEncrypted: Boolean, embeddedToken: String?): List<PayloadPart> {
+        return listOf(JSONPayloadPart(toJson(true, embeddedToken), getJsonContainer()))
     }
 
-    private fun maybeEncryptParts(parts: List<PayloadPart>, credentialProvider: ConversationCredentialProvider): List<PayloadPart> {
+    open fun maybeEncryptParts(parts: List<PayloadPart>, credentialProvider: ConversationCredentialProvider): List<PayloadPart> {
         var maybeEncryptedParts: List<PayloadPart> = parts
         val encryptionKey = credentialProvider.payloadEncryptionKey
 
@@ -71,7 +80,7 @@ abstract class Payload(
         return maybeEncryptedParts
     }
 
-    private fun getContentType(parts: List<PayloadPart>, boundary: String, isEncrypted: Boolean): String? {
+    open fun getContentType(parts: List<PayloadPart>, boundary: String, isEncrypted: Boolean): String? {
         return when (parts.size) {
             0 -> null
             1 -> parts[0].contentType
@@ -80,7 +89,7 @@ abstract class Payload(
         }
     }
 
-    private fun getDataBytes(parts: List<PayloadPart>, boundary: String): ByteArray {
+    open fun getDataBytes(parts: List<PayloadPart>, boundary: String): ByteArray {
         return when (parts.size) {
             0 -> byteArrayOf()
             1 -> parts[0].content
@@ -93,7 +102,7 @@ abstract class Payload(
         internal const val TWO_HYPHENS = "--"
     }
 
-    private fun assembleMultipart(parts: List<PayloadPart>, boundary: String): ByteArray {
+    protected fun assembleMultipart(parts: List<PayloadPart>, boundary: String): ByteArray {
         val data = ByteArrayOutputStream()
 
         parts.forEach { part ->

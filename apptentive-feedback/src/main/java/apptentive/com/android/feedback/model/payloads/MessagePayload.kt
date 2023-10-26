@@ -1,10 +1,12 @@
 package apptentive.com.android.feedback.model.payloads
 
 import apptentive.com.android.feedback.Constants
+import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.Sender
 import apptentive.com.android.feedback.payload.AttachmentData
 import apptentive.com.android.feedback.payload.AttachmentPayloadPart
+import apptentive.com.android.feedback.payload.EncryptedPayloadPart
 import apptentive.com.android.feedback.payload.JSONPayloadPart
 import apptentive.com.android.feedback.payload.MediaType
 import apptentive.com.android.feedback.payload.PayloadPart
@@ -46,9 +48,8 @@ data class MessagePayload(
 
     override fun getJsonContainer(): String = "message"
 
-    override fun getParts(isEncrypted: Boolean): List<PayloadPart> {
-        val includeContentKey = attachments.isEmpty() && !isEncrypted
-        var parts: MutableList<PayloadPart> = mutableListOf(JSONPayloadPart(toJson(includeContentKey), getJsonContainer()))
+    override fun getParts(isEncrypted: Boolean, embeddedToken: String?): List<PayloadPart> {
+        var parts: MutableList<PayloadPart> = mutableListOf(JSONPayloadPart(toJson(false, embeddedToken), getJsonContainer()))
 
         for (attachment in attachments) {
             val attachmentStream = ByteArrayOutputStream()
@@ -61,6 +62,33 @@ data class MessagePayload(
         }
 
         return parts
+    }
+
+    // Always send messages as multi-part
+    override fun getContentType(parts: List<PayloadPart>, boundary: String, isEncrypted: Boolean): String? {
+        return if (isEncrypted) MediaType.multipartEncrypted(boundary).toString()
+        else MediaType.multipartMixed(boundary).toString()
+    }
+
+    // Always send messages as multi-part
+    override fun getDataBytes(parts: List<PayloadPart>, boundary: String): ByteArray {
+        return assembleMultipart(parts, boundary)
+    }
+
+    override fun maybeEncryptParts(
+        parts: List<PayloadPart>,
+        credentialProvider: ConversationCredentialProvider
+    ): List<PayloadPart> {
+        var maybeEncryptedParts: List<PayloadPart> = parts
+        val encryptionKey = credentialProvider.payloadEncryptionKey
+
+        if (encryptionKey != null) {
+            maybeEncryptedParts = parts.map {
+                EncryptedPayloadPart(it, encryptionKey, true)
+            }
+        }
+
+        return maybeEncryptedParts
     }
 
     private fun retrieveAndWriteFileToStream(attachment: Message.Attachment, attachmentStream: ByteArrayOutputStream) {
