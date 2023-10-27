@@ -30,11 +30,11 @@ abstract class Payload(
 
     fun toJson(includeContentKey: Boolean, embeddedToken: String?): String {
         return if (includeContentKey) {
-            val jsonObject = mutableMapOf<String?, Any>(getJsonContainer() to this)
+            val jsonContainer = mutableMapOf<String?, Any>(getJsonContainer() to this)
             if (embeddedToken != null) {
-                jsonObject["token"] = embeddedToken
+                jsonContainer["token"] = embeddedToken
             }
-            JsonConverter.toJson(jsonObject)
+            JsonConverter.toJson(jsonContainer)
         } else {
             var jsonObject = this.toJsonObject()
             if (embeddedToken != null) {
@@ -67,13 +67,17 @@ abstract class Payload(
         return listOf(JSONPayloadPart(toJson(true, embeddedToken), getJsonContainer()))
     }
 
-    open fun maybeEncryptParts(parts: List<PayloadPart>, credentialProvider: ConversationCredentialProvider): List<PayloadPart> {
+    open fun shouldIncludeHeadersInEncryptedParts(): Boolean {
+        return false
+    }
+
+    private fun maybeEncryptParts(parts: List<PayloadPart>, credentialProvider: ConversationCredentialProvider): List<PayloadPart> {
         var maybeEncryptedParts: List<PayloadPart> = parts
         val encryptionKey = credentialProvider.payloadEncryptionKey
 
         if (encryptionKey != null) {
             maybeEncryptedParts = parts.map {
-                EncryptedPayloadPart(it, encryptionKey, parts.size > 1)
+                EncryptedPayloadPart(it, encryptionKey, shouldIncludeHeadersInEncryptedParts())
             }
         }
 

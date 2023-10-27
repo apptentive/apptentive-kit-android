@@ -25,8 +25,6 @@ class EventPayload(
 
     //region Inheritance
 
-    // Written as getter functions to avoid appearing (possibly recursively) in toJson/toJsonObject
-
     override fun getPayloadType() = PayloadType.Event
 
     override fun getJsonContainer() = "event"

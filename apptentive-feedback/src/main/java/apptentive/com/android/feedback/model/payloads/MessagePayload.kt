@@ -75,20 +75,8 @@ data class MessagePayload(
         return assembleMultipart(parts, boundary)
     }
 
-    override fun maybeEncryptParts(
-        parts: List<PayloadPart>,
-        credentialProvider: ConversationCredentialProvider
-    ): List<PayloadPart> {
-        var maybeEncryptedParts: List<PayloadPart> = parts
-        val encryptionKey = credentialProvider.payloadEncryptionKey
-
-        if (encryptionKey != null) {
-            maybeEncryptedParts = parts.map {
-                EncryptedPayloadPart(it, encryptionKey, true)
-            }
-        }
-
-        return maybeEncryptedParts
+    override fun shouldIncludeHeadersInEncryptedParts(): Boolean {
+        return true
     }
 
     private fun retrieveAndWriteFileToStream(attachment: Message.Attachment, attachmentStream: ByteArrayOutputStream) {
