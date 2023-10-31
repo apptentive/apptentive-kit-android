@@ -41,7 +41,7 @@ class AppReleaseSDKPayloadTest {
             versionCode = 1,
             versionName = "1.0.0"
         )
-        val actualJson = payload.toJson(true)
+        val actualJson = payload.toJson(true, null)
         val expectedJson = toProperJson("{'app_release':{'sdk_platform':'Android','sdk_version':'1.0.0','debug':true,'identifier':'apptentive.com.app','inheriting_styles':true,'overriding_styles':false,'target_sdk_version':'30','min_sdk_version':'21','type':'SDK','version_code':1,'version_name':'1.0.0','session_id':'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx','client_created_at':1000.0,'client_created_at_utc_offset':-18000,'nonce':'nonce'}}")
         assertEquals(expectedJson, actualJson)
 

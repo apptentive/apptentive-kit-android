@@ -18,9 +18,10 @@ import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.MessageList
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
-import apptentive.com.android.feedback.model.Sender
 import apptentive.com.android.feedback.model.payloads.MessagePayload
+import apptentive.com.android.feedback.model.payloads.MultipartParser
 import apptentive.com.android.feedback.payload.MockPayloadSender
+import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.util.Result
 import apptentive.com.android.util.generateUUID
 import org.junit.Assert
@@ -28,6 +29,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import java.io.ByteArrayInputStream
 
 class MessageManagerTest : TestCase() {
 
@@ -135,6 +137,26 @@ class MessageManagerTest : TestCase() {
         val actualPayload = payloadSender.payload as MessagePayload?
         assertEquals(expectedPayload.body, actualPayload?.body)
         assertEquals(expectedPayload.hidden, actualPayload?.hidden)
+
+        val credentialProvider = DependencyProvider.of<ConversationCredentialProvider>()
+        val actualPayloadData = actualPayload?.toPayloadData(credentialProvider)
+
+        val inputStream = ByteArrayInputStream(actualPayloadData?.data)
+        val parser = MultipartParser(inputStream, "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+
+        assertEquals(1, parser.numberOfParts)
+
+        val firstPart = parser.getPartAtIndex(0)!!
+
+        assertEquals("Content-Disposition: form-data; name=\"message\"\r\n" +
+                        "Content-Type: application/json;charset=UTF-8", firstPart.headers)
+
+        val json = JsonConverter.toMap(String(firstPart.content, Charsets.UTF_8))
+        assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["session_id"])
+        assertTrue(1698774495.52 < json["client_created_at"] as Double)
+        assertEquals("ABC", json["body"])
+        assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["nonce"])
+        assertEquals(-25200.0, json["client_created_at_utc_offset"])
     }
 
     @Test

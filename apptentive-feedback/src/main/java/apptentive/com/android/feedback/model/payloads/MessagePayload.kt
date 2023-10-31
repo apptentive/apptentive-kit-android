@@ -1,24 +1,17 @@
 package apptentive.com.android.feedback.model.payloads
 
 import apptentive.com.android.feedback.Constants
-import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.model.Message
-import apptentive.com.android.feedback.model.Sender
-import apptentive.com.android.feedback.payload.AttachmentData
 import apptentive.com.android.feedback.payload.AttachmentPayloadPart
-import apptentive.com.android.feedback.payload.EncryptedPayloadPart
 import apptentive.com.android.feedback.payload.JSONPayloadPart
 import apptentive.com.android.feedback.payload.MediaType
 import apptentive.com.android.feedback.payload.PayloadPart
 import apptentive.com.android.feedback.payload.PayloadType
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.network.HttpMethod
-import apptentive.com.android.serialization.json.JsonConverter
-import apptentive.com.android.serialization.json.JsonConverter.toJsonObject
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.PAYLOADS
-import apptentive.com.android.util.isNotNullOrEmpty
 import java.io.ByteArrayOutputStream
 import java.io.File
 
