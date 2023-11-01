@@ -2,9 +2,7 @@ package apptentive.com.android.network
 
 import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.util.InternalUseOnly
-import java.io.ByteArrayOutputStream
 import java.io.OutputStream
-import java.util.Base64
 
 /**
  * Helper function for creating JSON HTTP-requests.
@@ -39,12 +37,6 @@ internal class HttpJsonRequestBody(private val obj: Any) : HttpRequestBody {
     override fun write(stream: OutputStream) {
         val json = JsonConverter.toJson(obj)
         stream.write(json.toByteArray(Charsets.UTF_8))
-    }
-
-    override fun asString(): String {
-        val stream = ByteArrayOutputStream()
-        write(stream)
-        return stream.toByteArray().toString(Charsets.UTF_8)
     }
 }
 

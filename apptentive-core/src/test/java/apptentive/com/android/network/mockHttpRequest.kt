@@ -2,10 +2,8 @@ package apptentive.com.android.network
 
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.serialization.json.JsonConverter
-import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.OutputStream
-import java.util.Base64
 
 /**
  * Creates mock string HTTP-request.
@@ -35,14 +33,6 @@ internal fun createMockHttpRequest(
             }
 
             return stream.write(content)
-        }
-
-        // FIXME: revert this
-        override fun asString(): String {
-            val stream = ByteArrayOutputStream()
-            write(stream)
-
-            return Base64.getEncoder().encodeToString(stream.toByteArray())
         }
     } else null
 

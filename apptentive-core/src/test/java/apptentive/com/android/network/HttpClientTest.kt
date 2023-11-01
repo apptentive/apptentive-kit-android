@@ -7,9 +7,7 @@ import apptentive.com.android.util.Result
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Test
-import java.io.ByteArrayOutputStream
 import java.io.OutputStream
-import java.util.Base64
 
 class HttpClientTest : TestCase() {
     private lateinit var network: MockHttpNetwork
@@ -402,14 +400,6 @@ private object FailureRequestBody : HttpRequestBody {
 
     override fun write(stream: OutputStream) {
         throw AssertionError("Failed to deserialize")
-    }
-
-    // FIXME: revert this
-    override fun asString(): String {
-        val stream = ByteArrayOutputStream()
-        write(stream)
-
-        return Base64.getEncoder().encodeToString(stream.toByteArray())
     }
 }
 
