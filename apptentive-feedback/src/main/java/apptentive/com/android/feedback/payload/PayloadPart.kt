@@ -3,12 +3,10 @@ package apptentive.com.android.feedback.payload
 import android.os.Build
 import androidx.annotation.RequiresApi
 import apptentive.com.android.encryption.AESEncryption23
-import apptentive.com.android.encryption.EncryptionFactory
 import apptentive.com.android.encryption.EncryptionKey
 import apptentive.com.android.feedback.model.payloads.Payload
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags
-import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.util.Base64
 
@@ -24,14 +22,14 @@ interface PayloadPart {
     val parameterName: String? get() = null
 }
 
-class JSONPayloadPart(val json: String, private val containerKey: String?): PayloadPart {
-    override val contentType get() = "${MediaType.applicationJson.toString()};charset=UTF-8"
+class JSONPayloadPart(val json: String, private val containerKey: String?) : PayloadPart {
+    override val contentType get() = "${MediaType.applicationJson};charset=UTF-8"
     override val filename get() = null
     override val parameterName get() = containerKey
     override val content get() = json.toByteArray()
 }
 
-class AttachmentPayloadPart(override val content: ByteArray, override val contentType: String, override val filename: String?): PayloadPart {
+class AttachmentPayloadPart(override val content: ByteArray, override val contentType: String, override val filename: String?) : PayloadPart {
     override val parameterName get() = "file[]"
 }
 

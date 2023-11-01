@@ -21,8 +21,8 @@ import apptentive.com.android.feedback.model.MessageList
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.model.payloads.MessagePayload
-import apptentive.com.android.feedback.utils.MultipartParser
 import apptentive.com.android.feedback.payload.MockPayloadSender
+import apptentive.com.android.feedback.utils.MultipartParser
 import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.util.Result
 import apptentive.com.android.util.generateUUID
@@ -151,8 +151,11 @@ class MessageManagerTest : TestCase() {
 
         val firstPart = parser.getPartAtIndex(0)!!
 
-        assertEquals("Content-Disposition: form-data; name=\"message\"\r\n" +
-                        "Content-Type: application/json;charset=UTF-8", firstPart.headers)
+        assertEquals(
+            "Content-Disposition: form-data; name=\"message\"\r\n" +
+                "Content-Type: application/json;charset=UTF-8",
+            firstPart.headers
+        )
 
         val json = JsonConverter.toMap(String(firstPart.content, Charsets.UTF_8))
         assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["session_id"])
@@ -190,8 +193,11 @@ class MessageManagerTest : TestCase() {
 
         val firstPart = parser.getPartAtIndex(0)!!
 
-        assertEquals("Content-Disposition: form-data; name=\"message\"\r\n" +
-                "Content-Type: application/json;charset=UTF-8", firstPart.headers)
+        assertEquals(
+            "Content-Disposition: form-data; name=\"message\"\r\n" +
+                "Content-Type: application/json;charset=UTF-8",
+            firstPart.headers
+        )
 
         val json = JsonConverter.toMap(String(firstPart.content, Charsets.UTF_8))
         assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["session_id"])
@@ -203,8 +209,11 @@ class MessageManagerTest : TestCase() {
 
         val secondPart = parser.getPartAtIndex(1)!!
 
-        assertEquals("Content-Disposition: form-data; name=\"file[]\"\r\n" +
-                "Content-Type: image/jpeg", secondPart.headers)
+        assertEquals(
+            "Content-Disposition: form-data; name=\"file[]\"\r\n" +
+                "Content-Type: image/jpeg",
+            secondPart.headers
+        )
 
         assertTrue(secondPart.content.isNotEmpty())
     }
@@ -239,14 +248,20 @@ class MessageManagerTest : TestCase() {
 
         val firstPart = parser.getPartAtIndex(0)!!
 
-        assertEquals("Content-Disposition: form-data; name=\"message\"\r\n" +
-                "Content-Type: application/octet-stream", firstPart.headers)
+        assertEquals(
+            "Content-Disposition: form-data; name=\"message\"\r\n" +
+                "Content-Type: application/octet-stream",
+            firstPart.headers
+        )
 
         val decryptedContent = AESEncryption23(conversationCredential.payloadEncryptionKey!!).decryptPayloadData(firstPart.content)
         val decryptedPart = MultipartParser.parsePart(ByteArrayInputStream(decryptedContent), 0L..decryptedContent.size + 2) // TODO: Why do we have to add 2 here?
 
-        assertEquals("Content-Disposition: form-data; name=\"message\"\r\n" +
-                "Content-Type: application/json;charset=UTF-8", decryptedPart!!.headers)
+        assertEquals(
+            "Content-Disposition: form-data; name=\"message\"\r\n" +
+                "Content-Type: application/json;charset=UTF-8",
+            decryptedPart!!.headers
+        )
 
         val json = JsonConverter.toMap(String(decryptedPart!!.content, Charsets.UTF_8))
         assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["session_id"])
@@ -287,14 +302,20 @@ class MessageManagerTest : TestCase() {
 
         val firstPart = parser.getPartAtIndex(0)!!
 
-        assertEquals("Content-Disposition: form-data; name=\"message\"\r\n" +
-                "Content-Type: application/octet-stream", firstPart.headers)
+        assertEquals(
+            "Content-Disposition: form-data; name=\"message\"\r\n" +
+                "Content-Type: application/octet-stream",
+            firstPart.headers
+        )
 
         val decryptedContent = AESEncryption23(conversationCredential.payloadEncryptionKey!!).decryptPayloadData(firstPart.content)
         val decryptedPart = MultipartParser.parsePart(ByteArrayInputStream(decryptedContent), 0L..decryptedContent.size + 2) // TODO: Why do we have to add 2 here?
 
-        assertEquals("Content-Disposition: form-data; name=\"message\"\r\n" +
-                "Content-Type: application/json;charset=UTF-8", decryptedPart!!.headers)
+        assertEquals(
+            "Content-Disposition: form-data; name=\"message\"\r\n" +
+                "Content-Type: application/json;charset=UTF-8",
+            decryptedPart!!.headers
+        )
 
         val json = JsonConverter.toMap(String(decryptedPart!!.content, Charsets.UTF_8))
         assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["session_id"])
@@ -306,14 +327,20 @@ class MessageManagerTest : TestCase() {
 
         val secondPart = parser.getPartAtIndex(1)!!
 
-        assertEquals("Content-Disposition: form-data; name=\"file[]\"\r\n" +
-                "Content-Type: application/octet-stream", secondPart.headers)
+        assertEquals(
+            "Content-Disposition: form-data; name=\"file[]\"\r\n" +
+                "Content-Type: application/octet-stream",
+            secondPart.headers
+        )
 
         val decryptedContent2 = AESEncryption23(conversationCredential.payloadEncryptionKey!!).decryptPayloadData(secondPart.content)
         val decryptedPart2 = MultipartParser.parsePart(ByteArrayInputStream(decryptedContent2), 0L..decryptedContent2.size + 2) // TODO: Why do we have to add 2 here?
 
-        assertEquals("Content-Disposition: form-data; name=\"file[]\"\r\n" +
-                "Content-Type: image/jpeg", decryptedPart2!!.headers)
+        assertEquals(
+            "Content-Disposition: form-data; name=\"file[]\"\r\n" +
+                "Content-Type: image/jpeg",
+            decryptedPart2!!.headers
+        )
 
         assertTrue(decryptedPart2!!.content.isNotEmpty())
     }

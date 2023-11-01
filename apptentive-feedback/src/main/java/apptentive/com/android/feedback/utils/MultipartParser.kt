@@ -21,7 +21,7 @@ class MultipartParser(
         return parsePart(inputStream, ranges[index])
     }
 
-    data class Part (
+    data class Part(
         val headers: String,
         val content: ByteArray
     ) {
@@ -71,7 +71,8 @@ class MultipartParser(
                 inputStream.read(
                     contentByteArray,
                     0,
-                    lengthOfContent)
+                    lengthOfContent
+                )
 
                 return Part(String(headerByteArray, Charsets.UTF_8), contentByteArray)
             } else {
@@ -89,7 +90,7 @@ class MultipartParser(
     }
 
     private fun getPartRanges(): MutableList<LongRange>? {
-        val boundarySearcher = StreamSearcher("--${boundary}".toByteArray())
+        val boundarySearcher = StreamSearcher("--$boundary".toByteArray())
         val result = mutableListOf<LongRange>()
         var index = 0L
 

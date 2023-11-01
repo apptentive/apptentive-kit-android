@@ -45,4 +45,3 @@ internal fun parseInt(value: String?) = try {
 } catch (e: Exception) {
     null
 }
-
