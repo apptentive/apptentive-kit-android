@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import androidx.annotation.RequiresApi
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.concurrent.ExecutorQueue
 import apptentive.com.android.concurrent.Executors
@@ -61,7 +60,6 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.InputStream
 import java.lang.ref.WeakReference
-import java.util.Base64
 
 /**
  * Result class used in a callback for the `engage` function to help understand what happens.
@@ -425,8 +423,8 @@ object Apptentive {
                 Log.v(
                     NETWORK,
                     "Request Body: " +
-                            if ((request.requestBody?.asString()?.length ?: 0) < 5000) SensitiveDataUtils.hideIfSanitized(request.requestBody?.asString())
-                            else "Request body too large to print."
+                        if ((request.requestBody?.asString()?.length ?: 0) < 5000) SensitiveDataUtils.hideIfSanitized(request.requestBody?.asString())
+                        else "Request body too large to print."
                 )
             }
 

@@ -1,7 +1,6 @@
 package apptentive.com.android.feedback.model.payloads
 
 import android.os.Build
-import androidx.annotation.RequiresApi
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.payload.AttachmentData
 import apptentive.com.android.feedback.payload.EncryptedPayloadPart

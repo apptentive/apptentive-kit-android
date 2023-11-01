@@ -2,10 +2,6 @@ package apptentive.com.android.feedback.model.payloads
 
 import apptentive.com.android.feedback.Constants.buildHttpPath
 import apptentive.com.android.feedback.model.SensitiveDataKey
-import apptentive.com.android.feedback.payload.AttachmentData
-import apptentive.com.android.feedback.payload.JSONPayloadPart
-import apptentive.com.android.feedback.payload.MediaType
-import apptentive.com.android.feedback.payload.PayloadPart
 import apptentive.com.android.feedback.payload.PayloadType
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.network.HttpMethod
