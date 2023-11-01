@@ -31,10 +31,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.junit.internal.Classes.getClass
 import java.io.ByteArrayInputStream
 import java.io.File
-import java.io.FileInputStream
 
 class MessageManagerTest : TestCase() {
 
@@ -207,6 +205,8 @@ class MessageManagerTest : TestCase() {
 
         assertEquals("Content-Disposition: form-data; name=\"file[]\"\r\n" +
                 "Content-Type: image/jpeg", secondPart.headers)
+
+        assertTrue(secondPart.content.isNotEmpty())
     }
 
     @Test
@@ -314,6 +314,8 @@ class MessageManagerTest : TestCase() {
 
         assertEquals("Content-Disposition: form-data; name=\"file[]\"\r\n" +
                 "Content-Type: image/jpeg", decryptedPart2!!.headers)
+
+        assertTrue(decryptedPart2!!.content.isNotEmpty())
     }
 
     @Test
