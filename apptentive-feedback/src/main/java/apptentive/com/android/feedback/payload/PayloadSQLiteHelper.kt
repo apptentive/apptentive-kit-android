@@ -40,13 +40,14 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
             FileUtil.writeFileData(fileName, encryptedBytes)
             fileName
         } else ""
+        val dataBytes = if (payload.isEncrypted) payload.data else encryption.encrypt(payload.data)
         val values = ContentValues().apply {
             put(COL_NONCE, payload.nonce)
             put(COL_TYPE, payload.type.toString())
             put(COL_PATH, payload.path)
             put(COL_METHOD, payload.method.toString())
             put(COL_MEDIA_TYPE, payload.mediaType.toString())
-            put(COL_PAYLOAD_DATA, encryption.encrypt(payload.data))
+            put(COL_PAYLOAD_DATA, dataBytes)
             put(COL_PAYLOAD_DATA_FILE, fileName)
             put(COL_TAG, payload.tag)
 
