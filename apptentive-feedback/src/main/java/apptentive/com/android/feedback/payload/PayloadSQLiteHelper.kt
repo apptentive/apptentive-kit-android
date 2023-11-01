@@ -35,7 +35,7 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
     fun addPayload(payload: PayloadData) {
         Log.v(PAYLOADS, "Saving payload body to: ${writableDatabase.path}")
         val fileName = if (payload.attachmentData.data.isNotEmpty()) {
-            val encryptedBytes = encryption.encrypt(payload.attachmentData.data)
+            val encryptedBytes = if (payload.isEncrypted) payload.attachmentData.data else encryption.encrypt(payload.attachmentData.data)
             val fileName = FileUtil.generateCacheFilePathFromNonceOrPrefix(context, payload.nonce, "apptentive-message-payload")
             FileUtil.writeFileData(fileName, encryptedBytes)
             fileName
@@ -149,11 +149,12 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
 
     @Throws(FileNotFoundException::class, IOException::class)
     private fun readPayload(cursor: Cursor): PayloadData {
+        val isEncryptedForAPI = cursor.getInt(COL_ENCRYPTED) == 1
         val dataBytes = cursor.getBlob(COL_PAYLOAD_DATA)
-//        val dataBytes = encryption.decrypt(cursor.getBlob(COL_PAYLOAD_DATA))
         val dataPath = cursor.getString(COL_PAYLOAD_DATA_FILE)
-        val payloadData = if (dataBytes.isNotEmpty()) dataBytes
-        else encryption.decrypt(FileUtil.readFileData(dataPath))
+        val maybeEncryptedData = if (dataBytes.isNotEmpty()) dataBytes
+        else FileUtil.readFileData(dataPath)
+        val payloadData = if (isEncryptedForAPI) maybeEncryptedData else encryption.decrypt(maybeEncryptedData)
 
         return PayloadData(
             nonce = cursor.getString(COL_NONCE),
@@ -161,7 +162,7 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
             tag = cursor.getString(COL_TAG),
             token = cursor.getString(COL_TOKEN),
             conversationId = cursor.getString(COL_CONVERSATION_ID),
-            isEncrypted = cursor.getInt(COL_ENCRYPTED) == 1,
+            isEncrypted = isEncryptedForAPI,
             path = cursor.getString(COL_PATH),
             method = HttpMethod.valueOf(cursor.getString(COL_METHOD)),
             mediaType = cursor.getString(COL_MEDIA_TYPE),

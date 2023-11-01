@@ -3,6 +3,7 @@ package apptentive.com.android.feedback.model.payloads
 import android.os.Build
 import androidx.annotation.RequiresApi
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
+import apptentive.com.android.feedback.payload.AttachmentData
 import apptentive.com.android.feedback.payload.EncryptedPayloadPart
 import apptentive.com.android.feedback.payload.JSONPayloadPart
 import apptentive.com.android.feedback.payload.MediaType
@@ -44,6 +45,13 @@ abstract class Payload(
         val embeddedToken = if (isEncrypted) credentialProvider.conversationToken else null
         val parts = maybeEncryptParts(getParts(isEncrypted, embeddedToken), credentialProvider)
         val boundary = nonce.replace("-", "")
+        var dataBytes = getDataBytes(parts, boundary)
+        var attachmentData = AttachmentData()
+
+        if (dataBytes.size > 10240) {
+            attachmentData = AttachmentData(dataBytes)
+            dataBytes = byteArrayOf()
+        }
 
         return PayloadData(
             nonce = nonce,
@@ -55,7 +63,8 @@ abstract class Payload(
             path = getHttpPath(),
             method = getHttpMethod(),
             mediaType = getContentType(parts, boundary, isEncrypted),
-            data = getDataBytes(parts, boundary)
+            data = dataBytes,
+            attachmentData = attachmentData
         )
     }
 
