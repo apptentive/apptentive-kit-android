@@ -1,6 +1,5 @@
 package apptentive.com.android.feedback.model.payloads
 
-import android.os.Build
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.payload.AttachmentData
 import apptentive.com.android.feedback.payload.EncryptedPayloadPart
@@ -16,7 +15,6 @@ import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags
 import java.io.ByteArrayOutputStream
-import java.util.Base64
 
 @InternalUseOnly
 abstract class Payload(
@@ -128,13 +126,7 @@ abstract class Payload(
 
         Log.d(LogTags.PAYLOADS, "Total payload body bytes: %d", data.size())
 
-        val content = data.toByteArray()
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Log.v(LogTags.PAYLOADS, "Body: ${Base64.getEncoder().encodeToString(content)}")
-        }
-
-        return content
+        return data.toByteArray()
     }
 
     override fun equals(other: Any?): Boolean {
