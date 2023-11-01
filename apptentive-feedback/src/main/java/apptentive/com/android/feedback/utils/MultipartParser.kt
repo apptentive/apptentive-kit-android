@@ -1,6 +1,5 @@
-package apptentive.com.android.feedback.model.payloads
+package apptentive.com.android.feedback.utils
 
-import apptentive.com.android.feedback.utils.StreamSearcher
 import java.io.InputStream
 
 class MultipartParser(
@@ -19,7 +18,7 @@ class MultipartParser(
             return null
         }
 
-        return MultipartParser.parsePart(inputStream, ranges[index])
+        return parsePart(inputStream, ranges[index])
     }
 
     data class Part (

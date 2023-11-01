@@ -31,15 +31,11 @@ abstract class Payload(
     fun toJson(includeContentKey: Boolean, embeddedToken: String?): String {
         return if (includeContentKey) {
             val jsonContainer = mutableMapOf<String?, Any>(getJsonContainer() to this)
-            if (embeddedToken != null) {
-                jsonContainer["token"] = embeddedToken
-            }
+            embeddedToken?.let { jsonContainer["token"] = it }
             JsonConverter.toJson(jsonContainer)
         } else {
             var jsonObject = this.toJsonObject()
-            if (embeddedToken != null) {
-                jsonObject.put("token", embeddedToken)
-            }
+            embeddedToken?.let { jsonObject.put("token", it) }
             return jsonObject.toString()
         }
     }

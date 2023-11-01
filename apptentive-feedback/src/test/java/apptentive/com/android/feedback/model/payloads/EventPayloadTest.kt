@@ -75,6 +75,25 @@ class EventPayloadTest {
         assertEquals(expected, actual)
     }
 
+    @Test
+    fun testEventPayloadEmbeddedToken() {
+        val payload = EventPayload(
+            nonce = "nonce",
+            label = "label",
+            interactionId = "interactionId",
+            data = mapOf<String, Any>(
+                "key" to "value"
+            ),
+            customData = mapOf<String, Any>(
+                "custom_key" to "custom_value"
+            )
+        )
+
+        val expected = toProperJson("{'event':{'label':'label','interaction_id':'interactionId','data':{'key':'value'},'custom_data':{'custom_key':'custom_value'},'session_id':'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx','client_created_at':1000.0,'client_created_at_utc_offset':-18000,'nonce':'nonce'},'token':'abc123'}")
+        val actual = payload.toJson(true, "abc123")
+        assertEquals(expected, actual)
+    }
+
     @Ignore("Passes locally. Failing on backend because of the UUID generation for session id.")
     @Test
     fun testEventMissingJsonData() {

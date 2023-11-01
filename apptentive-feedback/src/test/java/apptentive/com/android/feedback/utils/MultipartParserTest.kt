@@ -1,7 +1,6 @@
-package apptentive.com.android.feedback.payload
+package apptentive.com.android.feedback.utils
 
 import apptentive.com.android.TestCase
-import apptentive.com.android.feedback.model.payloads.MultipartParser
 import org.junit.Test
 import java.io.ByteArrayInputStream
 import com.google.common.truth.Truth.assertThat

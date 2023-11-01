@@ -21,7 +21,7 @@ import apptentive.com.android.feedback.model.MessageList
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.model.payloads.MessagePayload
-import apptentive.com.android.feedback.model.payloads.MultipartParser
+import apptentive.com.android.feedback.utils.MultipartParser
 import apptentive.com.android.feedback.payload.MockPayloadSender
 import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.util.Result
