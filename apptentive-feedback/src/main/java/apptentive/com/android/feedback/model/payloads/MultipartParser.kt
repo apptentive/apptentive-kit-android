@@ -19,37 +19,7 @@ class MultipartParser(
             return null
         }
 
-        val partStart = ranges[index].first
-
-        inputStream.reset()
-        inputStream.skip(partStart)
-        val endOfBlankLineIndex = getEndOfHeaders()
-
-        if (endOfBlankLineIndex != null) {
-            inputStream.reset()
-            inputStream.skip(partStart)
-            val lengthOfHeaders = endOfBlankLineIndex.toInt() - 4
-            var headerByteArray = ByteArray(lengthOfHeaders)
-
-            inputStream.read(
-                headerByteArray,
-                0,
-                lengthOfHeaders
-            )
-
-            inputStream.skip(4)
-
-            val lengthOfContent = ranges[index].count() - endOfBlankLineIndex.toInt() - 3
-            val contentByteArray = ByteArray(lengthOfContent)
-            inputStream.read(
-                contentByteArray,
-                0,
-                lengthOfContent)
-
-            return Part(String(headerByteArray, Charsets.UTF_8), contentByteArray)
-        } else {
-            return null
-        }
+        return MultipartParser.parsePart(inputStream, ranges[index])
     }
 
     data class Part (
@@ -72,6 +42,50 @@ class MultipartParser(
             var result = headers.hashCode()
             result = 31 * result + content.contentHashCode()
             return result
+        }
+    }
+
+    companion object {
+        fun parsePart(inputStream: InputStream, range: LongRange): Part? {
+            val partStart = range.first
+
+            inputStream.reset()
+            inputStream.skip(partStart)
+            val endOfBlankLineIndex = getEndOfHeaders(inputStream)
+
+            if (endOfBlankLineIndex != null) {
+                inputStream.reset()
+                inputStream.skip(partStart)
+                val lengthOfHeaders = endOfBlankLineIndex.toInt() - 4
+                var headerByteArray = ByteArray(lengthOfHeaders)
+
+                inputStream.read(
+                    headerByteArray,
+                    0,
+                    lengthOfHeaders
+                )
+
+                inputStream.skip(4)
+
+                val lengthOfContent = range.count() - endOfBlankLineIndex.toInt() - 3
+                val contentByteArray = ByteArray(lengthOfContent)
+                inputStream.read(
+                    contentByteArray,
+                    0,
+                    lengthOfContent)
+
+                return Part(String(headerByteArray, Charsets.UTF_8), contentByteArray)
+            } else {
+                return null
+            }
+        }
+
+        private fun getEndOfHeaders(inputStream: InputStream): Long? {
+            val blankLineSearcher = StreamSearcher("\r\n\r\n".toByteArray())
+
+            val endOfBlankLineIndex = blankLineSearcher.search(inputStream)
+
+            return if (endOfBlankLineIndex == -1L) null else endOfBlankLineIndex
         }
     }
 
@@ -108,13 +122,5 @@ class MultipartParser(
 
             index += lengthToEndOfBoundary + 2
         }
-    }
-
-    private fun getEndOfHeaders(): Long? {
-        val blankLineSearcher = StreamSearcher("\r\n\r\n".toByteArray())
-
-        val endOfBlankLineIndex = blankLineSearcher.search(inputStream)
-
-        return if (endOfBlankLineIndex == -1L) null else endOfBlankLineIndex
     }
 }

@@ -99,7 +99,7 @@ class SurveyInteractionLauncherTest : TestCase() {
             EngagementResult.InteractionNotShown("No runnable interactions")
         },
         onSendPayload = onSendPayload ?: { payload ->
-            addResult(payload.toJson(true))
+            addResult(payload.toJson(true, null))
         }
     )
 
