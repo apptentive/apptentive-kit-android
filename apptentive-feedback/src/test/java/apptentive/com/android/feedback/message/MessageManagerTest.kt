@@ -177,9 +177,17 @@ class MessageManagerTest : TestCase() {
             attachments = emptyList()
         )
 
-        messageManager.sendMessage("ABC", attachments = listOf(Message.Attachment("1", "image/jpeg", localFilePath = File(
-            javaClass.getResource("/dog.jpg")?.path ?: ""
-        ).absolutePath)))
+        messageManager.sendMessage(
+            "ABC",
+            attachments = listOf(
+                Message.Attachment(
+                    "1", "image/jpeg",
+                    localFilePath = File(
+                        javaClass.getResource("/dog.jpg")?.path ?: ""
+                    ).absolutePath
+                )
+            )
+        )
 
         val actualPayload = payloadSender.payload as MessagePayload?
         assertEquals(expectedPayload.body, actualPayload?.body)
@@ -288,9 +296,17 @@ class MessageManagerTest : TestCase() {
             attachments = emptyList()
         )
 
-        messageManager.sendMessage("ABC", attachments = listOf(Message.Attachment("1", "image/jpeg", localFilePath = File(
-            javaClass.getResource("/dog.jpg")?.path ?: ""
-        ).absolutePath)))
+        messageManager.sendMessage(
+            "ABC",
+            attachments = listOf(
+                Message.Attachment(
+                    "1", "image/jpeg",
+                    localFilePath = File(
+                        javaClass.getResource("/dog.jpg")?.path ?: ""
+                    ).absolutePath
+                )
+            )
+        )
 
         val actualPayload = payloadSender.payload as MessagePayload?
         assertEquals(expectedPayload.body, actualPayload?.body)
