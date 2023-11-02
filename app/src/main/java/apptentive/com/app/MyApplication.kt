@@ -5,6 +5,8 @@ import android.content.Context
 import android.util.Log
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveConfiguration
+import apptentive.com.android.feedback.AuthenticationFailedListener
+import apptentive.com.android.feedback.AuthenticationFailedReason
 import apptentive.com.android.feedback.RegisterResult
 import apptentive.com.android.util.LogLevel
 import java.util.concurrent.TimeUnit
@@ -19,7 +21,7 @@ val configuration = ApptentiveConfiguration(
     ratingInteractionThrottleLength = TimeUnit.SECONDS.toMillis(30)
 }
 
-class MyApplication : Application() {
+class MyApplication : Application(), AuthenticationFailedListener {
     override fun onCreate() {
         val prefs = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
         // Turning off by default to get un-redacted logs
@@ -41,5 +43,10 @@ class MyApplication : Application() {
                 )
             }
         }
+        Apptentive.setAuthenticationFailedListener(this)
+    }
+
+    override fun onAuthenticationFailed(reason: AuthenticationFailedReason) {
+        Log.d("INTERNAL TEST APP", "Authentication failed with reason: $reason")
     }
 }
