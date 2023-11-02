@@ -11,11 +11,11 @@ import java.io.ByteArrayOutputStream
 import java.util.Base64
 
 interface PayloadPart {
-    val contentType: String get() = MediaType.applicationOctetStream.toString()
+    val contentType: MediaType get() = MediaType.applicationOctetStream
     val contentDisposition: String
         get() {
             return arrayOf("form-data", "name=\"${parameterName ?: "data"}\"", filename?.let { "filename=\"${filename}\"" })
-                .mapNotNull { it }.joinToString("; ")
+                .mapNotNull { it }.joinToString(";")
         }
     val content: ByteArray get() = byteArrayOf()
     val filename: String? get() = null
@@ -23,13 +23,13 @@ interface PayloadPart {
 }
 
 class JSONPayloadPart(val json: String, private val containerKey: String?) : PayloadPart {
-    override val contentType get() = "${MediaType.applicationJson};charset=UTF-8"
+    override val contentType get() = MediaType.applicationJson
     override val filename get() = null
     override val parameterName get() = containerKey
     override val content get() = json.toByteArray()
 }
 
-class AttachmentPayloadPart(override val content: ByteArray, override val contentType: String, override val filename: String?) : PayloadPart {
+class AttachmentPayloadPart(override val content: ByteArray, override val contentType: MediaType, override val filename: String?) : PayloadPart {
     override val parameterName get() = "file[]"
 }
 

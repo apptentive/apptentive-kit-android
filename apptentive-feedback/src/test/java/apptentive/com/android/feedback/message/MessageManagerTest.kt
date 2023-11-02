@@ -145,14 +145,14 @@ class MessageManagerTest : TestCase() {
         val actualPayloadData = actualPayload?.toPayloadData(credentialProvider)
 
         val inputStream = ByteArrayInputStream(actualPayloadData?.data)
-        val parser = MultipartParser(inputStream, "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+        val parser = MultipartParser(inputStream, "s16u0iwtqlokf4v9cpgne8a2amdrxz735hjby")
 
         assertEquals(1, parser.numberOfParts)
 
         val firstPart = parser.getPartAtIndex(0)!!
 
         assertEquals(
-            "Content-Disposition: form-data; name=\"message\"\r\n" +
+            "Content-Disposition: form-data;name=\"message\"\r\n" +
                 "Content-Type: application/json;charset=UTF-8",
             firstPart.headers
         )
@@ -184,7 +184,8 @@ class MessageManagerTest : TestCase() {
                     "1", "image/jpeg",
                     localFilePath = File(
                         javaClass.getResource("/dog.jpg")?.path ?: ""
-                    ).absolutePath
+                    ).absolutePath,
+                    originalName = "dog.jpg"
                 )
             )
         )
@@ -196,15 +197,15 @@ class MessageManagerTest : TestCase() {
         val credentialProvider = DependencyProvider.of<ConversationCredentialProvider>()
         val actualPayloadData = actualPayload?.toPayloadData(credentialProvider)
 
-        val inputStream = ByteArrayInputStream(actualPayloadData!!.attachmentData.data)
-        val parser = MultipartParser(inputStream, "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+        val inputStream = ByteArrayInputStream(actualPayloadData!!.sidecarFilename.data)
+        val parser = MultipartParser(inputStream, "s16u0iwtqlokf4v9cpgne8a2amdrxz735hjby")
 
         assertEquals(2, parser.numberOfParts)
 
         val firstPart = parser.getPartAtIndex(0)!!
 
         assertEquals(
-            "Content-Disposition: form-data; name=\"message\"\r\n" +
+            "Content-Disposition: form-data;name=\"message\"\r\n" +
                 "Content-Type: application/json;charset=UTF-8",
             firstPart.headers
         )
@@ -220,10 +221,12 @@ class MessageManagerTest : TestCase() {
         val secondPart = parser.getPartAtIndex(1)!!
 
         assertEquals(
-            "Content-Disposition: form-data; name=\"file[]\"\r\n" +
+            "Content-Disposition: form-data;name=\"file[]\";filename=\"dog.jpg\"\r\n" +
                 "Content-Type: image/jpeg",
             secondPart.headers
         )
+
+        // TODO: use original filename
 
         assertTrue(secondPart.content.isNotEmpty())
     }
@@ -252,14 +255,14 @@ class MessageManagerTest : TestCase() {
         val actualPayloadData = actualPayload?.toPayloadData(credentialProvider)
 
         val inputStream = ByteArrayInputStream(actualPayloadData?.data)
-        val parser = MultipartParser(inputStream, "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+        val parser = MultipartParser(inputStream, "s16u0iwtqlokf4v9cpgne8a2amdrxz735hjby")
 
         assertEquals(1, parser.numberOfParts)
 
         val firstPart = parser.getPartAtIndex(0)!!
 
         assertEquals(
-            "Content-Disposition: form-data; name=\"message\"\r\n" +
+            "Content-Disposition: form-data;name=\"message\"\r\n" +
                 "Content-Type: application/octet-stream",
             firstPart.headers
         )
@@ -268,7 +271,7 @@ class MessageManagerTest : TestCase() {
         val decryptedPart = MultipartParser.parsePart(ByteArrayInputStream(decryptedContent), 0L..decryptedContent.size + 2) // TODO: Why do we have to add 2 here?
 
         assertEquals(
-            "Content-Disposition: form-data; name=\"message\"\r\n" +
+            "Content-Disposition: form-data;name=\"message\"\r\n" +
                 "Content-Type: application/json;charset=UTF-8",
             decryptedPart!!.headers
         )
@@ -303,7 +306,8 @@ class MessageManagerTest : TestCase() {
                     "1", "image/jpeg",
                     localFilePath = File(
                         javaClass.getResource("/dog.jpg")?.path ?: ""
-                    ).absolutePath
+                    ).absolutePath,
+                    originalName = "dog.jpg"
                 )
             )
         )
@@ -315,15 +319,15 @@ class MessageManagerTest : TestCase() {
         val credentialProvider = DependencyProvider.of<ConversationCredentialProvider>()
         val actualPayloadData = actualPayload?.toPayloadData(credentialProvider)
 
-        val inputStream = ByteArrayInputStream(actualPayloadData?.attachmentData!!.data)
-        val parser = MultipartParser(inputStream, "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+        val inputStream = ByteArrayInputStream(actualPayloadData?.sidecarFilename!!.data)
+        val parser = MultipartParser(inputStream, "s16u0iwtqlokf4v9cpgne8a2amdrxz735hjby")
 
         assertEquals(2, parser.numberOfParts)
 
         val firstPart = parser.getPartAtIndex(0)!!
 
         assertEquals(
-            "Content-Disposition: form-data; name=\"message\"\r\n" +
+            "Content-Disposition: form-data;name=\"message\"\r\n" +
                 "Content-Type: application/octet-stream",
             firstPart.headers
         )
@@ -332,7 +336,7 @@ class MessageManagerTest : TestCase() {
         val decryptedPart = MultipartParser.parsePart(ByteArrayInputStream(decryptedContent), 0L..decryptedContent.size + 2) // TODO: Why do we have to add 2 here?
 
         assertEquals(
-            "Content-Disposition: form-data; name=\"message\"\r\n" +
+            "Content-Disposition: form-data;name=\"message\"\r\n" +
                 "Content-Type: application/json;charset=UTF-8",
             decryptedPart!!.headers
         )
@@ -348,7 +352,7 @@ class MessageManagerTest : TestCase() {
         val secondPart = parser.getPartAtIndex(1)!!
 
         assertEquals(
-            "Content-Disposition: form-data; name=\"file[]\"\r\n" +
+            "Content-Disposition: form-data;name=\"file[]\";filename=\"dog.jpg\"\r\n" +
                 "Content-Type: application/octet-stream",
             secondPart.headers
         )
@@ -357,7 +361,7 @@ class MessageManagerTest : TestCase() {
         val decryptedPart2 = MultipartParser.parsePart(ByteArrayInputStream(decryptedContent2), 0L..decryptedContent2.size + 2) // TODO: Why do we have to add 2 here?
 
         assertEquals(
-            "Content-Disposition: form-data; name=\"file[]\"\r\n" +
+            "Content-Disposition: form-data;name=\"file[]\";filename=\"dog.jpg\"\r\n" +
                 "Content-Type: image/jpeg",
             decryptedPart2!!.headers
         )

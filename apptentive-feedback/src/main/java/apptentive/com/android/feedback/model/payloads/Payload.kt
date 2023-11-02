@@ -1,7 +1,7 @@
 package apptentive.com.android.feedback.model.payloads
 
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
-import apptentive.com.android.feedback.payload.AttachmentData
+import apptentive.com.android.feedback.payload.SidecarData
 import apptentive.com.android.feedback.payload.EncryptedPayloadPart
 import apptentive.com.android.feedback.payload.JSONPayloadPart
 import apptentive.com.android.feedback.payload.MediaType
@@ -41,14 +41,17 @@ abstract class Payload(
         val isEncrypted = credentialProvider.payloadEncryptionKey != null
         val embeddedToken = if (isEncrypted) credentialProvider.conversationToken else null
         val parts = maybeEncryptParts(getParts(isEncrypted, embeddedToken), credentialProvider)
-        val boundary = nonce.replace("-", "")
-        var dataBytes = getDataBytes(parts, boundary)
-        var attachmentData = AttachmentData()
+        var dataBytes = getDataBytes(parts, Payload.BOUNDARY)
+        var attachmentData = SidecarData()
 
-        if (dataBytes.size > 10240) {
-            attachmentData = AttachmentData(dataBytes)
+        // Use a sidecar file if dataBytes is more than 10KB.
+        if (dataBytes.size > Payload.SQL_SIZE_LIMIT) {
+            attachmentData = SidecarData(dataBytes)
             dataBytes = byteArrayOf()
         }
+
+        // TODO: test when logged out.
+        // TODO: test with null token.
 
         return PayloadData(
             nonce = nonce,
@@ -59,9 +62,9 @@ abstract class Payload(
             isEncrypted = isEncrypted,
             path = getHttpPath(),
             method = getHttpMethod(),
-            mediaType = getContentType(parts, boundary, isEncrypted),
+            mediaType = getContentType(parts, Payload.BOUNDARY, isEncrypted),
             data = dataBytes,
-            attachmentData = attachmentData
+            sidecarFilename = attachmentData
         )
     }
 
@@ -86,18 +89,18 @@ abstract class Payload(
         return maybeEncryptedParts
     }
 
-    open fun getContentType(parts: List<PayloadPart>, boundary: String, isEncrypted: Boolean): String? {
+    open fun getContentType(parts: List<PayloadPart>, boundary: String, isEncrypted: Boolean): MediaType? {
         return when (parts.size) {
-            0 -> null
+            0 -> null // Not used for payloads currently.
             1 -> parts[0].contentType
-            else -> if (isEncrypted) MediaType.multipartEncrypted(boundary).toString()
-            else MediaType.multipartMixed(boundary).toString()
+            else -> if (isEncrypted) MediaType.multipartEncrypted(boundary)
+            else MediaType.multipartMixed(boundary)
         }
     }
 
     open fun getDataBytes(parts: List<PayloadPart>, boundary: String): ByteArray {
         return when (parts.size) {
-            0 -> byteArrayOf()
+            0 -> byteArrayOf() // Not used for payloads currently.
             1 -> parts[0].content
             else -> assembleMultipart(parts, boundary)
         }
@@ -106,6 +109,8 @@ abstract class Payload(
     companion object {
         internal const val LINE_END = "\r\n"
         internal const val TWO_HYPHENS = "--"
+        internal const val BOUNDARY = "s16u0iwtqlokf4v9cpgne8a2amdrxz735hjby"
+        internal const val SQL_SIZE_LIMIT = 10240
     }
 
     protected fun assembleMultipart(parts: List<PayloadPart>, boundary: String): ByteArray {

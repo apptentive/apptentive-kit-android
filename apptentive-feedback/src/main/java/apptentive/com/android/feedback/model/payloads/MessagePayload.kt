@@ -42,13 +42,13 @@ data class MessagePayload(
     override fun getJsonContainer(): String = "message"
 
     override fun getParts(isEncrypted: Boolean, embeddedToken: String?): List<PayloadPart> {
-        var parts: MutableList<PayloadPart> = mutableListOf(JSONPayloadPart(toJson(false, embeddedToken), getJsonContainer()))
+        var parts: MutableList<PayloadPart> = mutableListOf(JSONPayloadPart(toJson(false, embeddedToken), "message"))
 
         for (attachment in attachments) {
             val attachmentStream = ByteArrayOutputStream()
             try {
                 retrieveAndWriteFileToStream(attachment, attachmentStream)
-                parts.add(AttachmentPayloadPart(attachmentStream.toByteArray(), attachment.contentType?.let { it } ?: MediaType.applicationOctetStream.toString(), attachment.originalName))
+                parts.add(AttachmentPayloadPart(attachmentStream.toByteArray(), attachment.contentType?.let { MediaType.parse(it) } ?: MediaType.applicationOctetStream, attachment.originalName))
             } finally {
                 FileUtil.ensureClosed(attachmentStream)
             }
@@ -57,10 +57,12 @@ data class MessagePayload(
         return parts
     }
 
+    // TODO: What if we just had a "forceMultipart" Boolean?
+
     // Always send messages as multi-part
-    override fun getContentType(parts: List<PayloadPart>, boundary: String, isEncrypted: Boolean): String? {
-        return if (isEncrypted) MediaType.multipartEncrypted(boundary).toString()
-        else MediaType.multipartMixed(boundary).toString()
+    override fun getContentType(parts: List<PayloadPart>, boundary: String, isEncrypted: Boolean): MediaType? {
+        return if (isEncrypted) MediaType.multipartEncrypted(boundary)
+        else MediaType.multipartMixed(boundary)
     }
 
     // Always send messages as multi-part
@@ -68,9 +70,7 @@ data class MessagePayload(
         return assembleMultipart(parts, boundary)
     }
 
-    override fun shouldIncludeHeadersInEncryptedParts(): Boolean {
-        return true
-    }
+    override fun shouldIncludeHeadersInEncryptedParts(): Boolean = true
 
     private fun retrieveAndWriteFileToStream(attachment: Message.Attachment, attachmentStream: ByteArrayOutputStream) {
         try {

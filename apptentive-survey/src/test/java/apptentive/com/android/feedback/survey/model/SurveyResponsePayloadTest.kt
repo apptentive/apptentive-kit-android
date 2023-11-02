@@ -80,7 +80,7 @@ class SurveyResponsePayloadTest : TestCase() {
             isEncrypted = false,
             path = "/conversations/:conversation_id/surveys/$surveyId/responses",
             method = HttpMethod.POST,
-            mediaType = "${MediaType.applicationJson};charset=UTF-8",
+            mediaType = MediaType.applicationJson,
             data = expectedJson.toByteArray()
         )
         val actual = payload.toPayloadData(DependencyProvider.of<ConversationCredentialProvider>())

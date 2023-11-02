@@ -54,7 +54,7 @@ class AppReleaseSDKPayloadTest {
             isEncrypted = false,
             path = "/conversations/:conversation_id/app_release",
             method = HttpMethod.PUT,
-            mediaType = MediaType.applicationJson.toString(),
+            mediaType = MediaType.applicationJson,
             data = expectedJson.toByteArray()
         )
         val actual = payload.toPayloadData(DependencyProvider.of<ConversationCredentialProvider>())

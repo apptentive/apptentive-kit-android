@@ -14,7 +14,7 @@ class MediaTypeTest {
         }
 
         try {
-            MediaType.parse("MyMediaType/MyMediaSubtype/MyMediaBoundary/MyMediaSubSubtype")
+            MediaType.parse("MyMediaType/MyMediaSubtype/MyMediaBoundary")
             Assert.fail("Should not get there")
         } catch (_: IllegalArgumentException) {
         }
@@ -24,5 +24,8 @@ class MediaTypeTest {
     fun parseValidType() {
         val mediaType = MediaType("MyMediaType", "MyMediaSubtype")
         assertThat(mediaType).isEqualTo(MediaType.parse("MyMediaType/MyMediaSubtype"))
+
+        val multipartMediaType = MediaType("multipart", "mixed", mapOf(Pair("boundary", "abc123")))
+        assertThat(multipartMediaType).isEqualTo(MediaType.parse("multipart/mixed;boundary=abc123"))
     }
 }

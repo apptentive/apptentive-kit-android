@@ -85,7 +85,7 @@ class AESEncryption23(private val keyInfo: EncryptionKey) : Encryption {
     fun decrypt(inputStream: InputStream, decodeIVLength: Boolean): ByteArray {
         val outputStream = ByteArrayOutputStream()
         inputStream.use { input ->
-            val ivSize = if (decodeIVLength) input.read() else 16
+            val ivSize = if (decodeIVLength) input.read() else IV_LENGTH
             val iv = ByteArray(ivSize)
             input.read(iv)
             val decryptCipher = decryptCipherForIv(iv)

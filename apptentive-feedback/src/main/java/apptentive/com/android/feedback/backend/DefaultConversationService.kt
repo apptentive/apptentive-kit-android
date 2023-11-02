@@ -175,7 +175,7 @@ internal class DefaultConversationService(
     ) {
         val conversationId = payload.conversationId
         val conversationToken = payload.token
-        if (conversationId == null || (conversationToken == null && !payload.isEncrypted)) {
+        if (conversationId == null || conversationToken == null) {
             callback(Result.Error(payload, PayloadSendException(payload, cause = null)))
         } else {
             val url = createURL(payload.resolvePath(conversationId))
