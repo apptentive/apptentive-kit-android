@@ -19,7 +19,7 @@ abstract class Payload(
 ) {
     // These are getter functions so that they don't show up in the toJson result.
     protected abstract fun getPayloadType(): PayloadType
-    protected abstract fun getJsonContainer(): String?
+    protected abstract fun getJsonContainer(): String
     protected abstract fun getHttpMethod(): HttpMethod
     protected abstract fun getHttpPath(): String
 
@@ -29,7 +29,7 @@ abstract class Payload(
             embeddedToken?.let { jsonContainer["token"] = it }
             JsonConverter.toJson(jsonContainer)
         } else {
-            var jsonObject = this.toJsonObject()
+            val jsonObject = this.toJsonObject()
             embeddedToken?.let { jsonObject.put("token", it) }
             return jsonObject.toString()
         }
@@ -75,14 +75,14 @@ abstract class Payload(
     internal open fun forceMultipart(): Boolean = false // Message payloads set this to true
 
     internal open fun getContentType(parts: List<PayloadPart>, boundary: String, isEncrypted: Boolean): MediaType? {
-        if (parts.isEmpty()) return null
+        if (parts.isEmpty()) return null // Not used. Currently there are no payloads without parts.
         if (parts.size == 1 && !forceMultipart()) return parts[0].contentType
         return if (isEncrypted) MediaType.multipartEncrypted(boundary)
         else MediaType.multipartMixed(boundary)
     }
 
     internal open fun getDataBytes(parts: List<PayloadPart>, boundary: String): ByteArray {
-        if (parts.isEmpty()) return byteArrayOf()
+        if (parts.isEmpty()) return byteArrayOf() // Not used. Currently all payloads have bodies.
         return if (parts.size == 1 && !forceMultipart()) parts[0].content
         else assembleMultipart(parts, boundary)
     }

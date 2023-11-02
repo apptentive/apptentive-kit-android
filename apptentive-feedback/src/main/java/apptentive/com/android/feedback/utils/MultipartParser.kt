@@ -7,11 +7,7 @@ internal class MultipartParser(
     private val boundary: String
 ) {
     val numberOfParts: Int get() = ranges.count()
-    private var ranges = mutableListOf<LongRange>()
-
-    init {
-        ranges = getPartRanges() ?: mutableListOf()
-    }
+    private val ranges = getPartRanges() ?: mutableListOf()
 
     fun getPartAtIndex(index: Int): Part? {
         if (index > numberOfParts) {

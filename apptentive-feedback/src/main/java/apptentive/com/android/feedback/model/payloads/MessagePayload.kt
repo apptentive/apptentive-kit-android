@@ -48,7 +48,7 @@ data class MessagePayload(
     override fun forceMultipart(): Boolean = true
 
     internal override fun getParts(embeddedToken: String?): List<PayloadPart> {
-        val parts: MutableList<PayloadPart> = super.getParts(embeddedToken).toMutableList()
+        val parts = super.getParts(embeddedToken).toMutableList()
 
         for (attachment in attachments) {
             val attachmentStream = ByteArrayOutputStream()
