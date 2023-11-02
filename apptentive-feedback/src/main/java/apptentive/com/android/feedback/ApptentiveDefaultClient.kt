@@ -67,6 +67,7 @@ import apptentive.com.android.feedback.model.MessageCenterNotification
 import apptentive.com.android.feedback.model.payloads.AppReleaseAndSDKPayload
 import apptentive.com.android.feedback.model.payloads.EventPayload
 import apptentive.com.android.feedback.model.payloads.ExtendedData
+import apptentive.com.android.feedback.model.payloads.LogoutPayload
 import apptentive.com.android.feedback.model.payloads.Payload
 import apptentive.com.android.feedback.notifications.NotificationUtils
 import apptentive.com.android.feedback.payload.PayloadData
@@ -330,6 +331,7 @@ class ApptentiveDefaultClient(
         when (result) {
             is LoginResult.Success -> {
                 Log.v(CONVERSATION, "Successfully logged in")
+                engage(Event.internal(InternalEvent.SDK_LOGIN.labelName))
                 if (messageManager == null) {
                     createMessageManager()
                 }
@@ -379,8 +381,13 @@ class ApptentiveDefaultClient(
     }
 
     override fun logout() {
-        messageManager?.logout()
-        conversationManager.logoutSession()
+        conversationManager.logoutSession {
+            if (it is Result.Success) {
+                engage(Event.internal(InternalEvent.SDK_LOGOUT.labelName))
+                enqueuePayload(LogoutPayload())
+                messageManager?.logout()
+            }
+        }
     }
 
     override fun updateToken(jwtToken: JwtString, callback: ((result: LoginResult) -> Unit)?) {
