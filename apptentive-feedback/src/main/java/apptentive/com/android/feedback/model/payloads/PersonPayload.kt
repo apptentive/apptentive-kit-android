@@ -18,12 +18,20 @@ internal class PersonPayload(
     @SensitiveDataKey val mParticleId: String? = null,
     @SensitiveDataKey val customData: Map<String, Any?>? = null,
 ) : ConversationPayload(nonce) {
+
+    //region Inheritance
+
     override fun getPayloadType() = PayloadType.Person
+
     override fun getJsonContainer() = "person"
 
     override fun getHttpMethod() = HttpMethod.PUT
 
     override fun getHttpPath() = buildHttpPath("person")
+
+    //endregion
+
+    //region Equality
 
     override fun equals(other: Any?): Boolean {
         return when {
@@ -47,6 +55,8 @@ internal class PersonPayload(
         result = 31 * result + customData.hashCode()
         return result
     }
+
+    //endregion
 
     override fun toString(): String {
         return SensitiveDataUtils.logWithSanitizeCheck(javaClass, toJsonObject())

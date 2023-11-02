@@ -27,6 +27,9 @@ internal class AppReleaseAndSDKPayload(
     val versionCode: Int,
     val versionName: String
 ) : ConversationPayload(nonce) {
+
+    //region Inheritance
+
     override fun getHttpMethod(): HttpMethod = HttpMethod.PUT
 
     override fun getHttpPath(): String = Constants.buildHttpPath("app_release")
@@ -34,6 +37,8 @@ internal class AppReleaseAndSDKPayload(
     override fun getJsonContainer(): String = "app_release"
 
     override fun getPayloadType(): PayloadType = PayloadType.AppReleaseAndSDK
+
+    //endregion
 
     companion object {
         fun buildPayload(sdk: SDK, appRelease: AppRelease): AppReleaseAndSDKPayload {

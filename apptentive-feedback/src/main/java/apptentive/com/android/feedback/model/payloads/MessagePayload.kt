@@ -33,6 +33,9 @@ data class MessagePayload(
     val automated: Boolean?,
     val customData: Map<String, Any?>? = null
 ) : ConversationPayload(messageNonce) {
+
+    //region Inheritance
+
     override fun getPayloadType(): PayloadType = PayloadType.Message
 
     override fun getHttpMethod(): HttpMethod = HttpMethod.POST
@@ -41,8 +44,14 @@ data class MessagePayload(
 
     override fun getJsonContainer(): String = "message"
 
-    override fun getParts(isEncrypted: Boolean, embeddedToken: String?): List<PayloadPart> {
-        var parts: MutableList<PayloadPart> = mutableListOf(JSONPayloadPart(toJson(false, embeddedToken), "message"))
+    // Omit JSON container because the Content-Disposition header identifies the payload type.
+    override fun includeContainerKey(): Boolean = false
+
+    // API requires most messages to be sent as multi-part (optional for text-only anonymous).
+    override fun forceMultipart(): Boolean = true
+
+    override fun getParts(embeddedToken: String?): List<PayloadPart> {
+        var parts: MutableList<PayloadPart> = super.getParts(embeddedToken).toMutableList()
 
         for (attachment in attachments) {
             val attachmentStream = ByteArrayOutputStream()
@@ -57,20 +66,12 @@ data class MessagePayload(
         return parts
     }
 
-    // TODO: What if we just had a "forceMultipart" Boolean?
+    //endregion
 
-    // Always send messages as multi-part
-    override fun getContentType(parts: List<PayloadPart>, boundary: String, isEncrypted: Boolean): MediaType? {
-        return if (isEncrypted) MediaType.multipartEncrypted(boundary)
-        else MediaType.multipartMixed(boundary)
     }
 
-    // Always send messages as multi-part
-    override fun getDataBytes(parts: List<PayloadPart>, boundary: String): ByteArray {
-        return assembleMultipart(parts, boundary)
     }
 
-    override fun shouldIncludeHeadersInEncryptedParts(): Boolean = true
 
     private fun retrieveAndWriteFileToStream(attachment: Message.Attachment, attachmentStream: ByteArrayOutputStream) {
         try {

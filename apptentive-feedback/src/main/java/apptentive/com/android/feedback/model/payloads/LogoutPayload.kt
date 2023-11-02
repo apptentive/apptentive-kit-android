@@ -23,9 +23,7 @@ class LogoutPayload(nonce: String = generateUUID()) : ConversationPayload(nonce)
 
     override fun getHttpPath() = buildHttpPath("session")
 
-    override fun getParts(isEncrypted: Boolean, embeddedToken: String?): List<PayloadPart> {
-        return listOf(JSONPayloadPart(toJson(false, embeddedToken), null))
-    }
+    override fun includeContainerKey(): Boolean = false // No outer object nesting the token.
 
     //endregion
 

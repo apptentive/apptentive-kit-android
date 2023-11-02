@@ -36,6 +36,8 @@ internal class DevicePayload(
     @SensitiveDataKey val integrationConfig: Map<String, Any?>? = null,
 ) : ConversationPayload(nonce) {
 
+    //region Inheritance
+
     override fun getPayloadType() = PayloadType.Device
 
     override fun getJsonContainer() = "device"
@@ -43,6 +45,10 @@ internal class DevicePayload(
     override fun getHttpMethod() = HttpMethod.PUT
 
     override fun getHttpPath() = buildHttpPath("device")
+
+    //endregion
+
+    //region Equality
 
     override fun equals(other: Any?): Boolean {
         return when {
@@ -104,6 +110,8 @@ internal class DevicePayload(
         result = 31 * result + integrationConfig.hashCode()
         return result
     }
+
+    //endregion
 
     override fun toString(): String {
         return SensitiveDataUtils.logWithSanitizeCheck(javaClass, toJsonObject())
