@@ -26,8 +26,8 @@ abstract class Payload(
     protected abstract fun getHttpMethod(): HttpMethod
     protected abstract fun getHttpPath(): String
 
-    fun toJson(includeContentKey: Boolean, embeddedToken: String?): String {
-        return if (includeContentKey) {
+    fun toJson(includeContainerKey: Boolean, embeddedToken: String?): String {
+        return if (includeContainerKey) {
             val jsonContainer = mutableMapOf<String?, Any>(getJsonContainer() to this)
             embeddedToken?.let { jsonContainer["token"] = it }
             JsonConverter.toJson(jsonContainer)
