@@ -51,7 +51,6 @@ class EncryptedPayloadPart(private val payloadPart: PayloadPart, val encryptionK
             plaintextData.write(payloadPart.content)
         }
 
-        Log.v(LogTags.NETWORK, "encryptionKey: ${Base64.getEncoder().encodeToString(encryptionKey.key?.encoded)}")
         encryptedData.write(AESEncryption23(encryptionKey).encryptPayloadData(plaintextData.toByteArray()))
 
         return encryptedData.toByteArray()
