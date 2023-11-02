@@ -177,7 +177,9 @@ class MessageManagerTest : TestCase() {
             attachments = emptyList()
         )
 
-        messageManager.sendMessage("ABC", attachments = listOf(Message.Attachment("1", "image/jpeg", localFilePath = File(javaClass.getResource("/dog.jpg").path).absolutePath)))
+        messageManager.sendMessage("ABC", attachments = listOf(Message.Attachment("1", "image/jpeg", localFilePath = File(
+            javaClass.getResource("/dog.jpg")?.path ?: ""
+        ).absolutePath)))
 
         val actualPayload = payloadSender.payload as MessagePayload?
         assertEquals(expectedPayload.body, actualPayload?.body)
@@ -263,7 +265,7 @@ class MessageManagerTest : TestCase() {
             decryptedPart!!.headers
         )
 
-        val json = JsonConverter.toMap(String(decryptedPart!!.content, Charsets.UTF_8))
+        val json = JsonConverter.toMap(String(decryptedPart.content, Charsets.UTF_8))
         assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["session_id"])
         assertTrue(1698774495.52 < json["client_created_at"] as Double)
         assertEquals("ABC", json["body"])
@@ -286,7 +288,9 @@ class MessageManagerTest : TestCase() {
             attachments = emptyList()
         )
 
-        messageManager.sendMessage("ABC", attachments = listOf(Message.Attachment("1", "image/jpeg", localFilePath = File(javaClass.getResource("/dog.jpg").path).absolutePath)))
+        messageManager.sendMessage("ABC", attachments = listOf(Message.Attachment("1", "image/jpeg", localFilePath = File(
+            javaClass.getResource("/dog.jpg")?.path ?: ""
+        ).absolutePath)))
 
         val actualPayload = payloadSender.payload as MessagePayload?
         assertEquals(expectedPayload.body, actualPayload?.body)
@@ -317,7 +321,7 @@ class MessageManagerTest : TestCase() {
             decryptedPart!!.headers
         )
 
-        val json = JsonConverter.toMap(String(decryptedPart!!.content, Charsets.UTF_8))
+        val json = JsonConverter.toMap(String(decryptedPart.content, Charsets.UTF_8))
         assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["session_id"])
         assertTrue(1698774495.52 < json["client_created_at"] as Double)
         assertEquals("ABC", json["body"])
@@ -342,7 +346,7 @@ class MessageManagerTest : TestCase() {
             decryptedPart2!!.headers
         )
 
-        assertTrue(decryptedPart2!!.content.isNotEmpty())
+        assertTrue(decryptedPart2.content.isNotEmpty())
     }
 
     @Test
