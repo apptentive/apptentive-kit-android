@@ -1,8 +1,6 @@
 package apptentive.com.android.feedback.model.payloads
 
 import apptentive.com.android.feedback.Constants.buildHttpPath
-import apptentive.com.android.feedback.payload.JSONPayloadPart
-import apptentive.com.android.feedback.payload.PayloadPart
 import apptentive.com.android.feedback.payload.PayloadType
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.network.HttpMethod
@@ -10,8 +8,7 @@ import apptentive.com.android.serialization.json.JsonConverter.toJsonObject
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.generateUUID
 
-@InternalUseOnly
-class LogoutPayload(nonce: String = generateUUID()) : ConversationPayload(nonce) {
+internal class LogoutPayload(nonce: String = generateUUID()) : ConversationPayload(nonce) {
 
     //region Inheritance
 

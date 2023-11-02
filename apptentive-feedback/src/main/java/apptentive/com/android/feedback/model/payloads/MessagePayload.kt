@@ -2,10 +2,7 @@ package apptentive.com.android.feedback.model.payloads
 
 import apptentive.com.android.feedback.Constants
 import apptentive.com.android.feedback.model.Message
-import apptentive.com.android.feedback.payload.AttachmentPayloadPart
-import apptentive.com.android.feedback.payload.JSONPayloadPart
 import apptentive.com.android.feedback.payload.MediaType
-import apptentive.com.android.feedback.payload.PayloadPart
 import apptentive.com.android.feedback.payload.PayloadType
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.network.HttpMethod
@@ -50,8 +47,8 @@ data class MessagePayload(
     // API requires most messages to be sent as multi-part (optional for text-only anonymous).
     override fun forceMultipart(): Boolean = true
 
-    override fun getParts(embeddedToken: String?): List<PayloadPart> {
-        var parts: MutableList<PayloadPart> = super.getParts(embeddedToken).toMutableList()
+    internal override fun getParts(embeddedToken: String?): List<PayloadPart> {
+        val parts: MutableList<PayloadPart> = super.getParts(embeddedToken).toMutableList()
 
         for (attachment in attachments) {
             val attachmentStream = ByteArrayOutputStream()
@@ -67,11 +64,6 @@ data class MessagePayload(
     }
 
     //endregion
-
-    }
-
-    }
-
 
     private fun retrieveAndWriteFileToStream(attachment: Message.Attachment, attachmentStream: ByteArrayOutputStream) {
         try {

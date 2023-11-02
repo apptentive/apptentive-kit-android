@@ -2,11 +2,8 @@ package apptentive.com.android.feedback.model.payloads
 
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.payload.SidecarData
-import apptentive.com.android.feedback.payload.EncryptedPayloadPart
-import apptentive.com.android.feedback.payload.JSONPayloadPart
 import apptentive.com.android.feedback.payload.MediaType
 import apptentive.com.android.feedback.payload.PayloadData
-import apptentive.com.android.feedback.payload.PayloadPart
 import apptentive.com.android.feedback.payload.PayloadType
 import apptentive.com.android.network.HttpMethod
 import apptentive.com.android.serialization.json.JsonConverter
@@ -37,6 +34,7 @@ abstract class Payload(
             return jsonObject.toString()
         }
     }
+
     fun toPayloadData(credentialProvider: ConversationCredentialProvider): PayloadData {
         val isEncrypted = credentialProvider.payloadEncryptionKey != null
         val embeddedToken = if (isEncrypted) credentialProvider.conversationToken else null
@@ -68,13 +66,33 @@ abstract class Payload(
         )
     }
 
-    open fun getParts(embeddedToken: String?): List<PayloadPart> {
+    internal open fun getParts(embeddedToken: String?): List<PayloadPart> {
         return listOf(JSONPayloadPart(toJson(includeContainerKey(), embeddedToken), getJsonContainer()))
     }
 
-    open fun includeContainerKey(): Boolean = true // (multipart) message and logout payloads don't nest
+    internal open fun includeContainerKey(): Boolean = true // (multipart) message and logout payloads don't nest
 
-    open fun forceMultipart(): Boolean = false // Message payloads set this to true
+    internal open fun forceMultipart(): Boolean = false // Message payloads set this to true
+
+    internal open fun getContentType(parts: List<PayloadPart>, boundary: String, isEncrypted: Boolean): MediaType? {
+        if (parts.isEmpty()) return null
+        if (parts.size == 1 && !forceMultipart()) return parts[0].contentType
+        return if (isEncrypted) MediaType.multipartEncrypted(boundary)
+        else MediaType.multipartMixed(boundary)
+    }
+
+    internal open fun getDataBytes(parts: List<PayloadPart>, boundary: String): ByteArray {
+        if (parts.isEmpty()) return byteArrayOf()
+        return if (parts.size == 1 && !forceMultipart()) parts[0].content
+        else assembleMultipart(parts, boundary)
+    }
+
+    companion object {
+        internal const val LINE_END = "\r\n"
+        internal const val TWO_HYPHENS = "--"
+        internal const val BOUNDARY = "s16u0iwtqlokf4v9cpgne8a2amdrxz735hjby"
+        internal const val SQL_SIZE_LIMIT = 10240
+    }
 
     private fun maybeEncryptParts(parts: List<PayloadPart>, credentialProvider: ConversationCredentialProvider): List<PayloadPart> {
         var maybeEncryptedParts: List<PayloadPart> = parts
@@ -89,27 +107,7 @@ abstract class Payload(
         return maybeEncryptedParts
     }
 
-    open fun getContentType(parts: List<PayloadPart>, boundary: String, isEncrypted: Boolean): MediaType? {
-        if (parts.isEmpty()) return null
-        if (parts.size == 1 && !forceMultipart()) return parts[0].contentType
-        return if (isEncrypted) MediaType.multipartEncrypted(boundary)
-        else MediaType.multipartMixed(boundary)
-    }
-
-    open fun getDataBytes(parts: List<PayloadPart>, boundary: String): ByteArray {
-        if (parts.isEmpty()) return byteArrayOf()
-        return if (parts.size == 1 && !forceMultipart()) parts[0].content
-        else assembleMultipart(parts, boundary)
-    }
-
-    companion object {
-        internal const val LINE_END = "\r\n"
-        internal const val TWO_HYPHENS = "--"
-        internal const val BOUNDARY = "s16u0iwtqlokf4v9cpgne8a2amdrxz735hjby"
-        internal const val SQL_SIZE_LIMIT = 10240
-    }
-
-    protected fun assembleMultipart(parts: List<PayloadPart>, boundary: String): ByteArray {
+    private fun assembleMultipart(parts: List<PayloadPart>, boundary: String): ByteArray {
         val data = ByteArrayOutputStream()
 
         parts.forEach { part ->

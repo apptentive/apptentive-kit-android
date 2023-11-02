@@ -4,7 +4,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.util.Arrays
 
-class StreamSearcher(private var pattern: ByteArray) {
+internal class StreamSearcher(private var pattern: ByteArray) {
     // Adapted from: https://github.com/twitter/elephant-bird/blob/master/core/src/main/java/com/twitter/elephantbird/util/StreamSearcher.java
 
     private var borders: IntArray = IntArray(pattern.size + 1)
@@ -23,7 +23,7 @@ class StreamSearcher(private var pattern: ByteArray) {
      *
      * @param pattern the pattern the StreamSearcher will look for in future calls to search(...)
      */
-    fun setPattern(pattern: ByteArray) {
+    private fun setPattern(pattern: ByteArray) {
         this.pattern = Arrays.copyOf(pattern, pattern.size)
         borders = IntArray(pattern.size + 1)
         preProcess()

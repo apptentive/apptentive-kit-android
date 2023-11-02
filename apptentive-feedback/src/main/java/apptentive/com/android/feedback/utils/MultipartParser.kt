@@ -2,7 +2,7 @@ package apptentive.com.android.feedback.utils
 
 import java.io.InputStream
 
-class MultipartParser(
+internal class MultipartParser(
     val inputStream: InputStream,
     private val boundary: String
 ) {
