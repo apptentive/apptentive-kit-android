@@ -218,7 +218,7 @@ class DefaultConversationServiceTest : TestCase() {
             nonce = nonce,
             type = PayloadType.Event,
             tag = "test-tag",
-            token = conversationToken,
+            token = "embedded",
             conversationId = conversationId,
             isEncrypted = true,
             path = "/conversations/:conversation_id/events",
@@ -235,7 +235,7 @@ class DefaultConversationServiceTest : TestCase() {
             assertThat(it is Result.Success).isTrue()
         }
 
-        assertThat(payload.token).isEqualTo(conversationToken) // TODO: Ensure null once encryption in place
+        assertThat(payload.token).isEqualTo("embedded")
     }
 
     private fun createConversationService(network: MockHttpNetwork): ConversationService {
