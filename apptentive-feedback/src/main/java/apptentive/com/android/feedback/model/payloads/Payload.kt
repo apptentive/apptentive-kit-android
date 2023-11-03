@@ -36,9 +36,22 @@ abstract class Payload(
     }
 
     fun toPayloadData(credentialProvider: ConversationCredentialProvider): PayloadData {
-        val isEncrypted = credentialProvider.payloadEncryptionKey != null
-        val embeddedToken = if (isEncrypted) credentialProvider.conversationToken else null
-        val parts = maybeEncryptParts(getParts(embeddedToken), credentialProvider)
+        val encryptionKey = credentialProvider.payloadEncryptionKey
+        var isEncrypted = false
+        var parts: List<PayloadPart>
+        var token: String?
+
+        if (encryptionKey != null) {
+            isEncrypted = true
+            parts = getParts(credentialProvider.conversationToken).map {
+                EncryptedPayloadPart(it, encryptionKey, forceMultipart())
+            }
+            token = "embedded"
+        } else {
+            parts = getParts(null)
+            token = credentialProvider.conversationToken
+        }
+
         var dataBytes = getDataBytes(parts, Payload.BOUNDARY)
         var attachmentData = SidecarData()
 
@@ -55,7 +68,7 @@ abstract class Payload(
             nonce = nonce,
             type = getPayloadType(),
             tag = credentialProvider.conversationPath ?: "placeholder",
-            token = if (isEncrypted) "embedded" else credentialProvider.conversationToken,
+            token = token,
             conversationId = credentialProvider.conversationId,
             isEncrypted = isEncrypted,
             path = getHttpPath(),
@@ -92,19 +105,6 @@ abstract class Payload(
         internal const val TWO_HYPHENS = "--"
         internal const val BOUNDARY = "s16u0iwtqlokf4v9cpgne8a2amdrxz735hjby"
         internal const val SQL_SIZE_LIMIT = 10240
-    }
-
-    private fun maybeEncryptParts(parts: List<PayloadPart>, credentialProvider: ConversationCredentialProvider): List<PayloadPart> {
-        var maybeEncryptedParts: List<PayloadPart> = parts
-        val encryptionKey = credentialProvider.payloadEncryptionKey
-
-        if (encryptionKey != null) {
-            maybeEncryptedParts = parts.map {
-                EncryptedPayloadPart(it, encryptionKey, forceMultipart())
-            }
-        }
-
-        return maybeEncryptedParts
     }
 
     private fun assembleMultipart(parts: List<PayloadPart>, boundary: String): ByteArray {
