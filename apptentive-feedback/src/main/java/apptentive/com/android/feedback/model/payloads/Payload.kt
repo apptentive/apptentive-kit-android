@@ -88,16 +88,26 @@ abstract class Payload(
     internal open fun forceMultipart(): Boolean = false // Message payloads set this to true
 
     internal open fun getContentType(parts: List<PayloadPart>, boundary: String, isEncrypted: Boolean): MediaType? {
-        if (parts.isEmpty()) return null // Not used. Currently there are no payloads without parts.
-        if (parts.size == 1 && !forceMultipart()) return parts[0].contentType
-        return if (isEncrypted) MediaType.multipartEncrypted(boundary)
-        else MediaType.multipartMixed(boundary)
+        if (parts.isEmpty())  // Not used as currently there are no payloads without a body object.
+            return null       // (but would be correct to omit content type header)
+
+        if (parts.size == 1 && !forceMultipart()) // Used for non-message requests.
+            return parts[0].contentType           // Return the content type of the first/only part.
+
+        return if (isEncrypted)
+            MediaType.multipartEncrypted(boundary) // Apptentive's own "multipart/encrypted" type.
+        else
+            MediaType.multipartMixed(boundary) // Standard multipart/mixed type.
     }
 
     internal open fun getDataBytes(parts: List<PayloadPart>, boundary: String): ByteArray {
-        if (parts.isEmpty()) return byteArrayOf() // Not used. Currently all payloads have bodies.
-        return if (parts.size == 1 && !forceMultipart()) parts[0].content
-        else assembleMultipart(parts, boundary)
+        if (parts.isEmpty())     // Not used as currently there are no payloads without a body.
+            return byteArrayOf() // (but would be correct to return empty body data)
+
+        return if (parts.size == 1 && !forceMultipart()) // Used for non-message requests.
+            parts[0].content                             // Return first/only part's body data.
+        else
+            assembleMultipart(parts, boundary) // For multipart, combine the parts.
     }
 
     companion object {
