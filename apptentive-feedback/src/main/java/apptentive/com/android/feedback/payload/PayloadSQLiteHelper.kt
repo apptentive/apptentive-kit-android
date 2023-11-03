@@ -24,6 +24,7 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        // FIXME: Handle the 5.x to 6.5 migration
         if (!doesColumnExist(db, COL_TAG)) {
             db.execSQL(SQL_QUERY_ADD_TAG)
             db.execSQL(SQL_QUERY_ADD_TOKEN)
@@ -34,8 +35,8 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
 
     fun addPayload(payload: PayloadData) {
         Log.v(PAYLOADS, "Saving payload body to: ${writableDatabase.path}")
-        val fileName = if (payload.attachmentData.data.isNotEmpty()) {
-            val encryptedBytes = encryption.encrypt(payload.attachmentData.data)
+        val fileName = if (payload.sidecarFilename.data.isNotEmpty()) {
+            val encryptedBytes = encryption.encrypt(payload.sidecarFilename.data)
             val fileName = FileUtil.generateCacheFilePathFromNonceOrPrefix(context, payload.nonce, "apptentive-message-payload")
             FileUtil.writeFileData(fileName, encryptedBytes)
             fileName
@@ -165,7 +166,7 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
             method = HttpMethod.valueOf(cursor.getString(COL_METHOD)),
             mediaType = MediaType.parse(cursor.getString(COL_MEDIA_TYPE)),
             data = payloadData,
-            attachmentData = AttachmentData(dataFilePath = dataPath)
+            sidecarFilename = SidecarData(dataFilePath = dataPath)
         )
     }
 

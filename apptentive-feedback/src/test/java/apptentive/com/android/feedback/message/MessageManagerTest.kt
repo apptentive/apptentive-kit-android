@@ -3,11 +3,13 @@ package apptentive.com.android.feedback.message
 import apptentive.com.android.TestCase
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.encryption.AESEncryption23
 import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.feedback.backend.MessageCenterService
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.conversation.ConversationRoster
 import apptentive.com.android.feedback.conversation.MockConversationCredential
+import apptentive.com.android.feedback.conversation.MockEncryptedConversationCredential
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.MockEngagementContext
@@ -18,9 +20,10 @@ import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.MessageList
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
-import apptentive.com.android.feedback.model.Sender
 import apptentive.com.android.feedback.model.payloads.MessagePayload
 import apptentive.com.android.feedback.payload.MockPayloadSender
+import apptentive.com.android.feedback.utils.MultipartParser
+import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.util.Result
 import apptentive.com.android.util.generateUUID
 import org.junit.Assert
@@ -28,6 +31,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import java.io.ByteArrayInputStream
+import java.io.File
 
 class MessageManagerTest : TestCase() {
 
@@ -105,11 +110,8 @@ class MessageManagerTest : TestCase() {
     @Test
     fun testSendHiddenMessage() {
         val expectedPayload = MessagePayload(
-            type = Message.MESSAGE_TYPE_TEXT,
-            sender = Sender("123", "Tester", null),
             body = "ABC Hidden",
             hidden = true,
-            boundary = generateUUID(),
             messageNonce = generateUUID(),
             automated = null,
             attachments = emptyList()
@@ -118,8 +120,6 @@ class MessageManagerTest : TestCase() {
         messageManager.sendMessage("ABC Hidden", isHidden = true)
 
         val actualPayload = payloadSender.payload as MessagePayload?
-        assertEquals(expectedPayload.sender, actualPayload?.sender)
-        assertEquals(expectedPayload.type, actualPayload?.type)
         assertEquals(expectedPayload.body, actualPayload?.body)
         assertEquals(expectedPayload.hidden, actualPayload?.hidden)
     }
@@ -128,11 +128,8 @@ class MessageManagerTest : TestCase() {
     fun testSendMessage() {
         val payloadSender = engagementContext.getPayloadSender() as MockPayloadSender
         val expectedPayload = MessagePayload(
-            type = Message.MESSAGE_TYPE_TEXT,
-            sender = Sender("123", "Tester", null),
             body = "ABC",
             hidden = null,
-            boundary = generateUUID(),
             messageNonce = generateUUID(),
             automated = null,
             attachments = emptyList()
@@ -141,10 +138,231 @@ class MessageManagerTest : TestCase() {
         messageManager.sendMessage("ABC")
 
         val actualPayload = payloadSender.payload as MessagePayload?
-        assertEquals(expectedPayload.sender, actualPayload?.sender)
-        assertEquals(expectedPayload.type, actualPayload?.type)
         assertEquals(expectedPayload.body, actualPayload?.body)
         assertEquals(expectedPayload.hidden, actualPayload?.hidden)
+
+        val credentialProvider = DependencyProvider.of<ConversationCredentialProvider>()
+        val actualPayloadData = actualPayload?.toPayloadData(credentialProvider)
+
+        val inputStream = ByteArrayInputStream(actualPayloadData?.data)
+        val parser = MultipartParser(inputStream, "s16u0iwtqlokf4v9cpgne8a2amdrxz735hjby")
+
+        assertEquals(1, parser.numberOfParts)
+
+        val firstPart = parser.getPartAtIndex(0)!!
+
+        assertEquals(
+            "Content-Disposition: form-data;name=\"message\"\r\n" +
+                "Content-Type: application/json;charset=UTF-8",
+            firstPart.headers
+        )
+
+        val json = JsonConverter.toMap(String(firstPart.content, Charsets.UTF_8))
+        assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["session_id"])
+        assertTrue(1698774495.52 < json["client_created_at"] as Double)
+        assertEquals("ABC", json["body"])
+        assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["nonce"])
+        assertEquals(null, json["token"])
+    }
+
+    @Test
+    fun testSendMessageWithAttachment() {
+        val payloadSender = engagementContext.getPayloadSender() as MockPayloadSender
+        val expectedPayload = MessagePayload(
+            body = "ABC",
+            hidden = null,
+            messageNonce = generateUUID(),
+            automated = null,
+            attachments = emptyList()
+        )
+
+        messageManager.sendMessage(
+            "ABC",
+            attachments = listOf(
+                Message.Attachment(
+                    "1", "image/jpeg",
+                    localFilePath = File(
+                        javaClass.getResource("/dog.jpg")?.path ?: ""
+                    ).absolutePath,
+                    originalName = "dog.jpg"
+                )
+            )
+        )
+
+        val actualPayload = payloadSender.payload as MessagePayload?
+        assertEquals(expectedPayload.body, actualPayload?.body)
+        assertEquals(expectedPayload.hidden, actualPayload?.hidden)
+
+        val credentialProvider = DependencyProvider.of<ConversationCredentialProvider>()
+        val actualPayloadData = actualPayload?.toPayloadData(credentialProvider)
+
+        val inputStream = ByteArrayInputStream(actualPayloadData!!.sidecarFilename.data)
+        val parser = MultipartParser(inputStream, "s16u0iwtqlokf4v9cpgne8a2amdrxz735hjby")
+
+        assertEquals(2, parser.numberOfParts)
+
+        val firstPart = parser.getPartAtIndex(0)!!
+
+        assertEquals(
+            "Content-Disposition: form-data;name=\"message\"\r\n" +
+                "Content-Type: application/json;charset=UTF-8",
+            firstPart.headers
+        )
+
+        val json = JsonConverter.toMap(String(firstPart.content, Charsets.UTF_8))
+        assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["session_id"])
+        assertTrue(1698774495.52 < json["client_created_at"] as Double)
+        assertEquals("ABC", json["body"])
+        assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["nonce"])
+        assertEquals(null, json["token"])
+
+        val secondPart = parser.getPartAtIndex(1)!!
+
+        assertEquals(
+            "Content-Disposition: form-data;name=\"file[]\";filename=\"dog.jpg\"\r\n" +
+                "Content-Type: image/jpeg",
+            secondPart.headers
+        )
+
+        // TODO: use original filename
+
+        assertTrue(secondPart.content.isNotEmpty())
+    }
+
+    @Test
+    fun testSendMessageEncrypted() {
+        val conversationCredential = MockEncryptedConversationCredential()
+        DependencyProvider.register<ConversationCredentialProvider>(conversationCredential)
+
+        val payloadSender = engagementContext.getPayloadSender() as MockPayloadSender
+        val expectedPayload = MessagePayload(
+            body = "ABC",
+            hidden = null,
+            messageNonce = generateUUID(),
+            automated = null,
+            attachments = emptyList()
+        )
+
+        messageManager.sendMessage("ABC")
+
+        val actualPayload = payloadSender.payload as MessagePayload?
+        assertEquals(expectedPayload.body, actualPayload?.body)
+        assertEquals(expectedPayload.hidden, actualPayload?.hidden)
+
+        val credentialProvider = DependencyProvider.of<ConversationCredentialProvider>()
+        val actualPayloadData = actualPayload?.toPayloadData(credentialProvider)
+
+        val inputStream = ByteArrayInputStream(actualPayloadData?.data)
+        val parser = MultipartParser(inputStream, "s16u0iwtqlokf4v9cpgne8a2amdrxz735hjby")
+
+        assertEquals(1, parser.numberOfParts)
+
+        val firstPart = parser.getPartAtIndex(0)!!
+
+        assertEquals(
+            "Content-Disposition: form-data;name=\"message\"\r\n" +
+                "Content-Type: application/octet-stream",
+            firstPart.headers
+        )
+
+        val decryptedContent = AESEncryption23(conversationCredential.payloadEncryptionKey!!).decryptPayloadData(firstPart.content)
+        val decryptedPart = MultipartParser.parsePart(ByteArrayInputStream(decryptedContent), 0L..decryptedContent.size + 2) // TODO: Why do we have to add 2 here?
+
+        assertEquals(
+            "Content-Disposition: form-data;name=\"message\"\r\n" +
+                "Content-Type: application/json;charset=UTF-8",
+            decryptedPart!!.headers
+        )
+
+        val json = JsonConverter.toMap(String(decryptedPart.content, Charsets.UTF_8))
+        assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["session_id"])
+        assertTrue(1698774495.52 < json["client_created_at"] as Double)
+        assertEquals("ABC", json["body"])
+        assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["nonce"])
+        assertEquals("mockedConversationToken", json["token"])
+    }
+
+    @Test
+    fun testSendMessageEncryptedWithAttachment() {
+        val conversationCredential = MockEncryptedConversationCredential()
+        DependencyProvider.register<ConversationCredentialProvider>(conversationCredential)
+
+        val payloadSender = engagementContext.getPayloadSender() as MockPayloadSender
+        val expectedPayload = MessagePayload(
+            body = "ABC",
+            hidden = null,
+            messageNonce = generateUUID(),
+            automated = null,
+            attachments = emptyList()
+        )
+
+        messageManager.sendMessage(
+            "ABC",
+            attachments = listOf(
+                Message.Attachment(
+                    "1", "image/jpeg",
+                    localFilePath = File(
+                        javaClass.getResource("/dog.jpg")?.path ?: ""
+                    ).absolutePath,
+                    originalName = "dog.jpg"
+                )
+            )
+        )
+
+        val actualPayload = payloadSender.payload as MessagePayload?
+        assertEquals(expectedPayload.body, actualPayload?.body)
+        assertEquals(expectedPayload.hidden, actualPayload?.hidden)
+
+        val credentialProvider = DependencyProvider.of<ConversationCredentialProvider>()
+        val actualPayloadData = actualPayload?.toPayloadData(credentialProvider)
+
+        val inputStream = ByteArrayInputStream(actualPayloadData?.sidecarFilename!!.data)
+        val parser = MultipartParser(inputStream, "s16u0iwtqlokf4v9cpgne8a2amdrxz735hjby")
+
+        assertEquals(2, parser.numberOfParts)
+
+        val firstPart = parser.getPartAtIndex(0)!!
+
+        assertEquals(
+            "Content-Disposition: form-data;name=\"message\"\r\n" +
+                "Content-Type: application/octet-stream",
+            firstPart.headers
+        )
+
+        val decryptedContent = AESEncryption23(conversationCredential.payloadEncryptionKey!!).decryptPayloadData(firstPart.content)
+        val decryptedPart = MultipartParser.parsePart(ByteArrayInputStream(decryptedContent), 0L..decryptedContent.size + 2) // TODO: Why do we have to add 2 here?
+
+        assertEquals(
+            "Content-Disposition: form-data;name=\"message\"\r\n" +
+                "Content-Type: application/json;charset=UTF-8",
+            decryptedPart!!.headers
+        )
+
+        val json = JsonConverter.toMap(String(decryptedPart.content, Charsets.UTF_8))
+        assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["session_id"])
+        assertTrue(1698774495.52 < json["client_created_at"] as Double)
+        assertEquals("ABC", json["body"])
+        assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["nonce"])
+        assertEquals("mockedConversationToken", json["token"])
+
+        val secondPart = parser.getPartAtIndex(1)!!
+
+        assertEquals(
+            "Content-Disposition: form-data;name=\"file[]\";filename=\"dog.jpg\"\r\n" +
+                "Content-Type: application/octet-stream",
+            secondPart.headers
+        )
+
+        val decryptedContent2 = AESEncryption23(conversationCredential.payloadEncryptionKey!!).decryptPayloadData(secondPart.content)
+        val decryptedPart2 = MultipartParser.parsePart(ByteArrayInputStream(decryptedContent2), 0L..decryptedContent2.size + 2) // TODO: Why do we have to add 2 here?
+
+        assertEquals(
+            "Content-Disposition: form-data;name=\"file[]\";filename=\"dog.jpg\"\r\n" +
+                "Content-Type: image/jpeg",
+            decryptedPart2!!.headers
+        )
+
+        assertTrue(decryptedPart2.content.isNotEmpty())
     }
 
     @Test

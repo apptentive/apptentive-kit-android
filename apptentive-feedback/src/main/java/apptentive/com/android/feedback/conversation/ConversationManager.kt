@@ -232,7 +232,6 @@ internal class ConversationManager(
                                     )
                                 )
                             }
-                            updateConversationCredentialProvider(conversationId, jwtToken, encryptionKey)
                             activeConversationSubject.value = conversation.copy(
                                 conversationId = conversation.conversationId,
                                 conversationToken = jwtToken
@@ -247,6 +246,7 @@ internal class ConversationManager(
                     } else {
                         FileStorageUtil.deleteMessageFile() // delete previously stored message file as it would be cached with different encryption setting
                     }
+                    updateConversationCredentialProvider(conversationId, jwtToken, encryptionKey)
                     loginCallback?.invoke(LoginResult.Success)
                 }
             }

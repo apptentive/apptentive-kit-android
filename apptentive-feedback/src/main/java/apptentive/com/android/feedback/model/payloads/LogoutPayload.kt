@@ -1,8 +1,6 @@
 package apptentive.com.android.feedback.model.payloads
 
 import apptentive.com.android.feedback.Constants.buildHttpPath
-import apptentive.com.android.feedback.payload.AttachmentData
-import apptentive.com.android.feedback.payload.MediaType
 import apptentive.com.android.feedback.payload.PayloadType
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.network.HttpMethod
@@ -17,17 +15,13 @@ class LogoutPayload(nonce: String = generateUUID()) : ConversationPayload(nonce)
 
     override fun getPayloadType() = PayloadType.Logout
 
-    override fun getJsonContainer() = "delete"
+    override fun getJsonContainer() = "delete" // Note: not used.
 
     override fun getHttpMethod() = HttpMethod.DELETE
 
     override fun getHttpPath() = buildHttpPath("session")
 
-    override fun getContentType(): MediaType = MediaType.applicationOctetStream
-
-    override fun getDataBytes() = toJson().toByteArray()
-
-    override fun getAttachmentDataBytes() = AttachmentData()
+    override fun includeContainerKey(): Boolean = false // No outer object nesting the token.
 
     //endregion
 
