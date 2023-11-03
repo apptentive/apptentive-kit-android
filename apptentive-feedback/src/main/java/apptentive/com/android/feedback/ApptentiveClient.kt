@@ -29,6 +29,7 @@ internal interface ApptentiveClient {
     fun setLocalManifest(json: String)
     fun login(jwtToken: String, callback: ((result: LoginResult) -> Unit)? = null)
     fun logout()
+    fun setAuthenticationFailedListener(listener: AuthenticationFailedListener)
     fun updateToken(jwtToken: String, callback: ((result: LoginResult) -> Unit)? = null)
     companion object {
         val NULL: ApptentiveClient = ApptentiveNullClient()
@@ -119,6 +120,10 @@ private class ApptentiveNullClient : ApptentiveClient {
 
     override fun logout() {
         Log.d(FEEDBACK, "Apptentive SDK is not initialized; logout failed")
+    }
+
+    override fun setAuthenticationFailedListener(listener: AuthenticationFailedListener) {
+        Log.d(FEEDBACK, "Apptentive SDK is not initialized; set authentication failed listener failed")
     }
 
     override fun updateToken(jwtToken: String, callback: ((result: LoginResult) -> Unit)?) {

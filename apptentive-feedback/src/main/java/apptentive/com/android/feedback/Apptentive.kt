@@ -329,6 +329,28 @@ object Apptentive {
         }
     }
 
+    /**
+     * Registers your listener with Apptentive. This listener is stored with a WeakReference, which
+     * means that you must store a static reference to the listener as long as you want it to live.
+     * One possible way to do this is to implement this listener with your Application class, or store
+     * one on your Application.
+     *
+     *
+     * This listener will alert you to authentication failures, so that you can either recover from
+     * expired or revoked JWTs, or fix your authentication implementation.
+     *
+     * @param listener A listener that will be called when there is an authentication failure other
+     * for the current logged in conversation. If the failure is for another
+     * conversation, or there is no active conversation, the listener is not called.
+     */
+    fun setAuthenticationFailedListener(listener: AuthenticationFailedListener) {
+        try {
+            client.setAuthenticationFailedListener(listener)
+        } catch (e: java.lang.Exception) {
+            Log.e(CONVERSATION, e, "Error in Apptentive.setUnreadMessagesListener()")
+        }
+    }
+
     /*
      * Refreshes the auth token for the logged in user
      *

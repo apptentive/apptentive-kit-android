@@ -625,13 +625,13 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
             }
             login3.setOnClickListener {
                 val currentTimeMillis = System.currentTimeMillis()
-                val oneDay: Long =
+                val oneMinute: Long =
                     currentTimeMillis + ONE_MINUTE
                 it.isEnabled = false
                 login.isEnabled = false
                 login2.isEnabled = false
                 logout.isEnabled = true
-                val token = generateJWT("Frank", "ClientTeam", currentTimeMillis, oneDay, "38127017f4cfb4f84c8dfecd48ab98c6", null, null)
+                val token = generateJWT("Frank", "ClientTeam", currentTimeMillis, oneMinute, "38127017f4cfb4f84c8dfecd48ab98c6", null, null)
                 if (token != null)
                     Apptentive.login(token)
             }
@@ -639,6 +639,7 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
                 Apptentive.logout()
                 login.isEnabled = true
                 login2.isEnabled = true
+                login3.isEnabled = true
                 logout.isEnabled = false
             }
         }

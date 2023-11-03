@@ -8,7 +8,8 @@ import apptentive.com.android.serialization.json.JsonConverter.toJsonObject
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.generateUUID
 
-internal class LogoutPayload(nonce: String = generateUUID()) : ConversationPayload(nonce) {
+@InternalUseOnly
+class LogoutPayload(nonce: String = generateUUID()) : ConversationPayload(nonce) {
 
     //region Inheritance
 
