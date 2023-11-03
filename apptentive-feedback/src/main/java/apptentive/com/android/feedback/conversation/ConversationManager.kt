@@ -261,7 +261,6 @@ internal class ConversationManager(
         } else {
             callback(Result.Success(Unit)) // Callback immediately to send the logout event and payload before encryption is removed.
             DefaultStateMachine.onEvent(SDKEvent.Logout(conversationId))
-            setManifestExpired()
             activeConversationSubject.value = conversationRepository.createConversation()
             updateConversationCredentialProvider(null, null, null)
             Log.v(CONVERSATION, "Logout session successful, logged out conversation")
@@ -346,13 +345,14 @@ internal class ConversationManager(
         )
     }
 
-    private fun setManifestExpired() {
+    internal fun setManifestExpired() {
         val conversation = activeConversationSubject.value
         activeConversationSubject.value = conversation.copy(
             engagementManifest = conversation.engagementManifest.copy(
                 expiry = 0.0 // set to 0 to force a fetch
             )
         )
+        Log.v(CONVERSATION, "Engagement manifest is set to expire ${activeConversationSubject.value.engagementManifest.expiry}")
     }
 
     private fun createConversation(conversationId: String? = null, conversationToken: String? = null): Conversation {

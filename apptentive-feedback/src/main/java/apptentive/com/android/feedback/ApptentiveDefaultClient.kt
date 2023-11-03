@@ -388,6 +388,7 @@ class ApptentiveDefaultClient(
             if (it is Result.Success) {
                 engage(Event.internal(InternalEvent.SDK_LOGOUT.labelName))
                 enqueuePayload(LogoutPayload())
+                conversationManager.setManifestExpired()
                 messageManager?.logout()
             }
         }
