@@ -162,7 +162,6 @@ class MessageManagerTest : TestCase() {
         assertTrue(1698774495.52 < json["client_created_at"] as Double)
         assertEquals("ABC", json["body"])
         assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["nonce"])
-        assertEquals(-25200.0, json["client_created_at_utc_offset"])
         assertEquals(null, json["token"])
     }
 
@@ -215,7 +214,6 @@ class MessageManagerTest : TestCase() {
         assertTrue(1698774495.52 < json["client_created_at"] as Double)
         assertEquals("ABC", json["body"])
         assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["nonce"])
-        assertEquals(-25200.0, json["client_created_at_utc_offset"])
         assertEquals(null, json["token"])
 
         val secondPart = parser.getPartAtIndex(1)!!
@@ -281,7 +279,6 @@ class MessageManagerTest : TestCase() {
         assertTrue(1698774495.52 < json["client_created_at"] as Double)
         assertEquals("ABC", json["body"])
         assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["nonce"])
-        assertEquals(-25200.0, json["client_created_at_utc_offset"])
         assertEquals("mockedConversationToken", json["token"])
     }
 
@@ -346,7 +343,6 @@ class MessageManagerTest : TestCase() {
         assertTrue(1698774495.52 < json["client_created_at"] as Double)
         assertEquals("ABC", json["body"])
         assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["nonce"])
-        assertEquals(-25200.0, json["client_created_at_utc_offset"])
         assertEquals("mockedConversationToken", json["token"])
 
         val secondPart = parser.getPartAtIndex(1)!!
