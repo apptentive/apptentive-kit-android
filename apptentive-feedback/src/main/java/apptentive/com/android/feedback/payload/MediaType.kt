@@ -31,7 +31,7 @@ data class MediaType(
             var parameters: Map<String, String>? = null
             if (parts.size > 1) {
                 parameters = mutableMapOf()
-                    parts.subList(1, parts.size).forEach {
+                parts.subList(1, parts.size).forEach {
                     val keyAndValue = it.split("=")
 
                     if (keyAndValue.size != 2) {

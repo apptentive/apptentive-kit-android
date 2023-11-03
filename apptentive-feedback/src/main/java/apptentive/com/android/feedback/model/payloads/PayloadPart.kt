@@ -1,11 +1,6 @@
 package apptentive.com.android.feedback.model.payloads
 
-import android.os.Build
-import androidx.annotation.RequiresApi
-import apptentive.com.android.encryption.AESEncryption23
-import apptentive.com.android.encryption.EncryptionKey
 import apptentive.com.android.feedback.payload.MediaType
-import java.io.ByteArrayOutputStream
 
 internal interface PayloadPart {
     val contentType: MediaType get() = MediaType.applicationOctetStream
@@ -18,4 +13,3 @@ internal interface PayloadPart {
     val filename: String? get() = null
     val parameterName: String? get() = null
 }
-

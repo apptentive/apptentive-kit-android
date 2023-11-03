@@ -1,10 +1,10 @@
 package apptentive.com.android.feedback.model.payloads
 
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
-import apptentive.com.android.feedback.payload.SidecarData
 import apptentive.com.android.feedback.payload.MediaType
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadType
+import apptentive.com.android.feedback.payload.SidecarData
 import apptentive.com.android.network.HttpMethod
 import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.serialization.json.JsonConverter.toJsonObject
@@ -88,11 +88,11 @@ abstract class Payload(
     internal open fun forceMultipart(): Boolean = false // Message payloads set this to true
 
     internal open fun getContentType(parts: List<PayloadPart>, boundary: String, isEncrypted: Boolean): MediaType? {
-        if (parts.isEmpty())  // Not used as currently there are no payloads without a body object.
-            return null       // (but would be correct to omit content type header)
+        if (parts.isEmpty()) // Not used as currently there are no payloads without a body object.
+            return null // (but would be correct to omit content type header)
 
         if (parts.size == 1 && !forceMultipart()) // Used for non-message requests.
-            return parts[0].contentType           // Return the content type of the first/only part.
+            return parts[0].contentType // Return the content type of the first/only part.
 
         return if (isEncrypted)
             MediaType.multipartEncrypted(boundary) // Apptentive's own "multipart/encrypted" type.
@@ -101,11 +101,11 @@ abstract class Payload(
     }
 
     internal open fun getDataBytes(parts: List<PayloadPart>, boundary: String): ByteArray {
-        if (parts.isEmpty())     // Not used as currently there are no payloads without a body.
+        if (parts.isEmpty()) // Not used as currently there are no payloads without a body.
             return byteArrayOf() // (but would be correct to return empty body data)
 
         return if (parts.size == 1 && !forceMultipart()) // Used for non-message requests.
-            parts[0].content                             // Return first/only part's body data.
+            parts[0].content // Return first/only part's body data.
         else
             assembleMultipart(parts, boundary) // For multipart, combine the parts.
     }
