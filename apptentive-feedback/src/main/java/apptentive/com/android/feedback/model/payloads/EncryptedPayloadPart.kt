@@ -8,8 +8,8 @@ import java.io.ByteArrayOutputStream
 
 internal class EncryptedPayloadPart(private val payloadPart: PayloadPart, val encryptionKey: EncryptionKey, private val includeHeaders: Boolean) :
     PayloadPart {
-    override val filename get() = payloadPart.filename
-    override val parameterName get() = payloadPart.parameterName
+    override val filename = payloadPart.filename
+    override val parameterName = payloadPart.parameterName
     override val content: ByteArray @RequiresApi(Build.VERSION_CODES.M)
     get() {
         val plaintextData = ByteArrayOutputStream()
