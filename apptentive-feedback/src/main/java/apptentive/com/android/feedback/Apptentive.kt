@@ -289,15 +289,15 @@ object Apptentive {
         when {
             Build.VERSION_CODES.M > Build.VERSION.SDK_INT -> {
                 Log.w(FEEDBACK, "Login is only supported on Android M and above")
-                callback?.invoke(LoginResult.Error("Login is only supported on Android M and above"))
+                executeCallbackInMainExecutor(callback, LoginResult.Error("Login is only supported on Android M and above"))
             }
             DefaultStateMachine.state == SDKState.LOGGED_IN -> {
                 Log.w(FEEDBACK, "The SDK is already logged in. Logout first to login again")
-                callback?.invoke(LoginResult.Error("The SDK is already logged in. Logout first to login again"))
+                executeCallbackInMainExecutor(callback, LoginResult.Error("The SDK is already logged in. Logout first to login again"))
             }
             DefaultStateMachine.state == SDKState.UNINITIALIZED -> {
                 Log.w(FEEDBACK, "The SDK is not initialized yet. Please register the SDK first")
-                callback?.invoke(LoginResult.Error("The SDK is not initialized yet. Please register the SDK first"))
+                executeCallbackInMainExecutor(callback, LoginResult.Error("The SDK is not initialized yet. Please register the SDK first"))
             }
             else -> {
                 try {
@@ -306,9 +306,15 @@ object Apptentive {
                     }
                 } catch (e: java.lang.Exception) {
                     Log.e(FEEDBACK, "Exception thrown in the SDK login", e)
-                    callback?.invoke(LoginResult.Exception(e))
+                    executeCallbackInMainExecutor(callback, LoginResult.Exception(e))
                 }
             }
+        }
+    }
+
+    internal fun executeCallbackInMainExecutor(callback: ((result: LoginResult) -> Unit)? = null, result: LoginResult) {
+        mainExecutor.execute {
+            callback?.invoke(result)
         }
     }
 

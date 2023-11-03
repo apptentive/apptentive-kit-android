@@ -17,6 +17,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
+import apptentive.com.android.feedback.LoginResult
 import apptentive.com.android.feedback.platform.SDKState
 import apptentive.com.app.databinding.ActivityDevFunctionsBinding
 import com.google.android.material.textfield.TextInputEditText
@@ -588,65 +589,118 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
         }
     }
 
-    val ONE_DAY = (1000 * 60 * 60 * 24).toLong()
-    val ONE_MINUTE = (1000 * 60).toLong()
-
     private fun setupMultiUser() {
+        val ONE_DAY = (1000 * 60 * 60 * 24).toLong()
+        val ONE_MINUTE = (1000 * 60).toLong()
+        val USER_1 = "Poorni"
+        val USER_2 = "Chase"
+        val USER_3 = "Frank"
+
+        val userList = listOf(USER_1, USER_2, USER_3)
+        val userAdapter = ArrayAdapter(this, R.layout.list_item, userList)
+
+        val JWT_GOOD = "New JWT: Good"
+        val JWT_EXPIRES_IN_15_SECONDS = "New JWT: Expires in 15 seconds"
+        val JWT_EXPIRED = "New JWT: Expired"
+        val JWT_MISSING_SUB_CLAIM = "New JWT: Missing Sub Claim"
+        val JWT_MISSING_SIGNATURE = "Missing Signature"
+        val JWT_INVALID_SIGNATURE = "Invalid Signature"
+
+        val jwtList = listOf(JWT_GOOD, JWT_EXPIRES_IN_15_SECONDS, JWT_EXPIRED, JWT_MISSING_SUB_CLAIM, JWT_MISSING_SIGNATURE, JWT_INVALID_SIGNATURE)
+        val jwtAdapter = ArrayAdapter(this, R.layout.list_item, jwtList)
+
+        val prefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
+
+        binding.apply {
+            multiUserDropdown.setAdapter(userAdapter)
+            jwtDropdown.setAdapter(jwtAdapter)
+            multiUserDropdown.setText(prefs.getString("USER_NAME", USER_1), false)
+            jwtDropdown.setText(prefs.getString("JWT", JWT_GOOD), false)
+        }
+
         binding.apply {
             login.isEnabled = Apptentive.getCurrentState() != SDKState.LOGGED_IN
-            login2.isEnabled = Apptentive.getCurrentState() != SDKState.LOGGED_IN
-            login3.isEnabled = Apptentive.getCurrentState() != SDKState.LOGGED_IN
             logout.isEnabled = Apptentive.getCurrentState() == SDKState.LOGGED_IN
             login.setOnClickListener {
                 val currentTimeMillis = System.currentTimeMillis()
+                val jwtOption = jwtDropdown.text.toString()
+                val userName = multiUserDropdown.text.toString()
+                var token: String? = null
 
-                // JWT issued right now, expiring in 30 days
-                val thirtyDays: Long =
-                    currentTimeMillis + ONE_DAY * 30
-                it.isEnabled = false
-                login2.isEnabled = false
-                login3.isEnabled = false
-                logout.isEnabled = true
-                val token = generateJWT("Poorni", "ClientTeam", currentTimeMillis, thirtyDays, "38127017f4cfb4f84c8dfecd48ab98c6", null, null)
-                if (token != null)
-                    Apptentive.login(token)
-            }
-            login2.setOnClickListener {
-                val currentTimeMillis = System.currentTimeMillis()
-                val thirtyDays: Long =
-                    currentTimeMillis + ONE_DAY * 30
-                it.isEnabled = false
-                login.isEnabled = false
-                login3.isEnabled = false
-                logout.isEnabled = true
-                val token = generateJWT("Chase", "ClientTeam", currentTimeMillis, thirtyDays, "38127017f4cfb4f84c8dfecd48ab98c6", null, null)
-                if (token != null)
-                    Apptentive.login(token)
-            }
-            login3.setOnClickListener {
-                val currentTimeMillis = System.currentTimeMillis()
-                val oneMinute: Long =
-                    currentTimeMillis + ONE_MINUTE
-                it.isEnabled = false
-                login.isEnabled = false
-                login2.isEnabled = false
-                logout.isEnabled = true
-                val token = generateJWT("Frank", "ClientTeam", currentTimeMillis, oneMinute, "38127017f4cfb4f84c8dfecd48ab98c6", null, null)
-                if (token != null)
-                    Apptentive.login(token)
+                when (jwtOption) {
+                    JWT_GOOD -> {
+                        val thirtyDays: Long =
+                            currentTimeMillis + ONE_DAY * 30
+                        token = generateJWT(userName, "ClientTeam", currentTimeMillis, thirtyDays, "38127017f4cfb4f84c8dfecd48ab98c6", null, null)
+                    }
+                    JWT_EXPIRES_IN_15_SECONDS -> {
+                        val fifteenSeconds: Long =
+                            currentTimeMillis + ONE_MINUTE / 4
+                        token = generateJWT(userName, "ClientTeam", currentTimeMillis, fifteenSeconds, "38127017f4cfb4f84c8dfecd48ab98c6", null, null)
+                    }
+                    JWT_EXPIRED -> {
+                        val expired: Long =
+                            currentTimeMillis - ONE_MINUTE
+                        token = generateJWT(userName, "ClientTeam", currentTimeMillis, expired, "38127017f4cfb4f84c8dfecd48ab98c6", null, null)
+                    }
+                    JWT_MISSING_SUB_CLAIM -> {
+                        val thirtyDays: Long =
+                            currentTimeMillis + ONE_DAY * 30
+                        token = generateJWT(null, "ClientTeam", currentTimeMillis, thirtyDays, "38127017f4cfb4f84c8dfecd48ab98c6", null, null)
+                    }
+                    JWT_MISSING_SIGNATURE -> {
+                        val thirtyDays: Long =
+                            currentTimeMillis + ONE_DAY * 30
+                        token = generateJWT(userName, "ClientTeam", currentTimeMillis, thirtyDays, "38127017f4cfb4f84c8dfecd48ab98c6", null, null)
+                        // remove signature
+                        token = token?.substring(0, token.lastIndexOf("."))
+                    }
+                    JWT_INVALID_SIGNATURE -> {
+                        val thirtyDays: Long =
+                            currentTimeMillis + ONE_DAY * 30
+                        token = generateJWT(userName, "ClientTeam", currentTimeMillis, thirtyDays, "38127017f4cfb4f84c8dfecd48ab98c6BAD", null, null)
+                    }
+                }
+
+                if (token != null) {
+                    Apptentive.login(token) {
+                        when (it) {
+                            is LoginResult.Success -> {
+                                login.isEnabled = false
+                                logout.isEnabled = true
+                                prefs.edit().putString("USER_NAME", userName).apply()
+                                prefs.edit().putString("JWT", jwtOption).apply()
+                                makeToast("Logged in as $userName")
+                            }
+                            is LoginResult.Error -> {
+                                makeToast("Error logging in: ${it.message}")
+                                login.isEnabled = true
+                                logout.isEnabled = false
+                            }
+                            is LoginResult.Failure -> {
+                                makeToast("Error logging in: ${it.message}")
+                                login.isEnabled = true
+                                logout.isEnabled = false
+                            }
+                            is LoginResult.Exception -> {
+                                makeToast("Error logging in: ${it.error.message}")
+                                login.isEnabled = true
+                                logout.isEnabled = false
+                            }
+                        }
+                    }
+                }
             }
             logout.setOnClickListener {
                 Apptentive.logout()
                 login.isEnabled = true
-                login2.isEnabled = true
-                login3.isEnabled = true
                 logout.isEnabled = false
             }
         }
     }
 
     private fun generateJWT(
-        subject: String,
+        subject: String?,
         issuer: String,
         issuedAt: Long,
         expiration: Long,

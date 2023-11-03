@@ -17,6 +17,7 @@ import apptentive.com.android.encryption.KeyResolverFactory
 import apptentive.com.android.encryption.NoEncryptionStatus
 import apptentive.com.android.encryption.NotEncrypted
 import apptentive.com.android.encryption.getEncryptionStatus
+import apptentive.com.android.feedback.Apptentive.executeCallbackInMainExecutor
 import apptentive.com.android.feedback.Apptentive.messageCenterNotificationSubject
 import apptentive.com.android.feedback.backend.ConversationPayloadService
 import apptentive.com.android.feedback.backend.ConversationService
@@ -283,11 +284,11 @@ class ApptentiveDefaultClient(
             }
             activeConversationMetaData.state is ConversationState.LoggedIn -> {
                 Log.v(CONVERSATION, "Already logged in. Logout before calling login")
-                callback?.invoke(LoginResult.Error("Already logged in. Logout before calling login"))
+                executeCallbackInMainExecutor(callback, LoginResult.Error("Already logged in. Logout before calling login"))
             }
             else -> {
                 Log.v(CONVERSATION, "Cannot login while SDK is in ${activeConversationMetaData.state}")
-                callback?.invoke(LoginResult.Error("Cannot login while SDK is in ${activeConversationMetaData.state}"))
+                executeCallbackInMainExecutor(callback, LoginResult.Error("Cannot login while SDK is in ${activeConversationMetaData.state}"))
             }
         }
     }
@@ -344,19 +345,19 @@ class ApptentiveDefaultClient(
                 val pushProvider = sharedPrefDataStore.getInt(APPTENTIVE, PREF_KEY_PUSH_PROVIDER)
                 val pushProviderName = sharedPrefDataStore.getString(APPTENTIVE, PREF_KEY_PUSH_TOKEN)
                 setPushIntegration(pushProvider, pushProviderName)
-                callback?.invoke(LoginResult.Success)
+                executeCallbackInMainExecutor(callback, LoginResult.Success)
             }
             is LoginResult.Error -> {
                 Log.v(CONVERSATION, "Failed to login")
-                callback?.invoke(LoginResult.Error("Failed to login"))
+                executeCallbackInMainExecutor(callback, LoginResult.Error("Failed to login"))
             }
             is LoginResult.Failure -> {
                 Log.v(CONVERSATION, "Failed to login")
-                callback?.invoke(LoginResult.Failure("Failed to login", result.responseCode))
+                executeCallbackInMainExecutor(callback, LoginResult.Failure("Failed to login", result.responseCode))
             }
             is LoginResult.Exception -> {
                 Log.v(CONVERSATION, "Failed to login")
-                callback?.invoke(LoginResult.Exception(result.error))
+                executeCallbackInMainExecutor(callback, LoginResult.Exception(result.error))
             }
         }
     }
