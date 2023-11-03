@@ -36,19 +36,18 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
     fun addPayload(payload: PayloadData) {
         Log.v(PAYLOADS, "Saving payload body to: ${writableDatabase.path}")
         val fileName = if (payload.sidecarFilename.data.isNotEmpty()) {
-            val encryptedBytes = if (payload.isEncrypted) payload.sidecarFilename.data else encryption.encrypt(payload.sidecarFilename.data)
+            val encryptedBytes = encryption.encrypt(payload.sidecarFilename.data)
             val fileName = FileUtil.generateCacheFilePathFromNonceOrPrefix(context, payload.nonce, "apptentive-message-payload")
             FileUtil.writeFileData(fileName, encryptedBytes)
             fileName
         } else ""
-        val dataBytes = if (payload.isEncrypted) payload.data else encryption.encrypt(payload.data)
         val values = ContentValues().apply {
             put(COL_NONCE, payload.nonce)
             put(COL_TYPE, payload.type.toString())
             put(COL_PATH, payload.path)
             put(COL_METHOD, payload.method.toString())
             put(COL_MEDIA_TYPE, payload.mediaType.toString())
-            put(COL_PAYLOAD_DATA, dataBytes)
+            put(COL_PAYLOAD_DATA, encryption.encrypt(payload.data))
             put(COL_PAYLOAD_DATA_FILE, fileName)
             put(COL_TAG, payload.tag)
 
@@ -151,12 +150,10 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
 
     @Throws(FileNotFoundException::class, IOException::class)
     private fun readPayload(cursor: Cursor): PayloadData {
-        val isEncryptedForAPI = cursor.getInt(COL_ENCRYPTED) == 1
-        val dataBytes = cursor.getBlob(COL_PAYLOAD_DATA)
+        val dataBytes = encryption.decrypt(cursor.getBlob(COL_PAYLOAD_DATA))
         val dataPath = cursor.getString(COL_PAYLOAD_DATA_FILE)
-        val maybeEncryptedData = if (dataBytes.isNotEmpty()) dataBytes
-        else FileUtil.readFileData(dataPath)
-        val payloadData = if (isEncryptedForAPI) maybeEncryptedData else encryption.decrypt(maybeEncryptedData)
+        val payloadData = if (dataBytes.isNotEmpty()) dataBytes
+        else encryption.decrypt(FileUtil.readFileData(dataPath))
 
         return PayloadData(
             nonce = cursor.getString(COL_NONCE),
@@ -164,7 +161,7 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
             tag = cursor.getString(COL_TAG),
             token = cursor.getString(COL_TOKEN),
             conversationId = cursor.getString(COL_CONVERSATION_ID),
-            isEncrypted = isEncryptedForAPI,
+            isEncrypted = cursor.getInt(COL_ENCRYPTED) == 1,
             path = cursor.getString(COL_PATH),
             method = HttpMethod.valueOf(cursor.getString(COL_METHOD)),
             mediaType = MediaType.parse(cursor.getString(COL_MEDIA_TYPE)),
