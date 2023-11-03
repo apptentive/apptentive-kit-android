@@ -70,6 +70,7 @@ import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.feedback.model.payloads.LogoutPayload
 import apptentive.com.android.feedback.model.payloads.Payload
 import apptentive.com.android.feedback.notifications.NotificationUtils
+import apptentive.com.android.feedback.payload.AuthenticationFailureException
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadSender
 import apptentive.com.android.feedback.payload.PayloadType
@@ -115,6 +116,7 @@ import com.apptentive.android.sdk.conversation.DefaultLegacyConversationManager
 import com.apptentive.android.sdk.conversation.LegacyConversationManager
 import java.io.ByteArrayInputStream
 import java.io.InputStream
+import java.lang.ref.WeakReference
 
 @InternalUseOnly
 class ApptentiveDefaultClient(
@@ -131,6 +133,7 @@ class ApptentiveDefaultClient(
     private var engagement: Engagement = NullEngagement()
     private var encryption: Encryption = setInitialEncryptionFromPastSession()
     private var clearPayloadCache: Boolean = false
+    private var authenticationFailedListener: WeakReference<AuthenticationFailedListener>? = null
 
     //region Initialization
 
@@ -388,6 +391,10 @@ class ApptentiveDefaultClient(
                 messageManager?.logout()
             }
         }
+    }
+
+    override fun setAuthenticationFailedListener(listener: AuthenticationFailedListener) {
+        authenticationFailedListener = WeakReference(listener)
     }
 
     override fun updateToken(jwtToken: JwtString, callback: ((result: LoginResult) -> Unit)?) {
@@ -700,6 +707,11 @@ class ApptentiveDefaultClient(
                 if (resultData?.type == PayloadType.Message) {
                     messageManager?.updateMessageStatus(false, resultData)
                     engage(Event.internal(InternalEvent.EVENT_MESSAGE_HTTP_ERROR.labelName, InteractionType.MessageCenter))
+                }
+
+                if (result.error is AuthenticationFailureException) {
+                    val reason = AuthenticationFailedReason.parse((result.error as AuthenticationFailureException).errorMessage ?: "")
+                    authenticationFailedListener?.get()?.onAuthenticationFailed(reason)
                 }
 
                 Log.e(PAYLOADS, "Payload failed to send: ${result.error.cause}")

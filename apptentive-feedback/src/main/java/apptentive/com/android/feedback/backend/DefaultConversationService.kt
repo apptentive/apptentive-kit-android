@@ -160,13 +160,7 @@ internal class DefaultConversationService(
             .method(HttpMethod.GET, null)
             .responseReader(HttpByteArrayResponseReader())
             .build()
-
-        httpClient.send(request) {
-            when (it) {
-                is Result.Success -> callback(Result.Success(it.data.payload))
-                is Result.Error -> callback(it)
-            }
-        }
+        sendRequest(request, callback)
     }
 
     override fun sendPayloadRequest(
