@@ -294,7 +294,7 @@ internal class ConversationManager(
                     val encryptionKey = EncryptionKey(key, KeyResolver23.getTransformation())
                     val encryptedBytes = key.toSecretKeyBytes(subject)
                     DefaultStateMachine.onEvent(SDKEvent.LoggedIn(subject, encryptionKey, encryptedBytes))
-                    updateConversationCredentialProvider(it.data.id, it.data.token, encryptionKey)
+                    updateConversationCredentialProvider(it.data.id, jwtToken, encryptionKey)
                     activeConversationSubject.value = conversation.copy(
                         conversationToken = jwtToken,
                         conversationId = it.data.id,
