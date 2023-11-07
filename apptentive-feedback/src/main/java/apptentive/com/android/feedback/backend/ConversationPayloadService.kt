@@ -34,12 +34,18 @@ internal class ConversationPayloadService(
                     when (result.error) {
                         is SendErrorException -> {
                             // Convert to more specific Exception
-                            if ((result.error as SendErrorException).statusCode == 401) { // TODO add isEncrypted check after payload encryption is done
+                            if ((result.error as SendErrorException).statusCode == 401 && payload.isEncrypted) {
                                 Log.v(PAYLOADS, "Authentication failed for payload: $payload with error ${result.error}")
+                                val sendErrorException = (result.error as SendErrorException).errorType
                                 callback(
                                     Result.Error(
                                         payload,
-                                        AuthenticationFailureException(payload, (result.error as SendErrorException).errorMessage?.parseJsonField("error"), cause = result.error)
+                                        AuthenticationFailureException(
+                                            payload,
+                                            sendErrorException?.parseJsonField("error_type") ?: "",
+                                            sendErrorException?.parseJsonField("error") ?: "",
+                                            cause = result.error
+                                        )
                                     )
                                 )
                             } else {

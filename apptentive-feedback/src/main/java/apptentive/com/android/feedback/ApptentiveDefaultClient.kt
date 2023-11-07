@@ -711,8 +711,10 @@ class ApptentiveDefaultClient(
                     engage(Event.internal(InternalEvent.EVENT_MESSAGE_HTTP_ERROR.labelName, InteractionType.MessageCenter))
                 }
 
-                if (result.error is AuthenticationFailureException) {
-                    val reason = AuthenticationFailedReason.parse((result.error as AuthenticationFailureException).errorMessage ?: "")
+                val resultError = result.error as? AuthenticationFailureException
+
+                if (resultError != null) {
+                    val reason = AuthenticationFailedReason.parse(resultError.errorType, resultError.errorMessage)
                     authenticationFailedListener?.get()?.onAuthenticationFailed(reason)
                 }
 

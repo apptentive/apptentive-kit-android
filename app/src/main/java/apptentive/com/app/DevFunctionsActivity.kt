@@ -19,15 +19,11 @@ import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
 import apptentive.com.android.feedback.LoginResult
 import apptentive.com.android.feedback.platform.SDKState
+import apptentive.com.app.MyApplication.Companion.generateJWT
 import apptentive.com.app.databinding.ActivityDevFunctionsBinding
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import io.jsonwebtoken.JwtBuilder
-import io.jsonwebtoken.Jwts
 import java.io.IOException
-import java.io.UnsupportedEncodingException
-import java.util.Date
-import javax.crypto.spec.SecretKeySpec
 
 class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
     lateinit var binding: ActivityDevFunctionsBinding
@@ -590,8 +586,6 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
     }
 
     private fun setupMultiUser() {
-        val ONE_DAY = (1000 * 60 * 60 * 24).toLong()
-        val ONE_MINUTE = (1000 * 60).toLong()
         val USER_1 = "Poorni"
         val USER_2 = "Chase"
         val USER_3 = "Frank"
@@ -699,42 +693,6 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
         }
     }
 
-    private fun generateJWT(
-        subject: String?,
-        issuer: String,
-        issuedAt: Long,
-        expiration: Long,
-        secret: String?,
-        headerParams: Map<String, Any>?,
-        bodyParams: Map<String, Any>?
-    ): String? {
-        if (secret.isNullOrEmpty()) {
-            Toast.makeText(this, "Missing Secret", Toast.LENGTH_SHORT).show()
-            return null
-        }
-        val secretKey: SecretKeySpec = try {
-            SecretKeySpec(secret.toByteArray(charset("UTF-8")), "HmacSHA512")
-        } catch (e: UnsupportedEncodingException) {
-            Toast.makeText(this, "Error generating JWT: " + e.message, Toast.LENGTH_SHORT).show()
-            return null
-        }
-        val builder: JwtBuilder = Jwts.builder()
-            .setHeaderParam("typ", "JWT")
-            .claim("type", "user")
-            .setSubject(subject)
-            .setIssuer(issuer)
-            .setIssuedAt(Date(issuedAt))
-            .setExpiration(Date(expiration))
-            .setHeaderParams(headerParams)
-            .signWith(io.jsonwebtoken.SignatureAlgorithm.HS512, secretKey)
-        if (bodyParams != null) {
-            for (key in bodyParams.keys) {
-                builder.claim(key, bodyParams[key])
-            }
-        }
-        return builder.compact()
-    }
-
     @RequiresApi(Build.VERSION_CODES.M)
     private val requestCameraPermissionAndTakePic =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { cameraPermissionGranted ->
@@ -782,4 +740,9 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
     }
 
     //endregion
+
+    companion object {
+        const val ONE_DAY = (1000 * 60 * 60 * 24).toLong()
+        const val ONE_MINUTE = (1000 * 60).toLong()
+    }
 }
