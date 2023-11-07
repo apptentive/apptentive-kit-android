@@ -244,6 +244,9 @@ internal class ConversationManager(
                             loginCallback?.invoke(LoginResult.Exception(e))
                         }
                     } else {
+                        activeConversationSubject.value = activeConversation.value.copy(
+                            conversationToken = jwtToken
+                        )
                         FileStorageUtil.deleteMessageFile() // delete previously stored message file as it would be cached with different encryption setting
                     }
                     updateConversationCredentialProvider(conversationId, jwtToken, encryptionKey)
