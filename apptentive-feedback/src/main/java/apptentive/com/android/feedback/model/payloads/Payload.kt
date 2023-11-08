@@ -36,8 +36,8 @@ abstract class Payload(
     fun toPayloadData(credentialProvider: ConversationCredentialProvider): PayloadData {
         val encryptionKey = credentialProvider.payloadEncryptionKey
         var isEncrypted = false
-        var parts: List<PayloadPart>
-        var token: String?
+        val parts: List<PayloadPart>
+        val token: String?
 
         if (encryptionKey != null) {
             isEncrypted = true

@@ -9,6 +9,9 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.annotation.VisibleForTesting
 import apptentive.com.android.encryption.Encryption
+import apptentive.com.android.encryption.EncryptionNoOp
+import apptentive.com.android.feedback.platform.DefaultStateMachine
+import apptentive.com.android.feedback.platform.SDKState
 import apptentive.com.android.feedback.conversation.ConversationCredential
 import apptentive.com.android.feedback.payload.PayloadTokenUpdater.Companion.updateEmbeddedToken
 import apptentive.com.android.feedback.utils.FileUtil
@@ -28,14 +31,19 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.execSQL(SQL_QUERY_DROP_TABLE)
-        onCreate(db)
+        // FIXME: Handle the 5.x to 6.5 migration
+        if (!doesColumnExist(db, COL_TAG)) {
+            db.execSQL(SQL_QUERY_ADD_TAG)
+            db.execSQL(SQL_QUERY_ADD_TOKEN)
+            db.execSQL(SQL_QUERY_ADD_CONVERSATION_ID)
+            db.execSQL(SQL_QUERY_ADD_ENCRYPTED)
+        }
     }
 
     fun addPayload(payload: PayloadData) {
         Log.v(PAYLOADS, "Saving payload body to: ${writableDatabase.path}")
         val fileName = if (payload.sidecarFilename.data.isNotEmpty()) {
-            val encryptedBytes = encryption.encrypt(payload.sidecarFilename.data)
+            val encryptedBytes = determineEncryption().encrypt(payload.sidecarFilename.data)
             val fileName = FileUtil.generateCacheFilePathFromNonceOrPrefix(context, payload.nonce, "apptentive-message-payload")
             FileUtil.writeFileData(fileName, encryptedBytes)
             fileName
@@ -46,7 +54,7 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
             put(COL_PATH, payload.path)
             put(COL_METHOD, payload.method.toString())
             put(COL_MEDIA_TYPE, payload.mediaType.toString())
-            put(COL_PAYLOAD_DATA, encryption.encrypt(payload.data))
+            put(COL_PAYLOAD_DATA, determineEncryption().encrypt(payload.data))
             put(COL_PAYLOAD_DATA_FILE, fileName)
             put(COL_TAG, payload.tag)
 
@@ -110,6 +118,10 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
             }
         }
     }
+
+    private fun determineEncryption(): Encryption =
+        if (DefaultStateMachine.state == SDKState.LOGGED_IN || DefaultStateMachine.state == SDKState.LOGGED_OUT) EncryptionNoOp() // For Logged in conversation using the encryptionKey from ConversationCredential
+        else encryption
 
     private fun deletePayload(db: SQLiteDatabase, nonce: String): Boolean {
         val deletedRows = db.delete(TABLE_NAME, column = COL_NONCE, value = nonce)
@@ -199,10 +211,10 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
 
     @Throws(FileNotFoundException::class, IOException::class)
     private fun readPayload(cursor: Cursor): PayloadData {
-        val dataBytes = encryption.decrypt(cursor.getBlob(COL_PAYLOAD_DATA))
+        val dataBytes = determineEncryption().decrypt(cursor.getBlob(COL_PAYLOAD_DATA))
         val dataPath = cursor.getString(COL_PAYLOAD_DATA_FILE)
         val payloadData = if (dataBytes.isNotEmpty()) dataBytes
-        else encryption.decrypt(FileUtil.readFileData(dataPath))
+        else determineEncryption().decrypt(FileUtil.readFileData(dataPath))
 
         return PayloadData(
             nonce = cursor.getString(COL_NONCE),
@@ -281,7 +293,6 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
             "$COL_ENCRYPTED INTEGER" +
             ")"
 
-        private const val SQL_QUERY_DROP_TABLE = "DROP TABLE IF EXISTS $TABLE_NAME"
         private const val SQL_QUERY_ADD_TAG = "ALTER TABLE $TABLE_NAME ADD COLUMN tag TEXT"
         private const val SQL_QUERY_ADD_TOKEN = "ALTER TABLE $TABLE_NAME ADD COLUMN token TEXT"
         private const val SQL_QUERY_ADD_CONVERSATION_ID = "ALTER TABLE $TABLE_NAME ADD COLUMN conversation_id TEXT"
