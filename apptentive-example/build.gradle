@@ -4,23 +4,44 @@ plugins {
 }
 
 android {
-    compileSdk 31
+    namespace "com.apptentive.apptentive_example"
+
+    viewBinding {
+        enabled = true
+    }
+
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.apptentive.apptentive_example"
         minSdk 21
-        targetSdk 31
+        targetSdk 34
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    configurations.configureEach {
+        resolutionStrategy.dependencySubstitution {
+            substitute module("com.google.android.play:core:1.10.3") using module("com.google.android.play:review:$googlePlayReviewLibsVersions")
+            substitute module("com.google.android.play:core:1.10.3") using module("com.google.android.play:review-ktx:$googlePlayReviewLibsVersions")
+        }
     }
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'com.google.android.material:material:1.5.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
+    implementation "androidx.core:core-ktx:$core_ktx_version"
+    implementation "androidx.appcompat:appcompat:$appcompat_library_version"
+    implementation "com.google.android.material:material:$material_design_version"
+    implementation "androidx.constraintlayout:constraintlayout:$constraint_layout_version"
 
+    implementation 'com.google.firebase:firebase-messaging-ktx:23.3.1'
+    api project(':apptentive-kit-android')
     /**
      * TODO Step 1: Uncomment the import line below.
      * TODO Step 2: Replace APPTENTIVE_VERSION with latest released version on GitHub

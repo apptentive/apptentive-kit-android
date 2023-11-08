@@ -1,14 +1,21 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
 
 android {
-    compileSdkVersion rootProject.compileSdkVersion
-    buildToolsVersion rootProject.buildToolsVersion
+    namespace "apptentive.com.android.feedback"
+
+    buildFeatures {
+        buildConfig true
+    }
 
     defaultConfig {
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion
+        compileSdkVersion rootProject.compileSdkVersion
+
         consumerProguardFiles 'consumer-rules.pro'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -18,10 +25,19 @@ android {
                 minSdkVersion 26 // we need this workaround in order to fix "com.android.tools.r8.a: MethodHandle.invoke and MethodHandle.invokeExact are only supported starting with Android O (--min-api 26)"
             }
         }
+
+        compileOptions {
+            sourceCompatibility JavaVersion.VERSION_17
+            targetCompatibility JavaVersion.VERSION_17
+        }
     }
 
     buildTypes {
         release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -58,7 +74,7 @@ project.ext {
     artifactId = 'apptentive-feedback'
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+tasks.withType(KotlinCompile).configureEach {
     kotlinOptions {
         freeCompilerArgs += [
                 //'-Xexplicit-api=warning', // or '-Xexplicit-api=strict'

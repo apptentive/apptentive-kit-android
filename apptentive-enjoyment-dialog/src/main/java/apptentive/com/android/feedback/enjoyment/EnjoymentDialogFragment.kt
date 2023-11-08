@@ -15,6 +15,7 @@ import apptentive.com.android.ui.overrideTheme
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textview.MaterialTextView
+import apptentive.com.android.R as CoreR
 
 internal class EnjoymentDialogFragment : DialogFragment(), ApptentiveActivityInfo {
     private val viewModel by viewModels<EnjoymentDialogViewModel>()
@@ -30,7 +31,7 @@ internal class EnjoymentDialogFragment : DialogFragment(), ApptentiveActivityInf
         val dialog = MaterialAlertDialogBuilder(requireContext()).apply {
             val ctx = ContextThemeWrapper(
                 requireContext(),
-                R.style.Theme_Apptentive
+                CoreR.style.Theme_Apptentive
             ).apply {
                 overrideTheme()
             }

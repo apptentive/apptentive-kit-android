@@ -5,14 +5,18 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.media.RingtoneManager
 import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import apptentive.com.android.feedback.Apptentive
+import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.PUSH_NOTIFICATION
+import com.apptentive.apptentive_example.R
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
 class AppFirebaseMessagingService : FirebaseMessagingService() {
+    @InternalUseOnly
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         Log.i(
@@ -22,6 +26,7 @@ class AppFirebaseMessagingService : FirebaseMessagingService() {
         Apptentive.setPushNotificationIntegration(this, Apptentive.PUSH_PROVIDER_APPTENTIVE, token)
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
         val data = remoteMessage.data
@@ -69,9 +74,11 @@ class AppFirebaseMessagingService : FirebaseMessagingService() {
      * the NotificationChannel class is new and not in the support library
      */
     private fun createNotificationChannel(notificationManager: NotificationManager) {
-        val channel = NotificationChannel(CHANNEL_ID, "Message Center", NotificationManager.IMPORTANCE_HIGH)
-        channel.description = "A messaging service to communicate with the company."
-        notificationManager.createNotificationChannel(channel)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel =  NotificationChannel(CHANNEL_ID, "Message Center", NotificationManager.IMPORTANCE_HIGH)
+            channel.description = "A messaging service to communicate with the company."
+            notificationManager.createNotificationChannel(channel)
+        }
     }
 
     companion object {

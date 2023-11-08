@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
@@ -5,12 +7,12 @@ plugins {
 }
 
 android {
-    compileSdkVersion rootProject.compileSdkVersion
-    buildToolsVersion rootProject.buildToolsVersion
+    namespace "com.example.feedback"
 
     defaultConfig {
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion
+        compileSdkVersion rootProject.compileSdkVersion
 
         gradle.startParameter.taskNames.each {
             if (it.contains("AndroidTest")) {
@@ -27,6 +29,15 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 }
 
@@ -36,7 +47,6 @@ dependencies {
     implementation project(':apptentive-core-ui')
     implementation "androidx.appcompat:appcompat:$appcompat_library_version"
     implementation "androidx.core:core-ktx:$core_ktx_version"
-    implementation "com.google.android.play:core:$play_core_version"
     implementation "com.google.android.gms:play-services-base:$play_services_base_version"
 
     testImplementation project(':apptentive-core-test')
@@ -46,6 +56,10 @@ dependencies {
 
     androidTestImplementation project(':apptentive-core-test')
     androidTestImplementation project(':apptentive-feedback-test')
+
+    api "com.google.android.play:review:$googlePlayReviewLibsVersions"
+    api "com.google.android.play:review-ktx:$googlePlayReviewLibsVersions"
+
     androidTestImplementation "androidx.test.ext:junit:$androidx_junit_ext_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"
 }
@@ -55,7 +69,7 @@ project.ext {
     artifactId = 'apptentive-in-app-review'
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+tasks.withType(KotlinCompile).configureEach {
     kotlinOptions {
         freeCompilerArgs += [
                 //'-Xexplicit-api=warning', // or '-Xexplicit-api=strict',

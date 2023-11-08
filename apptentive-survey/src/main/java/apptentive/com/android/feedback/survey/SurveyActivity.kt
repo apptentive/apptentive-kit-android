@@ -10,6 +10,7 @@ import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.EditText
 import android.widget.LinearLayout
+import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -41,6 +42,8 @@ import apptentive.com.android.ui.hideSoftKeyboard
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.SURVEY
 import com.google.android.material.appbar.MaterialToolbar
+import apptentive.com.android.R.string.apptentive_cancel
+import apptentive.com.android.R.string.apptentive_close
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.textview.MaterialTextView
@@ -52,6 +55,11 @@ internal class SurveyActivity : BaseSurveyActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.apptentive_activity_survey)
+
+        onBackPressedDispatcher.addCallback {
+            viewModel.exit(showConfirmation = true)
+        }
+
         try {
             title = viewModel.title // So TalkBack announces the survey title
 
@@ -88,10 +96,10 @@ internal class SurveyActivity : BaseSurveyActivity() {
                             context = this@SurveyActivity,
                             title = title ?: getString(R.string.confirmation_dialog_title),
                             message = message ?: getString(R.string.confirmation_dialog_message),
-                            positiveButton = ApptentiveGenericDialog.DialogButton(positiveButtonMessage ?: getString(R.string.apptentive_cancel)) {
+                            positiveButton = ApptentiveGenericDialog.DialogButton(positiveButtonMessage ?: getString(apptentive_cancel)) {
                                 viewModel.onBackToSurveyFromConfirmationDialog()
                             },
-                            negativeButton = ApptentiveGenericDialog.DialogButton(negativeButtonMessage ?: getString(R.string.apptentive_close)) {
+                            negativeButton = ApptentiveGenericDialog.DialogButton(negativeButtonMessage ?: getString(apptentive_close)) {
                                 viewModel.exit(showConfirmation = false)
                             }
                         )
@@ -211,10 +219,6 @@ internal class SurveyActivity : BaseSurveyActivity() {
                 else linearProgressBar.visibility = View.INVISIBLE
             }
         }
-    }
-
-    override fun onBackPressed() {
-        viewModel.exit(showConfirmation = true)
     }
 
     override fun onDestroy() {
