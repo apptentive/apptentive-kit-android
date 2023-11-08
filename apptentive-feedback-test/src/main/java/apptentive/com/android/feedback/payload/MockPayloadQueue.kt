@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.payload
 
 import apptentive.com.android.feedback.conversation.ConversationCredential
+import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 
 class MockPayloadQueue : PayloadQueue {
     private val payloads = mutableListOf<PayloadData>()
@@ -20,11 +21,7 @@ class MockPayloadQueue : PayloadQueue {
         }
     }
 
-    override fun invalidateToken(tag: String) {
-        TODO("Not yet implemented")
-    }
-
-    override fun updateCredential(credential: ConversationCredential, oldTag: String) {
+    override fun updateCredential(credentialProvider: ConversationCredentialProvider, oldTag: String) {
         TODO("Not yet implemented")
     }
 }

@@ -3,6 +3,7 @@ package apptentive.com.android.feedback.payload
 import android.content.Context
 import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.feedback.conversation.ConversationCredential
+import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.feedback.utils.createStringTable
@@ -28,12 +29,8 @@ internal class PersistentPayloadQueue(
         printPayloads("Delete payload and associated files")
     }
 
-    override fun invalidateToken(tag: String) {
-        dbHelper.invalidateToken(tag)
-    }
-
-    override fun updateCredential(credential: ConversationCredential, oldTag: String) {
-        dbHelper.updateCredential(credential, oldTag)
+    override fun updateCredential(credentialProvider: ConversationCredentialProvider, oldTag: String) {
+        dbHelper.updateCredential(credentialProvider, oldTag)
     }
 
     private fun printPayloads(title: String) {

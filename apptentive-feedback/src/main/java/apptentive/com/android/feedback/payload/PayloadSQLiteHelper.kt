@@ -13,6 +13,7 @@ import apptentive.com.android.encryption.EncryptionNoOp
 import apptentive.com.android.feedback.platform.DefaultStateMachine
 import apptentive.com.android.feedback.platform.SDKState
 import apptentive.com.android.feedback.conversation.ConversationCredential
+import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.payload.EncryptedPayloadTokenUpdater.Companion.updateEmbeddedToken
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.network.HttpMethod
@@ -128,22 +129,13 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
         return deletedRows > 0
     }
 
-    internal fun invalidateToken(tag: String): Boolean {
-        writableDatabase.use { db ->
-            val contentValues = ContentValues()
-            contentValues.putNull(COL_TOKEN.toString())
-            val updatedRows = db.update(TABLE_NAME, contentValues, "COL_TAG = ?", arrayOf(tag))
-            return updatedRows > 0
-        }
-    }
-
     @RequiresApi(Build.VERSION_CODES.M)
-    internal fun updateCredential(credential: ConversationCredential, oldTag: String? = null): Boolean {
-        val token = credential.conversationToken
-        val conversationId = credential.conversationId
-        val tag = credential.conversationPath
-        val encryptionKey = credential.payloadEncryptionKey
-        val oldTag = oldTag ?: credential.conversationPath
+    internal fun updateCredential(credentialProvider: ConversationCredentialProvider, oldTag: String): Boolean {
+        val token = credentialProvider.conversationToken
+        val conversationId = credentialProvider.conversationId
+        val tag = credentialProvider.conversationPath
+        val encryptionKey = credentialProvider.payloadEncryptionKey
+        val oldTag = oldTag ?: credentialProvider.conversationPath
 
         if (oldTag != null && tag != null && token != null && conversationId != null && encryptionKey != null) {
 

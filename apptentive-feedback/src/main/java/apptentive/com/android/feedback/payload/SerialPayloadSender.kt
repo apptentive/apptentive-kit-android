@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.payload
 
+import apptentive.com.android.feedback.conversation.ConversationCredential
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.model.payloads.Payload
 import apptentive.com.android.util.Log
@@ -35,8 +36,8 @@ internal class SerialPayloadSender(
         }
     }
 
-    fun invalidateToken(tag: String) {
-        payloadQueue.invalidateToken(tag)
+    override fun updateCredential(credentialProvider: ConversationCredentialProvider, oldTag: String?) {
+        payloadQueue.updateCredential(credentialProvider, oldTag ?: credentialProvider.conversationPath ?: "placeholder")
     }
 
     private fun handleSentPayload(payload: PayloadData) {

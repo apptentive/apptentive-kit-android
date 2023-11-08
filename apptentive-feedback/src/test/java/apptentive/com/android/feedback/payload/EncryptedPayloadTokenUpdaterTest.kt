@@ -1,6 +1,9 @@
 package apptentive.com.android.feedback.payload
 
+import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.core.Logger
 import apptentive.com.android.encryption.AESEncryption23
+import apptentive.com.android.feedback.MockAndroidLoggerProvider
 import apptentive.com.android.feedback.conversation.MockEncryptedConversationCredential
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.payloads.MessagePayload
@@ -104,6 +107,8 @@ internal class EncryptedPayloadTokenUpdaterTest {
 
     @Test
     fun testMultipartFullTokenUpdate() {
+        DependencyProvider.register<Logger>(MockAndroidLoggerProvider())
+
         val attachments = listOf(
             Message.Attachment(
                 "1", "image/jpeg",

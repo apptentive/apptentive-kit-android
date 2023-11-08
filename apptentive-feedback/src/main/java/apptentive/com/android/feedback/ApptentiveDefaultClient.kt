@@ -401,6 +401,10 @@ class ApptentiveDefaultClient(
 
     override fun updateToken(jwtToken: JwtString, callback: ((result: LoginResult) -> Unit)?) {
         conversationManager.updateToken(jwtToken, callback)
+        val conversationCredentialProvider = if (DependencyProvider.isRegistered<ConversationCredentialProvider>()) {
+            DependencyProvider.of<ConversationCredentialProvider>()
+        } else ConversationCredential()
+        payloadSender.updateCredential(conversationCredentialProvider, conversationCredentialProvider.conversationPath)
     }
 
     @WorkerThread
@@ -716,7 +720,6 @@ class ApptentiveDefaultClient(
                 if (resultError != null) {
                     val reason = AuthenticationFailedReason.parse(resultError.errorType, resultError.errorMessage)
                     authenticationFailedListener?.get()?.onAuthenticationFailed(reason)
-                    // payloadSender.invalidateToken()
                 }
 
                 Log.e(PAYLOADS, "Payload failed to send: ${result.error.cause}")

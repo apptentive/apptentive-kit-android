@@ -9,6 +9,8 @@ import apptentive.com.android.network.HttpMethod
 import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.serialization.json.JsonConverter.toJsonObject
 import apptentive.com.android.util.InternalUseOnly
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags
 import java.io.ByteArrayOutputStream
 
 @InternalUseOnly
@@ -131,8 +133,7 @@ abstract class Payload(
 
             val result = data.toByteArray()
 
-            // TODO: figure out why this crashes
-            // Log.d(LogTags.PAYLOADS, "Total payload body bytes: %d", result.size)
+            Log.d(LogTags.PAYLOADS, "Total payload body bytes: %d", result.size)
 
             return result
         }
