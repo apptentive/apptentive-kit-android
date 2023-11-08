@@ -45,7 +45,7 @@ class PayloadTokenUpdater {
                                 decryptedPart.multipartHeaders,
                                 updatedJson,
                                 MediaType.applicationJson,
-                                payloadType.name.lowercase()
+                                payloadType.asString()
                             )
 
                             val parts = mutableListOf<PayloadPart>(
