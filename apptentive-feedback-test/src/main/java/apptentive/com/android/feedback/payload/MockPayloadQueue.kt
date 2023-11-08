@@ -1,6 +1,5 @@
 package apptentive.com.android.feedback.payload
 
-import apptentive.com.android.feedback.conversation.ConversationCredential
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 
 class MockPayloadQueue : PayloadQueue {

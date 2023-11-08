@@ -2,7 +2,6 @@ package apptentive.com.android.feedback.payload
 
 import android.content.Context
 import apptentive.com.android.encryption.Encryption
-import apptentive.com.android.feedback.conversation.ConversationCredential
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
