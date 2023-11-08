@@ -13,7 +13,7 @@ import apptentive.com.android.encryption.EncryptionNoOp
 import apptentive.com.android.feedback.platform.DefaultStateMachine
 import apptentive.com.android.feedback.platform.SDKState
 import apptentive.com.android.feedback.conversation.ConversationCredential
-import apptentive.com.android.feedback.payload.PayloadTokenUpdater.Companion.updateEmbeddedToken
+import apptentive.com.android.feedback.payload.EncryptedPayloadTokenUpdater.Companion.updateEmbeddedToken
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.network.HttpMethod
 import apptentive.com.android.util.Log

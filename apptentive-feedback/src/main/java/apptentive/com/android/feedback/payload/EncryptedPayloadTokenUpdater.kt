@@ -15,7 +15,7 @@ import apptentive.com.android.util.LogTags
 import java.io.ByteArrayInputStream
 
 @InternalUseOnly
-class PayloadTokenUpdater {
+class EncryptedPayloadTokenUpdater {
     companion object {
         @RequiresApi(Build.VERSION_CODES.M)
         fun updateEmbeddedToken(

@@ -14,12 +14,12 @@ import org.junit.Test
 import java.io.ByteArrayInputStream
 import java.io.File
 
-internal class PayloadTokenUpdaterTest {
+internal class EncryptedPayloadTokenUpdaterTest {
     @Test
     fun testUpdateMessageJson() {
         val originalJsonData = "{\"session_id\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at\":1699375136.316,\"body\":\"ABC\",\"nonce\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at_utc_offset\":-28800,\"token\":\"mockedConversationToken\"}".toByteArray()
 
-        val updatedJsonData = PayloadTokenUpdater.updateJSON("abc123", PayloadType.Message, originalJsonData)
+        val updatedJsonData = EncryptedPayloadTokenUpdater.updateJSON("abc123", PayloadType.Message, originalJsonData)
 
         val json = JsonConverter.toMap(String(updatedJsonData, Charsets.UTF_8))
 
@@ -34,7 +34,7 @@ internal class PayloadTokenUpdaterTest {
     fun testUpdateEventJson() {
         val originalJsonData = "{\"event\":{\"session_id\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at\":1699375136.316,\"label\":\"ABC\",\"nonce\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at_utc_offset\":-28800,\"token\":\"mockedConversationToken\"}}".toByteArray()
 
-        val updatedJsonData = PayloadTokenUpdater.updateJSON("abc123", PayloadType.Event, originalJsonData)
+        val updatedJsonData = EncryptedPayloadTokenUpdater.updateJSON("abc123", PayloadType.Event, originalJsonData)
 
         val json = JsonConverter.toMap(String(updatedJsonData, Charsets.UTF_8))
         val nestedJson = json["event"] as Map<String, Any>
@@ -52,9 +52,9 @@ internal class PayloadTokenUpdaterTest {
 
         val originalJsonData = "{\"event\":{\"session_id\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at\":1699375136.316,\"label\":\"ABC\",\"nonce\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at_utc_offset\":-28800,\"token\":\"mockedConversationToken\"}}".toByteArray()
 
-        val encryptedJsonData = PayloadTokenUpdater.encrypt(originalJsonData, conversationCredential.payloadEncryptionKey!!)
+        val encryptedJsonData = EncryptedPayloadTokenUpdater.encrypt(originalJsonData, conversationCredential.payloadEncryptionKey!!)
         assertNotEquals(encryptedJsonData.hashCode(), originalJsonData.hashCode())
-        val decryptedJsonData = PayloadTokenUpdater.decrypt(encryptedJsonData, conversationCredential.payloadEncryptionKey!!)
+        val decryptedJsonData = EncryptedPayloadTokenUpdater.decrypt(encryptedJsonData, conversationCredential.payloadEncryptionKey!!)
 
         assertTrue(originalJsonData.contentEquals(decryptedJsonData))
     }
@@ -65,11 +65,11 @@ internal class PayloadTokenUpdaterTest {
 
         val originalJsonData = "{\"event\":{\"session_id\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at\":1699375136.316,\"label\":\"ABC\",\"nonce\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at_utc_offset\":-28800,\"token\":\"mockedConversationToken\"}}".toByteArray()
 
-        val encryptedJsonData = PayloadTokenUpdater.encrypt(originalJsonData, conversationCredential.payloadEncryptionKey!!)
+        val encryptedJsonData = EncryptedPayloadTokenUpdater.encrypt(originalJsonData, conversationCredential.payloadEncryptionKey!!)
 
-        val updatedEncryptedJsonData = PayloadTokenUpdater.updateEmbeddedToken("abc123", conversationCredential.payloadEncryptionKey!!, PayloadType.Event, MediaType.applicationOctetStream, encryptedJsonData)
+        val updatedEncryptedJsonData = EncryptedPayloadTokenUpdater.updateEmbeddedToken("abc123", conversationCredential.payloadEncryptionKey!!, PayloadType.Event, MediaType.applicationOctetStream, encryptedJsonData)
 
-        val decryptedJsonData = PayloadTokenUpdater.decrypt(updatedEncryptedJsonData, conversationCredential.payloadEncryptionKey!!)
+        val decryptedJsonData = EncryptedPayloadTokenUpdater.decrypt(updatedEncryptedJsonData, conversationCredential.payloadEncryptionKey!!)
 
         val json = JsonConverter.toMap(String(decryptedJsonData, Charsets.UTF_8))
         val nestedJson = json["event"] as Map<String, Any>
@@ -87,11 +87,11 @@ internal class PayloadTokenUpdaterTest {
 
         val originalJsonData = "{\"session_id\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at\":1699375136.316,\"body\":\"ABC\",\"nonce\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at_utc_offset\":-28800,\"token\":\"mockedConversationToken\"}".toByteArray()
 
-        val encryptedJsonData = PayloadTokenUpdater.encrypt(originalJsonData, conversationCredential.payloadEncryptionKey!!)
+        val encryptedJsonData = EncryptedPayloadTokenUpdater.encrypt(originalJsonData, conversationCredential.payloadEncryptionKey!!)
 
-        val updatedEncryptedJsonData = PayloadTokenUpdater.updateEmbeddedToken("abc123", conversationCredential.payloadEncryptionKey!!, PayloadType.Message, MediaType.applicationOctetStream, encryptedJsonData)
+        val updatedEncryptedJsonData = EncryptedPayloadTokenUpdater.updateEmbeddedToken("abc123", conversationCredential.payloadEncryptionKey!!, PayloadType.Message, MediaType.applicationOctetStream, encryptedJsonData)
 
-        val decryptedJsonData = PayloadTokenUpdater.decrypt(updatedEncryptedJsonData, conversationCredential.payloadEncryptionKey!!)
+        val decryptedJsonData = EncryptedPayloadTokenUpdater.decrypt(updatedEncryptedJsonData, conversationCredential.payloadEncryptionKey!!)
 
         val json = JsonConverter.toMap(String(decryptedJsonData, Charsets.UTF_8))
 
@@ -118,7 +118,7 @@ internal class PayloadTokenUpdaterTest {
 
         val payloadData = messagePayload.toPayloadData(conversationCredential)
 
-        val updatedEncryptedPayloadData = PayloadTokenUpdater.updateEmbeddedToken("abc123", conversationCredential.payloadEncryptionKey!!, PayloadType.Message, MediaType.multipartEncrypted("s16u0iwtqlokf4v9cpgne8a2amdrxz735hjby"), payloadData.sidecarFilename.data)
+        val updatedEncryptedPayloadData = EncryptedPayloadTokenUpdater.updateEmbeddedToken("abc123", conversationCredential.payloadEncryptionKey!!, PayloadType.Message, MediaType.multipartEncrypted("s16u0iwtqlokf4v9cpgne8a2amdrxz735hjby"), payloadData.sidecarFilename.data)
 
         val inputStream = ByteArrayInputStream(updatedEncryptedPayloadData)
         val parser = MultipartParser(inputStream, "s16u0iwtqlokf4v9cpgne8a2amdrxz735hjby")
