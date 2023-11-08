@@ -15,4 +15,8 @@ enum class PayloadType {
     companion object {
         fun parse(value: String) = valueOf(value)
     }
+
+    fun asString(): String {
+        return name.lowercase()
+    }
 }

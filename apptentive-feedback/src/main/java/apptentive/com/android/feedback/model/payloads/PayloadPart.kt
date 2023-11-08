@@ -12,4 +12,8 @@ internal interface PayloadPart {
     val content: ByteArray get() = byteArrayOf()
     val filename: String? get() = null
     val parameterName: String? get() = null
+    val multipartHeaders: String
+        get() {
+            return "Content-Disposition: ${contentDisposition}\r\nContent-Type: ${contentType}\r\n"
+        }
 }

@@ -35,6 +35,10 @@ internal class SerialPayloadSender(
         }
     }
 
+    fun invalidateToken(tag: String) {
+        payloadQueue.invalidateToken(tag)
+    }
+
     private fun handleSentPayload(payload: PayloadData) {
         payloadQueue.deletePayloadAndAssociatedFiles(payload)
         notifySuccess(payload)

@@ -1,5 +1,7 @@
 package apptentive.com.android.feedback.payload
 
+import apptentive.com.android.feedback.conversation.ConversationCredential
+
 class MockPayloadQueue : PayloadQueue {
     private val payloads = mutableListOf<PayloadData>()
 
@@ -16,5 +18,13 @@ class MockPayloadQueue : PayloadQueue {
         if (!removed) {
             throw AssertionError("Payload was not in the queue")
         }
+    }
+
+    override fun invalidateToken(tag: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun updateCredential(credential: ConversationCredential, oldTag: String) {
+        TODO("Not yet implemented")
     }
 }

@@ -16,8 +16,7 @@ internal class EncryptedPayloadPart(private val payloadPart: PayloadPart, val en
         val encryptedData = ByteArrayOutputStream()
 
         if (includeHeaders) { // Required when part of our multipart/encrypted encoding
-            plaintextData.write("Content-Disposition: ${payloadPart.contentDisposition}${Payload.LINE_END}".toByteArray())
-            plaintextData.write("Content-Type: ${payloadPart.contentType}${Payload.LINE_END}".toByteArray())
+            plaintextData.write(payloadPart.multipartHeaders.toByteArray())
             plaintextData.write(Payload.LINE_END.toByteArray())
             plaintextData.write(payloadPart.content)
             // plaintextData.write(Payload.LINE_END.toByteArray()) // TODO: Add this back once API is fixed.

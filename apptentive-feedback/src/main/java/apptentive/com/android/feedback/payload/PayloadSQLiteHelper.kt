@@ -5,8 +5,12 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.annotation.VisibleForTesting
 import apptentive.com.android.encryption.Encryption
+import apptentive.com.android.feedback.conversation.ConversationCredential
+import apptentive.com.android.feedback.payload.PayloadTokenUpdater.Companion.updateEmbeddedToken
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.network.HttpMethod
 import apptentive.com.android.util.Log
@@ -24,13 +28,8 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        // FIXME: Handle the 5.x to 6.5 migration
-        if (!doesColumnExist(db, COL_TAG)) {
-            db.execSQL(SQL_QUERY_ADD_TAG)
-            db.execSQL(SQL_QUERY_ADD_TOKEN)
-            db.execSQL(SQL_QUERY_ADD_CONVERSATION_ID)
-            db.execSQL(SQL_QUERY_ADD_ENCRYPTED)
-        }
+        db.execSQL(SQL_QUERY_DROP_TABLE)
+        onCreate(db)
     }
 
     fun addPayload(payload: PayloadData) {
@@ -117,12 +116,62 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
         return deletedRows > 0
     }
 
-    // TODO: call this when we get an auth failure for a payload.
-    private fun invalidateToken(db: SQLiteDatabase, tag: String): Boolean {
-        val contentValues = ContentValues()
-        contentValues.putNull(COL_TOKEN.toString())
-        val updatedRows = db.update(TABLE_NAME, contentValues, "COL_TAG = ?", arrayOf(tag))
-        return updatedRows > 0
+    internal fun invalidateToken(tag: String): Boolean {
+        writableDatabase.use { db ->
+            val contentValues = ContentValues()
+            contentValues.putNull(COL_TOKEN.toString())
+            val updatedRows = db.update(TABLE_NAME, contentValues, "COL_TAG = ?", arrayOf(tag))
+            return updatedRows > 0
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    internal fun updateCredential(credential: ConversationCredential, oldTag: String? = null): Boolean {
+        val token = credential.conversationToken
+        val conversationId = credential.conversationId
+        val tag = credential.conversationPath
+        val encryptionKey = credential.payloadEncryptionKey
+        val oldTag = oldTag ?: credential.conversationPath
+
+        if (oldTag != null && tag != null && token != null && conversationId != null && encryptionKey != null) {
+
+            synchronized(this) {
+                writableDatabase.use { db ->
+                    db.select(tableName = TABLE_NAME, where = "$COL_TAG = ?", selectionArgs = arrayOf(oldTag), orderBy = COL_PRIMARY_KEY)
+                        .use { cursor ->
+                            while (cursor.moveToNext()) {
+                                val payloadData = readPayload(cursor)
+                                val contentValues = ContentValues()
+
+                                contentValues.put(COL_TAG, tag) // May be updating from oldTag.
+                                contentValues.put(COL_CONVERSATION_ID, conversationId) // May not have had conversation ID when enqueued.
+
+                                if (payloadData.isEncrypted) {
+                                    val updatedData = updateEmbeddedToken(token, encryptionKey, payloadData.type, payloadData.mediaType, payloadData.data)
+
+                                    if (payloadData.sidecarFilename.dataFilePath.isNotNullOrEmpty()) {
+                                        val encryptedBytes = encryption.encrypt(payloadData.data)
+                                        FileUtil.writeFileData(payloadData.sidecarFilename.dataFilePath, encryptedBytes)
+                                    } else {
+                                        contentValues.put(COL_PAYLOAD_DATA, updateEmbeddedToken(token, encryptionKey, payloadData.type, payloadData.mediaType, payloadData.data))
+                                    }
+
+                                    contentValues.put(COL_TOKEN, "embedded") // May have been invalidated after auth failure.
+                                } else {
+                                    contentValues.put(COL_TOKEN, token)
+                                }
+
+                                db.update(TABLE_NAME, contentValues, "$COL_NONCE = ?", arrayOf(payloadData.nonce))
+                            }
+                        }
+                }
+            }
+
+            return true
+        } else {
+            Log.w(LogTags.PAYLOADS, "Attempting to update payloads with invalid credentials.")
+            return false
+        }
     }
 
     internal fun deleteAllCachedPayloads() {
@@ -232,6 +281,7 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
             "$COL_ENCRYPTED INTEGER" +
             ")"
 
+        private const val SQL_QUERY_DROP_TABLE = "DROP TABLE IF EXISTS $TABLE_NAME"
         private const val SQL_QUERY_ADD_TAG = "ALTER TABLE $TABLE_NAME ADD COLUMN tag TEXT"
         private const val SQL_QUERY_ADD_TOKEN = "ALTER TABLE $TABLE_NAME ADD COLUMN token TEXT"
         private const val SQL_QUERY_ADD_CONVERSATION_ID = "ALTER TABLE $TABLE_NAME ADD COLUMN conversation_id TEXT"
@@ -262,12 +312,12 @@ private data class Column(val index: Int, val name: String) {
     override fun toString() = name
 }
 
-private fun SQLiteDatabase.select(tableName: String, where: String? = null, orderBy: Column, limit: Int? = null): Cursor {
+private fun SQLiteDatabase.select(tableName: String, where: String? = null, selectionArgs: Array<String>? = null, orderBy: Column, limit: Int? = null): Cursor {
     return query(
         tableName,
         null,
         where,
-        null,
+        selectionArgs,
         null,
         null,
         "${orderBy.name} ASC",

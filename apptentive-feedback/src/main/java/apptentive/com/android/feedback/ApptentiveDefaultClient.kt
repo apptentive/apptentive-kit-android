@@ -714,6 +714,7 @@ class ApptentiveDefaultClient(
                 if (result.error is AuthenticationFailureException) {
                     val reason = AuthenticationFailedReason.parse((result.error as AuthenticationFailureException).errorMessage ?: "")
                     authenticationFailedListener?.get()?.onAuthenticationFailed(reason)
+                    // payloadSender.invalidateToken()
                 }
 
                 Log.e(PAYLOADS, "Payload failed to send: ${result.error.cause}")
