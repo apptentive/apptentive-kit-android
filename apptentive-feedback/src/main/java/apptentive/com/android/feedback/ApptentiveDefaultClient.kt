@@ -326,15 +326,19 @@ class ApptentiveDefaultClient(
         val conversationId = conversationManager.getConversation().conversationId
         conversationId?.let { id ->
             conversationManager.loginSession(id, jwtToken, subject) { result ->
-                handleLoginResult(result, loginCallback)
+                handleLoginResult(result, loginCallback, true)
             }
         }
     }
 
-    private fun handleLoginResult(result: LoginResult, callback: ((result: LoginResult) -> Unit)?) {
+    private fun handleLoginResult(result: LoginResult, callback: ((result: LoginResult) -> Unit)?, transitioningFromAnonymous: Boolean = false) {
         when (result) {
             is LoginResult.Success -> {
                 Log.v(CONVERSATION, "Successfully logged in")
+                if (!transitioningFromAnonymous) {
+                    updateSessionIdForNewLoginSession()
+                    engage(Event.internal(InternalEvent.APP_LAUNCH.labelName))
+                }
                 engage(Event.internal(InternalEvent.SDK_LOGIN.labelName))
                 if (messageManager == null) {
                     createMessageManager()
@@ -796,6 +800,13 @@ class ApptentiveDefaultClient(
 
     companion object {
         // Gets created on the first call to Apptentive.register() and is used to identify the session
-        val sessionId = generateUUID()
+        private var sessionId = generateUUID()
+
+        fun getSessionId(): String = sessionId
+        fun updateSessionIdForNewLoginSession() {
+            Log.d(CONVERSATION, "Old session ID: $sessionId")
+            sessionId = generateUUID()
+            Log.d(CONVERSATION, "New session ID generated: $sessionId")
+        }
     }
 }

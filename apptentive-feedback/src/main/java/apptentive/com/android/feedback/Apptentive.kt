@@ -39,7 +39,6 @@ import apptentive.com.android.network.HttpClient
 import apptentive.com.android.network.HttpLoggingInterceptor
 import apptentive.com.android.network.HttpNetworkResponse
 import apptentive.com.android.network.HttpRequest
-import apptentive.com.android.network.asString
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.platform.DefaultAndroidSharedPrefDataStore
 import apptentive.com.android.platform.SharedPrefConstants
@@ -450,9 +449,7 @@ object Apptentive {
                 Log.v(NETWORK, "Content-Type: ${request.requestBody?.contentType}")
                 Log.v(
                     NETWORK,
-                    "Request Body: " +
-                        if ((request.requestBody?.asString()?.length ?: 0) < 5000) SensitiveDataUtils.hideIfSanitized(request.requestBody?.asString())
-                        else "Request body too large to print."
+                    "Request Body: ${SensitiveDataUtils.hideIfSanitized(request.requestBody?.asString())}"
                 )
             }
 
