@@ -155,7 +155,8 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
                                         val encryptedBytes = determineEncryption().encrypt(updatedData)
                                         FileUtil.writeFileData(payloadData.sidecarFilename.dataFilePath, encryptedBytes)
                                     } else {
-                                        contentValues.put(COL_PAYLOAD_DATA, updateEmbeddedToken(token, encryptionKey, payloadData.type, payloadData.mediaType, payloadData.data))
+                                        val encryptedBytes = determineEncryption().encrypt(payloadData.data)
+                                        contentValues.put(COL_PAYLOAD_DATA, updateEmbeddedToken(token, encryptionKey, payloadData.type, payloadData.mediaType, encryptedBytes))
                                     }
 
                                     contentValues.put(COL_TOKEN, "embedded") // May have been invalidated after auth failure.

@@ -27,7 +27,7 @@ class EncryptedPayloadTokenUpdater {
         ): ByteArray {
             if ((contentType?.type == "application") && (contentType.subType == "octet-stream")) {
                 return encrypt(
-                    updateJSON(token, payloadType, decrypt(data, encryptionKey)),
+                    updateJSON(token, decrypt(data, encryptionKey)),
                     encryptionKey
                 )
             } else if (contentType?.type == "multipart" && contentType.subType == "encrypted") {
@@ -40,7 +40,7 @@ class EncryptedPayloadTokenUpdater {
                         val decryptedPartData = decrypt(firstPart.content, encryptionKey)
                         val decryptedPart = MultipartParser.parsePart(ByteArrayInputStream(decryptedPartData), 0L..decryptedPartData.size + 2)
                         if (decryptedPart != null) {
-                            val updatedJson = updateJSON(token, payloadType, decryptedPart.content)
+                            val updatedJson = updateJSON(token, decryptedPart.content)
                             val updatedPart = MultipartParser.Part(
                                 decryptedPart.multipartHeaders,
                                 updatedJson,
@@ -73,12 +73,13 @@ class EncryptedPayloadTokenUpdater {
 
         internal fun updateJSON(
             token: String,
-            payloadType: PayloadType,
             data: ByteArray
         ): ByteArray {
-            val json = JsonConverter.toMap(String(data, Charsets.UTF_8)).toMutableMap()
-            json["token"] = token
-            return JsonConverter.toJson(json).toByteArray()
+            val jsonString = String(data, Charsets.UTF_8)
+            // Have to do a regex replace because the JSON codec mangles the timestamp number format
+            val regex = "\"token\":\"[^\"]+\""
+            val updatedJsonString = jsonString.replaceFirst(Regex(regex), "\"token\":\"$token\"")
+            return updatedJsonString.toByteArray()
         }
 
         @RequiresApi(Build.VERSION_CODES.M)
