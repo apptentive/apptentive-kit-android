@@ -71,11 +71,17 @@ internal class PersistentPayloadQueue(
                     else -> "Binary data: ${Base64.getEncoder().encodeToString(payload.data)}"
                 }
 
+                val formattedToken = when (payload.token) {
+                    null -> "null"
+                    "embedded" -> "embedded"
+                    else ->"JWT"
+                }
+
                 arrayOf<Any?>(
                     payload.nonce,
                     payload.type,
                     payload.tag,
-                    if (payload.token == null) "null" else "JWT",
+                    formattedToken,
                     formattedData
                 )
             }
