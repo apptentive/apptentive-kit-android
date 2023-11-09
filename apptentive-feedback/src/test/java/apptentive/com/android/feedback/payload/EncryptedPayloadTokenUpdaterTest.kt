@@ -24,7 +24,7 @@ internal class EncryptedPayloadTokenUpdaterTest {
 
         val originalJsonData = "{\"session_id\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at\":1699375136.316,\"body\":\"ABC\",\"nonce\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at_utc_offset\":-28800,\"token\":\"mockedConversationToken\"}".toByteArray()
 
-        val updatedJsonData = EncryptedPayloadTokenUpdater.updateJSON("abc123", PayloadType.Message, originalJsonData)
+        val updatedJsonData = EncryptedPayloadTokenUpdater.updateJSON("abc123", originalJsonData)
 
         val json = JsonConverter.toMap(String(updatedJsonData, Charsets.UTF_8))
 
@@ -39,9 +39,9 @@ internal class EncryptedPayloadTokenUpdaterTest {
     fun testUpdateEventJson() {
         DependencyProvider.register<Logger>(MockAndroidLoggerProvider())
 
-        val originalJsonData = "{\"event\":{\"session_id\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at\":1699375136.316,\"label\":\"ABC\",\"nonce\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at_utc_offset\":-28800,\"token\":\"mockedConversationToken\"}}".toByteArray()
+        val originalJsonData = "{\"event\":{\"session_id\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at\":1699375136.316,\"label\":\"ABC\",\"nonce\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at_utc_offset\":-28800},\"token\":\"mockedConversationToken\"}".toByteArray()
 
-        val updatedJsonData = EncryptedPayloadTokenUpdater.updateJSON("abc123", PayloadType.Event, originalJsonData)
+        val updatedJsonData = EncryptedPayloadTokenUpdater.updateJSON("abc123", originalJsonData)
 
         val json = JsonConverter.toMap(String(updatedJsonData, Charsets.UTF_8))
         val nestedJson = json["event"] as Map<String, Any>
@@ -57,9 +57,9 @@ internal class EncryptedPayloadTokenUpdaterTest {
     fun testUpdateAppReleaseSDKJson() {
         DependencyProvider.register<Logger>(MockAndroidLoggerProvider())
 
-        val originalJsonData = "{\"app_release\":{\"session_id\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at\":1699375136.316,\"label\":\"ABC\",\"nonce\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at_utc_offset\":-28800,\"token\":\"mockedConversationToken\"}}".toByteArray()
+        val originalJsonData = "{\"app_release\":{\"session_id\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at\":1699375136.316,\"label\":\"ABC\",\"nonce\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at_utc_offset\":-28800},\"token\":\"mockedConversationToken\"}".toByteArray()
 
-        val updatedJsonData = EncryptedPayloadTokenUpdater.updateJSON("abc123", PayloadType.AppReleaseAndSDK, originalJsonData)
+        val updatedJsonData = EncryptedPayloadTokenUpdater.updateJSON("abc123", originalJsonData)
 
         val json = JsonConverter.toMap(String(updatedJsonData, Charsets.UTF_8))
         val nestedJson = json["app_release"] as Map<String, Any>
@@ -75,9 +75,9 @@ internal class EncryptedPayloadTokenUpdaterTest {
     fun testUpdateSurveyResponseJson() {
         DependencyProvider.register<Logger>(MockAndroidLoggerProvider())
 
-        val originalJsonData = "{\"response\":{\"session_id\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at\":1699375136.316,\"label\":\"ABC\",\"nonce\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at_utc_offset\":-28800,\"token\":\"mockedConversationToken\"}}".toByteArray()
+        val originalJsonData = "{\"response\":{\"session_id\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at\":1699375136.316,\"label\":\"ABC\",\"nonce\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at_utc_offset\":-28800},\"token\":\"mockedConversationToken\"}".toByteArray()
 
-        val updatedJsonData = EncryptedPayloadTokenUpdater.updateJSON("abc123", PayloadType.SurveyResponse, originalJsonData)
+        val updatedJsonData = EncryptedPayloadTokenUpdater.updateJSON("abc123", originalJsonData)
 
         val json = JsonConverter.toMap(String(updatedJsonData, Charsets.UTF_8))
         val nestedJson = json["response"] as Map<String, Any>
@@ -93,9 +93,9 @@ internal class EncryptedPayloadTokenUpdaterTest {
     fun testUpdatePersonJson() {
         DependencyProvider.register<Logger>(MockAndroidLoggerProvider())
 
-        val originalJsonData = "{\"person\":{\"session_id\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at\":1699375136.316,\"name\":\"Testy McTestface\",\"email\":\"test@example.com\",\"nonce\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at_utc_offset\":-28800,\"token\":\"mockedConversationToken\"}}".toByteArray()
+        val originalJsonData = "{\"person\":{\"session_id\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at\":1699375136.316,\"name\":\"Testy McTestface\",\"email\":\"test@example.com\",\"nonce\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at_utc_offset\":-28800},\"token\":\"mockedConversationToken\"}".toByteArray()
 
-        val updatedJsonData = EncryptedPayloadTokenUpdater.updateJSON("abc123", PayloadType.Person, originalJsonData)
+        val updatedJsonData = EncryptedPayloadTokenUpdater.updateJSON("abc123", originalJsonData)
 
         val json = JsonConverter.toMap(String(updatedJsonData, Charsets.UTF_8))
         val nestedJson = json["person"] as Map<String, Any>
@@ -114,7 +114,7 @@ internal class EncryptedPayloadTokenUpdaterTest {
 
         val conversationCredential = MockEncryptedConversationCredential()
 
-        val originalJsonData = "{\"event\":{\"session_id\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at\":1699375136.316,\"label\":\"ABC\",\"nonce\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at_utc_offset\":-28800,\"token\":\"mockedConversationToken\"}}".toByteArray()
+        val originalJsonData = "{\"event\":{\"session_id\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at\":1699375136.316,\"label\":\"ABC\",\"nonce\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at_utc_offset\":-28800},\"token\":\"mockedConversationToken\"}".toByteArray()
 
         val encryptedJsonData = EncryptedPayloadTokenUpdater.encrypt(originalJsonData, conversationCredential.payloadEncryptionKey!!)
         assertNotEquals(encryptedJsonData.hashCode(), originalJsonData.hashCode())
@@ -129,7 +129,7 @@ internal class EncryptedPayloadTokenUpdaterTest {
 
         val conversationCredential = MockEncryptedConversationCredential()
 
-        val originalJsonData = "{\"event\":{\"session_id\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at\":1699375136.316,\"label\":\"ABC\",\"nonce\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at_utc_offset\":-28800,\"token\":\"mockedConversationToken\"}}".toByteArray()
+        val originalJsonData = "{\"event\":{\"session_id\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at\":1699375136.316,\"label\":\"ABC\",\"nonce\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at_utc_offset\":-28800},\"token\":\"mockedConversationToken\"}".toByteArray()
 
         val encryptedJsonData = EncryptedPayloadTokenUpdater.encrypt(originalJsonData, conversationCredential.payloadEncryptionKey!!)
 

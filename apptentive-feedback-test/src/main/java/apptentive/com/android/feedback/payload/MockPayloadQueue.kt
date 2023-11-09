@@ -23,4 +23,9 @@ class MockPayloadQueue : PayloadQueue {
     override fun updateCredential(credentialProvider: ConversationCredentialProvider, oldTag: String) {
         TODO("Not yet implemented")
     }
+
+    override fun invalidateCredential(tag: String) {
+        TODO("Not yet implemented")
+    }
+
 }
