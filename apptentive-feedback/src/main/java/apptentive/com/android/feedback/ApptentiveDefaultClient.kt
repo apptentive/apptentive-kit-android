@@ -780,7 +780,6 @@ class ApptentiveDefaultClient(
         val sharedPref = DependencyProvider.of<AndroidSharedPrefDataStore>()
 
         return when {
-            // TODO revisit this logic if necessary as the folder structure would change from 6.2
             FileUtil.containsFiles(FileStorageUtil.CONVERSATION_DIR) && !sharedPref.containsKey(SDK_CORE_INFO, CRYPTO_ENABLED) -> NotEncrypted // Migrating from 6.0.0
             sharedPref.containsKey(SDK_CORE_INFO, CRYPTO_ENABLED) -> sharedPref.getBoolean(SDK_CORE_INFO, CRYPTO_ENABLED).getEncryptionStatus()
             else -> NoEncryptionStatus

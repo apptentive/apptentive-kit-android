@@ -329,7 +329,6 @@ internal class ConversationManager(
             activeConversationSubject.value = getConversation().copy(
                 conversationToken = jwtToken,
             )
-            // TODO update the token for enqueued payloads/failed payloads
             callback?.invoke(LoginResult.Success)
         } else {
             Log.d(CONVERSATION, "Cannot refresh the auth token for the user with subject: $subClaim")

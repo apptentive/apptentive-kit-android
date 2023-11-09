@@ -76,7 +76,7 @@ internal object FileStorageUtil {
         val cachedSDKVersion = DependencyProvider.of<AndroidSharedPrefDataStore>()
             .getString(SharedPrefConstants.SDK_CORE_INFO, SharedPrefConstants.SDK_VERSION).ifEmpty { null }
 
-        return FileUtil.containsFiles(CONVERSATION_DIR) && // FIXME TODO this is true even for a new user
+        return FileUtil.containsFiles("$CONVERSATION_DIR/conversation.bin") &&
             cachedSDKVersion == null || cachedSDKVersion == "6.1.0"
     }
 
