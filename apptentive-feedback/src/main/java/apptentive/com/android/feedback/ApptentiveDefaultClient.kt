@@ -23,7 +23,6 @@ import apptentive.com.android.feedback.backend.ConversationPayloadService
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.DefaultConversationService
 import apptentive.com.android.feedback.backend.MessageCenterService
-import apptentive.com.android.feedback.conversation.ConversationCredential
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.conversation.ConversationManager
 import apptentive.com.android.feedback.conversation.ConversationMetaData
@@ -171,7 +170,6 @@ class ApptentiveDefaultClient(
         engage(Event.internal(InternalEvent.APP_LAUNCH.labelName))
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     @WorkerThread
     private fun getConversationToken(
         registerCallback: ((result: RegisterResult) -> Unit)?
@@ -198,6 +196,8 @@ class ApptentiveDefaultClient(
                     conversationManager.tryFetchAppConfiguration()
                     createMessageManager()
                     registerCallback?.invoke(RegisterResult.Success)
+                    val conversationCredentialProvider = DependencyProvider.of<ConversationCredentialProvider>()
+                    payloadSender.updateCredential(conversationCredentialProvider)
                 }
             }
         }
@@ -406,10 +406,11 @@ class ApptentiveDefaultClient(
 
     override fun updateToken(jwtToken: JwtString, callback: ((result: LoginResult) -> Unit)?) {
         conversationManager.updateToken(jwtToken, callback)
-        val conversationCredentialProvider = if (DependencyProvider.isRegistered<ConversationCredentialProvider>()) {
-            DependencyProvider.of<ConversationCredentialProvider>()
-        } else ConversationCredential(conversationPath = "placeholder")
-        payloadSender.updateCredential(conversationCredentialProvider, conversationCredentialProvider.conversationPath)
+        if (DependencyProvider.isRegistered<ConversationCredentialProvider>()) {
+            payloadSender.updateCredential(DependencyProvider.of<ConversationCredentialProvider>())
+        } else {
+            Log.w(PAYLOADS, "Attempting to update token without conversation credentials.")
+        }
     }
 
     @WorkerThread
@@ -796,10 +797,11 @@ class ApptentiveDefaultClient(
     internal fun getConversationId() = conversationManager.getConversation().conversationId
 
     private fun enqueuePayload(payload: Payload) {
-        val conversationCredential = if (DependencyProvider.isRegistered<ConversationCredentialProvider>()) {
-            DependencyProvider.of<ConversationCredentialProvider>()
-        } else ConversationCredential(conversationPath = "placeholder")
-        payloadSender.enqueuePayload(payload, conversationCredential)
+        if (DependencyProvider.isRegistered<ConversationCredentialProvider>()) {
+            payloadSender.enqueuePayload(payload, DependencyProvider.of<ConversationCredentialProvider>())
+        } else {
+            Log.w(PAYLOADS, "Attempting to enqueue payload without conversation credential.")
+        }
     }
 
     companion object {

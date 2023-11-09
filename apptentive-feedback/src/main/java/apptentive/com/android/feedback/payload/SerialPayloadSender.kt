@@ -35,8 +35,8 @@ internal class SerialPayloadSender(
         }
     }
 
-    override fun updateCredential(credentialProvider: ConversationCredentialProvider, oldTag: String?) {
-        payloadQueue.updateCredential(credentialProvider, oldTag ?: credentialProvider.conversationPath ?: "placeholder")
+    override fun updateCredential(credentialProvider: ConversationCredentialProvider) {
+        payloadQueue.updateCredential(credentialProvider)
         sendNextUnsentPayload()
     }
 

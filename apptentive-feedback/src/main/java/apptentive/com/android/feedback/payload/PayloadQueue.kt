@@ -8,6 +8,6 @@ interface PayloadQueue {
     fun enqueuePayload(payload: PayloadData)
     fun nextUnsentPayload(): PayloadData?
     fun deletePayloadAndAssociatedFiles(payload: PayloadData)
-    fun updateCredential(credentialProvider: ConversationCredentialProvider, oldTag: String)
+    fun updateCredential(credentialProvider: ConversationCredentialProvider)
     fun invalidateCredential(tag: String)
 }

@@ -2,15 +2,14 @@ package apptentive.com.android.feedback.payload
 
 import android.content.Context
 import android.os.Build
-import androidx.annotation.RequiresApi
 import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.utils.FileUtil
-import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.feedback.utils.createStringTable
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogLevel
 import apptentive.com.android.util.LogTags.PAYLOADS
+import java.util.Base64
 
 internal class PersistentPayloadQueue(
     private val dbHelper: PayloadSQLiteHelper
@@ -30,9 +29,8 @@ internal class PersistentPayloadQueue(
         printPayloads("Delete payload and associated files")
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
-    override fun updateCredential(credentialProvider: ConversationCredentialProvider, oldTag: String) {
-        dbHelper.updateCredential(credentialProvider, oldTag)
+    override fun updateCredential(credentialProvider: ConversationCredentialProvider) {
+        dbHelper.updateCredential(credentialProvider)
     }
 
     override fun invalidateCredential(tag: String) {
@@ -56,20 +54,29 @@ internal class PersistentPayloadQueue(
                 arrayOf<Any?>(
                     "nonce",
                     "type",
-                    "path",
-                    "method",
-                    "mediaType",
+                    "tag",
+                    "token",
                     "data"
                 )
             )
             val rows = payloads.map { payload ->
+                val formattedData = when {
+                    payload.data.size > 500 -> "Request body too large to print."
+                    payload.mediaType == MediaType.applicationJson ||
+                        Build.VERSION.SDK_INT < Build.VERSION_CODES.O -> String(
+                        payload.data,
+                        Charsets.UTF_8
+                    )
+
+                    else -> "Binary data: ${Base64.getEncoder().encodeToString(payload.data)}"
+                }
+
                 arrayOf<Any?>(
                     payload.nonce,
                     payload.type,
-                    payload.path,
-                    payload.method,
-                    payload.mediaType,
-                    SensitiveDataUtils.hideIfSanitized(payload.data.toString(Charsets.UTF_8))
+                    payload.tag,
+                    if (payload.token == null) "null" else "JWT",
+                    formattedData
                 )
             }
             Log.v(PAYLOADS, "$title (${payloads.size}):\n${createStringTable(header + rows)}")

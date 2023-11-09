@@ -6,7 +6,6 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.annotation.VisibleForTesting
 import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.encryption.EncryptionNoOp
@@ -128,18 +127,17 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
         return deletedRows > 0
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
-    internal fun updateCredential(credentialProvider: ConversationCredentialProvider, oldTag: String): Boolean {
+    internal fun updateCredential(credentialProvider: ConversationCredentialProvider): Boolean {
         val token = credentialProvider.conversationToken
         val conversationId = credentialProvider.conversationId
         val tag = credentialProvider.conversationPath
         val encryptionKey = credentialProvider.payloadEncryptionKey
 
-        if (oldTag != null && tag != null && token != null && conversationId != null) {
+        if (token != null && conversationId != null) {
             synchronized(this) {
                 writableDatabase.use { db ->
-                    Log.d(PAYLOADS, "Updating credentials for payloads with tag $oldTag")
-                    db.select(tableName = TABLE_NAME, where = "$COL_TAG = ?", selectionArgs = arrayOf(oldTag), orderBy = COL_PRIMARY_KEY)
+                    Log.d(PAYLOADS, "Updating credentials for payloads with tag $tag")
+                    db.select(tableName = TABLE_NAME, where = "$COL_TAG = ?", selectionArgs = arrayOf(tag), orderBy = COL_PRIMARY_KEY)
                         .use { cursor ->
                             while (cursor.moveToNext()) {
                                 val payloadData = readPayload(cursor)
@@ -148,7 +146,7 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
                                 contentValues.put(COL_TAG, tag) // May be updating from oldTag.
                                 contentValues.put(COL_CONVERSATION_ID, conversationId) // May not have had conversation ID when enqueued.
 
-                                if (payloadData.isEncrypted && encryptionKey != null) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && payloadData.isEncrypted && encryptionKey != null) {
                                     val updatedData = updateEmbeddedToken(token, encryptionKey, payloadData.type, payloadData.mediaType, payloadData.data)
 
                                     if (payloadData.sidecarFilename.dataFilePath.isNotNullOrEmpty()) {

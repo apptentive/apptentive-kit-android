@@ -14,10 +14,5 @@ class MockPayloadSender(
         callback?.invoke(payload)
     }
 
-    override fun updateCredential(
-        credentialProvider: ConversationCredentialProvider,
-        oldTag: String?
-    ) {
-        TODO("Not yet implemented")
-    }
+    override fun updateCredential(credentialProvider: ConversationCredentialProvider) {}
 }

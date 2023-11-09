@@ -113,10 +113,7 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
                 override fun enqueuePayload(payload: Payload, credentialProvider: ConversationCredentialProvider) {
                 }
 
-                override fun updateCredential(
-                    credentialProvider: ConversationCredentialProvider,
-                    oldTag: String?
-                ) {}
+                override fun updateCredential(credentialProvider: ConversationCredentialProvider) {}
             },
             executors = Executors(ImmediateExecutor, ImmediateExecutor),
         )

@@ -67,7 +67,7 @@ abstract class Payload(
         return PayloadData(
             nonce = nonce,
             type = getPayloadType(),
-            tag = credentialProvider.conversationPath ?: "placeholder",
+            tag = credentialProvider.conversationPath,
             token = token,
             conversationId = credentialProvider.conversationId,
             isEncrypted = isEncrypted,

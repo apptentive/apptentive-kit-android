@@ -8,7 +8,6 @@ import apptentive.com.android.feedback.model.payloads.EncryptedPayloadPart
 import apptentive.com.android.feedback.model.payloads.Payload
 import apptentive.com.android.feedback.model.payloads.PayloadPart
 import apptentive.com.android.feedback.utils.MultipartParser
-import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags

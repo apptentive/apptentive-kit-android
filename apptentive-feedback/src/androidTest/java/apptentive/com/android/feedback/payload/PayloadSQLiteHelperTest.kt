@@ -151,7 +151,7 @@ class PayloadSQLiteHelperTest : TestCase() {
         val imageFile = File(context.cacheDir, dogImageTempPath)
         imageFile.delete()
 
-        dbHelper.updateCredential(MockUpdatedConversationCredential(), "mockedConversationPath")
+        dbHelper.updateCredential(MockUpdatedConversationCredential())
 
         val payloadsUpdatedWithUnencryptedToken = dbHelper.readPayloads()
 
@@ -163,7 +163,7 @@ class PayloadSQLiteHelperTest : TestCase() {
         verifySinglePartWithToken(payloadsUpdatedWithUnencryptedToken[2].data, "mockedEncryptedConversationToken")
         verifyMultipartWithToken(payloadsUpdatedWithUnencryptedToken[3].data, "mockedEncryptedConversationToken")
 
-        dbHelper.updateCredential(MockUpdatedEncryptedConversationCredential(), "mockedEncryptedConversationPath")
+        dbHelper.updateCredential(MockUpdatedEncryptedConversationCredential())
 
         val payloadsUpdatedWithEncryptedToken = dbHelper.readPayloads()
 

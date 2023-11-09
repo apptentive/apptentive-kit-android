@@ -305,6 +305,7 @@ internal class ConversationManager(
                             id = it.data.personId
                         )
                     )
+
                     tryFetchEngagementManifest()
                     tryFetchAppConfiguration()
                     loginCallback?.invoke(LoginResult.Success)
@@ -342,7 +343,7 @@ internal class ConversationManager(
                 conversationId = id,
                 conversationToken = token,
                 payloadEncryptionKey = payloadEncryptionKey,
-                conversationPath = DefaultStateMachine.conversationRoster.activeConversation?.path ?: "placeholder"
+                conversationPath = DefaultStateMachine.conversationRoster.activeConversation?.path ?: "logged-out"
             )
         )
     }
