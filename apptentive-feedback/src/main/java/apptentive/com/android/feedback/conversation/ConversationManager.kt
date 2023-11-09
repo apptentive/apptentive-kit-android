@@ -305,7 +305,6 @@ internal class ConversationManager(
                             id = it.data.personId
                         )
                     )
-
                     tryFetchEngagementManifest()
                     tryFetchAppConfiguration()
                     loginCallback?.invoke(LoginResult.Success)
