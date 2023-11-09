@@ -339,21 +339,17 @@ class ApptentiveDefaultClient(
                 if (!transitioningFromAnonymous) {
                     updateSessionIdForNewLoginSession()
                     engage(Event.internal(InternalEvent.APP_LAUNCH.labelName))
+                    // message manager should be initialized if it is a new login session
+                    messageManager ?: createMessageManager()
+                    messageManager?.apply {
+                        login()
+                        addUnreadMessageListener(::updateMessageCenterNotification)
+                    }
                 } else {
                     // delete previously stored message file as it would be cached with different encryption setting
                     messageManager?.resetForAnonymousToLogin()
                 }
                 engage(Event.internal(InternalEvent.SDK_LOGIN.labelName))
-
-                if (messageManager == null) {
-                    createMessageManager()
-                }
-
-                messageManager?.apply {
-                    login()
-                    addUnreadMessageListener(::updateMessageCenterNotification)
-                }
-
                 val sharedPrefDataStore = DependencyProvider.of<AndroidSharedPrefDataStore>()
                 val pushProvider = sharedPrefDataStore.getInt(APPTENTIVE, PREF_KEY_PUSH_PROVIDER)
                 val pushProviderName = sharedPrefDataStore.getString(APPTENTIVE, PREF_KEY_PUSH_TOKEN)
