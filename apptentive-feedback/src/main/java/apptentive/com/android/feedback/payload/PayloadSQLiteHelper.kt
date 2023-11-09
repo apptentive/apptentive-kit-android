@@ -137,16 +137,19 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
             synchronized(this) {
                 writableDatabase.use { db ->
                     Log.d(PAYLOADS, "Updating credentials for payloads with tag $tag")
+
+                    // Grab each payload with the specified tag and update as needed.
                     db.select(tableName = TABLE_NAME, where = "$COL_TAG = ?", selectionArgs = arrayOf(tag), orderBy = COL_PRIMARY_KEY)
                         .use { cursor ->
                             while (cursor.moveToNext()) {
                                 val payloadData = readPayload(cursor)
                                 val contentValues = ContentValues()
 
-                                contentValues.put(COL_TAG, tag) // May be updating from oldTag.
-                                contentValues.put(COL_CONVERSATION_ID, conversationId) // May not have had conversation ID when enqueued.
+                                // May not have had conversation ID when enqueued.
+                                contentValues.put(COL_CONVERSATION_ID, conversationId)
 
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && payloadData.isEncrypted && encryptionKey != null) {
+                                    // If encrypted, we have to update the token the hard way.
                                     val updatedData = updateEmbeddedToken(token, encryptionKey, payloadData.type, payloadData.mediaType, payloadData.data)
 
                                     if (payloadData.sidecarFilename.dataFilePath.isNotNullOrEmpty()) {
@@ -157,8 +160,10 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
                                         contentValues.put(COL_PAYLOAD_DATA, updateEmbeddedToken(token, encryptionKey, payloadData.type, payloadData.mediaType, encryptedBytes))
                                     }
 
-                                    contentValues.put(COL_TOKEN, "embedded") // May have been invalidated after auth failure.
+                                    // Use placeholder for token column to indicate ready to send.
+                                    contentValues.put(COL_TOKEN, "embedded")
                                 } else {
+                                    // For unencrypted, just update the token column with the value.
                                     contentValues.put(COL_TOKEN, token)
                                 }
 

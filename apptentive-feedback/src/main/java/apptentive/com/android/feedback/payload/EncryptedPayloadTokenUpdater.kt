@@ -30,16 +30,28 @@ class EncryptedPayloadTokenUpdater {
                     encryptionKey
                 )
             } else if (contentType?.type == "multipart" && contentType.subType == "encrypted") {
-                val boundary = contentType?.parameters?.get("boundary") ?: "s16u0iwtqlokf4v9cpgne8a2amdrxz735hjby"
+                // Attempt to get the multi-part boundary from the Content-Type header.
+                val boundary = contentType?.parameters?.get("boundary") ?: Payload.BOUNDARY
                 val inputStream = ByteArrayInputStream(data)
+
                 val parser = MultipartParser(inputStream, boundary)
                 if (parser.numberOfParts > 0) {
+                    // Split the first part into header and content pieces.
                     val firstPart = parser.getPartAtIndex(0)
+
+                    // The first part is the JSON that contains the token we need to update.
                     if (firstPart != null) {
+                        // Decrypt the non-header portion of the part.
                         val decryptedPartData = decrypt(firstPart.content, encryptionKey)
+
+                        // Also split the decrypted part into headers and content.
                         val decryptedPart = MultipartParser.parsePart(ByteArrayInputStream(decryptedPartData), 0L..decryptedPartData.size + 2)
+
                         if (decryptedPart != null) {
+                            // Update the JSON with the new token
                             val updatedJson = updateJSON(token, decryptedPart.content)
+
+                            // Create a new PayloadPart-implementing instance with the updated JSON.
                             val updatedPart = MultipartParser.Part(
                                 decryptedPart.multipartHeaders,
                                 updatedJson,
@@ -47,16 +59,19 @@ class EncryptedPayloadTokenUpdater {
                                 payloadType.jsonContainer()
                             )
 
+                            // Create the list of parts for the updated payload data.
                             val parts = mutableListOf<PayloadPart>(
                                 EncryptedPayloadPart(updatedPart, encryptionKey, true)
                             )
 
+                            // Add any remaining parts to the list as-is.
                             if (parser.numberOfParts > 1) {
                                 for (i in 1 until parser.numberOfParts) {
                                     parser.getPartAtIndex(i)?.let { parts.add(it) }
                                 }
                             }
 
+                            // Assemble the parts into payload data.
                             return Payload.assembleMultipart(parts, boundary)
                         }
                     }
