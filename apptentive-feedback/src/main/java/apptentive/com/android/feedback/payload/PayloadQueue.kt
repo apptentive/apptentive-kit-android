@@ -9,4 +9,5 @@ interface PayloadQueue {
     fun nextUnsentPayload(): PayloadData?
     fun deletePayloadAndAssociatedFiles(payload: PayloadData)
     fun updateCredential(credentialProvider: ConversationCredentialProvider, oldTag: String)
+    fun invalidateCredential(tag: String)
 }

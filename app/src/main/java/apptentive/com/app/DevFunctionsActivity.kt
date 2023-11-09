@@ -629,7 +629,7 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
                     }
                     JWT_EXPIRES_IN_15_SECONDS -> {
                         val fifteenSeconds: Long =
-                            currentTimeMillis + ONE_MINUTE / 4
+                            currentTimeMillis + ONE_MINUTE / 1
                         token = generateJWT(userName, "ClientTeam", currentTimeMillis, fifteenSeconds, "38127017f4cfb4f84c8dfecd48ab98c6", null, null)
                     }
                     JWT_EXPIRED -> {

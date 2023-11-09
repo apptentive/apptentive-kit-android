@@ -404,7 +404,7 @@ class ApptentiveDefaultClient(
         conversationManager.updateToken(jwtToken, callback)
         val conversationCredentialProvider = if (DependencyProvider.isRegistered<ConversationCredentialProvider>()) {
             DependencyProvider.of<ConversationCredentialProvider>()
-        } else ConversationCredential()
+        } else ConversationCredential(conversationPath = "placeholder")
         payloadSender.updateCredential(conversationCredentialProvider, conversationCredentialProvider.conversationPath)
     }
 
@@ -795,7 +795,7 @@ class ApptentiveDefaultClient(
     private fun enqueuePayload(payload: Payload) {
         val conversationCredential = if (DependencyProvider.isRegistered<ConversationCredentialProvider>()) {
             DependencyProvider.of<ConversationCredentialProvider>()
-        } else ConversationCredential()
+        } else ConversationCredential(conversationPath = "placeholder")
         payloadSender.enqueuePayload(payload, conversationCredential)
     }
 

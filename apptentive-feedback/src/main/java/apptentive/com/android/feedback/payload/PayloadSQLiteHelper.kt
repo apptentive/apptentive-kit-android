@@ -134,11 +134,11 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
         val conversationId = credentialProvider.conversationId
         val tag = credentialProvider.conversationPath
         val encryptionKey = credentialProvider.payloadEncryptionKey
-        val oldTag = oldTag ?: credentialProvider.conversationPath
 
         if (oldTag != null && tag != null && token != null && conversationId != null) {
             synchronized(this) {
                 writableDatabase.use { db ->
+                    Log.d(PAYLOADS, "Updating credentials for payloads with tag $oldTag")
                     db.select(tableName = TABLE_NAME, where = "$COL_TAG = ?", selectionArgs = arrayOf(oldTag), orderBy = COL_PRIMARY_KEY)
                         .use { cursor ->
                             while (cursor.moveToNext()) {
@@ -163,6 +163,7 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
                                     contentValues.put(COL_TOKEN, token)
                                 }
 
+                                Log.d(PAYLOADS, "Updating credential for payload ${payloadData.nonce} with tag $tag, conversationId $conversationId")
                                 db.update(TABLE_NAME, contentValues, "$COL_NONCE = ?", arrayOf(payloadData.nonce))
                             }
                         }
@@ -173,6 +174,14 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
         } else {
             Log.w(LogTags.PAYLOADS, "Attempting to update payloads with invalid credentials.")
             return false
+        }
+    }
+
+    fun invalidateCredential(tag: String) {
+        writableDatabase.use { db ->
+            val contentValues = ContentValues()
+            contentValues.putNull(COL_TOKEN.toString())
+            db.update(TABLE_NAME, contentValues, "$COL_TAG = ?", arrayOf(tag))
         }
     }
 

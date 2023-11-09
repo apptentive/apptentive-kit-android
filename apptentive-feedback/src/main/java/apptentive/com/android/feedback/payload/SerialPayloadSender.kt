@@ -37,6 +37,7 @@ internal class SerialPayloadSender(
 
     override fun updateCredential(credentialProvider: ConversationCredentialProvider, oldTag: String?) {
         payloadQueue.updateCredential(credentialProvider, oldTag ?: credentialProvider.conversationPath ?: "placeholder")
+        sendNextUnsentPayload()
     }
 
     private fun handleSentPayload(payload: PayloadData) {
@@ -54,10 +55,18 @@ internal class SerialPayloadSender(
         } else {
             notifyFailure(error, payload)
         }
+
+        if (error is AuthenticationFailureException) {
+            payloadQueue.invalidateCredential(payload.tag)
+        }
     }
 
     private fun shouldDeletePayload(error: Throwable): Boolean {
         return when (error) {
+            is AuthenticationFailureException -> {
+                Log.d(PAYLOADS, "Payload failed with auth error... saving")
+                false
+            }
             is PayloadSendException -> {
                 Log.d(PAYLOADS, "Payload failed to send... deleting")
                 true

@@ -1,6 +1,8 @@
 package apptentive.com.android.feedback.payload
 
 import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.utils.FileUtil
@@ -28,8 +30,13 @@ internal class PersistentPayloadQueue(
         printPayloads("Delete payload and associated files")
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun updateCredential(credentialProvider: ConversationCredentialProvider, oldTag: String) {
         dbHelper.updateCredential(credentialProvider, oldTag)
+    }
+
+    override fun invalidateCredential(tag: String) {
+        dbHelper.invalidateCredential(tag)
     }
 
     private fun printPayloads(title: String) {
