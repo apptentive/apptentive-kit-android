@@ -190,86 +190,90 @@ object Apptentive {
     ) {
         if (registered) {
             Log.w(SYSTEM, "Apptentive SDK already registered")
-            return
-        }
-        DefaultStateMachine.onEvent(SDKEvent.RegisterSDK)
+            callback?.invoke(RegisterResult.Failure("Apptentive SDK already registered", -1))
+        } else {
+            DefaultStateMachine.onEvent(SDKEvent.RegisterSDK)
 
-        try {
+            try {
 
-            // register dependency providers
-            DependencyProvider.register(AndroidLoggerProvider("Apptentive"))
-            DependencyProvider.register<ApplicationInfo>(AndroidApplicationInfo(application.applicationContext))
-            DependencyProvider.register(AndroidExecutorFactoryProvider())
-            DependencyProvider.register(
-                AndroidFileSystemProvider(
-                    application.applicationContext,
-                    "apptentive.com.android.feedback"
+                // register dependency providers
+                DependencyProvider.register(AndroidLoggerProvider("Apptentive"))
+                DependencyProvider.register<ApplicationInfo>(AndroidApplicationInfo(application.applicationContext))
+                DependencyProvider.register(AndroidExecutorFactoryProvider())
+                DependencyProvider.register(
+                    AndroidFileSystemProvider(
+                        application.applicationContext,
+                        "apptentive.com.android.feedback"
+                    )
                 )
-            )
-            DependencyProvider.register<AndroidSharedPrefDataStore>(DefaultAndroidSharedPrefDataStore(application.applicationContext))
+                DependencyProvider.register<AndroidSharedPrefDataStore>(
+                    DefaultAndroidSharedPrefDataStore(application.applicationContext)
+                )
 
-            checkSavedKeyAndSignature(configuration)
+                checkSavedKeyAndSignature(configuration)
 
-            // Save host app theme usage
+                // Save host app theme usage
 
-            DependencyProvider.of<AndroidSharedPrefDataStore>().putBoolean(
-                SharedPrefConstants.USE_HOST_APP_THEME,
-                SharedPrefConstants.USE_HOST_APP_THEME_KEY,
-                configuration.shouldInheritAppTheme
-            )
+                DependencyProvider.of<AndroidSharedPrefDataStore>().putBoolean(
+                    SharedPrefConstants.USE_HOST_APP_THEME,
+                    SharedPrefConstants.USE_HOST_APP_THEME_KEY,
+                    configuration.shouldInheritAppTheme
+                )
 
-            // Set log level
-            Log.logLevel = configuration.logLevel
+                // Set log level
+                Log.logLevel = configuration.logLevel
 
-            // Set message redaction
-            SensitiveDataUtils.shouldSanitizeLogMessages = configuration.shouldSanitizeLogMessages
+                // Set message redaction
+                SensitiveDataUtils.shouldSanitizeLogMessages =
+                    configuration.shouldSanitizeLogMessages
 
-            // Set rating throttle
-            ThrottleUtils.ratingThrottleLength = configuration.ratingInteractionThrottleLength
+                // Set rating throttle
+                ThrottleUtils.ratingThrottleLength = configuration.ratingInteractionThrottleLength
 
-            // Save alternate app store URL to be set later
+                // Save alternate app store URL to be set later
 
-            DependencyProvider.of<AndroidSharedPrefDataStore>().putString(
-                SharedPrefConstants.CUSTOM_STORE_URL,
-                SharedPrefConstants.CUSTOM_STORE_URL_KEY,
-                configuration.customAppStoreURL
-            )
+                DependencyProvider.of<AndroidSharedPrefDataStore>().putString(
+                    SharedPrefConstants.CUSTOM_STORE_URL,
+                    SharedPrefConstants.CUSTOM_STORE_URL_KEY,
+                    configuration.customAppStoreURL
+                )
 
-            Log.i(SYSTEM, "Registering Apptentive Android SDK ${Constants.SDK_VERSION}")
-            Log.v(
-                SYSTEM,
-                "ApptentiveKey: ${SensitiveDataUtils.hideIfSanitized(configuration.apptentiveKey)} " +
-                    "ApptentiveSignature: ${SensitiveDataUtils.hideIfSanitized(configuration.apptentiveSignature)}"
-            )
+                Log.i(SYSTEM, "Registering Apptentive Android SDK ${Constants.SDK_VERSION}")
+                Log.v(
+                    SYSTEM,
+                    "ApptentiveKey: ${SensitiveDataUtils.hideIfSanitized(configuration.apptentiveKey)} " +
+                        "ApptentiveSignature: ${SensitiveDataUtils.hideIfSanitized(configuration.apptentiveSignature)}"
+                )
 
-            stateExecutor = ExecutorQueue.createSerialQueue("SDK Queue")
-            mainExecutor = ExecutorQueue.mainQueue
+                stateExecutor = ExecutorQueue.createSerialQueue("SDK Queue")
+                mainExecutor = ExecutorQueue.mainQueue
 
-            // wrap the callback
-            val callbackWrapper: ((RegisterResult) -> Unit)? = if (callback != null) {
-                {
-                    mainExecutor.execute {
-                        callback.invoke(it)
+                // wrap the callback
+                val callbackWrapper: ((RegisterResult) -> Unit)? = if (callback != null) {
+                    {
+                        mainExecutor.execute {
+                            callback.invoke(it)
+                        }
+                    }
+                } else null
+
+                client = ApptentiveDefaultClient(
+                    configuration = configuration,
+                    httpClient = createHttpClient(application.applicationContext),
+                    executors = Executors(
+                        state = stateExecutor,
+                        main = mainExecutor
+                    ),
+                ).apply {
+                    stateExecutor.execute {
+                        initialize(application.applicationContext)
+                        start(application.applicationContext, callbackWrapper)
                     }
                 }
-            } else null
-
-            client = ApptentiveDefaultClient(
-                configuration = configuration,
-                httpClient = createHttpClient(application.applicationContext),
-                executors = Executors(
-                    state = stateExecutor,
-                    main = mainExecutor
-                ),
-            ).apply {
-                stateExecutor.execute {
-                    initialize(application.applicationContext)
-                    start(application.applicationContext, callbackWrapper)
-                }
+            } catch (exception: Exception) {
+                Log.e(FEEDBACK, "Exception thrown in the SDK registration", exception)
+                DefaultStateMachine.onEvent(SDKEvent.Error)
             }
-        } catch (exception: Exception) {
-            Log.e(FEEDBACK, "Exception thrown in the SDK registration", exception)
-            DefaultStateMachine.onEvent(SDKEvent.Error)
         }
     }
 
@@ -310,6 +314,13 @@ object Apptentive {
             }
         }
     }
+
+    /**
+     * Returns whether or not the register() method is already called.
+     *
+     * @return true if the SDK's register method is already called, false otherwise.
+     */
+    fun isRegistered(): Boolean = registered
 
     internal fun executeCallbackInMainExecutor(callback: ((result: LoginResult) -> Unit)? = null, result: LoginResult) {
         mainExecutor.execute {

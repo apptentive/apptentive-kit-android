@@ -269,7 +269,7 @@ class ApptentiveDefaultClient(
         val subClaim = JwtUtils.extractSub(jwtToken)
 
         if (subClaim == null) {
-            callback?.invoke(LoginResult.Error("Invalid JWT token"))
+            executeCallbackInMainExecutor(callback, LoginResult.Error("Invalid JWT token"))
             return
         }
 
