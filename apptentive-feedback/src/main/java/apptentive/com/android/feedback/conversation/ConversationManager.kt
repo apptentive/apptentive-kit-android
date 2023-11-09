@@ -30,7 +30,6 @@ import apptentive.com.android.feedback.platform.AndroidUtils.currentTimeSeconds
 import apptentive.com.android.feedback.platform.DefaultStateMachine
 import apptentive.com.android.feedback.platform.SDKEvent
 import apptentive.com.android.feedback.platform.SDKState
-import apptentive.com.android.feedback.utils.FileStorageUtil
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.JwtString
 import apptentive.com.android.feedback.utils.JwtUtils
@@ -247,7 +246,6 @@ internal class ConversationManager(
                         activeConversationSubject.value = activeConversation.value.copy(
                             conversationToken = jwtToken
                         )
-                        FileStorageUtil.deleteMessageFile() // delete previously stored message file as it would be cached with different encryption setting
                     }
                     updateConversationCredentialProvider(conversationId, jwtToken, encryptionKey)
                     loginCallback?.invoke(LoginResult.Success)

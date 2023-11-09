@@ -335,16 +335,25 @@ class ApptentiveDefaultClient(
         when (result) {
             is LoginResult.Success -> {
                 Log.v(CONVERSATION, "Successfully logged in")
+                // if transitioning from anonymous, we don't want to resend the app launch event and reset the session id
                 if (!transitioningFromAnonymous) {
                     updateSessionIdForNewLoginSession()
                     engage(Event.internal(InternalEvent.APP_LAUNCH.labelName))
+                } else {
+                    // delete previously stored message file as it would be cached with different encryption setting
+                    messageManager?.resetForAnonymousToLogin()
                 }
                 engage(Event.internal(InternalEvent.SDK_LOGIN.labelName))
+
                 if (messageManager == null) {
                     createMessageManager()
                 }
-                messageManager?.login()
-                messageManager?.addUnreadMessageListener(::updateMessageCenterNotification)
+
+                messageManager?.apply {
+                    login()
+                    addUnreadMessageListener(::updateMessageCenterNotification)
+                }
+
                 val sharedPrefDataStore = DependencyProvider.of<AndroidSharedPrefDataStore>()
                 val pushProvider = sharedPrefDataStore.getInt(APPTENTIVE, PREF_KEY_PUSH_PROVIDER)
                 val pushProviderName = sharedPrefDataStore.getString(APPTENTIVE, PREF_KEY_PUSH_TOKEN)
