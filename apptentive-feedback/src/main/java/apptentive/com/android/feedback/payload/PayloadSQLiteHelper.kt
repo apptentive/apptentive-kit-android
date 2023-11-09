@@ -30,13 +30,8 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        // FIXME: Handle the 5.x to 6.5 migration
-        if (!doesColumnExist(db, COL_TAG)) {
-            db.execSQL(SQL_QUERY_ADD_TAG)
-            db.execSQL(SQL_QUERY_ADD_TOKEN)
-            db.execSQL(SQL_QUERY_ADD_CONVERSATION_ID)
-            db.execSQL(SQL_QUERY_ADD_ENCRYPTED)
-        }
+        db.execSQL(SQL_QUERY_DROP_TABLE)
+        onCreate(db)
     }
 
     fun addPayload(payload: PayloadData) {
@@ -310,10 +305,7 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
             "$COL_ENCRYPTED INTEGER" +
             ")"
 
-        private const val SQL_QUERY_ADD_TAG = "ALTER TABLE $TABLE_NAME ADD COLUMN tag TEXT"
-        private const val SQL_QUERY_ADD_TOKEN = "ALTER TABLE $TABLE_NAME ADD COLUMN token TEXT"
-        private const val SQL_QUERY_ADD_CONVERSATION_ID = "ALTER TABLE $TABLE_NAME ADD COLUMN conversation_id TEXT"
-        private const val SQL_QUERY_ADD_ENCRYPTED = "ALTER TABLE $TABLE_NAME ADD COLUMN encrypted INTEGER"
+        private const val SQL_QUERY_DROP_TABLE = "DROP TABLE IF EXISTS $TABLE_NAME"
     }
 
     private fun doesColumnExist(db: SQLiteDatabase, column: Column): Boolean {
