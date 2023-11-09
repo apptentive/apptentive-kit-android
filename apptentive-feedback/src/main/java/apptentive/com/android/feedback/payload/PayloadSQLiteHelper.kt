@@ -5,7 +5,6 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.os.Build
 import androidx.annotation.VisibleForTesting
 import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.encryption.EncryptionNoOp
@@ -14,6 +13,7 @@ import apptentive.com.android.feedback.payload.EncryptedPayloadTokenUpdater.Comp
 import apptentive.com.android.feedback.platform.DefaultStateMachine
 import apptentive.com.android.feedback.platform.SDKState
 import apptentive.com.android.feedback.utils.FileUtil
+import apptentive.com.android.feedback.utils.isMarshmallowOrGreater
 import apptentive.com.android.network.HttpMethod
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags
@@ -41,8 +41,8 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
 
     fun addPayload(payload: PayloadData) {
         Log.v(PAYLOADS, "Saving payload body to: ${writableDatabase.path}")
-        val fileName = if (payload.sidecarFilename.data.isNotEmpty()) {
-            val encryptedBytes = determineEncryption().encrypt(payload.sidecarFilename.data)
+        val fileName = if (payload.sidecarData.data.isNotEmpty()) {
+            val encryptedBytes = determineEncryption().encrypt(payload.sidecarData.data)
             val fileName = FileUtil.generateCacheFilePathFromNonceOrPrefix(context, payload.nonce, "apptentive-message-payload")
             FileUtil.writeFileData(fileName, encryptedBytes)
             fileName
@@ -148,20 +148,34 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
                                 // May not have had conversation ID when enqueued.
                                 contentValues.put(COL_CONVERSATION_ID, conversationId)
 
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && payloadData.isEncrypted && encryptionKey != null) {
-                                    // If encrypted, we have to update the token the hard way.
-                                    val updatedData = updateEmbeddedToken(token, encryptionKey, payloadData.type, payloadData.mediaType, payloadData.data)
+                                if (payloadData.isEncrypted) {
+                                    if (isMarshmallowOrGreater() && encryptionKey != null) {
+                                        // If encrypted, we have to update the token the hard way.
+                                        val updatedData = updateEmbeddedToken(
+                                            token,
+                                            encryptionKey,
+                                            payloadData.type,
+                                            payloadData.mediaType,
+                                            payloadData.data
+                                        )
 
-                                    if (payloadData.sidecarFilename.dataFilePath.isNotNullOrEmpty()) {
-                                        val encryptedBytes = determineEncryption().encrypt(updatedData)
-                                        FileUtil.writeFileData(payloadData.sidecarFilename.dataFilePath, encryptedBytes)
+                                        val encryptedBytes =
+                                            determineEncryption().encrypt(updatedData)
+
+                                        if (payloadData.sidecarData.dataFilePath.isNotNullOrEmpty()) {
+                                            FileUtil.writeFileData(
+                                                payloadData.sidecarData.dataFilePath,
+                                                encryptedBytes
+                                            )
+                                        } else {
+                                            contentValues.put(COL_PAYLOAD_DATA, encryptedBytes)
+                                        }
+
+                                        // Use placeholder for token column to indicate ready to send.
+                                        contentValues.put(COL_TOKEN, "embedded")
                                     } else {
-                                        val encryptedBytes = determineEncryption().encrypt(payloadData.data)
-                                        contentValues.put(COL_PAYLOAD_DATA, updateEmbeddedToken(token, encryptionKey, payloadData.type, payloadData.mediaType, encryptedBytes))
+                                        Log.w(PAYLOADS, "Invalid encrypted payload when updating token.")
                                     }
-
-                                    // Use placeholder for token column to indicate ready to send.
-                                    contentValues.put(COL_TOKEN, "embedded")
                                 } else {
                                     // For unencrypted, just update the token column with the value.
                                     contentValues.put(COL_TOKEN, token)
@@ -230,7 +244,7 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
             method = HttpMethod.valueOf(cursor.getString(COL_METHOD)),
             mediaType = MediaType.parse(cursor.getString(COL_MEDIA_TYPE)),
             data = payloadData,
-            sidecarFilename = SidecarData(dataFilePath = dataPath)
+            sidecarData = SidecarData(dataFilePath = dataPath)
         )
     }
 

@@ -61,9 +61,6 @@ abstract class Payload(
             dataBytes = byteArrayOf()
         }
 
-        // TODO: test when logged out.
-        // TODO: test with null token.
-
         return PayloadData(
             nonce = nonce,
             type = getPayloadType(),
@@ -75,7 +72,7 @@ abstract class Payload(
             method = getHttpMethod(),
             mediaType = getContentType(parts, Payload.BOUNDARY, isEncrypted),
             data = dataBytes,
-            sidecarFilename = attachmentData
+            sidecarData = attachmentData
         )
     }
 

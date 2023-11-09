@@ -197,7 +197,7 @@ class MessageManagerTest : TestCase() {
         val credentialProvider = DependencyProvider.of<ConversationCredentialProvider>()
         val actualPayloadData = actualPayload?.toPayloadData(credentialProvider)
 
-        val inputStream = ByteArrayInputStream(actualPayloadData!!.sidecarFilename.data)
+        val inputStream = ByteArrayInputStream(actualPayloadData!!.sidecarData.data)
         val parser = MultipartParser(inputStream, "s16u0iwtqlokf4v9cpgne8a2amdrxz735hjby")
 
         assertEquals(2, parser.numberOfParts)
@@ -224,8 +224,6 @@ class MessageManagerTest : TestCase() {
                 "Content-Type: image/jpeg\r\n",
             secondPart.multipartHeaders
         )
-
-        // TODO: use original filename
 
         assertTrue(secondPart.content.isNotEmpty())
     }
@@ -317,7 +315,7 @@ class MessageManagerTest : TestCase() {
         val credentialProvider = DependencyProvider.of<ConversationCredentialProvider>()
         val actualPayloadData = actualPayload?.toPayloadData(credentialProvider)
 
-        val inputStream = ByteArrayInputStream(actualPayloadData?.sidecarFilename!!.data)
+        val inputStream = ByteArrayInputStream(actualPayloadData?.sidecarData!!.data)
         val parser = MultipartParser(inputStream, "s16u0iwtqlokf4v9cpgne8a2amdrxz735hjby")
 
         assertEquals(2, parser.numberOfParts)

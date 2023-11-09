@@ -176,8 +176,6 @@ class PayloadSQLiteHelperTest : TestCase() {
 
         verifySinglePartWithToken(payloadsUpdatedWithEncryptedToken[2].data, "mockedUpdatedConversationToken")
         verifyMultipartWithToken(payloadsUpdatedWithEncryptedToken[3].data, "mockedUpdatedConversationToken")
-
-        deleteTestImageTempFile()
     }
 
     private fun verifySinglePartWithToken(data: ByteArray, token: String) {
@@ -266,9 +264,6 @@ class PayloadSQLiteHelperTest : TestCase() {
         }
     }
 
-    private fun deleteTestImageTempFile() {
-    }
-
     private fun createPayload(
         nonce: String,
         type: PayloadType,
@@ -280,7 +275,7 @@ class PayloadSQLiteHelperTest : TestCase() {
         return PayloadData(
             nonce = nonce,
             type = type,
-            tag = "test-tag", // TODO: pass a context and use that?
+            tag = "test-tag",
             token = "test-token",
             conversationId = "test-conversation-id",
             isEncrypted = false,

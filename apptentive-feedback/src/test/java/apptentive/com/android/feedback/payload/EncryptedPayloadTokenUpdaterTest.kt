@@ -188,7 +188,7 @@ internal class EncryptedPayloadTokenUpdaterTest {
 
         val payloadData = messagePayload.toPayloadData(conversationCredential)
 
-        val updatedEncryptedPayloadData = EncryptedPayloadTokenUpdater.updateEmbeddedToken("abc123", conversationCredential.payloadEncryptionKey!!, PayloadType.Message, MediaType.multipartEncrypted("s16u0iwtqlokf4v9cpgne8a2amdrxz735hjby"), payloadData.sidecarFilename.data)
+        val updatedEncryptedPayloadData = EncryptedPayloadTokenUpdater.updateEmbeddedToken("abc123", conversationCredential.payloadEncryptionKey!!, PayloadType.Message, MediaType.multipartEncrypted("s16u0iwtqlokf4v9cpgne8a2amdrxz735hjby"), payloadData.sidecarData.data)
 
         val inputStream = ByteArrayInputStream(updatedEncryptedPayloadData)
         val parser = MultipartParser(inputStream, "s16u0iwtqlokf4v9cpgne8a2amdrxz735hjby")

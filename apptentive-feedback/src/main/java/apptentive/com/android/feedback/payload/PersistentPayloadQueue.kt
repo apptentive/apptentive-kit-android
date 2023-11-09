@@ -24,7 +24,7 @@ internal class PersistentPayloadQueue(
     }
 
     override fun deletePayloadAndAssociatedFiles(payload: PayloadData) {
-        FileUtil.deleteFile(payload.sidecarFilename.dataFilePath)
+        FileUtil.deleteFile(payload.sidecarData.dataFilePath)
         dbHelper.deletePayload(payload.nonce)
         printPayloads("Delete payload and associated files")
     }
