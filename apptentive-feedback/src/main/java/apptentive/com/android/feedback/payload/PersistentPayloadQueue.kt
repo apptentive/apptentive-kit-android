@@ -74,7 +74,7 @@ internal class PersistentPayloadQueue(
                 val formattedToken = when (payload.token) {
                     null -> "null"
                     "embedded" -> "embedded"
-                    else ->"JWT"
+                    else -> "JWT"
                 }
 
                 arrayOf<Any?>(
