@@ -171,6 +171,7 @@ class ApptentiveDefaultClient(
         engage(Event.internal(InternalEvent.APP_LAUNCH.labelName))
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     @WorkerThread
     private fun getConversationToken(
         registerCallback: ((result: RegisterResult) -> Unit)?

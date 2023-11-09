@@ -136,8 +136,7 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
         val encryptionKey = credentialProvider.payloadEncryptionKey
         val oldTag = oldTag ?: credentialProvider.conversationPath
 
-        if (oldTag != null && tag != null && token != null && conversationId != null && encryptionKey != null) {
-
+        if (oldTag != null && tag != null && token != null && conversationId != null) {
             synchronized(this) {
                 writableDatabase.use { db ->
                     db.select(tableName = TABLE_NAME, where = "$COL_TAG = ?", selectionArgs = arrayOf(oldTag), orderBy = COL_PRIMARY_KEY)
@@ -149,11 +148,11 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
                                 contentValues.put(COL_TAG, tag) // May be updating from oldTag.
                                 contentValues.put(COL_CONVERSATION_ID, conversationId) // May not have had conversation ID when enqueued.
 
-                                if (payloadData.isEncrypted) {
+                                if (payloadData.isEncrypted && encryptionKey != null) {
                                     val updatedData = updateEmbeddedToken(token, encryptionKey, payloadData.type, payloadData.mediaType, payloadData.data)
 
                                     if (payloadData.sidecarFilename.dataFilePath.isNotNullOrEmpty()) {
-                                        val encryptedBytes = encryption.encrypt(payloadData.data)
+                                        val encryptedBytes = determineEncryption().encrypt(updatedData)
                                         FileUtil.writeFileData(payloadData.sidecarFilename.dataFilePath, encryptedBytes)
                                     } else {
                                         contentValues.put(COL_PAYLOAD_DATA, updateEmbeddedToken(token, encryptionKey, payloadData.type, payloadData.mediaType, payloadData.data))

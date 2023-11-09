@@ -45,7 +45,7 @@ class EncryptedPayloadTokenUpdater {
                                 decryptedPart.multipartHeaders,
                                 updatedJson,
                                 MediaType.applicationJson,
-                                payloadType.asString()
+                                payloadType.jsonContainer()
                             )
 
                             val parts = mutableListOf<PayloadPart>(
@@ -77,19 +77,7 @@ class EncryptedPayloadTokenUpdater {
             data: ByteArray
         ): ByteArray {
             val json = JsonConverter.toMap(String(data, Charsets.UTF_8)).toMutableMap()
-
-            if (payloadType == PayloadType.Message || payloadType == PayloadType.Logout) {
-                // No outer object (see below).
-                json["token"] = token
-            } else {
-                // For most payloads, there's an outer object with a key corresponding to the
-                // payload type and the value set to the object that contains the token/data.
-                val jsonContainer = payloadType.asString()
-                val nestedJson = json[jsonContainer] as? MutableMap<String, Any>
-                nestedJson?.put("token", token)
-                json[jsonContainer] = nestedJson
-            }
-
+            json["token"] = token
             return JsonConverter.toJson(json).toByteArray()
         }
 

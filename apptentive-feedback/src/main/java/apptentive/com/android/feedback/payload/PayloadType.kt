@@ -16,7 +16,11 @@ enum class PayloadType {
         fun parse(value: String) = valueOf(value)
     }
 
-    fun asString(): String {
-        return name.lowercase()
+    fun jsonContainer(): String {
+        return when (this) {
+            SurveyResponse -> "response"
+            AppReleaseAndSDK -> "app_release"
+            else -> name.lowercase()
+        }
     }
 }

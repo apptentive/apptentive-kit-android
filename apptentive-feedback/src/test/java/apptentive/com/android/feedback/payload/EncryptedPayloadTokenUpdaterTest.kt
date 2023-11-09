@@ -20,6 +20,8 @@ import java.io.File
 internal class EncryptedPayloadTokenUpdaterTest {
     @Test
     fun testUpdateMessageJson() {
+        DependencyProvider.register<Logger>(MockAndroidLoggerProvider())
+
         val originalJsonData = "{\"session_id\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at\":1699375136.316,\"body\":\"ABC\",\"nonce\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at_utc_offset\":-28800,\"token\":\"mockedConversationToken\"}".toByteArray()
 
         val updatedJsonData = EncryptedPayloadTokenUpdater.updateJSON("abc123", PayloadType.Message, originalJsonData)
@@ -35,6 +37,8 @@ internal class EncryptedPayloadTokenUpdaterTest {
 
     @Test
     fun testUpdateEventJson() {
+        DependencyProvider.register<Logger>(MockAndroidLoggerProvider())
+
         val originalJsonData = "{\"event\":{\"session_id\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at\":1699375136.316,\"label\":\"ABC\",\"nonce\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at_utc_offset\":-28800,\"token\":\"mockedConversationToken\"}}".toByteArray()
 
         val updatedJsonData = EncryptedPayloadTokenUpdater.updateJSON("abc123", PayloadType.Event, originalJsonData)
@@ -46,11 +50,68 @@ internal class EncryptedPayloadTokenUpdaterTest {
         Assert.assertTrue(1698774495.52 < nestedJson["client_created_at"] as Double)
         assertEquals("ABC", nestedJson["label"])
         assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", nestedJson["nonce"])
-        assertEquals("abc123", nestedJson["token"])
+        assertEquals("abc123", json["token"])
+    }
+
+    @Test
+    fun testUpdateAppReleaseSDKJson() {
+        DependencyProvider.register<Logger>(MockAndroidLoggerProvider())
+
+        val originalJsonData = "{\"app_release\":{\"session_id\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at\":1699375136.316,\"label\":\"ABC\",\"nonce\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at_utc_offset\":-28800,\"token\":\"mockedConversationToken\"}}".toByteArray()
+
+        val updatedJsonData = EncryptedPayloadTokenUpdater.updateJSON("abc123", PayloadType.AppReleaseAndSDK, originalJsonData)
+
+        val json = JsonConverter.toMap(String(updatedJsonData, Charsets.UTF_8))
+        val nestedJson = json["app_release"] as Map<String, Any>
+
+        assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", nestedJson["session_id"])
+        Assert.assertTrue(1698774495.52 < nestedJson["client_created_at"] as Double)
+        assertEquals("ABC", nestedJson["label"])
+        assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", nestedJson["nonce"])
+        assertEquals("abc123", json["token"])
+    }
+
+    @Test
+    fun testUpdateSurveyResponseJson() {
+        DependencyProvider.register<Logger>(MockAndroidLoggerProvider())
+
+        val originalJsonData = "{\"response\":{\"session_id\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at\":1699375136.316,\"label\":\"ABC\",\"nonce\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at_utc_offset\":-28800,\"token\":\"mockedConversationToken\"}}".toByteArray()
+
+        val updatedJsonData = EncryptedPayloadTokenUpdater.updateJSON("abc123", PayloadType.SurveyResponse, originalJsonData)
+
+        val json = JsonConverter.toMap(String(updatedJsonData, Charsets.UTF_8))
+        val nestedJson = json["response"] as Map<String, Any>
+
+        assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", nestedJson["session_id"])
+        Assert.assertTrue(1698774495.52 < nestedJson["client_created_at"] as Double)
+        assertEquals("ABC", nestedJson["label"])
+        assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", nestedJson["nonce"])
+        assertEquals("abc123", json["token"])
+    }
+
+    @Test
+    fun testUpdatePersonJson() {
+        DependencyProvider.register<Logger>(MockAndroidLoggerProvider())
+
+        val originalJsonData = "{\"person\":{\"session_id\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at\":1699375136.316,\"name\":\"Testy McTestface\",\"email\":\"test@example.com\",\"nonce\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at_utc_offset\":-28800,\"token\":\"mockedConversationToken\"}}".toByteArray()
+
+        val updatedJsonData = EncryptedPayloadTokenUpdater.updateJSON("abc123", PayloadType.Person, originalJsonData)
+
+        val json = JsonConverter.toMap(String(updatedJsonData, Charsets.UTF_8))
+        val nestedJson = json["person"] as Map<String, Any>
+
+        assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", nestedJson["session_id"])
+        Assert.assertTrue(1698774495.52 < nestedJson["client_created_at"] as Double)
+        assertEquals("Testy McTestface", nestedJson["name"])
+        assertEquals("test@example.com", nestedJson["email"])
+        assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", nestedJson["nonce"])
+        assertEquals("abc123", json["token"])
     }
 
     @Test
     fun testEncryptDecrypt() {
+        DependencyProvider.register<Logger>(MockAndroidLoggerProvider())
+
         val conversationCredential = MockEncryptedConversationCredential()
 
         val originalJsonData = "{\"event\":{\"session_id\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at\":1699375136.316,\"label\":\"ABC\",\"nonce\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at_utc_offset\":-28800,\"token\":\"mockedConversationToken\"}}".toByteArray()
@@ -64,6 +125,8 @@ internal class EncryptedPayloadTokenUpdaterTest {
 
     @Test
     fun testEventFullTokenUpdate() {
+        DependencyProvider.register<Logger>(MockAndroidLoggerProvider())
+
         val conversationCredential = MockEncryptedConversationCredential()
 
         val originalJsonData = "{\"event\":{\"session_id\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at\":1699375136.316,\"label\":\"ABC\",\"nonce\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at_utc_offset\":-28800,\"token\":\"mockedConversationToken\"}}".toByteArray()
@@ -81,11 +144,13 @@ internal class EncryptedPayloadTokenUpdaterTest {
         Assert.assertTrue(1698774495.52 < nestedJson["client_created_at"] as Double)
         assertEquals("ABC", nestedJson["label"])
         assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", nestedJson["nonce"])
-        assertEquals("abc123", nestedJson["token"])
+        assertEquals("abc123", json["token"])
     }
 
     @Test
     fun testMessageFullTokenUpdate() {
+        DependencyProvider.register<Logger>(MockAndroidLoggerProvider())
+
         val conversationCredential = MockEncryptedConversationCredential()
 
         val originalJsonData = "{\"session_id\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at\":1699375136.316,\"body\":\"ABC\",\"nonce\":\"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\"client_created_at_utc_offset\":-28800,\"token\":\"mockedConversationToken\"}".toByteArray()
