@@ -25,7 +25,6 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':apptentive-core')
-    implementation project(':apptentive-feedback')
     implementation "androidx.test:core:$androidx_test_version"
     implementation "androidx.test:runner:$androidx_test_version"
     implementation "io.mockk:mockk:$mockk_version"
