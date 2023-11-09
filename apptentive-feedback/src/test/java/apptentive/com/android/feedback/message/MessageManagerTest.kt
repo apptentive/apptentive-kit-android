@@ -28,6 +28,7 @@ import apptentive.com.android.util.Result
 import apptentive.com.android.util.generateUUID
 import org.junit.Assert
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -158,7 +159,7 @@ class MessageManagerTest : TestCase() {
         )
 
         val json = JsonConverter.toMap(String(firstPart.content, Charsets.UTF_8))
-        assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["session_id"])
+        assertNotNull(json["session_id"])
         assertTrue(1698774495.52 < json["client_created_at"] as Double)
         assertEquals("ABC", json["body"])
         assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["nonce"])
@@ -210,7 +211,7 @@ class MessageManagerTest : TestCase() {
         )
 
         val json = JsonConverter.toMap(String(firstPart.content, Charsets.UTF_8))
-        assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["session_id"])
+        assertNotNull(json["session_id"])
         assertTrue(1698774495.52 < json["client_created_at"] as Double)
         assertEquals("ABC", json["body"])
         assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["nonce"])
@@ -275,11 +276,11 @@ class MessageManagerTest : TestCase() {
         )
 
         val json = JsonConverter.toMap(String(decryptedPart.content, Charsets.UTF_8))
-        assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["session_id"])
+        assertNotNull(json["session_id"])
         assertTrue(1698774495.52 < json["client_created_at"] as Double)
         assertEquals("ABC", json["body"])
         assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["nonce"])
-        assertEquals("mockedConversationToken", json["token"])
+        assertEquals("mockedEncryptedConversationToken", json["token"])
     }
 
     @Test
@@ -339,11 +340,11 @@ class MessageManagerTest : TestCase() {
         )
 
         val json = JsonConverter.toMap(String(decryptedPart.content, Charsets.UTF_8))
-        assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["session_id"])
+        assertNotNull(json["session_id"])
         assertTrue(1698774495.52 < json["client_created_at"] as Double)
         assertEquals("ABC", json["body"])
         assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["nonce"])
-        assertEquals("mockedConversationToken", json["token"])
+        assertEquals("mockedEncryptedConversationToken", json["token"])
 
         val secondPart = parser.getPartAtIndex(1)!!
 

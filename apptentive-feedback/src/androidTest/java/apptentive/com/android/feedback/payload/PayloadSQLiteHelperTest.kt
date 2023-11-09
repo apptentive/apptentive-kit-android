@@ -24,10 +24,8 @@ import apptentive.com.android.feedback.utils.MultipartParser
 import apptentive.com.android.network.HttpMethod
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.serialization.json.JsonConverter
-import io.mockk.verify
 import org.junit.After
 import org.junit.Assert
-import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
@@ -204,7 +202,7 @@ class PayloadSQLiteHelperTest : TestCase() {
 
         Assert.assertEquals(
             "Content-Disposition: form-data;name=\"message\"\r\n" +
-                    "Content-Type: application/octet-stream\r\n",
+                "Content-Type: application/octet-stream\r\n",
             firstPart.multipartHeaders
         )
 
@@ -213,7 +211,7 @@ class PayloadSQLiteHelperTest : TestCase() {
 
         Assert.assertEquals(
             "Content-Disposition: form-data;name=\"message\"\r\n" +
-                    "Content-Type: application/json;charset=UTF-8\r\n",
+                "Content-Type: application/json;charset=UTF-8\r\n",
             decryptedPart!!.multipartHeaders
         )
 
@@ -228,7 +226,7 @@ class PayloadSQLiteHelperTest : TestCase() {
 
         Assert.assertEquals(
             "Content-Disposition: form-data;name=\"file[]\";filename=\"dog.jpg\"\r\n" +
-                    "Content-Type: application/octet-stream\r\n",
+                "Content-Type: application/octet-stream\r\n",
             secondPart.multipartHeaders
         )
 
@@ -237,7 +235,7 @@ class PayloadSQLiteHelperTest : TestCase() {
 
         Assert.assertEquals(
             "Content-Disposition: form-data;name=\"file[]\";filename=\"dog.jpg\"\r\n" +
-                    "Content-Type: image/jpeg\r\n",
+                "Content-Type: image/jpeg\r\n",
             decryptedPart2!!.multipartHeaders
         )
 
@@ -261,7 +259,7 @@ class PayloadSQLiteHelperTest : TestCase() {
             inputStream.close()
             outputStream.close()
 
-             return outputFile.absolutePath
+            return outputFile.absolutePath
         } catch (e: IOException) {
             e.printStackTrace()
             return ""
@@ -269,7 +267,6 @@ class PayloadSQLiteHelperTest : TestCase() {
     }
 
     private fun deleteTestImageTempFile() {
-
     }
 
     private fun createPayload(
