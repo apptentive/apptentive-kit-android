@@ -177,7 +177,6 @@ internal class DefaultConversationSerializer(
             }
         } catch (e: Exception) {
             throw ConversationSerializationException("Unable to load conversation roster", e)
-            // TODO add throttle logic like we have it for conversation
         }
 
     private fun readEngagementManifest(): EngagementManifest? {

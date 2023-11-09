@@ -117,7 +117,7 @@ class DefaultConversationSerializerTest : TestCase() {
         every {
             FileStorageUtil.hasStoragePriorToSkipLogic()
         } returns false
-        val manifestFile = createTempFile("manifest.json")
+        val manifestFile = createTempFile("manifest_structure_test.json")
         val serializer = DefaultConversationSerializer(
             conversationRosterFile = createTempFile("roster.bin"),
         ).apply {
@@ -159,7 +159,7 @@ class DefaultConversationSerializerTest : TestCase() {
             FileStorageUtil.hasStoragePriorToSkipLogic()
         } returns true // write random data
         conversationFile.writeBytes(Random.nextBytes(10))
-
+        val manifestFile = createTempFile("manifest_structure_test.json")
         val serializer = DefaultConversationSerializer(
             conversationRosterFile = createTempFile("roster.bin"),
         ).apply {
@@ -183,7 +183,8 @@ class DefaultConversationSerializerTest : TestCase() {
         every {
             FileStorageUtil.hasStoragePriorToSkipLogic()
         } returns true
-        val manifestFile = createTempFile("manifest.json")
+
+        val manifestFile = createTempFile("manifest_structure_test.json")
         val serializer = DefaultConversationSerializer(
             conversationRosterFile = createTempFile("roster.bin"),
         ).apply {

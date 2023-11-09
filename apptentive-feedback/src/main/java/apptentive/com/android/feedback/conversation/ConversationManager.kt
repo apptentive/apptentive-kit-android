@@ -329,7 +329,6 @@ internal class ConversationManager(
             activeConversationSubject.value = getConversation().copy(
                 conversationToken = jwtToken,
             )
-            // TODO update the token for enqueued payloads/failed payloads
             callback?.invoke(LoginResult.Success)
         } else {
             Log.d(CONVERSATION, "Cannot refresh the auth token for the user with subject: $subClaim")
@@ -372,13 +371,11 @@ internal class ConversationManager(
         val lastVersionItemSeen = conversation.engagementData.versionHistory.getLastVersionSeen()
         val lastVersionCode: VersionCode? = lastVersionItemSeen?.versionCode
         val lastVersionName: VersionName? = lastVersionItemSeen?.versionName
-        val lastSeenSdkVersion: String = conversation.sdk.version
 
         val currentAppRelease = conversationRepository.getCurrentAppRelease()
         val currentSDK: SDK = conversationRepository.getCurrentSdk()
         val currentVersionCode: VersionCode = currentAppRelease.versionCode
         val currentVersionName: VersionName = currentAppRelease.versionName
-        val currentSdkVersion: String = Constants.SDK_VERSION
 
         if (lastVersionItemSeen == null ||
             currentVersionCode != lastVersionCode ||
@@ -392,9 +389,10 @@ internal class ConversationManager(
             appReleaseChanged = true
         }
 
-        if (lastSeenSdkVersion != currentSdkVersion) {
+        if (conversation.sdk != currentSDK) {
             sdkChanged = true
-            Log.d(CONVERSATION, "SDK version was changed: $lastSeenSdkVersion => $currentSdkVersion")
+            Log.d(CONVERSATION, "SDK updated: ${conversation.sdk.version} (${conversation.sdk.distribution} ${conversation.sdk.distributionVersion}) => ${currentSDK.version} (${currentSDK.distribution} ${currentSDK.distributionVersion})")
+            Log.v(CONVERSATION, "SDK full changes: ${conversation.sdk} => $currentSDK")
         }
 
         if (appReleaseChanged || sdkChanged) {

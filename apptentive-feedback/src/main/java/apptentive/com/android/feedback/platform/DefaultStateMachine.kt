@@ -140,11 +140,6 @@ enum class SDKState {
     // No active anonymous or logged in conversation. Logged out conversation(s) is/are available
     LOGGED_OUT,
     // SDK has hit an error state like invalid JWT token, conversation deserialization error etc.
-    // TODO split into recoverable and unrecoverable error states
-
-    // TODO Recoverable manifest expiry without internet,
-    //  jwt token expiry - can customer recover the state by logging in again with a valid jwt?
-
     ERROR
 }
 
