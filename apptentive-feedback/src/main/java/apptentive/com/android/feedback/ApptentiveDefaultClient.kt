@@ -138,7 +138,6 @@ class ApptentiveDefaultClient(
     //region Initialization
 
     internal fun initialize(context: Context) {
-        // Consider moving other parameters out of the constructor as well
         interactionModules = loadInteractionModules()
         conversationService = createConversationService()
         DependencyProvider.register(createConversationRepository(context))
