@@ -4,12 +4,10 @@ import apptentive.com.android.feedback.Constants
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.payload.MediaType
 import apptentive.com.android.feedback.payload.PayloadType
-import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.network.HttpMethod
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.PAYLOADS
-import java.io.ByteArrayOutputStream
 import java.io.File
 
 /**
@@ -51,12 +49,15 @@ data class MessagePayload(
         val parts = super.getParts(embeddedToken).toMutableList()
 
         for (attachment in attachments) {
-            val attachmentStream = ByteArrayOutputStream()
             try {
-                retrieveAndWriteFileToStream(attachment, attachmentStream)
-                parts.add(AttachmentPayloadPart(attachmentStream.toByteArray(), attachment.contentType?.let { MediaType.parse(it) } ?: MediaType.applicationOctetStream, attachment.originalName))
-            } finally {
-                FileUtil.ensureClosed(attachmentStream)
+                val fileContents = File(attachment.localFilePath.orEmpty()).readBytes()
+                parts.add(AttachmentPayloadPart(fileContents, attachment.contentType?.let { MediaType.parse(it) } ?: MediaType.applicationOctetStream, attachment.originalName))
+            } catch (e: Exception) {
+                Log.e(
+                    PAYLOADS,
+                    "Error reading Message Payload attachment: \"${attachment.localFilePath}\".",
+                    e
+                )
             }
         }
 
@@ -64,17 +65,4 @@ data class MessagePayload(
     }
 
     //endregion
-
-    private fun retrieveAndWriteFileToStream(attachment: Message.Attachment, attachmentStream: ByteArrayOutputStream) {
-        try {
-            Log.v(PAYLOADS, "Appending attachment.")
-            attachmentStream.write(File(attachment.localFilePath.orEmpty()).readBytes())
-        } catch (e: Exception) {
-            Log.e(
-                PAYLOADS,
-                "Error reading Message Payload attachment: \"${attachment.localFilePath}\".",
-                e
-            )
-        }
-    }
 }

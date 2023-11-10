@@ -1,5 +1,7 @@
 package apptentive.com.android.feedback.utils
 
+import apptentive.com.android.feedback.model.payloads.PayloadPart
+import apptentive.com.android.feedback.payload.MediaType
 import java.io.InputStream
 
 internal class MultipartParser(
@@ -18,23 +20,25 @@ internal class MultipartParser(
     }
 
     data class Part(
-        val headers: String,
-        val content: ByteArray
-    ) {
+        override val multipartHeaders: String,
+        override val content: ByteArray,
+        override val contentType: MediaType = MediaType.applicationOctetStream,
+        override val parameterName: String? = null
+    ) : PayloadPart {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (javaClass != other?.javaClass) return false
 
             other as Part
 
-            if (headers != other.headers) return false
+            if (multipartHeaders != other.multipartHeaders) return false
             if (!content.contentEquals(other.content)) return false
 
             return true
         }
 
         override fun hashCode(): Int {
-            var result = headers.hashCode()
+            var result = multipartHeaders.hashCode()
             result = 31 * result + content.contentHashCode()
             return result
         }
@@ -52,15 +56,15 @@ internal class MultipartParser(
                 inputStream.reset()
                 inputStream.skip(partStart)
                 val lengthOfHeaders = endOfBlankLineIndex.toInt() - 4
-                var headerByteArray = ByteArray(lengthOfHeaders)
+                var headerByteArray = ByteArray(lengthOfHeaders + 2)
 
                 inputStream.read(
                     headerByteArray,
                     0,
-                    lengthOfHeaders
+                    lengthOfHeaders + 2
                 )
 
-                inputStream.skip(4)
+                inputStream.skip(2)
 
                 val lengthOfContent = range.count() - endOfBlankLineIndex.toInt() - 3
                 val contentByteArray = ByteArray(lengthOfContent)

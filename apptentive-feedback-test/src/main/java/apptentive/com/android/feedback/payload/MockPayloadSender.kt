@@ -13,4 +13,6 @@ class MockPayloadSender(
         this.credentialProvider = credentialProvider
         callback?.invoke(payload)
     }
+
+    override fun updateCredential(credentialProvider: ConversationCredentialProvider) {}
 }

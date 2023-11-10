@@ -340,7 +340,7 @@ internal class ConversationManager(
                 conversationId = id,
                 conversationToken = token,
                 payloadEncryptionKey = payloadEncryptionKey,
-                conversationPath = DefaultStateMachine.conversationRoster.activeConversation?.path
+                conversationPath = DefaultStateMachine.conversationRoster.activeConversation?.path ?: "logged-out"
             )
         )
     }

@@ -8,9 +8,12 @@ import android.database.sqlite.SQLiteOpenHelper
 import androidx.annotation.VisibleForTesting
 import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.encryption.EncryptionNoOp
+import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
+import apptentive.com.android.feedback.payload.EncryptedPayloadTokenUpdater.Companion.updateEmbeddedToken
 import apptentive.com.android.feedback.platform.DefaultStateMachine
 import apptentive.com.android.feedback.platform.SDKState
 import apptentive.com.android.feedback.utils.FileUtil
+import apptentive.com.android.feedback.utils.isMarshmallowOrGreater
 import apptentive.com.android.network.HttpMethod
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags
@@ -27,19 +30,14 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        // FIXME: Handle the 5.x to 6.5 migration
-        if (!doesColumnExist(db, COL_TAG)) {
-            db.execSQL(SQL_QUERY_ADD_TAG)
-            db.execSQL(SQL_QUERY_ADD_TOKEN)
-            db.execSQL(SQL_QUERY_ADD_CONVERSATION_ID)
-            db.execSQL(SQL_QUERY_ADD_ENCRYPTED)
-        }
+        db.execSQL(SQL_QUERY_DROP_TABLE)
+        onCreate(db)
     }
 
     fun addPayload(payload: PayloadData) {
         Log.v(PAYLOADS, "Saving payload body to: ${writableDatabase.path}")
-        val fileName = if (payload.sidecarFilename.data.isNotEmpty()) {
-            val encryptedBytes = determineEncryption().encrypt(payload.sidecarFilename.data)
+        val fileName = if (payload.sidecarData.data.isNotEmpty()) {
+            val encryptedBytes = determineEncryption().encrypt(payload.sidecarData.data)
             val fileName = FileUtil.generateCacheFilePathFromNonceOrPrefix(context, payload.nonce, "apptentive-message-payload")
             FileUtil.writeFileData(fileName, encryptedBytes)
             fileName
@@ -124,12 +122,80 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
         return deletedRows > 0
     }
 
-    // TODO: call this when we get an auth failure for a payload.
-    private fun invalidateToken(db: SQLiteDatabase, tag: String): Boolean {
-        val contentValues = ContentValues()
-        contentValues.putNull(COL_TOKEN.toString())
-        val updatedRows = db.update(TABLE_NAME, contentValues, "COL_TAG = ?", arrayOf(tag))
-        return updatedRows > 0
+    internal fun updateCredential(credentialProvider: ConversationCredentialProvider): Boolean {
+        val token = credentialProvider.conversationToken
+        val conversationId = credentialProvider.conversationId
+        val tag = credentialProvider.conversationPath
+        val encryptionKey = credentialProvider.payloadEncryptionKey
+
+        if (token != null && conversationId != null) {
+            synchronized(this) {
+                writableDatabase.use { db ->
+                    Log.d(PAYLOADS, "Updating credentials for payloads with tag $tag")
+
+                    // Grab each payload with the specified tag and update as needed.
+                    db.select(tableName = TABLE_NAME, where = "$COL_TAG = ?", selectionArgs = arrayOf(tag), orderBy = COL_PRIMARY_KEY)
+                        .use { cursor ->
+                            while (cursor.moveToNext()) {
+                                val payloadData = readPayload(cursor)
+                                val contentValues = ContentValues()
+
+                                // May not have had conversation ID when enqueued.
+                                contentValues.put(COL_CONVERSATION_ID, conversationId)
+
+                                if (payloadData.isEncrypted) {
+                                    if (isMarshmallowOrGreater() && encryptionKey != null) {
+                                        // If encrypted, we have to update the token the hard way.
+                                        val updatedData = updateEmbeddedToken(
+                                            token,
+                                            encryptionKey,
+                                            payloadData.type,
+                                            payloadData.mediaType,
+                                            payloadData.data
+                                        )
+
+                                        val encryptedBytes =
+                                            determineEncryption().encrypt(updatedData)
+
+                                        if (payloadData.sidecarData.dataFilePath.isNotNullOrEmpty()) {
+                                            FileUtil.writeFileData(
+                                                payloadData.sidecarData.dataFilePath,
+                                                encryptedBytes
+                                            )
+                                        } else {
+                                            contentValues.put(COL_PAYLOAD_DATA, encryptedBytes)
+                                        }
+
+                                        // Use placeholder for token column to indicate ready to send.
+                                        contentValues.put(COL_TOKEN, "embedded")
+                                    } else {
+                                        Log.w(PAYLOADS, "Invalid encrypted payload when updating token.")
+                                    }
+                                } else {
+                                    // For unencrypted, just update the token column with the value.
+                                    contentValues.put(COL_TOKEN, token)
+                                }
+
+                                Log.d(PAYLOADS, "Updating credential for payload ${payloadData.nonce} with tag $tag, conversationId $conversationId")
+                                db.update(TABLE_NAME, contentValues, "$COL_NONCE = ?", arrayOf(payloadData.nonce))
+                            }
+                        }
+                }
+            }
+
+            return true
+        } else {
+            Log.w(LogTags.PAYLOADS, "Attempting to update payloads with invalid credentials.")
+            return false
+        }
+    }
+
+    fun invalidateCredential(tag: String) {
+        writableDatabase.use { db ->
+            val contentValues = ContentValues()
+            contentValues.putNull(COL_TOKEN.toString())
+            db.update(TABLE_NAME, contentValues, "$COL_TAG = ?", arrayOf(tag))
+        }
     }
 
     internal fun deleteAllCachedPayloads() {
@@ -173,7 +239,7 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
             method = HttpMethod.valueOf(cursor.getString(COL_METHOD)),
             mediaType = MediaType.parse(cursor.getString(COL_MEDIA_TYPE)),
             data = payloadData,
-            sidecarFilename = SidecarData(dataFilePath = dataPath)
+            sidecarData = SidecarData(dataFilePath = dataPath)
         )
     }
 
@@ -239,10 +305,7 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
             "$COL_ENCRYPTED INTEGER" +
             ")"
 
-        private const val SQL_QUERY_ADD_TAG = "ALTER TABLE $TABLE_NAME ADD COLUMN tag TEXT"
-        private const val SQL_QUERY_ADD_TOKEN = "ALTER TABLE $TABLE_NAME ADD COLUMN token TEXT"
-        private const val SQL_QUERY_ADD_CONVERSATION_ID = "ALTER TABLE $TABLE_NAME ADD COLUMN conversation_id TEXT"
-        private const val SQL_QUERY_ADD_ENCRYPTED = "ALTER TABLE $TABLE_NAME ADD COLUMN encrypted INTEGER"
+        private const val SQL_QUERY_DROP_TABLE = "DROP TABLE IF EXISTS $TABLE_NAME"
     }
 
     private fun doesColumnExist(db: SQLiteDatabase, column: Column): Boolean {
@@ -269,12 +332,12 @@ private data class Column(val index: Int, val name: String) {
     override fun toString() = name
 }
 
-private fun SQLiteDatabase.select(tableName: String, where: String? = null, orderBy: Column, limit: Int? = null): Cursor {
+private fun SQLiteDatabase.select(tableName: String, where: String? = null, selectionArgs: Array<String>? = null, orderBy: Column, limit: Int? = null): Cursor {
     return query(
         tableName,
         null,
         where,
-        null,
+        selectionArgs,
         null,
         null,
         "${orderBy.name} ASC",

@@ -61,13 +61,10 @@ abstract class Payload(
             dataBytes = byteArrayOf()
         }
 
-        // TODO: test when logged out.
-        // TODO: test with null token.
-
         return PayloadData(
             nonce = nonce,
             type = getPayloadType(),
-            tag = credentialProvider.conversationPath ?: "placeholder",
+            tag = credentialProvider.conversationPath,
             token = token,
             conversationId = credentialProvider.conversationId,
             isEncrypted = isEncrypted,
@@ -75,7 +72,7 @@ abstract class Payload(
             method = getHttpMethod(),
             mediaType = getContentType(parts, Payload.BOUNDARY, isEncrypted),
             data = dataBytes,
-            sidecarFilename = attachmentData
+            sidecarData = attachmentData
         )
     }
 
@@ -115,27 +112,28 @@ abstract class Payload(
         internal const val TWO_HYPHENS = "--"
         internal const val BOUNDARY = "s16u0iwtqlokf4v9cpgne8a2amdrxz735hjby"
         internal const val SQL_SIZE_LIMIT = 10240
-    }
 
-    private fun assembleMultipart(parts: List<PayloadPart>, boundary: String): ByteArray {
-        val data = ByteArrayOutputStream()
+        internal fun assembleMultipart(parts: List<PayloadPart>, boundary: String): ByteArray {
+            val data = ByteArrayOutputStream()
 
-        parts.forEach { part ->
-            data.write("${Payload.TWO_HYPHENS}$boundary${Payload.LINE_END}".toByteArray())
-            data.write("Content-Disposition: ${part.contentDisposition}${Payload.LINE_END}".toByteArray())
-            data.write("Content-Type: ${part.contentType}${Payload.LINE_END}".toByteArray())
-            data.write(Payload.LINE_END.toByteArray())
-            data.write(part.content)
-            data.write(Payload.LINE_END.toByteArray())
+            parts.forEach { part ->
+                data.write("${Payload.TWO_HYPHENS}$boundary${Payload.LINE_END}".toByteArray())
+                data.write(part.multipartHeaders.toByteArray())
+                data.write(Payload.LINE_END.toByteArray())
+                data.write(part.content)
+                data.write(Payload.LINE_END.toByteArray())
+            }
+
+            // No more data
+            val endOfData = "${Payload.TWO_HYPHENS}$boundary${Payload.TWO_HYPHENS}".toByteArray()
+            data.write(endOfData)
+
+            val result = data.toByteArray()
+
+            Log.d(LogTags.PAYLOADS, "Total payload body bytes: %d", result.size)
+
+            return result
         }
-
-        // No more data
-        val endOfData = "${Payload.TWO_HYPHENS}$boundary${Payload.TWO_HYPHENS}".toByteArray()
-        data.write(endOfData)
-
-        Log.d(LogTags.PAYLOADS, "Total payload body bytes: %d", data.size())
-
-        return data.toByteArray()
     }
 
     override fun equals(other: Any?): Boolean {

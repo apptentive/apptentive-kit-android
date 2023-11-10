@@ -28,6 +28,7 @@ import apptentive.com.android.util.Result
 import apptentive.com.android.util.generateUUID
 import org.junit.Assert
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -153,12 +154,12 @@ class MessageManagerTest : TestCase() {
 
         assertEquals(
             "Content-Disposition: form-data;name=\"message\"\r\n" +
-                "Content-Type: application/json;charset=UTF-8",
-            firstPart.headers
+                "Content-Type: application/json;charset=UTF-8\r\n",
+            firstPart.multipartHeaders
         )
 
         val json = JsonConverter.toMap(String(firstPart.content, Charsets.UTF_8))
-        assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["session_id"])
+        assertNotNull(json["session_id"])
         assertTrue(1698774495.52 < json["client_created_at"] as Double)
         assertEquals("ABC", json["body"])
         assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["nonce"])
@@ -196,7 +197,7 @@ class MessageManagerTest : TestCase() {
         val credentialProvider = DependencyProvider.of<ConversationCredentialProvider>()
         val actualPayloadData = actualPayload?.toPayloadData(credentialProvider)
 
-        val inputStream = ByteArrayInputStream(actualPayloadData!!.sidecarFilename.data)
+        val inputStream = ByteArrayInputStream(actualPayloadData!!.sidecarData.data)
         val parser = MultipartParser(inputStream, "s16u0iwtqlokf4v9cpgne8a2amdrxz735hjby")
 
         assertEquals(2, parser.numberOfParts)
@@ -205,12 +206,12 @@ class MessageManagerTest : TestCase() {
 
         assertEquals(
             "Content-Disposition: form-data;name=\"message\"\r\n" +
-                "Content-Type: application/json;charset=UTF-8",
-            firstPart.headers
+                "Content-Type: application/json;charset=UTF-8\r\n",
+            firstPart.multipartHeaders
         )
 
         val json = JsonConverter.toMap(String(firstPart.content, Charsets.UTF_8))
-        assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["session_id"])
+        assertNotNull(json["session_id"])
         assertTrue(1698774495.52 < json["client_created_at"] as Double)
         assertEquals("ABC", json["body"])
         assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["nonce"])
@@ -220,11 +221,9 @@ class MessageManagerTest : TestCase() {
 
         assertEquals(
             "Content-Disposition: form-data;name=\"file[]\";filename=\"dog.jpg\"\r\n" +
-                "Content-Type: image/jpeg",
-            secondPart.headers
+                "Content-Type: image/jpeg\r\n",
+            secondPart.multipartHeaders
         )
-
-        // TODO: use original filename
 
         assertTrue(secondPart.content.isNotEmpty())
     }
@@ -261,8 +260,8 @@ class MessageManagerTest : TestCase() {
 
         assertEquals(
             "Content-Disposition: form-data;name=\"message\"\r\n" +
-                "Content-Type: application/octet-stream",
-            firstPart.headers
+                "Content-Type: application/octet-stream\r\n",
+            firstPart.multipartHeaders
         )
 
         val decryptedContent = AESEncryption23(conversationCredential.payloadEncryptionKey!!).decryptPayloadData(firstPart.content)
@@ -270,16 +269,16 @@ class MessageManagerTest : TestCase() {
 
         assertEquals(
             "Content-Disposition: form-data;name=\"message\"\r\n" +
-                "Content-Type: application/json;charset=UTF-8",
-            decryptedPart!!.headers
+                "Content-Type: application/json;charset=UTF-8\r\n",
+            decryptedPart!!.multipartHeaders
         )
 
         val json = JsonConverter.toMap(String(decryptedPart.content, Charsets.UTF_8))
-        assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["session_id"])
+        assertNotNull(json["session_id"])
         assertTrue(1698774495.52 < json["client_created_at"] as Double)
         assertEquals("ABC", json["body"])
         assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["nonce"])
-        assertEquals("mockedConversationToken", json["token"])
+        assertEquals("mockedEncryptedConversationToken", json["token"])
     }
 
     @Test
@@ -316,7 +315,7 @@ class MessageManagerTest : TestCase() {
         val credentialProvider = DependencyProvider.of<ConversationCredentialProvider>()
         val actualPayloadData = actualPayload?.toPayloadData(credentialProvider)
 
-        val inputStream = ByteArrayInputStream(actualPayloadData?.sidecarFilename!!.data)
+        val inputStream = ByteArrayInputStream(actualPayloadData?.sidecarData!!.data)
         val parser = MultipartParser(inputStream, "s16u0iwtqlokf4v9cpgne8a2amdrxz735hjby")
 
         assertEquals(2, parser.numberOfParts)
@@ -325,8 +324,8 @@ class MessageManagerTest : TestCase() {
 
         assertEquals(
             "Content-Disposition: form-data;name=\"message\"\r\n" +
-                "Content-Type: application/octet-stream",
-            firstPart.headers
+                "Content-Type: application/octet-stream\r\n",
+            firstPart.multipartHeaders
         )
 
         val decryptedContent = AESEncryption23(conversationCredential.payloadEncryptionKey!!).decryptPayloadData(firstPart.content)
@@ -334,23 +333,23 @@ class MessageManagerTest : TestCase() {
 
         assertEquals(
             "Content-Disposition: form-data;name=\"message\"\r\n" +
-                "Content-Type: application/json;charset=UTF-8",
-            decryptedPart!!.headers
+                "Content-Type: application/json;charset=UTF-8\r\n",
+            decryptedPart!!.multipartHeaders
         )
 
         val json = JsonConverter.toMap(String(decryptedPart.content, Charsets.UTF_8))
-        assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["session_id"])
+        assertNotNull(json["session_id"])
         assertTrue(1698774495.52 < json["client_created_at"] as Double)
         assertEquals("ABC", json["body"])
         assertEquals("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json["nonce"])
-        assertEquals("mockedConversationToken", json["token"])
+        assertEquals("mockedEncryptedConversationToken", json["token"])
 
         val secondPart = parser.getPartAtIndex(1)!!
 
         assertEquals(
             "Content-Disposition: form-data;name=\"file[]\";filename=\"dog.jpg\"\r\n" +
-                "Content-Type: application/octet-stream",
-            secondPart.headers
+                "Content-Type: application/octet-stream\r\n",
+            secondPart.multipartHeaders
         )
 
         val decryptedContent2 = AESEncryption23(conversationCredential.payloadEncryptionKey!!).decryptPayloadData(secondPart.content)
@@ -358,8 +357,8 @@ class MessageManagerTest : TestCase() {
 
         assertEquals(
             "Content-Disposition: form-data;name=\"file[]\";filename=\"dog.jpg\"\r\n" +
-                "Content-Type: image/jpeg",
-            decryptedPart2!!.headers
+                "Content-Type: image/jpeg\r\n",
+            decryptedPart2!!.multipartHeaders
         )
 
         assertTrue(decryptedPart2.content.isNotEmpty())

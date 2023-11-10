@@ -7,4 +7,5 @@ import apptentive.com.android.util.InternalUseOnly
 @InternalUseOnly
 interface PayloadSender {
     fun enqueuePayload(payload: Payload, credentialProvider: ConversationCredentialProvider)
+    fun updateCredential(credentialProvider: ConversationCredentialProvider)
 }
