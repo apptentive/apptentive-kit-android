@@ -61,7 +61,7 @@ internal class PersistentPayloadQueue(
             )
             val rows = payloads.map { payload ->
                 val formattedData = when {
-                    payload.data.size > 500 -> "Request body too large to print."
+                    payload.data.size > 5000 -> "Request body too large to print."
                     payload.mediaType == MediaType.applicationJson ||
                         Build.VERSION.SDK_INT < Build.VERSION_CODES.O -> String(
                         payload.data,
