@@ -1,6 +1,8 @@
 package apptentive.com.android.feedback.message
 
 import apptentive.com.android.core.TimeInterval
+import apptentive.com.android.encryption.Encryption
+import apptentive.com.android.feedback.conversation.ConversationRoster
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.util.InternalUseOnly
@@ -15,9 +17,14 @@ interface MessageRepository {
     fun getLastReceivedMessageIDFromEntries(): String
     fun deleteMessage(nonce: String)
     fun saveMessages()
+    fun updateEncryption(encryption: Encryption)
+    fun updateConversationRoster(conversationRoster: ConversationRoster)
+    fun logout()
 }
 
-internal class DefaultMessageRepository(val messageSerializer: MessageSerializer) : MessageRepository {
+internal class DefaultMessageRepository(
+    val messageSerializer: MessageSerializer,
+) : MessageRepository {
 
     private val messageEntries: MutableList<MessageEntry> = messageSerializer.loadMessages().toMutableList()
 
@@ -88,6 +95,19 @@ internal class DefaultMessageRepository(val messageSerializer: MessageSerializer
         } catch (e: MessageSerializerException) {
             Log.e(MESSAGE_CENTER, "Cannot save messages. A Serialization issue occurred ${e.message}")
         }
+    }
+
+    override fun updateEncryption(encryption: Encryption) {
+        messageSerializer.updateEncryption(encryption)
+    }
+
+    override fun updateConversationRoster(conversationRoster: ConversationRoster) {
+        messageSerializer.updateConversionRoster(conversationRoster)
+    }
+
+    override fun logout() {
+        saveMessages()
+        messageEntries.clear()
     }
 
     override fun deleteMessage(nonce: String) {

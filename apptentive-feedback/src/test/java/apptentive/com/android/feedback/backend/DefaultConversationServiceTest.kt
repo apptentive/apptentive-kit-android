@@ -142,7 +142,56 @@ class DefaultConversationServiceTest : TestCase() {
     }
 
     @Test
-    fun sendPayloadRequest() {
+    fun sendPayloadRequest_WithoutAuthorization() {
+        val conversationId = "conversation_id"
+        val conversationToken = "conversation_token"
+        val nonce = "nonce"
+
+        val network = MockHttpNetwork().apply {
+            register("https://api.apptentive.com/conversations/$conversationId/events") { request ->
+
+                // this is what we expect to be sent from the client
+                val expected = Request(
+                    method = HttpMethod.POST,
+                    headers = request.headers,
+                    body = "Payload Data".toByteArray()
+                )
+
+                assertThat(expected).isEqualTo(request)
+                assertThat(request.headers.toString()).contains("Authorization")
+
+                // the response is empty
+                Response(
+                    body = emptyMap<String, Any>()
+                )
+            }
+        }
+        val payload = PayloadData(
+            nonce = nonce,
+            type = PayloadType.Event,
+            tag = "test-tag",
+            token = conversationToken,
+            conversationId = conversationId,
+            isEncrypted = false,
+            path = "/conversations/:conversation_id/events",
+            method = HttpMethod.POST,
+            mediaType = MediaType.applicationJson,
+            data = "Payload Data".toByteArray()
+        )
+
+        val service = createConversationService(network) as DefaultConversationService
+        service.isAuthorized = false
+        service.sendPayloadRequest(
+            payload = payload
+        ) {
+            assertThat(it is Result.Success).isTrue()
+        }
+
+        assertThat(payload.token).isEqualTo(conversationToken)
+    }
+
+    @Test
+    fun sendPayloadRequest_WithAuthorization() {
         val conversationId = "conversation_id"
         val conversationToken = "conversation_token"
         val nonce = "nonce"
@@ -157,6 +206,7 @@ class DefaultConversationServiceTest : TestCase() {
                 )
 
                 assertThat(expected).isEqualTo(request)
+                assertThat(request.headers.toString()).doesNotContain("Authorization")
 
                 // the response is empty
                 Response(
@@ -167,20 +217,25 @@ class DefaultConversationServiceTest : TestCase() {
         val payload = PayloadData(
             nonce = nonce,
             type = PayloadType.Event,
+            tag = "test-tag",
+            token = "embedded",
+            conversationId = conversationId,
+            isEncrypted = true,
             path = "/conversations/:conversation_id/events",
             method = HttpMethod.POST,
             mediaType = MediaType.applicationJson,
             data = "Payload Data".toByteArray()
         )
 
-        val service = createConversationService(network)
+        val service = createConversationService(network) as DefaultConversationService
+        service.isAuthorized = true
         service.sendPayloadRequest(
-            payload = payload,
-            conversationToken = conversationToken,
-            conversationId = conversationId
+            payload = payload
         ) {
             assertThat(it is Result.Success).isTrue()
         }
+
+        assertThat(payload.token).isEqualTo("embedded")
     }
 
     private fun createConversationService(network: MockHttpNetwork): ConversationService {

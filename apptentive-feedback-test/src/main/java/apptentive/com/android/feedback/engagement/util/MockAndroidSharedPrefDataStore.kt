@@ -9,8 +9,8 @@ class MockAndroidSharedPrefDataStore(private val containsKey: Boolean = true, pr
 
     private var version = ""
 
-    override fun putString(file: String, keyEntry: String, value: String) {
-        version = value
+    override fun putString(file: String, keyEntry: String, value: String?) {
+        version = value ?: ""
     }
 
     override fun putBoolean(file: String, keyEntry: String, value: Boolean) {
@@ -25,11 +25,29 @@ class MockAndroidSharedPrefDataStore(private val containsKey: Boolean = true, pr
         return version
     }
 
+    override fun getNullableString(file: String, keyEntry: String, defaultValue: String?): String? {
+        return null
+    }
+
     override fun getSharedPrefForSDK(file: String): SharedPreferences {
         return mockk<SharedPreferences>()
     }
 
     override fun containsKey(file: String, keyEntry: String): Boolean {
         return containsKey
+    }
+
+    override fun getInt(file: String, keyEntry: String, defaultValue: Int): Int {
+        return 0
+    }
+
+    override fun putInt(file: String, keyEntry: String, value: Int) {
+    }
+
+    override fun getLong(file: String, keyEntry: String, defaultValue: Long): Long {
+        return 0
+    }
+
+    override fun putLong(file: String, keyEntry: String, value: Long) {
     }
 }

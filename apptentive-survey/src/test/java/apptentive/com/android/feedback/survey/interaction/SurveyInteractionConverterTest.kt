@@ -17,7 +17,6 @@ class SurveyInteractionConverterTest : TestCase() {
             description = "This is a survey",
             renderAs = "default",
             introButtonText = "Start",
-            nextText = "Next",
             questionSet = listOf(),
             isRequired = true,
             requiredText = "This field is required",
@@ -80,7 +79,6 @@ class SurveyInteractionConverterTest : TestCase() {
             termsAndConditions = SurveyInteraction.TermsAndConditions("labelTest", "linkTest"),
             disclaimerText = "Disclaimer text",
             renderAs = "paged",
-            nextText = "NEXT",
             introButtonText = "Intro",
             successButtonText = "SUCCESS"
         )
@@ -115,7 +113,6 @@ class SurveyInteractionConverterTest : TestCase() {
             description = "This is another survey",
             renderAs = "default",
             introButtonText = "Start",
-            nextText = "Next",
             questionSet = listOf(),
             isRequired = true,
             requiredText = "This field is required",

@@ -34,4 +34,5 @@ object SharedPrefConstants {
     const val SDK_VERSION = "sdk_version"
     const val CRYPTO_ENABLED = "should_encrypt"
     const val CRYPTO_KEY_ALIAS = "crypto.key.alias"
+    const val CRYPTO_KEY_WRAPPER_ALIAS = "_crypto.key.wrapper.alias" // to store wrapper key of multi-user encryption key
 }

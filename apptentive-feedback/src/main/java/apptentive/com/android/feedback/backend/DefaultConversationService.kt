@@ -10,6 +10,7 @@ import apptentive.com.android.feedback.model.MessageList
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.payload.PayloadData
+import apptentive.com.android.feedback.payload.PayloadSendException
 import apptentive.com.android.network.CacheControl
 import apptentive.com.android.network.HttpByteArrayResponseReader
 import apptentive.com.android.network.HttpClient
@@ -43,17 +44,35 @@ internal class DefaultConversationService(
         this["X-API-Version"] = apiVersion.toString()
     }
 
+    internal var isAuthorized: Boolean = false
+
     override fun fetchConversationToken(
         device: Device,
         sdk: SDK,
         appRelease: AppRelease,
         person: Person,
-        callback: (Result<ConversationCredentials>) -> Unit
+        callback: (Result<ConversationFetchResponse>) -> Unit
     ) {
-        val request = createJsonRequest<ConversationCredentials>(
+        val request = createJsonRequest<ConversationFetchResponse>(
             method = HttpMethod.POST,
             path = "conversation",
-            body = ConversationTokenRequestData.from(device, sdk, appRelease, person)
+            body = ConversationTokenRequestData.from(device, sdk, appRelease, person),
+        )
+        sendRequest(request, callback)
+    }
+
+    override fun fetchLoginConversation(
+        device: Device,
+        sdk: SDK,
+        appRelease: AppRelease,
+        person: Person,
+        token: String,
+        callback: (Result<ConversationFetchResponse>) -> Unit
+    ) {
+        val request = createJsonRequest<ConversationFetchResponse>(
+            method = HttpMethod.POST,
+            path = "conversations",
+            body = LoginConversationRequestData.from(device, sdk, appRelease, person, token),
         )
         sendRequest(request, callback)
     }
@@ -90,6 +109,29 @@ internal class DefaultConversationService(
         sendRequest(request, callback)
     }
 
+    /**
+     * Fetches the login session for the given conversation.
+     * Can be anonymous -> logged in
+     * or
+     * logged out -> logged in
+     *
+     * @param conversationId the conversation id
+     * @param jwtToken the customer provided JWT token
+     * @param callback the response with the encryption key
+     */
+    override fun loginSession(
+        conversationId: String,
+        jwtToken: String,
+        callback: (Result<ConversationFetchResponse>) -> Unit
+    ) {
+        val request = createJsonRequest<ConversationFetchResponse>(
+            method = HttpMethod.POST,
+            path = "conversations/$conversationId/session",
+            body = LoginSessionRequest(jwtToken)
+        )
+        sendRequest(request, callback)
+    }
+
     override fun getMessages(
         conversationToken: String,
         conversationId: String,
@@ -118,29 +160,29 @@ internal class DefaultConversationService(
             .method(HttpMethod.GET, null)
             .responseReader(HttpByteArrayResponseReader())
             .build()
-
-        httpClient.send(request) {
-            when (it) {
-                is Result.Success -> callback(Result.Success(it.data.payload))
-                is Result.Error -> callback(it)
-            }
-        }
+        sendRequest(request, callback)
     }
 
     override fun sendPayloadRequest(
         payload: PayloadData,
-        conversationId: String,
-        conversationToken: String,
         callback: (Result<PayloadResponse>) -> Unit
     ) {
-        val url = createURL(payload.resolvePath(conversationId))
-        val request = HttpRequest.Builder<PayloadResponse>(url)
-            .method(payload.method, payload.data, contentType = payload.mediaType.toString())
-            .headers(defaultHeaders)
-            .header("Authorization", "Bearer $conversationToken")
-            .responseReader(HttpJsonResponseReader(PayloadResponse::class.java))
-            .build()
-        sendRequest(request, callback)
+        val conversationId = payload.conversationId
+        val conversationToken = payload.token
+        if (conversationId == null || conversationToken == null) {
+            callback(Result.Error(payload, PayloadSendException(payload, cause = null)))
+        } else {
+            val url = createURL(payload.resolvePath(conversationId))
+            val request = HttpRequest.Builder<PayloadResponse>(url)
+                .method(payload.method, payload.data, contentType = payload.mediaType.toString())
+                .headers(defaultHeaders)
+                .responseReader(HttpJsonResponseReader(PayloadResponse::class.java))
+
+            if (payload.isEncrypted) request.header("APPTENTIVE-ENCRYPTED", "true")
+            else request.header("Authorization", "Bearer $conversationToken")
+
+            sendRequest(request.build(), callback)
+        }
     }
 
     private fun <T : Any> sendRequest(request: HttpRequest<T>, callback: (Result<T>) -> Unit) {

@@ -2,11 +2,13 @@ package apptentive.com.android.feedback.conversation
 
 import apptentive.com.android.TestCase
 import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.core.Logger
 import apptentive.com.android.core.Provider
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.getTimeSeconds
 import apptentive.com.android.encryption.Encryption
-import apptentive.com.android.feedback.backend.ConversationCredentials
+import apptentive.com.android.feedback.MockAndroidLoggerProvider
+import apptentive.com.android.feedback.backend.ConversationFetchResponse
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.PayloadResponse
 import apptentive.com.android.feedback.engagement.util.MockAndroidSharedPrefDataStore
@@ -27,11 +29,15 @@ import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.model.VersionHistory
 import apptentive.com.android.feedback.payload.PayloadData
+import apptentive.com.android.feedback.platform.DefaultStateMachine
 import apptentive.com.android.feedback.platform.FileSystem
+import apptentive.com.android.feedback.platform.SDKEvent
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.util.Result
 import com.apptentive.android.sdk.conversation.ConversationData
 import com.apptentive.android.sdk.conversation.LegacyConversationManager
+import com.apptentive.android.sdk.conversation.LegacyConversationMetadata
+import com.apptentive.android.sdk.conversation.LegacyConversationMetadataItem
 import com.google.common.truth.Truth.assertThat
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
@@ -45,11 +51,14 @@ class ConversationManagerTest : TestCase() {
     @Before
     override fun setUp() {
         DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore())
+        DependencyProvider.register<ConversationRepository>(MockConversationRepository())
+        DependencyProvider.register<Logger>(MockAndroidLoggerProvider())
     }
 
     @Test
     fun getActiveConversation() {
-        val fetchResponse = ConversationCredentials(
+        DefaultStateMachine.reset()
+        val fetchResponse = ConversationFetchResponse(
             id = "id",
             deviceId = "device_id",
             personId = "person_id",
@@ -57,10 +66,13 @@ class ConversationManagerTest : TestCase() {
             encryptionKey = "encryption_key"
         )
 
+        DefaultStateMachine.onEvent(SDKEvent.RegisterSDK)
+        DefaultStateMachine.onEvent(SDKEvent.ClientStarted)
+
         val conversationManager = createConversationManager(fetchResponse)
 
         var result: Result<Unit>? = null
-        conversationManager.fetchConversationToken {
+        conversationManager.tryFetchConversationToken {
             result = it
         }
 
@@ -84,6 +96,9 @@ class ConversationManagerTest : TestCase() {
 
     @Test
     fun testPersonUpdate() {
+        DefaultStateMachine.reset()
+        DefaultStateMachine.onEvent(SDKEvent.RegisterSDK)
+        DefaultStateMachine.onEvent(SDKEvent.ClientStarted)
         val conversationManager = createConversationManager()
         val customData = CustomData(content = mapOf("FirstKey" to "FirstValue", "SecondKey" to 2, "ThirdKey" to true))
         val newPerson = conversationManager.getConversation().person.copy(
@@ -110,6 +125,9 @@ class ConversationManagerTest : TestCase() {
 
     @Test
     fun testDeviceUpdate() {
+        DefaultStateMachine.reset()
+        DefaultStateMachine.onEvent(SDKEvent.RegisterSDK)
+        DefaultStateMachine.onEvent(SDKEvent.ClientStarted)
         val conversationManager = createConversationManager()
         val customData = CustomData(content = mapOf("FirstKey" to "FirstValue", "SecondKey" to 2, "ThirdKey" to false))
         val newDevice = conversationManager.getConversation().device.copy(
@@ -126,6 +144,9 @@ class ConversationManagerTest : TestCase() {
 
     @Test
     fun testAppReleaseSDKUpdate() {
+        DefaultStateMachine.reset()
+        DefaultStateMachine.onEvent(SDKEvent.RegisterSDK)
+        DefaultStateMachine.onEvent(SDKEvent.ClientStarted)
         val conversationManager = createConversationManager()
         conversationManager.onEncryptionSetupComplete()
         conversationManager.updateAppReleaseSDK(
@@ -140,6 +161,9 @@ class ConversationManagerTest : TestCase() {
 
     @Test
     fun testCheckForSDKAppReleaseUpdates() {
+        DefaultStateMachine.reset()
+        DefaultStateMachine.onEvent(SDKEvent.RegisterSDK)
+        DefaultStateMachine.onEvent(SDKEvent.ClientStarted)
         val conversationManager = createConversationManager()
         conversationManager.checkForSDKAppReleaseUpdates(conversationManager.getConversation())
         /* mockAppRelease & mockSDK has updates which sets the appReleaseChanged & sdkChanged to true
@@ -152,8 +176,11 @@ class ConversationManagerTest : TestCase() {
 
     @Test
     fun testEngagementDataFetch() {
-        val fetchResponse: ConversationCredentials =
-            ConversationCredentials(
+        DefaultStateMachine.reset()
+        DefaultStateMachine.onEvent(SDKEvent.RegisterSDK)
+        DefaultStateMachine.onEvent(SDKEvent.ClientStarted)
+        val fetchResponse: ConversationFetchResponse =
+            ConversationFetchResponse(
                 id = "id",
                 deviceId = "device_id",
                 personId = "person_id",
@@ -168,7 +195,7 @@ class ConversationManagerTest : TestCase() {
                 testTimeInterval = 222.22
             )
         )
-        conversationManager.fetchConversationToken {}
+        conversationManager.tryFetchConversationToken {}
         assertEquals(0.0, conversationManager.getConversation().engagementManifest.expiry, 0.0)
         conversationManager.tryFetchEngagementManifest()
         assertEquals(222.22, conversationManager.getConversation().engagementManifest.expiry, 0.0)
@@ -176,9 +203,11 @@ class ConversationManagerTest : TestCase() {
 
     @Test
     fun testConversationReset() {
-        DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore())
+        DefaultStateMachine.reset()
         DependencyProvider.register<FileSystem>(MockFileSystem())
         // conversation serializer throws exception, checks should throttle, not throttled, anonymous conversation is created
+        DefaultStateMachine.onEvent(SDKEvent.RegisterSDK)
+        DefaultStateMachine.onEvent(SDKEvent.ClientStarted)
         val conversationManager = createConversationManager(shouldThrowException = true)
         assertEquals(conversationManager.getConversation().device, mockDevice)
         val expectedMessage = "Cannot load existing conversation, conversation reset throttled"
@@ -190,8 +219,8 @@ class ConversationManagerTest : TestCase() {
 }
 
 internal fun createConversationManager(
-    fetchResponse: ConversationCredentials =
-        ConversationCredentials(
+    fetchResponse: ConversationFetchResponse =
+        ConversationFetchResponse(
             id = "id",
             deviceId = "device_id",
             personId = "person_id",
@@ -212,11 +241,11 @@ internal fun createConversationManager(
     )
 }
 
-private class MockConversationRepository(val throwException: Boolean = false) :
+class MockConversationRepository(val throwException: Boolean = false) :
     ConversationRepository {
     private var conversation: Conversation? = null
 
-    override fun createConversation(): Conversation {
+    override fun createConversation(conversationId: String?, conversationToken: String?): Conversation {
         return Conversation(
             localIdentifier = "localIdentifier",
             conversationToken = null,
@@ -247,10 +276,20 @@ private class MockConversationRepository(val throwException: Boolean = false) :
 
     override fun updateEncryption(encryption: Encryption) {
     }
+
+    override fun updateConversationRoster(conversationRoster: ConversationRoster) {
+    }
+
+    override fun saveRoster(conversationRoster: ConversationRoster) {
+    }
+
+    override fun initializeRepositoryWithRoster(): ConversationRoster {
+        return ConversationRoster()
+    }
 }
 
 internal class MockConversationService(
-    private val response: ConversationCredentials,
+    private val response: ConversationFetchResponse,
     private val testTimeInterval: TimeInterval? = null
 ) :
     ConversationService {
@@ -259,9 +298,19 @@ internal class MockConversationService(
         sdk: SDK,
         appRelease: AppRelease,
         person: Person,
-        callback: (Result<ConversationCredentials>) -> Unit
+        callback: (Result<ConversationFetchResponse>) -> Unit
     ) {
         callback(Result.Success(response))
+    }
+
+    override fun fetchLoginConversation(
+        device: Device,
+        sdk: SDK,
+        appRelease: AppRelease,
+        person: Person,
+        token: String,
+        callback: (Result<ConversationFetchResponse>) -> Unit
+    ) {
     }
 
     override fun fetchEngagementManifest(
@@ -280,6 +329,14 @@ internal class MockConversationService(
         callback(Result.Success(Configuration(expiry = testTimeInterval ?: getTimeSeconds() + 1800)))
     }
 
+    override fun loginSession(
+        conversationId: String,
+        jwtToken: String,
+        callback: (Result<ConversationFetchResponse>) -> Unit
+    ) {
+        callback(Result.Success(ConversationFetchResponse(id = "", deviceId = "", personId = "", token = "", encryptionKey = "key")))
+    }
+
     override fun getMessages(
         conversationToken: String,
         conversationId: String,
@@ -295,8 +352,6 @@ internal class MockConversationService(
 
     override fun sendPayloadRequest(
         payload: PayloadData,
-        conversationId: String,
-        conversationToken: String,
         callback: (Result<PayloadResponse>) -> Unit
     ) {
         TODO("Not yet implemented")
@@ -304,7 +359,15 @@ internal class MockConversationService(
 }
 
 private class MockLegacyConversationManager(val result: ConversationData? = null) : LegacyConversationManager {
-    override fun loadLegacyConversationData(): ConversationData? {
+    override fun loadLegacyConversationData(conversationMetadata: LegacyConversationMetadata?): ConversationData? {
         return result
+    }
+
+    override fun loadLegacyConversationMetadata(): LegacyConversationMetadata? {
+        return null
+    }
+
+    override fun loadEncryptedLegacyConversationData(conversationMetadataItem: LegacyConversationMetadataItem?): ConversationData? {
+        return null
     }
 }

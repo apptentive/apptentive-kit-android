@@ -340,7 +340,11 @@ object FileUtil {
     fun deleteFile(filePath: String?) {
         if (!filePath.isNullOrBlank()) {
             val file = File(filePath)
-            if (file.exists()) file.delete()
+            if (file.exists())
+                file.delete()
         }
     }
+
+    fun isConversationCacheStoredInLegacyFormat(filePath: String): Boolean =
+        filePath.contains("apptentive/conversations")
 }

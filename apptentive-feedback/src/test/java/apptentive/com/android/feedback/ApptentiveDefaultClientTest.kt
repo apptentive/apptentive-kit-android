@@ -3,10 +3,15 @@ package apptentive.com.android.feedback
 import apptentive.com.android.TestCase
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.concurrent.Executors
+import apptentive.com.android.core.AndroidLoggerProvider
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.encryption.Encrypted
 import apptentive.com.android.encryption.NotEncrypted
-import apptentive.com.android.feedback.backend.ConversationCredentials
+import apptentive.com.android.feedback.backend.ConversationFetchResponse
+import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
+import apptentive.com.android.feedback.conversation.ConversationRepository
+import apptentive.com.android.feedback.conversation.MockConversationCredential
+import apptentive.com.android.feedback.conversation.MockConversationRepository
 import apptentive.com.android.feedback.conversation.createConversationManager
 import apptentive.com.android.feedback.engagement.util.MockAndroidSharedPrefDataStore
 import apptentive.com.android.feedback.engagement.util.MockFileSystem
@@ -20,7 +25,9 @@ import apptentive.com.android.feedback.model.MessageCenterNotification
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.payloads.Payload
 import apptentive.com.android.feedback.payload.PayloadSender
+import apptentive.com.android.feedback.platform.DefaultStateMachine
 import apptentive.com.android.feedback.platform.FileSystem
+import apptentive.com.android.feedback.platform.SDKEvent
 import apptentive.com.android.network.HttpClient
 import apptentive.com.android.network.HttpRequest
 import apptentive.com.android.network.HttpResponse
@@ -36,11 +43,9 @@ import org.junit.Test
 
 class ApptentiveDefaultClientTest : TestCase() {
     private var messageManager = MessageManager(
-        "1234",
-        "token",
         MockMessageCenterService(),
         MockExecutor(),
-        MockMessageRepository()
+        MockMessageRepository(),
     )
 
     private val mockHttpClient = object : HttpClient {
@@ -57,13 +62,15 @@ class ApptentiveDefaultClientTest : TestCase() {
     }
 
     private val mockPayloadSender = object : PayloadSender {
-        override fun sendPayload(payload: Payload) {}
+        override fun enqueuePayload(payload: Payload, credentialProvider: ConversationCredentialProvider) {}
+        override fun updateCredential(credentialProvider: ConversationCredentialProvider) {}
     }
 
     @Before
     fun setup() {
         DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore())
         DependencyProvider.register<FileSystem>(MockFileSystem())
+        DependencyProvider.register<ConversationCredentialProvider>(MockConversationCredential())
         Apptentive.messageCenterNotificationSubject.value = null
     }
 
@@ -112,10 +119,14 @@ class ApptentiveDefaultClientTest : TestCase() {
 
     @Test
     fun testMigrationFrom600() {
+        DefaultStateMachine.reset()
         DependencyProvider.clear()
         // Migrating from 6.0.0, has storage but CRYPTO_ENABLED flag
         DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore(containsKey = false))
         DependencyProvider.register<FileSystem>(MockFileSystem())
+        DependencyProvider.register(AndroidLoggerProvider("Apptentive"))
+
+        DefaultStateMachine.onEvent(SDKEvent.RegisterSDK)
 
         val apptentiveClient = getApptentiveClient()
         val encryptionStatus = apptentiveClient.getOldEncryptionSetting()
@@ -124,9 +135,12 @@ class ApptentiveDefaultClientTest : TestCase() {
 
     @Test
     fun testNotEncryptedStatus() {
+        DefaultStateMachine.reset()
         // Not encrypted, has storage & contains CRYPTO_ENABLED flag
         DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore(containsKey = true))
         DependencyProvider.register<FileSystem>(MockFileSystem(containsFile = true))
+
+        DefaultStateMachine.onEvent(SDKEvent.RegisterSDK)
 
         val apptentiveClient = getApptentiveClient()
         val encryptionStatus = apptentiveClient.getOldEncryptionSetting()
@@ -135,10 +149,12 @@ class ApptentiveDefaultClientTest : TestCase() {
 
     @Test
     fun testEncryptedStatus() {
+        DefaultStateMachine.reset()
         // Encrypted, has storage & CRYPTO_ENABLED flag true
         DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore(containsKey = true, isEncryptionEnabled = true))
         DependencyProvider.register<FileSystem>(MockFileSystem(containsFile = true))
 
+        DefaultStateMachine.onEvent(SDKEvent.RegisterSDK)
         val apptentiveClient = getApptentiveClient()
 
         val encryptionStatus = apptentiveClient.getOldEncryptionSetting()
@@ -269,13 +285,15 @@ class ApptentiveDefaultClientTest : TestCase() {
             )
         )
 
-        val fetchResponse = ConversationCredentials(
+        val fetchResponse = ConversationFetchResponse(
             id = "id",
             deviceId = "device_id",
             personId = "person_id",
             token = "token",
             encryptionKey = "encryption_key"
         )
+        DependencyProvider.register<ConversationRepository>(MockConversationRepository())
+        DefaultStateMachine.onEvent(SDKEvent.ClientStarted)
 
         apptentiveClient.conversationManager = createConversationManager(fetchResponse)
         apptentiveClient.payloadSender = mockPayloadSender

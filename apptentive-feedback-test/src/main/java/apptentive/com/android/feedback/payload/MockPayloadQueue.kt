@@ -1,5 +1,7 @@
 package apptentive.com.android.feedback.payload
 
+import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
+
 class MockPayloadQueue : PayloadQueue {
     private val payloads = mutableListOf<PayloadData>()
 
@@ -17,4 +19,8 @@ class MockPayloadQueue : PayloadQueue {
             throw AssertionError("Payload was not in the queue")
         }
     }
+
+    override fun updateCredential(credentialProvider: ConversationCredentialProvider) {}
+
+    override fun invalidateCredential(tag: String) {}
 }

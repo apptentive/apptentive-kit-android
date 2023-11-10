@@ -1,19 +1,24 @@
 package apptentive.com.android.feedback.conversation
 
 import androidx.core.util.AtomicFile
-import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.encryption.Encryption
+import apptentive.com.android.feedback.conversation.DefaultSerializers.conversationRosterSerializer
 import apptentive.com.android.feedback.conversation.DefaultSerializers.conversationSerializer
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.EngagementManifest
-import apptentive.com.android.platform.AndroidSharedPrefDataStore
-import apptentive.com.android.platform.SharedPrefConstants
+import apptentive.com.android.feedback.utils.FileStorageUtil
+import apptentive.com.android.feedback.utils.FileStorageUtil.getManifestFile
+import apptentive.com.android.feedback.utils.FileStorageUtil.hasStoragePriorToMultiUserSupport
+import apptentive.com.android.feedback.utils.FileStorageUtil.hasStoragePriorToSkipLogic
+import apptentive.com.android.feedback.utils.FileUtil
+import apptentive.com.android.feedback.utils.SensitiveDataUtils.hideIfSanitized
 import apptentive.com.android.serialization.BinaryDecoder
 import apptentive.com.android.serialization.BinaryEncoder
 import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.CONVERSATION
+import apptentive.com.android.util.generateUUID
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.DataInputStream
@@ -26,24 +31,38 @@ internal interface ConversationSerializer {
     fun loadConversation(): Conversation?
 
     @Throws(ConversationSerializationException::class)
+    fun initializeSerializer(): ConversationRoster
+
+    @Throws(ConversationSerializationException::class)
     fun saveConversation(conversation: Conversation)
 
     fun setEncryption(encryption: Encryption)
+
+    fun setRoster(conversationRoster: ConversationRoster)
+
+    fun saveRoster(conversationRoster: ConversationRoster)
 }
 
 internal class DefaultConversationSerializer(
-    private val conversationFile: File,
-    private val manifestFile: File,
+    private val conversationRosterFile: File,
 ) : ConversationSerializer {
 
     private lateinit var encryption: Encryption
 
+    private lateinit var conversationRoster: ConversationRoster
+
+    private var manifestFile: File = getManifestFile()
+
     // we keep track of the last seen engagement manifest expiry date and only update storage if it changes
     private var lastKnownManifestExpiry: TimeInterval = 0.0
 
+    @Throws(ConversationSerializationException::class)
     override fun saveConversation(conversation: Conversation) {
+        val rosterConversationFile = getConversationFileFromRoster(conversationRoster)
+            ?: throw ConversationLoggedOutException("No active conversation metadata found, unable to save conversation", null)
+        saveRoster(conversationRoster)
         val start = System.currentTimeMillis()
-        val atomicFile = AtomicFile(conversationFile)
+        val atomicFile = AtomicFile(rosterConversationFile)
         val stream = atomicFile.startWrite()
         val byteArrayOutputStream = ByteArrayOutputStream()
         try {
@@ -81,14 +100,19 @@ internal class DefaultConversationSerializer(
 
     @Throws(ConversationSerializationException::class)
     override fun loadConversation(): Conversation? {
-        if (conversationFile.exists()) {
-            val conversation = readConversation()
+        val conversationFile = loadConversationFile(conversationRoster)
+        if (conversationFile?.exists() == true) {
+            val conversation = readConversation(conversationFile)
 
-            // Added in 6.1.0. Previous versions will be `null`.
-            val storedSdkVersion = DependencyProvider.of<AndroidSharedPrefDataStore>()
-                .getString(SharedPrefConstants.SDK_CORE_INFO, SharedPrefConstants.SDK_VERSION).ifEmpty { null }
+            if (hasStoragePriorToMultiUserSupport()) {
+                // Transfer the entries to new conversation file
+                saveConversation(conversation)
+                // Delete old conversation.bin if exists
+                FileUtil.deleteFile(conversationFile.path)
+            }
 
-            val engagementManifest = if (storedSdkVersion != null) readEngagementManifest() else null
+            // By setting engagementManifest null it will be refreshed for the users returning from < v6.1.0
+            val engagementManifest = if (hasStoragePriorToSkipLogic()) null else readEngagementManifest()
             if (engagementManifest != null) {
                 return conversation.copy(engagementManifest = engagementManifest)
             }
@@ -103,14 +127,56 @@ internal class DefaultConversationSerializer(
         this.encryption = encryption
     }
 
-    private fun readConversation(): Conversation =
+    override fun setRoster(conversationRoster: ConversationRoster) {
+        this.conversationRoster = conversationRoster
+        saveRoster(conversationRoster)
+    }
+
+    override fun initializeSerializer(): ConversationRoster {
+        val conversationRoster = if (conversationRosterFile.exists() && conversationRosterFile.length() > 0) {
+            Log.d(CONVERSATION, "Conversation roster file exists, loading roster")
+            readConversationRoster()
+        } else {
+            // Create conversation file
+            val path = "conversations/${generateUUID()}"
+            Log.d(CONVERSATION, "Conversation roster file does not exist, creating new conversation at $path")
+            ConversationRoster(activeConversation = ConversationMetaData(ConversationState.Undefined, path = path))
+        }
+        return conversationRoster
+    }
+
+    override fun saveRoster(conversationRoster: ConversationRoster) {
+        Log.d(CONVERSATION, "Saving conversation roster: ${hideIfSanitized(conversationRoster)}")
+        val atomicFile = AtomicFile(conversationRosterFile)
+        val stream = atomicFile.startWrite()
         try {
-            val decryptedMessage = encryption.decrypt(FileInputStream(conversationFile))
+            val encoder = BinaryEncoder(DataOutputStream(stream))
+            conversationRosterSerializer.encode(encoder, conversationRoster)
+            atomicFile.finishWrite(stream)
+        } catch (e: Exception) {
+            atomicFile.failWrite(stream)
+            throw ConversationSerializationException("Unable to save conversation roster", e)
+        }
+    }
+
+    private fun readConversation(rosterConversationFile: File): Conversation =
+        try {
+            val decryptedMessage = encryption.decrypt(FileInputStream(rosterConversationFile))
             val inputStream = ByteArrayInputStream(decryptedMessage)
             val decoder = BinaryDecoder(DataInputStream(inputStream))
             conversationSerializer.decode((decoder))
         } catch (e: Exception) {
             throw ConversationSerializationException("Unable to load conversation", e)
+        }
+
+    private fun readConversationRoster(): ConversationRoster =
+        try {
+            conversationRosterFile.inputStream().use { stream ->
+                val decoder = BinaryDecoder(DataInputStream(stream))
+                conversationRosterSerializer.decode(decoder)
+            }
+        } catch (e: Exception) {
+            throw ConversationSerializationException("Unable to load conversation roster", e)
         }
 
     private fun readEngagementManifest(): EngagementManifest? {
@@ -123,5 +189,26 @@ internal class DefaultConversationSerializer(
             Log.e(CONVERSATION, "Unable to load engagement manifest: $manifestFile", e)
         }
         return null
+    }
+
+    private fun getConversationFileFromRoster(roster: ConversationRoster): File? {
+        Log.d(CONVERSATION, "Setting conversation file from roster")
+        return roster.activeConversation?.let { activeConversation ->
+            Log.d(CONVERSATION, "Using conversation file: ${activeConversation.path}")
+            FileStorageUtil.getConversationFileForActiveUser(activeConversation.path)
+        }
+    }
+
+    private fun loadConversationFile(conversationRoster: ConversationRoster?): File? {
+        // Use the old messages.bin file for older SDKs < 6.2.0
+        // SDK_VERSION is added in 6.1.0. It would be null for the SDKs < 6.1.0
+        return if (hasStoragePriorToMultiUserSupport()) {
+            Log.d(CONVERSATION, "Using old conversation file")
+            FileStorageUtil.getConversationFile()
+        } else {
+            conversationRoster?.let { roster ->
+                getConversationFileFromRoster(roster)
+            }
+        }
     }
 }

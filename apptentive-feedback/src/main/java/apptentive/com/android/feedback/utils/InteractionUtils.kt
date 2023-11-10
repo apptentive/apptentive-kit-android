@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.utils
 
-import android.content.Context
+import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.platform.SharedPrefConstants
 import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.util.Log
@@ -15,28 +16,28 @@ import apptentive.com.android.util.LogTags
  * If it fails to create, don't throw an exception since this is an edge case fix.
  */
 
-fun <T : Any> saveInteractionBackup(interactionModel: T, context: Context) {
+fun <T : Any> saveInteractionBackup(interactionModel: T) {
     Log.d(LogTags.INTERACTIONS, "Saving interaction model backup")
 
     try {
         val jsonModel = JsonConverter.toJson(interactionModel)
 
-        context
-            .getSharedPreferences(SharedPrefConstants.APPTENTIVE, Context.MODE_PRIVATE)
-            .edit()
-            .putString(SharedPrefConstants.INTERACTION_BACKUP, jsonModel)
-            .apply()
+        DependencyProvider.of<AndroidSharedPrefDataStore>().putString(
+            SharedPrefConstants.APPTENTIVE,
+            SharedPrefConstants.INTERACTION_BACKUP,
+            jsonModel
+        )
     } catch (exception: Exception) {
         Log.e(LogTags.INTERACTIONS, "Error converting interaction model for backup", exception)
     }
 }
 
-inline fun <reified T> getInteractionBackup(context: Context): T {
+inline fun <reified T> getInteractionBackup(): T {
     Log.w(LogTags.INTERACTIONS, "Error creating ViewModel. Attempting backup.")
 
     try {
-        val sharedPrefs = context.getSharedPreferences(SharedPrefConstants.APPTENTIVE, Context.MODE_PRIVATE)
-        val jsonInteraction = sharedPrefs.getString(SharedPrefConstants.INTERACTION_BACKUP, null).orEmpty()
+        val jsonInteraction = DependencyProvider.of<AndroidSharedPrefDataStore>()
+            .getString(SharedPrefConstants.APPTENTIVE, SharedPrefConstants.INTERACTION_BACKUP, "")
         return JsonConverter.fromJson(jsonInteraction)
     } catch (exception: Exception) {
         Log.e(LogTags.INTERACTIONS, "Error creating ViewModel. Backup failed.", exception)

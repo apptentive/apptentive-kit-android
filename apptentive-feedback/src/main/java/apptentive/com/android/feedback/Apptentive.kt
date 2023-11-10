@@ -4,6 +4,7 @@ import android.app.Application
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.concurrent.ExecutorQueue
@@ -23,8 +24,13 @@ import apptentive.com.android.feedback.model.EventNotification
 import apptentive.com.android.feedback.model.MessageCenterNotification
 import apptentive.com.android.feedback.notifications.NotificationUtils
 import apptentive.com.android.feedback.platform.AndroidFileSystemProvider
+import apptentive.com.android.feedback.platform.DefaultStateMachine
+import apptentive.com.android.feedback.platform.SDKEvent
+import apptentive.com.android.feedback.platform.SDKState
+import apptentive.com.android.feedback.platform.isSDKLoading
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.feedback.utils.ThrottleUtils
+import apptentive.com.android.feedback.utils.isMarshmallowOrGreater
 import apptentive.com.android.feedback.utils.sha256
 import apptentive.com.android.network.DefaultHttpClient
 import apptentive.com.android.network.DefaultHttpNetwork
@@ -33,7 +39,6 @@ import apptentive.com.android.network.HttpClient
 import apptentive.com.android.network.HttpLoggingInterceptor
 import apptentive.com.android.network.HttpNetworkResponse
 import apptentive.com.android.network.HttpRequest
-import apptentive.com.android.network.asString
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.platform.DefaultAndroidSharedPrefDataStore
 import apptentive.com.android.platform.SharedPrefConstants
@@ -96,10 +101,10 @@ object Apptentive {
 
     /**
      * Collects the [ApptentiveActivityInfo] reference which can be used to retrieve the
-     * current [Activity]'s [Context].
+     * current Activity's [Context].
      * The retrieved context is used in the Apptentive interactions & its UI elements.
      *
-     * @param apptentiveActivityInfo reference to the app's current [Activity]
+     * @param apptentiveActivityInfo reference to the app's current Activity
      */
 
     @JvmStatic
@@ -185,120 +190,243 @@ object Apptentive {
     ) {
         if (registered) {
             Log.w(SYSTEM, "Apptentive SDK already registered")
-            return
-        }
+            callback?.invoke(RegisterResult.Failure("Apptentive SDK already registered", -1))
+        } else {
+            DefaultStateMachine.onEvent(SDKEvent.RegisterSDK)
 
-        try {
+            try {
 
-            // register dependency providers
-            DependencyProvider.register(AndroidLoggerProvider("Apptentive"))
-            DependencyProvider.register<ApplicationInfo>(AndroidApplicationInfo(application.applicationContext))
-            DependencyProvider.register(AndroidExecutorFactoryProvider())
-            DependencyProvider.register(
-                AndroidFileSystemProvider(
-                    application.applicationContext,
-                    "apptentive.com.android.feedback"
+                // register dependency providers
+                DependencyProvider.register(AndroidLoggerProvider("Apptentive"))
+                DependencyProvider.register<ApplicationInfo>(AndroidApplicationInfo(application.applicationContext))
+                DependencyProvider.register(AndroidExecutorFactoryProvider())
+                DependencyProvider.register(
+                    AndroidFileSystemProvider(
+                        application.applicationContext,
+                        "apptentive.com.android.feedback"
+                    )
                 )
-            )
-            DependencyProvider.register<AndroidSharedPrefDataStore>(DefaultAndroidSharedPrefDataStore(application.applicationContext))
+                DependencyProvider.register<AndroidSharedPrefDataStore>(
+                    DefaultAndroidSharedPrefDataStore(application.applicationContext)
+                )
 
-            checkSavedKeyAndSignature(application, configuration)
+                checkSavedKeyAndSignature(configuration)
 
-            // Save host app theme usage
-            application.getSharedPreferences(
-                SharedPrefConstants.USE_HOST_APP_THEME,
-                Context.MODE_PRIVATE
-            )
-                .edit().putBoolean(
+                // Save host app theme usage
+
+                DependencyProvider.of<AndroidSharedPrefDataStore>().putBoolean(
+                    SharedPrefConstants.USE_HOST_APP_THEME,
                     SharedPrefConstants.USE_HOST_APP_THEME_KEY,
                     configuration.shouldInheritAppTheme
-                ).apply()
-
-            // Set log level
-            Log.logLevel = configuration.logLevel
-
-            // Set message redaction
-            SensitiveDataUtils.shouldSanitizeLogMessages = configuration.shouldSanitizeLogMessages
-
-            // Set rating throttle
-            ThrottleUtils.ratingThrottleLength = configuration.ratingInteractionThrottleLength
-            ThrottleUtils.throttleSharedPrefs =
-                application.getSharedPreferences(
-                    SharedPrefConstants.THROTTLE_UTILS,
-                    Context.MODE_PRIVATE
                 )
 
-            // Save alternate app store URL to be set later
-            application.getSharedPreferences(
-                SharedPrefConstants.CUSTOM_STORE_URL,
-                Context.MODE_PRIVATE
-            )
-                .edit().putString(
+                // Set log level
+                Log.logLevel = configuration.logLevel
+
+                // Set message redaction
+                SensitiveDataUtils.shouldSanitizeLogMessages =
+                    configuration.shouldSanitizeLogMessages
+
+                // Set rating throttle
+                ThrottleUtils.ratingThrottleLength = configuration.ratingInteractionThrottleLength
+
+                // Save alternate app store URL to be set later
+
+                DependencyProvider.of<AndroidSharedPrefDataStore>().putString(
+                    SharedPrefConstants.CUSTOM_STORE_URL,
                     SharedPrefConstants.CUSTOM_STORE_URL_KEY,
                     configuration.customAppStoreURL
-                ).apply()
+                )
 
-            Log.i(SYSTEM, "Registering Apptentive Android SDK ${Constants.SDK_VERSION}")
-            Log.v(
-                SYSTEM,
-                "ApptentiveKey: ${SensitiveDataUtils.hideIfSanitized(configuration.apptentiveKey)} " +
-                    "ApptentiveSignature: ${SensitiveDataUtils.hideIfSanitized(configuration.apptentiveSignature)}"
-            )
+                Log.i(SYSTEM, "Registering Apptentive Android SDK ${Constants.SDK_VERSION}")
+                Log.v(
+                    SYSTEM,
+                    "ApptentiveKey: ${SensitiveDataUtils.hideIfSanitized(configuration.apptentiveKey)} " +
+                        "ApptentiveSignature: ${SensitiveDataUtils.hideIfSanitized(configuration.apptentiveSignature)}"
+                )
 
-            stateExecutor = ExecutorQueue.createSerialQueue("SDK Queue")
-            mainExecutor = ExecutorQueue.mainQueue
+                stateExecutor = ExecutorQueue.createSerialQueue("SDK Queue")
+                mainExecutor = ExecutorQueue.mainQueue
 
-            // wrap the callback
-            val callbackWrapper: ((RegisterResult) -> Unit)? = if (callback != null) {
-                {
-                    mainExecutor.execute {
-                        callback.invoke(it)
+                // wrap the callback
+                val callbackWrapper: ((RegisterResult) -> Unit)? = if (callback != null) {
+                    {
+                        mainExecutor.execute {
+                            callback.invoke(it)
+                        }
+                    }
+                } else null
+
+                client = ApptentiveDefaultClient(
+                    configuration = configuration,
+                    httpClient = createHttpClient(application.applicationContext),
+                    executors = Executors(
+                        state = stateExecutor,
+                        main = mainExecutor
+                    ),
+                ).apply {
+                    stateExecutor.execute {
+                        initialize(application.applicationContext)
+                        start(application.applicationContext, callbackWrapper)
                     }
                 }
-            } else null
-
-            client = ApptentiveDefaultClient(
-                configuration = configuration,
-                httpClient = createHttpClient(application.applicationContext),
-                executors = Executors(
-                    state = stateExecutor,
-                    main = mainExecutor
-                )
-            ).apply {
-                stateExecutor.execute {
-                    start(application.applicationContext, callbackWrapper)
-                }
+            } catch (exception: Exception) {
+                Log.e(FEEDBACK, "Exception thrown in the SDK registration", exception)
+                DefaultStateMachine.onEvent(SDKEvent.Error)
             }
-        } catch (exception: Exception) {
-            Log.e(FEEDBACK, "Exception thrown in the SDK registration", exception)
         }
     }
 
+    /**
+     * Starts login process asynchronously. This call returns immediately. Using this method requires
+     * you to implement JWT generation on your server. Please read about it in Apptentive's Android
+     * Integration Reference Guide.
+     *
+     * @param jwtToken A JWT signed by your server using the secret from your app's Apptentive settings.
+     * @param callback A LoginCallback, which will be called asynchronously when the login succeeds
+     *                 or fails.
+     */
+    @JvmStatic
+    @Synchronized
+    fun login(jwtToken: String, callback: ((result: LoginResult) -> Unit)? = null) {
+        when {
+            Build.VERSION_CODES.M > Build.VERSION.SDK_INT -> {
+                Log.w(FEEDBACK, "Login is only supported on Android M and above")
+                executeCallbackInMainExecutor(callback, LoginResult.Error("Login is only supported on Android M and above"))
+            }
+            DefaultStateMachine.state == SDKState.LOGGED_IN -> {
+                Log.w(FEEDBACK, "The SDK is already logged in. Logout first to login again")
+                executeCallbackInMainExecutor(callback, LoginResult.Error("The SDK is already logged in. Logout first to login again"))
+            }
+            DefaultStateMachine.state == SDKState.UNINITIALIZED -> {
+                Log.w(FEEDBACK, "The SDK is not initialized yet. Please register the SDK first")
+                executeCallbackInMainExecutor(callback, LoginResult.Error("The SDK is not initialized yet. Please register the SDK first"))
+            }
+            else -> {
+                try {
+                    stateExecutor.execute {
+                        client.login(jwtToken, callback)
+                    }
+                } catch (e: java.lang.Exception) {
+                    Log.e(FEEDBACK, "Exception thrown in the SDK login", e)
+                    executeCallbackInMainExecutor(callback, LoginResult.Exception(e))
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns whether or not the register() method is already called.
+     *
+     * @return true if the SDK's register method is already called, false otherwise.
+     */
+    fun isRegistered(): Boolean = registered
+
+    internal fun executeCallbackInMainExecutor(callback: ((result: LoginResult) -> Unit)? = null, result: LoginResult) {
+        mainExecutor.execute {
+            callback?.invoke(result)
+        }
+    }
+
+    /*
+     * Starts logout process asynchronously.
+     * The current logged in user will be logged out.
+     * The SDK will stop sending events & showing interactions until a new user is logged in.
+     */
+    @JvmStatic
+    @Synchronized
+    fun logout() {
+        try {
+            stateExecutor.execute {
+                client.logout()
+            }
+        } catch (e: java.lang.Exception) {
+            Log.e(FEEDBACK, "Exception thrown in the SDK logout", e)
+        }
+    }
+
+    /**
+     * Registers your listener with Apptentive. This listener is stored with a WeakReference, which
+     * means that you must store a static reference to the listener as long as you want it to live.
+     * One possible way to do this is to implement this listener with your Application class, or store
+     * one on your Application.
+     *
+     *
+     * This listener will alert you to authentication failures, so that you can either recover from
+     * expired or revoked JWTs, or fix your authentication implementation.
+     *
+     * @param listener A listener that will be called when there is an authentication failure other
+     * for the current logged in conversation. If the failure is for another
+     * conversation, or there is no active conversation, the listener is not called.
+     */
+    fun setAuthenticationFailedListener(listener: AuthenticationFailedListener) {
+        try {
+            client.setAuthenticationFailedListener(listener)
+        } catch (e: java.lang.Exception) {
+            Log.e(CONVERSATION, e, "Error in Apptentive.setUnreadMessagesListener()")
+        }
+    }
+
+    /*
+     * Refreshes the auth token for the logged in user
+     *
+     * @param jwtToken A JWT signed by your server using the secret from your app's Apptentive settings.
+     * @param callback A LoginCallback, which will be called asynchronously when the login succeeds
+     */
+    @JvmStatic
+    @Synchronized
+    fun updateToken(jwtToken: String, callback: ((result: LoginResult) -> Unit)? = null) {
+        when {
+            !isMarshmallowOrGreater() -> {
+                Log.w(FEEDBACK, "Login is only supported on Android M and above")
+                callback?.invoke(LoginResult.Error("Login is only supported on Android M and above"))
+            }
+            DefaultStateMachine.state != SDKState.LOGGED_IN -> {
+                Log.w(FEEDBACK, "Need to login first to update token")
+                callback?.invoke(LoginResult.Error("Need to login first to update token"))
+            }
+            else -> {
+                try {
+                    stateExecutor.execute {
+                        client.updateToken(jwtToken, callback)
+                    }
+                } catch (e: java.lang.Exception) {
+                    Log.e(FEEDBACK, "Exception thrown in the SDK udpate token", e)
+                    callback?.invoke(LoginResult.Exception(e))
+                }
+            }
+        }
+    }
+
+    // Not a public API, internal use only
+    @InternalUseOnly
+    fun getCurrentState(): SDKState {
+        return DefaultStateMachine.state
+    }
+
     private fun checkSavedKeyAndSignature(
-        application: Application,
         configuration: ApptentiveConfiguration
     ) {
-        val registrationSharedPrefs = application.getSharedPreferences(
-            SharedPrefConstants.REGISTRATION_INFO,
-            Context.MODE_PRIVATE
-        )
+        val registrationSharedPrefs = DependencyProvider.of<AndroidSharedPrefDataStore>()
+
         val savedKeyHash =
-            registrationSharedPrefs.getString(SharedPrefConstants.APPTENTIVE_KEY_HASH, null)
+            registrationSharedPrefs.getNullableString(SharedPrefConstants.REGISTRATION_INFO, SharedPrefConstants.APPTENTIVE_KEY_HASH, null)
         val savedSignatureHash =
-            registrationSharedPrefs.getString(SharedPrefConstants.APPTENTIVE_SIGNATURE_HASH, null)
+            registrationSharedPrefs.getNullableString(SharedPrefConstants.REGISTRATION_INFO, SharedPrefConstants.APPTENTIVE_SIGNATURE_HASH, null)
 
         if (savedKeyHash.isNullOrEmpty() && savedSignatureHash.isNullOrEmpty()) {
             registrationSharedPrefs
-                .edit()
                 .putString(
+                    SharedPrefConstants.REGISTRATION_INFO,
                     SharedPrefConstants.APPTENTIVE_KEY_HASH,
                     configuration.apptentiveKey.sha256()
                 )
+            registrationSharedPrefs
                 .putString(
+                    SharedPrefConstants.REGISTRATION_INFO,
                     SharedPrefConstants.APPTENTIVE_SIGNATURE_HASH,
                     configuration.apptentiveSignature.sha256()
                 )
-                .apply()
             Log.d(LogTags.CONFIGURATION, "Saving current ApptentiveKey and ApptentiveSignature hash")
         } else {
             val newKeyHash = configuration.apptentiveKey.sha256()
@@ -332,9 +460,7 @@ object Apptentive {
                 Log.v(NETWORK, "Content-Type: ${request.requestBody?.contentType}")
                 Log.v(
                     NETWORK,
-                    "Request Body: " +
-                        if ((request.requestBody?.asString()?.length ?: 0) < 5000) SensitiveDataUtils.hideIfSanitized(request.requestBody?.asString())
-                        else "Request body too large to print."
+                    "Request Body: ${SensitiveDataUtils.hideIfSanitized(request.requestBody?.asString())}"
                 )
             }
 
@@ -388,6 +514,7 @@ object Apptentive {
             engage(eventName, customData, callbackFunc)
         } catch (exception: Exception) {
             Log.e(FEEDBACK, "Exception when engage the event $eventName", exception)
+            callback?.onComplete(EngagementResult.Error("There was an exception when engaging the event $eventName"))
         }
     }
 
@@ -400,15 +527,19 @@ object Apptentive {
                 }
             }
         } else null
-
-        // all the SDK related operations should be executed on the state executor
-        stateExecutor.execute {
-            try {
-                val event = Event.local(eventName)
-                val result = client.engage(event, customData)
-                callbackWrapper?.invoke(result)
-            } catch (exception: Exception) {
-                callbackWrapper?.invoke(EngagementResult.Exception(error = exception))
+        if (DefaultStateMachine.state == SDKState.LOGGED_OUT) {
+            Log.w(FEEDBACK, "SDK is in logged out state. Please login to engage an event")
+            callbackWrapper?.invoke(EngagementResult.Error("SDK is in logged out state. Please login to engage an event"))
+        } else {
+            // all the SDK related operations should be executed on the state executor
+            stateExecutor.execute {
+                try {
+                    val event = Event.local(eventName)
+                    val result = client.engage(event, customData)
+                    callbackWrapper?.invoke(result)
+                } catch (exception: Exception) {
+                    callbackWrapper?.invoke(EngagementResult.Exception(error = exception))
+                }
             }
         }
     }
@@ -474,13 +605,18 @@ object Apptentive {
             }
         } else null
 
-        stateExecutor.execute {
-            try {
-                val result = client.showMessageCenter(customData)
-                callbackWrapper?.invoke(result)
-            } catch (exception: Exception) {
-                callbackWrapper?.invoke(EngagementResult.Exception(error = exception))
-                Log.e(MESSAGE_CENTER, "Exception showing the message center", exception)
+        if (DefaultStateMachine.state == SDKState.LOGGED_OUT) {
+            Log.w(FEEDBACK, "SDK is in logged out state. Please login to show message center")
+            callbackWrapper?.invoke(EngagementResult.Error("SDK is in logged out state. Please login to show message center"))
+        } else {
+            stateExecutor.execute {
+                try {
+                    val result = client.showMessageCenter(customData)
+                    callbackWrapper?.invoke(result)
+                } catch (exception: Exception) {
+                    callbackWrapper?.invoke(EngagementResult.Exception(error = exception))
+                    Log.e(MESSAGE_CENTER, "Exception showing the message center", exception)
+                }
             }
         }
     }
@@ -518,6 +654,11 @@ object Apptentive {
     @JvmStatic
     fun getUnreadMessageCount(): Int {
         return try {
+            if (DefaultStateMachine.state == SDKState.LOGGED_OUT) {
+                Log.w(FEEDBACK, "SDK is in logged out state. Please login to get unread message count")
+            } else {
+                client.getUnreadMessageCount()
+            }
             client.getUnreadMessageCount()
         } catch (exception: Exception) {
             Log.w(MESSAGE_CENTER, "Exception while getting unread message count", exception)
@@ -535,10 +676,14 @@ object Apptentive {
     fun sendAttachmentText(text: String?) {
         try {
             stateExecutor.execute {
-                text?.let {
-                    client.sendHiddenTextMessage(text)
-                } ?: run {
-                    Log.d(MESSAGE_CENTER, "Attachment text was null")
+                if (DefaultStateMachine.state == SDKState.LOGGED_OUT) {
+                    Log.w(FEEDBACK, "SDK is in logged out state. Please login to get unread message count")
+                } else {
+                    text?.let {
+                        client.sendHiddenTextMessage(text)
+                    } ?: run {
+                        Log.d(MESSAGE_CENTER, "Attachment text was null")
+                    }
                 }
             }
         } catch (exception: Exception) {
@@ -560,7 +705,11 @@ object Apptentive {
         try {
             if (!uri.isNullOrBlank()) {
                 stateExecutor.execute {
-                    client.sendHiddenAttachmentFileUri(uri)
+                    if (DefaultStateMachine.state == SDKState.LOGGED_OUT) {
+                        Log.w(FEEDBACK, "SDK is in logged out state. Please login to send attachment file")
+                    } else {
+                        client.sendHiddenAttachmentFileUri(uri)
+                    }
                 }
             } else Log.d(MESSAGE_CENTER, "URI String was null or blank. URI: $uri")
         } catch (exception: Exception) {
@@ -583,7 +732,11 @@ object Apptentive {
         try {
             if (content != null && mimeType != null) {
                 stateExecutor.execute {
-                    client.sendHiddenAttachmentFileBytes(content, mimeType)
+                    if (DefaultStateMachine.state == SDKState.LOGGED_OUT) {
+                        Log.w(FEEDBACK, "SDK is in logged out state. Please login to send attachment file")
+                    } else {
+                        client.sendHiddenAttachmentFileBytes(content, mimeType)
+                    }
                 }
             } else Log.d(
                 MESSAGE_CENTER,
@@ -609,7 +762,11 @@ object Apptentive {
         try {
             if (inputStream != null && mimeType != null) {
                 stateExecutor.execute {
-                    client.sendHiddenAttachmentFileStream(inputStream, mimeType)
+                    if (DefaultStateMachine.state == SDKState.LOGGED_OUT) {
+                        Log.w(FEEDBACK, "SDK is in logged out state. Please login to send attachment file")
+                    } else {
+                        client.sendHiddenAttachmentFileStream(inputStream, mimeType)
+                    }
                 }
             } else Log.d(
                 MESSAGE_CENTER,
@@ -640,11 +797,16 @@ object Apptentive {
     fun setPersonName(name: String?) {
         try {
             stateExecutor.execute {
-                if (!name.isNullOrBlank()) client.updatePerson(name = name)
-                else Log.d(
-                    PROFILE_DATA_UPDATE,
-                    "Null or Empty/Blank strings are not supported for name"
-                )
+                when {
+                    DefaultStateMachine.state == SDKState.LOGGED_OUT -> {
+                        Log.w(FEEDBACK, "SDK is in logged out state. Please login to set person name")
+                    }
+                    !name.isNullOrBlank() -> client.updatePerson(name = name)
+                    else -> Log.d(
+                        PROFILE_DATA_UPDATE,
+                        "Null or Empty/Blank strings are not supported for name"
+                    )
+                }
             }
         } catch (exception: Exception) {
             Log.e(PERSON, "Exception setting Person's name", exception)
@@ -660,13 +822,19 @@ object Apptentive {
     @JvmStatic
     fun getPersonName(): String? {
         return try {
-            if (registered) client.getPersonName()
-            else {
-                Log.w(
-                    LogTags.PROFILE_DATA_GET,
-                    "Apptentive not registered. Cannot get Person name."
-                )
-                null
+            when {
+                DefaultStateMachine.state == SDKState.LOGGED_OUT -> {
+                    Log.w(FEEDBACK, "SDK is in logged out state. Please login to get person name")
+                    null
+                }
+                registered -> client.getPersonName()
+                else -> {
+                    Log.w(
+                        LogTags.PROFILE_DATA_GET,
+                        "Apptentive not registered. Cannot get Person name."
+                    )
+                    null
+                }
             }
         } catch (exception: Exception) {
             Log.e(PERSON, "Exception while getting Person's name", exception)
@@ -955,6 +1123,13 @@ object Apptentive {
      */
     @JvmStatic
     fun setPushNotificationIntegration(context: Context, pushProvider: Int, token: String) {
+        if (DefaultStateMachine.isSDKLoading()) {
+            Log.w(
+                PUSH_NOTIFICATION,
+                "Apptentive is not initialized. Cannot set push notification integration."
+            )
+            return
+        }
         try {
             stateExecutor.execute {
                 context
@@ -974,7 +1149,7 @@ object Apptentive {
     /**
      * Determines whether this Intent is a push notification sent from Apptentive.
      *
-     * @param intent The received [Intent] you received in your [BroadcastReceiver].
+     * @param intent The received [Intent] you received in your BroadcastReceiver.
      * @return `true` if the [Intent] came from, and should be handled by Apptentive.
      */
     @JvmStatic
@@ -1030,7 +1205,7 @@ object Apptentive {
      * if the push data came from Apptentive, and an Interaction can be shown, or
      * `null`.
      * @param intent An [Intent] containing the Apptentive Push data. Pass in what you receive
-     * in the [Service] or [BroadcastReceiver] that is used by your chosen push provider.
+     * in the Service or BroadcastReceiver that is used by your chosen push provider.
      */
     @JvmStatic
     fun buildPendingIntentFromPushNotification(context: Context, callback: PendingIntentCallback, intent: Intent) {
@@ -1147,7 +1322,7 @@ object Apptentive {
      * [android.app.Notification] object.
      *
      * @param bundle A [Bundle] containing the Apptentive Push data. Pass in what you receive in
-     * the the [Service] or [BroadcastReceiver] that is used by your chosen push provider.
+     * the the Service or BroadcastReceiver that is used by your chosen push provider.
      * @return a [String] value, or `null`.
      */
     @JvmStatic

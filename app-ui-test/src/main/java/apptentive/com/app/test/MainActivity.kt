@@ -11,6 +11,7 @@ import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.InteractionModuleComponent
+import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.engagement.Engagement
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.Event
@@ -109,8 +110,10 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
                 }
             },
             payloadSender = object : PayloadSender {
-                override fun sendPayload(payload: Payload) {
+                override fun enqueuePayload(payload: Payload, credentialProvider: ConversationCredentialProvider) {
                 }
+
+                override fun updateCredential(credentialProvider: ConversationCredentialProvider) {}
             },
             executors = Executors(ImmediateExecutor, ImmediateExecutor),
         )

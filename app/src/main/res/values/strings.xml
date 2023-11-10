@@ -24,6 +24,8 @@
     <string name="email">Email…</string>
     <string name="person_name">Person Name</string>
     <string name="select_function_type">Select function type</string>
+    <string name="select_user">Select user</string>
+    <string name="select_jwt">Select jwt</string>
     <string name="send">Send</string>
     <string name="hidden_text_file_contents">Hidden Text File Contents</string>
     <string name="select_hidden_file">Select Hidden File</string>
@@ -77,6 +79,10 @@
     <string name="boolean_string">Boolean</string>
     <string name="other_person_data">Other Person Data</string>
     <string name="deep_link_successful">Deep Link Successful</string>
+    <string name="login">LOGIN</string>
+    <string name="logout">LOGOUT</string>
+    <string name="login2">LOGIN_2</string>
+    <string name="login3">LOGIN_3</string>
 
     <plurals name="unread_messages">
         <item quantity="one">%d unread message</item>

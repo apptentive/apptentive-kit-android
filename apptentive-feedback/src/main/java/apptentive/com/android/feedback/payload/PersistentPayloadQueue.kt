@@ -1,13 +1,15 @@
 package apptentive.com.android.feedback.payload
 
 import android.content.Context
+import android.os.Build
 import apptentive.com.android.encryption.Encryption
+import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.utils.FileUtil
-import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.feedback.utils.createStringTable
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogLevel
 import apptentive.com.android.util.LogTags.PAYLOADS
+import java.util.Base64
 
 internal class PersistentPayloadQueue(
     private val dbHelper: PayloadSQLiteHelper
@@ -22,9 +24,17 @@ internal class PersistentPayloadQueue(
     }
 
     override fun deletePayloadAndAssociatedFiles(payload: PayloadData) {
-        FileUtil.deleteFile(payload.attachmentData.dataFilePath)
+        FileUtil.deleteFile(payload.sidecarData.dataFilePath)
         dbHelper.deletePayload(payload.nonce)
         printPayloads("Delete payload and associated files")
+    }
+
+    override fun updateCredential(credentialProvider: ConversationCredentialProvider) {
+        dbHelper.updateCredential(credentialProvider)
+    }
+
+    override fun invalidateCredential(tag: String) {
+        dbHelper.invalidateCredential(tag)
     }
 
     private fun printPayloads(title: String) {
@@ -44,20 +54,35 @@ internal class PersistentPayloadQueue(
                 arrayOf<Any?>(
                     "nonce",
                     "type",
-                    "path",
-                    "method",
-                    "mediaType",
+                    "tag",
+                    "token",
                     "data"
                 )
             )
             val rows = payloads.map { payload ->
+                val formattedData = when {
+                    payload.data.size > 5000 -> "Request body too large to print."
+                    payload.mediaType == MediaType.applicationJson ||
+                        Build.VERSION.SDK_INT < Build.VERSION_CODES.O -> String(
+                        payload.data,
+                        Charsets.UTF_8
+                    )
+
+                    else -> "Binary data: ${Base64.getEncoder().encodeToString(payload.data)}"
+                }
+
+                val formattedToken = when (payload.token) {
+                    null -> "null"
+                    "embedded" -> "embedded"
+                    else -> "JWT"
+                }
+
                 arrayOf<Any?>(
                     payload.nonce,
                     payload.type,
-                    payload.path,
-                    payload.method,
-                    payload.mediaType,
-                    SensitiveDataUtils.hideIfSanitized(payload.data.toString(Charsets.UTF_8))
+                    payload.tag,
+                    formattedToken,
+                    formattedData
                 )
             }
             Log.v(PAYLOADS, "$title (${payloads.size}):\n${createStringTable(header + rows)}")

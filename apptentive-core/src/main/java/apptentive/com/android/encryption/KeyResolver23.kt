@@ -7,14 +7,17 @@ import androidx.annotation.RequiresApi
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.platform.SharedPrefConstants.CRYPTO_KEY_ALIAS
+import apptentive.com.android.platform.SharedPrefConstants.CRYPTO_KEY_WRAPPER_ALIAS
 import apptentive.com.android.platform.SharedPrefConstants.SDK_CORE_INFO
+import apptentive.com.android.util.InternalUseOnly
 import java.security.KeyStore
 import java.util.UUID
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 
 @RequiresApi(Build.VERSION_CODES.M)
-internal class KeyResolver23 : KeyResolver {
+@InternalUseOnly
+class KeyResolver23 : KeyResolver {
     private val keyStore = KeyStore.getInstance(KEYSTORE_PROVIDER).apply {
         load(null)
     }
@@ -24,6 +27,23 @@ internal class KeyResolver23 : KeyResolver {
     @Throws(EncryptionException::class)
     override fun resolveKey(): EncryptionKey {
         return EncryptionKey(getKey(), getTransformation())
+    }
+
+    override fun resolveMultiUserWrapperKey(user: String): EncryptionKey {
+        return EncryptionKey(getWrapperKey(user), getTransformation())
+    }
+
+    private fun getWrapperKey(user: String): SecretKey {
+        val keyAlias = androidProxy.getString(SDK_CORE_INFO, user + CRYPTO_KEY_WRAPPER_ALIAS)
+        val exitingKey = keyStore.getEntry(keyAlias, null) as? KeyStore.SecretKeyEntry
+
+        return if (exitingKey?.secretKey == null) {
+            val newKeyAlias = KEY_ALIAS + UUID.randomUUID()
+            androidProxy.putString(SDK_CORE_INFO, user + CRYPTO_KEY_WRAPPER_ALIAS, newKeyAlias)
+            createKey(newKeyAlias)
+        } else {
+            exitingKey.secretKey
+        }
     }
 
     @Throws(EncryptionException::class)
@@ -61,14 +81,14 @@ internal class KeyResolver23 : KeyResolver {
         }
     }
 
-    private fun getTransformation() = "$ALGORITHM/$BLOCK_MODE/$PADDING"
-
-    private companion object {
+    companion object {
         const val KEYSTORE_PROVIDER = "AndroidKeyStore"
         const val ALGORITHM = KeyProperties.KEY_ALGORITHM_AES
         const val BLOCK_MODE = KeyProperties.BLOCK_MODE_CBC
         const val PADDING = KeyProperties.ENCRYPTION_PADDING_PKCS7
         const val KEY_ALIAS = "apptentive-crypto-key-SDK"
         const val KEY_LENGTH = 256
+
+        fun getTransformation() = "$ALGORITHM/$BLOCK_MODE/$PADDING"
     }
 }

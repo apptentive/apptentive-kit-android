@@ -9,7 +9,7 @@ import apptentive.com.android.util.InternalUseOnly
 @InternalUseOnly
 abstract class ConversationPayload(
     nonce: String,
-    val sessionId: String = ApptentiveDefaultClient.sessionId,
+    val sessionId: String = ApptentiveDefaultClient.getSessionId(),
     val clientCreatedAt: TimeInterval = getTimeSeconds(),
     val clientCreatedAtUtcOffset: Int = getUtcOffset()
 ) : Payload(nonce) {

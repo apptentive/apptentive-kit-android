@@ -1,7 +1,10 @@
 package apptentive.com.android.feedback.survey.model
 
 import apptentive.com.android.TestCase
+import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.MockTimeRule
+import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
+import apptentive.com.android.feedback.conversation.MockConversationCredential
 import apptentive.com.android.feedback.payload.MediaType
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadType
@@ -18,6 +21,8 @@ class SurveyResponsePayloadTest : TestCase() {
     @Test
     fun testEventPayloadData() {
         val surveyId = "survey_id"
+
+        DependencyProvider.register<ConversationCredentialProvider>(MockConversationCredential())
 
         val payload = SurveyResponsePayload.fromAnswers(
             id = surveyId,
@@ -69,12 +74,16 @@ class SurveyResponsePayloadTest : TestCase() {
         val expected = PayloadData(
             nonce = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
             type = PayloadType.SurveyResponse,
+            tag = "mockedConversationPath",
+            token = "mockedConversationToken",
+            conversationId = "mockedConversationId",
+            isEncrypted = false,
             path = "/conversations/:conversation_id/surveys/$surveyId/responses",
             method = HttpMethod.POST,
             mediaType = MediaType.applicationJson,
             data = expectedJson.toByteArray()
         )
-        val actual = payload.toPayloadData()
+        val actual = payload.toPayloadData(DependencyProvider.of<ConversationCredentialProvider>())
         assertThat(actual).isEqualTo(expected)
     }
 }
