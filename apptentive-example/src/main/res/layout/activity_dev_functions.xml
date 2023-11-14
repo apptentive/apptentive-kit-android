@@ -1,0 +1,708 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:context=".DevFunctionsActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:id="@+id/backButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/icon_margin"
+            android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/back_button"
+            android:padding="@dimen/icon_padding"
+            android:src="@drawable/ic_back_arrow"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="?colorOnBackground" />
+
+        <TextView
+            android:id="@+id/devFunctionsHeading"
+            style="@style/TextAppearance.AppCompat.Headline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/title_margin"
+            android:text="@string/dev_functions"
+            android:textAllCaps="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/functionsTypeLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/horizontal_spacing"
+        android:layout_marginVertical="16dp"
+        android:hint="@string/select_function_type"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <AutoCompleteTextView
+            android:id="@+id/functionsTypeDropdown"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="none"
+            android:minHeight="@dimen/dropdown_min_height" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:scrollbars="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dataTypesLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/horizontal_spacing"
+                android:animateLayoutChanges="true"
+                android:paddingBottom="@dimen/vertical_spacing"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/dataTypeLayout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/select_data_type"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/dataTypeDropdown"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:inputType="none"
+                        android:minHeight="@dimen/dropdown_min_height" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/customDataHeader"
+                    style="@style/TextAppearance.AppCompat.Subhead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/section_spacing_margin"
+                    android:text="@string/custom_data"
+                    android:textAllCaps="true"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/dataTypeLayout" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/eventTextLayout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_4dp"
+                    android:hint="@string/enter_event_to_engage"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toStartOf="@+id/engageEventButton"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/customDataHeader">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/eventTextEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/engageEventButton"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_4dp"
+                    android:layout_marginTop="@dimen/margin_4dp"
+                    android:minHeight="@dimen/button_min_height"
+                    android:text="@string/engage"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/eventTextLayout"
+                    app:layout_constraintTop_toTopOf="@id/eventTextLayout" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/messageCenterButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_4dp"
+                    android:minHeight="@dimen/button_min_height"
+                    android:text="@string/message_center"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/eventTextLayout" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/addCustomStringKeyTextLayout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_4dp"
+                    android:hint="@string/key"
+                    app:layout_constraintEnd_toStartOf="@id/addCustomStringValueTextLayout"
+                    app:layout_constraintHorizontal_chainStyle="spread"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/messageCenterButton">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/addCustomStringKeyEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/addCustomStringValueTextLayout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/event_margin"
+                    android:hint="@string/string"
+                    app:layout_constraintEnd_toStartOf="@id/addCustomStringButton"
+                    app:layout_constraintStart_toEndOf="@id/addCustomStringKeyTextLayout"
+                    app:layout_constraintTop_toTopOf="@id/addCustomStringKeyTextLayout">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/addCustomStringValueEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:inputType="text" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/addCustomStringButton"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/event_margin"
+                    android:layout_marginTop="@dimen/event_button_top_margin"
+                    android:minWidth="@dimen/add_button_min_width"
+                    android:minHeight="@dimen/button_min_height"
+                    android:text="@string/add"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/addCustomStringValueTextLayout"
+                    app:layout_constraintTop_toTopOf="@id/addCustomStringValueTextLayout" />
+
+                <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/customStringBarrier"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="bottom"
+                    app:constraint_referenced_ids="addCustomStringKeyTextLayout, addCustomStringValueTextLayout" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/addCustomNumberKeyTextLayout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/event_margin"
+                    android:hint="@string/key"
+                    app:layout_constraintEnd_toStartOf="@id/addCustomNumberValueTextLayout"
+                    app:layout_constraintHorizontal_chainStyle="spread"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/customStringBarrier">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/addCustomNumberKeyEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/addCustomNumberValueTextLayout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/event_margin"
+                    android:hint="@string/number"
+                    app:layout_constraintEnd_toStartOf="@id/addCustomNumberButton"
+                    app:layout_constraintStart_toEndOf="@id/addCustomNumberKeyTextLayout"
+                    app:layout_constraintTop_toTopOf="@id/addCustomNumberKeyTextLayout">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/addCustomNumberValueEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:inputType="numberDecimal" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/addCustomNumberButton"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/event_margin"
+                    android:layout_marginTop="@dimen/event_button_top_margin"
+                    android:minWidth="@dimen/add_button_min_width"
+                    android:minHeight="@dimen/button_min_height"
+                    android:text="@string/add"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/addCustomNumberValueTextLayout"
+                    app:layout_constraintTop_toTopOf="@id/addCustomNumberValueTextLayout" />
+
+                <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/customNumberBarrier"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="bottom"
+                    app:constraint_referenced_ids="addCustomNumberKeyTextLayout, addCustomNumberValueTextLayout" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/addCustomBooleanKeyTextLayout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/event_margin"
+                    android:hint="@string/key"
+                    app:layout_constraintEnd_toStartOf="@id/addCustomBooleanValueTextLayout"
+                    app:layout_constraintHorizontal_chainStyle="spread"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/customNumberBarrier">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/addCustomBooleanKeyEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/addCustomBooleanValueTextLayout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/event_margin"
+                    app:layout_constraintEnd_toStartOf="@id/addCustomBooleanButton"
+                    app:layout_constraintStart_toEndOf="@id/addCustomBooleanKeyTextLayout"
+                    app:layout_constraintTop_toTopOf="@id/addCustomBooleanKeyTextLayout">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/addCustomBooleanValueDropdown"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:hint="@string/boolean_string"
+                        android:inputType="none"
+                        android:minHeight="@dimen/dropdown_min_height" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/addCustomBooleanButton"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/event_margin"
+                    android:layout_marginTop="@dimen/event_button_top_margin"
+                    android:minWidth="@dimen/add_button_min_width"
+                    android:minHeight="@dimen/button_min_height"
+                    android:text="@string/add"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/addCustomBooleanValueTextLayout"
+                    app:layout_constraintTop_toTopOf="@id/addCustomBooleanValueTextLayout" />
+
+                <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/customBooleanBarrier"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="bottom"
+                    app:constraint_referenced_ids="addCustomBooleanKeyTextLayout, addCustomBooleanValueTextLayout" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/removeCustomValueKeyTextLayout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/remove_section_spacing"
+                    android:hint="@string/key"
+                    app:layout_constraintEnd_toStartOf="@id/removeCustomValueButton"
+                    app:layout_constraintHorizontal_chainStyle="spread"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/customBooleanBarrier">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/removeCustomValueKeyEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/removeCustomValueButton"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/event_margin"
+                    android:layout_marginTop="@dimen/event_button_top_margin"
+                    android:minHeight="@dimen/button_min_height"
+                    android:text="@string/remove"
+                    app:backgroundTint="?colorError"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/removeCustomValueKeyTextLayout"
+                    app:layout_constraintTop_toTopOf="@id/removeCustomValueKeyTextLayout" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/customDataList"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/event_button_top_margin"
+                    android:textSize="14sp"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/removeCustomValueKeyTextLayout" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/personDataLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/section_spacing_margin"
+                    android:visibility="gone"
+                    app:layout_constraintTop_toBottomOf="@id/removeCustomValueKeyTextLayout"
+                    tools:visibility="visible">
+
+                    <TextView
+                        android:id="@+id/otherDataHeader"
+                        style="@style/TextAppearance.AppCompat.Subhead"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/other_person_data"
+                        android:textAllCaps="true"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/addPersonNameTextLayout"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_4dp"
+                        android:hint="@string/name"
+                        app:layout_constraintEnd_toStartOf="@id/addPersonNameButton"
+                        app:layout_constraintHorizontal_chainStyle="spread"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/otherDataHeader">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/addPersonNameEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:inputType="textPersonName" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/addPersonNameButton"
+                        style="@style/Widget.MaterialComponents.Button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/event_margin"
+                        android:layout_marginTop="@dimen/event_button_top_margin"
+                        android:minWidth="@dimen/add_button_min_width"
+                        android:minHeight="@dimen/button_min_height"
+                        android:text="@string/add"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/addPersonNameTextLayout"
+                        app:layout_constraintTop_toTopOf="@id/addPersonNameTextLayout" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/personNameText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/addPersonNameTextLayout" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/addPersonEmailTextLayout"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/event_margin"
+                        android:hint="@string/email"
+                        app:layout_constraintEnd_toStartOf="@id/addPersonEmailButton"
+                        app:layout_constraintHorizontal_chainStyle="spread"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/personNameText">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/addPersonEmailEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:inputType="textEmailAddress" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/addPersonEmailButton"
+                        style="@style/Widget.MaterialComponents.Button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/event_margin"
+                        android:layout_marginTop="@dimen/event_button_top_margin"
+                        android:minWidth="@dimen/add_button_min_width"
+                        android:minHeight="@dimen/button_min_height"
+                        android:text="@string/add"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/addPersonEmailTextLayout"
+                        app:layout_constraintTop_toTopOf="@id/addPersonEmailTextLayout" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/personEmailText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/addPersonEmailTextLayout" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/hiddenMessageLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/horizontal_spacing"
+                android:animateLayoutChanges="true"
+                android:paddingBottom="@dimen/vertical_spacing"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="gone">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/hiddenMessageCenterTextLayout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_4dp"
+                    android:hint="@string/hidden_text"
+                    app:layout_constraintEnd_toStartOf="@+id/hiddenMessageCenterTextButton"
+                    app:layout_constraintHorizontal_chainStyle="spread"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/hiddenMessageCenterTextEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/hiddenMessageCenterTextButton"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_4dp"
+                    android:layout_marginTop="@dimen/event_button_top_margin"
+                    android:minHeight="@dimen/button_min_height"
+                    android:text="@string/send"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/hiddenMessageCenterTextLayout"
+                    app:layout_constraintTop_toTopOf="@id/hiddenMessageCenterTextLayout" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/hiddenMessageCenterTextFileLayout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_4dp"
+                    android:layout_marginEnd="4dp"
+                    android:hint="@string/hidden_text_file_contents"
+                    app:layout_constraintEnd_toStartOf="@+id/hiddenMessageCenterTextButton"
+                    app:layout_constraintHorizontal_chainStyle="spread"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/hiddenMessageCenterTextLayout">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/hiddenMessageCenterTextFileEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/hiddenMessageCenterTextFileButton"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_4dp"
+                    android:layout_marginTop="@dimen/event_button_top_margin"
+                    android:minHeight="@dimen/button_min_height"
+                    android:text="@string/send"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/hiddenMessageCenterTextFileLayout"
+                    app:layout_constraintTop_toTopOf="@id/hiddenMessageCenterTextFileLayout" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/attachmentFileLayout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/event_margin"
+                    android:hint="@string/select_hidden_file"
+                    app:layout_constraintEnd_toStartOf="@+id/sendAttachmentFileButton"
+                    app:layout_constraintHorizontal_chainStyle="spread"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/hiddenMessageCenterTextFileLayout">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/attachmentFileDropdown"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:inputType="none"
+                        android:minHeight="@dimen/dropdown_min_height" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/sendAttachmentFileButton"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_4dp"
+                    android:layout_marginTop="@dimen/event_button_top_margin"
+                    android:minHeight="@dimen/button_min_height"
+                    android:text="@string/send"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/attachmentFileLayout"
+                    app:layout_constraintTop_toTopOf="@id/attachmentFileLayout" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/filePickerTextLayout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/event_margin"
+                    android:enabled="false"
+                    android:hint="@string/file_name"
+                    app:layout_constraintEnd_toStartOf="@+id/filePickerButton"
+                    app:layout_constraintHorizontal_chainStyle="spread"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/attachmentFileLayout">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/filePickerEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:inputType="textMultiLine" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/filePickerButton"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/event_margin"
+                    android:layout_marginTop="@dimen/event_button_top_margin"
+                    android:minWidth="@dimen/add_button_min_width"
+                    android:minHeight="@dimen/button_min_height"
+                    android:text="@string/files"
+                    app:layout_constraintEnd_toStartOf="@id/sendFileButton"
+                    app:layout_constraintStart_toEndOf="@id/filePickerTextLayout"
+                    app:layout_constraintTop_toTopOf="@id/filePickerTextLayout" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/sendFileButton"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/event_margin"
+                    android:layout_marginTop="@dimen/event_button_top_margin"
+                    android:minWidth="@dimen/add_button_min_width"
+                    android:minHeight="@dimen/button_min_height"
+                    android:text="@string/send"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/filePickerButton"
+                    app:layout_constraintTop_toTopOf="@id/filePickerTextLayout" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/photoPickerTextLayout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/event_margin"
+                    android:enabled="false"
+                    android:hint="@string/photo_name"
+                    app:layout_constraintEnd_toStartOf="@+id/photoPickerButton"
+                    app:layout_constraintHorizontal_chainStyle="spread"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/filePickerTextLayout">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/photoPickerEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:inputType="textMultiLine" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/photoPickerButton"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/event_margin"
+                    android:layout_marginTop="@dimen/event_button_top_margin"
+                    android:minWidth="@dimen/add_button_min_width"
+                    android:minHeight="@dimen/button_min_height"
+                    android:text="@string/take_nphoto"
+                    app:layout_constraintEnd_toStartOf="@id/sendPhotoButton"
+                    app:layout_constraintStart_toEndOf="@id/photoPickerTextLayout"
+                    app:layout_constraintTop_toTopOf="@id/photoPickerTextLayout" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/sendPhotoButton"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/event_margin"
+                    android:layout_marginTop="@dimen/event_button_top_margin"
+                    android:minWidth="@dimen/add_button_min_width"
+                    android:minHeight="@dimen/button_min_height"
+                    android:text="@string/send"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/photoPickerButton"
+                    app:layout_constraintTop_toTopOf="@id/photoPickerTextLayout" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/localManifestLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                android:paddingBottom="@dimen/vertical_spacing"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="gone">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/manifestFileView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_32"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>
