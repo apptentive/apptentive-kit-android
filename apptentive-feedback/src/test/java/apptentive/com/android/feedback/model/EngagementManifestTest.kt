@@ -10,7 +10,7 @@ import org.junit.Test
 class EngagementManifestTest : TestCase() {
     @Test
     fun getInteractions() {
-        val json = readAssetFile("manifest.json")
+        val json = readAssetFile("manifest_structure_test.json")
         val manifest = JsonConverter.fromJson<EngagementManifest>(json)
         assertThat(manifest.interactions).isEqualTo(
             listOf(

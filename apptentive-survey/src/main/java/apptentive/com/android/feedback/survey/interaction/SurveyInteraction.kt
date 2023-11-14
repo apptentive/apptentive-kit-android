@@ -15,7 +15,6 @@ internal typealias SurveyQuestionSetConfiguration = Map<String, Any?>
  * @param description a short description/introductory message (corresponds to the Introduction field on the dashboard).
  * @param renderAs whether to display the survey as a list or in pages
  * @param introButtonText button text on the introduction page of a paged survey
- * @param nextText button text on the question page of the paged survey
  * @param questionSet list of questions with invocation logic
  * @param isRequired whether to allow the user to cancel the survey
  * @param requiredText the text displayed adjacent to questions that require a response in order to submit the survey (no dashboard setting).
@@ -36,7 +35,6 @@ internal class SurveyInteraction(
     val description: String?,
     val renderAs: String,
     val introButtonText: String?,
-    val nextText: String?, // TODO verify if this is still in use, mock json doesn't have it
     val questionSet: List<SurveyQuestionSetConfiguration>,
     val isRequired: Boolean,
     val requiredText: String?,
@@ -57,8 +55,11 @@ internal class SurveyInteraction(
         val link: String?
     ) {
         fun convertToLink(): Spanned {
-            val httpLink = if (link?.startsWith("http", true) == true) link else "http://$link"
-            val linkText = "<a href=$httpLink>$label</a>"
+            val httpsLink = link?.let {
+                if (it.startsWith("https://", true) || it.startsWith("http://", true)) it
+                else "https://$it"
+            }
+            val linkText = "<a href=$httpsLink>$label</a>"
             return HtmlCompat.fromHtml(linkText, HtmlCompat.FROM_HTML_MODE_COMPACT)
         }
     }
@@ -99,7 +100,6 @@ internal class SurveyInteraction(
                 questionSet != other.questionSet ||
                 termsAndConditions != other.termsAndConditions ||
                 renderAs != other.renderAs ||
-                nextText != other.nextText ||
                 successButtonText != other.successButtonText ||
                 introButtonText != other.introButtonText ||
                 disclaimerText != other.disclaimerText -> false

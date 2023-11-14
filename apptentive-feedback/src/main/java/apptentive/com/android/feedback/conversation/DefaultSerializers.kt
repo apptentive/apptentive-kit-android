@@ -585,4 +585,112 @@ internal object DefaultSerializers {
             }
         }
     }
+
+    val conversationRosterSerializer: TypeSerializer<ConversationRoster> by lazy {
+        object : TypeSerializer<ConversationRoster> {
+            override fun encode(encoder: Encoder, value: ConversationRoster) {
+                if (value.activeConversation == null) {
+                    conversationMetadataSerializer.encode(encoder, ConversationMetaData(ConversationState.Null, ""))
+                } else {
+                    value.activeConversation?.let {
+                        conversationMetadataSerializer.encode(encoder, it)
+                    }
+                }
+                encoder.encodeList(value.loggedOut) {
+                    conversationMetadataSerializer.encode(encoder, it)
+                }
+            }
+
+            override fun decode(decoder: Decoder): ConversationRoster {
+                val activeConversation = conversationMetadataSerializer.decode(decoder)
+                return ConversationRoster(
+                    activeConversation = if (activeConversation.state == ConversationState.Null) null
+                    else activeConversation,
+                    loggedOut = decoder.decodeList {
+                        conversationMetadataSerializer.decode(decoder)
+                    }
+                )
+            }
+        }
+    }
+
+    val conversationMetadataSerializer: TypeSerializer<ConversationMetaData> by lazy {
+        object : TypeSerializer<ConversationMetaData> {
+            override fun encode(encoder: Encoder, value: ConversationMetaData) {
+                conversationStateSerializer.encode(encoder, value.state)
+                encoder.encodeString(value.path)
+            }
+
+            override fun decode(decoder: Decoder): ConversationMetaData {
+                return ConversationMetaData(
+                    state = conversationStateSerializer.decode(decoder),
+                    path = decoder.decodeString(),
+                )
+            }
+        }
+    }
+
+    val conversationStateSerializer: TypeSerializer<ConversationState> by lazy {
+        object : TypeSerializer<ConversationState> {
+            override fun encode(encoder: Encoder, value: ConversationState) {
+                when (value) {
+                    is ConversationState.Undefined -> encoder.encodeString("Undefined")
+                    is ConversationState.AnonymousPending -> encoder.encodeString("AnonymousPending")
+                    is ConversationState.Anonymous -> {
+                        encoder.encodeString("Anonymous")
+                    }
+                    is ConversationState.LoggedIn -> {
+                        encoder.encodeString("LoggedIn")
+                        encoder.encodeString(value.subject)
+                        encodeByteArray(encoder, value.encryptionWrapperBytes)
+                    }
+
+                    is ConversationState.LoggedOut -> {
+                        encoder.encodeString("LoggedOut")
+                        encoder.encodeString(value.id)
+                        encoder.encodeString(value.subject)
+                    }
+
+                    is ConversationState.Null -> encoder.encodeString("Null")
+                }
+            }
+
+            override fun decode(decoder: Decoder): ConversationState {
+                when (decoder.decodeString()) {
+                    "Undefined" -> return ConversationState.Undefined
+                    "AnonymousPending" -> return ConversationState.AnonymousPending
+                    "Anonymous" -> {
+                        return ConversationState.Anonymous
+                    }
+                    "LoggedIn" -> {
+                        val subject = decoder.decodeString()
+                        return ConversationState.LoggedIn(subject, decodeByteArray(decoder))
+                    }
+                    "LoggedOut" -> {
+                        val id = decoder.decodeString()
+                        val subject = decoder.decodeString()
+                        return ConversationState.LoggedOut(id, subject)
+                    }
+                    "Null" -> return ConversationState.Null
+                    else -> throw Exception("Unknown ConversationState type")
+                }
+            }
+
+            private fun encodeByteArray(encoder: Encoder, value: ByteArray) {
+                encoder.encodeInt(value.size)
+                for (byte in value) {
+                    encoder.encodeByte(byte)
+                }
+            }
+
+            private fun decodeByteArray(decoder: Decoder): ByteArray {
+                val encryptionWrapperByteSize = decoder.decodeInt()
+                val byteArray = ByteArray(encryptionWrapperByteSize)
+                for (i in 0 until encryptionWrapperByteSize) {
+                    byteArray[i] = decoder.decodeByte()
+                }
+                return byteArray
+            }
+        }
+    }
 }

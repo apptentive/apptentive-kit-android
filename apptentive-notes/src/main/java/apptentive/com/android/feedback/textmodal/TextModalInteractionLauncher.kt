@@ -17,7 +17,7 @@ internal class TextModalInteractionLauncher : AndroidViewInteractionLauncher<Tex
         Log.i(INTERACTIONS, "Note interaction launched with title: ${interaction.title}")
         Log.v(INTERACTIONS, "Note interaction data: $interaction")
 
-        saveInteractionBackup(interaction, engagementContext.getAppActivity())
+        saveInteractionBackup(interaction)
 
         engagementContext.executors.main.execute {
             try {

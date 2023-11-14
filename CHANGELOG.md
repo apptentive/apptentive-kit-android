@@ -1,3 +1,17 @@
+# 2023-11-14 - v6.5.0
+#### New Features
+* Implemented Customer Authentication features from the legacy SDK in the new SDK (See Android [Integration guide](https://learn.apptentive.com/knowledge-base/android-integration-guide/)). This allows apps with sensitive data to be shared among multiple users on a single device
+* Added the ability to work with multiple app key/signature pairs without deleting and reinstalling
+
+#### Improvements
+* Launch and exit events are standardized for app launches and exits
+* Send callback failure if the SDK is registered already
+* Expose a method to find if the SDK is already registered
+* Confirm that the SDK only makes HTTPS requests
+
+#### Fixes
+* Resolved validation issues for free form question type
+
 # 2023-07-20 - v6.1.0
 #### New Features
 * Survey skip logic
@@ -21,17 +35,17 @@
 * Added session id to the payloads
 
 #### Fixes
-* Resolved internal observers and observables issue 
+* Resolved internal observers and observables issue
 
 #### Known Issues and Limitations
 * Client authentication (login/logout) is not yet supported
 
 # 2023-04-05 - v6.0.4
 #### Improvements
- * Expanded support for links in survey introduction
- 
-#### Fixes 
- * Resolved resource linking issues
+* Expanded support for links in survey introduction
+
+#### Fixes
+* Resolved resource linking issues
 
 #### Known Issues and Limitations
 * Client authentication (login/logout) is not yet supported
@@ -49,7 +63,7 @@
 #### New Features
 * Device storage encryption support
 * Event observer support to listen for Apptentive events
-* Message Center observer support to listen for Message Center updates 
+* Message Center observer support to listen for Message Center updates
 
 #### Improvements
 * `canShowInteraction` function to check if an event will display an interaction

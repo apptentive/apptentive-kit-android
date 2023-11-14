@@ -17,3 +17,10 @@ fun String?.isNotNullOrEmpty(): Boolean {
     }
     return !isNullOrEmpty()
 }
+
+internal fun hexToBytes(hex: String): ByteArray {
+    require(hex.length % 2 == 0) { "Hex string length must be even" }
+    return hex.chunked(2) {
+        it.toString().toInt(16).toByte()
+    }.toByteArray()
+}

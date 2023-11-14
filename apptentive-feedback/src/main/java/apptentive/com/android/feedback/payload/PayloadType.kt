@@ -9,9 +9,18 @@ enum class PayloadType {
     AppReleaseAndSDK,
     Message,
     Event,
-    SurveyResponse;
+    SurveyResponse,
+    Logout;
 
     companion object {
         fun parse(value: String) = valueOf(value)
+    }
+
+    fun jsonContainer(): String {
+        return when (this) {
+            SurveyResponse -> "response"
+            AppReleaseAndSDK -> "app_release"
+            else -> name.lowercase()
+        }
     }
 }

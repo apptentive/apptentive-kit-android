@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.utils
 
+import org.json.JSONObject
 import kotlin.math.max
 
 internal fun createStringTable(rows: List<Array<Any?>>): String {
@@ -44,4 +45,13 @@ internal fun parseInt(value: String?) = try {
     if (value != null) Integer.valueOf(value) else null
 } catch (e: Exception) {
     null
+}
+
+internal fun String.parseJsonField(field: String): String {
+    return try {
+        val json = JSONObject(this)
+        json.optString(field)
+    } catch (e: Exception) {
+        ""
+    }
 }

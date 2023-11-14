@@ -132,6 +132,59 @@ class SerializersTest {
     }
 
     @Test
+    fun conversationRosterSerializer() {
+        val roster = ConversationRoster()
+        checkSerializer(DefaultSerializers.conversationRosterSerializer, roster)
+    }
+
+    @Test
+    fun conversationRosterLoggedOutState() {
+        val roster = ConversationRoster()
+        roster.loggedOut = listOf(
+            ConversationMetaData(
+                ConversationState.LoggedOut("id1", "subject1"),
+                "path1"
+            ),
+            ConversationMetaData(
+                ConversationState.LoggedOut("id2", "subject2"),
+                "path2"
+            )
+        )
+        checkSerializer(DefaultSerializers.conversationRosterSerializer, roster)
+    }
+
+    @Test
+    fun conversationRosterLoginState() {
+        val roster = ConversationRoster()
+        roster.loggedOut = listOf(
+            ConversationMetaData(
+                ConversationState.LoggedOut("id1", "subject1"),
+                "path1"
+            ),
+            ConversationMetaData(
+                ConversationState.LoggedOut("id2", "subject2"),
+                "path2"
+            )
+        )
+        roster.activeConversation = ConversationMetaData(
+            ConversationState.LoggedIn("subject3", ByteArray(0)),
+            "path3"
+        )
+        checkSerializer(DefaultSerializers.conversationRosterSerializer, roster)
+    }
+
+    @Test
+    fun conversationRosterAnonymousState() {
+        val roster = ConversationRoster()
+        roster.loggedOut = emptyList()
+        roster.activeConversation = ConversationMetaData(
+            ConversationState.Anonymous,
+            "path3"
+        )
+        checkSerializer(DefaultSerializers.conversationRosterSerializer, roster)
+    }
+
+    @Test
     @Ignore
     fun engagementManifestSerializer() {
     }

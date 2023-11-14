@@ -27,7 +27,10 @@ internal interface ApptentiveClient {
     fun getPersonEmail(): String?
     fun setPushIntegration(pushProvider: Int, token: String)
     fun setLocalManifest(json: String)
-
+    fun login(jwtToken: String, callback: ((result: LoginResult) -> Unit)? = null)
+    fun logout()
+    fun setAuthenticationFailedListener(listener: AuthenticationFailedListener)
+    fun updateToken(jwtToken: String, callback: ((result: LoginResult) -> Unit)? = null)
     companion object {
         val NULL: ApptentiveClient = ApptentiveNullClient()
     }
@@ -107,7 +110,23 @@ private class ApptentiveNullClient : ApptentiveClient {
         return null
     }
 
-    override fun setLocalManifest(uri: String) {
+    override fun setLocalManifest(json: String) {
         Log.d(FEEDBACK, "Apptentive SDK is not initialized; set local manifest failed ")
+    }
+
+    override fun login(jwtToken: String, callback: ((result: LoginResult) -> Unit)?) {
+        Log.d(FEEDBACK, "Apptentive SDK is not initialized; login failed")
+    }
+
+    override fun logout() {
+        Log.d(FEEDBACK, "Apptentive SDK is not initialized; logout failed")
+    }
+
+    override fun setAuthenticationFailedListener(listener: AuthenticationFailedListener) {
+        Log.d(FEEDBACK, "Apptentive SDK is not initialized; set authentication failed listener failed")
+    }
+
+    override fun updateToken(jwtToken: String, callback: ((result: LoginResult) -> Unit)?) {
+        Log.d(FEEDBACK, "Apptentive SDK is not initialized; update token failed")
     }
 }

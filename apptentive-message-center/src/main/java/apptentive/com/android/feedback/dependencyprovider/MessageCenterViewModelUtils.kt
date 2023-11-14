@@ -23,7 +23,7 @@ internal fun createMessageCenterViewModel(
         )
     } catch (exception: Exception) {
         MessageCenterViewModel(
-            messageCenterModel = (getInteractionBackup(context.getAppActivity()) as MessageCenterInteraction).convertToMessageCenterModel(),
+            messageCenterModel = (getInteractionBackup() as MessageCenterInteraction).convertToMessageCenterModel(),
             executors = context.executors,
             context = context,
             messageManager = messageManager

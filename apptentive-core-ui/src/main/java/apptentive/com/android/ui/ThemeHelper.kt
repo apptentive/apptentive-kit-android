@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.pm.PackageManager
 import androidx.appcompat.view.ContextThemeWrapper
 import apptentive.com.android.R
+import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.platform.SharedPrefConstants
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
@@ -69,9 +71,9 @@ fun ContextThemeWrapper.overrideTheme() {
  *
  * Default is `true` (inherit the host app's theme).
  */
-private fun Context.getShouldApplyAppTheme(): Boolean {
-    return getSharedPreferences(SharedPrefConstants.USE_HOST_APP_THEME, Context.MODE_PRIVATE)
-        .getBoolean(SharedPrefConstants.USE_HOST_APP_THEME_KEY, true)
+private fun getShouldApplyAppTheme(): Boolean {
+    return DependencyProvider.of<AndroidSharedPrefDataStore>()
+        .getBoolean(SharedPrefConstants.USE_HOST_APP_THEME, SharedPrefConstants.USE_HOST_APP_THEME_KEY, true)
 }
 
 private fun Context.applyAppTheme() {

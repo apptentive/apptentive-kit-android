@@ -18,7 +18,7 @@ internal class RatingDialogInteractionLauncher : AndroidViewInteractionLauncher<
 
         engagementContext.executors.main.execute {
             try {
-                saveInteractionBackup(interaction, engagementContext.getAppActivity())
+                saveInteractionBackup(interaction)
                 val fragmentManager = engagementContext.getFragmentManager()
                 DependencyProvider.register(RatingDialogInteractionProvider(interaction))
                 val ratingDialog = RatingDialogFragment()

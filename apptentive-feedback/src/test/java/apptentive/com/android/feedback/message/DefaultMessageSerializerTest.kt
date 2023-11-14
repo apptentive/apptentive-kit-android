@@ -1,12 +1,24 @@
 package apptentive.com.android.feedback.message
 
 import apptentive.com.android.TestCase
+import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.encryption.EncryptionFactory
 import apptentive.com.android.encryption.NotEncrypted
+import apptentive.com.android.feedback.conversation.ConversationMetaData
+import apptentive.com.android.feedback.conversation.ConversationRoster
+import apptentive.com.android.feedback.conversation.ConversationState
+import apptentive.com.android.feedback.engagement.util.MockAndroidSharedPrefDataStore
+import apptentive.com.android.feedback.engagement.util.MockFileSystem
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.Sender
+import apptentive.com.android.feedback.platform.FileSystem
+import apptentive.com.android.feedback.utils.FileStorageUtil
+import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import com.google.common.truth.Truth
+import io.mockk.every
+import io.mockk.mockkObject
 import org.junit.Assert
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -27,15 +39,29 @@ class DefaultMessageSerializerTest : TestCase() {
             sender = Sender(id = "1234", name = "John Doe", profilePhoto = null),
         )
     )
+    @Before
+    override fun setUp() {
+        super.setUp()
+        val messageFile = createTempFile("messages.bin")
+        DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore())
+        DependencyProvider.register<FileSystem>(MockFileSystem())
+        mockkObject(FileStorageUtil)
+        every {
+            FileStorageUtil.getMessagesFileForActiveUser(any())
+        } returns messageFile
+        every {
+            FileStorageUtil.getMessagesFile()
+        } returns messageFile
+    }
 
     @Test
     fun testLoadingNonExistingMessages() {
         val serializer = DefaultMessageSerializer(
-            messagesFile = createTempFile("messages.bin"),
             encryption = EncryptionFactory.getEncryption(
                 shouldEncryptStorage = false,
                 oldEncryptionSetting = NotEncrypted
-            )
+            ),
+            conversationRoster = ConversationRoster()
         )
         val messages = serializer.loadMessages()
         Truth.assertThat(messages).isEmpty()
@@ -44,10 +70,14 @@ class DefaultMessageSerializerTest : TestCase() {
     @Test
     fun testSerialization() {
         val serializer = DefaultMessageSerializer(
-            messagesFile = createTempFile("messages.bin"),
             encryption = EncryptionFactory.getEncryption(
                 shouldEncryptStorage = false,
                 oldEncryptionSetting = NotEncrypted,
+            ),
+            conversationRoster = ConversationRoster(
+                activeConversation = ConversationMetaData(
+                    ConversationState.Undefined, tempFolder.root.path
+                )
             )
         )
         serializer.saveMessages(convertToMessageEntry(testMessageList))
@@ -57,15 +87,23 @@ class DefaultMessageSerializerTest : TestCase() {
 
     @Test(expected = MessageSerializerException::class)
     fun testCorruptedMessageData() {
-        val messagesFile = createTempFile("messages.bin")
+        val corruptedMessagesFile = createTempFile("corrupted-messages.bin")
         // write random data
-        messagesFile.writeBytes(Random.nextBytes(1))
+        corruptedMessagesFile.writeBytes(Random.nextBytes(1))
+
+        every {
+            FileStorageUtil.getMessagesFile()
+        } returns corruptedMessagesFile
 
         val serializer = DefaultMessageSerializer(
-            messagesFile = messagesFile,
             encryption = EncryptionFactory.getEncryption(
                 shouldEncryptStorage = false,
                 oldEncryptionSetting = NotEncrypted
+            ),
+            conversationRoster = ConversationRoster(
+                activeConversation = ConversationMetaData(
+                    ConversationState.Undefined, tempFolder.root.path
+                )
             )
         )
 

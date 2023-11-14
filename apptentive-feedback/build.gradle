@@ -26,6 +26,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+//    Android tests with mockk wont run without this
+    testOptions {
+        packagingOptions {
+            resources.excludes.add("META-INF/LICENSE.md")
+            resources.excludes.add("META-INF/LICENSE-notice.md")
+        }
+    }
 }
 
 dependencies {
@@ -47,7 +55,8 @@ dependencies {
 
     androidTestImplementation project(':apptentive-core-test')
     androidTestImplementation project(':apptentive-feedback-test')
-    androidTestImplementation "io.mockk:mockk:$mockk_version"
+    androidTestImplementation "io.mockk:mockk-android:$mockk_version"
+    androidTestImplementation "io.mockk:mockk-agent:$mockk_version"
     androidTestImplementation "androidx.test:runner:$androidx_test_version"
     androidTestImplementation "androidx.test:core:$androidx_test_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"

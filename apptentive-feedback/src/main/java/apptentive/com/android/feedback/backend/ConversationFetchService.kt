@@ -17,7 +17,16 @@ internal interface ConversationFetchService {
         sdk: SDK,
         appRelease: AppRelease,
         person: Person,
-        callback: (Result<ConversationCredentials>) -> Unit
+        callback: (Result<ConversationFetchResponse>) -> Unit
+    )
+
+    fun fetchLoginConversation(
+        device: Device,
+        sdk: SDK,
+        appRelease: AppRelease,
+        person: Person,
+        token: String,
+        callback: (Result<ConversationFetchResponse>) -> Unit
     )
 }
 
@@ -33,6 +42,24 @@ internal data class ConversationTokenRequestData private constructor(
                 device = DeviceRequestData.from(device),
                 appRelease = AppReleaseSdkRequestData.from(appRelease, sdk),
                 person = PersonRequestData.from(person)
+            )
+    }
+}
+
+@Keep
+internal data class LoginConversationRequestData private constructor(
+    private val device: DeviceRequestData,
+    private val appRelease: AppReleaseSdkRequestData,
+    private val person: PersonRequestData,
+    private val token: String
+) {
+    companion object {
+        fun from(device: Device, sdk: SDK, appRelease: AppRelease, person: Person, token: String) =
+            LoginConversationRequestData(
+                device = DeviceRequestData.from(device),
+                appRelease = AppReleaseSdkRequestData.from(appRelease, sdk),
+                person = PersonRequestData.from(person),
+                token = token
             )
     }
 }
@@ -180,7 +207,7 @@ private data class PersonRequestData(
 }
 
 @Keep
-internal data class ConversationCredentials(
+internal data class ConversationFetchResponse(
     val id: String,
     val deviceId: String,
     val personId: String,
