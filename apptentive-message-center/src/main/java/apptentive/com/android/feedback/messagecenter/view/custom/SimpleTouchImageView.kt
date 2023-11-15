@@ -702,7 +702,7 @@ internal class SimpleTouchImageView @JvmOverloads constructor(context: Context, 
             performLongClick()
         }
 
-        override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
+        override fun onFling(e1: MotionEvent?, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
             // If a previous fling is still active, it should be cancelled so that two flings
             // are not run simultaneously.
             fling?.cancelFling()

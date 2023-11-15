@@ -1,4 +1,4 @@
-task jfrogAssembleApptentiveModules(type: GradleBuild) {
+tasks.register('jfrogAssembleApptentiveModules', GradleBuild) {
     buildName = "jfrogAssembleApptentiveModules"
     tasks = ['apptentive-core:assembleRelease',
              'apptentive-core-ui:assembleRelease',
@@ -12,7 +12,7 @@ task jfrogAssembleApptentiveModules(type: GradleBuild) {
              'apptentive-survey:assembleRelease']
 }
 
-task jfrogPublishApptentiveModules(type: GradleBuild)  {
+tasks.register('jfrogPublishApptentiveModules', GradleBuild) {
     buildName = "jfrogPublishApptentiveModules"
     startParameter.projectProperties = project.gradle.startParameter.projectProperties
     tasks = ['apptentive-core:artifactoryPublish',
@@ -28,13 +28,13 @@ task jfrogPublishApptentiveModules(type: GradleBuild)  {
     dependsOn jfrogAssembleApptentiveModules
 }
 
-task jfrogAssembleApptentiveKit(type: GradleBuild) {
+tasks.register('jfrogAssembleApptentiveKit', GradleBuild) {
     buildName = "jfrogAssembleApptentiveKit"
     tasks = ['apptentive-kit-android:assembleRelease']
     dependsOn jfrogPublishApptentiveModules
 }
 
-task jfrogPublishApptentiveKit(type: GradleBuild) {
+tasks.register('jfrogPublishApptentiveKit', GradleBuild) {
     buildName = "jfrogPublishApptentiveKit"
     startParameter.projectProperties = project.gradle.startParameter.projectProperties
     tasks = ['apptentive-kit-android:artifactoryPublish']

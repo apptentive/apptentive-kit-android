@@ -31,22 +31,22 @@ class ApptentiveGenericDialog : DialogFragment() {
         dialogBuilder.setView(dialogLayout)
         val dialog = dialogBuilder.create()
 
-        val titleView = dialogLayout.findViewById<MaterialTextView>(R.id.apptentive_generic_dialog_title)
+        val titleView = dialogLayout.findViewById(R.id.apptentive_generic_dialog_title) as MaterialTextView
         titleView.isVisible = !title.isNullOrBlank()
         titleView.text = title
 
-        val messageView = dialogLayout.findViewById<MaterialTextView>(R.id.apptentive_generic_dialog_message)
+        val messageView = dialogLayout.findViewById(R.id.apptentive_generic_dialog_message) as MaterialTextView
         messageView.isVisible = !message.isNullOrBlank()
         messageView.text = message
 
-        val positiveButtonView = dialogLayout.findViewById<MaterialButton>(R.id.apptentive_generic_dialog_positive)
+        val positiveButtonView = dialogLayout.findViewById(R.id.apptentive_generic_dialog_positive) as MaterialButton
         positiveButtonView.text = positiveButton.title
         positiveButtonView.setOnClickListener {
             positiveButton.action.invoke()
             dialog.dismiss()
         }
 
-        val negativeButtonView = dialogLayout.findViewById<MaterialButton>(R.id.apptentive_generic_dialog_negative)
+        val negativeButtonView = dialogLayout.findViewById(R.id.apptentive_generic_dialog_negative) as MaterialButton
         negativeButtonView.isVisible = negativeButton != null
         negativeButton?.let { negButton ->
             negativeButtonView.text = negButton.title

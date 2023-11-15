@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.addTextChangedListener
 import apptentive.com.android.feedback.messagecenter.R
+import apptentive.com.android.R as CoreR
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
@@ -57,12 +58,12 @@ internal class ProfileView(context: Context, attrs: AttributeSet? = null) : Cons
     }
 
     fun setEmailError(value: Boolean) {
-        if (value) emailInputLayout.error = context.getString(R.string.apptentive_email_validation_error)
+        if (value) emailInputLayout.error = context.getString(CoreR.string.apptentive_email_validation_error)
         else emailInputLayout.error = null
     }
 
     fun setNameError(value: Boolean) {
-        if (value) nameInputLayout.error = context.getString(R.string.apptentive_email_validation_error)
+        if (value) nameInputLayout.error = context.getString(CoreR.string.apptentive_email_validation_error)
         else nameInputLayout.error = null
     }
 }

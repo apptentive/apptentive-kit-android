@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.messagecenter.view
 
 import android.os.Bundle
+import androidx.activity.addCallback
 import apptentive.com.android.feedback.messagecenter.R
 import apptentive.com.android.feedback.messagecenter.utils.MessageCenterEvents
 import apptentive.com.android.feedback.messagecenter.view.custom.ProfileView
@@ -8,6 +9,7 @@ import apptentive.com.android.ui.ApptentiveGenericDialog
 import apptentive.com.android.ui.hideSoftKeyboard
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.button.MaterialButton
+import apptentive.com.android.R as CoreR
 import com.google.android.material.textview.MaterialTextView
 
 internal class ProfileActivity : BaseProfileActivity() {
@@ -20,6 +22,10 @@ internal class ProfileActivity : BaseProfileActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.apptentive_activity_profile)
+
+        onBackPressedDispatcher.addCallback {
+            viewModel.exitProfileView(profileView.getName(), profileView.getEmail())
+        }
 
         topAppBar = findViewById(R.id.apptentive_profile_toolbar)
         topAppBarTitle = findViewById(R.id.apptentive_profile_title)
@@ -57,16 +63,16 @@ internal class ProfileActivity : BaseProfileActivity() {
             if (showConfirmation) {
                 val confirmationDialog = ApptentiveGenericDialog().getGenericDialog(
                     context = this@ProfileActivity,
-                    title = getString(R.string.apptentive_profile_confirmation_dialog_title),
-                    message = getString(R.string.apptentive_profile_confirmation_dialog_message),
-                    positiveButton = ApptentiveGenericDialog.DialogButton(getString(R.string.apptentive_cancel)) {
+                    title = getString(CoreR.string.apptentive_profile_confirmation_dialog_title),
+                    message = getString(CoreR.string.apptentive_profile_confirmation_dialog_message),
+                    positiveButton = ApptentiveGenericDialog.DialogButton(getString(CoreR.string.apptentive_cancel)) {
                     },
-                    negativeButton = ApptentiveGenericDialog.DialogButton(getString(R.string.apptentive_close)) {
+                    negativeButton = ApptentiveGenericDialog.DialogButton(getString(CoreR.string.apptentive_close)) {
                         viewModel.onMessageCenterEvent(
                             event = MessageCenterEvents.EVENT_NAME_PROFILE_CLOSE,
                             data = mapOf(
                                 "required" to viewModel.isProfileRequired(),
-                                "button_label" to getString(R.string.apptentive_close)
+                                "button_label" to getString(CoreR.string.apptentive_close)
                             )
                         )
                         super.onBackPressed()
@@ -84,9 +90,5 @@ internal class ProfileActivity : BaseProfileActivity() {
                 super.onBackPressed()
             }
         }
-    }
-
-    override fun onBackPressed() {
-        viewModel.exitProfileView(profileView.getName(), profileView.getEmail())
     }
 }

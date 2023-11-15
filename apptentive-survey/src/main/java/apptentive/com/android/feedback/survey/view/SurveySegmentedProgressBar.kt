@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.survey.view
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.drawable.Drawable
@@ -10,9 +11,11 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionManager
 import apptentive.com.android.feedback.survey.R
+import apptentive.com.android.R as CoreR
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags
 
+@SuppressLint("ResourceType")
 internal class SurveySegmentedProgressBar(context: Context, attrs: AttributeSet? = null) : LinearLayout(context, attrs) {
 
     private val progressBar: LinearLayout
@@ -27,9 +30,9 @@ internal class SurveySegmentedProgressBar(context: Context, attrs: AttributeSet?
 
         val progressIcons: TypedArray = context.obtainStyledAttributes(
             intArrayOf(
-                R.attr.apptentiveProgressBarPreviousIcon,
-                R.attr.apptentiveProgressBarCurrentIcon,
-                R.attr.apptentiveProgressBarNextIcon
+                CoreR.attr.apptentiveProgressBarPreviousIcon,
+                CoreR.attr.apptentiveProgressBarCurrentIcon,
+                CoreR.attr.apptentiveProgressBarNextIcon
             )
         )
 
@@ -40,9 +43,9 @@ internal class SurveySegmentedProgressBar(context: Context, attrs: AttributeSet?
         } catch (e: Exception) {
             Log.e(LogTags.INTERACTIONS, "Error loading progress bar icons. Reverting to default", e)
 
-            previousIcon = AppCompatResources.getDrawable(context, R.drawable.apptentive_pill_previous)
-            currentIcon = AppCompatResources.getDrawable(context, R.drawable.apptentive_pill_current)
-            nextIcon = AppCompatResources.getDrawable(context, R.drawable.apptentive_pill_next)
+            previousIcon = AppCompatResources.getDrawable(context, CoreR.drawable.apptentive_pill_previous)
+            currentIcon = AppCompatResources.getDrawable(context, CoreR.drawable.apptentive_pill_current)
+            nextIcon = AppCompatResources.getDrawable(context, CoreR.drawable.apptentive_pill_next)
         } finally {
             progressIcons.recycle()
         }

@@ -16,6 +16,7 @@ import apptentive.com.android.ui.overrideTheme
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textview.MaterialTextView
+import apptentive.com.android.R as CoreR
 
 internal class RatingDialogFragment : DialogFragment(), ApptentiveActivityInfo {
 
@@ -31,7 +32,7 @@ internal class RatingDialogFragment : DialogFragment(), ApptentiveActivityInfo {
 
         val dialog = MaterialAlertDialogBuilder(requireContext()).apply {
 
-            val contextWrapper = ContextThemeWrapper(requireContext(), R.style.Theme_Apptentive).apply {
+            val contextWrapper = ContextThemeWrapper(requireContext(), CoreR.style.Theme_Apptentive).apply {
                 overrideTheme()
             }
             val inflater = LayoutInflater.from(contextWrapper)

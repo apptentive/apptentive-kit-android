@@ -37,6 +37,7 @@ import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.ui.hideSoftKeyboard
 import apptentive.com.android.ui.startViewModelActivity
 import apptentive.com.android.util.Log
+import apptentive.com.android.R.string.apptentive_message_validation_error
 import apptentive.com.android.util.LogTags.PUSH_NOTIFICATION
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.textview.MaterialTextView
@@ -155,7 +156,7 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
             messageListAdapter.setNameError(errorMessages.nameError)
             if (errorMessages.messageError) {
                 composerErrorView.visibility = View.VISIBLE
-                composerErrorView.text = getString(R.string.apptentive_message_validation_error)
+                composerErrorView.text = getString(apptentive_message_validation_error)
             } else {
                 composerErrorView.visibility = View.GONE
                 messageText.error = null
