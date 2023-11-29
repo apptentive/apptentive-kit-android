@@ -31,7 +31,7 @@ class MyApplication : Application(), AuthenticationFailedListener {
     override fun onCreate() {
         val prefs = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
         // Turning off by default to get un-redacted logs
-        configuration.shouldSanitizeLogMessages = prefs.getBoolean(SHOULD_SANITIZE, false)
+        configuration.shouldSanitizeLogMessages = true // prefs.getBoolean(SHOULD_SANITIZE, false)
 
         configuration.shouldEncryptStorage = true
 

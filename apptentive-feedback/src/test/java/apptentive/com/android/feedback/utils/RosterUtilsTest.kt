@@ -15,6 +15,7 @@ import apptentive.com.android.feedback.utils.AndroidSDKVersion.getSDKVersion
 import io.mockk.every
 import io.mockk.mockkObject
 import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
 import org.junit.Before
@@ -69,5 +70,22 @@ class RosterUtilsTest {
         val activeConversation = conversationRoster.activeConversation
         assertTrue(activeConversation?.state is ConversationState.LoggedIn)
         assertEquals(subject, (activeConversation?.state as ConversationState.LoggedIn).subject)
+    }
+
+    @Test
+    fun testNoConversationCache() {
+        val conversationRoster = ConversationRoster()
+        DefaultStateMachine.conversationRoster = conversationRoster
+        DependencyProvider.register(MockConversationRepository())
+        RosterUtils.initializeRoster()
+        assertTrue(RosterUtils.hasNoConversationCache())
+        conversationRoster.loggedOut = listOf(
+            ConversationMetaData(
+                ConversationState.LoggedOut("user123", "subject123"),
+                "path123"
+            )
+        )
+        DefaultStateMachine.conversationRoster = conversationRoster
+        assertFalse(RosterUtils.hasNoConversationCache())
     }
 }

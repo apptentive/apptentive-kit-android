@@ -89,8 +89,8 @@ import apptentive.com.android.feedback.utils.FileStorageUtil.deleteMessageFile
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.JwtString
 import apptentive.com.android.feedback.utils.JwtUtils
+import apptentive.com.android.feedback.utils.RosterUtils.getActiveConversationMetaData
 import apptentive.com.android.feedback.utils.RuntimeUtils
-import apptentive.com.android.feedback.utils.getActiveConversationMetaData
 import apptentive.com.android.feedback.utils.toEncryptionKey
 import apptentive.com.android.network.HttpClient
 import apptentive.com.android.network.UnexpectedResponseException
