@@ -314,15 +314,15 @@ internal class ConversationManager(
     }
 
     internal fun updateToken(jwtToken: JwtString, callback: ((result: LoginResult) -> Unit)? = null) {
-        val activeConversationMetaData = getActiveConversationMetaData()
-        val subClaim = JwtUtils.extractSub(jwtToken)
-
-        if (subClaim == null) {
+        val subClaim = JwtUtils.extractSub(jwtToken) ?: run {
             callback?.invoke(LoginResult.Error("Invalid JWT token"))
             return
         }
 
-        if (activeConversationMetaData?.state is ConversationState.LoggedIn && (activeConversationMetaData.state as ConversationState.LoggedIn).subject == subClaim) {
+        val activeConversationMetaData = getActiveConversationMetaData()
+        val loggedInState = activeConversationMetaData?.state as? ConversationState.LoggedIn
+
+        if (loggedInState != null && loggedInState.subject == subClaim) {
             Log.d(CONVERSATION, "Refreshing the auth token for the user with subject: $subClaim")
             val conversationCredential = DependencyProvider.of<ConversationCredentialProvider>()
             updateConversationCredentialProvider(conversationCredential.conversationId, jwtToken, conversationCredential.payloadEncryptionKey)
