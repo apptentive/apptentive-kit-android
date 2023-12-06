@@ -36,7 +36,8 @@ dependencies {
     implementation project(':apptentive-core-ui')
     implementation "androidx.appcompat:appcompat:$appcompat_library_version"
     implementation "androidx.core:core-ktx:$core_ktx_version"
-    implementation "com.google.android.play:core:$play_core_version"
+    implementation "com.google.android.play:review:$play_review_version"
+    implementation "com.google.android.play:review-ktx:$play_review_version"
     implementation "com.google.android.gms:play-services-base:$play_services_base_version"
 
     testImplementation project(':apptentive-core-test')
