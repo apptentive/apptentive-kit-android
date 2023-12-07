@@ -1,4 +1,4 @@
-# 2023-12-5 - v6.5.1
+# 2023-12-07 - v6.5.1
 #### Improvements
 * Updated google play libraries to support Android 14
 
