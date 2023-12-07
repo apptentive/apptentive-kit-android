@@ -1,3 +1,7 @@
+# 2023-12-5 - v6.5.1
+#### Improvements
+* Updated google play libraries to support Android 14
+
 # 2023-11-14 - v6.5.0
 #### New Features
 * Implemented Customer Authentication features from the legacy SDK in the new SDK (See Android [Integration guide](https://learn.apptentive.com/knowledge-base/android-integration-guide/)). This allows apps with sensitive data to be shared among multiple users on a single device

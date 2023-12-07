@@ -69,7 +69,7 @@ buildscript {
 
     project.ext {
         sonatypeVersion = '6.0.5'
-        jfrogVersion = '6.5.1'
+        jfrogVersion = '6.2.0-migration02'
 
         // Change this depending on where you are publishing to
         repoVersion = sonatypeVersion
