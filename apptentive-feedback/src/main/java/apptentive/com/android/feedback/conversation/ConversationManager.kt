@@ -33,10 +33,11 @@ import apptentive.com.android.feedback.platform.SDKState
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.JwtString
 import apptentive.com.android.feedback.utils.JwtUtils
+import apptentive.com.android.feedback.utils.RosterUtils.getActiveConversationMetaData
+import apptentive.com.android.feedback.utils.RosterUtils.hasNoConversationCache
 import apptentive.com.android.feedback.utils.ThrottleUtils
 import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
-import apptentive.com.android.feedback.utils.getActiveConversationMetaData
 import apptentive.com.android.feedback.utils.getEncryptionKey
 import apptentive.com.android.feedback.utils.isMarshmallowOrGreater
 import apptentive.com.android.feedback.utils.toSecretKeyBytes
@@ -166,22 +167,23 @@ internal class ConversationManager(
     @WorkerThread
     private fun loadActiveConversation(): Conversation {
         DefaultStateMachine.onEvent(SDKEvent.LoadingConversation)
-        // load existing conversation
+
         val existingConversation = loadExistingConversation()
         if (existingConversation != null) {
             Log.i(CONVERSATION, "Loaded an existing conversation")
             return existingConversation
         }
 
-        // attempt to migrate a legacy conversation
         val legacyConversation = tryMigrateLegacyConversation()
         if (legacyConversation != null) {
             Log.i(CONVERSATION, "Migrated 'legacy' conversation")
             return legacyConversation
         }
 
-        // no active conversation: create a new one
-        Log.i(CONVERSATION, "Creating 'anonymous' conversation...")
+        // Adding this check to avoid some confusion in the logs between actually creating anonymous conversation or just resetting the conversation when the app is launched in logged out state
+        if (hasNoConversationCache()) {
+            Log.i(CONVERSATION, "No active conversation found in the roster, creating an anonymous conversation...")
+        }
         return createConversation()
     }
 
@@ -207,7 +209,7 @@ internal class ConversationManager(
                 }
 
                 is Result.Success -> {
-                    Log.v(CONVERSATION, "Login session successful, encryption key: ${result.data.encryptionKey.getKeyFromHexString()}")
+                    Log.v(CONVERSATION, "Login session successful")
                     val previousState = DefaultStateMachine.state
                     val key = result.data.encryptionKey.getKeyFromHexString()
                     val encryptionKey = EncryptionKey(key, KeyResolver23.getTransformation())
@@ -312,15 +314,15 @@ internal class ConversationManager(
     }
 
     internal fun updateToken(jwtToken: JwtString, callback: ((result: LoginResult) -> Unit)? = null) {
-        val activeConversationMetaData = getActiveConversationMetaData()
-        val subClaim = JwtUtils.extractSub(jwtToken)
-
-        if (subClaim == null) {
+        val subClaim = JwtUtils.extractSub(jwtToken) ?: run {
             callback?.invoke(LoginResult.Error("Invalid JWT token"))
             return
         }
 
-        if (activeConversationMetaData?.state is ConversationState.LoggedIn && (activeConversationMetaData.state as ConversationState.LoggedIn).subject == subClaim) {
+        val activeConversationMetaData = getActiveConversationMetaData()
+        val loggedInState = activeConversationMetaData?.state as? ConversationState.LoggedIn
+
+        if (loggedInState != null && loggedInState.subject == subClaim) {
             Log.d(CONVERSATION, "Refreshing the auth token for the user with subject: $subClaim")
             val conversationCredential = DependencyProvider.of<ConversationCredentialProvider>()
             updateConversationCredentialProvider(conversationCredential.conversationId, jwtToken, conversationCredential.payloadEncryptionKey)

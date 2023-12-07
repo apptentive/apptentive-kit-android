@@ -3,9 +3,9 @@ package apptentive.com.android.feedback.rating.reviewmanager
 import android.app.Activity
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.IN_APP_REVIEW
+import com.google.android.gms.tasks.Task
 import com.google.android.play.core.review.ReviewInfo
 import com.google.android.play.core.review.ReviewManagerFactory
-import com.google.android.play.core.tasks.Task
 
 internal class GooglePlayReviewManager(private val activity: Activity) : InAppReviewManager {
     private val reviewManager = ReviewManagerFactory.create(activity)

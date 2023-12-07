@@ -134,16 +134,21 @@ internal object RosterUtils {
         messageRepository.updateConversationRoster(conversationRoster)
         messageRepository.updateEncryption(encryption)
     }
+
+    fun getActiveConversationMetaData(): ConversationMetaData? {
+        return DefaultStateMachine.conversationRoster.activeConversation
+    }
+
+    fun hasNoConversationCache(): Boolean {
+        return (DefaultStateMachine.conversationRoster.activeConversation == null || DefaultStateMachine.conversationRoster.activeConversation?.state is ConversationState.Undefined) &&
+            DefaultStateMachine.conversationRoster.loggedOut.isEmpty()
+    }
 }
 
 internal object AndroidSDKVersion {
     fun getSDKVersion(): Int {
         return Build.VERSION.SDK_INT
     }
-}
-
-fun getActiveConversationMetaData(): ConversationMetaData? {
-    return DefaultStateMachine.conversationRoster.activeConversation
 }
 
 @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.M)
