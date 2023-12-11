@@ -20,6 +20,7 @@ object SharedPrefConstants {
 
     const val THROTTLE_UTILS = "com.apptentive.sdk.throttle"
     const val CONVERSATION_RESET_THROTTLE = "conversation_reset_throttle"
+    const val ROSTER_RESET_THROTTLE = "roster_reset_throttle"
 
     const val CUSTOM_STORE_URL = "com.apptentive.sdk.customstoreurl"
     const val CUSTOM_STORE_URL_KEY = "custom_store_url_key"

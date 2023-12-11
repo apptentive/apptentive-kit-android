@@ -17,6 +17,9 @@ internal object ThrottleUtils {
 
     private val defaultThrottleLength = TimeUnit.SECONDS.toMillis(1)
 
+    internal const val CONVERSATION_TYPE = "Conversation"
+    internal const val ROSTER_TYPE = "Roster"
+
     @SuppressLint("ApplySharedPref")
     fun shouldThrottleInteraction(interaction: Interaction): Boolean {
         val interactionName = interaction.type.name
@@ -43,6 +46,34 @@ internal object ThrottleUtils {
                 }
             }
         } ?: false
+    }
+
+    fun shouldThrottleReset(fileType: String): Boolean {
+        val sharedPrefDataStore = DependencyProvider.of<AndroidSharedPrefDataStore>()
+        val sdkVersion = if (fileType == CONVERSATION_TYPE) {
+            sharedPrefDataStore.getString(
+                SharedPrefConstants.THROTTLE_UTILS,
+                SharedPrefConstants.CONVERSATION_RESET_THROTTLE
+            )
+        } else {
+            sharedPrefDataStore.getString(
+                SharedPrefConstants.THROTTLE_UTILS,
+                SharedPrefConstants.ROSTER_RESET_THROTTLE
+            )
+        }
+        val apptentiveSDKVersion: String = Constants.SDK_VERSION
+        return if (sdkVersion.isEmpty() || sdkVersion != apptentiveSDKVersion) {
+            Log.d(CONVERSATION, "$fileType reset NOT throttled")
+            sharedPrefDataStore.putString(
+                SharedPrefConstants.THROTTLE_UTILS,
+                SharedPrefConstants.CONVERSATION_RESET_THROTTLE,
+                Constants.SDK_VERSION
+            )
+            false
+        } else {
+            Log.d(CONVERSATION, "$fileType reset throttled")
+            true
+        }
     }
 
     fun shouldThrottleResetConversation(): Boolean {
