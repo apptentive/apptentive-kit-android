@@ -19,6 +19,7 @@ import apptentive.com.android.encryption.NotEncrypted
 import apptentive.com.android.encryption.getEncryptionStatus
 import apptentive.com.android.feedback.Apptentive.executeCallbackInMainExecutor
 import apptentive.com.android.feedback.Apptentive.messageCenterNotificationSubject
+import apptentive.com.android.feedback.Apptentive.updateToken
 import apptentive.com.android.feedback.backend.ConversationPayloadService
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.DefaultConversationService
@@ -727,7 +728,8 @@ class ApptentiveDefaultClient(
 
                 val resultError = result.error as? AuthenticationFailureException
 
-                if (resultError != null) {
+                if (resultError != null && authFailureCounter < MAX_AUTH_FAILURE_COUNT) {
+                    authFailureCounter++
                     val reason = AuthenticationFailedReason.parse(resultError.errorType, resultError.errorMessage)
                     authenticationFailedListener?.get()?.onAuthenticationFailed(reason)
                 }
@@ -811,6 +813,10 @@ class ApptentiveDefaultClient(
     companion object {
         // Gets created on the first call to Apptentive.register() and is used to identify the session
         private var sessionId = generateUUID()
+
+        private var authFailureCounter: Int = 0
+
+        const val MAX_AUTH_FAILURE_COUNT = 3
 
         fun getSessionId(): String = sessionId
         fun updateSessionIdForNewLoginSession() {
