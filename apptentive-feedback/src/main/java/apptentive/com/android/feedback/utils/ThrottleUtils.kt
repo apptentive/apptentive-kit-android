@@ -76,28 +76,6 @@ internal object ThrottleUtils {
         }
     }
 
-    fun shouldThrottleResetConversation(): Boolean {
-        val sharedPrefDataStore = DependencyProvider.of<AndroidSharedPrefDataStore>()
-        val sdkVersion: String = sharedPrefDataStore.getString(
-            SharedPrefConstants.THROTTLE_UTILS,
-            SharedPrefConstants.CONVERSATION_RESET_THROTTLE
-        )
-        val apptentiveSDKVersion: String = Constants.SDK_VERSION
-
-        return if (sdkVersion.isEmpty() || sdkVersion != apptentiveSDKVersion) {
-            Log.d(CONVERSATION, "Conversation reset NOT throttled")
-            sharedPrefDataStore.putString(
-                SharedPrefConstants.THROTTLE_UTILS,
-                SharedPrefConstants.CONVERSATION_RESET_THROTTLE,
-                Constants.SDK_VERSION
-            )
-            false
-        } else {
-            Log.d(CONVERSATION, "Conversation reset throttled")
-            true
-        }
-    }
-
     private fun logThrottle(
         interaction: Interaction,
         throttleLength: Long,

@@ -165,7 +165,16 @@ class ApptentiveDefaultClient(
         clearPayloadCache = false
 
         getConversationToken(registerCallback)
-        addObservers(conversationService)
+
+        if (!(payloadSender as SerialPayloadSender).hasPayloadService) {
+            (payloadSender as SerialPayloadSender).setPayloadService(
+                service = ConversationPayloadService(
+                    requestSender = conversationService,
+                )
+            )
+        }
+
+        addObservers()
 
         engage(Event.internal(InternalEvent.APP_LAUNCH.labelName))
     }
@@ -203,7 +212,7 @@ class ApptentiveDefaultClient(
         }
     }
 
-    private fun addObservers(conversationService: ConversationService) {
+    private fun addObservers() {
         conversationManager.activeConversation.observe { conversation ->
             if (Log.canLog(LogLevel.Verbose)) { // avoid unnecessary computations
                 conversation.logConversation()
@@ -220,16 +229,6 @@ class ApptentiveDefaultClient(
                 recordInteractionResponses = ::recordInteractionResponses,
                 recordCurrentAnswer = ::recordCurrentAnswer
             )
-            // once we have received conversationId and conversationToken we can setup payload sender service
-            val conversationId = conversation.conversationId
-            val conversationToken = conversation.conversationToken
-            if (conversationId != null && conversationToken != null && !(payloadSender as SerialPayloadSender).hasPayloadService) {
-                (payloadSender as SerialPayloadSender).setPayloadService(
-                    service = ConversationPayloadService(
-                        requestSender = conversationService,
-                    )
-                )
-            }
             // register engagement context as soon as DefaultEngagement is created to make it available for MessageManager
             DependencyProvider.register(EngagementContextProvider(engagement, payloadSender, executors))
             messageManager?.onConversationChanged(conversation)
