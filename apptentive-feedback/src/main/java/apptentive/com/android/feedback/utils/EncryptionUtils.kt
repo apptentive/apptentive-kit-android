@@ -29,10 +29,11 @@ internal fun SecretKeyBytes.toEncryptionKey(): EncryptionKey =
 
 @RequiresApi(Build.VERSION_CODES.M)
 internal fun SecretKeyBytes.getEncryptionKey(user: String): EncryptionKey {
-    val key = KeyResolver23().resolveMultiUserWrapperKey(user)
+    val encryptedKey = KeyResolver23().resolveMultiUserWrapperKey(user)
+    val encryption = AESEncryption23(encryptedKey)
     return EncryptionKey(
         SecretKeySpec(
-            AESEncryption23(key).decrypt(this),
+            encryption.decrypt(this),
             KeyProperties.KEY_ALGORITHM_AES
         ),
         KeyResolver23.getTransformation()

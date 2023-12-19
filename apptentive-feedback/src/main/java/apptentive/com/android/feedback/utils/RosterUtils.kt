@@ -41,11 +41,14 @@ internal object RosterUtils {
             loggedInState?.let { updateEncryptionForLoggedInConversation(it) }
             DefaultStateMachine.conversationRoster = conversationRoster
             conversationRepository.updateConversationRoster(conversationRoster)
-        } catch (e: ConversationSerializationException) {
+        } catch (e: Exception) {
             if (!ThrottleUtils.shouldThrottleReset(ROSTER_TYPE)) {
                 Log.e(LogTags.CONVERSATION, "Cannot load existing roster", e)
                 Log.d(LogTags.CONVERSATION, "Deserialization failure, deleting the conversation files")
                 FileUtil.deleteUnrecoverableStorageFiles(FileUtil.getInternalDir("conversations"))
+                val conversationRoster = conversationRepository.initializeRepositoryWithRoster()
+                DefaultStateMachine.conversationRoster = conversationRoster
+                conversationRepository.updateConversationRoster(conversationRoster)
             } else {
                 throw ConversationSerializationException(
                     "Cannot load existing roster, roster reset throttled",
