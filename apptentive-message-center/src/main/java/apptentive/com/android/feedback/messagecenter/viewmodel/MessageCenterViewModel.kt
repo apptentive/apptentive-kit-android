@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import apptentive.com.android.concurrent.Executors
 import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.LiveEvent
+import apptentive.com.android.feedback.PrefetchManager
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
@@ -24,7 +25,6 @@ import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.MessageCenterModel
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.utils.FileUtil
-import apptentive.com.android.feedback.utils.ImageUtil
 import apptentive.com.android.feedback.utils.convertToGroupDate
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
@@ -353,8 +353,7 @@ class MessageCenterViewModel(
     private fun loadAvatar(imageUrl: String) {
         isAvatarLoading = true
         executors.state.execute {
-            val avatarBitmap = ImageUtil.loadAvatar(imageUrl)
-            avatarBitmap?.let { avatarBitmapEvent.postValue(it) }
+            PrefetchManager.getImage(imageUrl)?.let { avatarBitmapEvent.postValue(it) }
             isAvatarLoading = false
         }
     }

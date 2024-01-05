@@ -19,7 +19,6 @@ import apptentive.com.android.encryption.NotEncrypted
 import apptentive.com.android.encryption.getEncryptionStatus
 import apptentive.com.android.feedback.Apptentive.executeCallbackInMainExecutor
 import apptentive.com.android.feedback.Apptentive.messageCenterNotificationSubject
-import apptentive.com.android.feedback.Apptentive.updateToken
 import apptentive.com.android.feedback.backend.ConversationPayloadService
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.backend.DefaultConversationService
@@ -207,6 +206,10 @@ class ApptentiveDefaultClient(
                     registerCallback?.invoke(RegisterResult.Success)
                     val conversationCredentialProvider = DependencyProvider.of<ConversationCredentialProvider>()
                     payloadSender.updateCredential(conversationCredentialProvider)
+                    PrefetchManager.apply {
+                        initPrefetchDirectory()
+                        downloadPrefetchResources(conversationManager.getConversation().engagementManifest.prefetch)
+                    }
                 }
             }
         }
@@ -355,6 +358,10 @@ class ApptentiveDefaultClient(
                 val pushProviderName = sharedPrefDataStore.getString(APPTENTIVE, PREF_KEY_PUSH_TOKEN)
                 setPushIntegration(pushProvider, pushProviderName)
                 executeCallbackInMainExecutor(callback, LoginResult.Success)
+                PrefetchManager.apply {
+                    initPrefetchDirectory()
+                    downloadPrefetchResources(conversationManager.getConversation().engagementManifest.prefetch)
+                }
             }
             is LoginResult.Error -> {
                 Log.v(CONVERSATION, "Failed to login")

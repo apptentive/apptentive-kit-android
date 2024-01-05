@@ -14,6 +14,7 @@ import apptentive.com.android.encryption.KeyResolver23
 import apptentive.com.android.encryption.getKeyFromHexString
 import apptentive.com.android.feedback.Constants
 import apptentive.com.android.feedback.LoginResult
+import apptentive.com.android.feedback.PrefetchManager
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
@@ -429,6 +430,10 @@ internal class ConversationManager(
             )
             Log.d(CONVERSATION, "USING LOCALLY DOWNLOADED MANIFEST")
             isUsingLocalManifest = true
+            PrefetchManager.apply {
+                initPrefetchDirectory()
+                downloadPrefetchResources(getConversation().engagementManifest.prefetch)
+            }
         }
     }
 
