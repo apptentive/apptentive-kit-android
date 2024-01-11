@@ -1,6 +1,8 @@
 package apptentive.com.android.feedback.notes.interaction
 
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
+import apptentive.com.android.feedback.textmodal.LayoutOptions
+import apptentive.com.android.feedback.textmodal.RichContent
 import apptentive.com.android.feedback.textmodal.TextModalActionConfiguration
 import apptentive.com.android.feedback.textmodal.TextModalInteraction
 import apptentive.com.android.feedback.textmodal.TextModalInteractionTypeConverter
@@ -46,7 +48,13 @@ class TextModalInteractionTypeConverterTest {
                     "action": "interaction",
                     "event": "com.apptentive#TextModal#event_1"
                   }
-                ]
+                ],
+                "image": {
+                    "url": "https://variety.com/wp-content/uploads/2022/12/Disney-Plus.png",
+                    "layout": "fill",
+                     "alt_text": "Disney Logo"
+                },
+                "max_height": 40
               }
             }
         """
@@ -80,7 +88,13 @@ class TextModalInteractionTypeConverterTest {
                     "action" to "interaction",
                     "event" to "com.apptentive#TextModal#event_1"
                 )
-            )
+            ),
+            richContent = RichContent(
+                url = "https://variety.com/wp-content/uploads/2022/12/Disney-Plus.png",
+                layout = LayoutOptions.FILL,
+                alternateText = "Disney Logo",
+                maxHeight = 40
+            ),
         )
 
         testConverter(json, expected)
@@ -108,6 +122,7 @@ class TextModalInteractionTypeConverterTest {
             id = "id",
             title = null,
             body = null,
+            richContent = null,
             actions = arrayListOf(
                 mapOf(
                     "id" to "action_id_1",

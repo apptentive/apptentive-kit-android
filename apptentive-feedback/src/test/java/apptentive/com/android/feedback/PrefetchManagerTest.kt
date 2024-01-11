@@ -29,7 +29,7 @@ class PrefetchManagerTest : TestCase() {
         every { prefetchManager.downloadFile(any()) } answers { /* do nothing */ }
 
         // Call the method under test
-        prefetchManager.downloadPrefetchResources(prefetchFromManifest)
+        prefetchManager.downloadPrefetchableResources(prefetchFromManifest)
 
         // Verify that downloadFile was called for each file in the manifest
         verify(exactly = prefetchFromManifest.size) { prefetchManager.downloadFile(any()) }

@@ -9,11 +9,12 @@ internal class TextModalModel(
     id: InteractionId,
     val title: String?,
     val body: String?,
+    val richContent: RichContent? = null,
     val actions: List<Action>
 ) : Interaction(id, InteractionType.TextModal) {
 
     override fun toString(): String {
-        return "${javaClass.simpleName} (id=$id, title=\"$title\", body=\"$body\", actions=$actions)"
+        return "${javaClass.simpleName} (id=$id, title=\"$title\", body=\"$body\", richContent=$richContent, actions=$actions)"
     }
 
     sealed class Action(val id: String, val label: String) {
@@ -74,6 +75,7 @@ internal class TextModalModel(
 
         if (title != other.title) return false
         if (body != other.body) return false
+        if (richContent != other.richContent) return false
         if (actions != other.actions) return false
 
         return true
@@ -82,6 +84,7 @@ internal class TextModalModel(
     override fun hashCode(): Int {
         var result = title?.hashCode() ?: 0
         result = 31 * result + (body?.hashCode() ?: 0)
+        result = 31 * result + (richContent?.hashCode() ?: 0)
         result = 31 * result + actions.hashCode()
         return result
     }

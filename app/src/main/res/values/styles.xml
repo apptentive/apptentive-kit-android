@@ -1272,84 +1272,84 @@
     </style>
 
     <!-- Cookbook 2 -->
-<!--    <style name="ApptentiveThemeOverride">
-        &lt;!&ndash; All Interactions &ndash;&gt;
-        <item name="apptentiveFontFamilyDefault">@font/sen</item>
-        <item name="colorSecondary">#34993E</item>
-        <item name="apptentiveHeaderAlpha">1</item>
-        <item name="apptentiveSubheaderAlpha">.8</item>
-        <item name="apptentiveTextSizeDefault">15sp</item>
+<!--  <style name="ApptentiveThemeOverride">-->
+<!--&lt;!&ndash;         All Interactions &ndash;&gt;-->
+<!--        <item name="apptentiveFontFamilyDefault">@font/sen</item>-->
+<!--        <item name="colorSecondary">#34993E</item>-->
+<!--        <item name="apptentiveHeaderAlpha">1</item>-->
+<!--        <item name="apptentiveSubheaderAlpha">.8</item>-->
+<!--        <item name="apptentiveTextSizeDefault">15sp</item>-->
 
-        &lt;!&ndash; Dialogs &ndash;&gt;
-        <item name="colorSurface">#FFFFFF</item>
-        <item name="colorOnSurface">#3A4C5F</item>
+<!--&lt;!&ndash;        Dialogs &ndash;&gt;-->
+<!--        <item name="colorSurface">#FFFFFF</item>-->
+<!--        <item name="colorOnSurface">#3A4C5F</item>-->
 
-        &lt;!&ndash; Love Dialog &ndash;&gt;
-        <item name="apptentiveLoveDialogLayoutStyle">@style/Cookbook2.Dialog.Layout</item>
-        <item name="apptentiveLoveDialogHeaderImageStyle">@style/Cookbook2.Dialog.HeaderImage.LoveDialog</item>
-        <item name="apptentiveLoveDialogTitleStyle">@style/Cookbook2.Dialog.Title</item>
-        <item name="apptentiveLoveDialogButtonLayoutStyle">@style/Cookbook2.Dialog.ButtonLayout.LoveDialog</item>
-        <item name="apptentiveLoveDialogButtonLayoutStyleAlternate">@style/Cookbook2.Dialog.ButtonLayout.Stacked</item>
-        <item name="apptentiveLoveDialogYesButtonStyleAlternate">@style/Cookbook2.Button</item>
-        <item name="apptentiveLoveDialogNoButtonStyleAlternate">@style/Cookbook2.Button.Borderless</item>
+<!--&lt;!&ndash;       Love Dialog &ndash;&gt;-->
+<!--        <item name="apptentiveLoveDialogLayoutStyle">@style/Cookbook2.Dialog.Layout</item>-->
+<!--        <item name="apptentiveLoveDialogHeaderImageStyle">@style/Cookbook2.Dialog.HeaderImage.LoveDialog</item>-->
+<!--        <item name="apptentiveLoveDialogTitleStyle">@style/Cookbook2.Dialog.Title</item>-->
+<!--        <item name="apptentiveLoveDialogButtonLayoutStyle">@style/Cookbook2.Dialog.ButtonLayout.LoveDialog</item>-->
+<!--        <item name="apptentiveLoveDialogButtonLayoutStyleAlternate">@style/Cookbook2.Dialog.ButtonLayout.Stacked</item>-->
+<!--        <item name="apptentiveLoveDialogYesButtonStyleAlternate">@style/Cookbook2.Button</item>-->
+<!--        <item name="apptentiveLoveDialogNoButtonStyleAlternate">@style/Cookbook2.Button.Borderless</item>-->
 
-        &lt;!&ndash; Note Dialog &ndash;&gt;
-        <item name="apptentiveNoteLayoutStyle">@style/Cookbook2.Dialog.Layout</item>
-        <item name="apptentiveNoteHeaderImageStyle">@style/Cookbook2.Dialog.HeaderImage.Note</item>
-        <item name="apptentiveNoteTitleWithMessageTextStyle">@style/Cookbook2.Dialog.Title</item>
-        <item name="apptentiveNoteTitleOrMessageOnlyTextStyle">@style/Cookbook2.Dialog.Title</item>
-        <item name="apptentiveNoteMessageTextStyle">@style/Cookbook2.Dialog.Message</item>
-        <item name="apptentiveNoteButtonLayoutStyle">@style/Cookbook2.Dialog.ButtonLayout.Stacked</item>
-        <item name="apptentiveNoteButtonStyle">@style/Cookbook2.Button</item>
-        <item name="apptentiveNoteDismissButtonStyle">@style/Cookbook2.Button.Borderless</item>
+<!--&lt;!&ndash;        Note Dialog &ndash;&gt;-->
+<!--        <item name="apptentiveNoteLayoutStyle">@style/Cookbook2.Dialog.Layout</item>-->
+<!--        <item name="apptentiveNoteHeaderImageStyle">@style/Cookbook2.Dialog.HeaderImage.Note</item>-->
+<!--        <item name="apptentiveNoteTitleWithMessageTextStyle">@style/Cookbook2.Dialog.Title</item>-->
+<!--        <item name="apptentiveNoteTitleOrMessageOnlyTextStyle">@style/Cookbook2.Dialog.Title</item>-->
+<!--        <item name="apptentiveNoteMessageTextStyle">@style/Cookbook2.Dialog.Message</item>-->
+<!--        <item name="apptentiveNoteButtonLayoutStyle">@style/Cookbook2.Dialog.ButtonLayout.Stacked</item>-->
+<!--        <item name="apptentiveNoteButtonStyle">@style/Cookbook2.Button</item>-->
+<!--        <item name="apptentiveNoteDismissButtonStyle">@style/Cookbook2.Button.Borderless</item>-->
 
-        &lt;!&ndash; Survey &ndash;&gt;
-        <item name="colorPrimary">#056E0F</item>
-        <item name="colorOnPrimary">#FFFFFF</item>
-        <item name="android:colorBackground">#FFFFFF</item>
-        <item name="colorOnBackground">#3A4C5F</item>
+<!--&lt;!&ndash;      Survey&ndash;&gt;-->
+<!--        <item name="colorPrimary">#056E0F</item>-->
+<!--        <item name="colorOnPrimary">#FFFFFF</item>-->
+<!--        <item name="android:colorBackground">#FFFFFF</item>-->
+<!--        <item name="colorOnBackground">#3A4C5F</item>-->
 
-        <item name="android:statusBarColor">#FFFFFF</item>
-        <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>
+<!--        <item name="android:statusBarColor">#FFFFFF</item>-->
+<!--        <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>-->
 
-        <item name="apptentiveSurveyToolbarStyle">@style/Cookbook2.Survey.Toolbar</item>
-        <item name="apptentiveSurveyBottomAppBarStyle">@style/Cookbook2.Survey.BottomAppBar</item>
-        <item name="apptentiveSurveyTitleStyle">@style/Cookbook2.Survey.Title</item>
-        <item name="apptentiveSurveyHeaderImageStyle">@style/Cookbook2.Survey.HeaderImage</item>
-        <item name="apptentiveSurveyIntroductionStyle">@style/Cookbook2.Survey.Introduction</item>
-        <item name="apptentiveSurveySuccessStyle">@style/Cookbook2.Survey.Introduction</item>
-        <item name="apptentiveSurveyFootnoteStyle">@style/Cookbook2.Survey.Footnote</item>
-        <item name="apptentiveSurveySubmitButtonStyle">@style/Cookbook2.Button</item>
+<!--        <item name="apptentiveSurveyToolbarStyle">@style/Cookbook2.Survey.Toolbar</item>-->
+<!--        <item name="apptentiveSurveyBottomAppBarStyle">@style/Cookbook2.Survey.BottomAppBar</item>-->
+<!--        <item name="apptentiveSurveyTitleStyle">@style/Cookbook2.Survey.Title</item>-->
+<!--        <item name="apptentiveSurveyHeaderImageStyle">@style/Cookbook2.Survey.HeaderImage</item>-->
+<!--        <item name="apptentiveSurveyIntroductionStyle">@style/Cookbook2.Survey.Introduction</item>-->
+<!--        <item name="apptentiveSurveySuccessStyle">@style/Cookbook2.Survey.Introduction</item>-->
+<!--        <item name="apptentiveSurveyFootnoteStyle">@style/Cookbook2.Survey.Footnote</item>-->
+<!--        <item name="apptentiveSurveySubmitButtonStyle">@style/Cookbook2.Button</item>-->
 
-        <item name="apptentiveGenericDialogTitleTextStyle">@style/Cookbook2.Dialog.Title</item>
-        <item name="apptentiveGenericDialogMessageTextStyle">@style/Cookbook2.Dialog.Message</item>
-        <item name="apptentiveGenericDialogButtonLayoutStyle">@style/Cookbook2.Dialog.ButtonLayout.Stacked</item>
-        <item name="apptentiveGenericDialogPositiveButtonStyle">@style/Cookbook2.Button</item>
-        <item name="apptentiveGenericDialogNegativeButtonStyle">@style/Cookbook2.Button</item>
+<!--        <item name="apptentiveGenericDialogTitleTextStyle">@style/Cookbook2.Dialog.Title</item>-->
+<!--        <item name="apptentiveGenericDialogMessageTextStyle">@style/Cookbook2.Dialog.Message</item>-->
+<!--        <item name="apptentiveGenericDialogButtonLayoutStyle">@style/Cookbook2.Dialog.ButtonLayout.Stacked</item>-->
+<!--        <item name="apptentiveGenericDialogPositiveButtonStyle">@style/Cookbook2.Button</item>-->
+<!--        <item name="apptentiveGenericDialogNegativeButtonStyle">@style/Cookbook2.Button</item>-->
 
-        &lt;!&ndash; Apptentive Rating Dialog &ndash;&gt;
-        <item name="apptentiveRatingDialogLayoutStyle">@style/Cookbook2.Dialog.Layout.RatingDialog</item>
-        <item name="apptentiveRatingDialogHeaderImageStyle">@style/Cookbook2.Dialog.HeaderImage.RatingDialog</item>
-        <item name="apptentiveRatingDialogTitleTextStyle">@style/Cookbook2.Dialog.Title.RatingDialog</item>
-        <item name="apptentiveRatingDialogMessageTextStyle">@style/Cookbook2.Dialog.Message</item>
-        <item name="apptentiveRatingDialogButtonRateStyle">@style/Cookbook2.Button.RatingDialog</item>
-        <item name="apptentiveRatingDialogButtonRemindStyle">@style/Cookbook2.Button.Borderless.RatingDialog</item>
-        <item name="apptentiveRatingDialogButtonDeclineStyle">@style/Cookbook2.Button.Borderless.RatingDialog</item>
+<!--        &lt;!&ndash;        Apptentive Rating Dialog &ndash;&gt;-->
+<!--        <item name="apptentiveRatingDialogLayoutStyle">@style/Cookbook2.Dialog.Layout.RatingDialog</item>-->
+<!--        <item name="apptentiveRatingDialogHeaderImageStyle">@style/Cookbook2.Dialog.HeaderImage.RatingDialog</item>-->
+<!--        <item name="apptentiveRatingDialogTitleTextStyle">@style/Cookbook2.Dialog.Title.RatingDialog</item>-->
+<!--        <item name="apptentiveRatingDialogMessageTextStyle">@style/Cookbook2.Dialog.Message</item>-->
+<!--        <item name="apptentiveRatingDialogButtonRateStyle">@style/Cookbook2.Button.RatingDialog</item>-->
+<!--        <item name="apptentiveRatingDialogButtonRemindStyle">@style/Cookbook2.Button.Borderless.RatingDialog</item>-->
+<!--        <item name="apptentiveRatingDialogButtonDeclineStyle">@style/Cookbook2.Button.Borderless.RatingDialog</item>-->
 
-         &lt;!&ndash; Apptentive Message Center &ndash;&gt;
-        <item name="apptentiveMessageCenterToolbarStyle">@style/Cookbook2.MessageCenter.Toolbar</item>
-        <item name="apptentiveMessageCenterToolbarTitleStyle">@style/Cookbook2.MessageCenter.Title</item>
-        <item name="apptentiveMessageCenterFillColorSendIconBackground">#056E0F</item>
-        <item name="apptentiveMessageCenterFillColorAttachmentIconBackground">#056E0F</item>
-        <item name="apptentiveMessageCenterBubbleColorOutbound">#F3F3F3</item>
-        <item name="apptentiveMessageCenterBubbleColorInbound">#056E0F</item>
-        <item name="apptentiveMessageCenterColorComposerOutline">#056E0F</item>
-        <item name="apptentiveMessageCenterViewSeparatorStyle">@style/Cookbook2.MessageCenter.View.Separator.Style</item>
-        <item name="apptentiveMessageCenterComposerStyle">@style/Cookbook2.MessageCenter.Composer.Style</item>
-       <item name="apptentiveMessageCenterFillColorIcon">#3A4C5F</item>
+<!--&lt;!&ndash;         Apptentive Message Center &ndash;&gt;&ndash;&gt;-->
+<!--        <item name="apptentiveMessageCenterToolbarStyle">@style/Cookbook2.MessageCenter.Toolbar</item>-->
+<!--        <item name="apptentiveMessageCenterToolbarTitleStyle">@style/Cookbook2.MessageCenter.Title</item>-->
+<!--        <item name="apptentiveMessageCenterFillColorSendIconBackground">#056E0F</item>-->
+<!--        <item name="apptentiveMessageCenterFillColorAttachmentIconBackground">#056E0F</item>-->
+<!--        <item name="apptentiveMessageCenterBubbleColorOutbound">#F3F3F3</item>-->
+<!--        <item name="apptentiveMessageCenterBubbleColorInbound">#056E0F</item>-->
+<!--        <item name="apptentiveMessageCenterColorComposerOutline">#056E0F</item>-->
+<!--        <item name="apptentiveMessageCenterViewSeparatorStyle">@style/Cookbook2.MessageCenter.View.Separator.Style</item>-->
+<!--        <item name="apptentiveMessageCenterComposerStyle">@style/Cookbook2.MessageCenter.Composer.Style</item>-->
+<!--       <item name="apptentiveMessageCenterFillColorIcon">#3A4C5F</item>-->
 
 
-    </style> -->
+<!--    </style>-->
 
     <!-- General -->
     <style name="Cookbook2.Button" parent="Widget.MaterialComponents.Button.OutlinedButton">

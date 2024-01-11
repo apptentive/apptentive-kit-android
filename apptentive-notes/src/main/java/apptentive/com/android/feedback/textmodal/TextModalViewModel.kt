@@ -1,9 +1,13 @@
 package apptentive.com.android.feedback.textmodal
 
+import android.graphics.Bitmap
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import apptentive.com.android.core.Callback
 import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.core.LiveEvent
 import apptentive.com.android.feedback.EngagementResult
+import apptentive.com.android.feedback.PrefetchManager
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
@@ -23,6 +27,7 @@ internal class TextModalViewModel : ViewModel() {
             id = interaction.id,
             title = interaction.title,
             body = interaction.body,
+            richContent = interaction.richContent,
             actions = interaction.actions.map { action ->
                 DefaultTextModalActionConverter().convert(action)
             }
@@ -31,6 +36,7 @@ internal class TextModalViewModel : ViewModel() {
 
     val title = interaction.title
     val message = interaction.body
+    val alternateText = interaction.richContent?.alternateText
     val actions = interaction.actions.mapIndexed { index, action ->
         if (action is TextModalModel.Action.Dismiss) {
             ActionModel.DismissActionModel(
@@ -58,6 +64,16 @@ internal class TextModalViewModel : ViewModel() {
     }
 
     var onDismiss: Callback? = null
+
+    private val noteHeaderEvent = LiveEvent<Bitmap>()
+    val noteHeaderBitmapStream: LiveData<Bitmap> = noteHeaderEvent
+    init {
+        context.executors.state.execute {
+            interaction.richContent?.url?.let { url ->
+                PrefetchManager.getImage(url)?.let { noteHeaderEvent.postValue(it) }
+            }
+        }
+    }
 
     fun onCancel() {
         context.executors.state.execute {

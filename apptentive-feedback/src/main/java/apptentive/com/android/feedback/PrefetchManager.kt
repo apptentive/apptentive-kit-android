@@ -34,11 +34,13 @@ object PrefetchManager {
         }
     }
 
-    fun downloadPrefetchResources(prefetchFromManifest: List<URL>) {
+    fun downloadPrefetchableResources(prefetchFromManifest: List<URL>) {
         deleteOutdatedResourcesFromLocal(getAsHashCodeNames(prefetchFromManifest))
         for (file in prefetchFromManifest) {
-            if (!prefetchedFileURIFromDisk.map { getFileNameFromFilePath(it) }.contains(getHashCodedFileNameFromUrl(file.toString()))) {
+            val hashCodedFileName = getHashCodedFileNameFromUrl(file.toString())
+            if (!prefetchedFileURIFromDisk.map { getFileNameFromFilePath(it) }.contains(hashCodedFileName)) {
                 downloadFile(file)
+                prefetchedFileURIFromDisk += hashCodedFileName
             }
         }
     }
@@ -79,11 +81,14 @@ object PrefetchManager {
     fun getImage(url: String): Bitmap? {
         val fileName = getHashCodedFileNameFromUrl(url)
         return if (prefetchedFileURIFromDisk.contains(fileName)) {
+            Log.d(PREFETCH_RESOURCES, "Loading image from disk $url")
             loadImageFromDisk(fileName)
         } else {
             try {
+                Log.d(PREFETCH_RESOURCES, "downloading image from URL $url")
                 val bitmap = BitmapFactory.decodeStream(URL(url).openStream())
                 saveBitmapToFile(bitmap, fileName)
+                prefetchedFileURIFromDisk += fileName
                 bitmap
             } catch (e: IOException) {
                 Log.e(PREFETCH_RESOURCES, "Error downloading file: ${e.message}")

@@ -7,6 +7,7 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.fragment.app.DialogFragment
@@ -22,6 +23,7 @@ import com.google.android.material.textview.MaterialTextView
 internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInfo {
 
     private val viewModel by viewModels<TextModalViewModel>()
+    private lateinit var headerImageView: ImageView
 
     @SuppressLint("UseGetLayoutInflater", "InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -51,12 +53,22 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
                 viewModel.title == null || viewModel.message == null -> {
                     val titleLayout = inflater.inflate(R.layout.apptentive_note_title_or_message_only, null) as LinearLayout
                     val titleView = titleLayout.findViewById<MaterialTextView>(R.id.apptentive_note_title_or_message_only)
+                    headerImageView = titleLayout.findViewById<ImageView>(R.id.apptentive_note_title_or_message_only_image)
+                    headerImageView.contentDescription = viewModel.alternateText
+                    viewModel.noteHeaderBitmapStream.value?.let { bitmap ->
+                        headerImageView.setImageBitmap(bitmap)
+                    }
                     titleView.text = if (viewModel.title != null) viewModel.title else viewModel.message
                     noteLayout.addView(titleLayout)
                 }
                 else -> {
                     val titleLayout = inflater.inflate(R.layout.apptentive_note_title_with_message, null) as LinearLayout
                     val titleView = titleLayout.findViewById<MaterialTextView>(R.id.apptentive_note_title_with_message)
+                    headerImageView = titleLayout.findViewById<ImageView>(R.id.apptentive_note_title_with_message_image)
+                    headerImageView.contentDescription = viewModel.alternateText
+                    viewModel.noteHeaderBitmapStream.value?.let { bitmap ->
+                        headerImageView.setImageBitmap(bitmap)
+                    }
                     titleView.text = viewModel.title
                     noteLayout.addView(titleLayout)
 
@@ -96,6 +108,15 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
 
         return dialog.apply {
             setCanceledOnTouchOutside(false)
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.noteHeaderBitmapStream.observe(this) { bitmap ->
+            if (this::headerImageView.isInitialized) {
+                headerImageView.setImageBitmap(bitmap)
+            }
         }
     }
 

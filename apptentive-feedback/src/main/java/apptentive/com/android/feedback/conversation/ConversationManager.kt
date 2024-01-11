@@ -432,7 +432,7 @@ internal class ConversationManager(
             isUsingLocalManifest = true
             PrefetchManager.apply {
                 initPrefetchDirectory()
-                downloadPrefetchResources(getConversation().engagementManifest.prefetch)
+                downloadPrefetchableResources(getConversation().engagementManifest.prefetch)
             }
         }
     }

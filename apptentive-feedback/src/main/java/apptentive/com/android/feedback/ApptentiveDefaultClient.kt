@@ -208,7 +208,7 @@ class ApptentiveDefaultClient(
                     payloadSender.updateCredential(conversationCredentialProvider)
                     PrefetchManager.apply {
                         initPrefetchDirectory()
-                        downloadPrefetchResources(conversationManager.getConversation().engagementManifest.prefetch)
+                        downloadPrefetchableResources(conversationManager.getConversation().engagementManifest.prefetch)
                     }
                 }
             }
@@ -360,7 +360,7 @@ class ApptentiveDefaultClient(
                 executeCallbackInMainExecutor(callback, LoginResult.Success)
                 PrefetchManager.apply {
                     initPrefetchDirectory()
-                    downloadPrefetchResources(conversationManager.getConversation().engagementManifest.prefetch)
+                    downloadPrefetchableResources(conversationManager.getConversation().engagementManifest.prefetch)
                 }
             }
             is LoginResult.Error -> {
