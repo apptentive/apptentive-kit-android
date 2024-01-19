@@ -52,7 +52,8 @@ class TextModalInteractionTypeConverterTest {
                 "image": {
                     "url": "https://variety.com/wp-content/uploads/2022/12/Disney-Plus.png",
                     "layout": "fill",
-                     "alt_text": "Disney Logo"
+                    "alt_text": "Disney Logo",
+                    "scale": 3
                 },
                 "max_height": 40
               }
@@ -63,6 +64,7 @@ class TextModalInteractionTypeConverterTest {
             id = "id",
             title = "Title",
             body = "Body",
+            maxHeight = 40,
             actions = arrayListOf<TextModalActionConfiguration>(
                 mapOf(
                     "id" to "action_id_1",
@@ -93,7 +95,7 @@ class TextModalInteractionTypeConverterTest {
                 url = "https://variety.com/wp-content/uploads/2022/12/Disney-Plus.png",
                 layout = LayoutOptions.FILL,
                 alternateText = "Disney Logo",
-                maxHeight = 40
+                scale = 3
             ),
         )
 

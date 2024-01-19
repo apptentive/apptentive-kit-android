@@ -345,6 +345,7 @@
 
     <style name="Apptentive.Dialog.ButtonLayout.Note">
         <item name="android:orientation">vertical</item>
+        <item name="android:layout_gravity">end</item>
     </style>
 
     <style name="Apptentive.Survey" />

@@ -4,7 +4,7 @@ internal data class RichContent(
     val url: String = "",
     val layout: LayoutOptions = LayoutOptions.FIT,
     val alternateText: String? = "",
-    val maxHeight: Int = 0,
+    val scale: Int = 0,
 )
 
 internal enum class LayoutOptions {

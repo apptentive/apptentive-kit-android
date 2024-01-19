@@ -5,7 +5,7 @@
       "type": "TextModal",
       "configuration": {
         "title": "New Promotion!",
-        "body": "Redeem our exclusive promotion today and treat yourself to more discounts.",
+        "body": " Redeem our exclusive promotion today and treat yourself to more discounts.Redeem our exclusive promotion today and treat yourself to more discounts.Redeem our exclusive promotion today and treat yourself to more discounts.Redeem our exclusive promotion today and treat yourself to more discounts.Redeem our exclusive promotion today and treat yourself to more discounts.Redeem our exclusive promotion today and treat yourself to more discounts.Redeem our exclusive promotion today and treat yourself to more discounts.Redeem our exclusive promotion today and treat yourself to more discounts.Redeem our exclusive promotion today and treat yourself to more discounts.Redeem our exclusive promotion today and treat yourself to more discounts.",
         "actions": [
           {
             "id": "action_id_1",
@@ -37,7 +37,7 @@
       "type": "TextModal",
       "configuration": {
         "title": "No Prefetch!",
-        "body": "Redeem our exclusive promotion today and treat yourself to more discounts.",
+        "body": "Redeem our exclusive promotion today and treat yourself to more discounts. Redeem our exclusive promotion today and treat yourself to more discounts. Redeem our exclusive promotion today and treat yourself to more discounts.",
         "actions": [
           {
             "id": "action_id_1",
@@ -57,11 +57,11 @@
           }
         ],
         "image": {
-          "url": "https://www.alchemer.com/wp-content/themes/alchemer/public/media/images/alchemer_logo.png",
+          "url": "https://app-icons.apptentive.com/521f9bba68e2758b6d00098d_1664232881.png",
           "layout": "fit",
           "alt_text": "Alchemer Logo"
         },
-        "max_height": 40
+        "max_height": 80
       }
     },
     {
@@ -135,6 +135,14 @@
         }
       }
     ],
+    "local#app#rich_image": [
+      {
+        "interaction_id": "548cc5dd49f63bb5c2000002",
+        "criteria": {
+          "interactions/548cc5dd49f63bb5c2000002/invokes/total": 0
+        }
+      }
+    ],
     "com.apptentive#app#show_message_center": [
       {
         "interaction_id": "55c94045a71b52ea570054d6",
@@ -144,6 +152,7 @@
   },
   "prefetch": [
     "https://variety.com/wp-content/uploads/2022/12/Disney-Plus.png",
-    "https://app-icons.apptentive.com/521f9bba68e2758b6d00098d_1664232881.png"
+    "https://app-icons.apptentive.com/521f9bba68e2758b6d00098d_1664232881.png",
+    "https://www.alchemer.com/wp-content/themes/alchemer/public/media/images/alchemer_logo.png"
   ]
 }

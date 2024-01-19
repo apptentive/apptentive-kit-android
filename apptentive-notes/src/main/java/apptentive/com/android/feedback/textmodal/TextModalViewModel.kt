@@ -37,6 +37,7 @@ internal class TextModalViewModel : ViewModel() {
     val title = interaction.title
     val message = interaction.body
     val alternateText = interaction.richContent?.alternateText
+    val maxHeight = interaction.maxHeight
     val actions = interaction.actions.mapIndexed { index, action ->
         if (action is TextModalModel.Action.Dismiss) {
             ActionModel.DismissActionModel(

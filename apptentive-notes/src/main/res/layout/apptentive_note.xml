@@ -1,20 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/apptentive_note_layout"
     style="?apptentiveNoteLayoutStyle"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/apptentive_note_layout"
+    <ImageView
+        style="?apptentiveNoteHeaderImageStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:contentDescription="@null" />
 
-        <ImageView
-            style="?apptentiveNoteHeaderImageStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+</LinearLayout>
 
-</ScrollView>

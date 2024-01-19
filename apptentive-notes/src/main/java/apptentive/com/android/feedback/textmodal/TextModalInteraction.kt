@@ -10,6 +10,7 @@ internal class TextModalInteraction(
     id: InteractionId,
     val title: String?,
     val body: String?,
+    val maxHeight: Int = 0,
     val richContent: RichContent? = null,
     val actions: List<TextModalActionConfiguration>
 ) : Interaction(id, InteractionType.TextModal) {
@@ -28,6 +29,7 @@ internal class TextModalInteraction(
 
         if (title != other.title) return false
         if (body != other.body) return false
+        if (maxHeight != other.maxHeight) return false
         if (richContent != other.richContent) return false
         if (actions != other.actions) return false
 
@@ -37,6 +39,7 @@ internal class TextModalInteraction(
     override fun hashCode(): Int {
         var result = title?.hashCode() ?: 0
         result = 31 * result + (body?.hashCode() ?: 0)
+        result = 31 * result + maxHeight
         result = 31 * result + actions.hashCode()
         result = 31 * result + (richContent?.hashCode() ?: 0)
         return result

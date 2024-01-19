@@ -14,6 +14,7 @@ internal class TextModalInteractionProvider(val interaction: TextModalInteractio
                     id = interaction.id,
                     title = interaction.title,
                     body = interaction.body,
+                    maxHeight = interaction.maxHeight,
                     richContent = interaction.richContent,
                     actions = interaction.actions.map { action ->
                         DefaultTextModalActionConverter().convert(action)

@@ -13,24 +13,25 @@ internal class TextModalInteractionTypeConverter : InteractionTypeConverter<Text
         id = data.id,
         title = data.configuration.optString("title"),
         body = data.configuration.optString("body"),
-        richContent = data.configuration.optMap("image")?.toRichContent(data.configuration),
+        maxHeight = data.configuration.optInt("max_height"),
+        richContent = data.configuration.optMap("image")?.toRichContent(),
         actions = data.configuration.getList("actions").map { action ->
             action as TextModalActionConfiguration
         }
     )
 
-    private fun Map<String, Any?>.toRichContent(configuration: Map<String, *>): RichContent =
+    private fun Map<String, Any?>.toRichContent(): RichContent =
         RichContent(
             url = optString("url") ?: "",
             layout = optString("layout")?.toLayoutOptions() ?: LayoutOptions.FILL,
             alternateText = optString("alt_text"),
-            maxHeight = configuration.optInt("max_height")
+            scale = optInt("scale"),
         )
 
     private fun String.toLayoutOptions(): LayoutOptions =
         when (this) {
-            "leading" -> LayoutOptions.ALIGN_LEFT
-            "trailing" -> LayoutOptions.ALIGN_RIGHT
+            "align_left" -> LayoutOptions.ALIGN_LEFT
+            "align_right" -> LayoutOptions.ALIGN_RIGHT
             "fill" -> LayoutOptions.FILL
             "fit" -> LayoutOptions.FIT
             "center" -> LayoutOptions.CENTER

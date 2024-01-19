@@ -6,7 +6,9 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.view.ContextThemeWrapper
@@ -24,6 +26,7 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
 
     private val viewModel by viewModels<TextModalViewModel>()
     private lateinit var headerImageView: ImageView
+    private lateinit var dialog: Dialog
 
     @SuppressLint("UseGetLayoutInflater", "InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -33,54 +36,55 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
             Apptentive.registerApptentiveActivityInfoCallback(this)
         }
 
-        val dialog = MaterialAlertDialogBuilder(requireContext()).apply {
+        dialog = MaterialAlertDialogBuilder(requireContext()).apply {
 
             val contextWrapper = ContextThemeWrapper(requireContext(), R.style.Theme_Apptentive).apply {
                 overrideTheme()
             }
             val inflater = LayoutInflater.from(contextWrapper)
-            val contentView = inflater.inflate(R.layout.apptentive_note, null)
-            setView(contentView)
+            val noteView = inflater.inflate(R.layout.apptentive_note, null)
+            setView(noteView)
 
-            val noteLayout = contentView.findViewById<LinearLayout>(R.id.apptentive_note_layout)
+            val noteLayout = noteView.findViewById<LinearLayout>(R.id.apptentive_note_layout)
 
-            when {
+            val noteContentView = when {
                 /*
                  * Material Design dialogs should always have supporting text (message).
                  * Titles are optional.
                  * https://material.io/components/dialogs
                 */
                 viewModel.title == null || viewModel.message == null -> {
-                    val titleLayout = inflater.inflate(R.layout.apptentive_note_title_or_message_only, null) as LinearLayout
-                    val titleView = titleLayout.findViewById<MaterialTextView>(R.id.apptentive_note_title_or_message_only)
-                    headerImageView = titleLayout.findViewById<ImageView>(R.id.apptentive_note_title_or_message_only_image)
+                    val titleOrMessageView = inflater.inflate(R.layout.apptentive_note_title_or_message_only, null) as LinearLayout
+                    val titleOrMessageText = titleOrMessageView.findViewById<MaterialTextView>(R.id.apptentive_note_title_or_message_only)
+                    headerImageView = titleOrMessageView.findViewById(R.id.apptentive_note_title_or_message_only_image)
                     headerImageView.contentDescription = viewModel.alternateText
                     viewModel.noteHeaderBitmapStream.value?.let { bitmap ->
                         headerImageView.setImageBitmap(bitmap)
                     }
-                    titleView.text = if (viewModel.title != null) viewModel.title else viewModel.message
-                    noteLayout.addView(titleLayout)
+                    titleOrMessageText.text = if (viewModel.title != null) viewModel.title else viewModel.message
+                    noteLayout.addView(titleOrMessageView)
+                    titleOrMessageView
                 }
                 else -> {
-                    val titleLayout = inflater.inflate(R.layout.apptentive_note_title_with_message, null) as LinearLayout
-                    val titleView = titleLayout.findViewById<MaterialTextView>(R.id.apptentive_note_title_with_message)
-                    headerImageView = titleLayout.findViewById<ImageView>(R.id.apptentive_note_title_with_message_image)
+                    val titleAndMessageView = inflater.inflate(R.layout.apptentive_note_title_with_message, null)
+                    val titleAndMessageLayout = titleAndMessageView.findViewById<LinearLayout>(R.id.apptentive_note_title_with_message_layout)
+                    val titleView = titleAndMessageLayout.findViewById<MaterialTextView>(R.id.apptentive_note_title_with_message)
+                    val messageView = titleAndMessageLayout.findViewById<MaterialTextView>(R.id.apptentive_note_message)
+                    headerImageView = titleAndMessageLayout.findViewById(R.id.apptentive_note_title_with_message_image)
+
                     headerImageView.contentDescription = viewModel.alternateText
                     viewModel.noteHeaderBitmapStream.value?.let { bitmap ->
                         headerImageView.setImageBitmap(bitmap)
                     }
                     titleView.text = viewModel.title
-                    noteLayout.addView(titleLayout)
-
-                    val messageView = inflater.inflate(R.layout.apptentive_note_message, null) as MaterialTextView
                     messageView.text = viewModel.message
-                    noteLayout.addView(messageView)
+                    noteLayout.addView(titleAndMessageView)
+                    titleAndMessageView
                 }
             }
 
             //region Actions
-            val buttonLayout = inflater.inflate(R.layout.apptentive_note_actions, null) as LinearLayout
-            noteLayout.addView(buttonLayout)
+            val buttonLayout = noteContentView.findViewById<LinearLayout>(R.id.apptentive_note_button_layout)
 
             viewModel.actions.forEach { action ->
                 val button = inflater.inflate(R.layout.apptentive_note_action, null) as MaterialButton
@@ -106,6 +110,25 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
             viewModel.onDismiss = { this@TextModalDialogFragment.dismiss() }
         }.create()
 
+        // Add an OnGlobalLayoutListener to the root view
+
+        val dialogView = dialog.window?.decorView
+        dialogView?.viewTreeObserver?.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                // Remove the listener to avoid multiple calls
+                dialogView.viewTreeObserver.removeOnGlobalLayoutListener(this)
+
+                // Get the measured width and height
+                val width: Int = dialogView.width
+                val height: Int = dialogView.height
+
+                if (viewModel.maxHeight != 0) {
+                    val maxHeight = height * viewModel.maxHeight / 100
+                    dialog.window?.setLayout(width, maxHeight)
+                }
+            }
+        })
+
         return dialog.apply {
             setCanceledOnTouchOutside(false)
         }
@@ -127,5 +150,23 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
 
     override fun getApptentiveActivityInfo(): Activity {
         return requireActivity()
+    }
+
+    private fun addLayoutListener(dialogView: View?) {
+        dialogView?.viewTreeObserver?.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                // Remove the listener to avoid multiple calls
+                dialogView.viewTreeObserver?.removeOnGlobalLayoutListener(this)
+
+                // Get the measured width and height
+                val width: Int = dialogView.width
+                val height: Int = dialogView.height
+
+                if (viewModel.maxHeight != 0) {
+                    val maxHeight = height * viewModel.maxHeight
+                    dialog.window?.setLayout(width, maxHeight)
+                }
+            }
+        })
     }
 }
