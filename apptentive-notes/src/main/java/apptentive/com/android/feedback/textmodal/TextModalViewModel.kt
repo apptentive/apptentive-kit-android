@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.textmodal
 
 import android.graphics.Bitmap
+import android.widget.ImageView.ScaleType
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import apptentive.com.android.core.Callback
@@ -38,6 +39,7 @@ internal class TextModalViewModel : ViewModel() {
     val message = interaction.body
     val alternateText = interaction.richContent?.alternateText
     val maxHeight = interaction.maxHeight
+    val scaleType = interaction.richContent?.layout
     val actions = interaction.actions.mapIndexed { index, action ->
         if (action is TextModalModel.Action.Dismiss) {
             ActionModel.DismissActionModel(
@@ -141,6 +143,24 @@ internal class TextModalViewModel : ViewModel() {
                 }
             }
         }
+
+    fun isRichNote(): Boolean {
+        return interaction.richContent != null
+    }
+
+    fun getImageScaleType(): ScaleType = when (scaleType) {
+        LayoutOptions.FIT -> ScaleType.FIT_CENTER
+        LayoutOptions.FILL -> ScaleType.CENTER_CROP
+        LayoutOptions.CENTER -> ScaleType.CENTER
+        LayoutOptions.ALIGN_LEFT -> ScaleType.FIT_START
+        LayoutOptions.ALIGN_RIGHT -> ScaleType.FIT_END
+        else -> ScaleType.FIT_CENTER
+    }
+
+    fun getModalHeight(maxModalHeight: Int, defaultModalHeight: Int): Int {
+        val newCalculatedHeight = (maxModalHeight * maxHeight / 100) + (defaultModalHeight * 0.1).toInt() // extra padding to support stacked buttons
+        return if (defaultModalHeight > newCalculatedHeight) newCalculatedHeight else defaultModalHeight
+    }
 
     sealed class ActionModel(open val title: String, open val callback: Callback) {
         data class OtherActionModel(override val title: String, override val callback: Callback) :

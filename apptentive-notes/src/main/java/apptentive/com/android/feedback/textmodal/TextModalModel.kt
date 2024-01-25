@@ -9,7 +9,7 @@ internal class TextModalModel(
     id: InteractionId,
     val title: String?,
     val body: String?,
-    val maxHeight: Int = 0,
+    val maxHeight: Int = 100,
     val richContent: RichContent? = null,
     val actions: List<Action>
 ) : Interaction(id, InteractionType.TextModal) {

@@ -11,6 +11,7 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
@@ -27,6 +28,8 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
     private val viewModel by viewModels<TextModalViewModel>()
     private lateinit var headerImageView: ImageView
     private lateinit var dialog: Dialog
+    private var isImageLoaded: Boolean = false
+    private lateinit var noteView: View
 
     @SuppressLint("UseGetLayoutInflater", "InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -37,54 +40,82 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
         }
 
         dialog = MaterialAlertDialogBuilder(requireContext()).apply {
-
             val contextWrapper = ContextThemeWrapper(requireContext(), R.style.Theme_Apptentive).apply {
                 overrideTheme()
             }
             val inflater = LayoutInflater.from(contextWrapper)
-            val noteView = inflater.inflate(R.layout.apptentive_note, null)
+            val resource = if (viewModel.isRichNote()) {
+                R.layout.apptentive_rich_note
+            } else {
+                R.layout.apptentive_note
+            }
+            noteView = inflater.inflate(resource, null)
             setView(noteView)
-
             val noteLayout = noteView.findViewById<LinearLayout>(R.id.apptentive_note_layout)
 
-            val noteContentView = when {
-                /*
-                 * Material Design dialogs should always have supporting text (message).
-                 * Titles are optional.
-                 * https://material.io/components/dialogs
-                */
-                viewModel.title == null || viewModel.message == null -> {
-                    val titleOrMessageView = inflater.inflate(R.layout.apptentive_note_title_or_message_only, null) as LinearLayout
-                    val titleOrMessageText = titleOrMessageView.findViewById<MaterialTextView>(R.id.apptentive_note_title_or_message_only)
-                    headerImageView = titleOrMessageView.findViewById(R.id.apptentive_note_title_or_message_only_image)
-                    headerImageView.contentDescription = viewModel.alternateText
-                    viewModel.noteHeaderBitmapStream.value?.let { bitmap ->
-                        headerImageView.setImageBitmap(bitmap)
-                    }
-                    titleOrMessageText.text = if (viewModel.title != null) viewModel.title else viewModel.message
-                    noteLayout.addView(titleOrMessageView)
-                    titleOrMessageView
-                }
-                else -> {
-                    val titleAndMessageView = inflater.inflate(R.layout.apptentive_note_title_with_message, null)
-                    val titleAndMessageLayout = titleAndMessageView.findViewById<LinearLayout>(R.id.apptentive_note_title_with_message_layout)
-                    val titleView = titleAndMessageLayout.findViewById<MaterialTextView>(R.id.apptentive_note_title_with_message)
-                    val messageView = titleAndMessageLayout.findViewById<MaterialTextView>(R.id.apptentive_note_message)
-                    headerImageView = titleAndMessageLayout.findViewById(R.id.apptentive_note_title_with_message_image)
+            when {
+                viewModel.isRichNote() -> {
+                    val scrollView = noteLayout.findViewById<ScrollView>(R.id.apptentive_note_scroll_view)
+                    val contentLayout = inflater.inflate(R.layout.apptentive_rich_note_content, null) as LinearLayout
+                    val titleView = contentLayout.findViewById<MaterialTextView>(R.id.apptentive_note_title_with_message)
+                    val messageView = contentLayout.findViewById<MaterialTextView>(R.id.apptentive_note_message)
+                    headerImageView = contentLayout.findViewById(R.id.apptentive_note_title_with_message_image)
 
+                    scrollView.addView(contentLayout)
                     headerImageView.contentDescription = viewModel.alternateText
                     viewModel.noteHeaderBitmapStream.value?.let { bitmap ->
                         headerImageView.setImageBitmap(bitmap)
+                        isImageLoaded = true
                     }
+                    viewModel.title?.let { title ->
+                        titleView.text = title
+                    }
+                    viewModel.message?.let { message ->
+                        messageView.text = message
+                    }
+                }
+
+                /*
+                * Material Design dialogs should always have supporting text (message).
+                * Titles are optional.
+                * https://material.io/components/dialogs
+                */
+
+                viewModel.title == null || viewModel.message == null -> {
+                    val titleLayout = inflater.inflate(
+                        R.layout.apptentive_note_title_or_message_only,
+                        null
+                    ) as LinearLayout
+                    val titleView =
+                        titleLayout.findViewById<MaterialTextView>(R.id.apptentive_note_title_or_message_only)
+                    titleView.text =
+                        if (viewModel.title != null) viewModel.title else viewModel.message
+                    noteLayout.addView(titleLayout)
+                }
+
+                else -> {
+                    val titleLayout = inflater.inflate(
+                        R.layout.apptentive_note_title_with_message,
+                        null
+                    ) as LinearLayout
+                    val titleView =
+                        titleLayout.findViewById<MaterialTextView>(R.id.apptentive_note_title_with_message)
                     titleView.text = viewModel.title
+                    noteLayout.addView(titleLayout)
+
+                    val messageView = inflater.inflate(
+                        R.layout.apptentive_note_message,
+                        null
+                    ) as MaterialTextView
                     messageView.text = viewModel.message
-                    noteLayout.addView(titleAndMessageView)
-                    titleAndMessageView
+                    noteLayout.addView(messageView)
                 }
             }
 
             //region Actions
-            val buttonLayout = noteContentView.findViewById<LinearLayout>(R.id.apptentive_note_button_layout)
+            val buttonLayout = inflater.inflate(R.layout.apptentive_note_actions, null) as LinearLayout
+
+            noteLayout.addView(buttonLayout)
 
             viewModel.actions.forEach { action ->
                 val button = inflater.inflate(R.layout.apptentive_note_action, null) as MaterialButton
@@ -111,23 +142,9 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
         }.create()
 
         // Add an OnGlobalLayoutListener to the root view
-
-        val dialogView = dialog.window?.decorView
-        dialogView?.viewTreeObserver?.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                // Remove the listener to avoid multiple calls
-                dialogView.viewTreeObserver.removeOnGlobalLayoutListener(this)
-
-                // Get the measured width and height
-                val width: Int = dialogView.width
-                val height: Int = dialogView.height
-
-                if (viewModel.maxHeight != 0) {
-                    val maxHeight = height * viewModel.maxHeight / 100
-                    dialog.window?.setLayout(width, maxHeight)
-                }
-            }
-        })
+        if (isImageLoaded) {
+            addLayoutListener()
+        }
 
         return dialog.apply {
             setCanceledOnTouchOutside(false)
@@ -139,6 +156,8 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
         viewModel.noteHeaderBitmapStream.observe(this) { bitmap ->
             if (this::headerImageView.isInitialized) {
                 headerImageView.setImageBitmap(bitmap)
+                headerImageView.scaleType = viewModel.getImageScaleType()
+                addLayoutListener()
             }
         }
     }
@@ -152,21 +171,35 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
         return requireActivity()
     }
 
-    private fun addLayoutListener(dialogView: View?) {
-        dialogView?.viewTreeObserver?.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                // Remove the listener to avoid multiple calls
-                dialogView.viewTreeObserver?.removeOnGlobalLayoutListener(this)
+    private fun addLayoutListener() {
+        val dialogView = dialog.window?.decorView
 
-                // Get the measured width and height
-                val width: Int = dialogView.width
-                val height: Int = dialogView.height
+        dialogView?.viewTreeObserver?.addOnGlobalLayoutListener(object :
+                OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    viewModel.noteHeaderBitmapStream.value?.let { image ->
+                        val aspectRatio = image.width.toFloat() / image.height.toFloat()
+                        val imageHeight = (headerImageView.width / aspectRatio).toInt()
 
-                if (viewModel.maxHeight != 0) {
-                    val maxHeight = height * viewModel.maxHeight
-                    dialog.window?.setLayout(width, maxHeight)
+                        headerImageView.scaleType = viewModel.getImageScaleType()
+
+                        if (viewModel.scaleType == LayoutOptions.FIT) {
+                            val layoutParams = headerImageView.layoutParams as LinearLayout.LayoutParams
+                            layoutParams.weight = 1f
+                            layoutParams.height = imageHeight
+                            headerImageView.layoutParams = layoutParams
+                        }
+                    }
+
+                    // Remove the listener to avoid multiple calls
+                    dialogView.viewTreeObserver.removeOnGlobalLayoutListener(this)
+
+                    val maxModalHeight = requireContext().resources.displayMetrics.heightPixels
+                    val maxHeight = viewModel.getModalHeight(maxModalHeight, dialogView.height)
+
+                    // Set the new height of the dialog
+                    dialog.window?.setLayout(dialogView.width, maxHeight)
                 }
-            }
-        })
+            })
     }
 }

@@ -26,18 +26,50 @@
         ],
         "image": {
           "url": "https://variety.com/wp-content/uploads/2022/12/Disney-Plus.png",
-          "layout": "fill",
+          "layout": "fit",
           "alt_text": "Disney Logo"
         },
-        "max_height": 40
+        "max_height": 50
       }
     },
     {
       "id": "548cc5dd49f63bb5c2000002",
       "type": "TextModal",
       "configuration": {
-        "title": "No Prefetch!",
-        "body": "Redeem our exclusive promotion today and treat yourself to more discounts. Redeem our exclusive promotion today and treat yourself to more discounts. Redeem our exclusive promotion today and treat yourself to more discounts.",
+        "title": "New Promotion!",
+        "body": " Redeem our exclusive promotion today and treat yourself to more discounts.",
+        "actions": [
+          {
+            "id": "action_id_1",
+            "label": "Redeem",
+            "action": "interaction",
+            "invokes": [
+              {
+                "interaction_id": "54a3437b7724c57cf6000043",
+                "criteria": {}
+              }
+            ]
+          },
+          {
+            "id": "action_id_2",
+            "label": "Dismiss",
+            "action": "dismiss"
+          }
+        ],
+        "image": {
+          "url": "https://app-icons.apptentive.com/521f9bba68e2758b6d00098d_1664232881.png",
+          "layout": "align_right",
+          "alt_text": "Apptentive Logo"
+        },
+        "max_height": 50
+      }
+    },
+    {
+      "id": "548cc5dd49f63bb5c2000003",
+      "type": "TextModal",
+      "configuration": {
+        "title": "New Promotion!",
+        "body": " Redeem our exclusive promotion today and treat yourself to more discounts.",
         "actions": [
           {
             "id": "action_id_1",
@@ -61,9 +93,10 @@
           "layout": "fit",
           "alt_text": "Alchemer Logo"
         },
-        "max_height": 80
+        "max_height": 50
       }
     },
+
     {
       "id": "54a3437b7724c57cf6000043",
       "type": "NavigateToLink",
@@ -130,17 +163,19 @@
     "local#app#note_event": [
       {
         "interaction_id": "548cc5dd49f63bb5c2000001",
-        "criteria": {
-          "interactions/548cc5dd49f63bb5c2000001/invokes/total": 0
-        }
+        "criteria": {}
       }
     ],
     "local#app#rich_image": [
       {
         "interaction_id": "548cc5dd49f63bb5c2000002",
-        "criteria": {
-          "interactions/548cc5dd49f63bb5c2000002/invokes/total": 0
-        }
+        "criteria": {}
+      }
+    ],
+    "local#app#rich_image2": [
+      {
+        "interaction_id": "548cc5dd49f63bb5c2000003",
+        "criteria": {}
       }
     ],
     "com.apptentive#app#show_message_center": [
