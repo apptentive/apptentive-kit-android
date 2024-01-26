@@ -28,7 +28,7 @@
           "url": "https://variety.com/wp-content/uploads/2022/12/Disney-Plus.png",
           "layout": "fit",
           "alt_text": "Disney Logo",
-          "scale": 2
+          "scale": 3
         },
         "max_height": 100
       }
@@ -61,7 +61,7 @@
           "url": "https://www.alchemer.com/wp-content/themes/alchemer/public/media/images/alchemer_logo.png",
           "layout": "fit",
           "alt_text": "Alchemer Logo",
-          "scale": 2
+          "scale": 3
         },
         "max_height": 60
       }
@@ -94,7 +94,7 @@
           "url": "https://github.com/apptentive/test-logos/blob/main/square.png?raw=true",
           "layout": "fill",
           "alt_text": "SQU\nARE",
-          "scale": 2
+          "scale": 3
         },
         "max_height": 60
       }
@@ -127,7 +127,7 @@
           "url": "https://github.com/apptentive/test-logos/blob/main/tall.png?raw=true",
           "layout": "fill",
           "alt_text": "TALL & SKINNY",
-          "scale": 2
+          "scale": 3
         },
         "max_height": 60
       }
@@ -160,7 +160,7 @@
           "url": "https://github.com/apptentive/test-logos/blob/main/wide.png?raw=true",
           "layout": "fill",
           "alt_text": "Short & Fat",
-          "scale": 2
+          "scale": 3
         },
         "max_height": 40
       }
@@ -193,7 +193,7 @@
           "url": "https://github.com/apptentive/test-logos/blob/main/square.png?raw=true",
           "layout": "fit",
           "alt_text": "SQU\nARE",
-          "scale": 2
+          "scale": 3
         },
         "max_height": 100
       }
@@ -226,7 +226,7 @@
           "url": "https://github.com/apptentive/test-logos/blob/main/tall.png?raw=true",
           "layout": "fit",
           "alt_text": "TALL & SKINNY",
-          "scale": 2
+          "scale": 3
         },
         "max_height": 60
       }
@@ -259,7 +259,7 @@
           "url": "https://github.com/apptentive/test-logos/blob/main/wide.png?raw=true",
           "layout": "fit",
           "alt_text": "Short & Fat",
-          "scale": 2
+          "scale": 3
         },
         "max_height": 40
       }
@@ -292,9 +292,9 @@
           "url": "https://github.com/apptentive/test-logos/blob/main/small-square.png?raw=true",
           "layout": "align_left",
           "alt_text": "SQU\nARE",
-          "scale": 2
+          "scale": 3
         },
-        "max_height": 40
+        "max_height": 60
       }
     },
     {
@@ -325,9 +325,9 @@
           "url": "https://github.com/apptentive/test-logos/blob/main/small-square.png?raw=true",
           "layout": "center",
           "alt_text": "SQU\nARE",
-          "scale": 2
+          "scale": 3
         },
-        "max_height": 40
+        "max_height": 60
       }
     },
     {
@@ -358,9 +358,9 @@
           "url": "https://github.com/apptentive/test-logos/blob/main/small-square.png?raw=true",
           "layout": "align_right",
           "alt_text": "SQU\nARE",
-          "scale": 2
+          "scale": 3
         },
-        "max_height": 40
+        "max_height": 60
       }
     },
     {

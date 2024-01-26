@@ -13,6 +13,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import androidx.appcompat.view.ContextThemeWrapper
+import androidx.core.view.setPadding
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import apptentive.com.android.feedback.Apptentive
@@ -67,11 +68,17 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
                         headerImageView.setImageBitmap(bitmap)
                         isImageLoaded = true
                     }
-                    viewModel.title?.let { title ->
-                        titleView.text = title
+
+                    if (viewModel.title == null) {
+                        titleView.visibility = View.GONE
+                    } else {
+                        titleView.text = viewModel.title
                     }
-                    viewModel.message?.let { message ->
-                        messageView.text = message
+
+                    if (viewModel.message == null) {
+                        messageView.visibility = View.GONE
+                    } else {
+                        messageView.text = viewModel.message
                     }
                 }
 
@@ -180,15 +187,16 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
                     viewModel.noteHeaderBitmapStream.value?.let { image ->
                         val aspectRatio = image.width.toFloat() / image.height.toFloat()
                         val imageHeight = (headerImageView.width / aspectRatio).toInt()
-
-                        headerImageView.scaleType = viewModel.getImageScaleType()
-
-                        if (viewModel.scaleType == LayoutOptions.FIT) {
-                            val layoutParams = headerImageView.layoutParams as LinearLayout.LayoutParams
-                            layoutParams.weight = 1f
-                            layoutParams.height = imageHeight
-                            headerImageView.layoutParams = layoutParams
-                        }
+                        val scalingFactor = viewModel.getScalingFactor(resources.displayMetrics.density)
+                        headerImageView.layoutParams = viewModel.getLayoutParams(
+                            headerImageView.layoutParams as LinearLayout.LayoutParams,
+                            imageHeight
+                        )
+                        headerImageView.setPadding(
+                            viewModel.getPadding(
+                                resources.getDimension(R.dimen.apptentive_dialog_text_horizontal_padding)
+                            )
+                        )
                     }
 
                     // Remove the listener to avoid multiple calls

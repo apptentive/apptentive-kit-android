@@ -1,7 +1,9 @@
 package apptentive.com.android.feedback.textmodal
 
 import android.graphics.Bitmap
+import android.view.ViewGroup.LayoutParams
 import android.widget.ImageView.ScaleType
+import android.widget.LinearLayout
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import apptentive.com.android.core.Callback
@@ -40,6 +42,7 @@ internal class TextModalViewModel : ViewModel() {
     val alternateText = interaction.richContent?.alternateText
     val maxHeight = interaction.maxHeight
     val scaleType = interaction.richContent?.layout
+    val scale = interaction.richContent?.scale
     val actions = interaction.actions.mapIndexed { index, action ->
         if (action is TextModalModel.Action.Dismiss) {
             ActionModel.DismissActionModel(
@@ -157,9 +160,36 @@ internal class TextModalViewModel : ViewModel() {
         else -> ScaleType.FIT_CENTER
     }
 
+    fun getLayoutParams(currentLayoutParams: LinearLayout.LayoutParams, imageHeight: Int): LayoutParams {
+        return if (scaleType == LayoutOptions.FIT) {
+            currentLayoutParams.apply {
+                height = imageHeight
+                weight = 1f
+            }
+        } else currentLayoutParams
+    }
+
+    fun getPadding(paddingFromDimen: Float): Int {
+        return if (scaleType == LayoutOptions.ALIGN_LEFT ||
+            scaleType == LayoutOptions.ALIGN_RIGHT ||
+            scaleType == LayoutOptions.CENTER
+        ) paddingFromDimen.toInt() else 0
+    }
+
     fun getModalHeight(maxModalHeight: Int, defaultModalHeight: Int): Int {
         val newCalculatedHeight = (maxModalHeight * maxHeight / 100) + (defaultModalHeight * 0.1).toInt() // extra padding to support stacked buttons
         return if (defaultModalHeight > newCalculatedHeight) newCalculatedHeight else defaultModalHeight
+    }
+
+    fun getScalingFactor(deviceDensity: Float): Float =
+        if (scale != null && scale != 0) scale.toFloat() / getAdjustedDeviceDensity(deviceDensity) else 1f
+
+    private fun getAdjustedDeviceDensity(deviceDensity: Float): Float = when {
+        deviceDensity <= 1 -> 1f // mdpi
+        deviceDensity <= 1.5 -> 1.5f // hdpi
+        deviceDensity <= 2 -> 2f // xhdpi
+        deviceDensity <= 3 -> 3f // xxhdpi
+        else -> 4f // xxxhdpi
     }
 
     sealed class ActionModel(open val title: String, open val callback: Callback) {
