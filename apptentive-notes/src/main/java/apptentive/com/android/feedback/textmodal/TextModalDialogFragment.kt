@@ -20,6 +20,8 @@ import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
 import apptentive.com.android.feedback.notes.R
 import apptentive.com.android.ui.overrideTheme
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTag
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textview.MaterialTextView
@@ -163,7 +165,6 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
         viewModel.noteHeaderBitmapStream.observe(this) { bitmap ->
             if (this::headerImageView.isInitialized) {
                 headerImageView.setImageBitmap(bitmap)
-                headerImageView.scaleType = viewModel.getImageScaleType()
                 addLayoutListener()
             }
         }
@@ -184,6 +185,7 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
         dialogView?.viewTreeObserver?.addOnGlobalLayoutListener(object :
                 OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
+                    Log.d(LogTag("TESTING"), "onGlobalLayout")
                     viewModel.noteHeaderBitmapStream.value?.let { image ->
                         val aspectRatio = image.width.toFloat() / image.height.toFloat()
                         val imageHeight = (headerImageView.width / aspectRatio).toInt()
@@ -192,6 +194,7 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
                             headerImageView.layoutParams as LinearLayout.LayoutParams,
                             imageHeight
                         )
+                        headerImageView.scaleType = viewModel.getImageScaleType()
                         headerImageView.setPadding(
                             viewModel.getPadding(
                                 resources.getDimension(R.dimen.apptentive_dialog_text_horizontal_padding)

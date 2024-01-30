@@ -419,7 +419,7 @@
     </style>
 
     <style name="Apptentive.TextAppearance.Title.Dialog.WithMessage.Rich">
-        <item name="android:paddingTop">@dimen/apptentive_dialog_top_padding</item>
+        <item name="android:paddingTop">@dimen/apptentive_dialog_text_horizontal_padding</item>
     </style>
 
     <style name="Apptentive.TextAppearance.Message.Dialog" parent="Apptentive.TextAppearance">

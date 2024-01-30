@@ -154,7 +154,7 @@ internal class TextModalViewModel : ViewModel() {
     fun getImageScaleType(): ScaleType = when (scaleType) {
         LayoutOptions.FIT -> ScaleType.FIT_CENTER
         LayoutOptions.FILL -> ScaleType.CENTER_CROP
-        LayoutOptions.CENTER -> ScaleType.CENTER
+        LayoutOptions.CENTER -> ScaleType.CENTER_INSIDE
         LayoutOptions.ALIGN_LEFT -> ScaleType.FIT_START
         LayoutOptions.ALIGN_RIGHT -> ScaleType.FIT_END
         else -> ScaleType.FIT_CENTER
