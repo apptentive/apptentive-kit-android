@@ -46,9 +46,12 @@ object PrefetchManager {
     }
 
     internal fun deleteOutdatedResourcesFromLocal(prefetchFromManifest: List<String>) {
-        for (file in prefetchedFileURIFromDisk) {
+        val prefechedFileURIFromDiskIterator = prefetchedFileURIFromDisk.iterator()
+        while (prefechedFileURIFromDiskIterator.hasNext()) {
+            val file = prefechedFileURIFromDiskIterator.next()
             if (!prefetchFromManifest.contains(getFileNameFromFilePath(file))) {
                 FileUtil.deleteFile(file)
+                prefechedFileURIFromDiskIterator.remove()
             }
         }
     }

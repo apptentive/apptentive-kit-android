@@ -152,28 +152,24 @@ internal class TextModalViewModel : ViewModel() {
     }
 
     fun getImageScaleType(): ScaleType = when (scaleType) {
-        LayoutOptions.FIT -> ScaleType.FIT_CENTER
-        LayoutOptions.FILL -> ScaleType.CENTER_CROP
+        LayoutOptions.FULL_WIDTH -> ScaleType.FIT_XY
         LayoutOptions.CENTER -> ScaleType.CENTER_INSIDE
         LayoutOptions.ALIGN_LEFT -> ScaleType.FIT_START
         LayoutOptions.ALIGN_RIGHT -> ScaleType.FIT_END
-        else -> ScaleType.FIT_CENTER
+        else -> ScaleType.FIT_XY
     }
 
     fun getLayoutParams(currentLayoutParams: LinearLayout.LayoutParams, imageHeight: Int): LayoutParams {
-        return if (scaleType == LayoutOptions.FIT) {
+        return if (scaleType == LayoutOptions.FULL_WIDTH) {
             currentLayoutParams.apply {
+                width = LayoutParams.MATCH_PARENT
                 height = imageHeight
-                weight = 1f
             }
         } else currentLayoutParams
     }
 
     fun getPadding(paddingFromDimen: Float): Int {
-        return if (scaleType == LayoutOptions.ALIGN_LEFT ||
-            scaleType == LayoutOptions.ALIGN_RIGHT ||
-            scaleType == LayoutOptions.CENTER
-        ) paddingFromDimen.toInt() else 0
+        return if (scaleType != LayoutOptions.FULL_WIDTH) paddingFromDimen.toInt() else 0
     }
 
     fun getModalHeight(maxModalHeight: Int, defaultModalHeight: Int): Int {

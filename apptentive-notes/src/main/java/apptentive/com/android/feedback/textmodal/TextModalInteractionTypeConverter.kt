@@ -23,7 +23,7 @@ internal class TextModalInteractionTypeConverter : InteractionTypeConverter<Text
     private fun Map<String, Any?>.toRichContent(): RichContent =
         RichContent(
             url = optString("url") ?: "",
-            layout = optString("layout")?.toLayoutOptions() ?: LayoutOptions.FILL,
+            layout = optString("layout")?.toLayoutOptions() ?: LayoutOptions.FULL_WIDTH,
             alternateText = optString("alt_text"),
             scale = optInt("scale"),
         )
@@ -32,9 +32,8 @@ internal class TextModalInteractionTypeConverter : InteractionTypeConverter<Text
         when (this) {
             "align_left" -> LayoutOptions.ALIGN_LEFT
             "align_right" -> LayoutOptions.ALIGN_RIGHT
-            "fill" -> LayoutOptions.FILL
-            "fit" -> LayoutOptions.FIT
+            "full_width" -> LayoutOptions.FULL_WIDTH
             "center" -> LayoutOptions.CENTER
-            else -> LayoutOptions.FILL
+            else -> LayoutOptions.FULL_WIDTH
         }
 }

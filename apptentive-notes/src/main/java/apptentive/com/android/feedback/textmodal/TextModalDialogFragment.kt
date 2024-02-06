@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.content.DialogInterface
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,15 +14,12 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import androidx.appcompat.view.ContextThemeWrapper
-import androidx.core.view.setPadding
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
 import apptentive.com.android.feedback.notes.R
 import apptentive.com.android.ui.overrideTheme
-import apptentive.com.android.util.Log
-import apptentive.com.android.util.LogTag
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textview.MaterialTextView
@@ -31,8 +29,9 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
     private val viewModel by viewModels<TextModalViewModel>()
     private lateinit var headerImageView: ImageView
     private lateinit var dialog: Dialog
-    private var isImageLoaded: Boolean = false
     private lateinit var noteView: View
+    private lateinit var buttonLayout: LinearLayout
+    private var isImageHeightSet: Boolean = false
 
     @SuppressLint("UseGetLayoutInflater", "InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -42,6 +41,7 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
             Apptentive.registerApptentiveActivityInfoCallback(this)
         }
 
+        isImageHeightSet = false
         dialog = MaterialAlertDialogBuilder(requireContext()).apply {
             val contextWrapper = ContextThemeWrapper(requireContext(), R.style.Theme_Apptentive).apply {
                 overrideTheme()
@@ -66,10 +66,11 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
 
                     scrollView.addView(contentLayout)
                     headerImageView.contentDescription = viewModel.alternateText
-                    viewModel.noteHeaderBitmapStream.value?.let { bitmap ->
-                        headerImageView.setImageBitmap(bitmap)
-                        isImageLoaded = true
-                    }
+                    val padding = viewModel.getPadding(
+                        resources.getDimension(R.dimen.apptentive_dialog_text_horizontal_padding)
+                    )
+                    headerImageView.scaleType = viewModel.getImageScaleType()
+                    headerImageView.setPadding(padding, padding, padding, 0)
 
                     if (viewModel.title == null) {
                         titleView.visibility = View.GONE
@@ -122,7 +123,7 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
             }
 
             //region Actions
-            val buttonLayout = inflater.inflate(R.layout.apptentive_note_actions, null) as LinearLayout
+            buttonLayout = inflater.inflate(R.layout.apptentive_note_actions, null) as LinearLayout
 
             noteLayout.addView(buttonLayout)
 
@@ -149,12 +150,9 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
 
             viewModel.onDismiss = { this@TextModalDialogFragment.dismiss() }
         }.create()
-
-        // Add an OnGlobalLayoutListener to the root view
-        if (isImageLoaded) {
-            addLayoutListener()
+        viewModel.noteHeaderBitmapStream.value?.let { bitmap ->
+            setupImage(bitmap)
         }
-
         return dialog.apply {
             setCanceledOnTouchOutside(false)
         }
@@ -164,8 +162,7 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
         super.onCreate(savedInstanceState)
         viewModel.noteHeaderBitmapStream.observe(this) { bitmap ->
             if (this::headerImageView.isInitialized) {
-                headerImageView.setImageBitmap(bitmap)
-                addLayoutListener()
+                setupImage(bitmap)
             }
         }
     }
@@ -179,38 +176,51 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
         return requireActivity()
     }
 
-    private fun addLayoutListener() {
-        val dialogView = dialog.window?.decorView
-
-        dialogView?.viewTreeObserver?.addOnGlobalLayoutListener(object :
-                OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    Log.d(LogTag("TESTING"), "onGlobalLayout")
-                    viewModel.noteHeaderBitmapStream.value?.let { image ->
-                        val aspectRatio = image.width.toFloat() / image.height.toFloat()
-                        val imageHeight = (headerImageView.width / aspectRatio).toInt()
-                        val scalingFactor = viewModel.getScalingFactor(resources.displayMetrics.density)
-                        headerImageView.layoutParams = viewModel.getLayoutParams(
-                            headerImageView.layoutParams as LinearLayout.LayoutParams,
-                            imageHeight
-                        )
-                        headerImageView.scaleType = viewModel.getImageScaleType()
-                        headerImageView.setPadding(
-                            viewModel.getPadding(
-                                resources.getDimension(R.dimen.apptentive_dialog_text_horizontal_padding)
-                            )
-                        )
-                    }
-
-                    // Remove the listener to avoid multiple calls
-                    dialogView.viewTreeObserver.removeOnGlobalLayoutListener(this)
-
-                    val maxModalHeight = requireContext().resources.displayMetrics.heightPixels
-                    val maxHeight = viewModel.getModalHeight(maxModalHeight, dialogView.height)
-
-                    // Set the new height of the dialog
-                    dialog.window?.setLayout(dialogView.width, maxHeight)
+    private fun setupImage(bitmap: Bitmap) {
+        if (this::headerImageView.isInitialized) {
+            headerImageView.setImageBitmap(bitmap)
+            val aspectRatio = bitmap.width.toFloat() / bitmap.height.toFloat()
+            headerImageView.scaleType = viewModel.getImageScaleType()
+            if (this::dialog.isInitialized && dialog.isShowing) {
+                dialog.window?.decorView?.let {
+                    val imageHeight = (it.width / aspectRatio).toInt()
+                    val layoutParams = headerImageView.layoutParams as LinearLayout.LayoutParams
+                    headerImageView.layoutParams = viewModel.getLayoutParams(layoutParams, imageHeight)
+                    isImageHeightSet = true
                 }
-            })
+            }
+            // Resize the dialog to max height after the image is loaded and positioned
+            addLayoutListener(aspectRatio)
+        }
+    }
+
+    private fun addLayoutListener(aspectRatio: Float) {
+        if (this::dialog.isInitialized) {
+            dialog.window?.decorView?.let { dialogView ->
+                dialogView.viewTreeObserver?.addOnGlobalLayoutListener(object :
+                        OnGlobalLayoutListener {
+                        override fun onGlobalLayout() {
+                            dialog.window?.decorView?.let {
+                                if (!isImageHeightSet) {
+                                    val imageHeight = (it.width / aspectRatio).toInt()
+                                    val layoutParams =
+                                        headerImageView.layoutParams as LinearLayout.LayoutParams
+                                    headerImageView.layoutParams =
+                                        viewModel.getLayoutParams(layoutParams, imageHeight)
+                                }
+                            }
+
+                            // Remove the listener to avoid multiple calls
+                            dialogView.viewTreeObserver.removeOnGlobalLayoutListener(this)
+
+                            val maxModalHeight = requireContext().resources.displayMetrics.heightPixels
+                            val maxHeight = viewModel.getModalHeight(maxModalHeight, dialogView.height)
+
+                            // Set the new height of the dialog
+                            dialog.window?.setLayout(dialogView.width, maxHeight)
+                        }
+                    })
+            }
+        }
     }
 }

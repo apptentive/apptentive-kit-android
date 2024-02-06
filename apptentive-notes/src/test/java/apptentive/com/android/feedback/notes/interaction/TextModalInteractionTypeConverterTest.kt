@@ -93,7 +93,7 @@ class TextModalInteractionTypeConverterTest {
             ),
             richContent = RichContent(
                 url = "https://variety.com/wp-content/uploads/2022/12/Disney-Plus.png",
-                layout = LayoutOptions.FILL,
+                layout = LayoutOptions.FULL_WIDTH,
                 alternateText = "Disney Logo",
                 scale = 3
             ),
