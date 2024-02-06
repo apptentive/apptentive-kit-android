@@ -39,8 +39,7 @@ object PrefetchManager {
         for (file in prefetchFromManifest) {
             val hashCodedFileName = getHashCodedFileNameFromUrl(file.toString())
             if (!prefetchedFileURIFromDisk.map { getFileNameFromFilePath(it) }.contains(hashCodedFileName)) {
-                downloadFile(file)
-                prefetchedFileURIFromDisk += hashCodedFileName
+                downloadFile(file, hashCodedFileName)
             }
         }
     }
@@ -56,11 +55,12 @@ object PrefetchManager {
         }
     }
 
-    internal fun downloadFile(url: URL) {
+    internal fun downloadFile(url: URL, hashCodedFileName: String) {
         downloadExecutor.execute {
             try {
                 val prefetchFile = BitmapFactory.decodeStream(url.openStream())
                 saveBitmapToFile(prefetchFile, getHashCodedFileNameFromUrl(url.toString()))
+                prefetchedFileURIFromDisk += hashCodedFileName
             } catch (e: IOException) {
                 Log.e(PREFETCH_RESOURCES, "Error downloading file: ${e.message}")
             }

@@ -37,12 +37,12 @@ internal class TextModalViewModel : ViewModel() {
         )
     }
 
+    private val maxHeight = interaction.maxHeight
+    private val scaleType = interaction.richContent?.layout
+    private val scale = interaction.richContent?.scale
     val title = interaction.title
     val message = interaction.body
     val alternateText = interaction.richContent?.alternateText
-    val maxHeight = interaction.maxHeight
-    val scaleType = interaction.richContent?.layout
-    val scale = interaction.richContent?.scale
     val actions = interaction.actions.mapIndexed { index, action ->
         if (action is TextModalModel.Action.Dismiss) {
             ActionModel.DismissActionModel(
@@ -151,41 +151,27 @@ internal class TextModalViewModel : ViewModel() {
         return interaction.richContent != null
     }
 
-    fun getImageScaleType(): ScaleType = when (scaleType) {
-        LayoutOptions.FULL_WIDTH -> ScaleType.FIT_XY
-        LayoutOptions.CENTER -> ScaleType.CENTER_INSIDE
-        LayoutOptions.ALIGN_LEFT -> ScaleType.FIT_START
-        LayoutOptions.ALIGN_RIGHT -> ScaleType.FIT_END
-        else -> ScaleType.FIT_XY
-    }
+    fun getImageScaleType(): ScaleType = getImageScaleTypeFromConfig(scaleType ?: LayoutOptions.FULL_WIDTH)
 
     fun getLayoutParams(currentLayoutParams: LinearLayout.LayoutParams, imageHeight: Int): LayoutParams {
-        return if (scaleType == LayoutOptions.FULL_WIDTH) {
-            currentLayoutParams.apply {
-                width = LayoutParams.MATCH_PARENT
-                height = imageHeight
-            }
-        } else currentLayoutParams
+        return getLayoutParamsForTheImagePositioning(currentLayoutParams, imageHeight, scaleType ?: LayoutOptions.FULL_WIDTH)
     }
 
     fun getPadding(paddingFromDimen: Float): Int {
-        return if (scaleType != LayoutOptions.FULL_WIDTH) paddingFromDimen.toInt() else 0
+        return getPaddingForTheImagePositioning(paddingFromDimen, scaleType ?: LayoutOptions.FULL_WIDTH)
     }
 
     fun getModalHeight(maxModalHeight: Int, defaultModalHeight: Int): Int {
-        val newCalculatedHeight = (maxModalHeight * maxHeight / 100) + (defaultModalHeight * 0.1).toInt() // extra padding to support stacked buttons
-        return if (defaultModalHeight > newCalculatedHeight) newCalculatedHeight else defaultModalHeight
+        return getAdjustedModalHeight(maxModalHeight, defaultModalHeight, maxHeight)
     }
 
     fun getScalingFactor(deviceDensity: Float): Float =
-        if (scale != null && scale != 0) scale.toFloat() / getAdjustedDeviceDensity(deviceDensity) else 1f
+        if (scale != null && scale != 0) scale.toFloat() / getDeviceDensity(deviceDensity) else 1f
 
-    private fun getAdjustedDeviceDensity(deviceDensity: Float): Float = when {
-        deviceDensity <= 1 -> 1f // mdpi
-        deviceDensity <= 1.5 -> 1.5f // hdpi
-        deviceDensity <= 2 -> 2f // xhdpi
-        deviceDensity <= 3 -> 3f // xxhdpi
-        else -> 4f // xxxhdpi
+    private fun getDeviceDensity(deviceDensity: Float): Float = getAdjustedDeviceDensity(deviceDensity)
+
+    fun getAlternateTextGravity(): Int {
+        return getAlternateTextGravity(scaleType ?: LayoutOptions.FULL_WIDTH)
     }
 
     sealed class ActionModel(open val title: String, open val callback: Callback) {

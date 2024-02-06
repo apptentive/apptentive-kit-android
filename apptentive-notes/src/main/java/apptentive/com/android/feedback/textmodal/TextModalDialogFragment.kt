@@ -28,6 +28,7 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
 
     private val viewModel by viewModels<TextModalViewModel>()
     private lateinit var headerImageView: ImageView
+    private lateinit var alternateTextView: MaterialTextView
     private lateinit var dialog: Dialog
     private lateinit var noteView: View
     private lateinit var buttonLayout: LinearLayout
@@ -62,9 +63,12 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
                     val contentLayout = inflater.inflate(R.layout.apptentive_rich_note_content, null) as LinearLayout
                     val titleView = contentLayout.findViewById<MaterialTextView>(R.id.apptentive_note_title_with_message)
                     val messageView = contentLayout.findViewById<MaterialTextView>(R.id.apptentive_note_message)
+                    alternateTextView = contentLayout.findViewById(R.id.apptentive_note_alternate_text)
                     headerImageView = contentLayout.findViewById(R.id.apptentive_note_title_with_message_image)
 
                     scrollView.addView(contentLayout)
+                    alternateTextView.text = viewModel.alternateText
+                    alternateTextView.gravity = viewModel.getAlternateTextGravity()
                     headerImageView.contentDescription = viewModel.alternateText
                     val padding = viewModel.getPadding(
                         resources.getDimension(R.dimen.apptentive_dialog_text_horizontal_padding)
@@ -178,6 +182,8 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
 
     private fun setupImage(bitmap: Bitmap) {
         if (this::headerImageView.isInitialized) {
+            alternateTextView.visibility = View.GONE
+            headerImageView.visibility = View.VISIBLE
             headerImageView.setImageBitmap(bitmap)
             val aspectRatio = bitmap.width.toFloat() / bitmap.height.toFloat()
             headerImageView.scaleType = viewModel.getImageScaleType()

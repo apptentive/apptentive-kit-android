@@ -9,13 +9,20 @@
         android:id="@+id/apptentive_note_title_with_message_image"
         style="?apptentiveNoteTitleWithMessageImageStyle"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/apptentive_note_alternate_text"
+        style="?apptentiveRichNoteAlternateTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/apptentive_note_title_with_message"
         style="?apptentiveRichNoteTitleWithMessageTextStyle"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/apptentive_note_message"

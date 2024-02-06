@@ -35,6 +35,7 @@
         <attr name="apptentiveNoteDismissButtonStyle" format="reference"/>
         <attr name="apptentiveRichNoteLayoutStyle" format="reference" />
         <attr name="apptentiveRichNoteTitleWithMessageTextStyle" format="reference" />
+        <attr name="apptentiveRichNoteAlternateTextStyle" format="reference" />
 
         <!-- Apptentive Rating Dialog Styles -->
         <attr name="apptentiveRatingDialogLayoutStyle" format="reference" />

@@ -44,6 +44,7 @@
         <item name="apptentiveNoteTitleWithMessageImageStyle">@style/Apptentive.Empty</item>
         <item name="apptentiveNoteTitleOrMessageOnlyTextStyle">@style/Apptentive.TextAppearance.Title.Dialog.TitleOrMessageOnly.Note</item>
         <item name="apptentiveNoteTitleOrMessageOnlyImageStyle">@style/Apptentive.Empty</item>
+        <item name="apptentiveRichNoteAlternateTextStyle">@style/Apptentive.TextAppearance.AlternateText</item>
         <item name="apptentiveNoteMessageTextStyle">@style/Apptentive.TextAppearance.Message.Dialog</item>
         <item name="apptentiveNoteButtonLayoutStyle">@style/Apptentive.Dialog.ButtonLayout.Note</item>
         <item name="apptentiveNoteButtonStyle">@style/Apptentive.Widget.Dialog.Button.Stacked</item>
@@ -420,6 +421,8 @@
 
     <style name="Apptentive.TextAppearance.Title.Dialog.WithMessage.Rich">
         <item name="android:paddingTop">@dimen/apptentive_dialog_text_horizontal_padding</item>
+        <item name="android:fontFamily">?apptentiveFontFamilyTitle</item>
+
     </style>
 
     <style name="Apptentive.TextAppearance.Message.Dialog" parent="Apptentive.TextAppearance">
@@ -432,6 +435,10 @@
         <item name="android:paddingEnd">@dimen/apptentive_dialog_text_horizontal_padding</item>
         <item name="android:paddingBottom">@dimen/apptentive_dialog_message_spacing</item>
         <item name="android:minHeight">@dimen/apptentive_dialog_title_or_message_only_min_height</item>
+    </style>
+
+    <style name="Apptentive.TextAppearance.AlternateText">
+        <item name="android:padding">@dimen/apptentive_dialog_text_horizontal_padding</item>
     </style>
 
     <style name="Apptentive.TextAppearance.Title.Dialog.TitleOrMessageOnly">
