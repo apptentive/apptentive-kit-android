@@ -70,11 +70,6 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
                     alternateTextView.text = viewModel.alternateText
                     alternateTextView.gravity = viewModel.getAlternateTextGravity()
                     headerImageView.contentDescription = viewModel.alternateText
-                    val padding = viewModel.getPadding(
-                        resources.getDimension(R.dimen.apptentive_dialog_text_horizontal_padding)
-                    )
-                    headerImageView.scaleType = viewModel.getImageScaleType()
-                    headerImageView.setPadding(padding, padding, padding, 0)
 
                     if (viewModel.title == null) {
                         titleView.visibility = View.GONE
@@ -157,6 +152,7 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
         viewModel.noteHeaderBitmapStream.value?.let { bitmap ->
             setupImage(bitmap)
         }
+
         return dialog.apply {
             setCanceledOnTouchOutside(false)
         }
@@ -195,6 +191,12 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
                     isImageHeightSet = true
                 }
             }
+            headerImageView.requestLayout()
+            val padding = viewModel.getPadding(
+                resources.getDimension(R.dimen.apptentive_dialog_text_horizontal_padding)
+            )
+            headerImageView.setPadding(padding, padding, padding, 0)
+
             // Resize the dialog to max height after the image is loaded and positioned
             addLayoutListener(aspectRatio)
         }

@@ -30,12 +30,25 @@ internal fun getPaddingForTheImagePositioning(paddingFromDimen: Float, scaleType
 }
 
 internal fun getLayoutParamsForTheImagePositioning(currentLayoutParams: LinearLayout.LayoutParams, imageHeight: Int, scaleType: LayoutOptions): ViewGroup.LayoutParams {
-    return if (scaleType == LayoutOptions.FULL_WIDTH) {
-        currentLayoutParams.apply {
-            width = ViewGroup.LayoutParams.MATCH_PARENT
-            height = imageHeight
+    return when (scaleType) {
+        LayoutOptions.FULL_WIDTH -> {
+            currentLayoutParams.apply {
+                width = ViewGroup.LayoutParams.MATCH_PARENT
+                height = imageHeight
+            }
         }
-    } else currentLayoutParams
+        LayoutOptions.CENTER -> currentLayoutParams
+        LayoutOptions.ALIGN_LEFT -> currentLayoutParams.apply {
+            width = ViewGroup.LayoutParams.WRAP_CONTENT
+            height = ViewGroup.LayoutParams.WRAP_CONTENT
+            gravity = android.view.Gravity.START
+        }
+        LayoutOptions.ALIGN_RIGHT -> currentLayoutParams.apply {
+            width = ViewGroup.LayoutParams.WRAP_CONTENT
+            height = ViewGroup.LayoutParams.WRAP_CONTENT
+            gravity = android.view.Gravity.END
+        }
+    }
 }
 
 internal fun getImageScaleTypeFromConfig(scaleType: LayoutOptions): android.widget.ImageView.ScaleType = when (scaleType) {

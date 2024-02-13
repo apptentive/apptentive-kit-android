@@ -130,8 +130,7 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
         val buttonNames = mutableListOf<String>()
 
         try {
-            val assetManager = assets
-            val files = assetManager.list("manifest/")
+            val files = assets.list("manifest")
 
             if (files != null) {
                 for (file in files) {
