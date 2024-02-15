@@ -122,13 +122,28 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
             }
 
             //region Actions
-            buttonLayout = inflater.inflate(R.layout.apptentive_note_actions, null) as LinearLayout
+            val buttonLayoutResource = if (viewModel.isRichNote()) {
+                R.layout.apptentive_rich_note_actions
+            } else {
+                R.layout.apptentive_note_actions
+            }
+            buttonLayout = inflater.inflate(buttonLayoutResource, null) as LinearLayout
 
             noteLayout.addView(buttonLayout)
 
             viewModel.actions.forEach { action ->
-                val button = inflater.inflate(R.layout.apptentive_note_action, null) as MaterialButton
-                val dismissButton = inflater.inflate(R.layout.apptentive_note_dismiss_action, null) as MaterialButton
+                val actionButtonResource = if (viewModel.isRichNote()) {
+                    R.layout.apptentive_rich_note_action
+                } else {
+                    R.layout.apptentive_note_action
+                }
+                val dismissButtonResource = if (viewModel.isRichNote()) {
+                    R.layout.apptentive_rich_note_dismiss_action
+                } else {
+                    R.layout.apptentive_note_dismiss_action
+                }
+                val button = inflater.inflate(actionButtonResource, null) as MaterialButton
+                val dismissButton = inflater.inflate(dismissButtonResource, null) as MaterialButton
 
                 when (action) {
                     is TextModalViewModel.ActionModel.DismissActionModel -> {
@@ -221,11 +236,15 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
                             // Remove the listener to avoid multiple calls
                             dialogView.viewTreeObserver.removeOnGlobalLayoutListener(this)
 
-                            val maxModalHeight = requireContext().resources.displayMetrics.heightPixels
-                            val maxHeight = viewModel.getModalHeight(maxModalHeight, dialogView.height)
+                            if (viewModel.maxHeight < 100) {
+                                val maxModalHeight =
+                                    requireContext().resources.displayMetrics.heightPixels
+                                val maxHeight =
+                                    viewModel.getModalHeight(maxModalHeight, dialogView.height)
 
-                            // Set the new height of the dialog
-                            dialog.window?.setLayout(dialogView.width, maxHeight)
+                                // Set the new height of the dialog
+                                dialog.window?.setLayout(dialogView.width, maxHeight)
+                            }
                         }
                     })
             }

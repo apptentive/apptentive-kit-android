@@ -7,7 +7,6 @@
 
     <ImageView
         android:id="@+id/apptentive_note_title_with_message_image"
-        style="?apptentiveNoteTitleWithMessageImageStyle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />
@@ -26,7 +25,7 @@
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/apptentive_note_message"
-        style="?apptentiveNoteMessageTextStyle"
+        style="?apptentiveRichNoteMessageTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

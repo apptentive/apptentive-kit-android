@@ -47,8 +47,11 @@
         <item name="apptentiveRichNoteAlternateTextStyle">@style/Apptentive.TextAppearance.AlternateText</item>
         <item name="apptentiveNoteMessageTextStyle">@style/Apptentive.TextAppearance.Message.Dialog</item>
         <item name="apptentiveNoteButtonLayoutStyle">@style/Apptentive.Dialog.ButtonLayout.Note</item>
+        <item name="apptentiveRichNoteButtonLayoutStyle">@style/Apptentive.Dialog.ButtonLayout.Note</item>
         <item name="apptentiveNoteButtonStyle">@style/Apptentive.Widget.Dialog.Button.Stacked</item>
+        <item name="apptentiveRichNoteButtonStyle">@style/Apptentive.Widget.Dialog.Button.Stacked</item>
         <item name="apptentiveNoteDismissButtonStyle">@style/Apptentive.Widget.Dialog.Button.Stacked</item>
+        <item name="apptentiveRichNoteDismissButtonStyle">@style/Apptentive.Widget.Dialog.Button.Stacked.Bottom</item>
 
         <!-- Apptentive Rating Dialog Styles -->
         <item name="apptentiveRatingDialogLayoutStyle">@style/Apptentive.Dialog.Layout</item>
@@ -67,6 +70,7 @@
         <item name="apptentiveGenericDialogTitleTextStyle">@style/Apptentive.TextAppearance.Title.Dialog.WithMessage</item>
         <item name="apptentiveGenericDialogTitleImageStyle">@style/Apptentive.Empty</item>
         <item name="apptentiveGenericDialogMessageTextStyle">@style/Apptentive.TextAppearance.Message.Dialog</item>
+        <item name="apptentiveRichNoteMessageTextStyle">@style/Apptentive.TextAppearance.Message.Dialog</item>
         <item name="apptentiveGenericDialogButtonLayoutStyle">@style/Apptentive.Dialog.ButtonLayout</item>
         <item name="apptentiveGenericDialogPositiveButtonStyle">@style/Apptentive.Widget.Dialog.Button.SideBySide.Yes</item>
         <item name="apptentiveGenericDialogNegativeButtonStyle">@style/Apptentive.Widget.Dialog.Button.SideBySide.No</item>
@@ -603,6 +607,11 @@
     <style name="Apptentive.Widget.Dialog.Button.Stacked">
         <item name="android:textAlignment">viewEnd</item>
         <item name="android:layout_gravity">end|center_vertical</item>
+    </style>
+
+    <style name="Apptentive.Widget.Dialog.Button.Stacked.Bottom">
+        <item name="android:textAlignment">viewEnd</item>
+        <item name="android:layout_gravity">end|center_vertical|bottom</item>
     </style>
 
     <style name="Apptentive.Widget.Dialog.Button.SideBySide" parent="Widget.MaterialComponents.Button.TextButton.Dialog">

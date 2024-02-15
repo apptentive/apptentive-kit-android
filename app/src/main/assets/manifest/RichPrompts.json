@@ -30,7 +30,7 @@
           "alt_text": "Disney Logo",
           "scale": 3
         },
-        "max_height": 60
+        "max_height": 100
       }
     },
     {
@@ -62,7 +62,7 @@
           "layout": "align_left",
           "alt_text": "Apptentive Logo"
         },
-        "max_height": 60
+        "max_height": 100
       }
     },
     {
@@ -94,7 +94,7 @@
           "layout": "center",
           "alt_text": "Alchemer Logo"
         },
-        "max_height": 60
+        "max_height": 100
       }
     },
     {
@@ -127,7 +127,7 @@
           "alt_text": "SQU\nARE",
           "scale": 3
         },
-        "max_height": 60
+        "max_height": 100
       }
     },
     {
@@ -160,7 +160,7 @@
           "alt_text": "TALL & SKINNY",
           "scale": 3
         },
-        "max_height": 40
+        "max_height": 100
       }
     },
     {
@@ -193,7 +193,7 @@
           "alt_text": "Short & Fat",
           "scale": 3
         },
-        "max_height": 40
+        "max_height": 100
       }
     },
     {
@@ -226,7 +226,7 @@
           "alt_text": "SQU\nARE",
           "scale": 3
         },
-        "max_height": 70
+        "max_height": 100
       }
     },
     {
@@ -259,7 +259,7 @@
           "alt_text": "SQU\nARE",
           "scale": 3
         },
-        "max_height": 60
+        "max_height": 100
       }
     },
     {
@@ -292,7 +292,7 @@
           "alt_text": "SQU\nARE",
           "scale": 3
         },
-        "max_height": 60
+        "max_height": 100
       }
     },
     {

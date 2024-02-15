@@ -37,7 +37,7 @@ internal class TextModalViewModel : ViewModel() {
         )
     }
 
-    private val maxHeight = interaction.maxHeight
+    val maxHeight = interaction.maxHeight
     private val scaleType = interaction.richContent?.layout
     private val scale = interaction.richContent?.scale
     val title = interaction.title
