@@ -10,7 +10,7 @@ internal class TextModalInteraction(
     id: InteractionId,
     val title: String?,
     val body: String?,
-    val maxHeight: Int = 0,
+    val maxHeight: Int = 100,
     val richContent: RichContent? = null,
     val actions: List<TextModalActionConfiguration>
 ) : Interaction(id, InteractionType.TextModal) {
