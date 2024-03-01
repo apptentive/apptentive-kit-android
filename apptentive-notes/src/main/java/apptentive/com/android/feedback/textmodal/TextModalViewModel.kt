@@ -43,6 +43,7 @@ internal class TextModalViewModel : ViewModel() {
     val title = interaction.title
     val message = interaction.body
     val alternateText = interaction.richContent?.alternateText
+    var isWiderImage: Boolean = false
     val actions = interaction.actions.mapIndexed { index, action ->
         if (action is TextModalModel.Action.Dismiss) {
             ActionModel.DismissActionModel(
@@ -76,7 +77,10 @@ internal class TextModalViewModel : ViewModel() {
     init {
         context.executors.state.execute {
             interaction.richContent?.url?.let { url ->
-                PrefetchManager.getImage(url)?.let { noteHeaderEvent.postValue(it) }
+                PrefetchManager.getImage(url)?.let {
+                    isWiderImage = it.width > MAX_IMAGE_WIDTH
+                    noteHeaderEvent.postValue(it)
+                }
             }
         }
     }
@@ -151,10 +155,10 @@ internal class TextModalViewModel : ViewModel() {
         return interaction.richContent != null
     }
 
-    fun getImageScaleType(): ScaleType = getImageScaleTypeFromConfig(scaleType ?: LayoutOptions.FULL_WIDTH)
+    fun getImageScaleType(): ScaleType = getImageScaleTypeFromConfig(isWiderImage, scaleType ?: LayoutOptions.FULL_WIDTH)
 
     fun getLayoutParams(currentLayoutParams: LinearLayout.LayoutParams, imageHeight: Int): LayoutParams {
-        return getLayoutParamsForTheImagePositioning(currentLayoutParams, imageHeight, scaleType ?: LayoutOptions.FULL_WIDTH)
+        return getLayoutParamsForTheImagePositioning(isWiderImage, currentLayoutParams, imageHeight, scaleType ?: LayoutOptions.FULL_WIDTH)
     }
 
     fun getPadding(paddingFromDimen: Float): Int {
@@ -195,6 +199,7 @@ internal class TextModalViewModel : ViewModel() {
         const val CODE_POINT_EVENT = "event"
         const val CODE_POINT_DISMISS = "dismiss"
         const val CODE_POINT_CANCEL = "cancel"
+        const val MAX_IMAGE_WIDTH = 1000
 
         private const val DATA_ACTION_ID = "action_id"
         private const val DATA_ACTION_LABEL = "label"

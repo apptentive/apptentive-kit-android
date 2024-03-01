@@ -26,7 +26,7 @@
         ],
         "image": {
           "url": "https://images.pexels.com/photos/255419/pexels-photo-255419.jpeg?cs=srgb&dl=pexels-pixabay-255419.jpg",
-          "layout": "fill",
+          "layout": "full_width",
           "alt_text": "Disney Logo",
           "scale": 3
         },

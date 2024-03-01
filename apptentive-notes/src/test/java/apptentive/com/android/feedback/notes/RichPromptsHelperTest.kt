@@ -49,7 +49,7 @@ class RichPromptsHelperTest : TestCase() {
     @Test
     fun testGetLayoutParamsForTheImagePositioning() {
         val layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-        val fullWidthLayoutParams = getLayoutParamsForTheImagePositioning(layoutParams, 100, LayoutOptions.FULL_WIDTH)
+        val fullWidthLayoutParams = getLayoutParamsForTheImagePositioning(false, layoutParams, 100, LayoutOptions.FULL_WIDTH)
         assertEquals(ViewGroup.LayoutParams.MATCH_PARENT, fullWidthLayoutParams.width)
         assertEquals(100, fullWidthLayoutParams.height)
 
@@ -59,16 +59,16 @@ class RichPromptsHelperTest : TestCase() {
             height = LinearLayout.LayoutParams.WRAP_CONTENT
         }
 
-        val otherLayoutParams = getLayoutParamsForTheImagePositioning(layoutParams, 100, LayoutOptions.CENTER)
+        val otherLayoutParams = getLayoutParamsForTheImagePositioning(false, layoutParams, 100, LayoutOptions.CENTER)
         assertEquals(LinearLayout.LayoutParams.WRAP_CONTENT, otherLayoutParams.width)
         assertEquals(LinearLayout.LayoutParams.WRAP_CONTENT, otherLayoutParams.height)
     }
 
     @Test
     fun testGetImageScaleTypeFromConfig() {
-        assertEquals(ImageView.ScaleType.FIT_XY, getImageScaleTypeFromConfig(LayoutOptions.FULL_WIDTH))
-        assertEquals(ImageView.ScaleType.CENTER_INSIDE, getImageScaleTypeFromConfig(LayoutOptions.CENTER))
-        assertEquals(ImageView.ScaleType.FIT_START, getImageScaleTypeFromConfig(LayoutOptions.ALIGN_LEFT))
-        assertEquals(ImageView.ScaleType.FIT_END, getImageScaleTypeFromConfig(LayoutOptions.ALIGN_RIGHT))
+        assertEquals(ImageView.ScaleType.FIT_XY, getImageScaleTypeFromConfig(false, LayoutOptions.FULL_WIDTH))
+        assertEquals(ImageView.ScaleType.CENTER_INSIDE, getImageScaleTypeFromConfig(false, LayoutOptions.CENTER))
+        assertEquals(ImageView.ScaleType.FIT_START, getImageScaleTypeFromConfig(false, LayoutOptions.ALIGN_LEFT))
+        assertEquals(ImageView.ScaleType.FIT_END, getImageScaleTypeFromConfig(false, LayoutOptions.ALIGN_RIGHT))
     }
 }

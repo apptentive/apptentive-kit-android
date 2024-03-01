@@ -26,34 +26,36 @@ internal fun getAdjustedModalHeight(maxModalHeight: Int, defaultModalHeight: Int
 }
 
 internal fun getPaddingForTheImagePositioning(paddingFromDimen: Float, scaleType: LayoutOptions): Int {
-    return if (scaleType != LayoutOptions.FULL_WIDTH) paddingFromDimen.toInt() else 0
+    return if (scaleType == LayoutOptions.FULL_WIDTH) 0 else paddingFromDimen.toInt()
 }
 
-internal fun getLayoutParamsForTheImagePositioning(currentLayoutParams: LinearLayout.LayoutParams, imageHeight: Int, scaleType: LayoutOptions): ViewGroup.LayoutParams {
-    return when (scaleType) {
-        LayoutOptions.FULL_WIDTH -> {
+internal fun getLayoutParamsForTheImagePositioning(isWiderImage: Boolean, currentLayoutParams: LinearLayout.LayoutParams, imageHeight: Int, scaleType: LayoutOptions): ViewGroup.LayoutParams {
+    return when {
+        scaleType == LayoutOptions.FULL_WIDTH || isWiderImage -> {
             currentLayoutParams.apply {
                 width = ViewGroup.LayoutParams.MATCH_PARENT
                 height = imageHeight
             }
         }
-        LayoutOptions.CENTER -> currentLayoutParams
-        LayoutOptions.ALIGN_LEFT -> currentLayoutParams.apply {
-            width = ViewGroup.LayoutParams.WRAP_CONTENT
-            height = ViewGroup.LayoutParams.WRAP_CONTENT
+        scaleType == LayoutOptions.CENTER -> currentLayoutParams.apply {
+            gravity = android.view.Gravity.CENTER
+        }
+        scaleType == LayoutOptions.ALIGN_LEFT -> currentLayoutParams.apply {
             gravity = android.view.Gravity.START
         }
-        LayoutOptions.ALIGN_RIGHT -> currentLayoutParams.apply {
-            width = ViewGroup.LayoutParams.WRAP_CONTENT
-            height = ViewGroup.LayoutParams.WRAP_CONTENT
+        scaleType == LayoutOptions.ALIGN_RIGHT -> currentLayoutParams.apply {
             gravity = android.view.Gravity.END
+        }
+        else -> currentLayoutParams.apply {
+            gravity = android.view.Gravity.CENTER
         }
     }
 }
 
-internal fun getImageScaleTypeFromConfig(scaleType: LayoutOptions): android.widget.ImageView.ScaleType = when (scaleType) {
-    LayoutOptions.FULL_WIDTH -> android.widget.ImageView.ScaleType.FIT_XY
-    LayoutOptions.CENTER -> android.widget.ImageView.ScaleType.CENTER_INSIDE
-    LayoutOptions.ALIGN_LEFT -> android.widget.ImageView.ScaleType.FIT_START
-    LayoutOptions.ALIGN_RIGHT -> android.widget.ImageView.ScaleType.FIT_END
+internal fun getImageScaleTypeFromConfig(isWiderImage: Boolean, scaleType: LayoutOptions): android.widget.ImageView.ScaleType = when {
+    scaleType == LayoutOptions.FULL_WIDTH || isWiderImage -> android.widget.ImageView.ScaleType.FIT_XY
+    scaleType == LayoutOptions.CENTER -> android.widget.ImageView.ScaleType.CENTER_INSIDE
+    scaleType == LayoutOptions.ALIGN_LEFT -> android.widget.ImageView.ScaleType.FIT_START
+    scaleType == LayoutOptions.ALIGN_RIGHT -> android.widget.ImageView.ScaleType.FIT_END
+    else -> android.widget.ImageView.ScaleType.FIT_CENTER
 }
