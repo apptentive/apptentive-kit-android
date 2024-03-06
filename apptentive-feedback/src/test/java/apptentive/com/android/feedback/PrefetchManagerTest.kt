@@ -79,9 +79,9 @@ class PrefetchManagerTest : TestCase() {
         // Assert
         assertEquals(
             listOf(
-                "${sampleUrls[0].toString().hashCode()}.txt",
-                "${sampleUrls[1].toString().hashCode()}.jpg",
-                "${sampleUrls[2].toString().hashCode()}.png"
+                "${sampleUrls[0].toString().hashCode()}",
+                "${sampleUrls[1].toString().hashCode()}",
+                "${sampleUrls[2].toString().hashCode()}"
             ),
             result
         )

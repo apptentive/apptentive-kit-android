@@ -11,7 +11,6 @@ import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.PREFETCH_RESOURCES
 import java.io.FileOutputStream
 import java.io.IOException
-import java.net.MalformedURLException
 import java.net.URL
 
 @InternalUseOnly
@@ -103,6 +102,7 @@ object PrefetchManager {
     private fun loadImageFromDisk(fileName: String): Bitmap? {
         return try {
             val file = FileStorageUtil.getPrefetchFileForActiveUser(prefetchPath, fileName)
+            Log.v(PREFETCH_RESOURCES, "Image loaded from disk: ${file.absolutePath}")
             BitmapFactory.decodeFile(file.absolutePath)
         } catch (e: IOException) {
             Log.e(PREFETCH_RESOURCES, "Error loading image from disk: ${e.message}")
@@ -110,13 +110,5 @@ object PrefetchManager {
         }
     }
 
-    internal fun getHashCodedFileNameFromUrl(url: String): String {
-        return try {
-            val extension = URL(url).path.substringAfterLast(".")
-            val hashCode = url.hashCode()
-            "$hashCode.$extension"
-        } catch (e: MalformedURLException) {
-            url.hashCode().toString()
-        }
-    }
+    internal fun getHashCodedFileNameFromUrl(url: String): String = url.hashCode().toString()
 }

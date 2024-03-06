@@ -176,9 +176,7 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.noteHeaderBitmapStream.observe(this) { bitmap ->
-            if (this::headerImageView.isInitialized) {
-                setupImage(bitmap)
-            }
+            setupImage(bitmap)
         }
     }
 
@@ -200,13 +198,15 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
             headerImageView.scaleType = viewModel.getImageScaleType()
             if (this::dialog.isInitialized && dialog.isShowing) {
                 dialog.window?.decorView?.let {
-                    val imageHeight = (it.width / aspectRatio).toInt()
-                    val layoutParams = headerImageView.layoutParams as LinearLayout.LayoutParams
-                    headerImageView.layoutParams = viewModel.getLayoutParams(layoutParams, imageHeight)
-                    isImageHeightSet = true
+                    if (it.width != 0) {
+                        val imageHeight = (it.width / aspectRatio).toInt()
+                        val layoutParams = headerImageView.layoutParams as LinearLayout.LayoutParams
+                        headerImageView.layoutParams =
+                            viewModel.getLayoutParams(layoutParams, imageHeight)
+                        isImageHeightSet = true
+                    }
                 }
             }
-            headerImageView.requestLayout()
             val padding = viewModel.getPadding(
                 resources.getDimension(R.dimen.apptentive_dialog_text_horizontal_padding)
             )

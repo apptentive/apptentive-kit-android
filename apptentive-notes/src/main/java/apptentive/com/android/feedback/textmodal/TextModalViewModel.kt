@@ -40,10 +40,10 @@ internal class TextModalViewModel : ViewModel() {
     val maxHeight = interaction.maxHeight
     private val scaleType = interaction.richContent?.layout
     private val scale = interaction.richContent?.scale
+    private var isWiderImage: Boolean = false
     val title = interaction.title
     val message = interaction.body
     val alternateText = interaction.richContent?.alternateText
-    var isWiderImage: Boolean = false
     val actions = interaction.actions.mapIndexed { index, action ->
         if (action is TextModalModel.Action.Dismiss) {
             ActionModel.DismissActionModel(

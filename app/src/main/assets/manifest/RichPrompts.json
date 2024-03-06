@@ -25,7 +25,7 @@
           }
         ],
         "image": {
-          "url": "https://images.pexels.com/photos/255419/pexels-photo-255419.jpeg?cs=srgb&dl=pexels-pixabay-255419.jpg",
+          "url": "https://wallpapers.com/images/featured/disney-has6vy47k75d0bzs.jpg",
           "layout": "full_width",
           "alt_text": "Disney Logo",
           "scale": 3
@@ -427,6 +427,7 @@
   ]
 },
   "prefetch": [
+    "https://wallpapers.com/images/featured/disney-has6vy47k75d0bzs.jpg",
     "https://images.pexels.com/photos/255419/pexels-photo-255419.jpeg?cs=srgb&dl=pexels-pixabay-255419.jpg",
     "https://variety.com/wp-content/uploads/2022/12/Disney-Plus.png",
     "https://app-icons.apptentive.com/521f9bba68e2758b6d00098d_1664232881.png",
