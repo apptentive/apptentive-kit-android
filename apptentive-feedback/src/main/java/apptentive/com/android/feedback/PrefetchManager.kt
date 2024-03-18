@@ -75,7 +75,7 @@ object PrefetchManager {
     private fun saveBitmapToFile(bitmap: Bitmap, fileName: String) {
         val file = FileStorageUtil.getPrefetchFileForActiveUser(prefetchPath, fileName)
         val outputStream = FileOutputStream(file)
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 95, outputStream)
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
         outputStream.flush()
         outputStream.close()
     }

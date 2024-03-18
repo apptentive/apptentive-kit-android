@@ -16,8 +16,7 @@
         android:id="@+id/apptentive_note_title_with_message_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:focusableInTouchMode="true"
-        android:visibility="gone" />
+        android:focusableInTouchMode="true" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/apptentive_note_title_with_message"

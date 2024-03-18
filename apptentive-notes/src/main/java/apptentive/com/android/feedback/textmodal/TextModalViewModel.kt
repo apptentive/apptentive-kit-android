@@ -106,53 +106,48 @@ internal class TextModalViewModel : ViewModel() {
         )
     }
 
-    private fun createActionCallback(action: TextModalModel.Action, index: Int): Callback =
-        when (action) {
-            is TextModalModel.Action.Dismiss -> {
-                {
-                    context.executors.state.execute {
-                        Log.i(INTERACTIONS, "Note dismissed")
-                        // engage event
-                        val data = createEventData(action, index)
-                        engageCodePoint(CODE_POINT_DISMISS, data, action.id)
-                    }
-                }
-            }
-            is TextModalModel.Action.Invoke -> {
-                {
-                    context.executors.state.execute {
-                        Log.i(INTERACTIONS, "Note action invoked")
-
-                        // run invocation
-                        val result = context.engage(action.invocations)
-
-                        // engage event
-                        val data = createEventData(action, index, result)
-                        engageCodePoint(CODE_POINT_INTERACTION, data, action.id)
-                    }
-                }
-            }
-            is TextModalModel.Action.Event -> {
-                {
-                    context.executors.state.execute {
-                        Log.i(INTERACTIONS, "Note event engaged")
-
-                        // engage target event
-                        val result = context.engage(
-                            event = action.event,
-                            interactionId = interaction.id
-                        )
-
-                        // engage event
-                        val data = createEventData(action, index, result)
-                        engageCodePoint(CODE_POINT_EVENT, data, action.id)
-                    }
+    private fun createActionCallback(action: TextModalModel.Action, index: Int): Callback = when (action) {
+        is TextModalModel.Action.Dismiss -> {
+            {
+                context.executors.state.execute {
+                    Log.i(INTERACTIONS, "Note dismissed")
+                    // engage event
+                    val data = createEventData(action, index)
+                    engageCodePoint(CODE_POINT_DISMISS, data, action.id)
                 }
             }
         }
+        is TextModalModel.Action.Invoke -> {
+            {
+                context.executors.state.execute {
+                    Log.i(INTERACTIONS, "Note action invoked")
 
-    fun isRichNote(): Boolean {
-        return interaction.richContent != null
+                    // run invocation
+                    val result = context.engage(action.invocations)
+
+                    // engage event
+                    val data = createEventData(action, index, result)
+                    engageCodePoint(CODE_POINT_INTERACTION, data, action.id)
+                }
+            }
+        }
+        is TextModalModel.Action.Event -> {
+            {
+                context.executors.state.execute {
+                    Log.i(INTERACTIONS, "Note event engaged")
+
+                    // engage target event
+                    val result = context.engage(
+                        event = action.event,
+                        interactionId = interaction.id
+                    )
+
+                    // engage event
+                    val data = createEventData(action, index, result)
+                    engageCodePoint(CODE_POINT_EVENT, data, action.id)
+                }
+            }
+        }
     }
 
     fun getImageScaleType(): ScaleType = getImageScaleTypeFromConfig(isWiderImage, scaleType ?: LayoutOptions.FULL_WIDTH)

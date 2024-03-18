@@ -30,7 +30,7 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
     private lateinit var headerImageView: ImageView
     private lateinit var alternateTextView: MaterialTextView
     private lateinit var dialog: Dialog
-    private lateinit var noteView: View
+    private lateinit var noteLayout: LinearLayout
     private lateinit var buttonLayout: LinearLayout
     private var isImageHeightSet: Boolean = false
 
@@ -48,102 +48,62 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
                 overrideTheme()
             }
             val inflater = LayoutInflater.from(contextWrapper)
-            val resource = if (viewModel.isRichNote()) {
-                R.layout.apptentive_rich_note
-            } else {
-                R.layout.apptentive_note
-            }
-            noteView = inflater.inflate(resource, null)
+            val noteView = inflater.inflate(R.layout.apptentive_note, null)
             setView(noteView)
-            val noteLayout = noteView.findViewById<LinearLayout>(R.id.apptentive_note_layout)
-
+            noteLayout = noteView.findViewById(R.id.apptentive_note_layout)
+            val scrollView = noteLayout.findViewById<ScrollView>(R.id.apptentive_note_scroll_view)
+            val contentLayout: LinearLayout
             when {
-                viewModel.isRichNote() -> {
-                    val scrollView = noteLayout.findViewById<ScrollView>(R.id.apptentive_note_scroll_view)
-                    val contentLayout = inflater.inflate(R.layout.apptentive_rich_note_content, null) as LinearLayout
-                    val titleView = contentLayout.findViewById<MaterialTextView>(R.id.apptentive_note_title_with_message)
-                    val messageView = contentLayout.findViewById<MaterialTextView>(R.id.apptentive_note_message)
-                    alternateTextView = contentLayout.findViewById(R.id.apptentive_note_alternate_text)
-                    headerImageView = contentLayout.findViewById(R.id.apptentive_note_title_with_message_image)
-
-                    scrollView.addView(contentLayout)
-                    alternateTextView.text = viewModel.alternateText
-                    alternateTextView.gravity = viewModel.getAlternateTextGravity()
-                    headerImageView.contentDescription = viewModel.alternateText
-
-                    if (viewModel.title == null) {
-                        titleView.visibility = View.GONE
-                    } else {
-                        titleView.text = viewModel.title
-                    }
-
-                    if (viewModel.message == null) {
-                        messageView.visibility = View.GONE
-                    } else {
-                        messageView.text = viewModel.message
-                    }
-                }
-
                 /*
                 * Material Design dialogs should always have supporting text (message).
                 * Titles are optional.
                 * https://material.io/components/dialogs
                 */
-
                 viewModel.title == null || viewModel.message == null -> {
-                    val titleLayout = inflater.inflate(
+                    contentLayout = inflater.inflate(
                         R.layout.apptentive_note_title_or_message_only,
                         null
                     ) as LinearLayout
                     val titleView =
-                        titleLayout.findViewById<MaterialTextView>(R.id.apptentive_note_title_or_message_only)
+                        contentLayout.findViewById<MaterialTextView>(R.id.apptentive_note_title_or_message_only)
                     titleView.text =
                         if (viewModel.title != null) viewModel.title else viewModel.message
-                    noteLayout.addView(titleLayout)
-                }
-
-                else -> {
-                    val titleLayout = inflater.inflate(
+                    if (viewModel.title == null && viewModel.message == null) titleView.visibility = View.GONE
+                    scrollView.addView(contentLayout)
+                } else -> {
+                    contentLayout = inflater.inflate(
                         R.layout.apptentive_note_title_with_message,
                         null
                     ) as LinearLayout
                     val titleView =
-                        titleLayout.findViewById<MaterialTextView>(R.id.apptentive_note_title_with_message)
+                        contentLayout.findViewById<MaterialTextView>(R.id.apptentive_note_title_with_message)
+                    val messageView = contentLayout.findViewById<MaterialTextView>(R.id.apptentive_note_message)
                     titleView.text = viewModel.title
-                    noteLayout.addView(titleLayout)
-
-                    val messageView = inflater.inflate(
-                        R.layout.apptentive_note_message,
-                        null
-                    ) as MaterialTextView
                     messageView.text = viewModel.message
-                    noteLayout.addView(messageView)
+                    scrollView.addView(contentLayout)
                 }
+            }
+            alternateTextView = contentLayout.findViewById(R.id.apptentive_note_alternate_text)
+            headerImageView = contentLayout.findViewById(R.id.apptentive_note_title_with_message_image)
+
+            if (viewModel.alternateText.isNullOrEmpty()) {
+                alternateTextView.visibility = View.GONE
+            } else {
+                alternateTextView.text = viewModel.alternateText
+                alternateTextView.gravity = viewModel.getAlternateTextGravity()
+                headerImageView.contentDescription = viewModel.alternateText
+                // Hide the image view until the image is loaded
+                headerImageView.visibility = View.GONE
             }
 
             //region Actions
-            val buttonLayoutResource = if (viewModel.isRichNote()) {
-                R.layout.apptentive_rich_note_actions
-            } else {
-                R.layout.apptentive_note_actions
-            }
-            buttonLayout = inflater.inflate(buttonLayoutResource, null) as LinearLayout
+            buttonLayout = inflater.inflate(R.layout.apptentive_note_actions, null) as LinearLayout
 
             noteLayout.addView(buttonLayout)
 
             viewModel.actions.forEach { action ->
-                val actionButtonResource = if (viewModel.isRichNote()) {
-                    R.layout.apptentive_rich_note_action
-                } else {
-                    R.layout.apptentive_note_action
-                }
-                val dismissButtonResource = if (viewModel.isRichNote()) {
-                    R.layout.apptentive_rich_note_dismiss_action
-                } else {
-                    R.layout.apptentive_note_dismiss_action
-                }
-                val button = inflater.inflate(actionButtonResource, null) as MaterialButton
-                val dismissButton = inflater.inflate(dismissButtonResource, null) as MaterialButton
+                val button = inflater.inflate(R.layout.apptentive_note_action, null) as MaterialButton
+                val dismissButton = inflater.inflate(R.layout.apptentive_note_dismiss_action, null) as MaterialButton
 
                 when (action) {
                     is TextModalViewModel.ActionModel.DismissActionModel -> {
@@ -210,7 +170,9 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
             val padding = viewModel.getPadding(
                 resources.getDimension(R.dimen.apptentive_dialog_text_horizontal_padding)
             )
-            headerImageView.setPadding(padding, padding, padding, 0)
+            headerImageView.setPadding(padding, padding, padding, resources.getDimension(R.dimen.apptentive_dialog_text_horizontal_padding).toInt())
+            // Readjust the padding for the note layout if image is present
+            noteLayout.setPadding(0, 0, 0, 0)
 
             // Resize the dialog to max height after the image is loaded and positioned
             addLayoutListener(aspectRatio)
