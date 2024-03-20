@@ -591,13 +591,10 @@
         <item name="android:layout_gravity">end|center_vertical</item>
     </style>
 
-    <style name="Apptentive.Widget.Dialog.Button.Stacked.Prompts">
-        <item name="android:maxLines">1</item>
-    </style>
+    <style name="Apptentive.Widget.Dialog.Button.Stacked.Prompts" />
 
     <style name="Apptentive.Widget.Dialog.Button.Stacked.Prompts.Bottom">
         <item name="android:layout_gravity">end|center_vertical|bottom</item>
-        <item name="android:maxLines">1</item>
     </style>
 
     <style name="Apptentive.Widget.Dialog.Button.SideBySide" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
