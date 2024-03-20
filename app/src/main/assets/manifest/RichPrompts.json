@@ -5,11 +5,11 @@
       "type": "TextModal",
       "configuration": {
         "title": "New Promotion!",
-        "body": "I'm baby williamsburg intelligentsia fashion axe venmo. Ramps quinoa tousled, edison bulb helvetica drinking vinegar cold-pressed scenester vice bushwick 90's live-edge. Neutral milk hotel woke 3 wolf moon JOMO fanny pack butcher asymmetrical whatever gastropub. Bushwick you probably haven't heard of them taxidermy, plaid kogi chambray franzen 8-bit grailed messenger bag crucifix artisan street art paleo cold-pressed. Umami migas affogato, irony meggings tote bag selfies. Cardigan brunch kombucha DSA succulents swag. Listicle quinoa ennui gochujang fam 90's PBR&B chia banjo heirloom paleo drinking vinegar dreamcatcher solarpunk.\nFanny pack lomo mumblecore try-hard art party. YOLO etsy next level banh mi lomo 3 wolf moon. Slow-carb put a bird on it cold-pressed VHS Brooklyn prism pinterest big mood, blackbird spyplane echo park edison bulb vegan four loko. XOXO whatever drinking vinegar lumbersexual, cold-pressed hexagon poutine raclette migas subway tile bruh deep v.",
+        "body": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
         "actions": [
           {
             "id": "action_id_1",
-            "label": "Redeem",
+            "label": "redeem, long label cut short to show a part of it",
             "action": "interaction",
             "invokes": [
               {
@@ -20,7 +20,7 @@
           },
           {
             "id": "action_id_2",
-            "label": "Dismiss",
+            "label": "dismiss",
             "action": "dismiss"
           }
         ],

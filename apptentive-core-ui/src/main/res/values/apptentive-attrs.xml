@@ -30,15 +30,9 @@
         <attr name="apptentiveNoteTitleOrMessageOnlyTextStyle" format="reference" />
         <attr name="apptentiveNoteTitleOrMessageOnlyImageStyle" format="reference" />
         <attr name="apptentiveNoteMessageTextStyle" format="reference" />
-        <attr name="apptentiveRichNoteMessageTextStyle" format="reference" />
         <attr name="apptentiveNoteButtonLayoutStyle" format="reference" />
-        <attr name="apptentiveRichNoteButtonLayoutStyle" format="reference" />
         <attr name="apptentiveNoteButtonStyle" format="reference"/>
-        <attr name="apptentiveRichNoteButtonStyle" format="reference"/>
         <attr name="apptentiveNoteDismissButtonStyle" format="reference"/>
-        <attr name="apptentiveRichNoteDismissButtonStyle" format="reference"/>
-        <attr name="apptentiveRichNoteLayoutStyle" format="reference" />
-        <attr name="apptentiveRichNoteTitleWithMessageTextStyle" format="reference" />
         <attr name="apptentiveRichNoteAlternateTextStyle" format="reference" />
 
         <!-- Apptentive Rating Dialog Styles -->

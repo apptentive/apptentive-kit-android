@@ -37,21 +37,16 @@
 
         <!-- Note Dialog Styles -->
         <item name="apptentiveNoteLayoutStyle">@style/Apptentive.Dialog.Layout</item>
-        <item name="apptentiveRichNoteLayoutStyle">@style/Apptentive.Dialog.Layout.Rich</item>
         <item name="apptentiveNoteHeaderImageStyle">@style/Apptentive.Empty</item>
         <item name="apptentiveNoteTitleWithMessageTextStyle">@style/Apptentive.TextAppearance.Title.Dialog.WithMessage</item>
-        <item name="apptentiveRichNoteTitleWithMessageTextStyle">@style/Apptentive.TextAppearance.Title.Dialog.WithMessage.Rich</item>
         <item name="apptentiveNoteTitleWithMessageImageStyle">@style/Apptentive.Empty</item>
         <item name="apptentiveNoteTitleOrMessageOnlyTextStyle">@style/Apptentive.TextAppearance.Title.Dialog.TitleOrMessageOnly.Note</item>
         <item name="apptentiveNoteTitleOrMessageOnlyImageStyle">@style/Apptentive.Empty</item>
         <item name="apptentiveRichNoteAlternateTextStyle">@style/Apptentive.TextAppearance.AlternateText</item>
         <item name="apptentiveNoteMessageTextStyle">@style/Apptentive.TextAppearance.Message.Dialog</item>
         <item name="apptentiveNoteButtonLayoutStyle">@style/Apptentive.Dialog.ButtonLayout.Note</item>
-        <item name="apptentiveRichNoteButtonLayoutStyle">@style/Apptentive.Dialog.ButtonLayout.Note</item>
-        <item name="apptentiveNoteButtonStyle">@style/Apptentive.Widget.Dialog.Button.Stacked</item>
-        <item name="apptentiveRichNoteButtonStyle">@style/Apptentive.Widget.Dialog.Button.Stacked</item>
-        <item name="apptentiveNoteDismissButtonStyle">@style/Apptentive.Widget.Dialog.Button.Stacked</item>
-        <item name="apptentiveRichNoteDismissButtonStyle">@style/Apptentive.Widget.Dialog.Button.Stacked.Bottom</item>
+        <item name="apptentiveNoteButtonStyle">@style/Apptentive.Widget.Dialog.Button.Stacked.Prompts</item>
+        <item name="apptentiveNoteDismissButtonStyle">@style/Apptentive.Widget.Dialog.Button.Stacked.Prompts.Bottom</item>
 
         <!-- Apptentive Rating Dialog Styles -->
         <item name="apptentiveRatingDialogLayoutStyle">@style/Apptentive.Dialog.Layout</item>
@@ -70,7 +65,6 @@
         <item name="apptentiveGenericDialogTitleTextStyle">@style/Apptentive.TextAppearance.Title.Dialog.WithMessage</item>
         <item name="apptentiveGenericDialogTitleImageStyle">@style/Apptentive.Empty</item>
         <item name="apptentiveGenericDialogMessageTextStyle">@style/Apptentive.TextAppearance.Message.Dialog</item>
-        <item name="apptentiveRichNoteMessageTextStyle">@style/Apptentive.TextAppearance.Message.Dialog</item>
         <item name="apptentiveGenericDialogButtonLayoutStyle">@style/Apptentive.Dialog.ButtonLayout</item>
         <item name="apptentiveGenericDialogPositiveButtonStyle">@style/Apptentive.Widget.Dialog.Button.SideBySide.Yes</item>
         <item name="apptentiveGenericDialogNegativeButtonStyle">@style/Apptentive.Widget.Dialog.Button.SideBySide.No</item>
@@ -341,13 +335,6 @@
         <item name="android:paddingBottom">@dimen/apptentive_dialog_bottom_padding</item>
     </style>
 
-    <style name="Apptentive.Dialog.Layout.Rich">
-        <item name="android:background">?apptentiveDialogBackground</item>
-        <item name="android:paddingStart">0dp</item>
-        <item name="android:paddingEnd">0dp</item>
-        <item name="android:paddingTop">0dp</item>
-    </style>
-
     <style name="Apptentive.Dialog.ButtonLayout">
         <item name="android:gravity">end</item>
     </style>
@@ -358,6 +345,7 @@
     </style>
 
     <style name="Apptentive.Dialog.ButtonLayout.Note">
+        <item name="android:gravity">end</item>
         <item name="android:orientation">vertical</item>
         <item name="android:layout_gravity">end</item>
     </style>
@@ -421,12 +409,6 @@
         <item name="android:paddingStart">@dimen/apptentive_dialog_text_horizontal_padding</item>
         <item name="android:paddingEnd">@dimen/apptentive_dialog_text_horizontal_padding</item>
         <item name="android:paddingBottom">@dimen/apptentive_dialog_title_spacing</item>
-    </style>
-
-    <style name="Apptentive.TextAppearance.Title.Dialog.WithMessage.Rich">
-        <item name="android:paddingTop">@dimen/apptentive_dialog_text_horizontal_padding</item>
-        <item name="android:fontFamily">?apptentiveFontFamilyTitle</item>
-
     </style>
 
     <style name="Apptentive.TextAppearance.Message.Dialog" parent="Apptentive.TextAppearance">
@@ -609,9 +591,13 @@
         <item name="android:layout_gravity">end|center_vertical</item>
     </style>
 
-    <style name="Apptentive.Widget.Dialog.Button.Stacked.Bottom">
-        <item name="android:textAlignment">viewEnd</item>
+    <style name="Apptentive.Widget.Dialog.Button.Stacked.Prompts">
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <style name="Apptentive.Widget.Dialog.Button.Stacked.Prompts.Bottom">
         <item name="android:layout_gravity">end|center_vertical|bottom</item>
+        <item name="android:maxLines">1</item>
     </style>
 
     <style name="Apptentive.Widget.Dialog.Button.SideBySide" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
