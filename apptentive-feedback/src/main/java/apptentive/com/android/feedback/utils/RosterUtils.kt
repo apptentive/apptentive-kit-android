@@ -11,10 +11,14 @@ import apptentive.com.android.encryption.EncryptionNoOp
 import apptentive.com.android.feedback.conversation.ConversationMetaData
 import apptentive.com.android.feedback.conversation.ConversationRepository
 import apptentive.com.android.feedback.conversation.ConversationRoster
+import apptentive.com.android.feedback.conversation.ConversationSerializationException
 import apptentive.com.android.feedback.conversation.ConversationState
 import apptentive.com.android.feedback.message.MessageRepository
 import apptentive.com.android.feedback.platform.DefaultStateMachine
 import apptentive.com.android.feedback.utils.AndroidSDKVersion.getSDKVersion
+import apptentive.com.android.feedback.utils.ThrottleUtils.ROSTER_TYPE
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags
 import apptentive.com.android.util.generateUUID
 
 internal object RosterUtils {
@@ -26,14 +30,32 @@ internal object RosterUtils {
         DependencyProvider.of<MessageRepository>()
     }
 
+    @Throws(ConversationSerializationException::class)
     fun initializeRoster() {
-        val conversationRoster = conversationRepository.initializeRepositoryWithRoster()
+        try {
+            val conversationRoster = conversationRepository.initializeRepositoryWithRoster()
 
-        val loggedInState = conversationRoster.activeConversation?.state as? ConversationState.LoggedIn
+            val loggedInState =
+                conversationRoster.activeConversation?.state as? ConversationState.LoggedIn
 
-        loggedInState?.let { updateEncryptionForLoggedInConversation(it) }
-        DefaultStateMachine.conversationRoster = conversationRoster
-        conversationRepository.updateConversationRoster(conversationRoster)
+            loggedInState?.let { updateEncryptionForLoggedInConversation(it) }
+            DefaultStateMachine.conversationRoster = conversationRoster
+            conversationRepository.updateConversationRoster(conversationRoster)
+        } catch (e: Exception) {
+            if (!ThrottleUtils.shouldThrottleReset(ROSTER_TYPE)) {
+                Log.e(LogTags.CONVERSATION, "Cannot load existing roster", e)
+                Log.d(LogTags.CONVERSATION, "Deserialization failure, deleting the conversation files")
+                FileUtil.deleteUnrecoverableStorageFiles(FileUtil.getInternalDir("conversations"))
+                val conversationRoster = conversationRepository.initializeRepositoryWithRoster()
+                DefaultStateMachine.conversationRoster = conversationRoster
+                conversationRepository.updateConversationRoster(conversationRoster)
+            } else {
+                throw ConversationSerializationException(
+                    "Cannot load existing roster, roster reset throttled",
+                    e
+                )
+            }
+        }
     }
 
     fun mergeLegacyRoster(legacyRoster: ConversationRoster) {

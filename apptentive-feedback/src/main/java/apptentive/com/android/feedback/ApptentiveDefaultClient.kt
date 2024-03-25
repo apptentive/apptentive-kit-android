@@ -164,7 +164,16 @@ class ApptentiveDefaultClient(
         clearPayloadCache = false
 
         getConversationToken(registerCallback)
-        addObservers(conversationService)
+
+        if (!(payloadSender as SerialPayloadSender).hasPayloadService) {
+            (payloadSender as SerialPayloadSender).setPayloadService(
+                service = ConversationPayloadService(
+                    requestSender = conversationService,
+                )
+            )
+        }
+
+        addObservers()
 
         engage(Event.internal(InternalEvent.APP_LAUNCH.labelName))
     }
@@ -197,12 +206,16 @@ class ApptentiveDefaultClient(
                     registerCallback?.invoke(RegisterResult.Success)
                     val conversationCredentialProvider = DependencyProvider.of<ConversationCredentialProvider>()
                     payloadSender.updateCredential(conversationCredentialProvider)
+                    PrefetchManager.apply {
+                        initPrefetchDirectory()
+                        downloadPrefetchableResources(conversationManager.getConversation().engagementManifest.prefetch)
+                    }
                 }
             }
         }
     }
 
-    private fun addObservers(conversationService: ConversationService) {
+    private fun addObservers() {
         conversationManager.activeConversation.observe { conversation ->
             if (Log.canLog(LogLevel.Verbose)) { // avoid unnecessary computations
                 conversation.logConversation()
@@ -219,16 +232,6 @@ class ApptentiveDefaultClient(
                 recordInteractionResponses = ::recordInteractionResponses,
                 recordCurrentAnswer = ::recordCurrentAnswer
             )
-            // once we have received conversationId and conversationToken we can setup payload sender service
-            val conversationId = conversation.conversationId
-            val conversationToken = conversation.conversationToken
-            if (conversationId != null && conversationToken != null && !(payloadSender as SerialPayloadSender).hasPayloadService) {
-                (payloadSender as SerialPayloadSender).setPayloadService(
-                    service = ConversationPayloadService(
-                        requestSender = conversationService,
-                    )
-                )
-            }
             // register engagement context as soon as DefaultEngagement is created to make it available for MessageManager
             DependencyProvider.register(EngagementContextProvider(engagement, payloadSender, executors))
             messageManager?.onConversationChanged(conversation)
@@ -355,6 +358,10 @@ class ApptentiveDefaultClient(
                 val pushProviderName = sharedPrefDataStore.getString(APPTENTIVE, PREF_KEY_PUSH_TOKEN)
                 setPushIntegration(pushProvider, pushProviderName)
                 executeCallbackInMainExecutor(callback, LoginResult.Success)
+                PrefetchManager.apply {
+                    initPrefetchDirectory()
+                    downloadPrefetchableResources(conversationManager.getConversation().engagementManifest.prefetch)
+                }
             }
             is LoginResult.Error -> {
                 Log.v(CONVERSATION, "Failed to login")
@@ -727,7 +734,8 @@ class ApptentiveDefaultClient(
 
                 val resultError = result.error as? AuthenticationFailureException
 
-                if (resultError != null) {
+                if (resultError != null && authFailureCounter < MAX_AUTH_FAILURE_COUNT) {
+                    authFailureCounter++
                     val reason = AuthenticationFailedReason.parse(resultError.errorType, resultError.errorMessage)
                     authenticationFailedListener?.get()?.onAuthenticationFailed(reason)
                 }
@@ -811,6 +819,10 @@ class ApptentiveDefaultClient(
     companion object {
         // Gets created on the first call to Apptentive.register() and is used to identify the session
         private var sessionId = generateUUID()
+
+        private var authFailureCounter: Int = 0
+
+        const val MAX_AUTH_FAILURE_COUNT = 3
 
         fun getSessionId(): String = sessionId
         fun updateSessionIdForNewLoginSession() {

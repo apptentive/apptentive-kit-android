@@ -8,6 +8,8 @@ import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.feedback.engagement.util.MockAndroidSharedPrefDataStore
+import apptentive.com.android.feedback.utils.ThrottleUtils.CONVERSATION_TYPE
+import apptentive.com.android.feedback.utils.ThrottleUtils.ROSTER_TYPE
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import org.junit.After
 import org.junit.Assert.assertFalse
@@ -149,8 +151,15 @@ class ThrottleUtilsTest : TestCase() {
     @Test
     fun shouldThrottleResetConversationTest() {
         DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore())
-        val result = ThrottleUtils.shouldThrottleResetConversation()
+        val result = ThrottleUtils.shouldThrottleReset(CONVERSATION_TYPE)
         assertFalse(result)
-        assertTrue(ThrottleUtils.shouldThrottleResetConversation())
+        assertTrue(ThrottleUtils.shouldThrottleReset(CONVERSATION_TYPE))
+    }
+
+    @Test
+    fun shouldThrottleResetRosterTest() {
+        DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore())
+        assertFalse(ThrottleUtils.shouldThrottleReset(ROSTER_TYPE))
+        assertTrue(ThrottleUtils.shouldThrottleReset(ROSTER_TYPE))
     }
 }

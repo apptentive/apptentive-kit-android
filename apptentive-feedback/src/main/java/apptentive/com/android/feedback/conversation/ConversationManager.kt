@@ -14,6 +14,7 @@ import apptentive.com.android.encryption.KeyResolver23
 import apptentive.com.android.encryption.getKeyFromHexString
 import apptentive.com.android.feedback.Constants
 import apptentive.com.android.feedback.LoginResult
+import apptentive.com.android.feedback.PrefetchManager
 import apptentive.com.android.feedback.backend.ConversationService
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
@@ -36,6 +37,7 @@ import apptentive.com.android.feedback.utils.JwtUtils
 import apptentive.com.android.feedback.utils.RosterUtils.getActiveConversationMetaData
 import apptentive.com.android.feedback.utils.RosterUtils.hasNoConversationCache
 import apptentive.com.android.feedback.utils.ThrottleUtils
+import apptentive.com.android.feedback.utils.ThrottleUtils.CONVERSATION_TYPE
 import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
 import apptentive.com.android.feedback.utils.getEncryptionKey
@@ -428,6 +430,10 @@ internal class ConversationManager(
             )
             Log.d(CONVERSATION, "USING LOCALLY DOWNLOADED MANIFEST")
             isUsingLocalManifest = true
+            PrefetchManager.apply {
+                initPrefetchDirectory()
+                downloadPrefetchableResources(getConversation().engagementManifest.prefetch)
+            }
         }
     }
 
@@ -619,7 +625,7 @@ internal class ConversationManager(
             // This fix is to recover the accounts that are stuck with serialization issue.
             // It is not recommended to reset the conversation state.
 
-            if (!ThrottleUtils.shouldThrottleResetConversation()) {
+            if (!ThrottleUtils.shouldThrottleReset(CONVERSATION_TYPE)) {
                 Log.e(CONVERSATION, "Cannot load existing conversation", e)
                 Log.d(CONVERSATION, "Deserialization failure, deleting the conversation files")
                 FileUtil.deleteUnrecoverableStorageFiles(FileUtil.getInternalDir("conversations"))

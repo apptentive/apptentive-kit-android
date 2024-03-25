@@ -132,6 +132,7 @@ internal class DefaultConversationSerializer(
         saveRoster(conversationRoster)
     }
 
+    @Throws(ConversationSerializationException::class)
     override fun initializeSerializer(): ConversationRoster {
         val conversationRoster = if (conversationRosterFile.exists() && conversationRosterFile.length() > 0) {
             Log.d(CONVERSATION, "Conversation roster file exists, loading roster")

@@ -64,6 +64,7 @@ internal class DefaultConversationRepository(
     @Throws(ConversationSerializationException::class)
     override fun loadConversation(): Conversation? = conversationSerializer.loadConversation()
 
+    @Throws(ConversationSerializationException::class)
     override fun initializeRepositoryWithRoster(): ConversationRoster = conversationSerializer.initializeSerializer()
 
     override fun getCurrentAppRelease(): AppRelease = appReleaseFactory.create()

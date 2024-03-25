@@ -187,6 +187,9 @@ public class DefaultLegacyConversationManager implements LegacyConversationManag
 		// check inconsistency
 		conversation.checkInternalConsistency();
 
+		item.getDataFile().delete(); // delete the data file
+		item.getMessagesFile().delete(); // delete the messages file
+
 		return conversation;
 	}
 
@@ -200,7 +203,9 @@ public class DefaultLegacyConversationManager implements LegacyConversationManag
 			File metaFile = new File(conversationsStorageDir, CONVERSATION_METADATA_FILE);
 			if (metaFile.exists()) {
 				Log.v(MIGRATION, "Loading metadata file: %s", metaFile);
-				return ObjectSerialization.deserialize(metaFile, LegacyConversationMetadata.class, encryption);
+				LegacyConversationMetadata metadata = ObjectSerialization.deserialize(metaFile, LegacyConversationMetadata.class, encryption);
+				metaFile.delete(); // delete the encrypted metadata file
+				return metadata;
 			}
 
 			// attempt to load the legacy metadata file

@@ -42,10 +42,11 @@
         <item name="apptentiveNoteTitleWithMessageImageStyle">@style/Apptentive.Empty</item>
         <item name="apptentiveNoteTitleOrMessageOnlyTextStyle">@style/Apptentive.TextAppearance.Title.Dialog.TitleOrMessageOnly.Note</item>
         <item name="apptentiveNoteTitleOrMessageOnlyImageStyle">@style/Apptentive.Empty</item>
+        <item name="apptentiveRichNoteAlternateTextStyle">@style/Apptentive.TextAppearance.AlternateText</item>
         <item name="apptentiveNoteMessageTextStyle">@style/Apptentive.TextAppearance.Message.Dialog</item>
         <item name="apptentiveNoteButtonLayoutStyle">@style/Apptentive.Dialog.ButtonLayout.Note</item>
-        <item name="apptentiveNoteButtonStyle">@style/Apptentive.Widget.Dialog.Button.Stacked</item>
-        <item name="apptentiveNoteDismissButtonStyle">@style/Apptentive.Widget.Dialog.Button.Stacked</item>
+        <item name="apptentiveNoteButtonStyle">@style/Apptentive.Widget.Dialog.Button.Stacked.Prompts</item>
+        <item name="apptentiveNoteDismissButtonStyle">@style/Apptentive.Widget.Dialog.Button.Stacked.Prompts.Bottom</item>
 
         <!-- Apptentive Rating Dialog Styles -->
         <item name="apptentiveRatingDialogLayoutStyle">@style/Apptentive.Dialog.Layout</item>
@@ -344,7 +345,9 @@
     </style>
 
     <style name="Apptentive.Dialog.ButtonLayout.Note">
+        <item name="android:gravity">end</item>
         <item name="android:orientation">vertical</item>
+        <item name="android:layout_gravity">end</item>
     </style>
 
     <style name="Apptentive.Survey" />
@@ -418,6 +421,10 @@
         <item name="android:paddingEnd">@dimen/apptentive_dialog_text_horizontal_padding</item>
         <item name="android:paddingBottom">@dimen/apptentive_dialog_message_spacing</item>
         <item name="android:minHeight">@dimen/apptentive_dialog_title_or_message_only_min_height</item>
+    </style>
+
+    <style name="Apptentive.TextAppearance.AlternateText">
+        <item name="android:padding">@dimen/apptentive_dialog_text_horizontal_padding</item>
     </style>
 
     <style name="Apptentive.TextAppearance.Title.Dialog.TitleOrMessageOnly">
@@ -582,6 +589,12 @@
     <style name="Apptentive.Widget.Dialog.Button.Stacked">
         <item name="android:textAlignment">viewEnd</item>
         <item name="android:layout_gravity">end|center_vertical</item>
+    </style>
+
+    <style name="Apptentive.Widget.Dialog.Button.Stacked.Prompts" />
+
+    <style name="Apptentive.Widget.Dialog.Button.Stacked.Prompts.Bottom">
+        <item name="android:layout_gravity">end|center_vertical|bottom</item>
     </style>
 
     <style name="Apptentive.Widget.Dialog.Button.SideBySide" parent="Widget.MaterialComponents.Button.TextButton.Dialog">

@@ -1,9 +1,16 @@
 package apptentive.com.android.feedback.textmodal
 
+import android.graphics.Bitmap
+import android.view.ViewGroup.LayoutParams
+import android.widget.ImageView.ScaleType
+import android.widget.LinearLayout
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import apptentive.com.android.core.Callback
 import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.core.LiveEvent
 import apptentive.com.android.feedback.EngagementResult
+import apptentive.com.android.feedback.PrefetchManager
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
@@ -23,14 +30,20 @@ internal class TextModalViewModel : ViewModel() {
             id = interaction.id,
             title = interaction.title,
             body = interaction.body,
+            richContent = interaction.richContent,
             actions = interaction.actions.map { action ->
                 DefaultTextModalActionConverter().convert(action)
             }
         )
     }
 
+    val maxHeight = interaction.maxHeight
+    private val scaleType = interaction.richContent?.layout
+    private val scale = interaction.richContent?.scale
+    private var isWiderImage: Boolean = false
     val title = interaction.title
     val message = interaction.body
+    val alternateText = interaction.richContent?.alternateText
     val actions = interaction.actions.mapIndexed { index, action ->
         if (action is TextModalModel.Action.Dismiss) {
             ActionModel.DismissActionModel(
@@ -59,6 +72,19 @@ internal class TextModalViewModel : ViewModel() {
 
     var onDismiss: Callback? = null
 
+    private val noteHeaderEvent = LiveEvent<Bitmap>()
+    val noteHeaderBitmapStream: LiveData<Bitmap> = noteHeaderEvent
+    init {
+        context.executors.state.execute {
+            interaction.richContent?.url?.let { url ->
+                PrefetchManager.getImage(url)?.let {
+                    isWiderImage = it.width > MAX_IMAGE_WIDTH
+                    noteHeaderEvent.postValue(it)
+                }
+            }
+        }
+    }
+
     fun onCancel() {
         context.executors.state.execute {
             engageCodePoint(CODE_POINT_CANCEL)
@@ -80,50 +106,72 @@ internal class TextModalViewModel : ViewModel() {
         )
     }
 
-    private fun createActionCallback(action: TextModalModel.Action, index: Int): Callback =
-        when (action) {
-            is TextModalModel.Action.Dismiss -> {
-                {
-                    context.executors.state.execute {
-                        Log.i(INTERACTIONS, "Note dismissed")
-                        // engage event
-                        val data = createEventData(action, index)
-                        engageCodePoint(CODE_POINT_DISMISS, data, action.id)
-                    }
-                }
-            }
-            is TextModalModel.Action.Invoke -> {
-                {
-                    context.executors.state.execute {
-                        Log.i(INTERACTIONS, "Note action invoked")
-
-                        // run invocation
-                        val result = context.engage(action.invocations)
-
-                        // engage event
-                        val data = createEventData(action, index, result)
-                        engageCodePoint(CODE_POINT_INTERACTION, data, action.id)
-                    }
-                }
-            }
-            is TextModalModel.Action.Event -> {
-                {
-                    context.executors.state.execute {
-                        Log.i(INTERACTIONS, "Note event engaged")
-
-                        // engage target event
-                        val result = context.engage(
-                            event = action.event,
-                            interactionId = interaction.id
-                        )
-
-                        // engage event
-                        val data = createEventData(action, index, result)
-                        engageCodePoint(CODE_POINT_EVENT, data, action.id)
-                    }
+    private fun createActionCallback(action: TextModalModel.Action, index: Int): Callback = when (action) {
+        is TextModalModel.Action.Dismiss -> {
+            {
+                context.executors.state.execute {
+                    Log.i(INTERACTIONS, "Note dismissed")
+                    // engage event
+                    val data = createEventData(action, index)
+                    engageCodePoint(CODE_POINT_DISMISS, data, action.id)
                 }
             }
         }
+        is TextModalModel.Action.Invoke -> {
+            {
+                context.executors.state.execute {
+                    Log.i(INTERACTIONS, "Note action invoked")
+
+                    // run invocation
+                    val result = context.engage(action.invocations)
+
+                    // engage event
+                    val data = createEventData(action, index, result)
+                    engageCodePoint(CODE_POINT_INTERACTION, data, action.id)
+                }
+            }
+        }
+        is TextModalModel.Action.Event -> {
+            {
+                context.executors.state.execute {
+                    Log.i(INTERACTIONS, "Note event engaged")
+
+                    // engage target event
+                    val result = context.engage(
+                        event = action.event,
+                        interactionId = interaction.id
+                    )
+
+                    // engage event
+                    val data = createEventData(action, index, result)
+                    engageCodePoint(CODE_POINT_EVENT, data, action.id)
+                }
+            }
+        }
+    }
+
+    fun getImageScaleType(): ScaleType = getImageScaleTypeFromConfig(isWiderImage, scaleType ?: LayoutOptions.FULL_WIDTH)
+
+    fun getLayoutParams(currentLayoutParams: LinearLayout.LayoutParams, imageHeight: Int): LayoutParams {
+        return getLayoutParamsForTheImagePositioning(isWiderImage, currentLayoutParams, imageHeight, scaleType ?: LayoutOptions.FULL_WIDTH)
+    }
+
+    fun getPadding(paddingFromDimen: Float): Int {
+        return getPaddingForTheImagePositioning(paddingFromDimen, scaleType ?: LayoutOptions.FULL_WIDTH)
+    }
+
+    fun getModalHeight(maxModalHeight: Int, defaultModalHeight: Int): Int {
+        return getAdjustedModalHeight(maxModalHeight, defaultModalHeight, maxHeight)
+    }
+
+    fun getScalingFactor(deviceDensity: Float): Float =
+        if (scale != null && scale != 0) scale.toFloat() / getDeviceDensity(deviceDensity) else 1f
+
+    private fun getDeviceDensity(deviceDensity: Float): Float = getAdjustedDeviceDensity(deviceDensity)
+
+    fun getAlternateTextGravity(): Int {
+        return getAlternateTextGravity(scaleType ?: LayoutOptions.FULL_WIDTH)
+    }
 
     sealed class ActionModel(open val title: String, open val callback: Callback) {
         data class OtherActionModel(override val title: String, override val callback: Callback) :
@@ -146,6 +194,7 @@ internal class TextModalViewModel : ViewModel() {
         const val CODE_POINT_EVENT = "event"
         const val CODE_POINT_DISMISS = "dismiss"
         const val CODE_POINT_CANCEL = "cancel"
+        const val MAX_IMAGE_WIDTH = 1000
 
         private const val DATA_ACTION_ID = "action_id"
         private const val DATA_ACTION_LABEL = "label"

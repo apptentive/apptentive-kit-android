@@ -35,4 +35,5 @@ object LogTags {
     val PUSH_NOTIFICATION = LogTag("PUSH_NOTIFICATION")
     val SURVEY = LogTag("SURVEY")
     val STATE_MACHINE = LogTag("STATE_MACHINE")
+    val PREFETCH_RESOURCES = LogTag("PREFETCH_RESOURCES")
 }

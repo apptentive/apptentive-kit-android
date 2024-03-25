@@ -307,25 +307,6 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
 
         private const val SQL_QUERY_DROP_TABLE = "DROP TABLE IF EXISTS $TABLE_NAME"
     }
-
-    private fun doesColumnExist(db: SQLiteDatabase, column: Column): Boolean {
-        val columns = db.rawQuery("PRAGMA table_info($TABLE_NAME)", null)
-
-        // Check if the column 'new_column' exists
-        val columnIndex = columns.getColumnIndex("name")
-        var columnExists = false
-
-        while (columns.moveToNext()) {
-            if (columns.getString(columnIndex) == column.toString()) {
-                columnExists = true
-                break
-            }
-        }
-
-        columns.close()
-
-        return columnExists
-    }
 }
 
 private data class Column(val index: Int, val name: String) {

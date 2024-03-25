@@ -13,6 +13,7 @@ import java.io.File
 internal object FileStorageUtil {
 
     const val CONVERSATION_DIR = "conversations"
+    const val PREFETCH_DIR = "prefetch"
 
     @WorkerThread
     fun getConversationFile(): File {
@@ -26,6 +27,11 @@ internal object FileStorageUtil {
         return File(conversationsDir, "conversation.bin")
     }
 
+    fun getPrefetchFileForActiveUser(directory: String, fileName: String): File {
+        val prefetchDir = getPrefetchDirForActiveUser(directory)
+        return File(prefetchDir, fileName)
+    }
+
     @WorkerThread
     fun getManifestFile(): File {
         val conversationsDir = getConversationDir()
@@ -35,6 +41,12 @@ internal object FileStorageUtil {
     @WorkerThread
     fun getConversationDir(): File {
         return FileUtil.getInternalDir(CONVERSATION_DIR, createIfNecessary = true)
+    }
+
+    @WorkerThread
+    fun getPrefetchDirForActiveUser(directory: String): File {
+        val prefetchDir = "$directory/$PREFETCH_DIR"
+        return FileUtil.getInternalDir(prefetchDir, createIfNecessary = true)
     }
 
     private fun getConversationDirForActiveUser(directory: String): File {
