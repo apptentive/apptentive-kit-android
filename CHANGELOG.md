@@ -1,3 +1,7 @@
+# 2024-03-25 - v6.6.0
+#### New Features
+* Added Image support through dashboard for Prompts(previously called Notes)
+
 # 2023-12-5 - v6.5.1
 #### Improvements
 * Updated google play libraries to support Android 14
