@@ -14,6 +14,7 @@ import apptentive.com.android.feedback.PrefetchManager
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
+import apptentive.com.android.feedback.textmodal.HtmlWrapper.linkifiedHTMLString
 import apptentive.com.android.feedback.utils.getInteractionBackup
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.INTERACTIONS
@@ -41,8 +42,8 @@ internal class TextModalViewModel : ViewModel() {
     private val scaleType = interaction.richContent?.layout
     private val scale = interaction.richContent?.scale
     private var isWiderImage: Boolean = false
-    val title = interaction.title
-    val message = interaction.body
+    val title = linkifiedHTMLString(interaction.title)
+    val message = linkifiedHTMLString(interaction.body)
     val alternateText = interaction.richContent?.alternateText
     val actions = interaction.actions.mapIndexed { index, action ->
         if (action is TextModalModel.Action.Dismiss) {
