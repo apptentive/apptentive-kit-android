@@ -14,11 +14,11 @@ import apptentive.com.android.feedback.engagement.InvocationCallback
 import apptentive.com.android.feedback.engagement.MockEngagementContext
 import apptentive.com.android.feedback.engagement.criteria.InvocationConverter
 import apptentive.com.android.feedback.model.InvocationData
-import apptentive.com.android.feedback.textmodal.HtmlWrapper
 import apptentive.com.android.feedback.textmodal.TextModalActionConfiguration
 import apptentive.com.android.feedback.textmodal.TextModalInteraction
 import apptentive.com.android.feedback.textmodal.TextModalInteractionProvider
 import apptentive.com.android.feedback.textmodal.TextModalViewModel
+import apptentive.com.android.feedback.utils.HtmlWrapper
 import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockkObject

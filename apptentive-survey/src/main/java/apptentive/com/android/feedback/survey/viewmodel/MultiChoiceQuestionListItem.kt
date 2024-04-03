@@ -8,6 +8,7 @@ import androidx.core.widget.doAfterTextChanged
 import apptentive.com.android.feedback.survey.R
 import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion
 import apptentive.com.android.feedback.survey.view.SurveyQuestionContainerView
+import apptentive.com.android.feedback.utils.HtmlWrapper.linkifiedHTMLString
 import apptentive.com.android.ui.ListViewItem
 import apptentive.com.android.ui.setInvalid
 import com.google.android.material.checkbox.MaterialCheckBox
@@ -120,7 +121,7 @@ internal class MultiChoiceQuestionListItem(
                     if (item.allowMultipleAnswers) choiceView.findViewById<MaterialCheckBox>(R.id.apptentive_checkbox)
                     else choiceView.findViewById<MaterialRadioButton>(R.id.apptentive_radiobutton)
 
-                compoundButton.text = choice.title
+                compoundButton.text = linkifiedHTMLString(choice.title)
                 compoundButton.isChecked = choice.isChecked
 
                 compoundButton.setOnCheckedChangeListener { _, isChecked ->

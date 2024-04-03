@@ -1,9 +1,11 @@
 package apptentive.com.android.feedback.survey.viewmodel
 
+import android.text.method.LinkMovementMethod
 import android.view.View
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import apptentive.com.android.feedback.survey.R
+import apptentive.com.android.feedback.utils.HtmlWrapper.linkifiedHTMLString
 import apptentive.com.android.ui.ApptentiveViewHolder
 import apptentive.com.android.ui.ListViewItem
 import com.google.android.material.button.MaterialButton
@@ -78,7 +80,10 @@ internal class SurveyFooterListItem(
         override fun bindView(item: SurveyFooterListItem, position: Int) {
             // Null checks here instead of .orEmpty() so in case text is set in customization
             if (item.buttonTitle != null) submitButton.text = item.buttonTitle
-            if (item.disclaimerText != null) disclaimerTextView.text = item.disclaimerText
+            if (item.disclaimerText != null) {
+                disclaimerTextView.text = linkifiedHTMLString(item.disclaimerText)
+                disclaimerTextView.movementMethod = LinkMovementMethod.getInstance()
+            }
 
             updateMessageState(item.messageState)
         }

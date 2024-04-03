@@ -14,7 +14,7 @@ import apptentive.com.android.feedback.PrefetchManager
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
-import apptentive.com.android.feedback.textmodal.HtmlWrapper.linkifiedHTMLString
+import apptentive.com.android.feedback.utils.HtmlWrapper.linkifiedHTMLString
 import apptentive.com.android.feedback.utils.getInteractionBackup
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.INTERACTIONS
