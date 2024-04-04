@@ -97,7 +97,7 @@ internal class SurveyFooterListItem(
         private fun updateMessageState(messageState: SurveySubmitMessageState?) {
             if (messageState != null) {
                 if (messageState.isValid) {
-                    Toast.makeText(errorMessageView.context, messageState.message, LENGTH_SHORT).show()
+                    Toast.makeText(errorMessageView.context, linkifiedHTMLString(messageState.message), LENGTH_SHORT).show()
                 } else {
                     errorMessageView.text = messageState.message
                     errorMessageView.visibility = View.VISIBLE

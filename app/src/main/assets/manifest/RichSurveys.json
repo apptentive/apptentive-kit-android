@@ -23,8 +23,8 @@
                 "id": "614b6b14a59ced71af000193",
                 "type": "multichoice",
                 "required": false,
-                "instructions": "select <strike>two</strike> <br> one www.google.com",
-                "value": "Single Select",
+                "instructions": "select two one",
+                "value": "<strike>Multi</strike>Single Select<br> <a href=https://www.google.com>link</a>",
                 "error_message": "Error - There was a problem with your single-select answer.",
                 "answer_choices": [
                   {
@@ -206,7 +206,7 @@
         "show_success_message": true,
         "required": false,
         "intro_button_text": "Next",
-        "success_message": "Thank you!",
+        "success_message": "<i>Thank you!</i>",
         "success_button_text": "Close",
         "show_disclaimer": true,
         "disclaimer_text": "Alchemer <a href=\"https://www.alchemer.com\">Disclaimer</a>"
@@ -236,8 +236,8 @@
                 "logical_id": "64cbbe84a9c3470b2bb2951d",
                 "type": "multichoice",
                 "required": true,
-                "instructions": "<html>select <strike>two</strike> <br>  <b>one</b> <a href=https://www.google.com>link</a> </html>",
-                "value": "Single",
+                "instructions": "select one",
+                "value": "<html> <strike>Multi</strike> Single  <br> <a href=https://www.google.com>link</a> </html>",
                 "error_message": "Error - There was a problem with your single-select answer.",
                 "answer_choices": [
                   {

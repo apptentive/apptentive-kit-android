@@ -69,7 +69,7 @@ internal class SurveyQuestionContainerView(
 
         try {
             Linkify.addLinks(titleTextView, Linkify.ALL)
-            instructionsTextView.movementMethod = LinkMovementMethod.getInstance()
+            titleTextView.movementMethod = LinkMovementMethod.getInstance()
         } catch (exception: Exception) {
             Log.e(SURVEY, "Couldn't add linkify to survey title text", exception)
         }

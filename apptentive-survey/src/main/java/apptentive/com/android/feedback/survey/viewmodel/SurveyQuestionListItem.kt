@@ -93,7 +93,7 @@ internal abstract class SurveyQuestionListItem(
             _questionId = item.id
 
             // title
-            containerView.title = item.title
+            containerView.title = linkifiedHTMLString(item.title)
 
             // instructions
             containerView.instructions = linkifiedHTMLString(item.instructions)
