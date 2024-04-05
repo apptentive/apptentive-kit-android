@@ -435,7 +435,7 @@
         ],
         "title": "Skip Logic all types required",
         "name": "Test required all types",
-        "description": "<html> Test required all <b>types</b> </html>",
+        "description": "<html> Test required all <b>types</b> <a href=https://alchemer.com>alchemer</a> </html>",
         "render_as": "paged",
         "show_success_message": true,
         "required": false,
