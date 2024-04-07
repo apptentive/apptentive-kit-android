@@ -27,6 +27,7 @@
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/apptentive_question_instructions"
                 style="?apptentiveSurveyQuestionInstructionsStyle"
+                android:focusableInTouchMode="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:text="@string/apptentive_required" />

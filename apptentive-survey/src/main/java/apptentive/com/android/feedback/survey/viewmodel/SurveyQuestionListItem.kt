@@ -4,6 +4,7 @@ import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.annotation.CallSuper
 import apptentive.com.android.feedback.survey.view.SurveyQuestionContainerView
+import apptentive.com.android.feedback.utils.HtmlWrapper.linkifiedHTMLString
 import apptentive.com.android.ui.ApptentiveViewHolder
 import apptentive.com.android.ui.ListViewItem
 
@@ -92,10 +93,10 @@ internal abstract class SurveyQuestionListItem(
             _questionId = item.id
 
             // title
-            containerView.title = item.title
+            containerView.title = linkifiedHTMLString(item.title)
 
             // instructions
-            containerView.instructions = item.instructions
+            containerView.instructions = linkifiedHTMLString(item.instructions)
 
             // accessibility description
             val instructionDescription = if (!item.instructions.isNullOrBlank()) "${item.instructions}." else ""

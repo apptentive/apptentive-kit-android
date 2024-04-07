@@ -69,8 +69,8 @@
       "id": "548cc5dd49f63bb5c2000003",
       "type": "TextModal",
       "configuration": {
-        "title": "New Promotion!",
-        "body": " Redeem our exclusive promotion today and treat yourself to more discounts.",
+        "title": "<html><body><ul><li> Wide Image (Full Width and Bullet List)</li></ul></body></html>",
+        "body": "<html><body><ul><li> &nbsp; &nbsp; Redeem our exclusive promotion today and treat yourself to more discounts.</li> <li> second line </li></ul></body></html>",
         "actions": [
           {
             "id": "action_id_1",
@@ -362,9 +362,75 @@
           }
         }
       }
+    },
+    {
+      "id": "HTML Links",
+      "type": "TextModal",
+      "api_version": "14",
+      "configuration": {
+        "title": "<html>HTML <a href=https://www.google.com>Links</a></html>",
+        "body": "<html>This Html message has a web url https://www.alchemer.com, a HTML &lt;a&gt; ref, an <a href=mailto:support@apptentive.com>email</a> and a number <a href=\"tel:123-456-7890\">Call us at 123-456-7890</a>\n </html>",
+        "actions": [
+          {
+            "id": "action_id_1",
+            "label": "Redeem",
+            "action": "interaction",
+            "invokes": [
+              {
+                "interaction_id": "54a3437b7724c57cf6000043",
+                "criteria": {}
+              }
+            ]
+          },
+          {
+            "id": "action_id_2",
+            "label": "Dismiss",
+            "action": "dismiss"
+          }
+        ]
+      }
+    },
+    {
+      "id": "Rich text",
+      "type": "TextModal",
+      "api_version": "14",
+      "configuration": {
+        "title": "<b>Rich text with HTML tags</b>",
+        "body": "<ol><li>&nbsp;Ordered List</li><li>&nbsp;<u>underline</u></li><li>&nbsp;<i>italicized</i></li><li>&nbsp<strong>bold</strong></li></ol>",
+        "actions": [
+          {
+            "id": "action_id_1",
+            "label": "Redeem",
+            "action": "interaction",
+            "invokes": [
+              {
+                "interaction_id": "54a3437b7724c57cf6000043",
+                "criteria": {}
+              }
+            ]
+          },
+          {
+            "id": "action_id_2",
+            "label": "Dismiss",
+            "action": "dismiss"
+          }
+        ]
+      }
     }
   ],
   "targets": {
+    "local#app#html-links": [
+      {
+        "interaction_id": "HTML Links",
+        "criteria": {}
+      }
+    ],
+    "local#app#rich-text": [
+      {
+        "interaction_id": "Rich text",
+        "criteria": {}
+      }
+    ],
     "local#app#note_event": [
       {
         "interaction_id": "548cc5dd49f63bb5c2000001",

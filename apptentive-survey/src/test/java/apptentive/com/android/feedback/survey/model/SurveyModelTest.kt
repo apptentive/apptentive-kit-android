@@ -1,16 +1,30 @@
 package apptentive.com.android.feedback.survey.model
 
-import android.text.SpannedString
+import android.text.SpannableString
 import apptentive.com.android.TestCase
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.MockEngagementContext
 import apptentive.com.android.feedback.engagement.MockEngagementContextFactory
+import apptentive.com.android.feedback.survey.utils.SpannedUtils
+import apptentive.com.android.feedback.utils.HtmlWrapper
+import apptentive.com.android.feedback.utils.HtmlWrapper.linkifiedHTMLString
+import io.mockk.every
+import io.mockk.mockkObject
+import org.junit.Before
 import org.junit.Test
 
 class SurveyModelTest : TestCase() {
     //region Question Stream
 
+    @Before
+    fun setup() {
+        mockkObject(HtmlWrapper)
+        every { HtmlWrapper.toHTMLString(any()) } returns SpannableString("TEST")
+        every { linkifiedHTMLString(any()) } returns SpannableString("TEST")
+        mockkObject(SpannedUtils)
+        every { SpannedUtils.isSpannedNotNullOrEmpty(any()) } returns true
+    }
     @Test
     fun testQuestionStream() {
         val model = createSurveyModel(
@@ -109,7 +123,7 @@ internal fun createSurveyModel(
     closeConfirmMessage = "All the changes will be lost",
     closeConfirmCloseText = "close",
     closeConfirmBackText = "Back to survey",
-    termsAndConditionsLinkText = SpannedString("Terms & Conditions"),
+    termsAndConditionsLinkText = linkifiedHTMLString("Terms & Conditions"),
     disclaimerText = "Disclaimer text",
     introButtonText = "START",
     successButtonText = "THANK YOU",

@@ -2,6 +2,7 @@ package apptentive.com.android.feedback.survey.view
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -68,6 +69,7 @@ internal class SurveyQuestionContainerView(
 
         try {
             Linkify.addLinks(titleTextView, Linkify.ALL)
+            titleTextView.movementMethod = LinkMovementMethod.getInstance()
         } catch (exception: Exception) {
             Log.e(SURVEY, "Couldn't add linkify to survey title text", exception)
         }
