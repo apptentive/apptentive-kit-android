@@ -20,6 +20,7 @@
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/apptentive_question_title"
                 style="?apptentiveSurveyQuestionTitleStyle"
+                android:focusableInTouchMode="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:text="Question Title" />
