@@ -372,9 +372,9 @@
     </style>
 
     <style name="Apptentive.Survey.Layout.Question" parent="">
-        <item name="android:accessibilityHeading" tools:targetApi="p">true</item>
         <item name="android:gravity">start</item>
         <item name="android:orientation">vertical</item>
+        <item name ="android:importantForAccessibility">no</item>
         <item name="android:layout_marginTop">@dimen/apptentive_survey_question_top_margin</item>
         <item name="android:layout_marginBottom">@dimen/apptentive_survey_question_bottom_margin</item>
     </style>
@@ -487,7 +487,7 @@
         <item name="android:textColor">?apptentiveTextColorTitle</item>
         <item name="android:typeface">?apptentiveTypefaceTitle</item>
         <item name="android:fontFamily">?apptentiveFontFamilySubhead</item>
-        <item name="android:importantForAccessibility">no</item>
+        <item name="android:importantForAccessibility">yes</item>
         <item name="android:alpha">?apptentiveHeaderAlpha</item>
         <item name="android:layout_marginBottom">@dimen/apptentive_survey_question_title_bottom_margin</item>
         <item name="android:layout_marginStart">@dimen/apptentive_activity_horizontal_margin_padding</item>
@@ -516,7 +516,7 @@
 
     <style name="Apptentive.TextAppearance.Caption.Survey.Instructions">
         <item name="android:textColor">?apptentiveTextColorSurveyQuestionInstructions</item>
-        <item name="android:importantForAccessibility">no</item>
+        <item name="android:importantForAccessibility">yes</item>
         <item name="android:alpha">?apptentiveSubheaderAlpha</item>
         <item name="android:layout_marginStart">@dimen/apptentive_activity_horizontal_margin_padding</item>
         <item name="android:layout_marginEnd">@dimen/apptentive_activity_horizontal_margin_padding</item>
