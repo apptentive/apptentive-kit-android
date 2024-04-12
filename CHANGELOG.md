@@ -1,3 +1,7 @@
+# 2024-04-12 - v6.7.0
+### New Features
+* Added rich text support through dashboard for Prompts(previously called Notes) and Surveys
+
 # 2024-03-25 - v6.6.0
 #### New Features
 * Added Image support through dashboard for Prompts(previously called Notes)
