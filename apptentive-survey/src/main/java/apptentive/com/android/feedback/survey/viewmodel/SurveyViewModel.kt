@@ -18,6 +18,7 @@ import apptentive.com.android.feedback.survey.model.SurveyQuestion
 import apptentive.com.android.feedback.survey.model.update
 import apptentive.com.android.feedback.survey.utils.END_OF_QUESTION_SET
 import apptentive.com.android.feedback.survey.utils.getValidAnsweredQuestions
+import apptentive.com.android.feedback.utils.HtmlWrapper.linkifiedHTMLString
 import apptentive.com.android.util.isNotNullOrEmpty
 
 /**
@@ -95,7 +96,7 @@ internal class SurveyViewModel(
     private var anyQuestionWasAnswered: Boolean = false
     private var surveySubmitted: Boolean = false
 
-    val title = model.name
+    val title = linkifiedHTMLString(model.name)
     val termsAndConditions = model.termsAndConditionsLinkText
     val isPaged = model.renderAs == RenderAs.PAGED
     val pageCount = model.questionSet.size
@@ -435,7 +436,16 @@ internal class SurveyViewModel(
 internal data class SurveySubmitMessageState(
     val message: String,
     val isValid: Boolean
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is SurveySubmitMessageState) return false
+
+        //   if (message != other.message) return false
+        if (isValid != other.isValid) return false
+        return true
+    }
+}
 
 data class SurveyCancelConfirmationDisplay(
     val title: String?,

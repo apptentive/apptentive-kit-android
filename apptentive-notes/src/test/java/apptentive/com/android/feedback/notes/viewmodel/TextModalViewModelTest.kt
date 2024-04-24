@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.notes.viewmodel
 
+import android.text.SpannableString
 import apptentive.com.android.TestCase
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.Provider
@@ -17,7 +18,10 @@ import apptentive.com.android.feedback.textmodal.TextModalActionConfiguration
 import apptentive.com.android.feedback.textmodal.TextModalInteraction
 import apptentive.com.android.feedback.textmodal.TextModalInteractionProvider
 import apptentive.com.android.feedback.textmodal.TextModalViewModel
+import apptentive.com.android.feedback.utils.HtmlWrapper
 import com.google.common.truth.Truth.assertThat
+import io.mockk.every
+import io.mockk.mockkObject
 import org.junit.Before
 import org.junit.Test
 
@@ -309,6 +313,9 @@ class TextModalViewModelTest : TestCase() {
     //region Helpers
 
     private fun createViewModel(): TextModalViewModel {
+        mockkObject(HtmlWrapper)
+        every { HtmlWrapper.toHTMLString(any()) } returns SpannableString("TEST")
+        every { HtmlWrapper.linkifiedHTMLString(any()) } returns SpannableString("TEST")
         val viewModel = TextModalViewModel()
         viewModel.onDismiss = { addResult(RESULT_DISMISS_UI) }
         return viewModel

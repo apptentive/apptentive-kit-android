@@ -39,6 +39,7 @@ dependencies {
     testImplementation project(':apptentive-feedback-test')
     testImplementation "androidx.test:core:$androidx_test_version"
     testImplementation "com.google.truth:truth:$truth_version"
+    testImplementation "io.mockk:mockk:1.12.0"
 
     androidTestImplementation "androidx.test.ext:junit:$androidx_junit_ext_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"

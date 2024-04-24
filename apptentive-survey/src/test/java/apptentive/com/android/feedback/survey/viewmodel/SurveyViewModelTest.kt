@@ -1,6 +1,6 @@
 package apptentive.com.android.feedback.survey.viewmodel
 
-import android.text.SpannedString
+import android.text.SpannableString
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import apptentive.com.android.TestCase
 import apptentive.com.android.concurrent.mockExecutors
@@ -15,9 +15,15 @@ import apptentive.com.android.feedback.survey.model.createMultiChoiceQuestionFor
 import apptentive.com.android.feedback.survey.model.createRangeQuestionForV12
 import apptentive.com.android.feedback.survey.model.createSingleLineQuestionForV12
 import apptentive.com.android.feedback.survey.model.createSurveyModel
+import apptentive.com.android.feedback.survey.utils.SpannedUtils
 import apptentive.com.android.feedback.survey.utils.getValidAnsweredQuestions
+import apptentive.com.android.feedback.utils.HtmlWrapper
+import apptentive.com.android.feedback.utils.HtmlWrapper.linkifiedHTMLString
 import com.google.common.truth.Truth.assertThat
+import io.mockk.every
+import io.mockk.mockkObject
 import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
@@ -31,6 +37,16 @@ class SurveyViewModelTest : TestCase() {
 
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
+
+    @Before
+    fun setup() {
+        mockkObject(HtmlWrapper)
+        every { HtmlWrapper.toHTMLString(any()) } returns SpannableString("TEST")
+        every { linkifiedHTMLString(any()) } returns SpannableString("TEST")
+        mockkObject(SpannedUtils)
+        every { SpannedUtils.isSpannedNotNullOrEmpty(any()) } returns true
+        every { SpannedUtils.convertToString(any()) } answers { "TEST" }
+    }
 
     @Test
     fun testListItems() {
@@ -53,7 +69,7 @@ class SurveyViewModelTest : TestCase() {
             SingleLineQuestionListItem(
                 id = questionId1,
                 title = "title 1",
-                instructions = "Required"
+                instructions = ("Required")
             ),
             SingleLineQuestionListItem(
                 id = questionId2,
@@ -568,7 +584,7 @@ class SurveyViewModelTest : TestCase() {
 
         // create a view model
         val viewModel = createViewModel(
-            validationError = surveyValidationErrorState.message
+            validationError = "Survey is not valid"
         )
 
         viewModel.exitStream.observeForever {
@@ -630,7 +646,7 @@ class SurveyViewModelTest : TestCase() {
             closeConfirmMessage = "All the changes will be lost",
             closeConfirmCloseText = "close",
             closeConfirmBackText = "Back to survey",
-            termsAndConditionsLinkText = SpannedString("Terms & Conditions"),
+            termsAndConditionsLinkText = linkifiedHTMLString("Terms & Conditions"),
             disclaimerText = "Disclaimer text",
             introButtonText = "INTRO",
             successButtonText = "THANKS!",

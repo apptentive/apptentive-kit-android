@@ -6,6 +6,7 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
@@ -68,6 +69,7 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
                         contentLayout.findViewById<MaterialTextView>(R.id.apptentive_note_title_or_message_only)
                     titleView.text =
                         if (viewModel.title != null) viewModel.title else viewModel.message
+                    titleView.movementMethod = LinkMovementMethod.getInstance()
                     if (viewModel.title == null && viewModel.message == null) titleView.visibility = View.GONE
                     scrollView.addView(contentLayout)
                 } else -> {
@@ -79,7 +81,9 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
                         contentLayout.findViewById<MaterialTextView>(R.id.apptentive_note_title_with_message)
                     val messageView = contentLayout.findViewById<MaterialTextView>(R.id.apptentive_note_message)
                     titleView.text = viewModel.title
+                    titleView.movementMethod = LinkMovementMethod.getInstance()
                     messageView.text = viewModel.message
+                    messageView.movementMethod = LinkMovementMethod.getInstance()
                     scrollView.addView(contentLayout)
                 }
             }

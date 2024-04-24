@@ -1,6 +1,6 @@
 package apptentive.com.android.feedback.survey.interaction
 
-import android.text.SpannedString
+import android.text.SpannableString
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import apptentive.com.android.TestCase
 import apptentive.com.android.core.DependencyProvider
@@ -22,9 +22,12 @@ import apptentive.com.android.feedback.survey.model.createMultiChoiceQuestionFor
 import apptentive.com.android.feedback.survey.model.createRangeQuestionForV12
 import apptentive.com.android.feedback.survey.model.createSingleLineQuestionForV12
 import apptentive.com.android.feedback.survey.utils.createSurveyViewModel
+import apptentive.com.android.feedback.utils.HtmlWrapper
+import apptentive.com.android.feedback.utils.HtmlWrapper.linkifiedHTMLString
 import apptentive.com.android.toProperJson
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkObject
 import org.junit.Rule
 import org.junit.Test
 
@@ -39,7 +42,9 @@ class SurveyInteractionLauncherTest : TestCase() {
     @Test
     fun testViewModel() {
         DependencyProvider.register<ConversationCredentialProvider>(MockConversationCredential())
-
+        mockkObject(HtmlWrapper)
+        every { HtmlWrapper.toHTMLString(any()) } returns SpannableString("TEST")
+        every { HtmlWrapper.linkifiedHTMLString(any()) } returns SpannableString("TEST")
         val context = createEngagementContext()
         val model = createSurveyModel(
             createSingleLineQuestionForV12(id = "id_1"),
@@ -118,7 +123,7 @@ class SurveyInteractionLauncherTest : TestCase() {
             closeConfirmMessage = "All the changes will be lost",
             closeConfirmCloseText = "close",
             closeConfirmBackText = "Back to survey",
-            termsAndConditionsLinkText = SpannedString("Terms & Conditions"),
+            termsAndConditionsLinkText = linkifiedHTMLString("Terms & Conditions"),
             disclaimerText = "Disclaimer text",
             introButtonText = "START",
             renderAs = RenderAs.LIST,

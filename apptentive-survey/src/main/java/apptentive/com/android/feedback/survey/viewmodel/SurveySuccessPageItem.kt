@@ -1,9 +1,9 @@
 package apptentive.com.android.feedback.survey.viewmodel
 
 import android.text.method.LinkMovementMethod
-import android.text.util.Linkify
 import android.view.View
 import apptentive.com.android.feedback.survey.R
+import apptentive.com.android.feedback.utils.HtmlWrapper.linkifiedHTMLString
 import apptentive.com.android.ui.ApptentiveViewHolder
 import apptentive.com.android.ui.ListViewItem
 import apptentive.com.android.util.Log
@@ -45,15 +45,13 @@ internal class SurveySuccessPageItem(val success: String, val disclaimer: String
         private val disclaimerView = itemView.findViewById<MaterialTextView>(R.id.apptentive_survey_disclaimer)
 
         override fun bindView(item: SurveySuccessPageItem, position: Int) {
-            successView.text = item.success
-            disclaimerView.text = item.disclaimer
+            successView.text = linkifiedHTMLString(item.success)
+            disclaimerView.text = linkifiedHTMLString(item.disclaimer)
 
             if (item.disclaimer.isBlank()) disclaimerView.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
 
             try {
-                Linkify.addLinks(successView, Linkify.ALL)
                 successView.movementMethod = LinkMovementMethod.getInstance()
-                Linkify.addLinks(disclaimerView, Linkify.ALL)
                 disclaimerView.movementMethod = LinkMovementMethod.getInstance()
             } catch (exception: Exception) {
                 Log.e(SURVEY, "Couldn't add linkify to survey success or disclaimer text", exception)

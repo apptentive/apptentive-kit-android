@@ -1,16 +1,32 @@
 package apptentive.com.android.feedback.survey.viewmodel
 
+import android.text.SpannableString
 import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion
 import apptentive.com.android.feedback.survey.model.createMultiChoiceQuestion
 import apptentive.com.android.feedback.survey.model.createRangeQuestion
 import apptentive.com.android.feedback.survey.model.createSingleLineQuestion
+import apptentive.com.android.feedback.survey.utils.SpannedUtils
+import apptentive.com.android.feedback.utils.HtmlWrapper
+import apptentive.com.android.feedback.utils.HtmlWrapper.linkifiedHTMLString
 import com.google.common.truth.Truth.assertThat
+import io.mockk.every
+import io.mockk.mockkObject
+import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 
 class DefaultSurveyQuestionListItemFactoryTest {
-    //region SingleLineQuestion
+    @Before
+    fun setup() {
+        mockkObject(HtmlWrapper)
+        every { HtmlWrapper.toHTMLString(any()) } returns SpannableString("TEST")
+        every { linkifiedHTMLString(any()) } returns SpannableString("TEST")
+        mockkObject(SpannedUtils)
+        every { SpannedUtils.isSpannedNotNullOrEmpty(any()) } returns true
+        every { SpannedUtils.convertToString(any()) } answers { "TEST" }
+    }
 
+    //region SingleLineQuestion
     @Test
     fun testSingleLineValidRequiredQuestionAndPressSubmitButton() = testSingleLineQuestion(
         required = true,
