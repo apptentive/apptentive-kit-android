@@ -32,7 +32,8 @@ class NavigateToLinkInteractionTypeConverterTest {
         val expected = NavigateToLinkInteraction(
             id = "id",
             url = "http://www.apptentive.com",
-            target = target
+            target = target,
+            appendVariables = emptyList()
         )
         assertThat(actual).isEqualTo(expected)
     }
