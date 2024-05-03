@@ -32,7 +32,8 @@ class LinkNavigatorTest : TestCase() {
         val interaction = NavigateToLinkInteraction(
             id = "id",
             url = "https://example.com",
-            target = target
+            target = target,
+            appendVariables = emptyList()
         )
         LinkNavigator.navigate(context, interaction) {
             activityLaunched
