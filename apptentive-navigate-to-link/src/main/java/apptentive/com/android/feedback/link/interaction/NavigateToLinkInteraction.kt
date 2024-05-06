@@ -1,4 +1,4 @@
-package apptentive.com.android.feedback.link
+package apptentive.com.android.feedback.link.interaction
 
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
