@@ -69,6 +69,10 @@
         <item name="apptentiveGenericDialogPositiveButtonStyle">@style/Apptentive.Widget.Dialog.Button.SideBySide.Yes</item>
         <item name="apptentiveGenericDialogNegativeButtonStyle">@style/Apptentive.Widget.Dialog.Button.SideBySide.No</item>
 
+        <!-- Navigate to Link In-app mode Styles -->
+        <item name="apptentiveNavigateToLinkImageStyle">@style/Apptentive.Widget.NavigateToLink.Image</item>
+        <item name="apptentiveNavigateToLinkToolbarStyle">@style/Apptentive.Widget.NavigateToLink.Toolbar</item>
+
         <!-- Survey Styles Start -->
         <!-- Layout -->
         <item name="apptentiveSurveyLayoutStyle">@style/Apptentive.Survey.Layout</item>
@@ -440,6 +444,13 @@
 
     <style name="Apptentive.TextAppearance.Title.Dialog.TitleOrMessageOnly.Note"/>
     <!-- Dialog Text Styles End -->
+
+    <!-- Navigate to Link in-app styles -->
+    <style name="Apptentive.Widget.NavigateToLink" />
+
+    <style name="Apptentive.Widget.NavigateToLink.Image" />
+
+    <style name="Apptentive.Widget.NavigateToLink.Toolbar" />
 
     <!-- Survey Text Styles Start -->
     <style name="Apptentive.TextAppearance.Title.Survey">
