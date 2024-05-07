@@ -33,7 +33,6 @@ internal class NavigateToLinkInteractionLauncher : InteractionLauncher<NavigateT
                     interaction
                 )
             }
-            //    LinkNavigator.navigate(engagementContext, engagementContext.getAppActivity(), interaction)
         }
     }
 }
