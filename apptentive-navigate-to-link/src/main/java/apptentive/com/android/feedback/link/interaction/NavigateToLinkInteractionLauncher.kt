@@ -1,11 +1,8 @@
 package apptentive.com.android.feedback.link.interaction
 
-import android.os.Bundle
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.interactions.InteractionLauncher
 import apptentive.com.android.feedback.link.LinkNavigator
-import apptentive.com.android.feedback.link.view.NavigateTolinkActivity
-import apptentive.com.android.ui.startViewModelActivity
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.INTERACTIONS
 
