@@ -4,7 +4,6 @@ import android.app.Activity
 import androidx.activity.viewModels
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
-import apptentive.com.android.feedback.messagecenter.viewmodel.MessageCenterViewModel
 import apptentive.com.android.feedback.messagecenter.viewmodel.ProfileViewModel
 import apptentive.com.android.ui.ApptentiveViewModelActivity
 import apptentive.com.android.ui.ViewModelFactory
@@ -20,8 +19,8 @@ import apptentive.com.android.ui.ViewModelFactory
 
 open class BaseProfileActivity : ApptentiveViewModelActivity(), ApptentiveActivityInfo {
     /**
-     * @property viewModel [MessageCenterViewModel] class that is responsible for preparing
-     * and managing messages for [MessageCenterActivity]
+     * @property viewModel [ProfileViewModel] class that is responsible for preparing
+     * and managing messages for [ProfileActivity]
      *
      */
     val viewModel: ProfileViewModel by viewModels {

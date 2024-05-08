@@ -11,4 +11,10 @@
         </intent>
     </queries>
 
+    <application>
+        <activity
+            android:name=".view.NavigateTolinkActivity"
+            android:theme="@style/Theme.Apptentive" />
+    </application>
+
 </manifest>

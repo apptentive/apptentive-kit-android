@@ -6,6 +6,7 @@ import apptentive.com.android.feedback.engagement.EngageArgs
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.MockEngagementContext
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
+import apptentive.com.android.feedback.link.interaction.NavigateToLinkInteraction
 import org.junit.Test
 
 class LinkNavigatorTest : TestCase() {

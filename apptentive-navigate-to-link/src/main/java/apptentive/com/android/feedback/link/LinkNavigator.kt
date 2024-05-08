@@ -7,6 +7,7 @@ import androidx.annotation.MainThread
 import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.Event
+import apptentive.com.android.feedback.link.interaction.NavigateToLinkInteraction
 import apptentive.com.android.feedback.platform.tryStartActivity
 
 internal object LinkNavigator {
@@ -54,6 +55,8 @@ private fun NavigateToLinkInteraction.createIntent(): Intent {
     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
     if (target == NavigateToLinkInteraction.Target.new) {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    } else {
+        intent.putExtra("SELF_TARGET", true)
     }
     return intent
 }
