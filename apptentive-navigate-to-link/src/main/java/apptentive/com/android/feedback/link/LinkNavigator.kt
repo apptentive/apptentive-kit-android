@@ -3,12 +3,15 @@ package apptentive.com.android.feedback.link
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import androidx.annotation.MainThread
 import androidx.annotation.VisibleForTesting
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.link.interaction.NavigateToLinkInteraction
+import apptentive.com.android.feedback.link.view.NavigateTolinkActivity
 import apptentive.com.android.feedback.platform.tryStartActivity
+import apptentive.com.android.ui.startViewModelActivity
 
 internal object LinkNavigator {
     @MainThread
@@ -20,7 +23,15 @@ internal object LinkNavigator {
         context = context,
         interaction = interaction
     ) {
-        activityContext.tryStartActivity(interaction.createIntent()) // this way we can use unit-tests
+        if (interaction.target == NavigateToLinkInteraction.Target.self) {
+            context.getAppActivity().startViewModelActivity<NavigateTolinkActivity>(
+                extras = Bundle().apply {
+                    putString("linkUrl", interaction.url)
+                }
+            )
+            true
+        } else
+            activityContext.tryStartActivity(interaction.createIntent()) // this way we can use unit-tests
     }
 
     @MainThread
@@ -55,8 +66,6 @@ private fun NavigateToLinkInteraction.createIntent(): Intent {
     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
     if (target == NavigateToLinkInteraction.Target.new) {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-    } else {
-        intent.putExtra("SELF_TARGET", true)
     }
     return intent
 }
