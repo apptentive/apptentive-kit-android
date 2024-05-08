@@ -450,7 +450,10 @@
 
     <style name="Apptentive.Widget.NavigateToLink.Image" />
 
-    <style name="Apptentive.Widget.NavigateToLink.Toolbar" />
+    <style name="Apptentive.Widget.NavigateToLink.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="navigationIcon">@drawable/apptentive_ic_close</item>
+        <item name="navigationContentDescription">@string/apptentive_close</item>
+    </style>
 
     <!-- Survey Text Styles Start -->
     <style name="Apptentive.TextAppearance.Title.Survey">
