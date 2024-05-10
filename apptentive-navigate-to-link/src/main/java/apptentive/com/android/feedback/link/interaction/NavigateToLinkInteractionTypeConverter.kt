@@ -9,7 +9,6 @@ internal class NavigateToLinkInteractionTypeConverter : InteractionTypeConverter
     override fun convert(data: InteractionData) = NavigateToLinkInteraction(
         id = data.id,
         url = data.configuration.getString("url"),
-        target = NavigateToLinkInteraction.Target.parse(data.configuration.optString("target")),
-        appendVariables = data.configuration.optString("append_variables")?.split(",") ?: emptyList()
+        target = NavigateToLinkInteraction.Target.parse(data.configuration.optString("target"))
     )
 }
