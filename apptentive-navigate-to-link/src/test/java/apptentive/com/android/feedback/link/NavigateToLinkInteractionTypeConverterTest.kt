@@ -35,7 +35,6 @@ class NavigateToLinkInteractionTypeConverterTest {
             id = "id",
             url = "http://www.apptentive.com",
             target = target,
-            appendVariables = emptyList()
         )
         assertThat(actual).isEqualTo(expected)
     }
