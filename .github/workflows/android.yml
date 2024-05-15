@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "develop" ]
   pull_request:
-    branches: [ "develop", "PBI-6074-rich-content-text" ]
+    branches: [ "develop", "PBI-6453-Advanced-Customer-Research" ]
     
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}

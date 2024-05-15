@@ -1,0 +1,223 @@
+{
+  "interactions": [
+    {
+      "id": "55e6037a45ce55118900001a",
+      "display_type": null,
+      "type": "TextModal",
+      "version": 1,
+      "api_version": 12,
+      "configuration": {
+        "actions": [
+          {
+            "id": "60f8683ff40707044100005a",
+            "action": "interaction",
+            "label": "Google Link",
+            "invokes": [
+              {
+                "interaction_id": "56b248fac21f96e6700001d3",
+                "criteria": {}
+              }
+            ]
+          },
+          {
+            "id": "6153364e0853573952000063",
+            "action": "interaction",
+            "label": "Deep Link",
+            "invokes": [
+              {
+                "interaction_id": "6153364e0853573952000064",
+                "criteria": {}
+              }
+            ]
+          },
+          {
+            "id": "621678fa48b9d6271a00005c",
+            "action": "interaction",
+            "label": "Survey",
+            "invokes": [
+              {
+                "interaction_id": "55e6033045ce5551eb00000b",
+                "criteria": {}
+              }
+            ]
+          },
+          {
+            "id": "55e6037a45ce551189000019",
+            "action": "dismiss",
+            "label": "Dismiss"
+          }
+        ],
+        "title": "This is the message title. Lorem ipsum dolor sit amet, consectet",
+        "body": "This is the message content. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit e",
+        "position": "center",
+        "name": "Long message 4 actions test note"
+      }
+    },
+    {
+      "id": "55e6037a45ce55118900001b",
+      "display_type": null,
+      "type": "TextModal",
+      "version": 1,
+      "api_version": 12,
+      "configuration": {
+        "actions": [
+          {
+            "id": "60f8683ff40707044100005a",
+            "action": "interaction",
+            "label": "Google Link",
+            "invokes": [
+              {
+                "interaction_id": "56b248fac21f96e6700001d4",
+                "criteria": {}
+              }
+            ]
+          },
+          {
+            "id": "6153364e0853573952000063",
+            "action": "interaction",
+            "label": "Deep Link",
+            "invokes": [
+              {
+                "interaction_id": "6153364e0853573952000064",
+                "criteria": {}
+              }
+            ]
+          },
+          {
+            "id": "621678fa48b9d6271a00005c",
+            "action": "interaction",
+            "label": "Survey",
+            "invokes": [
+              {
+                "interaction_id": "55e6033045ce5551eb00000b",
+                "criteria": {}
+              }
+            ]
+          },
+          {
+            "id": "55e6037a45ce551189000019",
+            "action": "dismiss",
+            "label": "Dismiss"
+          }
+        ],
+        "title": "This is the message title. Lorem ipsum dolor sit amet, consectet",
+        "body": "This is the message content. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit e",
+        "position": "center",
+        "name": "Long message 4 actions test note"
+      }
+    },
+    {
+      "id": "55e6037a45ce55118900001c",
+      "display_type": null,
+      "type": "TextModal",
+      "version": 1,
+      "api_version": 12,
+      "configuration": {
+        "actions": [
+          {
+            "id": "60f8683ff40707044100005a",
+            "action": "interaction",
+            "label": "Google Link",
+            "invokes": [
+              {
+                "interaction_id": "56b248fac21f96e6700001d5",
+                "criteria": {}
+              }
+            ]
+          },
+          {
+            "id": "6153364e0853573952000063",
+            "action": "interaction",
+            "label": "Deep Link",
+            "invokes": [
+              {
+                "interaction_id": "6153364e0853573952000064",
+                "criteria": {}
+              }
+            ]
+          },
+          {
+            "id": "621678fa48b9d6271a00005c",
+            "action": "interaction",
+            "label": "Survey",
+            "invokes": [
+              {
+                "interaction_id": "55e6033045ce5551eb00000b",
+                "criteria": {}
+              }
+            ]
+          },
+          {
+            "id": "55e6037a45ce551189000019",
+            "action": "dismiss",
+            "label": "Dismiss"
+          }
+        ],
+        "title": "This is the message title. Lorem ipsum dolor sit amet, consectet",
+        "body": "This is the message content. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit e",
+        "position": "center",
+        "name": "Long message 4 actions test note"
+      }
+    },
+    {
+      "id": "56b248fac21f96e6700001d3",
+      "display_type": null,
+      "type": "NavigateToLink",
+      "version": 1,
+      "api_version": 12,
+      "configuration": {
+        "target": "self",
+        "url": "https://www.google.com/"
+      }
+    },
+    {
+      "id": "56b248fac21f96e6700001d4",
+      "display_type": null,
+      "type": "NavigateToLink",
+      "version": 1,
+      "api_version": 12,
+      "configuration": {
+        "target": "new",
+        "url": "https://www.google.com/"
+      }
+    },
+    {
+      "id": "56b248fac21f96e6700001d5",
+      "display_type": null,
+      "type": "NavigateToLink",
+      "version": 1,
+      "api_version": 12,
+      "configuration": {
+        "url": "https://www.google.com/"
+      }
+    },
+    {
+      "id": "6153364e0853573952000064",
+      "display_type": null,
+      "type": "NavigateToLink",
+      "version": 1,
+      "api_version": 12,
+      "configuration": {
+        "target": "new",
+        "url": "apptentive://internal/deeplink"
+      }
+    }
+  ],
+  "targets": {
+    "local#app#note_event": [
+      {
+        "interaction_id": "55e6037a45ce55118900001a",
+        "criteria": {}
+      }],
+    "local#app#new": [
+      {
+        "interaction_id": "55e6037a45ce55118900001b",
+        "criteria": {}
+      }],
+    "local#app#none": [
+      {
+        "interaction_id": "55e6037a45ce55118900001c",
+        "criteria": {}
+      }]
+    }
+}

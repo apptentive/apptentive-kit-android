@@ -79,6 +79,9 @@
         <!-- General foreground/background/fill color -->
 <!--        <item name="apptentiveCustomFocusForegroundColor">@color/color_error </item>-->
 
+        <!-- Navigate to Link In-app mode Styles -->
+<!--        <item name="apptentiveNavigateToLinkImageStyle">@style/Custom.NavigateToLink.Image</item>-->
+<!--        <item name="apptentiveNavigateToLinkToolbarStyle">@style/Custom.NavigateToLink.Toolbar</item>-->
 
         <!-- Survey Styles Start -->
         <!-- Layout -->
@@ -680,6 +683,26 @@
         <item name="android:adjustViewBounds">true</item>
     </style>
     <!-- Dialog Widgets End -->
+
+    <!-- Navigate to Link in-app review style -->
+    <style name="Custom.NavigateToLink" />
+
+    <style name="Custom.NavigateToLink.Image">
+        <item name="android:src">@drawable/example_logo</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_margin">2dp</item>
+        <item name="android:maxHeight">?actionBarSize</item>
+        <item name="android:adjustViewBounds">true</item>
+    </style>
+
+    <style name="Custom.NavigateToLink.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="android:background">@drawable/disney_header</item>
+        <item name="layout_constraintHeight_max">224dp</item>
+        <item name="navigationIcon">@drawable/apptentive_ic_close</item>
+        <item name="navigationContentDescription">Close</item>
+        <item name="navigationIconTint">@android:color/white</item>
+    </style>
+    <!-- Navigate to Link in-app review style End-->
 
     <!-- Survey Widgets Start -->
     <style name="Custom.Survey.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">

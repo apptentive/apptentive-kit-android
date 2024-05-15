@@ -1,4 +1,4 @@
-package apptentive.com.android.feedback.link
+package apptentive.com.android.feedback.link.interaction
 
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
@@ -7,7 +7,7 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionType
 internal class NavigateToLinkInteraction(
     id: InteractionId,
     val url: String,
-    val target: Target
+    val target: Target,
 ) : Interaction(id, InteractionType.NavigateToLink) {
     @Suppress("EnumEntryName")
     enum class Target {

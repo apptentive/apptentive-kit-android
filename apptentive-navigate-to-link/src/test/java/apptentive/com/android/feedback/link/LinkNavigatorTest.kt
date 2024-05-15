@@ -6,6 +6,7 @@ import apptentive.com.android.feedback.engagement.EngageArgs
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.MockEngagementContext
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
+import apptentive.com.android.feedback.link.interaction.NavigateToLinkInteraction
 import org.junit.Test
 
 class LinkNavigatorTest : TestCase() {
@@ -32,7 +33,7 @@ class LinkNavigatorTest : TestCase() {
         val interaction = NavigateToLinkInteraction(
             id = "id",
             url = "https://example.com",
-            target = target
+            target = target,
         )
         LinkNavigator.navigate(context, interaction) {
             activityLaunched
