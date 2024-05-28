@@ -1,11 +1,11 @@
 package apptentive.com.android.feedback.link.view
 
 import android.os.Bundle
+import android.webkit.WebSettings
 import android.webkit.WebView
 import apptentive.com.android.feedback.link.R
 import apptentive.com.android.ui.hideSoftKeyboard
 import com.google.android.material.appbar.MaterialToolbar
-import android.webkit.WebSettings
 
 internal class NavigateTolinkActivity : BaseNavigateToLinkActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
