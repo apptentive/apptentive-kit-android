@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.link.view
 
 import android.os.Bundle
+import android.webkit.WebSettings
 import android.webkit.WebView
 import apptentive.com.android.feedback.link.R
 import apptentive.com.android.ui.hideSoftKeyboard
@@ -20,6 +21,8 @@ internal class NavigateTolinkActivity : BaseNavigateToLinkActivity() {
         }
 
         val webView = findViewById<WebView>(R.id.apptentive_webview_navigate_to_link)
+        val webSettings: WebSettings = webView.settings
+        webSettings.javaScriptEnabled = true
         val url = intent.getStringExtra("linkUrl")
         if (url != null) {
             webView.loadUrl(url)
