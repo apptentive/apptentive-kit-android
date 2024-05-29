@@ -1,6 +1,6 @@
 # 2024-05-29 - v6.8.0
 ### New Features
-* Advanced Customer Research support to show Alchemer Survey long form surveys through prompts
+* Advanced Customer Research support to show Alchemer long form surveys through prompts
 
 # 2024-04-12 - v6.7.0
 ### New Features
