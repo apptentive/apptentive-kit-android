@@ -1,6 +1,8 @@
 package apptentive.com.android.feedback.link
 
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
+import apptentive.com.android.feedback.link.interaction.NavigateToLinkInteraction
+import apptentive.com.android.feedback.link.interaction.NavigateToLinkInteractionTypeConverter
 import apptentive.com.android.util.readJson
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
@@ -32,7 +34,7 @@ class NavigateToLinkInteractionTypeConverterTest {
         val expected = NavigateToLinkInteraction(
             id = "id",
             url = "http://www.apptentive.com",
-            target = target
+            target = target,
         )
         assertThat(actual).isEqualTo(expected)
     }

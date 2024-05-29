@@ -4,9 +4,9 @@ import androidx.annotation.Keep
 import apptentive.com.android.feedback.engagement.interactions.InteractionLauncher
 import apptentive.com.android.feedback.engagement.interactions.InteractionModule
 import apptentive.com.android.feedback.engagement.interactions.InteractionTypeConverter
-import apptentive.com.android.feedback.link.NavigateToLinkInteraction
-import apptentive.com.android.feedback.link.NavigateToLinkInteractionLauncher
-import apptentive.com.android.feedback.link.NavigateToLinkInteractionTypeConverter
+import apptentive.com.android.feedback.link.interaction.NavigateToLinkInteraction
+import apptentive.com.android.feedback.link.interaction.NavigateToLinkInteractionLauncher
+import apptentive.com.android.feedback.link.interaction.NavigateToLinkInteractionTypeConverter
 
 @Keep
 internal class NavigateToLinkModule : InteractionModule<NavigateToLinkInteraction> {

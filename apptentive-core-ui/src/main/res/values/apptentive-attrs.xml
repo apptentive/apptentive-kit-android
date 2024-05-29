@@ -45,6 +45,10 @@
         <attr name="apptentiveRatingDialogButtonDeclineStyle" format="reference"/>
         <attr name="apptentiveRatingDialogMessageTextStyle" format="reference" />
 
+        <!-- Apptentive navigate to link Styles -->
+        <attr name="apptentiveNavigateToLinkImageStyle" format="reference" />
+        <attr name="apptentiveNavigateToLinkToolbarStyle" format="reference" />
+
         <!-- Generic Dialog Styles -->
         <!-- Currently used in: Survey Close Confirmation -->
         <attr name="apptentiveGenericDialogLayoutStyle" format="reference" />

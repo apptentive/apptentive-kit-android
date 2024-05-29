@@ -11,4 +11,11 @@
         </intent>
     </queries>
 
+    <application>
+        <activity
+            android:name=".view.NavigateTolinkActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/Theme.Apptentive" />
+    </application>
+
 </manifest>
