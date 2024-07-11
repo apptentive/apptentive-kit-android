@@ -205,6 +205,7 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
         }
 
         attachmentButton.setOnClickListener {
+            handleDraftMessage(true)
             selectImage.launch("image/*")
         }
 
