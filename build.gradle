@@ -7,9 +7,8 @@ buildscript {
         // Minimum compileSDK version requirements
         // https://support.google.com/googleplay/android-developer/answer/11926878?hl=en
         compileSdkVersion = 31
-        buildToolsVersion = '30.0.3'
         minSdkVersion = 21
-        targetSdkVersion = 31
+        targetSdkVersion = 34
 
 
         // ----- App dependencies ----- //

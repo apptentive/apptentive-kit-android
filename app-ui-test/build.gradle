@@ -4,8 +4,7 @@ plugins {
 }
 
 android {
-    compileSdkVersion rootProject.compileSdkVersion
-    buildToolsVersion rootProject.buildToolsVersion
+    compileSdk rootProject.compileSdkVersion
 
     defaultConfig {
         applicationId "apptentive.com.app.test"

@@ -26,13 +26,12 @@ def gitBranch = System.getenv("BRANCH_NAME") ?: "git branch --show-current".exec
 def gitTag = getTagString(gitBranch, theVersionName, theVersionCode)
 
 android {
-    compileSdkVersion rootProject.compileSdkVersion
-    buildToolsVersion rootProject.buildToolsVersion
+    compileSdk rootProject.compileSdkVersion
 
     defaultConfig {
         applicationId "apptentive.com.app"
         minSdkVersion rootProject.minSdkVersion
-        targetSdkVersion rootProject.targetSdkVersion
+        targetSdkVersion 33
         versionCode theVersionCode
         versionName theVersionName
 
@@ -103,7 +102,7 @@ dependencies {
 
 
     // Firebase Messaging (For Message Center Push Notifications)
-    implementation 'com.google.firebase:firebase-messaging:23.1.0'
+    implementation 'com.google.firebase:firebase-messaging:24.0.0'
 
     testImplementation "androidx.test:core:$androidx_test_version"
 
