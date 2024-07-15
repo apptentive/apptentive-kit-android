@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="apptentive.com.android.feedback.link">
 
     <queries>
@@ -15,7 +16,8 @@
         <activity
             android:name=".view.NavigateTolinkActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/Theme.Apptentive" />
+            android:theme="@style/Theme.Apptentive"
+            android:usesCleartextTraffic = "true" />
     </application>
 
 </manifest>
