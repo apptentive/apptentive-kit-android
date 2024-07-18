@@ -273,9 +273,8 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
                 }
                 viewModel.addAttachments(draftAttachments)
             }
-
             // Restore profile view
-            if (messageListAdapter.isProfileViewVisible()) {
+            if (viewModel.isProfileViewVisible()) {
                 val name = draftSharedPrefs.getString(MESSAGE_CENTER_PROFILE_NAME, "")
                 val email = draftSharedPrefs.getString(MESSAGE_CENTER_PROFILE_EMAIL, "")
                 messageListAdapter.updateEmail(email)
