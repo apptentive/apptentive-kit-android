@@ -25,7 +25,9 @@ object DependencyProvider {
         lookup[T::class.java] != null
 
     inline fun <reified T> of(): T {
-        val provider = lookup[T::class.java] ?: throw IllegalArgumentException("Provider is not registered: ${T::class.java}")
+        val provider = lookup[T::class.java] ?: throw MissingProviderException("Provider is not registered: ${T::class.java}")
         return provider.get() as T
     }
 }
+
+class MissingProviderException(message: String, cause: Throwable? = null) : ApptentiveException(message, cause)

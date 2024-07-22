@@ -3,6 +3,7 @@ package apptentive.com.android.feedback.survey
 import android.app.Activity
 import android.os.Bundle
 import androidx.activity.viewModels
+import apptentive.com.android.core.MissingProviderException
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
 import apptentive.com.android.feedback.survey.utils.createSurveyViewModel
@@ -29,6 +30,8 @@ internal open class BaseSurveyActivity : ApptentiveViewModelActivity(), Apptenti
         ViewModelFactory {
             try {
                 createSurveyViewModel()
+            } catch (exception: MissingProviderException) {
+                throw MissingProviderException("One or more dependency providers are not registered $exception")
             } catch (exception: Exception) {
                 throw IllegalStateException("Issue creating SurveyViewModel $exception")
             }

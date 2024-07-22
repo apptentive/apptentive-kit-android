@@ -70,6 +70,13 @@ internal class RatingDialogFragment : DialogFragment(), ApptentiveActivityInfo {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.dismissInteraction.observe(this) {
+            dismiss()
+        }
+    }
+
     override fun onCancel(dialog: DialogInterface) {
         viewModel.onCancel()
         super.onCancel(dialog)

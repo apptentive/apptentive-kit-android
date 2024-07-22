@@ -489,7 +489,13 @@ class ApptentiveDefaultClient(
     //region Engagement
 
     override fun engage(event: Event, customData: Map<String, Any?>?): EngagementResult {
-        return DependencyProvider.of<EngagementContextFactory>().engagementContext().engage(
+        val engagementContext = try {
+            DependencyProvider.of<EngagementContextFactory>().engagementContext()
+        } catch (e: IllegalStateException) {
+            return EngagementResult.Error("Apptentive SDK is not initialized. Cannot engage event: ${event.name}")
+        }
+
+        return engagementContext.engage(
             event = event,
             customData = filterCustomData(customData)
         )

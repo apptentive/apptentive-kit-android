@@ -37,6 +37,7 @@ import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.ui.hideSoftKeyboard
 import apptentive.com.android.ui.startViewModelActivity
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.util.LogTags.PUSH_NOTIFICATION
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.textview.MaterialTextView
@@ -87,32 +88,37 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.apptentive_activity_message_center)
 
-        rootLayout = findViewById(R.id.apptentive_root)
-        topAppBar = findViewById(R.id.apptentive_toolbar)
-        topAppBarTitle = findViewById(R.id.apptentive_message_center_title)
-        messageText = findViewById(R.id.apptentive_composer_text)
-        attachmentsLayout = findViewById(R.id.apptentive_composer_attachments_layout)
-        attachmentButton = findViewById(R.id.apptentive_attachment_button)
-        sendButton = findViewById(R.id.apptentive_send_message_button)
-        messageList = findViewById(R.id.apptentive_message_list)
-        composerErrorView = findViewById(R.id.apptentive_composer_error)
-        title = viewModel.title
-        topAppBar.title = ""
-        topAppBarTitle.text = viewModel.title
-        messageText.hint = viewModel.composerHint
-        messageListAdapter = MessageListAdapter(viewModel)
-        messageList.adapter = messageListAdapter
-        messageListAdapter.submitList(viewModel.buildMessageViewDataModel()) {
-            scrollRecyclerToFirstUnreadOrLastItem()
+        try {
+            rootLayout = findViewById(R.id.apptentive_root)
+            topAppBar = findViewById(R.id.apptentive_toolbar)
+            topAppBarTitle = findViewById(R.id.apptentive_message_center_title)
+            messageText = findViewById(R.id.apptentive_composer_text)
+            attachmentsLayout = findViewById(R.id.apptentive_composer_attachments_layout)
+            attachmentButton = findViewById(R.id.apptentive_attachment_button)
+            sendButton = findViewById(R.id.apptentive_send_message_button)
+            messageList = findViewById(R.id.apptentive_message_list)
+            composerErrorView = findViewById(R.id.apptentive_composer_error)
+            title = viewModel.title
+            topAppBar.title = ""
+            topAppBarTitle.text = viewModel.title
+            messageText.hint = viewModel.composerHint
+            messageListAdapter = MessageListAdapter(viewModel)
+            messageList.adapter = messageListAdapter
+            messageListAdapter.submitList(viewModel.buildMessageViewDataModel()) {
+                scrollRecyclerToFirstUnreadOrLastItem()
+            }
+            messageList.itemAnimator = null
+
+            // SupportActionBar should be set before setting NavigationOnClickListener
+            setSupportActionBar(topAppBar)
+
+            addObservers()
+            setListeners()
+            getPushNotificationPermission()
+        } catch (e: Exception) {
+            Log.e(MESSAGE_CENTER, "Error in onCreate", e)
+            finish()
         }
-        messageList.itemAnimator = null
-
-        // SupportActionBar should be set before setting NavigationOnClickListener
-        setSupportActionBar(topAppBar)
-
-        addObservers()
-        setListeners()
-        getPushNotificationPermission()
     }
 
     private fun addObservers() {
