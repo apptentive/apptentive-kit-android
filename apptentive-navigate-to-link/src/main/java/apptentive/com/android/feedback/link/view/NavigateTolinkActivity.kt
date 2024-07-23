@@ -68,6 +68,11 @@ internal class NavigateTolinkActivity : BaseNavigateToLinkActivity() {
                 }
                 return true
             }
+
+            override fun onReceivedTitle(view: WebView?, title: String?) {
+                super.onReceivedTitle(view, title)
+                title?.let { topAppBar.title = it }
+            }
         }
 
         val url = intent.getStringExtra("linkUrl")
