@@ -3,6 +3,7 @@ package apptentive.com.android.feedback.link
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import androidx.annotation.MainThread
 import androidx.annotation.VisibleForTesting
@@ -23,7 +24,8 @@ internal object LinkNavigator {
         context = context,
         interaction = interaction
     ) {
-        if (interaction.target == NavigateToLinkInteraction.Target.self) {
+        // The web view doesn't have a good support prior to Android P
+        if (interaction.target == NavigateToLinkInteraction.Target.self && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             context.getAppActivity().startViewModelActivity<NavigateTolinkActivity>(
                 extras = Bundle().apply {
                     putString("linkUrl", interaction.url)
