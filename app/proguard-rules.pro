@@ -19,3 +19,11 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+# Keep the entire javax.xml.bind package
+-keepattributes SourceFile,LineNumberTable
+
+-keep class javax.xml.bind.** { *; }
+
+# Keep the specific class that references DatatypeConverter
+-keep class io.jsonwebtoken.impl.Base64Codec { *; }
+-dontwarn javax.xml.bind.DatatypeConverter

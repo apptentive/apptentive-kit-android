@@ -26,6 +26,7 @@ android {
             minifyEnabled false
         }
     }
+    namespace 'apptentive.com.android.feedback.messagecenter'
 }
 
 dependencies {

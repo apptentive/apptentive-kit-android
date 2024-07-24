@@ -6,7 +6,7 @@ buildscript {
 
         // Minimum compileSDK version requirements
         // https://support.google.com/googleplay/android-developer/answer/11926878?hl=en
-        compileSdkVersion = 31
+        compileSdkVersion = 34
         minSdkVersion = 21
         targetSdkVersion = 34
 
@@ -99,7 +99,7 @@ buildscript {
     dependencies {
         // Android Gradle
         // https://developer.android.com/studio/releases/gradle-plugin
-        classpath "com.android.tools.build:gradle:7.1.3"
+        classpath 'com.android.tools.build:gradle:8.1.1'
 
         // Kotlin Gradle
         // https://kotlinlang.org/docs/gradle.html

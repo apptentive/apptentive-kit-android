@@ -26,7 +26,7 @@ def gitBranch = System.getenv("BRANCH_NAME") ?: "git branch --show-current".exec
 def gitTag = getTagString(gitBranch, theVersionName, theVersionCode)
 
 android {
-    compileSdk rootProject.compileSdkVersion
+    compileSdk 33
 
     defaultConfig {
         applicationId "apptentive.com.app"
@@ -79,6 +79,13 @@ android {
     buildFeatures {
         viewBinding true
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    namespace 'apptentive.com.app'
 }
 
 dependencies {

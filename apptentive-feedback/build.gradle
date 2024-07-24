@@ -33,6 +33,7 @@ android {
             resources.excludes.add("META-INF/LICENSE-notice.md")
         }
     }
+    namespace 'apptentive.com.android.feedback'
 }
 
 dependencies {
