@@ -67,7 +67,8 @@ buildscript {
     }
 
     project.ext {
-        sonatypeVersion = '6.8.0'
+        sonatypeVersion = '6.8.1'
+        jfrogVersion = '6.8.1'
 
         // Change this depending on where you are publishing to
         repoVersion = sonatypeVersion
@@ -105,6 +106,10 @@ buildscript {
         // https://kotlinlang.org/docs/gradle.html
         // https://kotlinlang.org/docs/releases.html#release-details
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.20"
+
+        // JFrog Gradle
+        // https://plugins.gradle.org/plugin/com.jfrog.artifactory
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.24.20"
     }
 
 }
@@ -144,6 +149,7 @@ group = "com.apptentive"
 version = sonatypeVersion
 
 allprojects {
+    apply plugin: 'com.jfrog.artifactory'
     apply plugin: 'maven-publish'
 }
 
@@ -151,4 +157,5 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
+apply from: "jfrog-publish-util.gradle"
 apply from: "sonatype-publish-util.gradle"

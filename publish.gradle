@@ -1,3 +1,4 @@
+apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
 apply plugin: 'org.jetbrains.dokka'
@@ -88,30 +89,30 @@ signing {
     sign publishing.publications
 }
 
-//artifactory {
-//    contextUrl = 'https://apptentive.jfrog.io/artifactory'
-//
-//    publish {
-//        repository {
-//            def artifactoryProperties = new Properties()
-//            if (gradle.rootProject.file('local.properties').exists()) {
-//                artifactoryProperties.load(project.rootProject.file('local.properties').newDataInputStream())
-//            }
-//            def repoUsername = artifactoryProperties['artifactory_username'] ? artifactoryProperties['artifactory_username'] : ""
-//            def repoPassword = artifactoryProperties['artifactory_password'] ? artifactoryProperties['artifactory_password'] : ""
-//            repoKey = project.hasProperty("REPO_KEY") ? project.getProperty("REPO_KEY") : "InternalNewAndroidSDK"
-//            username = repoUsername
-//            password = repoPassword
-//            maven = true
-//        }
-//        defaults {
-//            publications('maven')
-//            publishArtifacts = true
-//            publishPom = true
-//        }
-//    }
-//    clientConfig.setIncludeEnvVars(true)
-//    clientConfig.setEnvVarsExcludePatterns('*password*,*secret*')
-//    clientConfig.setEnvVarsIncludePatterns('*not-secret*')
-//}
+artifactory {
+    contextUrl = 'https://apptentive.jfrog.io/artifactory'
+
+    publish {
+        repository {
+            def artifactoryProperties = new Properties()
+            if (gradle.rootProject.file('local.properties').exists()) {
+                artifactoryProperties.load(project.rootProject.file('local.properties').newDataInputStream())
+            }
+            def repoUsername = artifactoryProperties['artifactory_username'] ? artifactoryProperties['artifactory_username'] : ""
+            def repoPassword = artifactoryProperties['artifactory_password'] ? artifactoryProperties['artifactory_password'] : ""
+            repoKey = project.hasProperty("REPO_KEY") ? project.getProperty("REPO_KEY") : "InternalNewAndroidSDK"
+            username = repoUsername
+            password = repoPassword
+            maven = true
+        }
+        defaults {
+            publications('maven')
+            publishArtifacts = true
+            publishPom = true
+        }
+    }
+    clientConfig.setIncludeEnvVars(true)
+    clientConfig.setEnvVarsExcludePatterns('*password*,*secret*')
+    clientConfig.setEnvVarsIncludePatterns('*not-secret*')
+}
 

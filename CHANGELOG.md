@@ -1,3 +1,16 @@
+# 2024=07-31 - v6.8.1
+
+### Fixes
+* ACR Fileupload now working in in-app mode
+* ACR Video sentiment is now working in in-app mode
+* Display survey header in in-app mode
+* Cache the message center's input field for the next time if not updated
+
+### Improvements
+* Upgraded SDK target to Android 14 (API level 34)
+* Upgraded Gradle version to 8.0
+* Prevent the SDK from crashing after the dependencies are garbage collected
+
 # 2024-05-29 - v6.8.0
 ### New Features
 * Advanced Customer Research support to show Alchemer long form surveys through prompts

@@ -99,12 +99,12 @@ class InAppReviewInteractionLauncherTest : TestCase() {
             EngagementResult.InteractionShown(args.interactionId as InteractionId)
         },
         onSendPayload = onSendPayload ?: { payload ->
-            addResult(payload.toJson())
+            addResult(payload.toJson(false, ""))
         }
     )
 }
 
-class MockInAppReviewManager(val supported: Boolean, val errorMessage: String?) :
+internal class MockInAppReviewManager(val supported: Boolean, val errorMessage: String?) :
     InAppReviewManager {
     override fun startReviewFlow(callback: InAppReviewCallback) {
         if (supported) {
@@ -120,7 +120,7 @@ class MockInAppReviewManager(val supported: Boolean, val errorMessage: String?) 
 
     override fun isInAppReviewSupported(): Boolean = supported
 
-    companion object {
+    internal companion object {
         fun successful(): InAppReviewManager = MockInAppReviewManager(true, null)
 
         fun failed(errorMessage: String): InAppReviewManager = MockInAppReviewManager(true, errorMessage)
@@ -129,7 +129,7 @@ class MockInAppReviewManager(val supported: Boolean, val errorMessage: String?) 
     }
 }
 
-class MockInAppReviewManagerFactory(private val manager: InAppReviewManager) :
+internal class MockInAppReviewManagerFactory(private val manager: InAppReviewManager) :
     InAppReviewManagerFactory {
     override fun createReviewManager(context: Context): InAppReviewManager = manager
 }
