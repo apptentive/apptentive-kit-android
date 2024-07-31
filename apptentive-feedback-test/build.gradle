@@ -5,8 +5,7 @@ plugins {
 }
 
 android {
-    compileSdkVersion rootProject.compileSdkVersion
-    buildToolsVersion rootProject.buildToolsVersion
+    compileSdk rootProject.compileSdkVersion
 
     defaultConfig {
         minSdkVersion rootProject.minSdkVersion
@@ -25,6 +24,7 @@ android {
     buildFeatures {
         buildConfig = false
     }
+    namespace 'apptentive.com.android.feedback'
 }
 
 dependencies {

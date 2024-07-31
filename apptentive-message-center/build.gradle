@@ -5,8 +5,7 @@ plugins {
 }
 
 android {
-    compileSdkVersion rootProject.compileSdkVersion
-    buildToolsVersion rootProject.buildToolsVersion
+    compileSdk rootProject.compileSdkVersion
 
     defaultConfig {
         minSdkVersion rootProject.minSdkVersion
@@ -27,6 +26,7 @@ android {
             minifyEnabled false
         }
     }
+    namespace 'apptentive.com.android.feedback.messagecenter'
 }
 
 dependencies {

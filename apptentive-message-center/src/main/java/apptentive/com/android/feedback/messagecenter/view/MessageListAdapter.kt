@@ -31,6 +31,8 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
     ListAdapter<MessageViewData, RecyclerView.ViewHolder>(DiffCallback()) {
 
     private var profileView: ProfileView? = null
+    private var restoreEmailFromDraft: String = ""
+    private var restoreNameFromDraft: String = ""
 
     companion object {
         private const val TYPE_HEADER = 0
@@ -51,14 +53,22 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
     }
 
     fun updateEmail(email: String?) {
-        email?.let { profileView?.updateEmail(email) }
+        email?.let {
+            if (profileView != null)
+                profileView?.updateEmail(email)
+            else
+                restoreEmailFromDraft = email
+        }
     }
 
     fun updateName(name: String?) {
-        name?.let { profileView?.updateName(name) }
+        name?.let {
+            if (profileView != null)
+                profileView?.updateName(name)
+            else
+                restoreNameFromDraft = name
+        }
     }
-
-    fun isProfileViewVisible(): Boolean = profileView?.isVisible == true
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -193,6 +203,8 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
                     profileView?.setEmailHint(viewData.emailHint)
                     profileView?.setNameHint(viewData.nameHint)
                     profileView?.isVisible = viewData.showProfile
+                    profileView?.updateName(restoreNameFromDraft)
+                    profileView?.updateEmail(restoreEmailFromDraft)
                 }
             }
         }

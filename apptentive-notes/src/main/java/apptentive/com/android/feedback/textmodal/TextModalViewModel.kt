@@ -11,6 +11,7 @@ import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.LiveEvent
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.PrefetchManager
+import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
@@ -20,7 +21,14 @@ import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.INTERACTIONS
 
 internal class TextModalViewModel : ViewModel() {
-    private val context = DependencyProvider.of<EngagementContextFactory>().engagementContext()
+    val dismissInteraction: LiveEvent<Unit> = LiveEvent()
+    private val context: EngagementContext? = try {
+        DependencyProvider.of<EngagementContextFactory>().engagementContext()
+    } catch (exception: Exception) {
+        Log.e(INTERACTIONS, "Provider is not registered, could not create engagement context", exception)
+        dismissInteraction.postValue(Unit)
+        null
+    }
 
     private val interaction: TextModalModel = try {
         DependencyProvider.of<TextModalModelFactory>().getTextModalModel()
@@ -51,7 +59,7 @@ internal class TextModalViewModel : ViewModel() {
                 title = action.label,
                 callback = {
                     // invoke action
-                    context.executors.state.execute(createActionCallback(action, index))
+                    context?.executors?.state?.execute(createActionCallback(action, index))
 
                     // dismiss UI
                     onDismiss?.invoke()
@@ -62,7 +70,7 @@ internal class TextModalViewModel : ViewModel() {
                 title = action.label,
                 callback = {
                     // invoke action
-                    context.executors.state.execute(createActionCallback(action, index))
+                    context?.executors?.state?.execute(createActionCallback(action, index))
 
                     // dismiss UI
                     onDismiss?.invoke()
@@ -76,7 +84,7 @@ internal class TextModalViewModel : ViewModel() {
     private val noteHeaderEvent = LiveEvent<Bitmap>()
     val noteHeaderBitmapStream: LiveData<Bitmap> = noteHeaderEvent
     init {
-        context.executors.state.execute {
+        context?.executors?.state?.execute {
             interaction.richContent?.url?.let { url ->
                 PrefetchManager.getImage(url)?.let {
                     isWiderImage = it.width > MAX_IMAGE_WIDTH
@@ -87,7 +95,7 @@ internal class TextModalViewModel : ViewModel() {
     }
 
     fun onCancel() {
-        context.executors.state.execute {
+        context?.executors?.state?.execute {
             engageCodePoint(CODE_POINT_CANCEL)
         }
     }
@@ -97,7 +105,7 @@ internal class TextModalViewModel : ViewModel() {
         data: Map<String, Any?>? = null,
         actionId: String? = null
     ) {
-        context.engage(
+        context?.engage(
             event = Event.internal(codePoint, interaction = "TextModal"),
             interactionId = interaction.id,
             data = data,
@@ -110,7 +118,7 @@ internal class TextModalViewModel : ViewModel() {
     private fun createActionCallback(action: TextModalModel.Action, index: Int): Callback = when (action) {
         is TextModalModel.Action.Dismiss -> {
             {
-                context.executors.state.execute {
+                context?.executors?.state?.execute {
                     Log.i(INTERACTIONS, "Note dismissed")
                     // engage event
                     val data = createEventData(action, index)
@@ -120,7 +128,7 @@ internal class TextModalViewModel : ViewModel() {
         }
         is TextModalModel.Action.Invoke -> {
             {
-                context.executors.state.execute {
+                context?.executors?.state?.execute {
                     Log.i(INTERACTIONS, "Note action invoked")
 
                     // run invocation
@@ -134,7 +142,7 @@ internal class TextModalViewModel : ViewModel() {
         }
         is TextModalModel.Action.Event -> {
             {
-                context.executors.state.execute {
+                context?.executors?.state?.execute {
                     Log.i(INTERACTIONS, "Note event engaged")
 
                     // engage target event

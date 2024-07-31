@@ -1,5 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="apptentive.com.android.core">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Required for making Http-requests -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <!-- Used for checking network connectivity status -->

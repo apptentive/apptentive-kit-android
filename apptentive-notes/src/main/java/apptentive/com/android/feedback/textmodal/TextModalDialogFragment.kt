@@ -139,6 +139,9 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel.dismissInteraction.observe(this) {
+            dismiss()
+        }
         viewModel.noteHeaderBitmapStream.observe(this) { bitmap ->
             setupImage(bitmap)
         }

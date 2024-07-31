@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.apptentive.apptentive_example">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- TODO Step 3: Set the MyApplication class to the android:name
             parameter within the <application> tag

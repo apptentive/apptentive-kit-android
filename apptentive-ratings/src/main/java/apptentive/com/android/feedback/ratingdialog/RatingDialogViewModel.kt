@@ -2,6 +2,9 @@ package apptentive.com.android.feedback.ratingdialog
 
 import androidx.lifecycle.ViewModel
 import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.core.LiveEvent
+import apptentive.com.android.core.MissingProviderException
+import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.utils.getInteractionBackup
@@ -9,7 +12,18 @@ import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.INTERACTIONS
 
 internal class RatingDialogViewModel : ViewModel() {
-    private val context = DependencyProvider.of<EngagementContextFactory>().engagementContext()
+    val dismissInteraction = LiveEvent<Unit>()
+    private val context: EngagementContext? = try {
+        DependencyProvider.of<EngagementContextFactory>().engagementContext()
+    } catch (exception: MissingProviderException) {
+        dismissInteraction.postValue(Unit)
+        Log.e(
+            INTERACTIONS,
+            "EngagementContextFactory is not registered, cannot launch RatingDialogViewModel",
+            exception
+        )
+        null
+    }
     private val interaction: RatingDialogInteraction = try {
         DependencyProvider.of<RatingDialogInteractionFactory>().getRatingDialogInteraction()
     } catch (exception: Exception) {
@@ -40,7 +54,7 @@ internal class RatingDialogViewModel : ViewModel() {
     }
 
     private fun engageCodePoint(name: String) {
-        context.executors.state.execute {
+        context?.executors?.state?.execute {
             context.engage(
                 event = Event.internal(name, interaction.type),
                 interactionId = interaction.id
