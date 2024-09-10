@@ -26,9 +26,9 @@ import apptentive.com.android.feedback.messagecenter.view.custom.AttachmentBotto
 import apptentive.com.android.feedback.messagecenter.view.custom.AttachmentBottomSheet.Companion.APPTENTIVE_ATTACHMENT_BOTTOMSHEET_TAG
 import apptentive.com.android.feedback.messagecenter.view.custom.MessageCenterAttachmentThumbnailView
 import apptentive.com.android.feedback.model.Message
+import apptentive.com.android.feedback.utils.FileUtil.getDraftStorageName
 import apptentive.com.android.feedback.utils.SystemUtils
 import apptentive.com.android.platform.SharedPrefConstants
-import apptentive.com.android.platform.SharedPrefConstants.MESSAGE_CENTER_DRAFT
 import apptentive.com.android.platform.SharedPrefConstants.MESSAGE_CENTER_DRAFT_ATTACHMENTS
 import apptentive.com.android.platform.SharedPrefConstants.MESSAGE_CENTER_DRAFT_TEXT
 import apptentive.com.android.platform.SharedPrefConstants.MESSAGE_CENTER_PROFILE_EMAIL
@@ -58,7 +58,7 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
     private var hasScrolled = false
 
     private val draftSharedPrefs by lazy { // So this is only retrieved once
-        getSharedPreferences(MESSAGE_CENTER_DRAFT, MODE_PRIVATE)
+        getSharedPreferences(getDraftStorageName(), MODE_PRIVATE)
     }
 
     private val sharedPrefsPush by lazy {

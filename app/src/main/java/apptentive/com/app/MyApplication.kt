@@ -39,7 +39,7 @@ class MyApplication : Application(), AuthenticationFailedListener {
         Apptentive.register(this, configuration) {
             when (it) {
                 RegisterResult.Success -> Log.v("SYSTEM", "Registration successful")
-                is RegisterResult.Failure -> Log.d(
+                is RegisterResult.Failure -> Log.e(
                     "SYSTEM",
                     "Registration failed with response code: ${it.responseCode} and error message: ${it.message}"
                 )

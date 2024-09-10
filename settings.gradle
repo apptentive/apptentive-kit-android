@@ -14,6 +14,8 @@ include ':app',
         ':apptentive-in-app-review',
         ':apptentive-survey',
         ':apptentive-kit-android',
-        ':apptentive-message-center'
+        ':apptentive-message-center',
+        ':apptentive-initiator'
 
 rootProject.name = 'apptentive-sdk-ktx'
+

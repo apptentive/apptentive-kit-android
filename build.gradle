@@ -37,7 +37,7 @@ buildscript {
 
         // Gson
         // https://github.com/google/gson
-        gson_version = '2.8.8'
+        gson_version = '2.10.1'
 
 
         // ----- Testing ----- //
@@ -67,7 +67,7 @@ buildscript {
     }
 
     project.ext {
-        sonatypeVersion = '6.8.1'
+        sonatypeVersion = '6.9.0'
         jfrogVersion = '6.8.1'
 
         // Change this depending on where you are publishing to

@@ -20,6 +20,7 @@ import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.MockEngagementContext
 import apptentive.com.android.feedback.engagement.MockEngagementContextFactory
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
+import apptentive.com.android.feedback.engagement.util.MockAndroidSharedPrefDataStore
 import apptentive.com.android.feedback.message.MessageCenterInteraction
 import apptentive.com.android.feedback.message.MessageManager
 import apptentive.com.android.feedback.message.MessageManagerFactory
@@ -35,7 +36,11 @@ import apptentive.com.android.feedback.messagecenter.view.MessageViewData
 import apptentive.com.android.feedback.messagecenter.view.ProfileViewData
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.MessageList
+import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.convertToGroupDate
+import apptentive.com.android.feedback.utils.sha256
+import apptentive.com.android.platform.AndroidSharedPrefDataStore
+import apptentive.com.android.platform.SharedPrefConstants
 import apptentive.com.android.util.Result
 import apptentive.com.android.util.generateUUID
 import org.junit.Assert.assertEquals
@@ -477,6 +482,15 @@ class MessageCenterViewModelTest : TestCase() {
 
         // Messages are only sorted at the MessageRepository level
         assertEquals(4, firstUnreadItem)
+    }
+
+    @Test
+    fun testGetDraftStorageName() {
+        DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore())
+        DependencyProvider.register<ConversationCredentialProvider>(MockConversationCredential())
+        val expectedDraftStorageName = SharedPrefConstants.MESSAGE_CENTER_DRAFT + "mockedConversationId".sha256()
+        val actualDraftStorageName = FileUtil.getDraftStorageName()
+        assertEquals(expectedDraftStorageName, actualDraftStorageName)
     }
 }
 

@@ -17,6 +17,7 @@ data class InteractionType(val name: String) {
         private const val SURVEY = "Survey"
         private const val TEXT_MODAL = "TextModal"
         private const val NAVIGATE_TO_LINK = "NavigateToLink"
+        private const val INITIATOR = "Initiator"
 
         val EnjoymentDialog = InteractionType(ENJOYMENT_DIALOG)
         val RatingDialog = InteractionType(RATING_DIALOG)
@@ -26,6 +27,7 @@ data class InteractionType(val name: String) {
         val Survey = InteractionType(SURVEY)
         val TextModal = InteractionType(TEXT_MODAL)
         val NavigateToLink = InteractionType(NAVIGATE_TO_LINK)
+        val Initiator = InteractionType(INITIATOR)
 
         internal fun names() = listOf(
             ENJOYMENT_DIALOG,
@@ -35,7 +37,8 @@ data class InteractionType(val name: String) {
             GOOGLE_IN_APP_REVIEW,
             SURVEY,
             TEXT_MODAL,
-            NAVIGATE_TO_LINK
+            NAVIGATE_TO_LINK,
+            INITIATOR,
         )
     }
 }

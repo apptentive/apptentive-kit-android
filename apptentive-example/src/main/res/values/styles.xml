@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!--
     - MAIN APPTENTIVE STYLING INFO -
 
@@ -10,6 +10,8 @@
 
     <style name="ApptentiveThemeOverride">
         <!-- This is where you'll add your override items -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
     <!--
@@ -71,6 +73,8 @@
     <!-- Cookbook 1 -->
     <!-- https://learn.apptentive.com/knowledge-base/android-ui-cookbook-design-1/ -->
 <!--    <style name="ApptentiveThemeOverride">-->
+<!--        <item name="windowNoTitle">true</item>-->
+<!--        <item name="windowActionBar">false</item>-->
 <!--        &lt;!&ndash; All Interactions &ndash;&gt;-->
 <!--        <item name="apptentiveFontFamilyDefault">@font/mulish</item>-->
 <!--        <item name="colorSecondary">#2294D5</item>-->
@@ -295,6 +299,8 @@
     <!-- Cookbook 2 -->
     <!-- https://learn.apptentive.com/knowledge-base/android-ui-cookbook-design-2/ -->
 <!--    <style name="ApptentiveThemeOverride">-->
+<!--        <item name="windowActionBar">false</item>-->
+<!--        <item name="windowNoTitle">true</item>-->
 <!--        &lt;!&ndash; All Interactions &ndash;&gt;-->
 <!--        <item name="apptentiveFontFamilyDefault">@font/sen</item>-->
 <!--        <item name="colorSecondary">#34993E</item>-->
@@ -330,7 +336,7 @@
 <!--        <item name="colorOnPrimary">#FFFFFF</item>-->
 <!--        <item name="android:colorBackground">#FFFFFF</item>-->
 <!--        <item name="colorOnBackground">#3A4C5F</item>-->
-<!--        -->
+
 <!--        <item name="android:statusBarColor">#FFFFFF</item>-->
 <!--        <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>-->
 
@@ -529,6 +535,8 @@
     <!-- Cookbook 3 -->
     <!-- https://learn.apptentive.com/knowledge-base/android-ui-cookbook-design-3/ -->
 <!--    <style name="ApptentiveThemeOverride">-->
+<!--        <item name="windowNoTitle">true</item>-->
+<!--        <item name="windowActionBar">false</item>-->
 <!--        &lt;!&ndash; All Interactions &ndash;&gt;-->
 <!--        <item name="apptentiveFontFamilyDefault">@font/comfortaa</item>-->
 <!--        <item name="colorSecondary">#AB112C</item>-->
@@ -726,7 +734,7 @@
 <!--    <style name="Cookbook3.Survey.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">-->
 <!--        <item name="android:background">@drawable/cookbook_3_survey_header</item>-->
 <!--        <item name="layout_constraintHeight_max">172dp</item>-->
-<!--        <item name="navigationIcon">@drawable/ic_baseline_close_24</item>-->
+<!--        <item name="navigationIcon">@drawable/apptentive_ic_close</item>-->
 <!--        <item name="navigationContentDescription">Close</item>-->
 <!--        <item name="navigationIconTint">@android:color/white</item>-->
 <!--    </style>-->

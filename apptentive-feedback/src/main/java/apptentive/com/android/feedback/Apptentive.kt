@@ -13,6 +13,7 @@ import apptentive.com.android.core.AndroidApplicationInfo
 import apptentive.com.android.core.AndroidExecutorFactoryProvider
 import apptentive.com.android.core.AndroidLoggerProvider
 import apptentive.com.android.core.ApplicationInfo
+import apptentive.com.android.core.ApptentiveException
 import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.Observable
@@ -337,6 +338,10 @@ object Apptentive {
     @Synchronized
     fun logout() {
         try {
+            if (DefaultStateMachine.state != SDKState.LOGGED_IN) {
+                Log.e(FEEDBACK, "The SDK is not logged in. Nothing to logout", ApptentiveException("The SDK is not logged in. Nothing to logout"))
+                return
+            }
             stateExecutor.execute {
                 client.logout()
             }
@@ -605,17 +610,24 @@ object Apptentive {
             }
         } else null
 
-        if (DefaultStateMachine.state == SDKState.LOGGED_OUT) {
-            Log.w(FEEDBACK, "SDK is in logged out state. Please login to show message center")
-            callbackWrapper?.invoke(EngagementResult.Error("SDK is in logged out state. Please login to show message center"))
-        } else {
-            stateExecutor.execute {
-                try {
-                    val result = client.showMessageCenter(customData)
-                    callbackWrapper?.invoke(result)
-                } catch (exception: Exception) {
-                    callbackWrapper?.invoke(EngagementResult.Exception(error = exception))
-                    Log.e(MESSAGE_CENTER, "Exception showing the message center", exception)
+        when {
+            DefaultStateMachine.state == SDKState.LOGGED_OUT -> {
+                Log.w(FEEDBACK, "SDK is in logged out state. Please login to show message center")
+                callbackWrapper?.invoke(EngagementResult.Error("SDK is in logged out state. Please login to show message center"))
+            }
+            !registered || DefaultStateMachine.state == SDKState.ERROR -> {
+                Log.w(FEEDBACK, "SDK is not registered or have reached an error state")
+                callbackWrapper?.invoke(EngagementResult.Error("SDK is not registered or have reached an error state"))
+            }
+            else -> {
+                stateExecutor.execute {
+                    try {
+                        val result = client.showMessageCenter(customData)
+                        callbackWrapper?.invoke(result)
+                    } catch (exception: Exception) {
+                        callbackWrapper?.invoke(EngagementResult.Exception(error = exception))
+                        Log.e(MESSAGE_CENTER, "Exception showing the message center", exception)
+                    }
                 }
             }
         }

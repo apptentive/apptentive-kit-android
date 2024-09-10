@@ -689,6 +689,9 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
                 login.isEnabled = true
                 logout.isEnabled = false
             }
+            onlyLogout.setOnClickListener {
+                Apptentive.logout()
+            }
         }
     }
 

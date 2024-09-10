@@ -9,6 +9,15 @@ class DefaultAndroidSharedPrefDataStore(val context: Context) : AndroidSharedPre
     override fun getSharedPrefForSDK(file: String): SharedPreferences =
         context.getSharedPreferences(file, Context.MODE_PRIVATE)
 
+    override fun deleteSharedPrefForSDK(file: String, mode: Int) {
+        if (context.getSharedPreferences(file, mode) != null) {
+            context.getSharedPreferences(file, Context.MODE_PRIVATE)
+                .edit()
+                .clear()
+                .apply()
+        }
+    }
+
     override fun containsKey(file: String, keyEntry: String): Boolean =
         context.getSharedPreferences(file, Context.MODE_PRIVATE).contains(keyEntry)
 
