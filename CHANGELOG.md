@@ -5,7 +5,7 @@
 * Upgrade GSON dependnecy to latest to fix the security vulnerability
 
 ### New Features
-* Added initiator to the kit to support workflow initiation from the SDKs
+* Added initiator to the kit to support Alchemer Workflow initiation from the SDKs
 
 # 2024-07-31 - v6.8.1
 
