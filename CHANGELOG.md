@@ -10,10 +10,10 @@
 # 2024-07-31 - v6.8.1
 
 ### Fixes
-* ACR Fileupload now working in in-app mode
-* ACR Video sentiment is now working in in-app mode
-* Display survey header in in-app mode
-* Cache the message center's input field for the next time if not updated
+* Alchemer Survey file upload now working in in-app mode
+* Alchemer Survey video sentiment is now working in in-app mode
+* Alchemer Survey title will display as the survey header in in-app mode
+* Cache the Message Center's input field values for the next time if not updated
 
 ### Improvements
 * Upgraded SDK target to Android 14 (API level 34)
