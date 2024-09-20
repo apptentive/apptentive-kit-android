@@ -63,4 +63,37 @@ data class Device(
         customData = customData.content,
         integrationConfig = integrationConfig.toPayload()
     )
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Device
+
+        return !(
+            osName != other.osName ||
+                osVersion != other.osVersion ||
+                osBuild != other.osBuild ||
+                osApiLevel != other.osApiLevel ||
+                manufacturer != other.manufacturer ||
+                model != other.model ||
+                board != other.board ||
+                product != other.product ||
+                brand != other.brand ||
+                cpu != other.cpu ||
+                device != other.device ||
+                buildType != other.buildType ||
+                buildId != other.buildId ||
+                carrier != other.carrier ||
+                currentCarrier != other.currentCarrier ||
+                networkType != other.networkType ||
+                bootloaderVersion != other.bootloaderVersion ||
+                radioVersion != other.radioVersion ||
+                localeCountryCode != other.localeCountryCode ||
+                localeLanguageCode != other.localeLanguageCode ||
+                localeRaw != other.localeRaw ||
+                customData != other.customData ||
+                integrationConfig != other.integrationConfig
+            )
+    }
 }

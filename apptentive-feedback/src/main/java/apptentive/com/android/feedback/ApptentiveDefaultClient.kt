@@ -247,6 +247,14 @@ class ApptentiveDefaultClient(
             }
         }
 
+        conversationManager.deviceupdate.observe { deviceUpdated ->
+            if (deviceUpdated) {
+                val device = conversationManager.getConversation().device
+                val payload = device.toDevicePayload()
+                enqueuePayload(payload)
+            }
+        }
+
         executors.main.execute {
             Log.i(LIFE_CYCLE_OBSERVER, "Observing App lifecycle")
             ProcessLifecycleOwner.get().lifecycle.addObserver(

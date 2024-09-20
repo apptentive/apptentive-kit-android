@@ -25,6 +25,8 @@ internal interface ConversationRepository {
 
     fun getCurrentAppRelease(): AppRelease
 
+    fun getCurrentDevice(): Device
+
     fun getCurrentSdk(): SDK
 
     fun updateEncryption(encryption: Encryption)
@@ -70,6 +72,8 @@ internal class DefaultConversationRepository(
     override fun getCurrentAppRelease(): AppRelease = appReleaseFactory.create()
 
     override fun getCurrentSdk(): SDK = sdkFactory.create()
+
+    override fun getCurrentDevice(): Device = deviceFactory.create()
 
     override fun updateEncryption(encryption: Encryption) {
         conversationSerializer.setEncryption(encryption)

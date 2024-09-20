@@ -74,7 +74,11 @@ internal class ConversationManager(
     private val sdkAppReleaseUpdateSubject = BehaviorSubject(false)
     val sdkAppReleaseUpdate: Observable<Boolean> get() = sdkAppReleaseUpdateSubject
 
+    private val deviceUpdateSubject = BehaviorSubject(false)
+    val deviceupdate: Observable<Boolean> get() = deviceUpdateSubject
+
     var isSDKAppReleaseCheckDone = false
+    var isDeviceUpdateCheckDone = false
 
     init {
         val conversation = loadActiveConversation()
@@ -90,6 +94,7 @@ internal class ConversationManager(
     fun onEncryptionSetupComplete() {
         activeConversationSubject.observe(::saveConversation)
         activeConversation.observe(::checkForSDKAppReleaseUpdates)
+        activeConversation.observe(::checkForDeviceUpdates)
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -361,6 +366,18 @@ internal class ConversationManager(
 
     private fun createConversation(conversationId: String? = null, conversationToken: String? = null): Conversation {
         return conversationRepository.createConversation(conversationId, conversationToken)
+    }
+
+    fun checkForDeviceUpdates(conversation: Conversation) {
+        if (isDeviceUpdateCheckDone) return else isDeviceUpdateCheckDone = true
+        Log.i(CONVERSATION, "Checking for device updates")
+        val currentDevice = conversationRepository.getCurrentDevice()
+        if (conversation.device != currentDevice) {
+            deviceUpdateSubject.value = true
+            Log.d(CONVERSATION, "Device updated: ${conversation.device} => $currentDevice")
+            // Keep the uuid same as the previous device conversation
+            updateDevice(currentDevice.copy(uuid = conversation.device.uuid))
+        }
     }
 
     fun checkForSDKAppReleaseUpdates(conversation: Conversation) {
