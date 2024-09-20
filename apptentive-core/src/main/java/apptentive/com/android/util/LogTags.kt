@@ -36,4 +36,5 @@ object LogTags {
     val SURVEY = LogTag("SURVEY")
     val STATE_MACHINE = LogTag("STATE_MACHINE")
     val PREFETCH_RESOURCES = LogTag("PREFETCH_RESOURCES")
+    val INITIATOR = LogTag("INITIATOR")
 }

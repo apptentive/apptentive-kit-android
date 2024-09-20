@@ -11,8 +11,11 @@ import android.provider.OpenableColumns
 import android.webkit.MimeTypeMap
 import androidx.annotation.WorkerThread
 import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.platform.FileSystem
+import apptentive.com.android.platform.AndroidSharedPrefDataStore
+import apptentive.com.android.platform.SharedPrefConstants
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.CONVERSATION
@@ -347,4 +350,12 @@ object FileUtil {
 
     fun isConversationCacheStoredInLegacyFormat(filePath: String): Boolean =
         filePath.contains("apptentive/conversations")
+
+    fun getDraftStorageName(): String {
+        // clear any previously created MESSAGE_CENTER_DRAFT file, used in < 6.9
+        val draftStorage = DependencyProvider.of<AndroidSharedPrefDataStore>()
+        draftStorage.deleteSharedPrefForSDK(SharedPrefConstants.MESSAGE_CENTER_DRAFT, 0)
+        val conversationCredential = DependencyProvider.of<ConversationCredentialProvider>()
+        return SharedPrefConstants.MESSAGE_CENTER_DRAFT + conversationCredential.conversationId?.sha256()
+    }
 }

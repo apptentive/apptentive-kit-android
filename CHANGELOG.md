@@ -1,3 +1,12 @@
+# 2024-09-18 - v6.9.0
+### Fixes
+* Draft messages are now saved correctly in the multiuser environment
+* Prevent logout calls from being made when the SDK is not logged in
+* Upgrade GSON dependnecy to latest to fix the security vulnerability
+
+### New Features
+* Added initiator to the kit to support Alchemer Workflow initiation from the SDKs
+
 # 2024-07-31 - v6.8.1
 
 ### Fixes

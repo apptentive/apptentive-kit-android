@@ -9,6 +9,9 @@ class MockAndroidSharedPrefDataStore(private val containsKey: Boolean = true, pr
 
     private var version = ""
 
+    override fun deleteSharedPrefForSDK(file: String, mode: Int) {
+    }
+
     override fun putString(file: String, keyEntry: String, value: String?) {
         version = value ?: ""
     }
