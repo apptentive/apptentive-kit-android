@@ -43,6 +43,13 @@
               "device/custom_data/string_qwerty": {
                 "$ends_with": "erty"
               }
+            },
+            {
+              "$not": {
+                "device/custom_data/string_qwerty": {
+                  "$contains": "wre"
+                }
+              }
             }
           ]
         }
