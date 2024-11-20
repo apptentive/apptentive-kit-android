@@ -1,3 +1,10 @@
+# 2024-11-20 - v6.9.1
+### Fixes
+* Device updates are now accurately captured in the conversation metadata.
+* Support for Android 15's edge-to-edge feature implemented via Apptentive theme override.
+* Updated WebView configuration settings to address a security vulnerability.
+* Resolved the profile screen freezing issue.
+
 # 2024-09-18 - v6.9.0
 ### Fixes
 * Draft messages are now saved correctly in the multiuser environment
