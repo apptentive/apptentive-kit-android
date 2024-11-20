@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.messagecenter.view
 
 import android.os.Bundle
+import androidx.activity.addCallback
 import apptentive.com.android.feedback.messagecenter.R
 import apptentive.com.android.feedback.messagecenter.utils.MessageCenterEvents
 import apptentive.com.android.feedback.messagecenter.view.custom.ProfileView
@@ -69,7 +70,7 @@ internal class ProfileActivity : BaseProfileActivity() {
                                 "button_label" to getString(R.string.apptentive_close)
                             )
                         )
-                        super.onBackPressed()
+                        finish()
                     }
                 )
                 confirmationDialog.show()
@@ -81,12 +82,11 @@ internal class ProfileActivity : BaseProfileActivity() {
                         "button_label" to saveButton.text.toString()
                     )
                 )
-                super.onBackPressed()
+                finish()
             }
         }
-    }
-
-    override fun onBackPressed() {
-        viewModel.exitProfileView(profileView.getName(), profileView.getEmail())
+        onBackPressedDispatcher.addCallback(this) {
+            viewModel.exitProfileView(profileView.getName(), profileView.getEmail().trim())
+        }
     }
 }

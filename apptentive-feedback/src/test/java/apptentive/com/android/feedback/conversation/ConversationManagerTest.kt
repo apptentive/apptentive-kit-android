@@ -124,7 +124,7 @@ class ConversationManagerTest : TestCase() {
         conversationManager.getConversation().device
 
     @Test
-    fun testDeviceUpdate() {
+    fun testCustomDataDeviceUpdate() {
         DefaultStateMachine.reset()
         DefaultStateMachine.onEvent(SDKEvent.RegisterSDK)
         DefaultStateMachine.onEvent(SDKEvent.ClientStarted)
@@ -140,6 +140,17 @@ class ConversationManagerTest : TestCase() {
         val updatedCustomData = CustomData(customData.content.minus("FirstKey"))
         conversationManager.updateDevice(newDevice.copy(customData = updatedCustomData))
         assertEquals(updatedCustomData.content.size, getUpdatedDevice(conversationManager).customData.content.size)
+    }
+
+    @Test
+    fun testNonCustomDataDeviceUpdate() {
+        DefaultStateMachine.reset()
+        DefaultStateMachine.onEvent(SDKEvent.RegisterSDK)
+        DefaultStateMachine.onEvent(SDKEvent.ClientStarted)
+        val conversationManager = createConversationManager()
+        // The mockConversationRepository updates the mockDevice with osApiLevel = 31, osVersion = "12" hence there is a device udpate
+        conversationManager.checkForDeviceUpdates(conversationManager.getConversation())
+        assertTrue(conversationManager.isDeviceUpdateCheckDone)
     }
 
     @Test
@@ -269,6 +280,8 @@ class MockConversationRepository(val throwException: Boolean = false) :
     override fun getCurrentAppRelease(): AppRelease = mockAppRelease.copy(
         versionName = "Version name updated"
     )
+
+    override fun getCurrentDevice(): Device = mockDevice.copy(osApiLevel = 31, osVersion = "12")
 
     override fun getCurrentSdk(): SDK = mockSdk.copy(
         version = "Version updated"
