@@ -2,6 +2,7 @@
 <com.google.android.material.textfield.TextInputLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/apptentive_other_text_input_layout"
     style="?attr/apptentiveSurveyOtherTextFieldLayoutStyle"
+    android:focusableInTouchMode="true"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:visibility="gone">

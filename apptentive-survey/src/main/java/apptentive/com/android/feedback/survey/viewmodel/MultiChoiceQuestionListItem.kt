@@ -133,6 +133,9 @@ internal class MultiChoiceQuestionListItem(
                 val textInputLayout = choiceView.findViewById<TextInputLayout>(R.id.apptentive_other_text_input_layout)
                 val textInputEditText = choiceView.findViewById<TextInputEditText>(R.id.apptentive_other_edit_text)
 
+                if (choice.isTextInputVisible) {
+                    textInputEditText.requestFocusFromTouch()
+                }
                 textInputLayout.isVisible = choice.isTextInputVisible
                 textInputLayout.hint = choice.hint
 
