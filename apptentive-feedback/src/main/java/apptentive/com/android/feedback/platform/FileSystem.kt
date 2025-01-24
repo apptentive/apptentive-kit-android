@@ -3,6 +3,7 @@ package apptentive.com.android.feedback.platform
 import android.content.Context
 import androidx.annotation.WorkerThread
 import apptentive.com.android.core.Provider
+import apptentive.com.android.feedback.utils.FileStorageUtil
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.CORE
@@ -14,6 +15,8 @@ interface FileSystem {
     fun getInternalDir(path: String, createIfNecessary: Boolean = false): File
 
     fun containsFile(path: String): Boolean
+
+    fun hasOldConversationFile(): Boolean
 }
 
 internal class AndroidFileSystemProvider(context: Context, private val domain: String) :
@@ -43,5 +46,10 @@ private class AndroidFileSystem(
     override fun containsFile(path: String): Boolean {
         val internalDir = File(applicationContext.filesDir, "$domain/$path")
         return internalDir.exists() && (internalDir.listFiles()?.size ?: 0) > 0
+    }
+
+    override fun hasOldConversationFile(): Boolean {
+        val conversationFile = File(applicationContext.filesDir, "$domain/${FileStorageUtil.CONVERSATION_DIR + "/conversation.bin"}")
+        return conversationFile.exists()
     }
 }

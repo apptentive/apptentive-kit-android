@@ -45,6 +45,8 @@ object FileUtil {
 
     fun containsFiles(path: String): Boolean = fileSystem.containsFile(path)
 
+    fun hasOldConversationStorage(): Boolean = fileSystem.hasOldConversationFile()
+
     private fun getMimeTypeFromUri(context: Context, contentUri: Uri): String? {
         return context.contentResolver?.getType(contentUri) // Usually `application/TYPE`
     }

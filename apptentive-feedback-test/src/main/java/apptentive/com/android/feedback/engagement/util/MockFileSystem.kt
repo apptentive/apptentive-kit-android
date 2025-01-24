@@ -19,4 +19,8 @@ class MockFileSystem(private val containsFile: Boolean = true) : FileSystem {
     override fun containsFile(path: String): Boolean {
         return containsFile
     }
+
+    override fun hasOldConversationFile(): Boolean {
+        return containsFile
+    }
 }
