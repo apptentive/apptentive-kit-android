@@ -11,7 +11,6 @@ import android.util.TypedValue
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import apptentive.com.android.feedback.Constants
 import apptentive.com.app.databinding.ActivityDebugInfoBinding
 import java.text.SimpleDateFormat
@@ -25,9 +24,6 @@ class InfoActivity : AppCompatActivity() {
 
         val isApptentiveTheme = prefs.getBoolean(EXTRA_APPTENTIVE_THEME, false)
         theme.applyStyle(if (isApptentiveTheme) R.style.Theme_Apptentive else R.style.AppTheme, true)
-
-        val isNightMode = prefs.getBoolean(EXTRA_NIGHT_MODE, false)
-        delegate.localNightMode = if (isNightMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
 
         val binding = ActivityDebugInfoBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -49,12 +45,6 @@ class InfoActivity : AppCompatActivity() {
             prefs.edit().putBoolean(EXTRA_APPTENTIVE_THEME, isChecked).apply()
             startActivity(intent)
             finish()
-        }
-
-        binding.nightSwitch.isChecked = isNightMode
-        binding.nightSwitch.setOnCheckedChangeListener { _, isChecked ->
-            delegate.localNightMode = if (isChecked) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
-            prefs.edit().putBoolean(EXTRA_NIGHT_MODE, isChecked).apply()
         }
     }
 

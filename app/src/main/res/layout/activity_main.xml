@@ -250,21 +250,21 @@
                 android:text="@string/sanitize_logs_info"
                 android:textAlignment="center"
                 android:textColor="?colorError"
-                app:layout_constraintBottom_toTopOf="@id/nightSwitch"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/sanitizeSwitch" />
 
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/nightSwitch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/section_spacing_margin"
-                android:text="@string/night"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/sanitizeSwitchInfo" />
+<!--            <androidx.appcompat.widget.SwitchCompat-->
+<!--                android:id="@+id/nightSwitch"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="@dimen/section_spacing_margin"-->
+<!--                android:text="@string/night"-->
+<!--                app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@id/sanitizeSwitchInfo" />-->
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

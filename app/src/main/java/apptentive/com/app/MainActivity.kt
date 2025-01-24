@@ -8,8 +8,6 @@ import android.os.Bundle
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
-import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
 import androidx.core.content.ContextCompat
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
@@ -28,17 +26,8 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
 
         val prefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
 
-        val isNightMode = prefs.getBoolean(EXTRA_NIGHT_MODE, false)
-        delegate.localNightMode = if (isNightMode) MODE_NIGHT_YES else MODE_NIGHT_NO
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        binding.nightSwitch.isChecked = isNightMode
-        binding.nightSwitch.setOnCheckedChangeListener { _, isChecked ->
-            delegate.localNightMode = if (isChecked) MODE_NIGHT_YES else MODE_NIGHT_NO
-            prefs.edit().putBoolean(EXTRA_NIGHT_MODE, isChecked).apply()
-        }
 
         val shouldSanitize = prefs.getBoolean(SHOULD_SANITIZE, false)
         binding.sanitizeSwitch.isChecked = shouldSanitize
