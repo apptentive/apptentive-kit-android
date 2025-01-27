@@ -5,12 +5,14 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
+import apptentive.com.android.feedback.utils.containsLinks
 import apptentive.com.android.ui.overrideTheme
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -37,6 +39,9 @@ internal class EnjoymentDialogFragment : DialogFragment(), ApptentiveActivityInf
             val enjoymentDialogView = LayoutInflater.from(ctx).inflate(R.layout.apptentive_enjoyment_dialog, null)
             val messageView = enjoymentDialogView.findViewById<MaterialTextView>(R.id.apptentive_enjoyment_dialog_title)
             messageView.text = viewModel.title
+            if (containsLinks(viewModel.title)) {
+                messageView.movementMethod = LinkMovementMethod.getInstance()
+            }
 
             // No -> Yes Orientation (default)
             val positiveButtonView = enjoymentDialogView.findViewById<MaterialButton>(R.id.apptentive_enjoyment_dialog_yes)

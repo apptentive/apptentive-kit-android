@@ -20,6 +20,7 @@ import androidx.fragment.app.viewModels
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
 import apptentive.com.android.feedback.notes.R
+import apptentive.com.android.feedback.utils.containsLinks
 import apptentive.com.android.ui.overrideTheme
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -69,7 +70,9 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
                         contentLayout.findViewById<MaterialTextView>(R.id.apptentive_note_title_or_message_only)
                     titleView.text =
                         if (viewModel.title != null) viewModel.title else viewModel.message
-                    titleView.movementMethod = LinkMovementMethod.getInstance()
+                    if (containsLinks(titleView.text.toString())) {
+                        titleView.movementMethod = LinkMovementMethod.getInstance()
+                    }
                     if (viewModel.title == null && viewModel.message == null) titleView.visibility = View.GONE
                     scrollView.addView(contentLayout)
                 } else -> {
@@ -81,9 +84,11 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
                         contentLayout.findViewById<MaterialTextView>(R.id.apptentive_note_title_with_message)
                     val messageView = contentLayout.findViewById<MaterialTextView>(R.id.apptentive_note_message)
                     titleView.text = viewModel.title
-                    titleView.movementMethod = LinkMovementMethod.getInstance()
+                    if (containsLinks(titleView.text.toString()))
+                        titleView.movementMethod = LinkMovementMethod.getInstance()
                     messageView.text = viewModel.message
-                    messageView.movementMethod = LinkMovementMethod.getInstance()
+                    if (containsLinks(viewModel.message.toString()))
+                        messageView.movementMethod = LinkMovementMethod.getInstance()
                     scrollView.addView(contentLayout)
                 }
             }
