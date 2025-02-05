@@ -137,6 +137,9 @@ internal class MultiChoiceQuestionListItem(
                     textInputEditText.requestFocusFromTouch()
                 }
                 textInputLayout.isVisible = choice.isTextInputVisible
+                if (choice.isTextInputVisible) {
+                    textInputEditText.requestFocusFromTouch()
+                }
                 textInputLayout.hint = choice.hint
 
                 textInputEditText.setText(choice.text)
@@ -172,6 +175,9 @@ internal class MultiChoiceQuestionListItem(
             item.answerChoices.forEachIndexed { index, choice ->
                 cachedViews[index].compoundButton.isChecked = choice.isChecked
                 cachedViews[index].textInputLayout.isVisible = choice.isTextInputVisible
+                if (choice.isTextInputVisible) {
+                    cachedViews[index].textInputLayout.editText?.requestFocusFromTouch()
+                }
             }
         }
     }
