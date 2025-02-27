@@ -316,6 +316,14 @@
 
     </style>
 
+    <style name="Theme.Apptentive.NoAnimation">
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+    </style>
+
     <!-- This style has been a problem within our UI and will be disabled by default -->
     <!-- Can be re-enabled by using ApptentiveThemeOverride -->
     <style name="DisableAndroidBackgroundStyle">

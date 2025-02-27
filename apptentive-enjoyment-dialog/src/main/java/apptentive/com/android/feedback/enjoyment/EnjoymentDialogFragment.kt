@@ -49,6 +49,7 @@ internal class EnjoymentDialogFragment : DialogFragment(), ApptentiveActivityInf
             positiveButtonView.setOnClickListener {
                 viewModel.onYesButton()
                 this@EnjoymentDialogFragment.dismiss()
+                finishActivity(arguments)
             }
 
             val negativeButtonView = enjoymentDialogView.findViewById<MaterialButton>(R.id.apptentive_enjoyment_dialog_no)
@@ -56,6 +57,7 @@ internal class EnjoymentDialogFragment : DialogFragment(), ApptentiveActivityInf
             negativeButtonView.setOnClickListener {
                 viewModel.onNoButton()
                 this@EnjoymentDialogFragment.dismiss()
+                finishActivity(arguments)
             }
 
             // Yes -> No Orientation (alternate - enabled through styles)
@@ -64,6 +66,7 @@ internal class EnjoymentDialogFragment : DialogFragment(), ApptentiveActivityInf
             positiveButtonViewAlternate.setOnClickListener {
                 viewModel.onYesButton()
                 this@EnjoymentDialogFragment.dismiss()
+                finishActivity(arguments)
             }
 
             val negativeButtonViewAlternate = enjoymentDialogView.findViewById<MaterialButton>(R.id.apptentive_enjoyment_dialog_no_alternate)
@@ -71,6 +74,7 @@ internal class EnjoymentDialogFragment : DialogFragment(), ApptentiveActivityInf
             negativeButtonViewAlternate.setOnClickListener {
                 viewModel.onNoButton()
                 this@EnjoymentDialogFragment.dismiss()
+                finishActivity(arguments)
             }
 
             setView(enjoymentDialogView)
@@ -90,6 +94,7 @@ internal class EnjoymentDialogFragment : DialogFragment(), ApptentiveActivityInf
     override fun onCancel(dialog: DialogInterface) {
         viewModel.onCancel()
         super.onCancel(dialog)
+        finishActivity(arguments)
     }
 
     override fun onDismiss(dialog: DialogInterface) {
@@ -99,5 +104,11 @@ internal class EnjoymentDialogFragment : DialogFragment(), ApptentiveActivityInf
 
     override fun getApptentiveActivityInfo(): Activity {
         return requireActivity()
+    }
+
+    private fun finishActivity(arguments: Bundle?) {
+        if (arguments?.getBoolean("IS_SDK_HOST_ACTIVITY") == true && requireActivity().isFinishing.not()) {
+            requireActivity().finish()
+        }
     }
 }

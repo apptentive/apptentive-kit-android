@@ -131,7 +131,10 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
             }
             //endregion
 
-            viewModel.onDismiss = { this@TextModalDialogFragment.dismiss() }
+            viewModel.onDismiss = {
+                this@TextModalDialogFragment.dismiss()
+                finishActivity(arguments)
+            }
         }.create()
         viewModel.noteHeaderBitmapStream.value?.let { bitmap ->
             setupImage(bitmap)
@@ -155,6 +158,7 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
     override fun onCancel(dialog: DialogInterface) {
         viewModel.onCancel()
         super.onCancel(dialog)
+        finishActivity(arguments)
     }
 
     override fun getApptentiveActivityInfo(): Activity {
@@ -222,6 +226,12 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
                         }
                     })
             }
+        }
+    }
+
+    private fun finishActivity(arguments: Bundle?) {
+        if (arguments?.getBoolean("IS_SDK_HOST_ACTIVITY") == true && requireActivity().isFinishing.not()) {
+            requireActivity().finish()
         }
     }
 }

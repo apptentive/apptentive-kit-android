@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.textmodal
 
+import android.content.Intent
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.platform.AndroidViewInteractionLauncher
@@ -29,7 +30,12 @@ internal class TextModalInteractionLauncher : AndroidViewInteractionLauncher<Tex
                 val noteDialog = TextModalDialogFragment()
                 noteDialog.show(fragmentManager, TextModalInteraction.TAG)
             } catch (exception: Exception) {
-                Log.e(INTERACTIONS, "Could not start Note interaction", exception)
+                Log.e(INTERACTIONS, "Could not start Note interaction, launching host activity", exception)
+                try {
+                    engagementContext.getAppActivity().startActivity(Intent((engagementContext.getAppActivity()), TextModalSupportFragmentManagerActivity::class.java))
+                } catch (e: Exception) {
+                    Log.e(INTERACTIONS, "Could not start Note interaction using host activity", e)
+                }
             }
         }
     }
