@@ -1,3 +1,8 @@
+# 2025-03-05 - v6.9.2
+### Improvements
+* Activities without supportFragmentManager now can engage modal interactions.
+* Enhanced external keyboard accessibility experience
+
 # 2024-11-20 - v6.9.1
 ### Fixes
 * Device updates are now accurately captured in the conversation metadata.

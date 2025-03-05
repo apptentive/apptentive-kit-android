@@ -24,6 +24,7 @@ android {
 }
 
 repositories {
+    mavenLocal()
     maven {
         url "https://oss.sonatype.org/content/groups/staging/"
     }
@@ -39,7 +40,6 @@ repositories {
 //            password = artifactoryProperties['artifactory_password'] ? artifactoryProperties['artifactory_password'] : ""
 //        }
 //    }
-    mavenLocal()
 }
 
 dependencies {
