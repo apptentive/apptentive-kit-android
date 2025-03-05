@@ -5,12 +5,14 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
+import apptentive.com.android.feedback.utils.containsLinks
 import apptentive.com.android.ui.overrideTheme
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -37,6 +39,9 @@ internal class EnjoymentDialogFragment : DialogFragment(), ApptentiveActivityInf
             val enjoymentDialogView = LayoutInflater.from(ctx).inflate(R.layout.apptentive_enjoyment_dialog, null)
             val messageView = enjoymentDialogView.findViewById<MaterialTextView>(R.id.apptentive_enjoyment_dialog_title)
             messageView.text = viewModel.title
+            if (containsLinks(viewModel.title)) {
+                messageView.movementMethod = LinkMovementMethod.getInstance()
+            }
 
             // No -> Yes Orientation (default)
             val positiveButtonView = enjoymentDialogView.findViewById<MaterialButton>(R.id.apptentive_enjoyment_dialog_yes)
@@ -44,6 +49,7 @@ internal class EnjoymentDialogFragment : DialogFragment(), ApptentiveActivityInf
             positiveButtonView.setOnClickListener {
                 viewModel.onYesButton()
                 this@EnjoymentDialogFragment.dismiss()
+                finishActivity(arguments)
             }
 
             val negativeButtonView = enjoymentDialogView.findViewById<MaterialButton>(R.id.apptentive_enjoyment_dialog_no)
@@ -51,6 +57,7 @@ internal class EnjoymentDialogFragment : DialogFragment(), ApptentiveActivityInf
             negativeButtonView.setOnClickListener {
                 viewModel.onNoButton()
                 this@EnjoymentDialogFragment.dismiss()
+                finishActivity(arguments)
             }
 
             // Yes -> No Orientation (alternate - enabled through styles)
@@ -59,6 +66,7 @@ internal class EnjoymentDialogFragment : DialogFragment(), ApptentiveActivityInf
             positiveButtonViewAlternate.setOnClickListener {
                 viewModel.onYesButton()
                 this@EnjoymentDialogFragment.dismiss()
+                finishActivity(arguments)
             }
 
             val negativeButtonViewAlternate = enjoymentDialogView.findViewById<MaterialButton>(R.id.apptentive_enjoyment_dialog_no_alternate)
@@ -66,6 +74,7 @@ internal class EnjoymentDialogFragment : DialogFragment(), ApptentiveActivityInf
             negativeButtonViewAlternate.setOnClickListener {
                 viewModel.onNoButton()
                 this@EnjoymentDialogFragment.dismiss()
+                finishActivity(arguments)
             }
 
             setView(enjoymentDialogView)
@@ -85,6 +94,7 @@ internal class EnjoymentDialogFragment : DialogFragment(), ApptentiveActivityInf
     override fun onCancel(dialog: DialogInterface) {
         viewModel.onCancel()
         super.onCancel(dialog)
+        finishActivity(arguments)
     }
 
     override fun onDismiss(dialog: DialogInterface) {
@@ -94,5 +104,11 @@ internal class EnjoymentDialogFragment : DialogFragment(), ApptentiveActivityInf
 
     override fun getApptentiveActivityInfo(): Activity {
         return requireActivity()
+    }
+
+    private fun finishActivity(arguments: Bundle?) {
+        if (arguments?.getBoolean("IS_SDK_HOST_ACTIVITY") == true && requireActivity().isFinishing.not()) {
+            requireActivity().finish()
+        }
     }
 }

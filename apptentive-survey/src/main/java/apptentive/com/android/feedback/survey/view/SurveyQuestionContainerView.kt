@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.LinearLayout
 import androidx.core.view.isVisible
 import apptentive.com.android.feedback.survey.R
+import apptentive.com.android.feedback.utils.containsLinks
 import apptentive.com.android.ui.getThemeColor
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.SURVEY
@@ -31,6 +32,14 @@ internal class SurveyQuestionContainerView(
         get() = titleTextView.text
         set(value) {
             titleTextView.text = value
+            try {
+                if (containsLinks(value.toString())) {
+                    Linkify.addLinks(titleTextView, Linkify.ALL)
+                    titleTextView.movementMethod = LinkMovementMethod.getInstance()
+                }
+            } catch (exception: Exception) {
+                Log.e(SURVEY, "Couldn't add linkify to survey title text", exception)
+            }
         }
 
     var instructions: CharSequence?
@@ -66,13 +75,6 @@ internal class SurveyQuestionContainerView(
         instructionsTextView = contentView.findViewById(R.id.apptentive_question_instructions)
         answerContainerView = contentView.findViewById(R.id.apptentive_answer_container)
         errorMessageView = contentView.findViewById(R.id.apptentive_question_error_message)
-
-        try {
-            Linkify.addLinks(titleTextView, Linkify.ALL)
-            titleTextView.movementMethod = LinkMovementMethod.getInstance()
-        } catch (exception: Exception) {
-            Log.e(SURVEY, "Couldn't add linkify to survey title text", exception)
-        }
         titleTextViewDefaultColor = titleTextView.textColors
         instructionsTextViewDefaultColor = instructionsTextView.textColors
 

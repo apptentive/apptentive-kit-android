@@ -201,7 +201,7 @@ internal class DefaultConversationSerializer(
     }
 
     private fun loadConversationFile(conversationRoster: ConversationRoster?): File? {
-        // Use the old messages.bin file for older SDKs < 6.2.0
+        // Use the old messages.bin file for older SDKs < 6.1.0
         // SDK_VERSION is added in 6.1.0. It would be null for the SDKs < 6.1.0
         return if (hasStoragePriorToMultiUserSupport()) {
             Log.d(CONVERSATION, "Using old conversation file")

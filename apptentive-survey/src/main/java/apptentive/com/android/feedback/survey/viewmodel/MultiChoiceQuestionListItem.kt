@@ -133,7 +133,13 @@ internal class MultiChoiceQuestionListItem(
                 val textInputLayout = choiceView.findViewById<TextInputLayout>(R.id.apptentive_other_text_input_layout)
                 val textInputEditText = choiceView.findViewById<TextInputEditText>(R.id.apptentive_other_edit_text)
 
+                if (choice.isTextInputVisible) {
+                    textInputEditText.requestFocusFromTouch()
+                }
                 textInputLayout.isVisible = choice.isTextInputVisible
+                if (choice.isTextInputVisible) {
+                    textInputEditText.requestFocusFromTouch()
+                }
                 textInputLayout.hint = choice.hint
 
                 textInputEditText.setText(choice.text)
@@ -169,6 +175,9 @@ internal class MultiChoiceQuestionListItem(
             item.answerChoices.forEachIndexed { index, choice ->
                 cachedViews[index].compoundButton.isChecked = choice.isChecked
                 cachedViews[index].textInputLayout.isVisible = choice.isTextInputVisible
+                if (choice.isTextInputVisible) {
+                    cachedViews[index].textInputLayout.editText?.requestFocusFromTouch()
+                }
             }
         }
     }

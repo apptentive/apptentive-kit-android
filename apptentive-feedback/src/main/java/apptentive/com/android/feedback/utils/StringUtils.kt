@@ -1,5 +1,7 @@
 package apptentive.com.android.feedback.utils
 
+import android.util.Patterns
+import apptentive.com.android.util.InternalUseOnly
 import org.json.JSONObject
 import kotlin.math.max
 
@@ -54,4 +56,19 @@ internal fun String.parseJsonField(field: String): String {
     } catch (e: Exception) {
         ""
     }
+}
+
+@InternalUseOnly
+fun containsLinks(text: String): Boolean {
+    val urlPattern = Patterns.WEB_URL
+    val urlMatcher = urlPattern.matcher(text)
+    if (urlMatcher.find()) return true
+
+    val emailPattern = Patterns.EMAIL_ADDRESS
+    val emailMatcher = emailPattern.matcher(text)
+    if (emailMatcher.find()) return true
+
+    val phonePatterns = Patterns.PHONE
+    val phoneMatcher = phonePatterns.matcher(text)
+    return phoneMatcher.find()
 }

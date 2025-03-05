@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.enjoyment
 
+import android.content.Intent
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.platform.AndroidViewInteractionLauncher
@@ -26,7 +27,17 @@ internal class EnjoymentDialogInteractionLauncher :
                 val enjoymentDialog = EnjoymentDialogFragment()
                 enjoymentDialog.show(fragmentManager, EnjoymentDialogInteraction.TAG)
             } catch (exception: Exception) {
-                Log.e(INTERACTIONS, "Could not start Love Dialog interaction", exception)
+                Log.e(INTERACTIONS, "Could not start Love Dialog interaction, launching host activity", exception)
+                try {
+                    engagementContext.getAppActivity().startActivity(
+                        Intent(
+                            (engagementContext.getAppActivity()),
+                            EnjoymentDialogSupportFragmentManagerActivity::class.java
+                        )
+                    )
+                } catch (e: Exception) {
+                    Log.e(INTERACTIONS, "Could not start Love Dialog interaction using host activity", e)
+                }
             }
         }
     }

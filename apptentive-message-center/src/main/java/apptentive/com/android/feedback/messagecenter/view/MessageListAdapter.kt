@@ -22,6 +22,7 @@ import apptentive.com.android.feedback.messagecenter.view.custom.MessageCenterAt
 import apptentive.com.android.feedback.messagecenter.view.custom.ProfileView
 import apptentive.com.android.feedback.messagecenter.viewmodel.MessageCenterViewModel
 import apptentive.com.android.feedback.model.Message
+import apptentive.com.android.feedback.utils.containsLinks
 import apptentive.com.android.feedback.utils.convertToDate
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.MESSAGE_CENTER
@@ -134,8 +135,13 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
                         inboundText.isVisible = !message.body.isNullOrEmpty()
                         inboundText.text = message.body
                         try {
-                            Linkify.addLinks(inboundText, Linkify.ALL)
-                            inboundText.movementMethod = LinkMovementMethod.getInstance()
+                            if (containsLinks(inboundText.text.toString())) {
+                                Linkify.addLinks(inboundText, Linkify.ALL)
+                                inboundText.movementMethod = LinkMovementMethod.getInstance()
+                                inboundText.setTextIsSelectable(true)
+                            } else {
+                                inboundText.setTextIsSelectable(false)
+                            }
                         } catch (exception: Exception) {
                             Log.e(MESSAGE_CENTER, "Couldn't add linkify to inbound text", exception)
                         }
@@ -153,8 +159,12 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
                         outboundLayout.isVisible = true
                         outboundText.text = message?.body
                         try {
-                            Linkify.addLinks(outboundText, Linkify.ALL)
-                            outboundText.movementMethod = LinkMovementMethod.getInstance()
+                            if (containsLinks(outboundText.text.toString())) {
+                                Linkify.addLinks(outboundText, Linkify.ALL)
+                                outboundText.movementMethod = LinkMovementMethod.getInstance()
+                                outboundText.setTextIsSelectable(true)
+                            } else
+                                outboundText.setTextIsSelectable(false)
                         } catch (exception: Exception) {
                             Log.e(MESSAGE_CENTER, "Couldn't add linkify to outbound text", exception)
                         }
@@ -181,9 +191,21 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
                 greetingTitle.text = greetingData?.greetingTitle
                 greetingBodyTextView.text = greetingData?.greetingBody
                 try {
-                    Linkify.addLinks(greetingTitle, Linkify.ALL)
-                    Linkify.addLinks(greetingBodyTextView, Linkify.ALL)
-                    greetingBodyTextView.movementMethod = LinkMovementMethod.getInstance()
+                    if (containsLinks(greetingTitle.text.toString())) {
+                        Linkify.addLinks(greetingTitle, Linkify.ALL)
+                        greetingBodyTextView.movementMethod = LinkMovementMethod.getInstance()
+                        greetingTitle.setTextIsSelectable(true)
+                    } else {
+                        greetingTitle.setTextIsSelectable(false)
+                    }
+
+                    if (containsLinks(greetingBodyTextView.text.toString())) {
+                        Linkify.addLinks(greetingBodyTextView, Linkify.ALL)
+                        greetingBodyTextView.movementMethod = LinkMovementMethod.getInstance()
+                        greetingBodyTextView.setTextIsSelectable(true)
+                    } else {
+                        greetingBodyTextView.setTextIsSelectable(false)
+                    }
                 } catch (exception: Exception) {
                     Log.e(MESSAGE_CENTER, "Couldn't add linkify to greeting text", exception)
                 }
@@ -195,7 +217,9 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
                 val statusView: MaterialTextView =
                     holder.itemView.findViewById(R.id.apptentive_message_center_status)
                 statusView.text = messageViewModel.messageSLA
-                statusView.movementMethod = LinkMovementMethod.getInstance()
+
+                if (containsLinks(statusView.text.toString()))
+                    statusView.movementMethod = LinkMovementMethod.getInstance()
 
                 val profileData = getItem(position).profileData
 
