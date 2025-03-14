@@ -1,5 +1,7 @@
 package apptentive.com.android.feedback.messagecenter.interaction
 
+import android.os.Handler
+import android.os.Looper
 import androidx.annotation.Keep
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.dependencyprovider.MessageCenterModelProvider
@@ -28,8 +30,25 @@ internal class MessageCenterInteractionLauncher : AndroidViewInteractionLauncher
         DependencyProvider.register(MessageCenterModelProvider(interaction))
 
         // Launch Message center landing page
+        launchMessageCenterWithARetry(engagementContext, interaction, 1)
+    }
+
+    private fun launchMessageCenterWithARetry(engagementContext: EngagementContext, interaction: MessageCenterInteraction, retryCount: Int) {
         engagementContext.executors.main.execute {
-            engagementContext.getAppActivity().startViewModelActivity<MessageCenterActivity>()
+            try {
+                engagementContext.getAppActivity().startViewModelActivity<MessageCenterActivity>()
+            } catch (e: Exception) {
+                if (retryCount > 0) {
+                    engagementContext.executors.state.execute {
+                        Log.e(INTERACTIONS, "Could not start Message Center interaction retrying in 1 second", e)
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            launchMessageCenterWithARetry(engagementContext, interaction, retryCount - 1)
+                        }, 1000)
+                    }
+                } else {
+                    Log.e(INTERACTIONS, "Could not start Message Center interaction after a retry", e)
+                }
+            }
         }
     }
 }

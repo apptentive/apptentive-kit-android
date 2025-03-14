@@ -1,5 +1,7 @@
 package apptentive.com.android.feedback.survey.interaction
 
+import android.os.Handler
+import android.os.Looper
 import androidx.annotation.VisibleForTesting
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.engagement.EngagementContext
@@ -26,8 +28,25 @@ internal class SurveyInteractionLauncher : AndroidViewInteractionLauncher<Survey
 
         DependencyProvider.register(SurveyModelFactoryProvider(engagementContext, interaction))
 
+        launcSurveyWithARetry(engagementContext, interaction, 1)
+    }
+
+    private fun launcSurveyWithARetry(engagementContext: EngagementContext, interaction: SurveyInteraction, retryCount: Int) {
         engagementContext.executors.main.execute {
-            engagementContext.getAppActivity().startViewModelActivity<SurveyActivity>()
+            try {
+                engagementContext.getAppActivity().startViewModelActivity<SurveyActivity>()
+            } catch (e: Exception) {
+                if (retryCount > 0) {
+                    engagementContext.executors.state.execute {
+                        Log.e(INTERACTIONS, "Could not start Survey interaction retrying in 1 second", e)
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            launcSurveyWithARetry(engagementContext, interaction, retryCount - 1)
+                        }, 1000)
+                    }
+                } else {
+                    Log.e(INTERACTIONS, "Could not start Survey interaction after a retry", e)
+                }
+            }
         }
     }
 }
