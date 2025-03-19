@@ -1,5 +1,7 @@
 package apptentive.com.android.feedback.rating.interaction
 
+import android.os.Handler
+import android.os.Looper
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.InternalEvent
@@ -19,19 +21,35 @@ internal class InAppReviewInteractionLauncher(private val inAppReviewManagerFact
     ) {
         super.launchInteraction(engagementContext, interaction)
         engagementContext.engage(Event.internal(InternalEvent.EVENT_REQUEST.labelName, interaction.type), interaction.id)
-        val reviewManager = inAppReviewManagerFactory.createReviewManager(engagementContext.getAppActivity())
-        if (reviewManager.isInAppReviewSupported()) {
-            reviewManager.startReviewFlow(object : InAppReviewCallback {
-                override fun onReviewComplete() {
-                    onReviewShown(engagementContext, interaction)
-                }
+        createReviewManagerWithARetry(engagementContext, interaction, 1)
+    }
 
-                override fun onReviewFlowFailed(message: String) {
-                    onReviewNotShown(engagementContext, interaction, message)
+    private fun createReviewManagerWithARetry(engagementContext: EngagementContext, interaction: InAppReviewInteraction, retry: Int) {
+        try {
+            val reviewManager = inAppReviewManagerFactory.createReviewManager(engagementContext.getAppActivity())
+            if (reviewManager.isInAppReviewSupported()) {
+                reviewManager.startReviewFlow(object : InAppReviewCallback {
+                    override fun onReviewComplete() {
+                        onReviewShown(engagementContext, interaction)
+                    }
+
+                    override fun onReviewFlowFailed(message: String) {
+                        onReviewNotShown(engagementContext, interaction, message)
+                    }
+                })
+            } else {
+                onReviewNotSupported(engagementContext, interaction)
+            }
+        } catch (e: Exception) {
+            if (retry > 0) {
+                engagementContext.executors.state.execute {
+                    Log.i(IN_APP_REVIEW, "Could not start InAppReview interaction, retrying in 1 second")
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        createReviewManagerWithARetry(engagementContext, interaction, retry - 1)
+                    }, 1000)
                 }
-            })
-        } else {
-            onReviewNotSupported(engagementContext, interaction)
+            } else
+                Log.e(IN_APP_REVIEW, "Could not start InAppReview interaction after a retry", e)
         }
     }
 

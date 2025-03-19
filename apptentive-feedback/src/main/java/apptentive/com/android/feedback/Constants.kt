@@ -4,7 +4,7 @@ import apptentive.com.android.util.InternalUseOnly
 
 @InternalUseOnly
 object Constants {
-    const val SDK_VERSION = "6.9.2"
+    const val SDK_VERSION = "6.9.3"
     const val API_VERSION = 15
     const val SERVER_URL = "https://api.apptentive.com"
     const val REDACTED_DATA = "<REDACTED>"
