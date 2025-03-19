@@ -28,18 +28,6 @@ repositories {
     maven {
         url "https://oss.sonatype.org/content/groups/staging/"
     }
-//
-//    maven {
-//        def artifactoryProperties = new Properties()
-//        if  (project.rootProject.file('local.properties').exists()) {
-//            artifactoryProperties.load(project.rootProject.file('local.properties').newDataInputStream())
-//        }
-//        url "https://apptentive.jfrog.io/artifactory/InternalNewAndroidSDK"
-//        credentials {
-//            username = artifactoryProperties['artifactory_username'] ? artifactoryProperties['artifactory_username'] : ""
-//            password = artifactoryProperties['artifactory_password'] ? artifactoryProperties['artifactory_password'] : ""
-//        }
-//    }
 }
 
 dependencies {
