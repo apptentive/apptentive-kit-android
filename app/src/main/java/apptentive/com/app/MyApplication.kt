@@ -35,8 +35,6 @@ class MyApplication : Application(), AuthenticationFailedListener {
 
         configuration.shouldEncryptStorage = true
 
-        configuration.metricsEnabled = false
-
         super.onCreate()
         Apptentive.register(this, configuration) {
             when (it) {

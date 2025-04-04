@@ -63,8 +63,8 @@ android {
     productFlavors {
         dev {
             applicationIdSuffix ".dev"
-            buildConfigField "String", "APPTENTIVE_KEY", "\"ANDROID-ANDROID-DEV-c9c0b324114f\""
-            buildConfigField "String", "APPTENTIVE_SIGNATURE", "\"98f5539e9310dc290394c68b76664e98\""
+            buildConfigField "String", "APPTENTIVE_KEY", "\"ANDROID-TEST-METRICS-ANDROID\""
+            buildConfigField "String", "APPTENTIVE_SIGNATURE", "\"0480ed80988bb6a73b231d9fcafbec34\""
         }
         qa {
             applicationIdSuffix ".qa"

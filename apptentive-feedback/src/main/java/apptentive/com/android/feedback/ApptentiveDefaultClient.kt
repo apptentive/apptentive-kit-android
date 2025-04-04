@@ -698,7 +698,9 @@ class ApptentiveDefaultClient(
         // store event locally
         conversationManager.recordEvent(event)
 
-        if (configuration.metricsEnabled || event.vendor == "com.apptentive" || BuildConfig.DEBUG) {
+        val metricsConfiguration = conversationManager.getConversation().configuration
+
+        if (metricsConfiguration.metricsEnabled || event.vendor == "com.apptentive" || BuildConfig.DEBUG) {
             Log.d(EVENT, "Recording event: ${event.fullName}")
             // send event to the backend
             enqueuePayload(

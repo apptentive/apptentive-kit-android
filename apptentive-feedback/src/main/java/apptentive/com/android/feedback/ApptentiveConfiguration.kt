@@ -99,15 +99,6 @@ data class ApptentiveConfiguration(
      */
     var customAppStoreURL: String? = null
 
-    /**
-     * Determines if the Apptentive SDK should collect metrics.
-     *
-     * If `true`, the SDK will collect metrics and send them to the Apptentive API.
-     *
-     * If `false`, the SDK will collect metrics to user internally. It won't send them to the Apptentive API.
-     */
-    var metricsEnabled: Boolean = true
-
     //region plugin configuration
 
     /**
