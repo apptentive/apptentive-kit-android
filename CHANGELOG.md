@@ -18,31 +18,7 @@
 ### Fixes
 * Draft messages are now saved correctly in the multiuser environment
 * Prevent logout calls from being made when the SDK is not logged in
-* Upgrade GSON dependnecy to latest to fix the security vulnerability
-
-### New Features
-* Added initiator to the kit to support Alchemer Workflow initiation from the SDKs
-# 2025-03-19 - v6.9.3
-### Fixes
-* Addressed a race condition when showing coupled interactions that are engaged from activities without supportFragmentManager 
-
-# 2025-03-05 - v6.9.2
-### Improvements
-* Activities without supportFragmentManager now can engage modal interactions.
-* Enhanced external keyboard accessibility experience
-
-# 2024-11-20 - v6.9.1
-### Fixes
-* Device updates are now accurately captured in the conversation metadata.
-* Support for Android 15's edge-to-edge feature implemented via Apptentive theme override.
-* Updated WebView configuration settings to address a security vulnerability.
-* Resolved the profile screen freezing issue.
-
-# 2024-09-18 - v6.9.0
-### Fixes
-* Draft messages are now saved correctly in the multiuser environment
-* Prevent logout calls from being made when the SDK is not logged in
-* Upgrade GSON dependnecy to latest to fix the security vulnerability
+* Upgrade GSON dependency to latest to fix the security vulnerability
 
 ### New Features
 * Added initiator to the kit to support Alchemer Workflow initiation from the SDKs
