@@ -85,9 +85,9 @@ publishing {
     }
 }
 
-//signing {
-//    sign publishing.publications
-//}
+signing {
+    sign publishing.publications
+}
 
 artifactory {
     contextUrl = 'https://apptentive.jfrog.io/artifactory'

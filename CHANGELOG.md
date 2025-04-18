@@ -1,6 +1,6 @@
 # 2025-03-19 - v6.9.3
 ### Fixes
-* Addressed a race condition when showing coupled interactions that are engaged from activities without supportFragmentManager 
+* Addressed a race condition when showing coupled interactions that are engaged from activities without supportFragmentManager
 
 # 2025-03-05 - v6.9.2
 ### Improvements
