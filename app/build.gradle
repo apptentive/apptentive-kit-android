@@ -63,8 +63,8 @@ android {
     productFlavors {
         dev {
             applicationIdSuffix ".dev"
-            buildConfigField "String", "APPTENTIVE_KEY", "\"ANDROID-TEST-METRICS-ANDROID\""
-            buildConfigField "String", "APPTENTIVE_SIGNATURE", "\"0480ed80988bb6a73b231d9fcafbec34\""
+            buildConfigField "String", "APPTENTIVE_KEY", "\"ANDROID-CENTURIO-272c744c4885\""
+            buildConfigField "String", "APPTENTIVE_SIGNATURE", "\"73f0731a3fee6a6b29024b9888603640\""
         }
         qa {
             applicationIdSuffix ".qa"
@@ -93,19 +93,20 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-
-    implementation project(':apptentive-core')
-    implementation project(':apptentive-core-ui')
-    implementation project(':apptentive-feedback')
-    implementation project(':apptentive-enjoyment-dialog')
-    implementation project(':apptentive-survey')
-    implementation project(':apptentive-notes')
-    implementation project(':apptentive-ratings')
-    implementation project(':apptentive-message-center')
-    implementation project(':apptentive-navigate-to-link')
-    implementation project(':apptentive-in-app-review')
-    implementation project(":apptentive-initiator")
+//    implementation fileTree(dir: 'libs', include: ['*.jar'])
+//
+//    implementation project(':apptentive-core')
+//    implementation project(':apptentive-core-ui')
+//    implementation project(':apptentive-feedback')
+//    implementation project(':apptentive-enjoyment-dialog')
+//    implementation project(':apptentive-survey')
+//    implementation project(':apptentive-notes')
+//    implementation project(':apptentive-ratings')
+//    implementation project(':apptentive-message-center')
+//    implementation project(':apptentive-navigate-to-link')
+//    implementation project(':apptentive-in-app-review')
+//    implementation project(":apptentive-initiator")
+    implementation "com.apptentive:apptentive-kit-android:6.9.1"
     implementation "androidx.appcompat:appcompat:$appcompat_library_version"
     implementation "androidx.core:core-ktx:$core_ktx_version"
     implementation "com.google.android.material:material:$material_design_version"

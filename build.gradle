@@ -68,10 +68,10 @@ buildscript {
 
     project.ext {
         sonatypeVersion = '6.9.3'
-        jfrogVersion = '6.8.1'
+        jfrogVersion = '6.9.31'
 
         // Change this depending on where you are publishing to
-        repoVersion = sonatypeVersion
+        repoVersion = jfrogVersion
     }
 
     repositories {
@@ -83,6 +83,9 @@ buildscript {
         repositories {
             google()
             mavenCentral()
+            maven {
+                url "https://apptentive.jfrog.io/artifactory/NewAndroidSDK"
+            }
             maven {
                 def artifactoryProperties = new Properties()
                 if (project.rootProject.file('local.properties').exists()) {
