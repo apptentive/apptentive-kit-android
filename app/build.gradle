@@ -106,7 +106,7 @@ dependencies {
 //    implementation project(':apptentive-navigate-to-link')
 //    implementation project(':apptentive-in-app-review')
 //    implementation project(":apptentive-initiator")
-    implementation "com.apptentive:apptentive-kit-android:6.9.1"
+    implementation "com.apptentive:apptentive-kit-android:6.9.32"
     implementation "androidx.appcompat:appcompat:$appcompat_library_version"
     implementation "androidx.core:core-ktx:$core_ktx_version"
     implementation "com.google.android.material:material:$material_design_version"
