@@ -12,7 +12,6 @@ import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.encryption.EncryptionKey
 import apptentive.com.android.encryption.KeyResolver23
 import apptentive.com.android.encryption.getKeyFromHexString
-import apptentive.com.android.feedback.ApptentiveConfiguration
 import apptentive.com.android.feedback.Constants
 import apptentive.com.android.feedback.LoginResult
 import apptentive.com.android.feedback.PrefetchManager
