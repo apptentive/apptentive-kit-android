@@ -45,6 +45,7 @@ import apptentive.com.android.feedback.utils.isMarshmallowOrGreater
 import apptentive.com.android.feedback.utils.toSecretKeyBytes
 import apptentive.com.android.network.UnexpectedResponseException
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
+import apptentive.com.android.platform.SharedPrefConstants.METRICS_ENABLED
 import apptentive.com.android.platform.SharedPrefConstants.SDK_CORE_INFO
 import apptentive.com.android.platform.SharedPrefConstants.SDK_VERSION
 import apptentive.com.android.serialization.json.JsonConverter
@@ -178,7 +179,12 @@ internal class ConversationManager(
         val existingConversation = loadExistingConversation()
         if (existingConversation != null) {
             Log.i(CONVERSATION, "Loaded an existing conversation")
-            return existingConversation
+            return existingConversation.copy(
+                configuration = existingConversation.configuration.copy(
+                    metricsEnabled = DependencyProvider.of<AndroidSharedPrefDataStore>()
+                        .getBoolean(SDK_CORE_INFO, METRICS_ENABLED, existingConversation.configuration.metricsEnabled)
+                )
+            )
         }
 
         val legacyConversation = tryMigrateLegacyConversation()
@@ -507,7 +513,7 @@ internal class ConversationManager(
         val conversation = activeConversationSubject.value
         val configuration = conversation.configuration
 
-        if (isInThePast(configuration.expiry) || isDebuggable) {
+        if (isInThePast(configuration.expiry) || isDebuggable || !DependencyProvider.of<AndroidSharedPrefDataStore>().containsKey(SDK_CORE_INFO, METRICS_ENABLED)) {
             Log.d(CONVERSATION, "Fetching configuration")
             val token = conversation.conversationToken
             val id = conversation.conversationId
@@ -523,6 +529,8 @@ internal class ConversationManager(
                             activeConversationSubject.value = activeConversationSubject.value.copy(
                                 configuration = it.data
                             )
+                            DependencyProvider.of<AndroidSharedPrefDataStore>()
+                                .putBoolean(SDK_CORE_INFO, METRICS_ENABLED, it.data.metricsEnabled)
                         }
                         is Result.Error -> {
                             Log.e(CONVERSATION, "Error while fetching configuration", it.error)

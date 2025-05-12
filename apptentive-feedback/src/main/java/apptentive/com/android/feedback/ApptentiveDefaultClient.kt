@@ -698,16 +698,23 @@ class ApptentiveDefaultClient(
         // store event locally
         conversationManager.recordEvent(event)
 
-        // send event to the backend
-        enqueuePayload(
-            EventPayload(
-                label = event.fullName,
-                interactionId = interactionId,
-                data = data,
-                customData = customData,
-                extendedData = extendedData
+        val metricsConfiguration = conversationManager.getConversation().configuration
+
+        if (metricsConfiguration.metricsEnabled || event.vendor == "com.apptentive" || BuildConfig.DEBUG) {
+            Log.d(EVENT, "Recording event: ${event.fullName}")
+            // send event to the backend
+            enqueuePayload(
+                EventPayload(
+                    label = event.fullName,
+                    interactionId = interactionId,
+                    data = data,
+                    customData = customData,
+                    extendedData = extendedData
+                )
             )
-        )
+        } else {
+            Log.v(EVENT, "Metrics are disabled. Not sending event: ${event.fullName}")
+        }
     }
 
     override fun setLocalManifest(json: String) {
