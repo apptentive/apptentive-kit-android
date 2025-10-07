@@ -97,7 +97,8 @@ internal class MultiChoiceQuestionListItem(
         itemView: SurveyQuestionContainerView,
         private val onSelectionChanged: (questionId: String, choiceId: String, selected: Boolean, text: String?) -> Unit
     ) : SurveyQuestionListItem.ViewHolder<MultiChoiceQuestionListItem>(itemView) {
-        private val choiceContainer = itemView.findViewById<LinearLayout>(R.id.apptentive_choice_container)
+        private val choiceContainer =
+            itemView.findViewById<LinearLayout>(R.id.apptentive_choice_container)
         private lateinit var cachedViews: List<CachedViews>
 
         override fun bindView(
@@ -125,13 +126,27 @@ internal class MultiChoiceQuestionListItem(
                 compoundButton.isChecked = choice.isChecked
 
                 compoundButton.setOnCheckedChangeListener { _, isChecked ->
-                    onSelectionChanged.invoke(questionId, choice.id, isChecked, null) // text wasn't changed
+                    if (!item.allowMultipleAnswers && isChecked) {
+                        cachedViews.forEach { view ->
+                            if (view.compoundButton != compoundButton) {
+                                view.compoundButton.isChecked = false
+                            }
+                        }
+                    }
+                    onSelectionChanged.invoke(
+                        questionId,
+                        choice.id,
+                        isChecked,
+                        null
+                    ) // text wasn't changed
                 }
                 // button end
 
                 // text fields
-                val textInputLayout = choiceView.findViewById<TextInputLayout>(R.id.apptentive_other_text_input_layout)
-                val textInputEditText = choiceView.findViewById<TextInputEditText>(R.id.apptentive_other_edit_text)
+                val textInputLayout =
+                    choiceView.findViewById<TextInputLayout>(R.id.apptentive_other_text_input_layout)
+                val textInputEditText =
+                    choiceView.findViewById<TextInputEditText>(R.id.apptentive_other_edit_text)
 
                 if (choice.isTextInputVisible) {
                     textInputEditText.requestFocusFromTouch()
@@ -144,7 +159,12 @@ internal class MultiChoiceQuestionListItem(
 
                 textInputEditText.setText(choice.text)
                 textInputEditText.doAfterTextChanged {
-                    onSelectionChanged.invoke(questionId, choice.id, true, it?.toString().orEmpty().trim())
+                    onSelectionChanged.invoke(
+                        questionId,
+                        choice.id,
+                        true,
+                        it?.toString().orEmpty().trim()
+                    )
                 }
                 // text fields end
 
@@ -184,5 +204,8 @@ internal class MultiChoiceQuestionListItem(
 
     //endregion
 
-    private data class CachedViews(val compoundButton: CompoundButton, val textInputLayout: TextInputLayout)
+    private data class CachedViews(
+        val compoundButton: CompoundButton,
+        val textInputLayout: TextInputLayout
+    )
 }
