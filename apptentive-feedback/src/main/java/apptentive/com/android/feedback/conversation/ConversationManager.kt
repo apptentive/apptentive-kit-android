@@ -7,6 +7,7 @@ import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.Observable
 import apptentive.com.android.core.Provider
+import apptentive.com.android.core.hasItBeenAnHour
 import apptentive.com.android.core.isInThePast
 import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.encryption.EncryptionKey
@@ -45,6 +46,7 @@ import apptentive.com.android.feedback.utils.isMarshmallowOrGreater
 import apptentive.com.android.feedback.utils.toSecretKeyBytes
 import apptentive.com.android.network.UnexpectedResponseException
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
+import apptentive.com.android.platform.SharedPrefConstants.FAN_SIGNAL_TIME_STAMP
 import apptentive.com.android.platform.SharedPrefConstants.SDK_CORE_INFO
 import apptentive.com.android.platform.SharedPrefConstants.SDK_VERSION
 import apptentive.com.android.serialization.json.JsonConverter
@@ -458,12 +460,16 @@ internal class ConversationManager(
     fun tryFetchEngagementManifest() {
         val conversation = activeConversationSubject.value
         val manifest = conversation.engagementManifest
+        val latestLDTimeStamp = DependencyProvider.of<AndroidSharedPrefDataStore>().getString(SDK_CORE_INFO, FAN_SIGNAL_TIME_STAMP, "")
+        val needFanSignalUpdate = latestLDTimeStamp.isNotEmpty() && hasItBeenAnHour(latestLDTimeStamp)
 
-        if (isInThePast(manifest.expiry) || isDebuggable && !isUsingLocalManifest) {
+        if (isInThePast(manifest.expiry) || isDebuggable && !isUsingLocalManifest || needFanSignalUpdate) {
             Log.d(CONVERSATION, "Fetching engagement manifest")
             val token = conversation.conversationToken
             val id = conversation.conversationId
             if (token != null && id != null) {
+                // reset the FAN_SGINAL_TIME_STAMP
+                if (needFanSignalUpdate) DependencyProvider.of<AndroidSharedPrefDataStore>().putString(SDK_CORE_INFO, FAN_SIGNAL_TIME_STAMP, "")
                 fetchEngagementManifest(id, token)
             } else {
                 Log.d(

@@ -190,6 +190,7 @@ class ConversationManagerTest : TestCase() {
         DefaultStateMachine.reset()
         DefaultStateMachine.onEvent(SDKEvent.RegisterSDK)
         DefaultStateMachine.onEvent(SDKEvent.ClientStarted)
+        DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore())
         val fetchResponse: ConversationFetchResponse =
             ConversationFetchResponse(
                 id = "id",

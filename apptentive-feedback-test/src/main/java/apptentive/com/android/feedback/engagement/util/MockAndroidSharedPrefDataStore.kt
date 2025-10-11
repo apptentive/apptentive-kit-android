@@ -1,8 +1,10 @@
 package apptentive.com.android.feedback.engagement.util
 
 import android.content.SharedPreferences
+import apptentive.com.android.core.getTimeSeconds
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.platform.SharedPrefConstants.CRYPTO_ENABLED
+import apptentive.com.android.platform.SharedPrefConstants.FAN_SIGNAL_TIME_STAMP
 import io.mockk.mockk
 
 class MockAndroidSharedPrefDataStore(private val containsKey: Boolean = true, private val isEncryptionEnabled: Boolean = false) : AndroidSharedPrefDataStore {
@@ -25,7 +27,10 @@ class MockAndroidSharedPrefDataStore(private val containsKey: Boolean = true, pr
     }
 
     override fun getString(file: String, keyEntry: String, defaultValue: String): String {
-        return version
+        return if (keyEntry == FAN_SIGNAL_TIME_STAMP)
+            getTimeSeconds().toString()
+        else
+            version
     }
 
     override fun getNullableString(file: String, keyEntry: String, defaultValue: String?): String? {

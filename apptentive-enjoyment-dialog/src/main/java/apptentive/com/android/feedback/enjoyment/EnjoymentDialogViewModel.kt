@@ -4,10 +4,14 @@ import androidx.lifecycle.ViewModel
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.LiveEvent
 import apptentive.com.android.core.MissingProviderException
+import apptentive.com.android.core.getTimeSeconds
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.utils.getInteractionBackup
+import apptentive.com.android.platform.AndroidSharedPrefDataStore
+import apptentive.com.android.platform.SharedPrefConstants.FAN_SIGNAL_TIME_STAMP
+import apptentive.com.android.platform.SharedPrefConstants.SDK_CORE_INFO
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.INTERACTIONS
 
@@ -31,6 +35,8 @@ internal class EnjoymentDialogViewModel : ViewModel() {
     val yesText = interaction.yesText
     val noText = interaction.noText
 
+    val sharedPrefDataStore = DependencyProvider.of<AndroidSharedPrefDataStore>()
+
     fun onYesButton() {
         Log.i(INTERACTIONS, "Love Dialog positive button pressed")
         engageCodePoint(CODE_POINT_YES)
@@ -52,6 +58,10 @@ internal class EnjoymentDialogViewModel : ViewModel() {
     }
 
     private fun engageCodePoint(name: String) {
+        // capture the time stamp of LD response
+        if (name == CODE_POINT_NO || name == CODE_POINT_YES) {
+            sharedPrefDataStore.putString(SDK_CORE_INFO, FAN_SIGNAL_TIME_STAMP, getTimeSeconds().toString())
+        }
         context?.executors?.state?.execute {
             context.engage(
                 event = Event.internal(name, interaction.type),

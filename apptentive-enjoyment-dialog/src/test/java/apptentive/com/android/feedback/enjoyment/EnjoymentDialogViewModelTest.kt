@@ -9,10 +9,12 @@ import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.MockEngagementContext
+import apptentive.com.android.feedback.engagement.util.MockAndroidSharedPrefDataStore
 import apptentive.com.android.feedback.enjoyment.EnjoymentDialogViewModel.Companion.CODE_POINT_CANCEL
 import apptentive.com.android.feedback.enjoyment.EnjoymentDialogViewModel.Companion.CODE_POINT_DISMISS
 import apptentive.com.android.feedback.enjoyment.EnjoymentDialogViewModel.Companion.CODE_POINT_NO
 import apptentive.com.android.feedback.enjoyment.EnjoymentDialogViewModel.Companion.CODE_POINT_YES
+import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import org.junit.Test
 
 class EnjoymentDialogViewModelTest : TestCase() {
@@ -42,6 +44,7 @@ class EnjoymentDialogViewModelTest : TestCase() {
                 )
             }
         )
+        DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore())
 
         val viewModel = EnjoymentDialogViewModel()
 

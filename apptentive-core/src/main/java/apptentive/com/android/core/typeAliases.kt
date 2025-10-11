@@ -32,3 +32,13 @@ fun isInThePast(time: TimeInterval): Boolean = getTimeSeconds() > time
 
 @InternalUseOnly
 fun TimeInterval.format(digits: Int = 3): String = "%.${digits}f".format(this)
+
+@InternalUseOnly
+fun hasItBeenAnHour(stringTime: String): Boolean {
+    return try {
+        val time = stringTime.toDouble()
+        getTimeSeconds() - time > 60 * 60
+    } catch (exception: NumberFormatException) {
+        false
+    }
+}
