@@ -1,6 +1,5 @@
 package apptentive.com.android.feedback.utils
 
-import android.annotation.SuppressLint
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.Constants
 import apptentive.com.android.feedback.engagement.interactions.Interaction
@@ -10,42 +9,57 @@ import apptentive.com.android.platform.SharedPrefConstants
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.CONVERSATION
 import apptentive.com.android.util.LogTags.INTERACTIONS
-import java.util.concurrent.TimeUnit
 
 internal object ThrottleUtils {
     internal var ratingThrottleLength: Long? = null
-
-    private val defaultThrottleLength = TimeUnit.SECONDS.toMillis(1)
-
     internal const val CONVERSATION_TYPE = "Conversation"
     internal const val ROSTER_TYPE = "Roster"
+    internal var exemptedEvents = setOf("show_message_center", "message_center_fallback", "rating_dialog_event", "app_review_event", "EnjoymentDialog#no", "EnjoymentDialog#yes")
+    internal var interactionCountLimit = 1
+    internal val engagedInteractions = mutableMapOf<String, Int>()
 
-    @SuppressLint("ApplySharedPref")
-    fun shouldThrottleInteraction(interaction: Interaction): Boolean {
-        val interactionName = interaction.type.name
-        val interactionIsRating = interaction.type in
-            listOf(InteractionType.GoogleInAppReview, InteractionType.RatingDialog)
+    fun shouldThrottleInteraction(eventName: String, interaction: Interaction): Boolean {
+        val interactionType = interaction.type
 
-        val currentTime = System.currentTimeMillis()
-        val interactionLastThrottledTime = DependencyProvider.of<AndroidSharedPrefDataStore>().getLong(SharedPrefConstants.THROTTLE_UTILS, interactionName, 0)
-        val interactionLastThrottledLength = currentTime - interactionLastThrottledTime
-
-        return ratingThrottleLength?.let { ratingLength ->
-            when {
-                interactionIsRating && interactionLastThrottledLength < ratingLength -> {
-                    logThrottle(interaction, ratingLength, interactionLastThrottledLength)
-                    true
-                }
-                !interactionIsRating && interactionLastThrottledLength < defaultThrottleLength -> {
-                    logThrottle(interaction, defaultThrottleLength, interactionLastThrottledLength)
-                    true
-                }
-                else -> {
-                    DependencyProvider.of<AndroidSharedPrefDataStore>().putLong(SharedPrefConstants.THROTTLE_UTILS, interactionName, currentTime)
+        return when {
+            interactionType == InteractionType.Initiator -> false
+            interactionCountLimit <= 0 -> true
+            interaction.type == InteractionType.RatingDialog || interaction.type == InteractionType.GoogleInAppReview -> {
+                val currentTime = System.currentTimeMillis()
+                val lastThrottledTime = DependencyProvider.of<AndroidSharedPrefDataStore>().getLong(SharedPrefConstants.THROTTLE_UTILS, interaction.type.name, 0)
+                val elapsedTimeSinceLastInteraction = currentTime - lastThrottledTime
+                return ratingThrottleLength?.let { ratingLength ->
+                    when {
+                        elapsedTimeSinceLastInteraction < ratingLength -> {
+                            logThrottle(interaction, ratingLength, elapsedTimeSinceLastInteraction)
+                            true
+                        }
+                        else -> {
+                            DependencyProvider.of<AndroidSharedPrefDataStore>().putLong(SharedPrefConstants.THROTTLE_UTILS, interaction.type.name, currentTime)
+                            false
+                        }
+                    }
+                } ?: false
+            }
+            eventName in exemptedEvents -> false
+            interaction.id in engagedInteractions -> {
+                val count = engagedInteractions[interaction.id] ?: 0
+                if (count < interactionCountLimit) {
+                    engagedInteractions[interaction.id] = count + 1
                     false
+                } else {
+                    true
                 }
             }
-        } ?: false
+            else -> {
+                engagedInteractions[interaction.id] = 1
+                false
+            }
+        }
+    }
+
+    fun resetEngagedEvents() {
+        engagedInteractions.clear()
     }
 
     fun shouldThrottleReset(fileType: String): Boolean {

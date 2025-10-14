@@ -91,6 +91,7 @@ import apptentive.com.android.feedback.utils.JwtString
 import apptentive.com.android.feedback.utils.JwtUtils
 import apptentive.com.android.feedback.utils.RosterUtils.getActiveConversationMetaData
 import apptentive.com.android.feedback.utils.RuntimeUtils
+import apptentive.com.android.feedback.utils.ThrottleUtils
 import apptentive.com.android.feedback.utils.toEncryptionKey
 import apptentive.com.android.network.HttpClient
 import apptentive.com.android.network.UnexpectedResponseException
@@ -415,6 +416,7 @@ class ApptentiveDefaultClient(
                 enqueuePayload(LogoutPayload())
                 conversationManager.setManifestExpired()
                 messageManager?.logout()
+                ThrottleUtils.resetEngagedEvents()
             }
         }
     }
@@ -430,6 +432,10 @@ class ApptentiveDefaultClient(
         } else {
             Log.w(PAYLOADS, "Attempting to update token without conversation credentials.")
         }
+    }
+
+    override fun excludeEventsFromThrottling(event: List<String>) {
+        ThrottleUtils.exemptedEvents = (ThrottleUtils.exemptedEvents + event.toSet())
     }
 
     @WorkerThread

@@ -31,6 +31,7 @@ internal interface ApptentiveClient {
     fun logout()
     fun setAuthenticationFailedListener(listener: AuthenticationFailedListener)
     fun updateToken(jwtToken: String, callback: ((result: LoginResult) -> Unit)? = null)
+    fun excludeEventsFromThrottling(event: List<String>)
     companion object {
         val NULL: ApptentiveClient = ApptentiveNullClient()
     }
@@ -128,5 +129,9 @@ private class ApptentiveNullClient : ApptentiveClient {
 
     override fun updateToken(jwtToken: String, callback: ((result: LoginResult) -> Unit)?) {
         Log.d(FEEDBACK, "Apptentive SDK is not initialized; update token failed")
+    }
+
+    override fun excludeEventsFromThrottling(event: List<String>) {
+        Log.d(FEEDBACK, "Apptentive SDK is not initialized; exempt rate limit event failed")
     }
 }

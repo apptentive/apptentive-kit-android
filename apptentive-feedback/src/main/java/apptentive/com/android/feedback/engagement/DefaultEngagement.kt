@@ -9,6 +9,7 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionDataCo
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
 import apptentive.com.android.feedback.model.EventNotification
 import apptentive.com.android.feedback.model.payloads.ExtendedData
+import apptentive.com.android.feedback.utils.ThrottleUtils
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.EVENT
 
@@ -67,7 +68,12 @@ internal data class DefaultEngagement(
             return EngagementResult.Error("Cannot find '${interactionData.type}' module to handle event '${event.name}'")
         }
 
-        return engage(context, interaction)
+        if (ThrottleUtils.shouldThrottleInteraction(event.name, interaction)) {
+            Log.d(EVENT, "Event '${event.name}' throttled")
+            return EngagementResult.InteractionNotShown("Event '${event.name}', '${interaction.type.name}' throttled")
+        } else {
+            return engage(context, interaction)
+        }
     }
 
     // This engage is only used for Note actions
