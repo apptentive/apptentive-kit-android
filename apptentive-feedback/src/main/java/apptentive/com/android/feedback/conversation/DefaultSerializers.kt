@@ -251,13 +251,13 @@ internal object DefaultSerializers {
     val configurationSerializer: TypeSerializer<Configuration> by lazy {
         object : TypeSerializer<Configuration> {
             override fun encode(encoder: Encoder, value: Configuration) {
-                encoder.encodeDouble(value.expiry)
+                encoder.encodeDouble(value.lastUpdated)
                 messageCenterConfigurationSerializer.encode(encoder, value.messageCenter)
             }
 
             override fun decode(decoder: Decoder): Configuration {
                 return Configuration(
-                    expiry = decoder.decodeDouble(),
+                    lastUpdated = decoder.decodeDouble(),
                     messageCenter = messageCenterConfigurationSerializer.decode(decoder)
                 )
             }

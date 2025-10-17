@@ -1,7 +1,10 @@
 package apptentive.com.android.feedback.utils
 
 import android.util.Patterns
+import apptentive.com.android.core.getTimeSeconds
 import apptentive.com.android.util.InternalUseOnly
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.CONVERSATION
 import org.json.JSONObject
 import kotlin.math.max
 
@@ -71,4 +74,41 @@ fun containsLinks(text: String): Boolean {
     val phonePatterns = Patterns.PHONE
     val phoneMatcher = phonePatterns.matcher(text)
     return phoneMatcher.find()
+}
+
+@InternalUseOnly
+fun shouldRefreshManifest(lastRecordedManifestFetchTime: String, lastUpdatedTimeStamp: Double): Boolean {
+    return when {
+        lastRecordedManifestFetchTime.isEmpty() -> true // as the SDK doesn't have the latest manifest fetched time, can't detect manifest changes. So fetch refresh the manifest
+        getTimeAsDouble(lastRecordedManifestFetchTime) == lastUpdatedTimeStamp -> false // No manifest changes detected
+        getTimeAsDouble(lastRecordedManifestFetchTime) < lastUpdatedTimeStamp -> true // manifest changes detected
+        else -> false
+    }
+}
+
+@InternalUseOnly
+fun getTimeAsDouble(stringTime: String): Double {
+    return try {
+        stringTime.toDouble()
+    } catch (exception: NumberFormatException) {
+        Log.e(CONVERSATION, "Error parsing time $stringTime")
+        0.0
+    }
+}
+
+@InternalUseOnly
+fun hasItBeenAnHour(stringTime: String): Boolean {
+    return try {
+        // First time checking, hence returns true
+        if (stringTime.isEmpty()) {
+            true
+        } else {
+            val time = stringTime.toDouble()
+            val currentTime = getTimeSeconds()
+            currentTime - time > 60 * 60
+        }
+    } catch (exception: NumberFormatException) {
+        Log.e(CONVERSATION, "Error parsing time string: $stringTime")
+        false
+    }
 }

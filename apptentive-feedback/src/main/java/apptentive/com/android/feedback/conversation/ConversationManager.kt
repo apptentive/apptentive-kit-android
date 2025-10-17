@@ -7,7 +7,7 @@ import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.Observable
 import apptentive.com.android.core.Provider
-import apptentive.com.android.core.hasItBeenAnHour
+import apptentive.com.android.core.getTimeSeconds
 import apptentive.com.android.core.isInThePast
 import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.encryption.EncryptionKey
@@ -42,11 +42,14 @@ import apptentive.com.android.feedback.utils.ThrottleUtils.CONVERSATION_TYPE
 import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
 import apptentive.com.android.feedback.utils.getEncryptionKey
+import apptentive.com.android.feedback.utils.hasItBeenAnHour
 import apptentive.com.android.feedback.utils.isMarshmallowOrGreater
+import apptentive.com.android.feedback.utils.shouldRefreshManifest
 import apptentive.com.android.feedback.utils.toSecretKeyBytes
 import apptentive.com.android.network.UnexpectedResponseException
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.platform.SharedPrefConstants.FAN_SIGNAL_TIME_STAMP
+import apptentive.com.android.platform.SharedPrefConstants.MANIFEST_TIME_STAMP
 import apptentive.com.android.platform.SharedPrefConstants.SDK_CORE_INFO
 import apptentive.com.android.platform.SharedPrefConstants.SDK_VERSION
 import apptentive.com.android.serialization.json.JsonConverter
@@ -495,6 +498,7 @@ internal class ConversationManager(
                     activeConversationSubject.value = activeConversationSubject.value.copy(
                         engagementManifest = it.data
                     )
+                    DependencyProvider.of<AndroidSharedPrefDataStore>().putString(SDK_CORE_INFO, MANIFEST_TIME_STAMP, getTimeSeconds().toString())
                 }
 
                 is Result.Error -> {
@@ -511,16 +515,16 @@ internal class ConversationManager(
     @WorkerThread
     fun tryFetchAppConfiguration() {
         val conversation = activeConversationSubject.value
-        val configuration = conversation.configuration
+        val sharedPref = DependencyProvider.of<AndroidSharedPrefDataStore>()
 
-        if (isInThePast(configuration.expiry) || isDebuggable) {
+        if (conversation.engagementManifest.applicationId.isNotEmpty() && isInThePast(conversation.configuration.expiry)) {
             Log.d(CONVERSATION, "Fetching configuration")
             val token = conversation.conversationToken
-            val id = conversation.conversationId
-            if (token != null && id != null) {
-                conversationService.fetchConfiguration(
+            val id = conversation.engagementManifest.applicationId
+            if (token != null && id.isNotEmpty()) {
+                conversationService.fetchConfigurationStatus(
                     conversationToken = token,
-                    conversationId = id
+                    applicationId = id
                 ) {
                     when (it) {
                         is Result.Success -> {
@@ -529,6 +533,14 @@ internal class ConversationManager(
                             activeConversationSubject.value = activeConversationSubject.value.copy(
                                 configuration = it.data
                             )
+                            val lastRecordedManifestFetchTime = sharedPref.getString(SDK_CORE_INFO, MANIFEST_TIME_STAMP, "")
+                            Log.v(CONFIGURATION, "Last recorded manifest fetch time: $lastRecordedManifestFetchTime")
+                            Log.v(CONFIGURATION, "Last updated time from status response: ${it.data.lastUpdated}")
+                            val conversationId = conversation.conversationId
+                            if (conversationId?.isNotEmpty() == true && shouldRefreshManifest(lastRecordedManifestFetchTime, it.data.lastUpdated)) {
+                                fetchEngagementManifest(conversationId, conversation.conversationToken)
+                            }
+                            sharedPref.putString(SDK_CORE_INFO, MANIFEST_TIME_STAMP, it.data.lastUpdated.toString())
                         }
                         is Result.Error -> {
                             Log.e(CONVERSATION, "Error while fetching configuration", it.error)

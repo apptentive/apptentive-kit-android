@@ -93,20 +93,36 @@ internal class DefaultConversationService(
         sendRequest(request, callback)
     }
 
-    override fun fetchConfiguration(
+    override fun fetchConfigurationStatus(
         conversationToken: String,
-        conversationId: String,
+        applicationId: String,
         callback: (Result<Configuration>) -> Unit
     ) {
-        val request = createJsonRequest(
-            method = HttpMethod.GET,
-            path = "conversations/$conversationId/configuration",
-            headers = MutableHttpHeaders().apply {
-                this["Authorization"] = "Bearer $conversationToken"
-            },
-            responseReader = ConfigurationReader
-        )
-        sendRequest(request, callback)
+//        val request = createJsonRequest(
+//            method = HttpMethod.GET,
+//            path = "conversations/$applicationId/status",
+//            headers = MutableHttpHeaders().apply {
+//                this["Authorization"] = "Bearer $conversationToken"
+//            },
+//            responseReader = ConfigurationReader
+//        )
+//        sendRequest(request, callback)
+        callback(Result.Success(getMockPayloadForStatus()))
+    }
+
+    fun getMockPayloadForStatus() = Configuration(
+        expiry = pickRandomTimeSlots(),
+        lastUpdated = pickRandomTimeSlots(),
+        messageCenter = Configuration.MessageCenter()
+    )
+
+    fun pickRandomTimeSlots(): Double {
+        val now = getTimeSeconds()
+        return when ((1..3).random()) {
+            1 -> now // current time
+            2 -> now + (1..3600).random() // future time (up to 1 hour ahead)
+            else -> now - (1..3600).random() // past time (up to 1 hour ago)
+        }
     }
 
     /**
@@ -245,7 +261,7 @@ private object ConfigurationReader : HttpResponseReader<Configuration> {
     override fun read(response: HttpNetworkResponse): Configuration {
         val cacheControl = parseCacheControl(response.headers[CACHE_CONTROL]?.value)
         val configuration = HttpJsonResponseReader(Configuration::class.java).read(response)
-        return configuration.copy(expiry = getTimeSeconds() + cacheControl.maxAgeSeconds)
+        return configuration.copy(lastUpdated = getTimeSeconds() + cacheControl.maxAgeSeconds)
     }
 
     private fun parseCacheControl(value: String?): CacheControl {

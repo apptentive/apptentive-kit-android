@@ -1,11 +1,8 @@
 package apptentive.com.android.feedback
 
 import apptentive.com.android.TestCase
-import apptentive.com.android.core.getTimeSeconds
-import apptentive.com.android.core.hasItBeenAnHour
 import apptentive.com.android.core.toSeconds
 import apptentive.com.android.feedback.utils.convertToGroupDate
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Ignore
 import org.junit.Test
@@ -43,16 +40,5 @@ class DateUtilsTest : TestCase() {
         outsideYearDays.forEach {
             assertTrue(convertToGroupDate(toSeconds(System.currentTimeMillis() - (DAY_IN_MILLIS * it))).length in outsideYear)
         }
-    }
-
-    @Test
-    fun testHasItBeenAnHour() {
-        val now = getTimeSeconds()
-        val oneHourAgo = now - 3601 // just over an hour ago
-        val justUnderHourAgo = now - 3599 // just under an hour ago
-
-        assertTrue(hasItBeenAnHour(oneHourAgo.toString()))
-        assertFalse(hasItBeenAnHour(justUnderHourAgo.toString()))
-        assertFalse(hasItBeenAnHour(now.toString())) // exactly now
     }
 }

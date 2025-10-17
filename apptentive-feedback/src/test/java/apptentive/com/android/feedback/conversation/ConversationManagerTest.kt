@@ -335,12 +335,12 @@ internal class MockConversationService(
         callback(Result.Success(EngagementManifest(expiry = testTimeInterval ?: getTimeSeconds() + 1800)))
     }
 
-    override fun fetchConfiguration(
+    override fun fetchConfigurationStatus(
         conversationToken: String,
         conversationId: String,
         callback: (Result<Configuration>) -> Unit
     ) {
-        callback(Result.Success(Configuration(expiry = testTimeInterval ?: getTimeSeconds() + 1800)))
+        callback(Result.Success(Configuration(lastUpdated = testTimeInterval ?: getTimeSeconds() + 1800)))
     }
 
     override fun loginSession(
