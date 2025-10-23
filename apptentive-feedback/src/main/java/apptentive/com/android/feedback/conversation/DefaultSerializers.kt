@@ -1,12 +1,12 @@
 package apptentive.com.android.feedback.conversation
 
+import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponseData
 import apptentive.com.android.feedback.model.AppRelease
-import apptentive.com.android.feedback.model.Configuration
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.CustomData
 import apptentive.com.android.feedback.model.Device
@@ -19,8 +19,13 @@ import apptentive.com.android.feedback.model.IntegrationConfigItem
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.RandomSampling
 import apptentive.com.android.feedback.model.SDK
+import apptentive.com.android.feedback.model.SDKConfigurationStatus
 import apptentive.com.android.feedback.model.VersionHistory
 import apptentive.com.android.feedback.model.VersionHistoryItem
+import apptentive.com.android.feedback.utils.isVersionLessThan610
+import apptentive.com.android.platform.AndroidSharedPrefDataStore
+import apptentive.com.android.platform.SharedPrefConstants.SDK_CORE_INFO
+import apptentive.com.android.platform.SharedPrefConstants.SDK_VERSION
 import apptentive.com.android.serialization.Decoder
 import apptentive.com.android.serialization.DoubleSerializer
 import apptentive.com.android.serialization.Encoder
@@ -31,10 +36,12 @@ import apptentive.com.android.serialization.TypeEncoder
 import apptentive.com.android.serialization.TypeSerializer
 import apptentive.com.android.serialization.decodeList
 import apptentive.com.android.serialization.decodeMap
+import apptentive.com.android.serialization.decodeNullableDouble
 import apptentive.com.android.serialization.decodeNullableString
 import apptentive.com.android.serialization.decodeSet
 import apptentive.com.android.serialization.encodeList
 import apptentive.com.android.serialization.encodeMap
+import apptentive.com.android.serialization.encodeNullableDouble
 import apptentive.com.android.serialization.encodeNullableString
 import apptentive.com.android.serialization.encodeSet
 import apptentive.com.android.util.Log
@@ -248,31 +255,47 @@ internal object DefaultSerializers {
         }
     }
 
-    val configurationSerializer: TypeSerializer<Configuration> by lazy {
-        object : TypeSerializer<Configuration> {
-            override fun encode(encoder: Encoder, value: Configuration) {
-                encoder.encodeDouble(value.lastUpdated)
+    val configurationSerializer: TypeSerializer<SDKConfigurationStatus> by lazy {
+        object : TypeSerializer<SDKConfigurationStatus> {
+            override fun encode(encoder: Encoder, value: SDKConfigurationStatus) {
+                encoder.encodeDouble(value.expiry)
                 messageCenterConfigurationSerializer.encode(encoder, value.messageCenter)
+                encoder.encodeDouble(value.lastUpdated)
+                encoder.encodeBoolean(value.metricsEnabled)
+                encoder.encodeNullableDouble(value.hibernateUntil)
             }
 
-            override fun decode(decoder: Decoder): Configuration {
-                return Configuration(
-                    lastUpdated = decoder.decodeDouble(),
-                    messageCenter = messageCenterConfigurationSerializer.decode(decoder)
-                )
+            override fun decode(decoder: Decoder): SDKConfigurationStatus {
+                val cachedSDKVersion = DependencyProvider.of<AndroidSharedPrefDataStore>()
+                    .getString(SDK_CORE_INFO, SDK_VERSION).ifEmpty { null }
+                // SDK_VERSION cached from 6.5.0, it is null prior to that
+                return if (isVersionLessThan610(cachedSDKVersion)) {
+                    SDKConfigurationStatus(
+                        expiry = decoder.decodeDouble(),
+                        messageCenter = messageCenterConfigurationSerializer.decode(decoder)
+                    )
+                } else {
+                    SDKConfigurationStatus(
+                        expiry = decoder.decodeDouble(),
+                        messageCenter = messageCenterConfigurationSerializer.decode(decoder),
+                        lastUpdated = decoder.decodeDouble(),
+                        metricsEnabled = decoder.decodeBoolean(),
+                        hibernateUntil = decoder.decodeNullableDouble()
+                    )
+                }
             }
         }
     }
 
-    val messageCenterConfigurationSerializer: TypeSerializer<Configuration.MessageCenter> by lazy {
-        object : TypeSerializer<Configuration.MessageCenter> {
-            override fun encode(encoder: Encoder, value: Configuration.MessageCenter) {
+    val messageCenterConfigurationSerializer: TypeSerializer<SDKConfigurationStatus.MessageCenter> by lazy {
+        object : TypeSerializer<SDKConfigurationStatus.MessageCenter> {
+            override fun encode(encoder: Encoder, value: SDKConfigurationStatus.MessageCenter) {
                 encoder.encodeDouble(value.fgPoll)
                 encoder.encodeDouble(value.bgPoll)
             }
 
-            override fun decode(decoder: Decoder): Configuration.MessageCenter {
-                return Configuration.MessageCenter(
+            override fun decode(decoder: Decoder): SDKConfigurationStatus.MessageCenter {
+                return SDKConfigurationStatus.MessageCenter(
                     fgPoll = decoder.decodeDouble(),
                     bgPoll = decoder.decodeDouble()
                 )

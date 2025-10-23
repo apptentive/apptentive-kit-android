@@ -3,12 +3,12 @@ package apptentive.com.android.feedback.backend
 import apptentive.com.android.core.getTimeSeconds
 import apptentive.com.android.feedback.BuildConfig
 import apptentive.com.android.feedback.model.AppRelease
-import apptentive.com.android.feedback.model.Configuration
 import apptentive.com.android.feedback.model.Device
 import apptentive.com.android.feedback.model.EngagementManifest
 import apptentive.com.android.feedback.model.MessageList
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
+import apptentive.com.android.feedback.model.SDKConfigurationStatus
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadSendException
 import apptentive.com.android.network.CacheControl
@@ -96,7 +96,7 @@ internal class DefaultConversationService(
     override fun fetchConfigurationStatus(
         conversationToken: String,
         applicationId: String,
-        callback: (Result<Configuration>) -> Unit
+        callback: (Result<SDKConfigurationStatus>) -> Unit
     ) {
 //        val request = createJsonRequest(
 //            method = HttpMethod.GET,
@@ -110,10 +110,10 @@ internal class DefaultConversationService(
         callback(Result.Success(getMockPayloadForStatus()))
     }
 
-    fun getMockPayloadForStatus() = Configuration(
+    fun getMockPayloadForStatus() = SDKConfigurationStatus(
         expiry = pickRandomTimeSlots(),
         lastUpdated = pickRandomTimeSlots(),
-        messageCenter = Configuration.MessageCenter()
+        messageCenter = SDKConfigurationStatus.MessageCenter()
     )
 
     fun pickRandomTimeSlots(): Double {
@@ -257,10 +257,10 @@ private object EngagementManifestReader :
     }
 }
 
-private object ConfigurationReader : HttpResponseReader<Configuration> {
-    override fun read(response: HttpNetworkResponse): Configuration {
+private object ConfigurationReader : HttpResponseReader<SDKConfigurationStatus> {
+    override fun read(response: HttpNetworkResponse): SDKConfigurationStatus {
         val cacheControl = parseCacheControl(response.headers[CACHE_CONTROL]?.value)
-        val configuration = HttpJsonResponseReader(Configuration::class.java).read(response)
+        val configuration = HttpJsonResponseReader(SDKConfigurationStatus::class.java).read(response)
         return configuration.copy(lastUpdated = getTimeSeconds() + cacheControl.maxAgeSeconds)
     }
 

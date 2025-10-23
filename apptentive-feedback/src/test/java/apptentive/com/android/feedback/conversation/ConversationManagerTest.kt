@@ -18,7 +18,6 @@ import apptentive.com.android.feedback.mockDevice
 import apptentive.com.android.feedback.mockPerson
 import apptentive.com.android.feedback.mockSdk
 import apptentive.com.android.feedback.model.AppRelease
-import apptentive.com.android.feedback.model.Configuration
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.CustomData
 import apptentive.com.android.feedback.model.Device
@@ -27,6 +26,7 @@ import apptentive.com.android.feedback.model.EngagementManifest
 import apptentive.com.android.feedback.model.MessageList
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
+import apptentive.com.android.feedback.model.SDKConfigurationStatus
 import apptentive.com.android.feedback.model.VersionHistory
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.platform.DefaultStateMachine
@@ -338,9 +338,9 @@ internal class MockConversationService(
     override fun fetchConfigurationStatus(
         conversationToken: String,
         conversationId: String,
-        callback: (Result<Configuration>) -> Unit
+        callback: (Result<SDKConfigurationStatus>) -> Unit
     ) {
-        callback(Result.Success(Configuration(lastUpdated = testTimeInterval ?: getTimeSeconds() + 1800)))
+        callback(Result.Success(SDKConfigurationStatus(lastUpdated = testTimeInterval ?: getTimeSeconds() + 1800)))
     }
 
     override fun loginSession(

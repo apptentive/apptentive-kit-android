@@ -22,7 +22,7 @@ data class Conversation(
     val person: Person,
     val sdk: SDK,
     val appRelease: AppRelease,
-    val configuration: Configuration = Configuration(),
+    val configuration: SDKConfigurationStatus = SDKConfigurationStatus(),
     val randomSampling: RandomSampling = RandomSampling(),
     val engagementData: EngagementData = EngagementData(),
     val engagementManifest: EngagementManifest = EngagementManifest()

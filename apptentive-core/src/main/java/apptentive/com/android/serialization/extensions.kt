@@ -15,6 +15,17 @@ fun Encoder.encodeNullableString(value: String?) {
 @InternalUseOnly
 fun Decoder.decodeNullableString(): String? = if (decodeBoolean()) decodeString() else null
 
+@InternalUseOnly
+fun Encoder.encodeNullableDouble(value: Double?) {
+    encodeBoolean(value != null)
+    if (value != null) {
+        encodeDouble(value)
+    }
+}
+
+@InternalUseOnly
+fun Decoder.decodeNullableDouble(): Double? = if (decodeBoolean()) decodeDouble() else null
+
 //endregion
 
 //region Enum

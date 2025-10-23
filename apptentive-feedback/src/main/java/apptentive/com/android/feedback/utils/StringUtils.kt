@@ -112,3 +112,20 @@ fun hasItBeenAnHour(stringTime: String): Boolean {
         false
     }
 }
+
+@InternalUseOnly
+fun isVersionLessThan610(version: String?): Boolean {
+    if (version.isNullOrBlank()) return true
+
+    val target = listOf(6, 10, 0)
+    val parts = version.split(".").mapNotNull { it.toIntOrNull() }
+
+    // Pad with zeros to ensure 3 components
+    val padded = parts + List(maxOf(0, 3 - parts.size)) { 0 }
+
+    for (i in 0..2) {
+        if (padded[i] < target[i]) return true
+        if (padded[i] > target[i]) return false
+    }
+    return false // Equal to 6.10.0
+}

@@ -81,4 +81,34 @@ class StringUtilsTest {
         assertFalse(hasItBeenAnHour(justUnderHourAgo.toString()))
         assertFalse(hasItBeenAnHour(now.toString())) // exactly now
     }
+
+    @Test
+    fun testNullOrBlankVersion_returnsTrue() {
+        assertTrue(isVersionLessThan610(null))
+        assertTrue(isVersionLessThan610(""))
+        assertTrue(isVersionLessThan610("   "))
+    }
+
+    @Test
+    fun testVersionLessThan610_returnsTrue() {
+        assertTrue(isVersionLessThan610("5.9.9"))
+        assertTrue(isVersionLessThan610("6.9.9"))
+        assertTrue(isVersionLessThan610("6.0.0"))
+        assertTrue(isVersionLessThan610("6.9"))
+        assertTrue(isVersionLessThan610("6.9.0"))
+        assertTrue(isVersionLessThan610("6.9.9"))
+    }
+
+    @Test
+    fun testVersionEqualTo610_returnsFalse() {
+        assertFalse(isVersionLessThan610("6.10.0"))
+    }
+
+    @Test
+    fun testVersionGreaterThan610_returnsFalse() {
+        assertFalse(isVersionLessThan610("6.10.1"))
+        assertFalse(isVersionLessThan610("6.11.0"))
+        assertFalse(isVersionLessThan610("7.0.0"))
+        assertFalse(isVersionLessThan610("10.0.0"))
+    }
 }
