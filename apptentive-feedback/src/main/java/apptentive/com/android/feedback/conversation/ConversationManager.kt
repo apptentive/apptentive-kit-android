@@ -376,7 +376,9 @@ internal class ConversationManager(
     fun checkForDeviceUpdates(conversation: Conversation) {
         if (isDeviceUpdateCheckDone) return else isDeviceUpdateCheckDone = true
         Log.i(CONVERSATION, "Checking for device updates")
-        val currentDevice = conversationRepository.getCurrentDevice()
+        val currentDevice = conversationRepository.getCurrentDevice().copy(
+            customData = conversation.device.customData
+        )
         if (conversation.device != currentDevice) {
             deviceUpdateSubject.value = true
             Log.d(CONVERSATION, "Device updated: ${conversation.device} => $currentDevice")
