@@ -3,7 +3,7 @@ package apptentive.com.android.feedback.backend
 internal interface ConversationService :
     ConversationFetchService,
     EngagementManifestService,
-    ConfigurationStatusService,
+    StatusService,
     LoginSessionService,
     PayloadRequestSender,
     MessageCenterService

@@ -8,7 +8,7 @@ import apptentive.com.android.feedback.model.EngagementManifest
 import apptentive.com.android.feedback.model.MessageList
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
-import apptentive.com.android.feedback.model.SDKConfigurationStatus
+import apptentive.com.android.feedback.model.SDKStatus
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadSendException
 import apptentive.com.android.network.CacheControl
@@ -23,6 +23,7 @@ import apptentive.com.android.network.HttpRequest
 import apptentive.com.android.network.HttpResponseReader
 import apptentive.com.android.network.MutableHttpHeaders
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.CONFIGURATION
 import apptentive.com.android.util.LogTags.CONVERSATION
 import apptentive.com.android.util.Result
 
@@ -93,36 +94,20 @@ internal class DefaultConversationService(
         sendRequest(request, callback)
     }
 
-    override fun fetchConfigurationStatus(
+    override fun fetchStatus(
         conversationToken: String,
         applicationId: String,
-        callback: (Result<SDKConfigurationStatus>) -> Unit
+        callback: (Result<SDKStatus>) -> Unit
     ) {
-//        val request = createJsonRequest(
-//            method = HttpMethod.GET,
-//            path = "conversations/$applicationId/status",
-//            headers = MutableHttpHeaders().apply {
-//                this["Authorization"] = "Bearer $conversationToken"
-//            },
-//            responseReader = ConfigurationReader
-//        )
-//        sendRequest(request, callback)
-        callback(Result.Success(getMockPayloadForStatus()))
-    }
-
-    fun getMockPayloadForStatus() = SDKConfigurationStatus(
-        expiry = pickRandomTimeSlots(),
-        lastUpdated = pickRandomTimeSlots(),
-        messageCenter = SDKConfigurationStatus.MessageCenter()
-    )
-
-    fun pickRandomTimeSlots(): Double {
-        val now = getTimeSeconds()
-        return when ((1..3).random()) {
-            1 -> now // current time
-            2 -> now + (1..3600).random() // future time (up to 1 hour ahead)
-            else -> now - (1..3600).random() // past time (up to 1 hour ago)
-        }
+        val request = createJsonRequest(
+            method = HttpMethod.GET,
+            path = "apps/$applicationId/status",
+            headers = MutableHttpHeaders().apply {
+                this["Authorization"] = "Bearer $conversationToken"
+            },
+            responseReader = StatusReader
+        )
+        sendRequest(request, callback)
     }
 
     /**
@@ -257,11 +242,15 @@ private object EngagementManifestReader :
     }
 }
 
-private object ConfigurationReader : HttpResponseReader<SDKConfigurationStatus> {
-    override fun read(response: HttpNetworkResponse): SDKConfigurationStatus {
+private object StatusReader : HttpResponseReader<SDKStatus> {
+    override fun read(response: HttpNetworkResponse): SDKStatus {
         val cacheControl = parseCacheControl(response.headers[CACHE_CONTROL]?.value)
-        val configuration = HttpJsonResponseReader(SDKConfigurationStatus::class.java).read(response)
-        return configuration.copy(lastUpdated = getTimeSeconds() + cacheControl.maxAgeSeconds)
+        val status = HttpJsonResponseReader(SDKStatus::class.java).read(response)
+        Log.v(CONFIGURATION, "Status ttl is ${cacheControl.maxAgeSeconds}")
+        return status.copy(
+            expiry = getTimeSeconds() + cacheControl.maxAgeSeconds.toDouble(),
+            lastUpdate = status.lastUpdate
+        )
     }
 
     private fun parseCacheControl(value: String?): CacheControl {

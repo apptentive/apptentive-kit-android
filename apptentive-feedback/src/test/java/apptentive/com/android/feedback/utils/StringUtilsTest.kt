@@ -22,6 +22,11 @@ class StringUtilsTest {
     }
 
     @Test
+    fun testShouldRefreshManifest_lastUpdateZero_returnsFalse() {
+        assertFalse(shouldRefreshManifest("1234.0", 0.0,))
+    }
+
+    @Test
     fun testShouldRefreshManifest_equalTimestamps_returnsFalse() {
         val timestamp = 5678.0
         assertFalse(shouldRefreshManifest(timestamp.toString(), timestamp))
@@ -29,8 +34,8 @@ class StringUtilsTest {
 
     @Test
     fun testShouldRefreshManifest_lastFetchOlder_returnsTrue() {
-        val lastFetch = 1000.0
-        val lastUpdate = 2000.0
+        val lastFetch = 1.76245335541E9
+        val lastUpdate = 1762448101283.0
         assertTrue(shouldRefreshManifest(lastFetch.toString(), lastUpdate))
     }
 

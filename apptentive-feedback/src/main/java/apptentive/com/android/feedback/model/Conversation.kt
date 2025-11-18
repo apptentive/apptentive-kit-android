@@ -22,7 +22,7 @@ data class Conversation(
     val person: Person,
     val sdk: SDK,
     val appRelease: AppRelease,
-    val configuration: SDKConfigurationStatus = SDKConfigurationStatus(),
+    val sdkStatus: SDKStatus = SDKStatus(),
     val randomSampling: RandomSampling = RandomSampling(),
     val engagementData: EngagementData = EngagementData(),
     val engagementManifest: EngagementManifest = EngagementManifest()
@@ -39,7 +39,7 @@ data class Conversation(
         Log.v(PERSON, person.toString())
         Log.v(SDK, sdk.toString())
         Log.v(APP_RELEASE, appRelease.toString())
-        Log.v(CONFIGURATION, configuration.toString())
+        Log.v(CONFIGURATION, sdkStatus.toString())
         Log.v(RANDOM_SAMPLING, randomSampling.toString())
         Log.v(ENGAGEMENT_DATA, engagementData.toString())
         Log.v(CONVERSATION, "\n$dashLine CONVERSATION STATE CHANGE END $dashLine")

@@ -201,8 +201,6 @@ class ApptentiveDefaultClient(
                     }
                 }
                 is Result.Success -> {
-                    conversationManager.tryFetchEngagementManifest()
-                    conversationManager.tryFetchAppConfiguration()
                     createMessageManager()
                     registerCallback?.invoke(RegisterResult.Success)
                     val conversationCredentialProvider = DependencyProvider.of<ConversationCredentialProvider>()
@@ -263,8 +261,8 @@ class ApptentiveDefaultClient(
                     client = this,
                     stateExecutor = executors.state,
                     onForeground = {
+                        conversationManager.tryFetchAppStatus()
                         conversationManager.tryFetchEngagementManifest()
-                        conversationManager.tryFetchAppConfiguration()
                         messageManager?.onAppForeground()
                     },
                     onBackground = {

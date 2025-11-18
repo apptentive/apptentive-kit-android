@@ -9,10 +9,10 @@ import apptentive.com.android.util.InternalUseOnly
  * @param lastUpdated - Length of time before Configuration expires and should re-fetch from server
  */
 @InternalUseOnly
-data class SDKConfigurationStatus(
+data class SDKStatus(
     val expiry: TimeInterval = 0.0,
     val messageCenter: MessageCenter = MessageCenter(),
-    val lastUpdated: TimeInterval = 0.0,
+    val lastUpdate: TimeInterval = 0.0,
     val metricsEnabled: Boolean = true,
     val hibernateUntil: TimeInterval? = null,
 ) {

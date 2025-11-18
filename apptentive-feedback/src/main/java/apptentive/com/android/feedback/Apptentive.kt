@@ -230,7 +230,7 @@ object Apptentive {
 
                 // Set rating throttle
                 ThrottleUtils.ratingThrottleLength = configuration.ratingInteractionThrottleLength
-                ThrottleUtils.interactionCountLimit = configuration.interactionCountLimit
+                ThrottleUtils.interactionCountLimit = configuration.perSessionInteractionLimit
 
                 // Save alternate app store URL to be set later
 

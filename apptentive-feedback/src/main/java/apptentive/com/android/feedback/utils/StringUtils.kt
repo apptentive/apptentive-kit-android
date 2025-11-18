@@ -79,6 +79,7 @@ fun containsLinks(text: String): Boolean {
 @InternalUseOnly
 fun shouldRefreshManifest(lastRecordedManifestFetchTime: String, lastUpdatedTimeStamp: Double): Boolean {
     return when {
+        lastUpdatedTimeStamp == 0.0 -> false
         lastRecordedManifestFetchTime.isEmpty() -> true // as the SDK doesn't have the latest manifest fetched time, can't detect manifest changes. So fetch refresh the manifest
         getTimeAsDouble(lastRecordedManifestFetchTime) == lastUpdatedTimeStamp -> false // No manifest changes detected
         getTimeAsDouble(lastRecordedManifestFetchTime) < lastUpdatedTimeStamp -> true // manifest changes detected

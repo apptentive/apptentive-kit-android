@@ -26,7 +26,7 @@ import apptentive.com.android.feedback.model.EngagementManifest
 import apptentive.com.android.feedback.model.MessageList
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
-import apptentive.com.android.feedback.model.SDKConfigurationStatus
+import apptentive.com.android.feedback.model.SDKStatus
 import apptentive.com.android.feedback.model.VersionHistory
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.platform.DefaultStateMachine
@@ -208,7 +208,7 @@ class ConversationManagerTest : TestCase() {
             )
         )
         conversationManager.tryFetchConversationToken {}
-        assertEquals(0.0, conversationManager.getConversation().engagementManifest.expiry, 0.0)
+        assertEquals(222.22, conversationManager.getConversation().engagementManifest.expiry, 0.0)
         conversationManager.tryFetchEngagementManifest()
         assertEquals(222.22, conversationManager.getConversation().engagementManifest.expiry, 0.0)
     }
@@ -335,12 +335,12 @@ internal class MockConversationService(
         callback(Result.Success(EngagementManifest(expiry = testTimeInterval ?: getTimeSeconds() + 1800)))
     }
 
-    override fun fetchConfigurationStatus(
+    override fun fetchStatus(
         conversationToken: String,
         conversationId: String,
-        callback: (Result<SDKConfigurationStatus>) -> Unit
+        callback: (Result<SDKStatus>) -> Unit
     ) {
-        callback(Result.Success(SDKConfigurationStatus(lastUpdated = testTimeInterval ?: getTimeSeconds() + 1800)))
+        callback(Result.Success(SDKStatus(lastUpdate = testTimeInterval ?: getTimeSeconds() + 1800)))
     }
 
     override fun loginSession(

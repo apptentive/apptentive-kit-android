@@ -16,7 +16,7 @@ import apptentive.com.android.feedback.lifecycle.LifecycleListener
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.Person
-import apptentive.com.android.feedback.model.SDKConfigurationStatus
+import apptentive.com.android.feedback.model.SDKStatus
 import apptentive.com.android.feedback.model.Sender
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.utils.FileStorageUtil
@@ -30,7 +30,7 @@ import java.io.InputStream
 
 /**
  * This class acts as a communicator between MessageCenterModule & Apptentive core components
- * It owns [PollingScheduler],schedules and updates the polling [SDKConfigurationStatus] depending on whether
+ * It owns [PollingScheduler],schedules and updates the polling [SDKStatus] depending on whether
  * the App & MessageCenter is in the background vs foreground
  * Fetches,sorts & groups messages
  * Updates & maintain the cache using [MessageRepository]
@@ -67,7 +67,7 @@ class MessageManager(
     private val profileSubject: BehaviorSubject<Person?> = BehaviorSubject(null)
     val profile: Observable<Person?> get() = profileSubject
 
-    private var configuration: SDKConfigurationStatus = SDKConfigurationStatus()
+    private var configuration: SDKStatus = SDKStatus()
     private lateinit var senderProfile: Person
 
     private var fetchingInProgress = false
@@ -86,7 +86,7 @@ class MessageManager(
     }
 
     override fun onConversationChanged(conversation: Conversation) {
-        configuration = conversation.configuration
+        configuration = conversation.sdkStatus
         senderProfile = conversation.person
         profileSubject.value = senderProfile
     }
