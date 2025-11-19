@@ -79,21 +79,21 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
                         if (viewModel.title == null && viewModel.message == null) titleView.visibility = View.GONE
                         scrollView.addView(contentLayout)
                     } else -> {
-                    contentLayout = inflater.inflate(
-                        R.layout.apptentive_note_title_with_message,
-                        null
-                    ) as LinearLayout
-                    val titleView =
-                        contentLayout.findViewById<MaterialTextView>(R.id.apptentive_note_title_with_message)
-                    val messageView = contentLayout.findViewById<MaterialTextView>(R.id.apptentive_note_message)
-                    titleView.text = viewModel.title
-                    if (containsLinks(titleView.text.toString()))
-                        titleView.movementMethod = LinkMovementMethod.getInstance()
-                    messageView.text = viewModel.message
-                    if (containsLinks(viewModel.message.toString()))
-                        messageView.movementMethod = LinkMovementMethod.getInstance()
-                    scrollView.addView(contentLayout)
-                }
+                        contentLayout = inflater.inflate(
+                            R.layout.apptentive_note_title_with_message,
+                            null
+                        ) as LinearLayout
+                        val titleView =
+                            contentLayout.findViewById<MaterialTextView>(R.id.apptentive_note_title_with_message)
+                        val messageView = contentLayout.findViewById<MaterialTextView>(R.id.apptentive_note_message)
+                        titleView.text = viewModel.title
+                        if (containsLinks(titleView.text.toString()))
+                            titleView.movementMethod = LinkMovementMethod.getInstance()
+                        messageView.text = viewModel.message
+                        if (containsLinks(viewModel.message.toString()))
+                            messageView.movementMethod = LinkMovementMethod.getInstance()
+                        scrollView.addView(contentLayout)
+                    }
                 }
                 alternateTextView = contentLayout.findViewById(R.id.apptentive_note_alternate_text)
                 headerImageView = contentLayout.findViewById(R.id.apptentive_note_title_with_message_image)
@@ -215,32 +215,31 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
         if (this::dialog.isInitialized) {
             dialog.window?.decorView?.let { dialogView ->
                 dialogView.viewTreeObserver?.addOnGlobalLayoutListener(object :
-                    OnGlobalLayoutListener {
-                    override fun onGlobalLayout() {
-                        dialog.window?.decorView?.let {
-                            if (!isImageHeightSet) {
-                                val imageHeight = (it.width / aspectRatio).toInt()
-                                val layoutParams =
-                                    headerImageView.layoutParams as LinearLayout.LayoutParams
-                                headerImageView.layoutParams =
-                                    viewModel.getLayoutParams(layoutParams, imageHeight)
+                        OnGlobalLayoutListener {
+                        override fun onGlobalLayout() {
+                            dialog.window?.decorView?.let {
+                                if (!isImageHeightSet) {
+                                    val imageHeight = (it.width / aspectRatio).toInt()
+                                    val layoutParams =
+                                        headerImageView.layoutParams as LinearLayout.LayoutParams
+                                    headerImageView.layoutParams =
+                                        viewModel.getLayoutParams(layoutParams, imageHeight)
+                                }
+                            }
+                            // Remove the listener to avoid multiple calls
+                            dialogView.viewTreeObserver.removeOnGlobalLayoutListener(this)
+
+                            if (viewModel.maxHeight < 100) {
+                                val maxModalHeight =
+                                    requireContext().resources.displayMetrics.heightPixels
+                                val maxHeight =
+                                    viewModel.getModalHeight(maxModalHeight, dialogView.height)
+
+                                // Set the new height of the dialog
+                                dialog.window?.setLayout(dialogView.width, maxHeight)
                             }
                         }
-
-                        // Remove the listener to avoid multiple calls
-                        dialogView.viewTreeObserver.removeOnGlobalLayoutListener(this)
-
-                        if (viewModel.maxHeight < 100) {
-                            val maxModalHeight =
-                                requireContext().resources.displayMetrics.heightPixels
-                            val maxHeight =
-                                viewModel.getModalHeight(maxModalHeight, dialogView.height)
-
-                            // Set the new height of the dialog
-                            dialog.window?.setLayout(dialogView.width, maxHeight)
-                        }
-                    }
-                })
+                    })
             }
         }
     }
