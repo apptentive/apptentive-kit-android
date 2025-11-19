@@ -14,6 +14,8 @@ import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
 import apptentive.com.android.feedback.utils.containsLinks
 import apptentive.com.android.ui.overrideTheme
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.INTERACTIONS
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textview.MaterialTextView
@@ -23,64 +25,83 @@ internal class EnjoymentDialogFragment : DialogFragment(), ApptentiveActivityInf
 
     @SuppressLint("UseGetLayoutInflater", "InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        if (!Apptentive.isApptentiveActivityInfoCallbackRegistered()) {
-            // Calling this in onCreateDialog in case we lose the Activity reference from the
-            // last Activity for whatever reason (garbage collection while app is in the background)
-            Apptentive.registerApptentiveActivityInfoCallback(this)
-        }
-
-        val dialog = MaterialAlertDialogBuilder(requireContext()).apply {
-            val ctx = ContextThemeWrapper(
-                requireContext(),
-                R.style.Theme_Apptentive
-            ).apply {
-                overrideTheme()
-            }
-            val enjoymentDialogView = LayoutInflater.from(ctx).inflate(R.layout.apptentive_enjoyment_dialog, null)
-            val messageView = enjoymentDialogView.findViewById<MaterialTextView>(R.id.apptentive_enjoyment_dialog_title)
-            messageView.text = viewModel.title
-            if (containsLinks(viewModel.title)) {
-                messageView.movementMethod = LinkMovementMethod.getInstance()
+        return try {
+            if (!Apptentive.isApptentiveActivityInfoCallbackRegistered()) {
+                // Calling this in onCreateDialog in case we lose the Activity reference from the
+                // last Activity for whatever reason (garbage collection while app is in the background)
+                Apptentive.registerApptentiveActivityInfoCallback(this)
             }
 
-            // No -> Yes Orientation (default)
-            val positiveButtonView = enjoymentDialogView.findViewById<MaterialButton>(R.id.apptentive_enjoyment_dialog_yes)
-            positiveButtonView.text = viewModel.yesText
-            positiveButtonView.setOnClickListener {
-                viewModel.onYesButton()
-                this@EnjoymentDialogFragment.dismiss()
-                finishActivity(arguments)
-            }
+            val dialog = MaterialAlertDialogBuilder(requireContext()).apply {
+                val ctx = ContextThemeWrapper(
+                    requireContext(),
+                    R.style.Theme_Apptentive
+                ).apply {
+                    overrideTheme()
+                }
+                val enjoymentDialogView =
+                    LayoutInflater.from(ctx).inflate(R.layout.apptentive_enjoyment_dialog, null)
+                val messageView =
+                    enjoymentDialogView.findViewById<MaterialTextView>(R.id.apptentive_enjoyment_dialog_title)
+                messageView.text = viewModel.title
+                if (containsLinks(viewModel.title)) {
+                    messageView.movementMethod = LinkMovementMethod.getInstance()
+                }
 
-            val negativeButtonView = enjoymentDialogView.findViewById<MaterialButton>(R.id.apptentive_enjoyment_dialog_no)
-            negativeButtonView.text = viewModel.noText
-            negativeButtonView.setOnClickListener {
-                viewModel.onNoButton()
-                this@EnjoymentDialogFragment.dismiss()
-                finishActivity(arguments)
-            }
+                // No -> Yes Orientation (default)
+                val positiveButtonView =
+                    enjoymentDialogView.findViewById<MaterialButton>(R.id.apptentive_enjoyment_dialog_yes)
+                positiveButtonView.text = viewModel.yesText
+                positiveButtonView.setOnClickListener {
+                    viewModel.onYesButton()
+                    this@EnjoymentDialogFragment.dismiss()
+                    finishActivity(arguments)
+                }
 
-            // Yes -> No Orientation (alternate - enabled through styles)
-            val positiveButtonViewAlternate = enjoymentDialogView.findViewById<MaterialButton>(R.id.apptentive_enjoyment_dialog_yes_alternate)
-            positiveButtonViewAlternate.text = viewModel.yesText
-            positiveButtonViewAlternate.setOnClickListener {
-                viewModel.onYesButton()
-                this@EnjoymentDialogFragment.dismiss()
-                finishActivity(arguments)
-            }
+                val negativeButtonView =
+                    enjoymentDialogView.findViewById<MaterialButton>(R.id.apptentive_enjoyment_dialog_no)
+                negativeButtonView.text = viewModel.noText
+                negativeButtonView.setOnClickListener {
+                    viewModel.onNoButton()
+                    this@EnjoymentDialogFragment.dismiss()
+                    finishActivity(arguments)
+                }
 
-            val negativeButtonViewAlternate = enjoymentDialogView.findViewById<MaterialButton>(R.id.apptentive_enjoyment_dialog_no_alternate)
-            negativeButtonViewAlternate.text = viewModel.noText
-            negativeButtonViewAlternate.setOnClickListener {
-                viewModel.onNoButton()
-                this@EnjoymentDialogFragment.dismiss()
-                finishActivity(arguments)
-            }
+                // Yes -> No Orientation (alternate - enabled through styles)
+                val positiveButtonViewAlternate =
+                    enjoymentDialogView.findViewById<MaterialButton>(R.id.apptentive_enjoyment_dialog_yes_alternate)
+                positiveButtonViewAlternate.text = viewModel.yesText
+                positiveButtonViewAlternate.setOnClickListener {
+                    viewModel.onYesButton()
+                    this@EnjoymentDialogFragment.dismiss()
+                    finishActivity(arguments)
+                }
 
-            setView(enjoymentDialogView)
-        }.create()
-        return dialog.apply {
-            setCanceledOnTouchOutside(false)
+                val negativeButtonViewAlternate =
+                    enjoymentDialogView.findViewById<MaterialButton>(R.id.apptentive_enjoyment_dialog_no_alternate)
+                negativeButtonViewAlternate.text = viewModel.noText
+                negativeButtonViewAlternate.setOnClickListener {
+                    viewModel.onNoButton()
+                    this@EnjoymentDialogFragment.dismiss()
+                    finishActivity(arguments)
+                }
+
+                setView(enjoymentDialogView)
+            }.create()
+            dialog.apply {
+                setOnShowListener {
+                    window?.decorView?.post {
+                        setCanceledOnTouchOutside(false)
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(INTERACTIONS, "Error creating TextModalDialogFragment", e)
+            Dialog(requireContext()).apply {
+                setOnShowListener {
+                    dismiss() // silently close itself
+                }
+            }
         }
     }
 
