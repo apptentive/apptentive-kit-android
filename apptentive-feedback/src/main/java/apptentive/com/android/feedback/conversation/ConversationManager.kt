@@ -555,6 +555,8 @@ internal class ConversationManager(
         val conversationToken = conversation.conversationToken
         val conversationId = conversation.conversationId
 
+        Log.d(CONVERSATION, "Manifest expiry ${manifest.expiry}")
+
         when {
             isUsingLocalManifest -> {
                 Log.d(CONVERSATION, "Using locally downloaded manifest, skipping the fetch")
@@ -579,7 +581,7 @@ internal class ConversationManager(
             }
 
             else -> {
-                Log.d(CONVERSATION, "Engagement manifest up to date")
+                Log.d(CONVERSATION, "Engagement manifest is up to date")
             }
         }
     }
