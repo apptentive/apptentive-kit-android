@@ -48,7 +48,7 @@ internal object ThrottleUtils {
                     engagedInteractions[interaction.id] = count + 1
                     false
                 } else {
-                    true
+                    false // Not throttling for 6.10
                 }
             }
             else -> {

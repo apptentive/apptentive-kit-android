@@ -108,7 +108,7 @@ data class ApptentiveConfiguration(
      *
      */
 
-    var perSessionInteractionLimit: Int = 1
+    internal var perSessionInteractionLimit: Int = 1
 
     //region plugin configuration
 

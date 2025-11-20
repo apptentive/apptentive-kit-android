@@ -566,7 +566,7 @@ object Apptentive {
      * Exempt event(s) from rate limit and won't throttle
      */
     @JvmStatic
-    fun excludeEventsFromThrottling(events: List<String>) {
+    internal fun excludeEventsFromThrottling(events: List<String>) {
         if (isRegistered()) {
             try {
                 stateExecutor.execute {
