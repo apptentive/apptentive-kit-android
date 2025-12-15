@@ -1,3 +1,11 @@
+### Fixes
+* Device custom data is now reliably preserved across version upgrades.
+* In survey, single select questions ensures mutual exclusivity
+
+### Improvements
+* Dialog creation is now deferred until the decor view is created, resulting in more consistent and stable behavior.
+* A new status endpoint has been introduced to track updates to interactions and targeting. The SDK checks this endpoint frequently, ensuring interactions are updated promptly without waiting for cache expiration.
+
 # 2025-03-19 - v6.9.3
 ### Fixes
 * Addressed a race condition when showing coupled interactions that are engaged from activities without supportFragmentManager 
