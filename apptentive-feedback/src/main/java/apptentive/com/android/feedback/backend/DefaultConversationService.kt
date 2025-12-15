@@ -3,6 +3,7 @@ package apptentive.com.android.feedback.backend
 import apptentive.com.android.core.getTimeSeconds
 import apptentive.com.android.feedback.BuildConfig
 import apptentive.com.android.feedback.model.AppRelease
+import apptentive.com.android.feedback.model.Configuration
 import apptentive.com.android.feedback.model.Device
 import apptentive.com.android.feedback.model.EngagementManifest
 import apptentive.com.android.feedback.model.MessageList

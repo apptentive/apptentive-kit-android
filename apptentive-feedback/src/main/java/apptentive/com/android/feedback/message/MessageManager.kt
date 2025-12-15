@@ -13,6 +13,7 @@ import apptentive.com.android.feedback.backend.MessageCenterService
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.lifecycle.LifecycleListener
+import apptentive.com.android.feedback.model.Configuration
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.Person

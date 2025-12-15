@@ -90,6 +90,34 @@ internal object ThrottleUtils {
         }
     }
 
+    fun shouldThrottleReset(fileType: String): Boolean {
+        val sharedPrefDataStore = DependencyProvider.of<AndroidSharedPrefDataStore>()
+        val sdkVersion = if (fileType == CONVERSATION_TYPE) {
+            sharedPrefDataStore.getString(
+                SharedPrefConstants.THROTTLE_UTILS,
+                SharedPrefConstants.CONVERSATION_RESET_THROTTLE
+            )
+        } else {
+            sharedPrefDataStore.getString(
+                SharedPrefConstants.THROTTLE_UTILS,
+                SharedPrefConstants.ROSTER_RESET_THROTTLE
+            )
+        }
+        val apptentiveSDKVersion: String = Constants.SDK_VERSION
+        return if (sdkVersion.isEmpty() || sdkVersion != apptentiveSDKVersion) {
+            Log.d(CONVERSATION, "$fileType reset NOT throttled")
+            sharedPrefDataStore.putString(
+                SharedPrefConstants.THROTTLE_UTILS,
+                SharedPrefConstants.CONVERSATION_RESET_THROTTLE,
+                Constants.SDK_VERSION
+            )
+            false
+        } else {
+            Log.d(CONVERSATION, "$fileType reset throttled")
+            true
+        }
+    }
+
     private fun logThrottle(
         interaction: Interaction,
         throttleLength: Long,

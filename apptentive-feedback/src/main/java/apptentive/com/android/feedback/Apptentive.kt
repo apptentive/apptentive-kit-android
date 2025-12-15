@@ -808,6 +808,36 @@ object Apptentive {
         }
     }
 
+    /**
+     * Sends a file to the server. This file will be visible in the conversation view on the server,
+     * but will not be shown in the client's Message Center. A local copy of this file will be made
+     * until the message is transmitted, at which point the temporary file will be deleted.
+     *
+     * NOTICE: FILE SIZE LIMIT IS 15MB
+     *
+     * @param inputStream An InputStream from the desired file.
+     * @param mimeType    The mime type of the file.
+     */
+    @JvmStatic
+    fun sendAttachmentFile(inputStream: InputStream?, mimeType: String?) {
+        try {
+            if (inputStream != null && mimeType != null) {
+                stateExecutor.execute {
+                    if (DefaultStateMachine.state == SDKState.LOGGED_OUT) {
+                        Log.w(FEEDBACK, "SDK is in logged out state. Please login to send attachment file")
+                    } else {
+                        client.sendHiddenAttachmentFileStream(inputStream, mimeType)
+                    }
+                }
+            } else Log.d(
+                MESSAGE_CENTER,
+                "InputStream and Mime Type cannot be null\ninputStream: $inputStream, mimeType: $mimeType"
+            )
+        } catch (exception: Exception) {
+            Log.e(MESSAGE_CENTER, "Exception while trying to send attachment file", exception)
+        }
+    }
+
     //endregion
 
     //region Person data updates

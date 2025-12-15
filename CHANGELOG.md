@@ -27,7 +27,7 @@
 ### Fixes
 * Draft messages are now saved correctly in the multiuser environment
 * Prevent logout calls from being made when the SDK is not logged in
-* Upgrade GSON dependnecy to latest to fix the security vulnerability
+* Upgrade GSON dependency to latest to fix the security vulnerability
 
 ### New Features
 * Added initiator to the kit to support Alchemer Workflow initiation from the SDKs
