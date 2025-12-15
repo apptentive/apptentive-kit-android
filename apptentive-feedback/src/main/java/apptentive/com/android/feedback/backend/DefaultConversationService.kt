@@ -9,6 +9,7 @@ import apptentive.com.android.feedback.model.EngagementManifest
 import apptentive.com.android.feedback.model.MessageList
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
+import apptentive.com.android.feedback.model.SDKStatus
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadSendException
 import apptentive.com.android.network.CacheControl
@@ -23,6 +24,7 @@ import apptentive.com.android.network.HttpRequest
 import apptentive.com.android.network.HttpResponseReader
 import apptentive.com.android.network.MutableHttpHeaders
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags.CONFIGURATION
 import apptentive.com.android.util.LogTags.CONVERSATION
 import apptentive.com.android.util.Result
 
@@ -93,18 +95,18 @@ internal class DefaultConversationService(
         sendRequest(request, callback)
     }
 
-    override fun fetchConfiguration(
+    override fun fetchStatus(
         conversationToken: String,
-        conversationId: String,
-        callback: (Result<Configuration>) -> Unit
+        applicationId: String,
+        callback: (Result<SDKStatus>) -> Unit
     ) {
         val request = createJsonRequest(
             method = HttpMethod.GET,
-            path = "conversations/$conversationId/configuration",
+            path = "apps/$applicationId/status",
             headers = MutableHttpHeaders().apply {
                 this["Authorization"] = "Bearer $conversationToken"
             },
-            responseReader = ConfigurationReader
+            responseReader = StatusReader
         )
         sendRequest(request, callback)
     }
@@ -241,11 +243,15 @@ private object EngagementManifestReader :
     }
 }
 
-private object ConfigurationReader : HttpResponseReader<Configuration> {
-    override fun read(response: HttpNetworkResponse): Configuration {
+private object StatusReader : HttpResponseReader<SDKStatus> {
+    override fun read(response: HttpNetworkResponse): SDKStatus {
         val cacheControl = parseCacheControl(response.headers[CACHE_CONTROL]?.value)
-        val configuration = HttpJsonResponseReader(Configuration::class.java).read(response)
-        return configuration.copy(expiry = getTimeSeconds() + cacheControl.maxAgeSeconds)
+        val status = HttpJsonResponseReader(SDKStatus::class.java).read(response)
+        Log.v(CONFIGURATION, "Status ttl is ${cacheControl.maxAgeSeconds}")
+        return status.copy(
+            expiry = getTimeSeconds() + cacheControl.maxAgeSeconds.toDouble(),
+            lastUpdate = status.lastUpdate
+        )
     }
 
     private fun parseCacheControl(value: String?): CacheControl {

@@ -3,6 +3,7 @@ package apptentive.com.android.feedback.engagement.util
 import android.content.SharedPreferences
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.platform.SharedPrefConstants.CRYPTO_ENABLED
+import apptentive.com.android.platform.SharedPrefConstants.SDK_VERSION
 import io.mockk.mockk
 
 class MockAndroidSharedPrefDataStore(private val containsKey: Boolean = true, private val isEncryptionEnabled: Boolean = false) : AndroidSharedPrefDataStore {
@@ -25,7 +26,11 @@ class MockAndroidSharedPrefDataStore(private val containsKey: Boolean = true, pr
     }
 
     override fun getString(file: String, keyEntry: String, defaultValue: String): String {
-        return version
+        return when (keyEntry) {
+            SDK_VERSION -> "6.10.0"
+            CRYPTO_ENABLED -> isEncryptionEnabled.toString()
+            else -> version
+        }
     }
 
     override fun getNullableString(file: String, keyEntry: String, defaultValue: String?): String? {

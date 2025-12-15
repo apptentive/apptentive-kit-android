@@ -230,6 +230,7 @@ object Apptentive {
 
                 // Set rating throttle
                 ThrottleUtils.ratingThrottleLength = configuration.ratingInteractionThrottleLength
+                ThrottleUtils.interactionCountLimit = configuration.perSessionInteractionLimit
 
                 // Save alternate app store URL to be set later
 
@@ -559,6 +560,24 @@ object Apptentive {
     fun canShowInteraction(eventName: String): Boolean {
         val event = Event.local(eventName)
         return client.canShowInteraction(event)
+    }
+
+    /**
+     * Exempt event(s) from rate limit and won't throttle
+     */
+    @JvmStatic
+    internal fun excludeEventsFromThrottling(events: List<String>) {
+        if (isRegistered()) {
+            try {
+                stateExecutor.execute {
+                    client.excludeEventsFromThrottling(events)
+                }
+            } catch (e: Exception) {
+                Log.e(FEEDBACK, "Exception while excluding events from throttling", e)
+            }
+        } else {
+            Log.w(FEEDBACK, "SDK is not registered")
+        }
     }
 
     //endregion

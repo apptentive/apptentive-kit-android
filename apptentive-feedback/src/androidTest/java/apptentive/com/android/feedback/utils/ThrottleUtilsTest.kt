@@ -53,26 +53,26 @@ class ThrottleUtilsTest : TestCase() {
     fun shouldThrottleInAppReviewInteractionTest() {
         try {
             // First call
-            assertFalse(throttleUtils.shouldThrottleInteraction(inAppReviewInteraction))
+            assertFalse(throttleUtils.shouldThrottleInteraction("app_review_event", inAppReviewInteraction))
 
             // Call right after
-            assertTrue(throttleUtils.shouldThrottleInteraction(inAppReviewInteraction))
+            assertTrue(throttleUtils.shouldThrottleInteraction("app_review_event", inAppReviewInteraction))
             TimeUnit.MILLISECONDS.sleep(10L)
 
             // 10ms since first call
-            assertTrue(throttleUtils.shouldThrottleInteraction(inAppReviewInteraction))
+            assertTrue(throttleUtils.shouldThrottleInteraction("app_review_event", inAppReviewInteraction))
             TimeUnit.MILLISECONDS.sleep(50L)
 
             // 60ms since first call
-            assertTrue(throttleUtils.shouldThrottleInteraction(inAppReviewInteraction))
+            assertTrue(throttleUtils.shouldThrottleInteraction("app_review_event", inAppReviewInteraction))
             TimeUnit.MILLISECONDS.sleep(60L)
 
             // 120ms since first call (should be able to call again)
-            assertFalse(throttleUtils.shouldThrottleInteraction(inAppReviewInteraction))
+            assertFalse(throttleUtils.shouldThrottleInteraction("app_review_event", inAppReviewInteraction))
             TimeUnit.MILLISECONDS.sleep(50L)
 
             // 50ms since second call
-            assertTrue(throttleUtils.shouldThrottleInteraction(inAppReviewInteraction))
+            assertTrue(throttleUtils.shouldThrottleInteraction("app_review_event", inAppReviewInteraction))
         } catch (e: Exception) {
         }
     }
@@ -81,26 +81,26 @@ class ThrottleUtilsTest : TestCase() {
     fun shouldThrottleRatingDialogInteractionTest() {
         try {
             // First call
-            assertFalse(throttleUtils.shouldThrottleInteraction(ratingDialogInteraction))
+            assertFalse(throttleUtils.shouldThrottleInteraction("app_review_event", ratingDialogInteraction))
 
             // Call right after
-            assertTrue(throttleUtils.shouldThrottleInteraction(ratingDialogInteraction))
+            assertTrue(throttleUtils.shouldThrottleInteraction("app_review_event", ratingDialogInteraction))
             TimeUnit.MILLISECONDS.sleep(10L)
 
             // 10ms since first call
-            assertTrue(throttleUtils.shouldThrottleInteraction(ratingDialogInteraction))
+            assertTrue(throttleUtils.shouldThrottleInteraction("app_review_event", ratingDialogInteraction))
             TimeUnit.MILLISECONDS.sleep(50L)
 
             // 60ms since first call
-            assertTrue(throttleUtils.shouldThrottleInteraction(ratingDialogInteraction))
+            assertTrue(throttleUtils.shouldThrottleInteraction("app_review_event", ratingDialogInteraction))
             TimeUnit.MILLISECONDS.sleep(60L)
 
             // 120ms since first call (should be able to call again)
-            assertFalse(throttleUtils.shouldThrottleInteraction(ratingDialogInteraction))
+            assertFalse(throttleUtils.shouldThrottleInteraction("app_review_event", ratingDialogInteraction))
             TimeUnit.MILLISECONDS.sleep(50L)
 
             // 50ms since second call
-            assertTrue(throttleUtils.shouldThrottleInteraction(ratingDialogInteraction))
+            assertTrue(throttleUtils.shouldThrottleInteraction("app_review_event", ratingDialogInteraction))
         } catch (e: Exception) {
         }
     }
@@ -108,44 +108,79 @@ class ThrottleUtilsTest : TestCase() {
     @Test
     fun shouldThrottleInteractionWithOtherInteractionsTest() {
         try {
-            // Default throttle length is 1 second aka 1000 ms
+            // Throttle after 1 count per session
 
-            // First call interactionTwo
-            assertFalse(throttleUtils.shouldThrottleInteraction(noteInteractionOne))
-            TimeUnit.MILLISECONDS.sleep(300L)
+            ThrottleUtils.interactionCountLimit = 1
 
-            // 300ms since first call interactionTwo
-            assertTrue(throttleUtils.shouldThrottleInteraction(noteInteractionOne))
+            // First call interactionOne
+            assertFalse(throttleUtils.shouldThrottleInteraction("note_1", noteInteractionOne))
+            // 2nd call
+            assertTrue(throttleUtils.shouldThrottleInteraction("note_1", noteInteractionOne))
 
-            // Same Type as interactionTwo (so 300ms since last called this type)
-            assertTrue(throttleUtils.shouldThrottleInteraction(noteInteractionTwo))
+            // First call to InteractionTwo
+            assertFalse(throttleUtils.shouldThrottleInteraction("note_2", noteInteractionTwo))
+            // 2nd call
+            assertTrue(throttleUtils.shouldThrottleInteraction("note_2", noteInteractionTwo))
 
-            // first call interactionFour
-            assertFalse(throttleUtils.shouldThrottleInteraction(surveyInteraction))
-            TimeUnit.MILLISECONDS.sleep(500L)
+            // first call interactionThree
+            assertFalse(throttleUtils.shouldThrottleInteraction("survey_1", surveyInteraction))
+            // 2nd call
+            assertTrue(throttleUtils.shouldThrottleInteraction("survey_1", surveyInteraction))
 
-            // 800ms since second call interactionTwo
-            assertTrue(throttleUtils.shouldThrottleInteraction(noteInteractionOne))
-            assertTrue(throttleUtils.shouldThrottleInteraction(noteInteractionTwo))
-            TimeUnit.MILLISECONDS.sleep(300L)
+            // Throttle count increased to 2 per session
+            ThrottleUtils.interactionCountLimit = 2
 
-            // 1100ms since first call of interactionTwo (should be able to call)
-            assertFalse(throttleUtils.shouldThrottleInteraction(noteInteractionTwo))
+            // 3rd call but technically we have executed only once
+            assertFalse(throttleUtils.shouldThrottleInteraction("note_1", noteInteractionOne))
+            assertFalse(throttleUtils.shouldThrottleInteraction("note_2", noteInteractionTwo))
+            assertFalse(throttleUtils.shouldThrottleInteraction("survey_1", surveyInteraction))
 
-            // Same type as interactionThree that was just called (shouldn't be able to call)
-            assertTrue(throttleUtils.shouldThrottleInteraction(noteInteractionOne))
+            // 4th call and already executed twice
+            assertTrue(throttleUtils.shouldThrottleInteraction("note_1", noteInteractionOne))
+            assertTrue(throttleUtils.shouldThrottleInteraction("note_2", noteInteractionTwo))
+            assertTrue(throttleUtils.shouldThrottleInteraction("survey_1", surveyInteraction))
 
-            // 800ms since first call of interactionFour
-            assertTrue(throttleUtils.shouldThrottleInteraction(surveyInteraction))
-            TimeUnit.MILLISECONDS.sleep(300L)
+            ThrottleUtils.interactionCountLimit = 0
+            assertTrue(throttleUtils.shouldThrottleInteraction("any_event", noteInteractionOne))
+            assertTrue(throttleUtils.shouldThrottleInteraction("any_event", noteInteractionOne))
+            assertTrue(throttleUtils.shouldThrottleInteraction("any_event", noteInteractionOne))
 
-            // 1100ms since first call of interactionFour
-            assertFalse(throttleUtils.shouldThrottleInteraction(surveyInteraction))
+            ThrottleUtils.interactionCountLimit = -2
+            assertTrue(throttleUtils.shouldThrottleInteraction("any_event", noteInteractionOne))
 
-            // Call right after same interaction should not call
-            assertTrue(throttleUtils.shouldThrottleInteraction(surveyInteraction))
+            val initiatorInteraction = object : Interaction("initiatorID", InteractionType.Initiator) {}
+            ThrottleUtils.interactionCountLimit = 1
+            assertFalse(throttleUtils.shouldThrottleInteraction("initiator_event", initiatorInteraction))
+
+            ThrottleUtils.interactionCountLimit = 1
+            val exemptedEvent = ThrottleUtils.exemptedEvents.first()
+            assertFalse(throttleUtils.shouldThrottleInteraction(exemptedEvent, noteInteractionOne))
+            assertFalse(throttleUtils.shouldThrottleInteraction(exemptedEvent, noteInteractionOne))
+            assertFalse(throttleUtils.shouldThrottleInteraction(exemptedEvent, noteInteractionOne))
         } catch (e: Exception) {
         }
+    }
+
+    @Test
+    fun resetEngagedEventsTest() {
+        ThrottleUtils.engagedInteractions["test_id"] = 5
+        throttleUtils.resetEngagedEvents()
+        assertTrue(ThrottleUtils.engagedInteractions.isEmpty())
+    }
+
+    @Test
+    fun shouldThrottleResetConversationTest() {
+        DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore())
+        val result = ThrottleUtils.shouldThrottleReset(CONVERSATION_TYPE)
+        assertFalse(result)
+        assertTrue(ThrottleUtils.shouldThrottleReset(CONVERSATION_TYPE))
+    }
+
+    @Test
+    fun shouldThrottleResetRosterTest() {
+        DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore())
+        assertFalse(ThrottleUtils.shouldThrottleReset(ROSTER_TYPE))
+        assertTrue(ThrottleUtils.shouldThrottleReset(ROSTER_TYPE))
     }
 
     @Test

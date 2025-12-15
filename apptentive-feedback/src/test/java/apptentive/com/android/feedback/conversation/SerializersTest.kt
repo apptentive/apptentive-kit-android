@@ -1,8 +1,10 @@
 package apptentive.com.android.feedback.conversation
 
+import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
+import apptentive.com.android.feedback.engagement.util.MockAndroidSharedPrefDataStore
 import apptentive.com.android.feedback.mockAppRelease
 import apptentive.com.android.feedback.mockDevice
 import apptentive.com.android.feedback.mockEngagementData
@@ -15,6 +17,7 @@ import apptentive.com.android.feedback.model.EngagementRecord
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
+import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.serialization.BinaryDecoder
 import apptentive.com.android.serialization.BinaryEncoder
 import apptentive.com.android.serialization.TypeSerializer
@@ -118,6 +121,7 @@ class SerializersTest {
 
     @Test
     fun conversationSerializer() {
+        DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore())
         val conversation = Conversation(
             localIdentifier = "local_identifier",
             conversationToken = "conversation_token",

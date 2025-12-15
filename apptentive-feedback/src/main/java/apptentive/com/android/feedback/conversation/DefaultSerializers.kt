@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.conversation
 
+import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
@@ -19,8 +20,13 @@ import apptentive.com.android.feedback.model.IntegrationConfigItem
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.RandomSampling
 import apptentive.com.android.feedback.model.SDK
+import apptentive.com.android.feedback.model.SDKStatus
 import apptentive.com.android.feedback.model.VersionHistory
 import apptentive.com.android.feedback.model.VersionHistoryItem
+import apptentive.com.android.feedback.utils.isVersionLessThan610
+import apptentive.com.android.platform.AndroidSharedPrefDataStore
+import apptentive.com.android.platform.SharedPrefConstants.SDK_CORE_INFO
+import apptentive.com.android.platform.SharedPrefConstants.SDK_VERSION
 import apptentive.com.android.serialization.Decoder
 import apptentive.com.android.serialization.DoubleSerializer
 import apptentive.com.android.serialization.Encoder
@@ -31,10 +37,12 @@ import apptentive.com.android.serialization.TypeEncoder
 import apptentive.com.android.serialization.TypeSerializer
 import apptentive.com.android.serialization.decodeList
 import apptentive.com.android.serialization.decodeMap
+import apptentive.com.android.serialization.decodeNullableDouble
 import apptentive.com.android.serialization.decodeNullableString
 import apptentive.com.android.serialization.decodeSet
 import apptentive.com.android.serialization.encodeList
 import apptentive.com.android.serialization.encodeMap
+import apptentive.com.android.serialization.encodeNullableDouble
 import apptentive.com.android.serialization.encodeNullableString
 import apptentive.com.android.serialization.encodeSet
 import apptentive.com.android.util.Log
@@ -248,31 +256,47 @@ internal object DefaultSerializers {
         }
     }
 
-    val configurationSerializer: TypeSerializer<Configuration> by lazy {
-        object : TypeSerializer<Configuration> {
-            override fun encode(encoder: Encoder, value: Configuration) {
+    val configurationSerializer: TypeSerializer<SDKStatus> by lazy {
+        object : TypeSerializer<SDKStatus> {
+            override fun encode(encoder: Encoder, value: SDKStatus) {
                 encoder.encodeDouble(value.expiry)
                 messageCenterConfigurationSerializer.encode(encoder, value.messageCenter)
+                encoder.encodeDouble(value.lastUpdate)
+                encoder.encodeBoolean(value.metricsEnabled)
+                encoder.encodeNullableDouble(value.hibernateUntil)
             }
 
-            override fun decode(decoder: Decoder): Configuration {
-                return Configuration(
-                    expiry = decoder.decodeDouble(),
-                    messageCenter = messageCenterConfigurationSerializer.decode(decoder)
-                )
+            override fun decode(decoder: Decoder): SDKStatus {
+                val cachedSDKVersion = DependencyProvider.of<AndroidSharedPrefDataStore>()
+                    .getString(SDK_CORE_INFO, SDK_VERSION).ifEmpty { null }
+                // SDK_VERSION cached from 6.5.0, it is null prior to that
+                return if (isVersionLessThan610(cachedSDKVersion)) {
+                    SDKStatus(
+                        expiry = decoder.decodeDouble(),
+                        messageCenter = messageCenterConfigurationSerializer.decode(decoder)
+                    )
+                } else {
+                    SDKStatus(
+                        expiry = decoder.decodeDouble(),
+                        messageCenter = messageCenterConfigurationSerializer.decode(decoder),
+                        lastUpdate = decoder.decodeDouble(),
+                        metricsEnabled = decoder.decodeBoolean(),
+                        hibernateUntil = decoder.decodeNullableDouble()
+                    )
+                }
             }
         }
     }
 
-    val messageCenterConfigurationSerializer: TypeSerializer<Configuration.MessageCenter> by lazy {
-        object : TypeSerializer<Configuration.MessageCenter> {
-            override fun encode(encoder: Encoder, value: Configuration.MessageCenter) {
+    val messageCenterConfigurationSerializer: TypeSerializer<SDKStatus.MessageCenter> by lazy {
+        object : TypeSerializer<SDKStatus.MessageCenter> {
+            override fun encode(encoder: Encoder, value: SDKStatus.MessageCenter) {
                 encoder.encodeDouble(value.fgPoll)
                 encoder.encodeDouble(value.bgPoll)
             }
 
-            override fun decode(decoder: Decoder): Configuration.MessageCenter {
-                return Configuration.MessageCenter(
+            override fun decode(decoder: Decoder): SDKStatus.MessageCenter {
+                return SDKStatus.MessageCenter(
                     fgPoll = decoder.decodeDouble(),
                     bgPoll = decoder.decodeDouble()
                 )
@@ -563,7 +587,7 @@ internal object DefaultSerializers {
                 personSerializer.encode(encoder, value.person)
                 sdkSerializer.encode(encoder, value.sdk)
                 appReleaseSerializer.encode(encoder, value.appRelease)
-                configurationSerializer.encode(encoder, value.configuration)
+                configurationSerializer.encode(encoder, value.sdkStatus)
                 randomSamplingSerializer.encode(encoder, value.randomSampling)
                 engagementDataSerializer.encode(encoder, value.engagementData)
             }
@@ -577,7 +601,7 @@ internal object DefaultSerializers {
                     person = personSerializer.decode(decoder),
                     sdk = sdkSerializer.decode(decoder),
                     appRelease = appReleaseSerializer.decode(decoder),
-                    configuration = configurationSerializer.decode(decoder),
+                    sdkStatus = configurationSerializer.decode(decoder),
                     randomSampling = randomSamplingSerializer.decode(decoder),
                     engagementManifest = EngagementManifest(), // EngagementManifest is serialized separately
                     engagementData = engagementDataSerializer.decode(decoder)

@@ -1,6 +1,15 @@
+# 2025-12-15 - v6.9.10
+### Fixes
+* Device custom data is now reliably preserved across version upgrades.
+* In survey, single select questions ensures mutual exclusivity
+
+### Improvements
+* Dialog creation is now deferred until the decor view is created, resulting in more consistent and stable behavior.
+* A new status endpoint has been introduced to track updates to interactions and targeting. The SDK checks this endpoint frequently, ensuring interactions are updated promptly without waiting for cache expiration.
+
 # 2025-03-19 - v6.9.3
 ### Fixes
-* Addressed a race condition when showing coupled interactions that are engaged from activities without supportFragmentManager
+* Addressed a race condition when showing coupled interactions that are engaged from activities without supportFragmentManager 
 
 # 2025-03-05 - v6.9.2
 ### Improvements
@@ -18,7 +27,7 @@
 ### Fixes
 * Draft messages are now saved correctly in the multiuser environment
 * Prevent logout calls from being made when the SDK is not logged in
-* Upgrade GSON dependnecy to latest to fix the security vulnerability
+* Upgrade GSON dependency to latest to fix the security vulnerability
 
 ### New Features
 * Added initiator to the kit to support Alchemer Workflow initiation from the SDKs

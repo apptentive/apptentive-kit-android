@@ -99,6 +99,17 @@ data class ApptentiveConfiguration(
      */
     var customAppStoreURL: String? = null
 
+    /**
+     *  Sets the number of times an interaction can be shown before it is throttled.
+     *
+     *  The default value is 1 per app session, defined as a cold start of the app or a user logins from the apptentive logout state
+     *
+     *  When the value is set  to <=0, the interaction will always be throttled.
+     *
+     */
+
+    internal var perSessionInteractionLimit: Int = 1
+
     //region plugin configuration
 
     /**

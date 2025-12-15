@@ -10,6 +10,7 @@ import java.net.URL
  */
 @InternalUseOnly
 data class EngagementManifest(
+    val applicationId: String = "",
     val interactions: List<InteractionData> = emptyList(),
     val targets: Map<String, List<InvocationData>> = emptyMap(),
     val expiry: TimeInterval = 0.0,
