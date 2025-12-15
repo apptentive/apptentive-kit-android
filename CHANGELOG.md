@@ -1,3 +1,4 @@
+# 2025-12-15 - v6.9.10
 ### Fixes
 * Device custom data is now reliably preserved across version upgrades.
 * In survey, single select questions ensures mutual exclusivity
