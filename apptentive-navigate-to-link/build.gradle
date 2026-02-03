@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
@@ -21,7 +23,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    namespace 'apptentive.com.android.feedback.link'
+    namespace = 'apptentive.com.android.feedback.link'
 }
 
 dependencies {
@@ -47,7 +49,7 @@ project.ext {
     artifactId = 'apptentive-navigate-to-link'
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+tasks.withType(KotlinCompile).configureEach {
     kotlinOptions {
         freeCompilerArgs += [
                 //'-Xexplicit-api=warning', // or '-Xexplicit-api=strict'

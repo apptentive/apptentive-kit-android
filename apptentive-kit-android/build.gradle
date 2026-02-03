@@ -23,13 +23,6 @@ android {
     namespace 'com.apptentive.apptentive_kit_android'
 }
 
-repositories {
-    mavenLocal()
-    maven {
-        url "https://oss.sonatype.org/content/groups/staging/"
-    }
-}
-
 dependencies {
     implementation "com.apptentive:apptentive-core:$repoVersion"
     implementation "com.apptentive:apptentive-core-ui:$repoVersion"

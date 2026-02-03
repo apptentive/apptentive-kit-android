@@ -1,19 +1,16 @@
 package apptentive.com.android.feedback.utils
 
 import android.os.Build
-import androidx.annotation.ChecksSdkIntAtLeast
-import androidx.annotation.RequiresApi
-import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.encryption.AESEncryption23
 import apptentive.com.android.encryption.Encryption
 import apptentive.com.android.encryption.EncryptionKey
 import apptentive.com.android.encryption.EncryptionNoOp
 import apptentive.com.android.feedback.conversation.ConversationMetaData
-import apptentive.com.android.feedback.conversation.ConversationRepository
 import apptentive.com.android.feedback.conversation.ConversationRoster
 import apptentive.com.android.feedback.conversation.ConversationSerializationException
 import apptentive.com.android.feedback.conversation.ConversationState
-import apptentive.com.android.feedback.message.MessageRepository
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getConversationRepository
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getMessageRepository
 import apptentive.com.android.feedback.platform.DefaultStateMachine
 import apptentive.com.android.feedback.utils.AndroidSDKVersion.getSDKVersion
 import apptentive.com.android.feedback.utils.ThrottleUtils.ROSTER_TYPE
@@ -22,16 +19,9 @@ import apptentive.com.android.util.LogTags
 import apptentive.com.android.util.generateUUID
 
 internal object RosterUtils {
-    private val conversationRepository by lazy {
-        DependencyProvider.of<ConversationRepository>()
-    }
-
-    private val messageRepository by lazy {
-        DependencyProvider.of<MessageRepository>()
-    }
-
     @Throws(ConversationSerializationException::class)
     fun initializeRoster() {
+        val conversationRepository = getConversationRepository()
         try {
             val conversationRoster = conversationRepository.initializeRepositoryWithRoster()
 
@@ -68,16 +58,14 @@ internal object RosterUtils {
             }
         }
         DefaultStateMachine.conversationRoster = currentRoster
-        conversationRepository.updateConversationRoster(currentRoster)
+        getConversationRepository().updateConversationRoster(currentRoster)
     }
 
     private fun updateEncryptionForLoggedInConversation(loggedInState: ConversationState.LoggedIn) {
-        if (!isMarshmallowOrGreater()) return
-
         val wrapperEncryptionBytes = loggedInState.encryptionWrapperBytes
         val encryptionKey = wrapperEncryptionBytes.getEncryptionKey(loggedInState.subject)
         DefaultStateMachine.encryption = AESEncryption23(encryptionKey)
-        conversationRepository.updateEncryption(DefaultStateMachine.encryption)
+        getConversationRepository().updateEncryption(DefaultStateMachine.encryption)
     }
 
     fun updateRosterForLogout(conversationId: String) {
@@ -97,10 +85,9 @@ internal object RosterUtils {
         conversationRoster.activeConversation = null
         conversationRoster.loggedOut = loggedOut
         updateRepositories(conversationRoster, EncryptionNoOp())
-        conversationRepository.saveRoster(conversationRoster)
+        getConversationRepository().saveRoster(conversationRoster)
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     fun updateRosterForLogin(subject: String, encryptionKey: EncryptionKey, wrapperEncryption: ByteArray) {
         if (getSDKVersion() < Build.VERSION_CODES.M) return
         val conversationRoster = DefaultStateMachine.conversationRoster
@@ -134,7 +121,7 @@ internal object RosterUtils {
         DefaultStateMachine.encryption = encryption
         DefaultStateMachine.conversationRoster = conversationRoster
         updateRepositories(conversationRoster, encryption)
-        conversationRepository.saveRoster(conversationRoster)
+        getConversationRepository().saveRoster(conversationRoster)
     }
 
     private fun findAndRemoveMatchingLoggedOutConversation(loggedOut: MutableList<ConversationMetaData>, subject: String): ConversationMetaData? {
@@ -150,6 +137,8 @@ internal object RosterUtils {
     }
 
     private fun updateRepositories(conversationRoster: ConversationRoster, encryption: Encryption) {
+        val conversationRepository = getConversationRepository()
+        val messageRepository = getMessageRepository()
         DefaultStateMachine.conversationRoster = conversationRoster
         conversationRepository.updateConversationRoster(conversationRoster)
         conversationRepository.updateEncryption(encryption)
@@ -172,7 +161,3 @@ internal object AndroidSDKVersion {
         return Build.VERSION.SDK_INT
     }
 }
-
-@ChecksSdkIntAtLeast(api = Build.VERSION_CODES.M)
-internal fun isMarshmallowOrGreater(): Boolean =
-    Build.VERSION.SDK_INT >= Build.VERSION_CODES.M

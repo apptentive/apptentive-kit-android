@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.backend
 
+import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.getTimeSeconds
 import apptentive.com.android.feedback.BuildConfig
 import apptentive.com.android.feedback.model.AppRelease
@@ -22,9 +23,13 @@ import apptentive.com.android.network.HttpNetworkResponse
 import apptentive.com.android.network.HttpRequest
 import apptentive.com.android.network.HttpResponseReader
 import apptentive.com.android.network.MutableHttpHeaders
+import apptentive.com.android.platform.AndroidSharedPrefDataStore
+import apptentive.com.android.platform.SharedPrefConstants.ETAG_INTERACTIONS
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTags
 import apptentive.com.android.util.LogTags.CONFIGURATION
 import apptentive.com.android.util.LogTags.CONVERSATION
+import apptentive.com.android.util.ResponseMetadata
 import apptentive.com.android.util.Result
 
 internal class DefaultConversationService(
@@ -83,11 +88,21 @@ internal class DefaultConversationService(
         conversationId: String,
         callback: (Result<EngagementManifest>) -> Unit
     ) {
+        val sharedPrefDataStore = DependencyProvider.of<AndroidSharedPrefDataStore>()
         val request = createJsonRequest(
             method = HttpMethod.GET,
             path = "conversations/$conversationId/interactions",
-            headers = MutableHttpHeaders().apply {
-                this["Authorization"] = "Bearer $conversationToken"
+            headers = if (sharedPrefDataStore.getString("com.apptentive.sdk.coreinfo", ETAG_INTERACTIONS).isNotEmpty()) {
+                Log.v(CONVERSATION, "Using ETag for engagement manifest request")
+                MutableHttpHeaders().apply {
+                    this["If-None-Match"] = sharedPrefDataStore
+                        .getString("com.apptentive.sdk.coreinfo", ETAG_INTERACTIONS)
+                    this["Authorization"] = "Bearer $conversationToken"
+                }
+            } else {
+                MutableHttpHeaders().apply {
+                    this["Authorization"] = "Bearer $conversationToken"
+                }
             },
             responseReader = EngagementManifestReader
         )
@@ -189,7 +204,25 @@ internal class DefaultConversationService(
     private fun <T : Any> sendRequest(request: HttpRequest<T>, callback: (Result<T>) -> Unit) {
         httpClient.send(request) {
             when (it) {
-                is Result.Success -> callback(Result.Success(it.data.payload))
+                is Result.Success -> {
+                    if (request.url.toString().contains("interactions")) {
+                        Log.v(LogTags.NETWORK, "Collecting ETag")
+                        val sharedPref = DependencyProvider.of<AndroidSharedPrefDataStore>()
+                        val etag: String? = it.data.headers["Etag"]?.value
+                        Log.v(LogTags.NETWORK, "Etag: $etag")
+                        sharedPref.putString(
+                            "com.apptentive.sdk.coreinfo",
+                            ETAG_INTERACTIONS,
+                            etag
+                        )
+                    }
+                    if (it.data.statusCode == 304) {
+                        Log.i(LogTags.NETWORK, "Interactions request completed with 304 Not Modified")
+                        callback(Result.Success(it.data.payload, ResponseMetadata(true)))
+                    } else {
+                        callback(Result.Success(it.data.payload))
+                    }
+                }
                 is Result.Error -> callback(it)
             }
         }

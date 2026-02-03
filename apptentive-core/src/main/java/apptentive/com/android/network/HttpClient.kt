@@ -128,7 +128,7 @@ class DefaultHttpClient(
         val statusMessage = networkResponse.statusMessage
 
         // successful?
-        if (statusCode in 200..299) {
+        if (statusCode in 200..299 || statusCode == 304) {
             return HttpResponse(
                 statusCode,
                 statusMessage,

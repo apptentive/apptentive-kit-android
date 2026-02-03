@@ -15,6 +15,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.addTextChangedListener
@@ -115,6 +116,7 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
             addObservers()
             setListeners()
             getPushNotificationPermission()
+            applyWindowInsets(rootLayout)
         } catch (e: Exception) {
             Log.e(MESSAGE_CENTER, "Error in onCreate", e)
             finish()
@@ -161,6 +163,8 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
             messageListAdapter.setNameError(errorMessages.nameError)
             if (errorMessages.messageError) {
                 composerErrorView.visibility = View.VISIBLE
+                // Reset for talkback announcement
+                composerErrorView.text = null
                 composerErrorView.text = getString(R.string.apptentive_message_validation_error)
             } else {
                 composerErrorView.visibility = View.GONE
@@ -174,6 +178,18 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
 
         viewModel.avatarBitmapStream.observe(this) {
             updateMessageListAdapter()
+        }
+
+        onBackPressedDispatcher.addCallback(this) {
+            viewModel.onMessageCenterEvent(
+                event = MessageCenterEvents.EVENT_NAME_CANCEL,
+                data = mapOf("cause" to "back_button")
+            )
+
+            if (isTaskRoot) packageManager.getLaunchIntentForPackage(packageName)?.let {
+                // Opens the Launch Activity of app
+                startActivity(Intent.makeMainActivity(it.component))
+            } ?: finish() else finish()
         }
     }
 
@@ -368,19 +384,5 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
             startViewModelActivity<ProfileActivity>()
         }
         return true
-    }
-
-    override fun onBackPressed() {
-        viewModel.onMessageCenterEvent(
-            event = MessageCenterEvents.EVENT_NAME_CANCEL,
-            data = mapOf("cause" to "back_button")
-        )
-
-        if (isTaskRoot) packageManager.getLaunchIntentForPackage(packageName)?.let {
-            // Opens the Launch Activity of app
-            startActivity(Intent.makeMainActivity(it.component))
-        } ?: finish() else finish()
-
-        super.onBackPressed()
     }
 }

@@ -1,7 +1,6 @@
 package apptentive.com.android.feedback.utils
 
-import apptentive.com.android.core.ApplicationInfo
-import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getApplicationInfo
 
-internal val appVersionCode by lazy { DependencyProvider.of<ApplicationInfo>().versionCode }
-internal val appVersionName by lazy { DependencyProvider.of<ApplicationInfo>().versionName }
+internal val appVersionCode by lazy { getApplicationInfo().versionCode }
+internal val appVersionName by lazy { getApplicationInfo().versionName }

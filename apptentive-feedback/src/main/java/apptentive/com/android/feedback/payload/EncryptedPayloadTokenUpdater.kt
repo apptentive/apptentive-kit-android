@@ -1,7 +1,5 @@
 package apptentive.com.android.feedback.payload
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import apptentive.com.android.encryption.AESEncryption23
 import apptentive.com.android.encryption.EncryptionKey
 import apptentive.com.android.feedback.model.payloads.EncryptedPayloadPart
@@ -16,7 +14,6 @@ import java.io.ByteArrayInputStream
 @InternalUseOnly
 class EncryptedPayloadTokenUpdater {
     companion object {
-        @RequiresApi(Build.VERSION_CODES.M)
         fun updateEmbeddedToken(
             token: String,
             encryptionKey: EncryptionKey,
@@ -31,7 +28,7 @@ class EncryptedPayloadTokenUpdater {
                 )
             } else if (contentType?.type == "multipart" && contentType.subType == "encrypted") {
                 // Attempt to get the multi-part boundary from the Content-Type header.
-                val boundary = contentType?.parameters?.get("boundary") ?: Payload.BOUNDARY
+                val boundary = contentType.parameters?.get("boundary") ?: Payload.BOUNDARY
                 val inputStream = ByteArrayInputStream(data)
 
                 val parser = MultipartParser(inputStream, boundary)
@@ -96,12 +93,10 @@ class EncryptedPayloadTokenUpdater {
             return updatedJsonString.toByteArray()
         }
 
-        @RequiresApi(Build.VERSION_CODES.M)
         internal fun decrypt(data: ByteArray, encryptionKey: EncryptionKey): ByteArray {
             return AESEncryption23(encryptionKey).decryptPayloadData(data)
         }
 
-        @RequiresApi(Build.VERSION_CODES.M)
         internal fun encrypt(data: ByteArray, encryptionKey: EncryptionKey): ByteArray {
             return AESEncryption23(encryptionKey).encryptPayloadData(data)
         }

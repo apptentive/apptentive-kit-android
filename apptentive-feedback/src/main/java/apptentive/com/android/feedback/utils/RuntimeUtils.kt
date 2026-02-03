@@ -2,7 +2,6 @@ package apptentive.com.android.feedback.utils
 
 import android.content.Context
 import android.os.Build
-import androidx.annotation.RequiresApi
 
 internal object RuntimeUtils {
     fun getApplicationInfo(context: Context): ApplicationInfo {
@@ -14,11 +13,11 @@ internal object RuntimeUtils {
         val targetSdkVersion = ai?.targetSdkVersion ?: 0
 
         val minSdkVersion: Int =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) getMinSdkVersion(ai)
-            else 0
+            ai?.minSdkVersion ?: 0
+        @Suppress("DEPRECATION")
         return ApplicationInfo(
             packageName = context.packageName,
-            versionName = packageInfo.versionName,
+            versionName = packageInfo.versionName.toString(),
             versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode
             else packageInfo.versionCode.toLong(),
             targetSdkVersion = targetSdkVersion,
@@ -26,9 +25,6 @@ internal object RuntimeUtils {
             debuggable = debuggable
         )
     }
-
-    @RequiresApi(Build.VERSION_CODES.N)
-    fun getMinSdkVersion(ai: android.content.pm.ApplicationInfo?) = ai?.minSdkVersion ?: 0
 }
 
 internal typealias VersionCode = Long

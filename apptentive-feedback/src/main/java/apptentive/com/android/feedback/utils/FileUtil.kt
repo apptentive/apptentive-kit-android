@@ -10,11 +10,11 @@ import android.os.Environment
 import android.provider.OpenableColumns
 import android.webkit.MimeTypeMap
 import androidx.annotation.WorkerThread
-import apptentive.com.android.core.DependencyProvider
-import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.model.Message
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getConversationCredentialProvider
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getFileSystemProvider
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getSharedPrefDataStore
 import apptentive.com.android.feedback.platform.FileSystem
-import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.platform.SharedPrefConstants
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
@@ -33,7 +33,7 @@ import java.io.OutputStream
 
 @InternalUseOnly
 object FileUtil {
-    private val fileSystem: FileSystem by lazy { DependencyProvider.of<FileSystem>() }
+    private val fileSystem: FileSystem by lazy { getFileSystemProvider() }
     private const val ONE_MB = 1024 * 1024 // 1MB
     private const val MAX_FILE_SIZE = 15 * ONE_MB // 15MB
     private const val BYTES_BUFFER = ONE_MB // 1MB
@@ -355,9 +355,9 @@ object FileUtil {
 
     fun getDraftStorageName(): String {
         // clear any previously created MESSAGE_CENTER_DRAFT file, used in < 6.9
-        val draftStorage = DependencyProvider.of<AndroidSharedPrefDataStore>()
+        val draftStorage = getSharedPrefDataStore()
         draftStorage.deleteSharedPrefForSDK(SharedPrefConstants.MESSAGE_CENTER_DRAFT, 0)
-        val conversationCredential = DependencyProvider.of<ConversationCredentialProvider>()
+        val conversationCredential = getConversationCredentialProvider()
         return SharedPrefConstants.MESSAGE_CENTER_DRAFT + conversationCredential.conversationId?.sha256()
     }
 }

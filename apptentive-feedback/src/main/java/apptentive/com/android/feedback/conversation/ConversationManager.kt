@@ -1,7 +1,5 @@
 package apptentive.com.android.feedback.conversation
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.annotation.WorkerThread
 import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.DependencyProvider
@@ -30,6 +28,9 @@ import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.model.VersionHistory
 import apptentive.com.android.feedback.platform.AndroidUtils.currentTimeSeconds
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.addConversationCredentialProvider
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getConversationCredentialProvider
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getSharedPrefDataStore
 import apptentive.com.android.feedback.platform.DefaultStateMachine
 import apptentive.com.android.feedback.platform.SDKEvent
 import apptentive.com.android.feedback.platform.SDKState
@@ -44,7 +45,6 @@ import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
 import apptentive.com.android.feedback.utils.getEncryptionKey
 import apptentive.com.android.feedback.utils.hasItBeenAnHour
-import apptentive.com.android.feedback.utils.isMarshmallowOrGreater
 import apptentive.com.android.feedback.utils.shouldRefreshManifest
 import apptentive.com.android.feedback.utils.toSecretKeyBytes
 import apptentive.com.android.network.UnexpectedResponseException
@@ -92,7 +92,7 @@ internal class ConversationManager(
         val conversation = loadActiveConversation()
 
         // Store successful SDK version after loading conversation
-        DependencyProvider.of<AndroidSharedPrefDataStore>()
+        getSharedPrefDataStore()
             .putString(SDK_CORE_INFO, SDK_VERSION, Constants.SDK_VERSION)
 
         updateConversationCredentialProvider(
@@ -105,11 +105,10 @@ internal class ConversationManager(
 
     fun onEncryptionSetupComplete() {
         activeConversationSubject.observe(::saveConversation)
-        activeConversation.observe(::checkForSDKAppReleaseUpdates)
-        activeConversation.observe(::checkForDeviceUpdates)
+        activeConversationSubject.observe(::checkForSDKAppReleaseUpdates)
+        activeConversationSubject.observe(::checkForDeviceUpdates)
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     fun tryFetchConversationToken(callback: (result: Result<Unit>) -> Unit) {
         val conversation = activeConversation.value
         val conversationToken = conversation.conversationToken
@@ -145,7 +144,7 @@ internal class ConversationManager(
         state: ConversationState
     ) {
         var encryptionKey: EncryptionKey? = null
-        if (state is ConversationState.LoggedIn && isMarshmallowOrGreater()) {
+        if (state is ConversationState.LoggedIn) {
             encryptionKey = state.encryptionWrapperBytes.getEncryptionKey(state.subject)
             DefaultStateMachine.onEvent(SDKEvent.SDKLaunchedAsLoggedIn)
         } else { // Anonymous
@@ -182,6 +181,7 @@ internal class ConversationManager(
                             id = it.data.personId
                         )
                     )
+                    activeConversation.value.logConversation()
                     tryFetchEngagementManifest()
                     tryFetchAppStatus()
                     callback(Result.Success(Unit))
@@ -223,7 +223,6 @@ internal class ConversationManager(
         return createConversation()
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     internal fun loginSession(
         conversationId: String,
         jwtToken: String,
@@ -288,6 +287,7 @@ internal class ConversationManager(
                                 conversationId = conversation.conversationId,
                                 conversationToken = jwtToken
                             )
+                            activeConversation.value.logConversation()
                             tryFetchEngagementManifest()
                             tryFetchAppStatus()
                         } catch (e: ConversationSerializationException) {
@@ -299,6 +299,7 @@ internal class ConversationManager(
                         activeConversationSubject.value = activeConversation.value.copy(
                             conversationToken = jwtToken
                         )
+                        activeConversation.value.logConversation()
                     }
                     updateConversationCredentialProvider(conversationId, jwtToken, encryptionKey)
                     loginCallback?.invoke(LoginResult.Success)
@@ -316,12 +317,12 @@ internal class ConversationManager(
             callback(Result.Success(Unit)) // Callback immediately to send the logout event and payload before encryption is removed.
             DefaultStateMachine.onEvent(SDKEvent.Logout(conversationId))
             activeConversationSubject.value = conversationRepository.createConversation()
+            activeConversation.value.logConversation()
             updateConversationCredentialProvider(null, null, null)
             Log.v(CONVERSATION, "Logout session successful, logged out conversation")
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     internal fun createConversationAndLogin(
         jwtToken: String,
         subject: String,
@@ -372,6 +373,7 @@ internal class ConversationManager(
                             id = it.data.personId
                         )
                     )
+                    activeConversation.value.logConversation()
                     tryFetchEngagementManifest()
                     tryFetchAppStatus()
                     loginCallback?.invoke(LoginResult.Success)
@@ -394,7 +396,7 @@ internal class ConversationManager(
 
         if (loggedInState != null && loggedInState.subject == subClaim) {
             Log.d(CONVERSATION, "Refreshing the auth token for the user with subject: $subClaim")
-            val conversationCredential = DependencyProvider.of<ConversationCredentialProvider>()
+            val conversationCredential = getConversationCredentialProvider()
             updateConversationCredentialProvider(
                 conversationCredential.conversationId,
                 jwtToken,
@@ -403,6 +405,7 @@ internal class ConversationManager(
             activeConversationSubject.value = getConversation().copy(
                 conversationToken = jwtToken,
             )
+            activeConversation.value.logConversation()
             callback?.invoke(LoginResult.Success)
         } else {
             Log.d(
@@ -418,7 +421,7 @@ internal class ConversationManager(
         token: String?,
         payloadEncryptionKey: EncryptionKey?
     ) {
-        DependencyProvider.register<ConversationCredentialProvider>(
+        addConversationCredentialProvider(
             ConversationCredential(
                 conversationId = id,
                 conversationToken = token,
@@ -543,7 +546,7 @@ internal class ConversationManager(
     }
 
     @WorkerThread
-    fun tryFetchEngagementManifest() {
+    fun tryFetchEngagementManifest(callback: () -> Unit = {}) {
         val conversation = activeConversationSubject.value
         val manifest = conversation.engagementManifest
         val latestLDTimeStamp = DependencyProvider.of<AndroidSharedPrefDataStore>()
@@ -577,7 +580,7 @@ internal class ConversationManager(
                 // reset the FAN_SGINAL_TIME_STAMP
                 if (needFanSignalUpdate) DependencyProvider.of<AndroidSharedPrefDataStore>()
                     .putString(SDK_CORE_INFO, FAN_SIGNAL_TIME_STAMP, "")
-                fetchEngagementManifest(conversationId, conversationToken)
+                fetchEngagementManifest(conversationId, conversationToken, callback)
             }
 
             else -> {
@@ -586,7 +589,7 @@ internal class ConversationManager(
         }
     }
 
-    private fun fetchEngagementManifest(conversationId: String, conversationToken: String) {
+    private fun fetchEngagementManifest(conversationId: String, conversationToken: String, callback: () -> Unit = {}) {
         conversationService.fetchEngagementManifest(
             conversationToken = conversationToken,
             conversationId = conversationId
@@ -597,9 +600,19 @@ internal class ConversationManager(
                     Log.v(ENGAGEMENT_MANIFEST, it.data.toString())
                     val isFreshStart =
                         activeConversationSubject.value.engagementManifest.applicationId == ""
-                    activeConversationSubject.value = activeConversationSubject.value.copy(
-                        engagementManifest = it.data
-                    )
+                    if (it.metadata?.notModified == true) {
+                        Log.d(CONVERSATION, "No change in engagement manifest, only update expiry")
+                        activeConversationSubject.value = activeConversationSubject.value.copy(
+                            engagementManifest = activeConversationSubject.value.engagementManifest.copy(
+                                expiry = it.data.expiry
+                            )
+                        )
+                    } else {
+                        activeConversationSubject.value = activeConversationSubject.value.copy(
+                            engagementManifest = it.data
+                        )
+                    }
+                    callback()
                     Log.v(CONVERSATION, "Engagement manifest expiry is ${activeConversationSubject.value.engagementManifest.expiry}")
                     if (isFreshStart) {
                         tryFetchAppStatus()
@@ -656,6 +669,8 @@ internal class ConversationManager(
                             activeConversationSubject.value = activeConversationSubject.value.copy(
                                 sdkStatus = it.data
                             )
+                            activeConversation.value.logConfiguration()
+
                             if (checkStatusForUpdate()) {
                                 tryFetchEngagementManifest()
                             } else {
@@ -698,6 +713,7 @@ internal class ConversationManager(
                 lastInvoked = DateTime.now()
             )
         )
+        activeConversation.value.logEngagementData()
     }
 
     fun updatePerson(person: Person) {
@@ -705,6 +721,7 @@ internal class ConversationManager(
         activeConversationSubject.value = conversation.copy(
             person = person
         )
+        activeConversation.value.logPerson()
     }
 
     fun updateDevice(device: Device) {
@@ -712,6 +729,7 @@ internal class ConversationManager(
         activeConversationSubject.value = conversation.copy(
             device = device
         )
+        activeConversation.value.logDevice()
     }
 
     fun updateAppReleaseSDK(sdk: SDK, appRelease: AppRelease, versionHistory: VersionHistory) {
@@ -722,6 +740,7 @@ internal class ConversationManager(
             appRelease = appRelease,
             engagementData = engagementData.copy(versionHistory = versionHistory)
         )
+        activeConversation.value.logAppReleaseSDK()
     }
 
     fun clear() {
@@ -729,6 +748,7 @@ internal class ConversationManager(
         activeConversationSubject.value = conversation.copy(
             engagementData = EngagementData()
         )
+        activeConversation.value.logEngagementData()
     }
 
     fun recordInteraction(interactionId: String) {
@@ -742,6 +762,7 @@ internal class ConversationManager(
                 lastInvoked = DateTime.now()
             )
         )
+        activeConversation.value.logEngagementData()
     }
 
     fun recordInteractionResponses(interactionResponses: Map<String, Set<InteractionResponse>>) {
@@ -760,6 +781,7 @@ internal class ConversationManager(
                 }
             }
         )
+        activeConversation.value.logEngagementData()
     }
 
     fun recordCurrentResponse(
@@ -785,6 +807,7 @@ internal class ConversationManager(
                 }
             }
         )
+        activeConversation.value.logEngagementData()
     }
 
     internal fun loadExistingConversation(): Conversation? {

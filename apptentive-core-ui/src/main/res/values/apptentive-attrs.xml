@@ -48,6 +48,7 @@
         <!-- Apptentive navigate to link Styles -->
         <attr name="apptentiveNavigateToLinkImageStyle" format="reference" />
         <attr name="apptentiveNavigateToLinkToolbarStyle" format="reference" />
+        <attr name="apptentiveNavigateToLinkInappStyle" format="reference" />
 
         <!-- Generic Dialog Styles -->
         <!-- Currently used in: Survey Close Confirmation -->
@@ -65,6 +66,8 @@
 
         <!-- Survey Styles Start -->
         <!-- Layout -->
+        <attr name="apptentiveSurveyEdgeToEdgeStyle" format="reference"/>
+        <attr name="apptentiveSurveyBackgroundColor" format="color|reference"/>
         <attr name="apptentiveSurveyLayoutStyle" format="reference"/>
         <attr name="apptentiveSurveyLayoutPagedStyle" format="reference"/>
         <attr name="apptentiveSurveyIntroductionLayoutStyle" format="reference"/>
@@ -116,8 +119,11 @@
 
         <!-- Layouts -->
         <attr name="apptentiveMessageCenterLayoutStyle" format="reference"/>
-        <attr name="apptentiveMessageCenterAttachmentPreviewLayoutStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterAttachmentPreviewEdgeToEdgeStyle" format="reference"/>
         <attr name="apptentiveMessageCenterProfileLayoutStyle" format="reference"/>
+        <attr name="apptentiveMessageCenterBackgroundColor" format="reference" />
+        <attr name="apptentiveMessageCenterBodyStyle" format="reference"/>
+        <attr name="apptentiveImagePreviewLayoutStyle" format="reference"/>
 
         <!-- App Bars -->
         <attr name="apptentiveMessageCenterToolbarStyle" format="reference"/>

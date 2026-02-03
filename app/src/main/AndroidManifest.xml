@@ -1,11 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="apptentive.com.app">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
     <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-sdk
+        android:minSdkVersion="24"
+        tools:overrideLibrary="apptentive.com.android.feedback.enjoyment,
+        apptentive.com.android.feedback.survey,
+        apptentive.com.android.feedback.notes,
+        apptentive.com.android.feedback.ratings,
+        apptentive.com.android.feedback.messagecenter,
+        apptentive.com.android.feedback.link,
+        apptentive.com.android.feedback.inappreview,
+        apptentive.com.android.feedback.initiator,
+        apptentive.com.android.core"
+        />
+
 
     <application
         android:name=".MyApplication"

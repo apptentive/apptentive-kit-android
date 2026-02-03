@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat.getString
 import androidx.core.view.isVisible
 import apptentive.com.android.feedback.messagecenter.R
 import apptentive.com.android.feedback.model.Message
@@ -52,6 +53,7 @@ internal class MessageCenterAttachmentThumbnailView(context: Context, attrs: Att
         fileLayout.setOnClickListener {
             onClickAttachment()
         }
+        fileLayout.contentDescription = getString(context, R.string.apptentive_attachment_thumbnail) + file.contentType + file.originalName
     }
 
     private fun showImageThumbnail(file: Message.Attachment) {

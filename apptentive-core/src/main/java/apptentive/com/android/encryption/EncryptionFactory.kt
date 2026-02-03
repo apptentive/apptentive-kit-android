@@ -1,6 +1,5 @@
 package apptentive.com.android.encryption
 
-import android.os.Build
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.CRYPTOGRAPHY
@@ -20,7 +19,7 @@ class EncryptionFactory {
             when {
                 key.key == null -> EncryptionNoOp()
 
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && shouldEncryptStorage && (oldEncryptionSetting == NoEncryptionStatus || oldEncryptionSetting == Encrypted) -> {
+                shouldEncryptStorage && (oldEncryptionSetting == NoEncryptionStatus || oldEncryptionSetting == Encrypted) -> {
                     // previously encrypted or fresh launch, encrypt
                     AESEncryption23(key)
                 }

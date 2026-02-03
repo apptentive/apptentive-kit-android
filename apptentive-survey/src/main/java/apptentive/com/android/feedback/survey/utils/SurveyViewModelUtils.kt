@@ -2,10 +2,10 @@ package apptentive.com.android.feedback.survey.utils
 
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.engagement.EngagementContext
-import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getEngagementContext
 import apptentive.com.android.feedback.survey.DefaultSurveyModelFactory
 import apptentive.com.android.feedback.survey.SurveyModelFactory
 import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion
@@ -30,7 +30,7 @@ internal const val END_OF_QUESTION_SET = "end_question_set"
 
 @Throws(MissingKeyException::class)
 internal fun createSurveyViewModel(
-    context: EngagementContext = DependencyProvider.of<EngagementContextFactory>().engagementContext()
+    context: EngagementContext = getEngagementContext()
 ): SurveyViewModel {
     return try {
         createSurveyViewModel(DependencyProvider.of<SurveyModelFactory>().getSurveyModel(), context)

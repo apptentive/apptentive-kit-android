@@ -1,10 +1,12 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 buildscript {
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath 'com.google.gms:google-services:4.3.14'
+        classpath 'com.google.gms:google-services:4.4.2'
     }
 }
 
@@ -26,12 +28,12 @@ def gitBranch = System.getenv("BRANCH_NAME") ?: "git branch --show-current".exec
 def gitTag = getTagString(gitBranch, theVersionName, theVersionCode)
 
 android {
-    compileSdk 34
+    compileSdk 36
 
     defaultConfig {
-        applicationId "apptentive.com.app"
+        applicationId = "apptentive.com.app"
         minSdkVersion rootProject.minSdkVersion
-        targetSdkVersion 34
+        targetSdkVersion 36
         versionCode theVersionCode
         versionName theVersionName
 
@@ -58,7 +60,7 @@ android {
         }
     }
 
-    flavorDimensions 'default'
+    flavorDimensions = ['default']
 
     productFlavors {
         dev {
@@ -89,7 +91,7 @@ android {
         jvmTarget = '17'
     }
 
-    namespace 'apptentive.com.app'
+    namespace = 'apptentive.com.app'
 }
 
 dependencies {
@@ -114,7 +116,7 @@ dependencies {
 
 
     // Firebase Messaging (For Message Center Push Notifications)
-    implementation 'com.google.firebase:firebase-messaging:24.0.0'
+    implementation 'com.google.firebase:firebase-messaging:24.1.1'
 
     testImplementation "androidx.test:core:$androidx_test_version"
 
@@ -124,7 +126,7 @@ dependencies {
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.9.1'
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+tasks.withType(KotlinCompile).configureEach {
     kotlinOptions {
         freeCompilerArgs += [
                 '-opt-in=apptentive.com.android.util.InternalUseOnly',
@@ -138,7 +140,7 @@ def extractSdkVersion() {
     return match[0][1]
 }
 
-def getTagString(gitBranch, versionName, versionCode) {
+static def getTagString(gitBranch, versionName, versionCode) {
     if (gitBranch == 'production') {
         return versionName
     } else {
@@ -146,13 +148,15 @@ def getTagString(gitBranch, versionName, versionCode) {
     }
 }
 
-task tag(type: Exec) {
+tasks.register('tag', Exec) {
     workingDir '.'
-        
+
     commandLine 'git', 'tag', gitTag
 }
 
-tasks.getByName('githubRelease').mustRunAfter(tasks.getByName('assemble'))
+tasks.named('githubRelease') {
+    mustRunAfter(tasks.named('assemble'))
+}
 
 github {
     owner = 'apptentive'

@@ -3,6 +3,9 @@ package apptentive.com.android.feedback.utils
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.Logger
 import apptentive.com.android.core.getTimeSeconds
+import apptentive.com.android.feedback.ApptentiveConfiguration
+import apptentive.com.android.feedback.ApptentiveRegion
+import apptentive.com.android.feedback.Constants
 import apptentive.com.android.feedback.MockAndroidLoggerProvider
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -53,30 +56,93 @@ class StringUtilsTest {
     }
 
     @Test
+    fun testCreateStringTable() {
+        val rows: List<Array<Any?>> = listOf(
+            arrayOf("a", "b", "c"),
+            arrayOf("d", "e", "f"),
+        )
+        val result = createStringTable(rows)
+        assert(result == "---------\na-1s | b-1s | c-1s\nd-1s | e-1s | f-1s\n---------".trimMargin())
+    }
+
     fun getTimeAsDouble_integerString_returnsDoubleValue() {
         val result = getTimeAsDouble("42")
         assertTrue(result == 42.0)
     }
 
     @Test
+    fun testParseInt() {
+        assert(parseInt("123") == 123)
+        assert(parseInt(null) == null)
+        assert(parseInt("abc") == null)
+    }
+
     fun getTimeAsDouble_emptyString_returnsZero() {
         val result = getTimeAsDouble("")
         assertTrue(result == 0.0)
     }
 
     @Test
+    fun testParseJsonField() {
+        val json = """
+            {
+                "field1": "value1",
+                "field2": "value2"
+            }
+        """.trimIndent()
+        assert(json.parseJsonField("field1") == "value1")
+        assert(json.parseJsonField("field2") == "value2")
+        assert(json.parseJsonField("field3") == "")
+    }
+
     fun getTimeAsDouble_invalidString_returnsZero() {
         val result = getTimeAsDouble("not_a_number")
         assertTrue(result == 0.0)
     }
 
     @Test
+    fun testBaseUrl() {
+        val config = ApptentiveConfiguration("app_key", "app_signature")
+        config.region = ApptentiveRegion.US
+        assert(getBaseUrl(config) == "https://app_key.api.digital.us.alchemer.com")
+        config.region = ApptentiveRegion.EU
+        assert(getBaseUrl(config) == "https://app_key.api.digital.eu.alchemer.com")
+        config.region = ApptentiveRegion.AU
+        assert(getBaseUrl(config) == "https://app_key.api.digital.au.alchemer.com")
+        config.region = ApptentiveRegion.CN
+        assert(getBaseUrl(config) == "https://app_key.api.digital.cn.alchemer.com")
+        config.region = ApptentiveRegion.UNKNOWN
+        assert(getBaseUrl(config) == Constants.SERVER_URL)
+        config.region = ApptentiveRegion.Custom("https://custom.api.alchemer.com")
+        assert(getBaseUrl(config) == "https://custom.api.alchemer.com")
+        config.region = ApptentiveRegion.STAGING0
+        assert(getBaseUrl(config) == "https://app_key.api.use1.digital.stage0.alc-eng.com")
+        config.region = ApptentiveRegion.STAGING1
+        assert(getBaseUrl(config) == "https://app_key.api.use1.digital.stage1.alc-eng.com")
+        config.region = ApptentiveRegion.STAGING2
+        assert(getBaseUrl(config) == "https://app_key.api.use1.digital.stage2.alc-eng.com")
+    }
+
     fun getTimeAsDouble_negativeNumberString_returnsNegativeDouble() {
         val result = getTimeAsDouble("-987.65")
         assertTrue(result == -987.65)
     }
 
     @Test
+    fun testEmails() {
+        assertTrue(validateEmail("test@example.com"))
+        assertTrue(validateEmail("user.name@domain.co"))
+        assertTrue(validateEmail("user+alias@sub.domain.org"))
+        assertTrue(validateEmail("test@something.xyz"))
+        assertFalse(validateEmail("plainaddress")) // No '@' symbol
+        assertFalse(validateEmail("user@.com")) // No domain name
+        assertFalse(validateEmail("user@domain.c")) // Single-letter TLD
+        assertFalse(validateEmail("user@domain.")) // No TLD
+        assertFalse(validateEmail(null))
+        assertFalse(validateEmail(""))
+        assertFalse(validateEmail("    "))
+    }
+
     fun testHasItBeenAnHour() {
         val now = getTimeSeconds()
         val oneHourAgo = now - 3601 // just over an hour ago

@@ -10,6 +10,9 @@
         <item name="colorSurface">@color/apptentive_color_surface</item>
         <item name="colorOnSurface">@color/apptentive_color_on_surface</item>
         <item name="colorError">@color/apptentive_color_error</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item> <!-- Or false depending on your status bar content color -->
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@color/apptentive_color_primary</item>
         <item name="android:actionButtonStyle">?apptentiveActionButtonStyle</item>
 
@@ -72,9 +75,11 @@
         <!-- Navigate to Link In-app mode Styles -->
         <item name="apptentiveNavigateToLinkImageStyle">@style/Apptentive.Widget.NavigateToLink.Image</item>
         <item name="apptentiveNavigateToLinkToolbarStyle">@style/Apptentive.Widget.NavigateToLink.Toolbar</item>
+        <item name="apptentiveNavigateToLinkInappStyle">@style/Apptentive.Widget.NavigateToLink.InappLayout</item>
 
         <!-- Survey Styles Start -->
         <!-- Layout -->
+        <item name="apptentiveSurveyBackgroundColor">@color/apptentive_color_primary</item>
         <item name="apptentiveSurveyLayoutStyle">@style/Apptentive.Survey.Layout</item>
         <item name="apptentiveSurveyLayoutPagedStyle">@style/Apptentive.Survey.Paged.Layout</item>
         <item name="apptentiveSurveyIntroductionLayoutStyle">@style/Apptentive.Survey.Layout.PageItem</item>
@@ -82,6 +87,7 @@
         <item name="apptentiveSurveyQuestionLayoutStyle">@style/Apptentive.Survey.Layout.Question</item>
         <item name="apptentiveSurveyQuestionDividerStyle">@style/Apptentive.Empty</item>
         <item name="apptentiveSurveyScrollViewLayoutStyle">@style/Apptentive.Survey.Layout.Question.ScrollView</item>
+        <item name="apptentiveSurveyEdgeToEdgeStyle">@style/Apptentive.Survey.EdgeToEdge</item>
 
         <!-- App Bars -->
         <item name="apptentiveSurveyToolbarStyle">@style/Apptentive.Widget.Survey.Toolbar</item>
@@ -158,6 +164,7 @@
         <!-- General foreground/background/fill color -->
         <item name="apptentiveColorIconClose">?colorOnPrimary</item>
         <item name="apptentiveCustomFocusForegroundColor">@color/apptentive_color_focus_overlay</item>
+        <item name="apptentiveMessageCenterBackgroundColor">@color/apptentive_color_primary</item>
 
         <!-- Dialog -->
         <item name="apptentiveTextColorDialogTitleWithMessage">?colorOnSurface</item>
@@ -270,10 +277,15 @@
         <!-- Typeface End -->
 
         <!-- Message Center -->
+        <item name="apptentiveMessageCenterLayoutStyle">@style/Apptentive.Widget.MessageCenter.Layout</item>
+        <item name="apptentiveMessageCenterBodyStyle">@style/Apptentive.Widget.MessageCenter.Layout.Body</item>"
         <item name="apptentiveMessageCenterToolbarStyle">@style/Apptentive.Widget.MessageCenter.Toolbar</item>
         <item name="apptentiveMessageCenterToolbarTitleStyle">@style/Apptentive.Widget.MessageCenter.Text.ToolbarTitle</item>
+        <item name="apptentiveMessageCenterProfileLayoutStyle">@style/Apptentive.Widget.MessageCenter.ProfileLayout</item>
         <item name="apptentiveMessageCenterProfileToolbarStyle">@style/Apptentive.Widget.MessageCenter.Profile.Toolbar</item>
         <item name="apptentiveMessageCenterProfileToolbarTitleStyle">@style/Apptentive.Widget.MessageCenter.Text.ToolbarTitle</item>
+        <item name="apptentiveMessageCenterAttachmentPreviewEdgeToEdgeStyle">@style/Apptentive.Widget.MessageCenter.AttachmentEdgeToEdge</item>
+        <item name="apptentiveImagePreviewLayoutStyle">@style/Apptentive.Widget.MessageCenter.AttachmentPreviewImageLayout</item>
         <item name="apptentiveMessageCenterAttachmentImageStyle">@style/Apptentive.Widget.MessageCenter.Image.Button.Attachment</item>
         <item name="apptentiveMessageCenterComposerStyle">@style/Apptentive.Widget.MessageCenter.Composer.EditText</item>
         <item name="apptentiveMessageCenterSendImageStyle">@style/Apptentive.Widget.MessageCenter.Image.Button.Send</item>
@@ -363,6 +375,10 @@
     </style>
 
     <style name="Apptentive.Survey" />
+
+    <style name="Apptentive.Survey.EdgeToEdge">
+        <item name="android:background">?apptentiveSurveyBackgroundColor</item>
+    </style>
 
     <style name="Apptentive.Survey.Layout">
         <item name="android:background">?android:colorBackground</item>
@@ -461,6 +477,10 @@
     <style name="Apptentive.Widget.NavigateToLink.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
         <item name="navigationIcon">@drawable/apptentive_ic_close</item>
         <item name="navigationContentDescription">@string/apptentive_close</item>
+    </style>
+
+    <style name="Apptentive.Widget.NavigateToLink.InappLayout">
+        <item name="android:background">@color/apptentive_color_primary</item>
     </style>
 
     <!-- Survey Text Styles Start -->
@@ -812,6 +832,14 @@
         <item name="android:background">?selectableItemBackgroundBorderless</item>
     </style>
 
+    <style name="Apptentive.Widget.MessageCenter.Layout">
+        <item name="android:background">?apptentiveMessageCenterBackgroundColor</item>
+    </style>
+
+    <style name="Apptentive.Widget.MessageCenter.Layout.Body">
+        <item name="android:background">?android:colorBackground</item>
+    </style>
+
     <style name="Apptentive.Widget.MessageCenter.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
         <item name="navigationIcon">@drawable/apptentive_ic_close</item>
         <item name="navigationContentDescription">@string/apptentive_close</item>
@@ -822,12 +850,24 @@
         <item name="navigationContentDescription">@string/apptentive_back</item>
     </style>
 
+    <style name="Apptentive.Widget.MessageCenter.ProfileLayout">
+        <item name="android:background">?apptentiveMessageCenterBackgroundColor</item>
+    </style>
+
     <style name="Apptentive.Widget.MessageCenter.Text.ToolbarTitle" parent="Widget.MaterialComponents.TextView">
         <item name="android:textColor">?apptentiveMessageCenterTextColorToolbarTitle</item>
         <item name="android:textAppearance">?textAppearanceHeadline6</item>
         <item name="android:accessibilityHeading" tools:ignore="NewApi">true</item>
         <item name="android:fontFamily">?apptentiveMessageCenterFontFamilyBody1</item>
         <item name="android:typeface">?apptentiveMessageCenterTypefaceBody1</item>
+    </style>
+
+    <style name="Apptentive.Widget.MessageCenter.AttachmentEdgeToEdge">
+        <item name="android:background">?apptentiveMessageCenterBackgroundColor</item>
+    </style>
+
+    <style name="Apptentive.Widget.MessageCenter.AttachmentPreviewImageLayout">
+        <item name="android:background">?android:colorBackground</item>
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.ActionButton" parent="Widget.AppCompat.ActionButton">
@@ -1041,8 +1081,9 @@
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.ProfileView" parent="">
-        <item name="android:layout_marginStart">@dimen/apptentive_profile_view_margin</item>
-        <item name="android:layout_marginEnd">@dimen/apptentive_profile_view_margin</item>
+        <item name="android:background">?android:colorBackground</item>
+        <item name="android:paddingStart">@dimen/apptentive_profile_view_margin</item>
+        <item name="android:paddingEnd">@dimen/apptentive_profile_view_margin</item>
     </style>
 
     <!-- https://material.io/components/buttons/android#contained-button -->

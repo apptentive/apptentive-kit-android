@@ -1,8 +1,6 @@
 package apptentive.com.android.feedback
 
 import android.content.Context
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.ProcessLifecycleOwner
 import apptentive.com.android.concurrent.Executors
@@ -34,7 +32,6 @@ import apptentive.com.android.feedback.conversation.DefaultConversationSerialize
 import apptentive.com.android.feedback.engagement.DefaultEngagement
 import apptentive.com.android.feedback.engagement.DefaultInteractionEngagement
 import apptentive.com.android.feedback.engagement.Engagement
-import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.EngagementContextProvider
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.InteractionDataProvider
@@ -76,6 +73,15 @@ import apptentive.com.android.feedback.payload.PayloadSender
 import apptentive.com.android.feedback.payload.PayloadType
 import apptentive.com.android.feedback.payload.PersistentPayloadQueue
 import apptentive.com.android.feedback.payload.SerialPayloadSender
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.addConversationRepository
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.addEngagementContextFactory
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.addMessageManager
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.addMessageRepository
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getConversationCredentialProvider
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getConversationRepository
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getEngagementContext
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getMessageRepository
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getSharedPrefDataStore
 import apptentive.com.android.feedback.platform.DefaultAppReleaseFactory
 import apptentive.com.android.feedback.platform.DefaultDeviceFactory
 import apptentive.com.android.feedback.platform.DefaultEngagementDataFactory
@@ -92,10 +98,10 @@ import apptentive.com.android.feedback.utils.JwtUtils
 import apptentive.com.android.feedback.utils.RosterUtils.getActiveConversationMetaData
 import apptentive.com.android.feedback.utils.RuntimeUtils
 import apptentive.com.android.feedback.utils.ThrottleUtils
+import apptentive.com.android.feedback.utils.getBaseUrl
 import apptentive.com.android.feedback.utils.toEncryptionKey
 import apptentive.com.android.network.HttpClient
 import apptentive.com.android.network.UnexpectedResponseException
-import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.platform.SharedPrefConstants.APPTENTIVE
 import apptentive.com.android.platform.SharedPrefConstants.CRYPTO_ENABLED
 import apptentive.com.android.platform.SharedPrefConstants.PREF_KEY_PUSH_PROVIDER
@@ -103,7 +109,6 @@ import apptentive.com.android.platform.SharedPrefConstants.PREF_KEY_PUSH_TOKEN
 import apptentive.com.android.platform.SharedPrefConstants.SDK_CORE_INFO
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
-import apptentive.com.android.util.LogLevel
 import apptentive.com.android.util.LogTags.CONVERSATION
 import apptentive.com.android.util.LogTags.CRYPTOGRAPHY
 import apptentive.com.android.util.LogTags.EVENT
@@ -141,14 +146,14 @@ class ApptentiveDefaultClient(
     internal fun initialize(context: Context) {
         interactionModules = loadInteractionModules()
         conversationService = createConversationService()
-        DependencyProvider.register(createConversationRepository(context))
+        addConversationRepository(createConversationRepository(context))
     }
 
     @WorkerThread
     internal fun start(context: Context, registerCallback: ((result: RegisterResult) -> Unit)?) {
         DefaultStateMachine.onEvent(SDKEvent.ClientStarted)
         conversationManager = ConversationManager(
-            conversationRepository = DependencyProvider.of(),
+            conversationRepository = getConversationRepository(),
             conversationService = conversationService,
             legacyConversationManagerProvider = object : Provider<LegacyConversationManager> {
                 override fun get() = DefaultLegacyConversationManager(context)
@@ -175,6 +180,8 @@ class ApptentiveDefaultClient(
         }
 
         addObservers()
+
+        updateMessageCenterNotification()
 
         engage(Event.internal(InternalEvent.APP_LAUNCH.labelName))
     }
@@ -203,7 +210,7 @@ class ApptentiveDefaultClient(
                 is Result.Success -> {
                     createMessageManager()
                     registerCallback?.invoke(RegisterResult.Success)
-                    val conversationCredentialProvider = DependencyProvider.of<ConversationCredentialProvider>()
+                    val conversationCredentialProvider = getConversationCredentialProvider()
                     payloadSender.updateCredential(conversationCredentialProvider)
                     PrefetchManager.apply {
                         initPrefetchDirectory()
@@ -216,10 +223,6 @@ class ApptentiveDefaultClient(
 
     private fun addObservers() {
         conversationManager.activeConversation.observe { conversation ->
-            if (Log.canLog(LogLevel.Verbose)) { // avoid unnecessary computations
-                conversation.logConversation()
-            }
-
             interactionDataProvider = createInteractionDataProvider(conversation)
 
             engagement = DefaultEngagement(
@@ -232,9 +235,8 @@ class ApptentiveDefaultClient(
                 recordCurrentAnswer = ::recordCurrentAnswer
             )
             // register engagement context as soon as DefaultEngagement is created to make it available for MessageManager
-            DependencyProvider.register(EngagementContextProvider(engagement, payloadSender, executors))
+            addEngagementContextFactory(EngagementContextProvider(engagement, payloadSender, executors))
             messageManager?.onConversationChanged(conversation)
-            updateMessageCenterNotification()
         }
         // add an observer to track SDK & AppRelease changes
         conversationManager.sdkAppReleaseUpdate.observe { appReleaseSDKUpdated ->
@@ -262,7 +264,7 @@ class ApptentiveDefaultClient(
                     stateExecutor = executors.state,
                     onForeground = {
                         conversationManager.tryFetchAppStatus()
-                        conversationManager.tryFetchEngagementManifest()
+                        conversationManager.tryFetchEngagementManifest(::updateMessageCenterNotification)
                         messageManager?.onAppForeground()
                     },
                     onBackground = {
@@ -273,7 +275,11 @@ class ApptentiveDefaultClient(
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
+    /* For local testing only */
+    override fun clearDependencies() {
+        DependencyProvider.clear()
+    }
+
     override fun login(jwtToken: JwtString, callback: ((result: LoginResult) -> Unit)?) {
         val activeConversationMetaData = getActiveConversationMetaData()
         val subClaim = JwtUtils.extractSub(jwtToken)
@@ -303,7 +309,6 @@ class ApptentiveDefaultClient(
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     private fun handleNoActiveConversation(subClaim: JwtString, jwtToken: String, callback: ((result: LoginResult) -> Unit)?) {
         val matchingMetaData = findMatchingMetaData(subClaim)
         val conversationId = (matchingMetaData?.state as? ConversationState.LoggedOut)?.id
@@ -331,7 +336,6 @@ class ApptentiveDefaultClient(
         return matchingMetaData
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     private fun loginAnonymousConversation(jwtToken: JwtString, subject: String, loginCallback: ((result: LoginResult) -> Unit)? = null) {
         val conversationId = conversationManager.getConversation().conversationId
         conversationId?.let { id ->
@@ -360,7 +364,7 @@ class ApptentiveDefaultClient(
                     messageManager?.resetForAnonymousToLogin()
                 }
                 engage(Event.internal(InternalEvent.SDK_LOGIN.labelName))
-                val sharedPrefDataStore = DependencyProvider.of<AndroidSharedPrefDataStore>()
+                val sharedPrefDataStore = getSharedPrefDataStore()
                 val pushProvider = sharedPrefDataStore.getInt(APPTENTIVE, PREF_KEY_PUSH_PROVIDER)
                 val pushProviderName = sharedPrefDataStore.getString(APPTENTIVE, PREF_KEY_PUSH_TOKEN)
                 setPushIntegration(pushProvider, pushProviderName)
@@ -369,6 +373,7 @@ class ApptentiveDefaultClient(
                     initPrefetchDirectory()
                     downloadPrefetchableResources(conversationManager.getConversation().engagementManifest.prefetch)
                 }
+                updateMessageCenterNotification()
             }
             is LoginResult.Error -> {
                 Log.v(CONVERSATION, "Failed to login")
@@ -393,17 +398,16 @@ class ApptentiveDefaultClient(
                     DefaultStateMachine.conversationRoster
                 )
             )
-            DependencyProvider.register(messageRepository as MessageRepository)
+            addMessageRepository(messageRepository)
             Log.d(CONVERSATION, "MessageRepository registered")
         }
         messageManager = MessageManager(
             conversationService as MessageCenterService,
             executors.state,
-            DependencyProvider.of<MessageRepository>(),
-        )
-        messageManager?.let {
-            DependencyProvider.register(MessageManagerFactoryProvider(it))
-            it.addUnreadMessageListener(::updateMessageCenterNotification)
+            getMessageRepository(),
+        ).apply {
+            addMessageManager(MessageManagerFactoryProvider(this))
+            addUnreadMessageListener(::updateMessageCenterNotification)
         }
     }
 
@@ -414,6 +418,7 @@ class ApptentiveDefaultClient(
                 enqueuePayload(LogoutPayload())
                 conversationManager.setManifestExpired()
                 messageManager?.logout()
+                updateMessageCenterNotification()
                 ThrottleUtils.resetEngagedEvents()
             }
         }
@@ -426,7 +431,7 @@ class ApptentiveDefaultClient(
     override fun updateToken(jwtToken: JwtString, callback: ((result: LoginResult) -> Unit)?) {
         conversationManager.updateToken(jwtToken, callback)
         if (DependencyProvider.isRegistered<ConversationCredentialProvider>()) {
-            payloadSender.updateCredential(DependencyProvider.of<ConversationCredentialProvider>())
+            payloadSender.updateCredential(getConversationCredentialProvider())
         } else {
             Log.w(PAYLOADS, "Attempting to update token without conversation credentials.")
         }
@@ -467,7 +472,7 @@ class ApptentiveDefaultClient(
         apptentiveSignature = configuration.apptentiveSignature,
         apiVersion = Constants.API_VERSION,
         sdkVersion = Constants.SDK_VERSION,
-        baseURL = Constants.SERVER_URL
+        baseURL = getBaseUrl(configuration),
     )
 
     private fun createInteractionDataProvider(conversation: Conversation): InteractionDataProvider {
@@ -502,7 +507,7 @@ class ApptentiveDefaultClient(
 
     override fun engage(event: Event, customData: Map<String, Any?>?): EngagementResult {
         val engagementContext = try {
-            DependencyProvider.of<EngagementContextFactory>().engagementContext()
+            getEngagementContext()
         } catch (e: IllegalStateException) {
             return EngagementResult.Error("Apptentive SDK is not initialized. Cannot engage event: ${event.name}")
         }
@@ -543,6 +548,7 @@ class ApptentiveDefaultClient(
         if (person != newPerson) {
             conversationManager.updatePerson(newPerson)
             enqueuePayload(newPerson.toPersonPayload())
+            updateMessageCenterNotification()
         }
     }
 
@@ -702,16 +708,23 @@ class ApptentiveDefaultClient(
         // store event locally
         conversationManager.recordEvent(event)
 
-        // send event to the backend
-        enqueuePayload(
-            EventPayload(
-                label = event.fullName,
-                interactionId = interactionId,
-                data = data,
-                customData = customData,
-                extendedData = extendedData
+        val metricsConfiguration = conversationManager.getConversation().sdkStatus
+
+        if (metricsConfiguration.metricsEnabled || event.vendor == "com.apptentive" || BuildConfig.DEBUG) {
+            Log.d(EVENT, "Recording event: ${event.fullName}")
+            // send event to the backend
+            enqueuePayload(
+                EventPayload(
+                    label = event.fullName,
+                    interactionId = interactionId,
+                    data = data,
+                    customData = customData,
+                    extendedData = extendedData
+                )
             )
-        )
+        } else {
+            Log.v(EVENT, "Metrics are disabled. Not sending event: ${event.fullName}")
+        }
     }
 
     override fun setLocalManifest(json: String) {
@@ -768,7 +781,7 @@ class ApptentiveDefaultClient(
     //region Encryption
 
     private fun setInitialEncryptionFromPastSession(): Encryption {
-        val sharedPref = DependencyProvider.of<AndroidSharedPrefDataStore>()
+        val sharedPref = getSharedPrefDataStore()
         val oldEncryptionSetting = getOldEncryptionSetting()
         val encryption = EncryptionFactory.getEncryption(
             shouldEncryptStorage = configuration.shouldEncryptStorage,
@@ -781,7 +794,7 @@ class ApptentiveDefaultClient(
 
     private fun finalizeEncryption() {
         val activeConversationState = DefaultStateMachine.conversationRoster.activeConversation?.state
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && activeConversationState is ConversationState.LoggedIn) {
+        if (activeConversationState is ConversationState.LoggedIn) {
             val wrapperEncryptionBytes = activeConversationState.encryptionWrapperBytes
             val encryptionKey = KeyResolverFactory.getKeyResolver().resolveMultiUserWrapperKey(activeConversationState.subject)
             AESEncryption23(encryptionKey).decrypt(wrapperEncryptionBytes).let {
@@ -797,7 +810,7 @@ class ApptentiveDefaultClient(
     }
 
     private fun onFinalEncryptionSettingsChanged() {
-        val sharedPref = DependencyProvider.of<AndroidSharedPrefDataStore>()
+        val sharedPref = getSharedPrefDataStore()
 
         sharedPref.putBoolean(SDK_CORE_INFO, CRYPTO_ENABLED, configuration.shouldEncryptStorage)
         encryption = EncryptionFactory.getEncryption(
@@ -813,7 +826,7 @@ class ApptentiveDefaultClient(
     }
 
     fun getOldEncryptionSetting(): EncryptionStatus {
-        val sharedPref = DependencyProvider.of<AndroidSharedPrefDataStore>()
+        val sharedPref = getSharedPrefDataStore()
 
         return when {
             FileUtil.containsFiles(FileStorageUtil.CONVERSATION_DIR) && !sharedPref.containsKey(SDK_CORE_INFO, CRYPTO_ENABLED) -> NotEncrypted // Migrating from 6.0.0
@@ -828,7 +841,7 @@ class ApptentiveDefaultClient(
 
     private fun enqueuePayload(payload: Payload) {
         if (DependencyProvider.isRegistered<ConversationCredentialProvider>()) {
-            payloadSender.enqueuePayload(payload, DependencyProvider.of<ConversationCredentialProvider>())
+            payloadSender.enqueuePayload(payload, getConversationCredentialProvider())
         } else {
             Log.w(PAYLOADS, "Attempting to enqueue payload without conversation credential.")
         }

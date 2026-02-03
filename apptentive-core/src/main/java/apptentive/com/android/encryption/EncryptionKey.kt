@@ -1,8 +1,6 @@
 package apptentive.com.android.encryption
 
-import android.os.Build
 import android.security.keystore.KeyProperties
-import androidx.annotation.RequiresApi
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.hexToBytes
 import javax.crypto.SecretKey
@@ -15,7 +13,6 @@ data class EncryptionKey(val key: SecretKey? = null, val transformation: String 
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.M)
 fun String.getKeyFromHexString(): SecretKey {
     return SecretKeySpec(hexToBytes(this), KeyProperties.KEY_ALGORITHM_AES)
 }

@@ -3,15 +3,15 @@ package apptentive.com.app
 import android.Manifest
 import android.app.Activity
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.webkit.MimeTypeMap
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import apptentive.com.android.feedback.Apptentive
@@ -29,13 +29,17 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
 
     private val customData: MutableMap<String, Any?> = mutableMapOf()
 
-    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDevFunctionsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.backButton.setOnClickListener {
-            onBackPressed()
+            onBackPressedDispatcher.onBackPressed()
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            v.setPadding(v.paddingLeft, insets.getInsets(WindowInsetsCompat.Type.statusBars()).top, v.paddingRight, v.paddingBottom)
+            WindowInsetsCompat.CONSUMED
         }
 
         setupFunctionTypeDropdown()
@@ -450,7 +454,7 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 
-    enum class DataTypes(name: String) {
+    enum class DataTypes(val type: String) {
         PERSON("PERSON"),
         DEVICE("DEVICE"),
         EVENT("EVENT"),
@@ -556,7 +560,6 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
             } ?: makeToast("Picker cancelled")
         }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     private fun setupPhotoPicker() {
         binding.apply {
             photoPickerButton.setOnClickListener {
@@ -689,7 +692,6 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     private val requestCameraPermissionAndTakePic =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { cameraPermissionGranted ->
             when {
@@ -721,7 +723,6 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
         photoUri?.apply { takePhoto.launch(this) } ?: makeToast("Error occurred while creating image file")
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     private fun launchCamera() {
         requestCameraPermissionAndTakePic.launch(Manifest.permission.CAMERA)
     }

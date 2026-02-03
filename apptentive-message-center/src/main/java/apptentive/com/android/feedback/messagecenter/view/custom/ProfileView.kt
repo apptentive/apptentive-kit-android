@@ -57,8 +57,11 @@ internal class ProfileView(context: Context, attrs: AttributeSet? = null) : Cons
     }
 
     fun setEmailError(value: Boolean) {
-        if (value) emailInputLayout.error = context.getString(R.string.apptentive_email_validation_error)
-        else emailInputLayout.error = null
+        if (value) {
+            // Reset for talkback announcement
+            emailInputLayout.error = null
+            emailInputLayout.error = context.getString(R.string.apptentive_email_validation_error)
+        } else emailInputLayout.error = null
     }
 
     fun setNameError(value: Boolean) {

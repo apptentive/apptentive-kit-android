@@ -1,4 +1,4 @@
-package apptentive.com.android.feedback.initiator.interaction
+package apptentive.com.android.feedback.initiator
 
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.platform.AndroidViewInteractionLauncher

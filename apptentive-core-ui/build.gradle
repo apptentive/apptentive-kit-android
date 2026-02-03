@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
@@ -21,11 +23,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    namespace 'apptentive.com.android'
+    namespace = 'apptentive.com.android'
 }
 
 dependencies {
     implementation project(':apptentive-core')
+    implementation project(':apptentive-feedback')
     implementation "androidx.core:core-ktx:$core_ktx_version"
     implementation "androidx.activity:activity-ktx:$activity_ktx_version"
     implementation "androidx.appcompat:appcompat:$appcompat_library_version"
@@ -42,7 +45,7 @@ project.ext {
     artifactId = 'apptentive-core-ui'
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+tasks.withType(KotlinCompile).configureEach {
     kotlinOptions {
         freeCompilerArgs += [
                 //'-Xexplicit-api=warning', // or '-Xexplicit-api=strict'

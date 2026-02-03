@@ -13,7 +13,6 @@ import apptentive.com.android.feedback.payload.EncryptedPayloadTokenUpdater.Comp
 import apptentive.com.android.feedback.platform.DefaultStateMachine
 import apptentive.com.android.feedback.platform.SDKState
 import apptentive.com.android.feedback.utils.FileUtil
-import apptentive.com.android.feedback.utils.isMarshmallowOrGreater
 import apptentive.com.android.network.HttpMethod
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags
@@ -144,7 +143,7 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
                                 contentValues.put(COL_CONVERSATION_ID, conversationId)
 
                                 if (payloadData.isEncrypted) {
-                                    if (isMarshmallowOrGreater() && encryptionKey != null) {
+                                    if (encryptionKey != null) {
                                         // If encrypted, we have to update the token the hard way.
                                         val updatedData = updateEmbeddedToken(
                                             token,

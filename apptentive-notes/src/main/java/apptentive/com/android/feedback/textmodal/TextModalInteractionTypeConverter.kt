@@ -23,7 +23,7 @@ internal class TextModalInteractionTypeConverter : InteractionTypeConverter<Text
 
     private fun Map<String, Any?>.toRichContent(): RichContent =
         RichContent(
-            url = getString("url") ?: "",
+            url = getString("url"),
             layout = optString("layout")?.toLayoutOptions() ?: LayoutOptions.FULL_WIDTH,
             alternateText = getString("alt_text"),
             scale = optInt("scale", 3),

@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.messagecenter.view
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.text.method.LinkMovementMethod
@@ -7,6 +8,8 @@ import android.text.util.Linkify
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.accessibility.AccessibilityEvent
+import android.view.accessibility.AccessibilityManager
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -136,7 +139,7 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
                         inboundText.text = message.body
                         try {
                             if (containsLinks(inboundText.text.toString())) {
-                                Linkify.addLinks(inboundText, Linkify.ALL)
+                                Linkify.addLinks(inboundText, Linkify.EMAIL_ADDRESSES or Linkify.WEB_URLS or Linkify.PHONE_NUMBERS)
                                 inboundText.movementMethod = LinkMovementMethod.getInstance()
                                 inboundText.setTextIsSelectable(true)
                             } else {
@@ -149,9 +152,14 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
                         inboundAttachments.removeAllViews()
                         inboundAttachments.addAttachments(message)
                         val status =
-                            if (message.messageStatus == Message.Status.Saved) Message.Status.Sent
-                            else message.messageStatus
-                        inboundStatus.text = "$status \u2022 ${convertToDate(message.createdAt)}"
+                            if (message.messageStatus == Message.Status.Saved) messageViewModel.messageCenterModel.composer?.sendOk ?: Message.Status.Sent
+                            else getMessageStatus(message.messageStatus)
+                        inboundStatus.text = String.format("%s \u2022 %s", status, convertToDate(message.createdAt))
+                        if (isAccessibilityEnabled(context)) {
+                            inboundStatus.contentDescription = status.toString()
+                            inboundStatus.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUSED)
+                            inboundStatus.announceForAccessibility(status.toString())
+                        }
                         inboundError.isVisible = message.messageStatus == Message.Status.Failed
                     } else { // Message from the DASHBOARD to SDK (gray bubble)
                         inboundLayout.isVisible = false
@@ -160,7 +168,7 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
                         outboundText.text = message?.body
                         try {
                             if (containsLinks(outboundText.text.toString())) {
-                                Linkify.addLinks(outboundText, Linkify.ALL)
+                                Linkify.addLinks(outboundText, Linkify.EMAIL_ADDRESSES or Linkify.WEB_URLS or Linkify.PHONE_NUMBERS)
                                 outboundText.movementMethod = LinkMovementMethod.getInstance()
                                 outboundText.setTextIsSelectable(true)
                             } else
@@ -192,7 +200,7 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
                 greetingBodyTextView.text = greetingData?.greetingBody
                 try {
                     if (containsLinks(greetingTitle.text.toString())) {
-                        Linkify.addLinks(greetingTitle, Linkify.ALL)
+                        Linkify.addLinks(greetingTitle, Linkify.EMAIL_ADDRESSES or Linkify.WEB_URLS or Linkify.PHONE_NUMBERS)
                         greetingBodyTextView.movementMethod = LinkMovementMethod.getInstance()
                         greetingTitle.setTextIsSelectable(true)
                     } else {
@@ -200,7 +208,7 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
                     }
 
                     if (containsLinks(greetingBodyTextView.text.toString())) {
-                        Linkify.addLinks(greetingBodyTextView, Linkify.ALL)
+                        Linkify.addLinks(greetingBodyTextView, Linkify.EMAIL_ADDRESSES or Linkify.WEB_URLS or Linkify.PHONE_NUMBERS)
                         greetingBodyTextView.movementMethod = LinkMovementMethod.getInstance()
                         greetingBodyTextView.setTextIsSelectable(true)
                     } else {
@@ -232,6 +240,24 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
                 }
             }
         }
+    }
+
+    private fun getMessageStatus(status: Message.Status): String {
+        val composer = messageViewModel.messageCenterModel.composer
+
+        return if (composer != null) {
+            when (status) {
+                Message.Status.Failed -> composer.sendFail ?: status.name
+                Message.Status.Sending -> composer.sendStart ?: status.name
+                Message.Status.Sent -> composer.sendOk ?: status.name
+                else -> status.name
+            }
+        } else status.name
+    }
+
+    private fun isAccessibilityEnabled(context: Context): Boolean {
+        val accessibilityManager = context.getSystemService(Context.ACCESSIBILITY_SERVICE) as? AccessibilityManager
+        return accessibilityManager?.isEnabled ?: false && accessibilityManager?.isTouchExplorationEnabled ?: false
     }
 
     private fun LinearLayout.addAttachments(message: Message?) {

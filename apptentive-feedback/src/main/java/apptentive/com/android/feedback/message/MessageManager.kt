@@ -5,13 +5,10 @@ import android.webkit.MimeTypeMap
 import androidx.annotation.VisibleForTesting
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.core.BehaviorSubject
-import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.Observable
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.UnreadMessageCallback
 import apptentive.com.android.feedback.backend.MessageCenterService
-import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
-import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.lifecycle.LifecycleListener
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.Message
@@ -19,6 +16,8 @@ import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDKStatus
 import apptentive.com.android.feedback.model.Sender
 import apptentive.com.android.feedback.payload.PayloadData
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getConversationCredentialProvider
 import apptentive.com.android.feedback.utils.FileStorageUtil
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.util.InternalUseOnly
@@ -115,6 +114,10 @@ class MessageManager(
         lastDownloadedMessageID = messageRepository.getLastReceivedMessageIDFromEntries()
         messagesSubject.value = messagesFromStorage
         isLoggedOut = false
+        if (hasSentMessage) {
+            Log.d(MESSAGE_CENTER, "App is in the foreground & hasSentMessage is true, start polling")
+            startPolling()
+        }
     }
 
     fun setCustomData(customData: Map<String, Any?>) {
@@ -126,7 +129,7 @@ class MessageManager(
     }
 
     fun fetchMessages() {
-        val conversationCredential = DependencyProvider.of<ConversationCredentialProvider>()
+        val conversationCredential = getConversationCredentialProvider()
         val token = conversationCredential.conversationToken
         val id = conversationCredential.conversationId
         if (!fetchingInProgress && !id.isNullOrEmpty() && !token.isNullOrEmpty()) {
@@ -182,7 +185,7 @@ class MessageManager(
     }
 
     fun sendMessage(messageText: String, attachments: List<Message.Attachment> = emptyList(), isHidden: Boolean? = null) {
-        val context = DependencyProvider.of<EngagementContextFactory>().engagementContext()
+        val context = ApptentiveKitSDKState.getEngagementContext()
         val message = Message(
             type = if (attachments.isEmpty()) Message.MESSAGE_TYPE_TEXT else Message.MESSAGE_TYPE_COMPOUND,
             body = messageText,
@@ -211,7 +214,7 @@ class MessageManager(
     }
 
     fun sendMessage(message: Message) {
-        val context = DependencyProvider.of<EngagementContextFactory>().engagementContext()
+        val context = ApptentiveKitSDKState.getEngagementContext()
         messageRepository.addOrUpdateMessages(listOf(message))
         messagesSubject.value = messageRepository.getAllMessages()
 
@@ -241,7 +244,7 @@ class MessageManager(
          * Make a local copy in the cache dir. By default the file name is "apptentive-api-file + nonce"
          * If original uri is known, the name will be taken from the original uri
          */
-            val activity = DependencyProvider.of<EngagementContextFactory>().engagementContext()
+            val activity = ApptentiveKitSDKState.getEngagementContext()
                 .getAppActivity()
             FileUtil.createLocalStoredAttachment(activity, uri, message.nonce)?.let {
                 it.id = message.nonce
@@ -267,7 +270,7 @@ class MessageManager(
                 inbound = true
             )
 
-            val activity = DependencyProvider.of<EngagementContextFactory>().engagementContext()
+            val activity = ApptentiveKitSDKState.getEngagementContext()
                 .getAppActivity()
             var localFilePath: String =
                 FileUtil.generateCacheFilePathFromNonceOrPrefix(activity, message.nonce, null)

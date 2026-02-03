@@ -1,8 +1,6 @@
 package apptentive.com.android.feedback.utils
 
-import android.os.Build
 import android.security.keystore.KeyProperties
-import androidx.annotation.RequiresApi
 import apptentive.com.android.encryption.AESEncryption23
 import apptentive.com.android.encryption.EncryptionKey
 import apptentive.com.android.encryption.KeyResolver23
@@ -25,11 +23,9 @@ fun String.sha256(): String {
 internal fun SecretKey.toByteArray(): ByteArray =
     encoded
 
-@RequiresApi(Build.VERSION_CODES.M)
 internal fun SecretKeyBytes.toEncryptionKey(): EncryptionKey =
     EncryptionKey(SecretKeySpec(this, KeyProperties.KEY_ALGORITHM_AES), KeyResolver23.getTransformation())
 
-@RequiresApi(Build.VERSION_CODES.M)
 internal fun SecretKeyBytes.getEncryptionKey(user: String): EncryptionKey {
     val encryptedKey = KeyResolver23().resolveMultiUserWrapperKey(user)
     val encryption = AESEncryption23(encryptedKey)
@@ -42,7 +38,6 @@ internal fun SecretKeyBytes.getEncryptionKey(user: String): EncryptionKey {
     )
 }
 
-@RequiresApi(Build.VERSION_CODES.M)
 internal fun SecretKey.toSecretKeyBytes(user: String): SecretKeyBytes {
     val keyWrapperAlias = KeyResolverFactory.getKeyResolver().resolveMultiUserWrapperKey(user)
     return AESEncryption23(keyWrapperAlias).encrypt(this.toByteArray())

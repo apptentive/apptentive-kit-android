@@ -11,6 +11,9 @@ import android.util.TypedValue
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import apptentive.com.android.feedback.Constants
 import apptentive.com.app.databinding.ActivityDebugInfoBinding
 import java.text.SimpleDateFormat
@@ -28,7 +31,7 @@ class InfoActivity : AppCompatActivity() {
         val binding = ActivityDebugInfoBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.backButton.setOnClickListener { onBackPressed() }
+        binding.backButton.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
         binding.appIcon.setImageResource(applicationInfo.icon)
         val sdf = SimpleDateFormat(BUILD_TIME_FORMAT, Locale.US)
@@ -45,6 +48,15 @@ class InfoActivity : AppCompatActivity() {
             prefs.edit().putBoolean(EXTRA_APPTENTIVE_THEME, isChecked).apply()
             startActivity(intent)
             finish()
+        }
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            v.updatePadding(
+                v.paddingLeft,
+                insets.getInsets(WindowInsetsCompat.Type.systemBars()).top,
+                v.paddingRight,
+                v.paddingBottom
+            )
+            WindowInsetsCompat.CONSUMED
         }
     }
 
@@ -83,6 +95,7 @@ class InfoActivity : AppCompatActivity() {
         binding.sdkRecycler.adapter = adapter
     }
 
+    @SuppressLint("NewApi")
     private fun setAppInfo(binding: ActivityDebugInfoBinding) {
         val packageInfo = packageManager.getPackageInfo(packageName, 0)
         val ai = packageInfo.applicationInfo
@@ -90,14 +103,13 @@ class InfoActivity : AppCompatActivity() {
             ai != null && ai.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE != 0
         val targetSdkVersion = ai?.targetSdkVersion ?: 0
         val minSdkVersion: String =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) ai.minSdkVersion.toString()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) ai?.minSdkVersion.toString()
             else "NEED SDK N+"
-
         val deviceItems = listOf(
             InfoItem("Label", getString(applicationInfo.labelRes)),
             InfoItem("Package Name", packageName),
             InfoItem("Version Code", packageInfo.versionCode.toString()),
-            InfoItem("Version Name", packageInfo.versionName),
+            InfoItem("Version Name", packageInfo.versionName.toString()),
             InfoItem("Target SDK Version", targetSdkVersion.toString()),
             InfoItem("Min SDK Version", minSdkVersion),
             InfoItem("Build Type", BuildConfig.BUILD_TYPE),

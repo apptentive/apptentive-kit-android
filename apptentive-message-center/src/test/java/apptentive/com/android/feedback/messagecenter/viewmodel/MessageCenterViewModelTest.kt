@@ -36,6 +36,7 @@ import apptentive.com.android.feedback.messagecenter.view.MessageViewData
 import apptentive.com.android.feedback.messagecenter.view.ProfileViewData
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.MessageList
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.convertToGroupDate
 import apptentive.com.android.feedback.utils.sha256
@@ -181,7 +182,7 @@ class MessageCenterViewModelTest : TestCase() {
 
     @Before
     fun setup() {
-        DependencyProvider.register(
+        ApptentiveKitSDKState.addEngagementContextFactory(
             MockEngagementContextFactory
             {
                 MockEngagementContext(
@@ -199,7 +200,7 @@ class MessageCenterViewModelTest : TestCase() {
             MockMessageRepository(),
         )
         DependencyProvider.register(MessageCenterModelProvider(messageCenterInteractionNoData))
-        DependencyProvider.register(MessageManagerFactoryProvider(messageManager))
+        ApptentiveKitSDKState.addMessageManager(MessageManagerFactoryProvider(messageManager))
     }
 
     @Test
@@ -429,7 +430,7 @@ class MessageCenterViewModelTest : TestCase() {
 
         val profileNotVisibleList = expectedList.apply {
             val profileView = last().copy(profileData = last().profileData?.copy(showProfile = false))
-            removeLast()
+            removeAt(size - 1)
             expectedList.add(profileView)
         }
         assertEquals(profileNotVisibleList, viewModel.buildMessageViewDataModel())

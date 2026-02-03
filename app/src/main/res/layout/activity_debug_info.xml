@@ -185,6 +185,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/night"
+                app:layout_constraintBottom_toTopOf="@id/rebootButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <Button
+                android:id="@+id/rebootButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="REBOOT"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />

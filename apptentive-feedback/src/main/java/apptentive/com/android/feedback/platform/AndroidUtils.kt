@@ -48,9 +48,7 @@ internal object AndroidUtils {
     @SuppressLint("MissingPermission")
     fun getNetworkType(context: Context): String {
         var networkType = 0
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-            networkType = getTelephonyManager(context).networkType
-        } else if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
             networkType = getTelephonyManager(context).dataNetworkType
         }
         return if (networkType >= 0 && networkType < networkTypeLookup.size)

@@ -6,8 +6,8 @@ import apptentive.com.android.core.LiveEvent
 import apptentive.com.android.core.MissingProviderException
 import apptentive.com.android.core.getTimeSeconds
 import apptentive.com.android.feedback.engagement.EngagementContext
-import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getEngagementContext
 import apptentive.com.android.feedback.utils.getInteractionBackup
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.platform.SharedPrefConstants.FAN_SIGNAL_TIME_STAMP
@@ -18,7 +18,7 @@ import apptentive.com.android.util.LogTags.INTERACTIONS
 internal class EnjoymentDialogViewModel : ViewModel() {
     val dismissInteraction: LiveEvent<Unit> = LiveEvent()
     private val context: EngagementContext? = try {
-        DependencyProvider.of<EngagementContextFactory>().engagementContext()
+        getEngagementContext()
     } catch (exception: MissingProviderException) {
         dismissInteraction.postValue(Unit)
         Log.e(INTERACTIONS, "EngagementContextFactory is not registered, cannot launch EnjoymentDialogViewModel", exception)

@@ -8,7 +8,6 @@ import apptentive.com.android.feedback.utils.RosterUtils
 import apptentive.com.android.feedback.utils.RosterUtils.initializeRoster
 import apptentive.com.android.feedback.utils.RosterUtils.updateRosterForLogin
 import apptentive.com.android.feedback.utils.RosterUtils.updateRosterForLogout
-import apptentive.com.android.feedback.utils.isMarshmallowOrGreater
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.STATE_MACHINE
@@ -91,9 +90,7 @@ internal object DefaultStateMachine : StateMachine(SDKState.UNINITIALIZED) {
             initState {
                 Log.d(STATE_MACHINE, "LOGGED_IN")
                 if (it is SDKEvent.LoggedIn) {
-                    if (isMarshmallowOrGreater()) {
-                        updateRosterForLogin(it.subject, it.encryption, it.wrapperEncryption)
-                    }
+                    updateRosterForLogin(it.subject, it.encryption, it.wrapperEncryption)
                 }
             }
             transition(SDKEvent.Logout.name, SDKState.LOGGED_OUT)

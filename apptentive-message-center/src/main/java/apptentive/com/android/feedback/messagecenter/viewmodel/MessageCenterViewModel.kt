@@ -4,7 +4,6 @@ import android.app.Activity
 import android.graphics.Bitmap
 import android.net.Uri
 import androidx.annotation.VisibleForTesting
-import androidx.core.util.PatternsCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -26,6 +25,7 @@ import apptentive.com.android.feedback.model.MessageCenterModel
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.convertToGroupDate
+import apptentive.com.android.feedback.utils.validateEmail
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.MESSAGE_CENTER
@@ -361,9 +361,9 @@ class MessageCenterViewModel(
 
 fun validateProfile(email: String?, model: MessageCenterModel): Boolean {
     return when {
-        model.profile?.require == true && PatternsCompat.EMAIL_ADDRESS.matcher(email.toString()).matches() -> true
+        model.profile?.require == true && validateEmail(email) -> true
         model.profile?.request == true && model.profile?.require == false && email?.isEmpty() == true -> true
-        model.profile?.request == true && PatternsCompat.EMAIL_ADDRESS.matcher(email.toString()).matches() -> true
+        model.profile?.request == true && validateEmail(email) -> true
         else -> false
     }
 }

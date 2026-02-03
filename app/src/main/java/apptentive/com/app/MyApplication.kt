@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.Log
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveConfiguration
+import apptentive.com.android.feedback.ApptentiveRegion
 import apptentive.com.android.feedback.AuthenticationFailedListener
 import apptentive.com.android.feedback.AuthenticationFailedReason
 import apptentive.com.android.feedback.LoginResult
@@ -33,12 +34,30 @@ class MyApplication : Application(), AuthenticationFailedListener {
         // Turning off by default to get un-redacted logs
         configuration.shouldSanitizeLogMessages = prefs.getBoolean(SHOULD_SANITIZE, false)
 
-        configuration.shouldEncryptStorage = true
+        configuration.shouldEncryptStorage = prefs.getBoolean(SHOULD_ENCRYPT, true)
+
+        configuration.region = ApptentiveRegion.US
 
         super.onCreate()
-        Apptentive.register(this, configuration) {
+        Apptentive.register(this, configuration) { it ->
             when (it) {
-                RegisterResult.Success -> Log.v("SYSTEM", "Registration successful")
+                RegisterResult.Success -> {
+                    Log.v("SYSTEM", "Registration successful")
+                    Apptentive.rebootSDKSubjectObservable.observe {
+                        if (it == true) {
+                            Apptentive.rebootSDK(this, configuration) { result ->
+                                when (result) {
+                                    RegisterResult.Success -> Log.v("SYSTEM", "Reboot successful")
+                                    is RegisterResult.Failure -> Log.e("SYSTEM", "Reboot failed")
+                                    is RegisterResult.Exception -> Log.e(
+                                        "SYSTEM",
+                                        "Reboot exception"
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
                 is RegisterResult.Failure -> Log.e(
                     "SYSTEM",
                     "Registration failed with response code: ${it.responseCode} and error message: ${it.message}"

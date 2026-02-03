@@ -1,7 +1,6 @@
 package apptentive.com.android.feedback.survey
 
 import android.graphics.Rect
-import android.os.Build
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.view.MotionEvent
@@ -10,6 +9,7 @@ import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.EditText
 import android.widget.LinearLayout
+import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -48,6 +48,7 @@ import com.google.android.material.textview.MaterialTextView
 internal class SurveyActivity : BaseSurveyActivity() {
 
     private var confirmationDialog: AlertDialog? = null
+    private lateinit var root: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +59,7 @@ internal class SurveyActivity : BaseSurveyActivity() {
             supportActionBar?.hide()
 
             val topAppBar = findViewById<MaterialToolbar>(R.id.apptentive_top_app_bar)
+            root = findViewById<View>(R.id.apptentive_survey_root)
             topAppBar.setNavigationOnClickListener {
                 it.hideSoftKeyboard()
                 viewModel.exit(showConfirmation = true)
@@ -100,6 +102,10 @@ internal class SurveyActivity : BaseSurveyActivity() {
                     }
                 }
             }
+            onBackPressedDispatcher.addCallback(this) {
+                viewModel.exit(showConfirmation = true)
+            }
+            applyWindowInsets(root)
         } catch (exception: Exception) {
             Log.e(SURVEY, "Error launching survey activity $exception")
             finish()
@@ -122,17 +128,15 @@ internal class SurveyActivity : BaseSurveyActivity() {
                 // Check if item is fully visible on screen before trying to scroll
                 val layoutManger = (listRecyclerView.layoutManager as LinearLayoutManager)
                 if (firstErrorPosition !in layoutManger.findFirstCompletelyVisibleItemPosition()..layoutManger.findLastCompletelyVisibleItemPosition()) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        listRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                                if (newState == SCROLL_STATE_IDLE) {
-                                    val errorView = layoutManger.findViewByPosition(firstErrorPosition)
-                                    errorView?.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
-                                    recyclerView.removeOnScrollListener(this)
-                                }
+                    listRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                            if (newState == SCROLL_STATE_IDLE) {
+                                val errorView = layoutManger.findViewByPosition(firstErrorPosition)
+                                errorView?.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
+                                recyclerView.removeOnScrollListener(this)
                             }
-                        })
-                    }
+                        }
+                    })
                     listRecyclerView.smoothScrollToPosition(firstErrorPosition)
                 } else {
                     val errorView = layoutManger.findViewByPosition(firstErrorPosition)
@@ -212,10 +216,6 @@ internal class SurveyActivity : BaseSurveyActivity() {
                 else linearProgressBar.visibility = View.INVISIBLE
             }
         }
-    }
-
-    override fun onBackPressed() {
-        viewModel.exit(showConfirmation = true)
     }
 
     override fun onDestroy() {

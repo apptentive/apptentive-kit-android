@@ -90,7 +90,7 @@ internal class DefaultSurveyQuestionListItemFactory :
         val hasRequiredText = question.isRequired && !question.requiredText.isNullOrBlank()
         val hasInstructionText = !question.instructionsText.isNullOrBlank()
         if (hasRequiredText && hasInstructionText) {
-            return "${question.requiredText}. ${question.instructionsText}"
+            return "${question.requiredText} - ${question.instructionsText}"
         }
         if (hasRequiredText) {
             return question.requiredText

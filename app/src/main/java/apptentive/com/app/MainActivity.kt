@@ -9,6 +9,8 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
 import apptentive.com.android.feedback.EngagementResult
@@ -98,6 +100,16 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
             (getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager).clearApplicationUserData()
         }
 
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            v.setPadding(
+                v.paddingLeft,
+                insets.getInsets(WindowInsetsCompat.Type.systemBars()).top,
+                v.paddingRight,
+                v.paddingBottom
+            )
+            WindowInsetsCompat.CONSUMED
+        }
+
         Apptentive.eventNotificationObservable.observe(::observeApptentiveEvents)
 
         Apptentive.messageCenterNotificationObservable.observe(::observeNewMessage)
@@ -129,8 +141,6 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
                 "Unread Message Count: ${notification?.unreadMessageCount}. " +
                 "Person Name: ${notification?.personName}. " +
                 "Person Email: ${notification?.personEmail}"
-
-        Log.d(LogTags.MESSAGE_CENTER_NOTIFICATION, notificationText)
 
         runOnUiThread {
             //     binding.messageCenterButton.isEnabled = notification?.canShowMessageCenter == true
