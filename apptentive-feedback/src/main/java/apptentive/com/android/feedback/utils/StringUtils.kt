@@ -74,11 +74,6 @@ fun getBaseUrl(configuration: ApptentiveConfiguration): String {
         is ApptentiveRegion.Custom -> {
             configuration.region.value
         }
-        is ApptentiveRegion.STAGING1,
-        is ApptentiveRegion.STAGING2,
-        is ApptentiveRegion.STAGING0 -> {
-            "https://${configuration.apptentiveKey}.api.use1.digital.${configuration.region.value}.alc-eng.com"
-        }
         else -> {
             "https://${configuration.apptentiveKey}.api.digital.${configuration.region.value}.alchemer.com"
         }

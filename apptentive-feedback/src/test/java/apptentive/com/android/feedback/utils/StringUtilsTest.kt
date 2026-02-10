@@ -115,12 +115,6 @@ class StringUtilsTest {
         assert(getBaseUrl(config) == Constants.SERVER_URL)
         config.region = ApptentiveRegion.Custom("https://custom.api.alchemer.com")
         assert(getBaseUrl(config) == "https://custom.api.alchemer.com")
-        config.region = ApptentiveRegion.STAGING0
-        assert(getBaseUrl(config) == "https://app_key.api.use1.digital.stage0.alc-eng.com")
-        config.region = ApptentiveRegion.STAGING1
-        assert(getBaseUrl(config) == "https://app_key.api.use1.digital.stage1.alc-eng.com")
-        config.region = ApptentiveRegion.STAGING2
-        assert(getBaseUrl(config) == "https://app_key.api.use1.digital.stage2.alc-eng.com")
     }
 
     fun getTimeAsDouble_negativeNumberString_returnsNegativeDouble() {
