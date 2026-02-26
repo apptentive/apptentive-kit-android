@@ -26,7 +26,7 @@ class StringUtilsTest {
 
     @Test
     fun testShouldRefreshManifest_lastUpdateZero_returnsFalse() {
-        assertFalse(shouldRefreshManifest("1234.0", 0.0,))
+        assertFalse(shouldRefreshManifest("1234.0", 0.0))
     }
 
     @Test
@@ -102,19 +102,27 @@ class StringUtilsTest {
 
     @Test
     fun testBaseUrl() {
+        val internalBaseUrl = "https://<APPTENTIVE_KEY>.api.<REGION>.alc.com"
+
         val config = ApptentiveConfiguration("app_key", "app_signature")
         config.region = ApptentiveRegion.US
-        assert(getBaseUrl(config) == "https://app_key.api.digital.us.alchemer.com")
+        assert(config.getBaseUrl(internalBaseUrl) == "https://app_key.api.digital.us.alchemer.com")
         config.region = ApptentiveRegion.EU
-        assert(getBaseUrl(config) == "https://app_key.api.digital.eu.alchemer.com")
+        assert(config.getBaseUrl(internalBaseUrl) == "https://app_key.api.digital.eu.alchemer.com")
         config.region = ApptentiveRegion.AU
-        assert(getBaseUrl(config) == "https://app_key.api.digital.au.alchemer.com")
+        assert(config.getBaseUrl(internalBaseUrl) == "https://app_key.api.digital.au.alchemer.com")
         config.region = ApptentiveRegion.CN
-        assert(getBaseUrl(config) == "https://app_key.api.digital.cn.alchemer.com")
+        assert(config.getBaseUrl(internalBaseUrl) == "https://app_key.api.digital.cn.alchemer.com")
         config.region = ApptentiveRegion.UNKNOWN
-        assert(getBaseUrl(config) == Constants.SERVER_URL)
+        assert(config.getBaseUrl(internalBaseUrl) == Constants.SERVER_URL)
         config.region = ApptentiveRegion.Custom("https://custom.api.alchemer.com")
-        assert(getBaseUrl(config) == "https://custom.api.alchemer.com")
+        assert(config.getBaseUrl(internalBaseUrl) == "https://custom.api.alchemer.com")
+        config.region = ApptentiveRegion.STAGING0
+        assert(config.getBaseUrl(internalBaseUrl) == "https://app_key.api.stage0.alc.com")
+        config.region = ApptentiveRegion.STAGING1
+        assert(config.getBaseUrl(internalBaseUrl) == "https://app_key.api.stage1.alc.com")
+        config.region = ApptentiveRegion.STAGING2
+        assert(config.getBaseUrl(internalBaseUrl) == "https://app_key.api.stage2.alc.com")
     }
 
     fun getTimeAsDouble_negativeNumberString_returnsNegativeDouble() {
