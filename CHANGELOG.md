@@ -1,3 +1,27 @@
+# 2026-02-26 - v7.0.0
+### Fixes
+* Attachment rotation in Message Center now works reliably.
+* Email validation in Message Center/Profile correctly handles top‑level domains.
+* Edge‑to‑edge layout issues have been resolved for the apps targeting Android 15 & 16.
+* Dependency provider refactor ensures providers remain available; the new reboot listener helps the SDK recover if in‑memory providers are lost.
+* Unread message count is properly tracked on the multiuser environment
+
+### Improvements
+* Added ETag / If‑None‑Match support for manifest endpoints.
+* Compatibility updates for Gradle 9.0 and 10.0.
+* Brings the SDK into full compliance with Android 15 and 16, updating interaction flows and background operations accordingly.
+* Accessibility enhancements for Surveys and Message Center. Improved focus behavior, color contrast, screen‑reader announcements.
+* Logging improvements - conversations are logged only when changed, preventing large repetitive dumps.
+* Cleanup of deprecated code.
+* Minimum SDK raised to 24 to better support modern apps while still accommodating apps targeting 21–23.
+* Removed unnecessary cached‑interactions check.
+* Full screen mode support with local customization for top and bottom bars for Surveys & Message center.
+
+### New Features
+* Reboot listener for SDK recover ensures the SDK can automatically restart itself when in-memory providers are lost, improving stability after process death or low‑memory events.
+* Allows routing traffic to region‑specific endpoints, reducing latency and comply with regional data‑handling requirements. Now supporting EU along with US
+* Allows reduced event traffic through a configurable setting
+
 # 2025-12-15 - v6.9.10
 ### Fixes
 * Device custom data is now reliably preserved across version upgrades.
