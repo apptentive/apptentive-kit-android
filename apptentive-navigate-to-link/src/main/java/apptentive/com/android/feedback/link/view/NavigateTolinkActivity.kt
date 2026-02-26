@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
 import android.webkit.WebView
@@ -17,12 +18,15 @@ import com.google.android.material.appbar.MaterialToolbar
 
 internal class NavigateTolinkActivity : BaseNavigateToLinkActivity() {
     private lateinit var webView: WebView
+    private lateinit var root: View
     private var uploadMessage: ValueCallback<Array<Uri>>? = null
     private lateinit var fileChooserLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.apptentive_activity_navigate_to_link)
+
+        root = findViewById<View>(R.id.navigate_to_link_root)
 
         // Register the ActivityResultLauncher
         fileChooserLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -53,7 +57,9 @@ internal class NavigateTolinkActivity : BaseNavigateToLinkActivity() {
         }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            @Suppress("DEPRECATION")
             settings.allowFileAccessFromFileURLs = false
+            @Suppress("DEPRECATION")
             settings.allowUniversalAccessFromFileURLs = false
         }
 
@@ -93,6 +99,8 @@ internal class NavigateTolinkActivity : BaseNavigateToLinkActivity() {
             webView.restoreState(savedInstanceState)
         } else
             url?.let { webView.loadUrl(it) }
+
+        applyWindowInsets(root)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

@@ -14,8 +14,9 @@ interface ApplicationInfo {
 class AndroidApplicationInfo(context: Context) : ApplicationInfo {
     private val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
 
+    @Suppress("DEPRECATION")
     override val versionCode: Long =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode
         else packageInfo.versionCode.toLong()
-    override val versionName: String = packageInfo.versionName
+    override val versionName: String = packageInfo.versionName.toString()
 }

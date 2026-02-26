@@ -1,10 +1,9 @@
 package apptentive.com.android.feedback.utils
 
 import androidx.annotation.WorkerThread
-import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.conversation.ConversationRoster
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getSharedPrefDataStore
 import apptentive.com.android.feedback.platform.DefaultStateMachine
-import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.platform.SharedPrefConstants
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags
@@ -13,7 +12,7 @@ import java.io.File
 internal object FileStorageUtil {
 
     const val CONVERSATION_DIR = "conversations"
-    const val PREFETCH_DIR = "prefetch"
+    private const val PREFETCH_DIR = "prefetch"
 
     @WorkerThread
     fun getConversationFile(): File {
@@ -85,7 +84,7 @@ internal object FileStorageUtil {
 
     @WorkerThread
     fun hasStoragePriorToMultiUserSupport(): Boolean {
-        val cachedSDKVersion = DependencyProvider.of<AndroidSharedPrefDataStore>()
+        val cachedSDKVersion = getSharedPrefDataStore()
             .getString(SharedPrefConstants.SDK_CORE_INFO, SharedPrefConstants.SDK_VERSION).ifEmpty { null }
 
         return FileUtil.hasOldConversationStorage() &&
@@ -94,7 +93,7 @@ internal object FileStorageUtil {
 
     @WorkerThread
     fun hasStoragePriorToSkipLogic(): Boolean {
-        val storedSdkVersion = DependencyProvider.of<AndroidSharedPrefDataStore>()
+        val storedSdkVersion = getSharedPrefDataStore()
             .getString(SharedPrefConstants.SDK_CORE_INFO, SharedPrefConstants.SDK_VERSION).ifEmpty { null }
         return storedSdkVersion == null && FileUtil.containsFiles(CONVERSATION_DIR)
     }

@@ -12,9 +12,9 @@ import apptentive.com.android.core.LiveEvent
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.PrefetchManager
 import apptentive.com.android.feedback.engagement.EngagementContext
-import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getEngagementContext
 import apptentive.com.android.feedback.utils.HtmlWrapper.linkifiedHTMLString
 import apptentive.com.android.feedback.utils.getInteractionBackup
 import apptentive.com.android.util.Log
@@ -23,7 +23,7 @@ import apptentive.com.android.util.LogTags.INTERACTIONS
 internal class TextModalViewModel : ViewModel() {
     val dismissInteraction: LiveEvent<Unit> = LiveEvent()
     private val context: EngagementContext? = try {
-        DependencyProvider.of<EngagementContextFactory>().engagementContext()
+        getEngagementContext()
     } catch (exception: Exception) {
         Log.e(INTERACTIONS, "Provider is not registered, could not create engagement context", exception)
         dismissInteraction.postValue(Unit)

@@ -1,10 +1,9 @@
 package apptentive.com.android.feedback.utils
 
-import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.Constants
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
-import apptentive.com.android.platform.AndroidSharedPrefDataStore
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getSharedPrefDataStore
 import apptentive.com.android.platform.SharedPrefConstants
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.CONVERSATION
@@ -26,7 +25,7 @@ internal object ThrottleUtils {
             interactionCountLimit <= 0 -> true
             interaction.type == InteractionType.RatingDialog || interaction.type == InteractionType.GoogleInAppReview -> {
                 val currentTime = System.currentTimeMillis()
-                val lastThrottledTime = DependencyProvider.of<AndroidSharedPrefDataStore>().getLong(SharedPrefConstants.THROTTLE_UTILS, interaction.type.name, 0)
+                val lastThrottledTime = getSharedPrefDataStore().getLong(SharedPrefConstants.THROTTLE_UTILS, interaction.type.name, 0)
                 val elapsedTimeSinceLastInteraction = currentTime - lastThrottledTime
                 return ratingThrottleLength?.let { ratingLength ->
                     when {
@@ -35,7 +34,7 @@ internal object ThrottleUtils {
                             true
                         }
                         else -> {
-                            DependencyProvider.of<AndroidSharedPrefDataStore>().putLong(SharedPrefConstants.THROTTLE_UTILS, interaction.type.name, currentTime)
+                            getSharedPrefDataStore().putLong(SharedPrefConstants.THROTTLE_UTILS, interaction.type.name, currentTime)
                             false
                         }
                     }
@@ -63,35 +62,7 @@ internal object ThrottleUtils {
     }
 
     fun shouldThrottleReset(fileType: String): Boolean {
-        val sharedPrefDataStore = DependencyProvider.of<AndroidSharedPrefDataStore>()
-        val sdkVersion = if (fileType == CONVERSATION_TYPE) {
-            sharedPrefDataStore.getString(
-                SharedPrefConstants.THROTTLE_UTILS,
-                SharedPrefConstants.CONVERSATION_RESET_THROTTLE
-            )
-        } else {
-            sharedPrefDataStore.getString(
-                SharedPrefConstants.THROTTLE_UTILS,
-                SharedPrefConstants.ROSTER_RESET_THROTTLE
-            )
-        }
-        val apptentiveSDKVersion: String = Constants.SDK_VERSION
-        return if (sdkVersion.isEmpty() || sdkVersion != apptentiveSDKVersion) {
-            Log.d(CONVERSATION, "$fileType reset NOT throttled")
-            sharedPrefDataStore.putString(
-                SharedPrefConstants.THROTTLE_UTILS,
-                SharedPrefConstants.CONVERSATION_RESET_THROTTLE,
-                Constants.SDK_VERSION
-            )
-            false
-        } else {
-            Log.d(CONVERSATION, "$fileType reset throttled")
-            true
-        }
-    }
-
-    fun shouldThrottleReset(fileType: String): Boolean {
-        val sharedPrefDataStore = DependencyProvider.of<AndroidSharedPrefDataStore>()
+        val sharedPrefDataStore = getSharedPrefDataStore()
         val sdkVersion = if (fileType == CONVERSATION_TYPE) {
             sharedPrefDataStore.getString(
                 SharedPrefConstants.THROTTLE_UTILS,

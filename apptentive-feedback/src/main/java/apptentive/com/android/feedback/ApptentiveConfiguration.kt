@@ -110,6 +110,15 @@ data class ApptentiveConfiguration(
 
     internal var perSessionInteractionLimit: Int = 1
 
+    /**
+     * The region in which the Apptentive SDK is being used.
+     *
+     * This is used to determine the correct Apptentive API endpoint to use.
+     *
+     * The default value is [ApptentiveRegion.US]
+     */
+    var region: ApptentiveRegion = ApptentiveRegion.US
+
     //region plugin configuration
 
     /**

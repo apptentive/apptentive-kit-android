@@ -202,6 +202,7 @@ private fun getStatusMessage(statusCode: Int): String {
         204 -> "No Content"
         401 -> "Unauthorized"
         500 -> "Internal Server Error"
+        429 -> "Too Many Requests"
         else -> "Unknown"
     }
 }

@@ -1,9 +1,7 @@
 package apptentive.com.android.encryption
 
-import android.os.Build
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
-import androidx.annotation.RequiresApi
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.platform.SharedPrefConstants.CRYPTO_KEY_ALIAS
@@ -15,7 +13,6 @@ import java.util.UUID
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 
-@RequiresApi(Build.VERSION_CODES.M)
 @InternalUseOnly
 class KeyResolver23 : KeyResolver {
     private val keyStore = KeyStore.getInstance(KEYSTORE_PROVIDER).apply {
@@ -52,9 +49,9 @@ class KeyResolver23 : KeyResolver {
         val existingKey = keyStore.getEntry(keyAlias, null) as? KeyStore.SecretKeyEntry
 
         return if (existingKey?.secretKey == null) {
-            val keyAlias = KEY_ALIAS + UUID.randomUUID()
-            androidProxy.putString(SDK_CORE_INFO, CRYPTO_KEY_ALIAS, keyAlias)
-            createKey(keyAlias)
+            val newKeyAlias = KEY_ALIAS + UUID.randomUUID()
+            androidProxy.putString(SDK_CORE_INFO, CRYPTO_KEY_ALIAS, newKeyAlias)
+            createKey(newKeyAlias)
         } else {
             existingKey.secretKey
         }

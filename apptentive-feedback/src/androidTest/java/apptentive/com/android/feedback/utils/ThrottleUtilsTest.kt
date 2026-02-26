@@ -182,19 +182,4 @@ class ThrottleUtilsTest : TestCase() {
         assertFalse(ThrottleUtils.shouldThrottleReset(ROSTER_TYPE))
         assertTrue(ThrottleUtils.shouldThrottleReset(ROSTER_TYPE))
     }
-
-    @Test
-    fun shouldThrottleResetConversationTest() {
-        DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore())
-        val result = ThrottleUtils.shouldThrottleReset(CONVERSATION_TYPE)
-        assertFalse(result)
-        assertTrue(ThrottleUtils.shouldThrottleReset(CONVERSATION_TYPE))
-    }
-
-    @Test
-    fun shouldThrottleResetRosterTest() {
-        DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore())
-        assertFalse(ThrottleUtils.shouldThrottleReset(ROSTER_TYPE))
-        assertTrue(ThrottleUtils.shouldThrottleReset(ROSTER_TYPE))
-    }
 }

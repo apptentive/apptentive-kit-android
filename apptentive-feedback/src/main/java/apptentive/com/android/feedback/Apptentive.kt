@@ -4,18 +4,12 @@ import android.app.Application
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import apptentive.com.android.concurrent.Executor
 import apptentive.com.android.concurrent.ExecutorQueue
 import apptentive.com.android.concurrent.Executors
-import apptentive.com.android.core.AndroidApplicationInfo
-import apptentive.com.android.core.AndroidExecutorFactoryProvider
-import apptentive.com.android.core.AndroidLoggerProvider
-import apptentive.com.android.core.ApplicationInfo
 import apptentive.com.android.core.ApptentiveException
 import apptentive.com.android.core.BehaviorSubject
-import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.Observable
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.format
@@ -24,14 +18,14 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionId
 import apptentive.com.android.feedback.model.EventNotification
 import apptentive.com.android.feedback.model.MessageCenterNotification
 import apptentive.com.android.feedback.notifications.NotificationUtils
-import apptentive.com.android.feedback.platform.AndroidFileSystemProvider
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getSharedPrefDataStore
 import apptentive.com.android.feedback.platform.DefaultStateMachine
 import apptentive.com.android.feedback.platform.SDKEvent
 import apptentive.com.android.feedback.platform.SDKState
 import apptentive.com.android.feedback.platform.isSDKLoading
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.feedback.utils.ThrottleUtils
-import apptentive.com.android.feedback.utils.isMarshmallowOrGreater
 import apptentive.com.android.feedback.utils.sha256
 import apptentive.com.android.network.DefaultHttpClient
 import apptentive.com.android.network.DefaultHttpNetwork
@@ -40,8 +34,6 @@ import apptentive.com.android.network.HttpClient
 import apptentive.com.android.network.HttpLoggingInterceptor
 import apptentive.com.android.network.HttpNetworkResponse
 import apptentive.com.android.network.HttpRequest
-import apptentive.com.android.platform.AndroidSharedPrefDataStore
-import apptentive.com.android.platform.DefaultAndroidSharedPrefDataStore
 import apptentive.com.android.platform.SharedPrefConstants
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
@@ -175,6 +167,17 @@ object Apptentive {
         register(application, configuration, callbackFunc)
     }
 
+    internal val rebootSDKSubject: BehaviorSubject<Boolean?> = BehaviorSubject(null)
+    @JvmStatic
+    val rebootSDKSubjectObservable: Observable<Boolean?> get() = rebootSDKSubject
+
+    @JvmStatic
+    fun rebootSDK(application: Application, configuration: ApptentiveConfiguration, callback: RegisterCallback? = null) {
+        DefaultStateMachine.reset()
+        client = ApptentiveClient.NULL
+        _register(application, configuration, callback)
+    }
+
     /**
      * This method registers the Apptentive SDK using the given SDK credentials in the [ApptentiveConfiguration]
      * It must be called from the  Application#onCreate() method in the Application object defined in your app's manifest.
@@ -196,29 +199,22 @@ object Apptentive {
             DefaultStateMachine.onEvent(SDKEvent.RegisterSDK)
 
             try {
-
                 // register dependency providers
-                DependencyProvider.register(AndroidLoggerProvider("Apptentive"))
-                DependencyProvider.register<ApplicationInfo>(AndroidApplicationInfo(application.applicationContext))
-                DependencyProvider.register(AndroidExecutorFactoryProvider())
-                DependencyProvider.register(
-                    AndroidFileSystemProvider(
-                        application.applicationContext,
-                        "apptentive.com.android.feedback"
-                    )
-                )
-                DependencyProvider.register<AndroidSharedPrefDataStore>(
-                    DefaultAndroidSharedPrefDataStore(application.applicationContext)
-                )
-
+                ApptentiveKitSDKState.initialize(application.applicationContext, configuration)
                 checkSavedKeyAndSignature(configuration)
 
                 // Save host app theme usage
-
-                DependencyProvider.of<AndroidSharedPrefDataStore>().putBoolean(
+                getSharedPrefDataStore().putBoolean(
                     SharedPrefConstants.USE_HOST_APP_THEME,
                     SharedPrefConstants.USE_HOST_APP_THEME_KEY,
                     configuration.shouldInheritAppTheme
+                )
+
+                // Save alternate app store URL to be set later
+                getSharedPrefDataStore().putString(
+                    SharedPrefConstants.CUSTOM_STORE_URL,
+                    SharedPrefConstants.CUSTOM_STORE_URL_KEY,
+                    configuration.customAppStoreURL
                 )
 
                 // Set log level
@@ -231,15 +227,6 @@ object Apptentive {
                 // Set rating throttle
                 ThrottleUtils.ratingThrottleLength = configuration.ratingInteractionThrottleLength
                 ThrottleUtils.interactionCountLimit = configuration.perSessionInteractionLimit
-
-                // Save alternate app store URL to be set later
-
-                DependencyProvider.of<AndroidSharedPrefDataStore>().putString(
-                    SharedPrefConstants.CUSTOM_STORE_URL,
-                    SharedPrefConstants.CUSTOM_STORE_URL_KEY,
-                    configuration.customAppStoreURL
-                )
-
                 Log.i(SYSTEM, "Registering Apptentive Android SDK ${Constants.SDK_VERSION}")
                 Log.v(
                     SYSTEM,
@@ -291,16 +278,12 @@ object Apptentive {
     @JvmStatic
     @Synchronized
     fun login(jwtToken: String, callback: ((result: LoginResult) -> Unit)? = null) {
-        when {
-            Build.VERSION_CODES.M > Build.VERSION.SDK_INT -> {
-                Log.w(FEEDBACK, "Login is only supported on Android M and above")
-                executeCallbackInMainExecutor(callback, LoginResult.Error("Login is only supported on Android M and above"))
-            }
-            DefaultStateMachine.state == SDKState.LOGGED_IN -> {
+        when (DefaultStateMachine.state) {
+            SDKState.LOGGED_IN -> {
                 Log.w(FEEDBACK, "The SDK is already logged in. Logout first to login again")
                 executeCallbackInMainExecutor(callback, LoginResult.Error("The SDK is already logged in. Logout first to login again"))
             }
-            DefaultStateMachine.state == SDKState.UNINITIALIZED -> {
+            SDKState.UNINITIALIZED -> {
                 Log.w(FEEDBACK, "The SDK is not initialized yet. Please register the SDK first")
                 executeCallbackInMainExecutor(callback, LoginResult.Error("The SDK is not initialized yet. Please register the SDK first"))
             }
@@ -383,10 +366,6 @@ object Apptentive {
     @Synchronized
     fun updateToken(jwtToken: String, callback: ((result: LoginResult) -> Unit)? = null) {
         when {
-            !isMarshmallowOrGreater() -> {
-                Log.w(FEEDBACK, "Login is only supported on Android M and above")
-                callback?.invoke(LoginResult.Error("Login is only supported on Android M and above"))
-            }
             DefaultStateMachine.state != SDKState.LOGGED_IN -> {
                 Log.w(FEEDBACK, "Need to login first to update token")
                 callback?.invoke(LoginResult.Error("Need to login first to update token"))
@@ -413,7 +392,7 @@ object Apptentive {
     private fun checkSavedKeyAndSignature(
         configuration: ApptentiveConfiguration
     ) {
-        val registrationSharedPrefs = DependencyProvider.of<AndroidSharedPrefDataStore>()
+        val registrationSharedPrefs = getSharedPrefDataStore()
 
         val savedKeyHash =
             registrationSharedPrefs.getNullableString(SharedPrefConstants.REGISTRATION_INFO, SharedPrefConstants.APPTENTIVE_KEY_HASH, null)
@@ -1495,5 +1474,11 @@ object Apptentive {
         }
     }
 
+    @InternalUseOnly
+    fun clearDependencies() {
+        stateExecutor.execute {
+            client.clearDependencies()
+        }
+    }
     //endregion
 }

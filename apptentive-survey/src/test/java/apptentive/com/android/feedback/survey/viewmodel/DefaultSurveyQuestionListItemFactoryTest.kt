@@ -33,7 +33,7 @@ class DefaultSurveyQuestionListItemFactoryTest {
         answer = "answer",
         instructionsText = "Provide your input",
         pressedSubmitButton = true,
-        expectedInstructions = "Required. Provide your input",
+        expectedInstructions = "Required - Provide your input",
         expectedInvalid = false // the answer is valid - no need for showing an error
     )
 
@@ -43,7 +43,7 @@ class DefaultSurveyQuestionListItemFactoryTest {
         answer = "answer",
         instructionsText = "Provide your input",
         pressedSubmitButton = false,
-        expectedInstructions = "Required. Provide your input",
+        expectedInstructions = "Required - Provide your input",
         expectedInvalid = false // the answer is valid - no need for showing an error
     )
 
@@ -53,7 +53,7 @@ class DefaultSurveyQuestionListItemFactoryTest {
         answer = "", // invalid answer
         instructionsText = "Provide your input",
         pressedSubmitButton = true,
-        expectedInstructions = "Required. Provide your input",
+        expectedInstructions = "Required - Provide your input",
         expectedInvalid = true // the answer is invalid - show error message
     )
 
@@ -63,7 +63,7 @@ class DefaultSurveyQuestionListItemFactoryTest {
         answer = "", // invalid answer
         instructionsText = "Provide your input",
         pressedSubmitButton = false,
-        expectedInstructions = "Required. Provide your input",
+        expectedInstructions = "Required - Provide your input",
         expectedInvalid = false // the answer is invalid - but we're not required to show it
     )
 
@@ -130,7 +130,7 @@ class DefaultSurveyQuestionListItemFactoryTest {
         selectedIndex = 5,
         instructionsText = "Provide your input",
         PressSubmitButton = true,
-        expectedInstructions = "Required. Provide your input",
+        expectedInstructions = "Required - Provide your input",
         expectedInvalid = false // the answer is valid - no need for showing an error
     )
 
@@ -140,7 +140,7 @@ class DefaultSurveyQuestionListItemFactoryTest {
         selectedIndex = 5,
         instructionsText = "Provide your input",
         PressSubmitButton = false,
-        expectedInstructions = "Required. Provide your input",
+        expectedInstructions = "Required - Provide your input",
         expectedInvalid = false // the answer is valid - no need for showing an error
     )
 
@@ -150,7 +150,7 @@ class DefaultSurveyQuestionListItemFactoryTest {
         selectedIndex = null, // invalid answer
         instructionsText = "Provide your input",
         PressSubmitButton = true,
-        expectedInstructions = "Required. Provide your input",
+        expectedInstructions = "Required - Provide your input",
         expectedInvalid = true // the answer is invalid - show error message
     )
 
@@ -160,7 +160,7 @@ class DefaultSurveyQuestionListItemFactoryTest {
         selectedIndex = null, // invalid answer
         instructionsText = "Provide your input",
         PressSubmitButton = false,
-        expectedInstructions = "Required. Provide your input",
+        expectedInstructions = "Required - Provide your input",
         expectedInvalid = false // the answer is invalid - but we're not required to show it
     )
 
@@ -234,7 +234,7 @@ class DefaultSurveyQuestionListItemFactoryTest {
         ),
         instructionsText = "Provide your input",
         pressSubmitButton = true,
-        expectedInstructions = "Required. Provide your input",
+        expectedInstructions = "Required - Provide your input",
         expectedInvalid = false // the answer is valid - no need for showing an error
     )
 
@@ -247,7 +247,7 @@ class DefaultSurveyQuestionListItemFactoryTest {
         ),
         instructionsText = "Provide your input",
         pressSubmitButton = true,
-        expectedInstructions = "Required. Provide your input",
+        expectedInstructions = "Required - Provide your input",
         expectedInvalid = true // no selections were made
     )
 
@@ -260,7 +260,7 @@ class DefaultSurveyQuestionListItemFactoryTest {
         ),
         instructionsText = "Provide your input",
         pressSubmitButton = true,
-        expectedInstructions = "Required. Provide your input",
+        expectedInstructions = "Required - Provide your input",
         expectedInvalid = true // there's a selection but you did not provide any text
     )
 

@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.messagecenter.view
 
 import android.os.Bundle
+import android.view.View
 import androidx.activity.addCallback
 import apptentive.com.android.feedback.messagecenter.R
 import apptentive.com.android.feedback.messagecenter.utils.MessageCenterEvents
@@ -12,16 +13,16 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.textview.MaterialTextView
 
 internal class ProfileActivity : BaseProfileActivity() {
-
     private lateinit var topAppBar: MaterialToolbar
     private lateinit var topAppBarTitle: MaterialTextView
     private lateinit var profileView: ProfileView
     private lateinit var saveButton: MaterialButton
-
+    private lateinit var root: View
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.apptentive_activity_profile)
 
+        root = findViewById(R.id.apptentive_activity_profile_root)
         topAppBar = findViewById(R.id.apptentive_profile_toolbar)
         topAppBarTitle = findViewById(R.id.apptentive_profile_title)
         profileView = findViewById(R.id.apptentive_edit_profile)
@@ -50,8 +51,8 @@ internal class ProfileActivity : BaseProfileActivity() {
         }
 
         viewModel.profileStream.observe(this) { profile ->
-            profileView.updateName(profile.name ?: "")
-            profileView.updateEmail(profile.email ?: "")
+            profileView.updateName(profile?.name ?: "")
+            profileView.updateEmail(profile?.email ?: "")
         }
 
         viewModel.showConfirmationStream.observe(this) { showConfirmation ->
@@ -85,6 +86,9 @@ internal class ProfileActivity : BaseProfileActivity() {
                 finish()
             }
         }
+
+        applyWindowInsets(root)
+
         onBackPressedDispatcher.addCallback(this) {
             viewModel.exitProfileView(profileView.getName(), profileView.getEmail().trim())
         }

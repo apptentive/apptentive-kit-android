@@ -48,8 +48,6 @@ class EnjoymentDialogViewModelTest : TestCase() {
 
         val viewModel = EnjoymentDialogViewModel()
 
-        val viewModel = EnjoymentDialogViewModel()
-
         viewModel.onYesButton()
         assertResults(
             createCall(CODE_POINT_YES, interactionId = interactionId)

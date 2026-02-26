@@ -42,7 +42,7 @@ class InteractionModuleComponent(
     private fun getModule(className: String): InteractionModule<*>? {
         try {
             val moduleClass = Class.forName(className)
-            return moduleClass.newInstance() as InteractionModule<*>
+            return moduleClass.getDeclaredConstructor().newInstance() as InteractionModule<*>
         } catch (e: ClassNotFoundException) {
             Log.v(CORE, "Module not found: $className")
         } catch (e: IllegalAccessException) {

@@ -1,7 +1,6 @@
 package apptentive.com.android.feedback.utils
 
-import apptentive.com.android.core.DependencyProvider
-import apptentive.com.android.platform.AndroidSharedPrefDataStore
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState
 import apptentive.com.android.platform.SharedPrefConstants
 import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.util.Log
@@ -22,7 +21,7 @@ fun <T : Any> saveInteractionBackup(interactionModel: T) {
     try {
         val jsonModel = JsonConverter.toJson(interactionModel)
 
-        DependencyProvider.of<AndroidSharedPrefDataStore>().putString(
+        ApptentiveKitSDKState.getSharedPrefDataStore().putString(
             SharedPrefConstants.APPTENTIVE,
             SharedPrefConstants.INTERACTION_BACKUP,
             jsonModel
@@ -36,7 +35,7 @@ inline fun <reified T> getInteractionBackup(): T {
     Log.w(LogTags.INTERACTIONS, "Error creating ViewModel. Attempting backup.")
 
     try {
-        val jsonInteraction = DependencyProvider.of<AndroidSharedPrefDataStore>()
+        val jsonInteraction = ApptentiveKitSDKState.getSharedPrefDataStore()
             .getString(SharedPrefConstants.APPTENTIVE, SharedPrefConstants.INTERACTION_BACKUP, "")
         return JsonConverter.fromJson(jsonInteraction)
     } catch (exception: Exception) {

@@ -21,7 +21,6 @@ import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.model.VersionHistory
 import apptentive.com.android.feedback.model.VersionHistoryItem
-import apptentive.com.android.feedback.utils.isMarshmallowOrGreater
 import apptentive.com.android.feedback.utils.parseInt
 import apptentive.com.android.feedback.utils.toSecretKeyBytes
 import apptentive.com.android.util.Log
@@ -162,8 +161,7 @@ internal fun LegacyConversationMetadata.toConversationRoster(): ConversationRost
         val key = item.conversationEncryptionKey
         val conversationId = item.conversationId
         when {
-            item.conversationState == LegacyConversationState.LOGGED_IN &&
-                isMarshmallowOrGreater() && subject != null && key?.getKeyFromHexString() != null -> {
+            item.conversationState == LegacyConversationState.LOGGED_IN && subject != null && key?.getKeyFromHexString() != null -> {
                 val encryptedBytes = key.getKeyFromHexString().toSecretKeyBytes(subject)
                 val newConversationMetaData = ConversationMetaData(
                     state = ConversationState.LoggedIn(subject = subject, encryptionWrapperBytes = encryptedBytes),

@@ -1,3 +1,4 @@
+
 task jfrogAssembleApptentiveModules(type: GradleBuild) {
     buildName = "jfrogAssembleApptentiveModules"
     tasks = ['apptentive-core:assembleRelease',

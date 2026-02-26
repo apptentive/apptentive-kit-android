@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace 'apptentive.com.android.feedback.initiator'
+    namespace  = 'apptentive.com.android.feedback.initiator'
     compileSdk rootProject.compileSdkVersion
 
 

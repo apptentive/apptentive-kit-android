@@ -6,28 +6,28 @@ buildscript {
 
         // Minimum compileSDK version requirements
         // https://support.google.com/googleplay/android-developer/answer/11926878?hl=en
-        compileSdkVersion = 34
-        minSdkVersion = 21
-        targetSdkVersion = 34
+        compileSdkVersion = 35
+        minSdkVersion = 24
+        targetSdkVersion = 35
 
 
         // ----- App dependencies ----- //
 
         // AndroidX
         // https://developer.android.com/jetpack/androidx/explorer
-        core_ktx_version = '1.7.0'
-        activity_ktx_version = '1.4.0'
-        fragment_ktx_version = '1.4.1'
+        core_ktx_version = '1.12.0'
+        activity_ktx_version = '1.8.0'
+        fragment_ktx_version = '1.6.0'
         livedata_ktx_version = '2.4.1'
-        appcompat_library_version = '1.4.1'
-        annotations_version = '1.3.0'
-        lifecycle_version = '2.4.1'
+        appcompat_library_version = '1.7.0'
+        annotations_version = '1.7.1'
+        lifecycle_version = '2.8.7'
         constraint_layout_version = '2.1.3'
         exifinterface = '1.3.3'
 
         // Material Design
         // https://github.com/material-components/material-components-android/releases
-        material_design_version = '1.5.0'
+        material_design_version = '1.12.0'
 
         // Google Play (For Google In-App Review)
         // https://developer.android.com/guide/playcore
@@ -44,13 +44,13 @@ buildscript {
 
         // AndroidX
         // https://developer.android.com/training/testing/set-up-project
-        androidx_junit_ext_version = '1.1.5'
-        androidx_test_version = '1.5.0'
-        androidx_arch_core_version = '2.1.0'
+        androidx_junit_ext_version = '1.2.1'
+        androidx_test_version = '1.6.1'
+        androidx_arch_core_version = '2.2.0'
 
         // Espresso
         // https://developer.android.com/training/testing/espresso
-        espresso_core_version = '3.5.0'
+        espresso_core_version = '3.6.1'
 
         // Json
         // https://mvnrepository.com/artifact/org.json/json
@@ -67,34 +67,11 @@ buildscript {
     }
 
     project.ext {
-        sonatypeVersion = '6.10.0'
+        sonatypeVersion = '7.0.0'
         jfrogVersion = '6.10.0'
 
         // Change this depending on where you are publishing to
         repoVersion = sonatypeVersion
-    }
-
-    repositories {
-        mavenCentral()
-        google()
-    }
-
-    allprojects {
-        repositories {
-            google()
-            mavenCentral()
-            maven {
-                def artifactoryProperties = new Properties()
-                if (project.rootProject.file('local.properties').exists()) {
-                    artifactoryProperties.load(project.rootProject.file('local.properties').newDataInputStream())
-                }
-                url "https://apptentive.jfrog.io/artifactory/InternalNewAndroidSDK"
-                credentials {
-                    username = artifactoryProperties['artifactory_username'] ? artifactoryProperties['artifactory_username'] : ""
-                    password = artifactoryProperties['artifactory_password'] ? artifactoryProperties['artifactory_password'] : ""
-                }
-            }
-        }
     }
 
     dependencies {
@@ -125,7 +102,7 @@ plugins {
 
     // Gradle Nexus Publish Plugin
     // https://github.com/gradle-nexus/publish-plugin
-    id "io.github.gradle-nexus.publish-plugin" version "1.1.0"
+    id "io.github.gradle-nexus.publish-plugin" version "2.0.0"
 
     // Gradle Dokka Plugin
     // https://github.com/Kotlin/dokka
@@ -136,6 +113,7 @@ nexusPublishing {
     repositories {
         sonatype {
             Properties sonatypeProperties = new Properties()
+            nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
             if (project.rootProject.file('local.properties').exists()) {
                 sonatypeProperties.load(project.rootProject.file('local.properties').newDataInputStream())
             }

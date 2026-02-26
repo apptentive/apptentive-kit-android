@@ -1,7 +1,5 @@
 package apptentive.com.android.encryption
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.CRYPTOGRAPHY
@@ -15,7 +13,6 @@ import javax.crypto.CipherOutputStream
 import javax.crypto.spec.IvParameterSpec
 import kotlin.math.min
 
-@RequiresApi(Build.VERSION_CODES.M)
 @InternalUseOnly
 class AESEncryption23(private val keyInfo: EncryptionKey) : Encryption {
     private val secureRandom = SecureRandom()

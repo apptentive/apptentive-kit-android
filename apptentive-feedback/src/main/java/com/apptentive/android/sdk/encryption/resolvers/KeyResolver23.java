@@ -24,7 +24,6 @@ import java.security.cert.CertificateException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
-@RequiresApi(api = Build.VERSION_CODES.M)
 class KeyResolver23 implements KeyResolver {
 	private static final String CIPHER_TRANSFORMATION = "AES/CBC/PKCS7Padding";
 	private static final String KEYSTORE_PROVIDER = "AndroidKeyStore";

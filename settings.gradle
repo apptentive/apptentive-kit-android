@@ -1,3 +1,30 @@
+pluginManagement {
+    repositories {
+        google() // Add google() here, and preferably first for Android plugins
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        mavenLocal()
+        maven {
+            def artifactoryProperties = new Properties()
+            if (file('./local.properties').exists()) {
+                artifactoryProperties.load(file('./local.properties').newDataInputStream())
+            }
+            url "https://apptentive.jfrog.io/artifactory/InternalNewAndroidSDK"
+            credentials {
+                username = artifactoryProperties['artifactory_username'] ? artifactoryProperties['artifactory_username'] : ""
+                password = artifactoryProperties['artifactory_password'] ? artifactoryProperties['artifactory_password'] : ""
+            }
+        }
+    }
+}
+
 include ':apptentive-example',
         ':apptentive-core',
         ':apptentive-core-test',

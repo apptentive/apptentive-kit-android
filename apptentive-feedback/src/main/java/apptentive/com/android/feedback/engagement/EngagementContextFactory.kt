@@ -10,7 +10,8 @@ interface EngagementContextFactory {
     fun engagementContext(): EngagementContext
 }
 
-internal class EngagementContextProvider(
+@InternalUseOnly
+class EngagementContextProvider(
     private val engagement: Engagement,
     private val payloadSender: PayloadSender,
     private val executor: Executors

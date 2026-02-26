@@ -2,11 +2,10 @@ package apptentive.com.android.feedback.survey.model
 
 import android.text.Spanned
 import androidx.annotation.WorkerThread
-import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.ResettableDelegate
 import apptentive.com.android.feedback.engagement.EngagementContext
-import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.model.InvocationData
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getEngagementContext
 import apptentive.com.android.feedback.survey.interaction.DefaultSurveyQuestionConverter
 import apptentive.com.android.feedback.survey.model.SurveyPageData.PageIndicatorStatus
 import apptentive.com.android.feedback.survey.utils.END_OF_QUESTION_SET
@@ -66,7 +65,7 @@ internal class SurveyModel(
 
     fun getNextQuestionSet(): String? {
         val context: EngagementContext =
-            DependencyProvider.of<EngagementContextFactory>().engagementContext()
+            getEngagementContext()
 
         val nextQuestionSet = context.getNextQuestionSet(getCurrentPage().invocations)
 

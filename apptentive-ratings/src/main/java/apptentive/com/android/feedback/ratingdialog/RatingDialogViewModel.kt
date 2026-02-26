@@ -5,8 +5,8 @@ import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.LiveEvent
 import apptentive.com.android.core.MissingProviderException
 import apptentive.com.android.feedback.engagement.EngagementContext
-import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getEngagementContext
 import apptentive.com.android.feedback.utils.getInteractionBackup
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.INTERACTIONS
@@ -14,7 +14,7 @@ import apptentive.com.android.util.LogTags.INTERACTIONS
 internal class RatingDialogViewModel : ViewModel() {
     val dismissInteraction = LiveEvent<Unit>()
     private val context: EngagementContext? = try {
-        DependencyProvider.of<EngagementContextFactory>().engagementContext()
+        getEngagementContext()
     } catch (exception: MissingProviderException) {
         dismissInteraction.postValue(Unit)
         Log.e(

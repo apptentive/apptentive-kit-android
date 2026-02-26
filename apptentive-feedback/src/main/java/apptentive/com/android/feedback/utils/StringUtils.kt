@@ -1,7 +1,11 @@
 package apptentive.com.android.feedback.utils
 
 import android.util.Patterns
+import androidx.core.util.PatternsCompat
 import apptentive.com.android.core.getTimeSeconds
+import apptentive.com.android.feedback.ApptentiveConfiguration
+import apptentive.com.android.feedback.ApptentiveRegion
+import apptentive.com.android.feedback.Constants
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.CONVERSATION
@@ -62,6 +66,21 @@ internal fun String.parseJsonField(field: String): String {
 }
 
 @InternalUseOnly
+fun getBaseUrl(configuration: ApptentiveConfiguration): String {
+    return when (configuration.region) {
+        ApptentiveRegion.UNKNOWN -> {
+            Constants.SERVER_URL
+        }
+        is ApptentiveRegion.Custom -> {
+            configuration.region.value
+        }
+        else -> {
+            "https://${configuration.apptentiveKey}.api.digital.${configuration.region.value}.alchemer.com"
+        }
+    }
+}
+
+@InternalUseOnly
 fun containsLinks(text: String): Boolean {
     val urlPattern = Patterns.WEB_URL
     val urlMatcher = urlPattern.matcher(text)
@@ -74,6 +93,15 @@ fun containsLinks(text: String): Boolean {
     val phonePatterns = Patterns.PHONE
     val phoneMatcher = phonePatterns.matcher(text)
     return phoneMatcher.find()
+}
+
+fun validateEmail(email: String?): Boolean {
+    if (email != null && PatternsCompat.EMAIL_ADDRESS.matcher(email.toString()).matches()) {
+        // validate TLD and Domain
+        val topLevelDomain = email.substringAfterLast(".")
+        return topLevelDomain.length >= 2
+    }
+    return false
 }
 
 @InternalUseOnly

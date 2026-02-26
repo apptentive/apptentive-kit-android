@@ -16,7 +16,8 @@ class DefaultHttpRequestRetryPolicy(
     private val retryDelay: TimeInterval = Constants.DEFAULT_RETRY_DELAY
 ) : HttpRequestRetryPolicy {
     override fun shouldRetry(statusCode: Int, numRetries: Int): Boolean {
-        if (statusCode in 400..499) {
+
+        if (statusCode in 400..499 && statusCode != 429) {
             return false // don't retry if request was unauthorized or rejected
         }
 

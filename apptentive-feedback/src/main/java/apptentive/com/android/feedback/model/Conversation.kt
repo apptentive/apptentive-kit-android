@@ -4,6 +4,7 @@ import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.serialization.json.JsonConverter.toJsonObject
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogLevel
 import apptentive.com.android.util.LogTags.APP_RELEASE
 import apptentive.com.android.util.LogTags.CONFIGURATION
 import apptentive.com.android.util.LogTags.CONVERSATION
@@ -32,17 +33,65 @@ data class Conversation(
     }
 
     internal fun logConversation() {
-        val dashLine = "-".repeat(20)
-        Log.v(CONVERSATION, "\n$dashLine CONVERSATION STATE CHANGE START $dashLine")
-        Log.v(CONVERSATION, logReducedConversationObject())
-        Log.v(DEVICE, device.toString())
-        Log.v(PERSON, person.toString())
-        Log.v(SDK, sdk.toString())
-        Log.v(APP_RELEASE, appRelease.toString())
-        Log.v(CONFIGURATION, sdkStatus.toString())
-        Log.v(RANDOM_SAMPLING, randomSampling.toString())
-        Log.v(ENGAGEMENT_DATA, engagementData.toString())
-        Log.v(CONVERSATION, "\n$dashLine CONVERSATION STATE CHANGE END $dashLine")
+        if (Log.canLog(LogLevel.Verbose)) {
+            val dashLine = "-".repeat(20)
+            Log.v(CONVERSATION, "\n$dashLine CONVERSATION STATE CHANGE START $dashLine")
+            Log.v(CONVERSATION, logReducedConversationObject())
+            Log.v(DEVICE, device.toString())
+            Log.v(PERSON, person.toString())
+            Log.v(SDK, sdk.toString())
+            Log.v(APP_RELEASE, appRelease.toString())
+            Log.v(CONFIGURATION, sdkStatus.toString())
+            Log.v(RANDOM_SAMPLING, randomSampling.toString())
+            Log.v(ENGAGEMENT_DATA, engagementData.toString())
+            Log.v(CONVERSATION, "\n$dashLine CONVERSATION STATE CHANGE END $dashLine")
+        }
+    }
+
+    internal fun logConfiguration() {
+        if (Log.canLog(LogLevel.Verbose)) {
+            val dashLine = "-".repeat(20)
+            Log.v(CONVERSATION, "\n$dashLine CONVERSATION STATE CHANGE START $dashLine")
+            Log.v(CONFIGURATION, sdkStatus.toString())
+            Log.v(CONVERSATION, "\n$dashLine CONVERSATION STATE CHANGE END $dashLine")
+        }
+    }
+
+    internal fun logEngagementData() {
+        if (Log.canLog(LogLevel.Verbose)) {
+            val dashLine = "-".repeat(20)
+            Log.v(CONVERSATION, "\n$dashLine CONVERSATION STATE CHANGE START $dashLine")
+            Log.v(ENGAGEMENT_DATA, engagementData.toString())
+            Log.v(CONVERSATION, "\n$dashLine CONVERSATION STATE CHANGE END $dashLine")
+        }
+    }
+
+    internal fun logPerson() {
+        if (Log.canLog(LogLevel.Verbose)) {
+            val dashLine = "-".repeat(20)
+            Log.v(CONVERSATION, "\n$dashLine CONVERSATION STATE CHANGE START $dashLine")
+            Log.v(PERSON, person.toString())
+            Log.v(CONVERSATION, "\n$dashLine CONVERSATION STATE CHANGE END $dashLine")
+        }
+    }
+
+    internal fun logDevice() {
+        if (Log.canLog(LogLevel.Verbose)) {
+            val dashLine = "-".repeat(20)
+            Log.v(CONVERSATION, "\n$dashLine CONVERSATION STATE CHANGE START $dashLine")
+            Log.v(DEVICE, device.toString())
+            Log.v(CONVERSATION, "\n$dashLine CONVERSATION STATE CHANGE END $dashLine")
+        }
+    }
+
+    internal fun logAppReleaseSDK() {
+        if (Log.canLog(LogLevel.Verbose)) {
+            val dashLine = "-".repeat(20)
+            Log.v(CONVERSATION, "\n$dashLine CONVERSATION STATE CHANGE START $dashLine")
+            Log.v(APP_RELEASE, appRelease.toString())
+            Log.v(SDK, sdk.toString())
+            Log.v(CONVERSATION, "\n$dashLine CONVERSATION STATE CHANGE END $dashLine")
+        }
     }
 
     private fun logReducedConversationObject(): String {

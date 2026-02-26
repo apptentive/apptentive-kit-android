@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
@@ -33,7 +35,7 @@ android {
             resources.excludes.add("META-INF/LICENSE-notice.md")
         }
     }
-    namespace 'apptentive.com.android.feedback'
+    namespace = 'apptentive.com.android.feedback'
 }
 
 dependencies {
@@ -67,7 +69,7 @@ project.ext {
     artifactId = 'apptentive-feedback'
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+tasks.withType(KotlinCompile).configureEach {
     kotlinOptions {
         freeCompilerArgs += [
                 //'-Xexplicit-api=warning', // or '-Xexplicit-api=strict'

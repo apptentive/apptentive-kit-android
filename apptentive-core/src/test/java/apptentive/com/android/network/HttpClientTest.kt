@@ -163,6 +163,30 @@ class HttpClientTest : TestCase() {
         assertResults()
     }
 
+    /* Should retry on 429 */
+    @Test
+    fun testRetriable429() {
+        val client = createHttpClientForRetry()
+
+        sendRequest(client, createMockHttpRequest("request", statusCode = 429))
+
+        dispatchRequests()
+        assertResults("request start")
+
+        dispatchRequests()
+        assertResults("request retry: 1")
+
+        dispatchRequests()
+        assertResults(
+            "request retry: 2",
+            "request complete",
+            "request failed: 429 (Too Many Requests)"
+        )
+
+        dispatchRequests()
+        assertResults()
+    }
+
     /* Should not retry on 4xx */
     @Test
     fun testRetryAuthError() {

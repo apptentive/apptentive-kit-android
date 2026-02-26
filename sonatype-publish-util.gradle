@@ -1,4 +1,4 @@
-task sonatypeAssembleApptentiveModules(type: GradleBuild) {
+tasks.register('sonatypeAssembleApptentiveModules', GradleBuild) {
     buildName = "sonatypeAssembleApptentiveModules"
     tasks = ['apptentive-core:assembleRelease',
              'apptentive-core-ui:assembleRelease',
@@ -14,7 +14,7 @@ task sonatypeAssembleApptentiveModules(type: GradleBuild) {
 }
 
 // Do this first
-task sonatypePublishApptentiveModules(type: GradleBuild)  {
+tasks.register('sonatypePublishApptentiveModules', GradleBuild) {
     buildName = "sonatypePublishApptentiveModules"
     startParameter.projectProperties = project.gradle.startParameter.projectProperties
     tasks = ['apptentive-core:publishMavenPublicationToMavenLocal',
@@ -31,13 +31,13 @@ task sonatypePublishApptentiveModules(type: GradleBuild)  {
     dependsOn sonatypeAssembleApptentiveModules
 }
 
-task sonatypeAssembleApptentiveKitModule(type: GradleBuild) {
+tasks.register('sonatypeAssembleApptentiveKitModule', GradleBuild) {
     buildName = "sonatypeAssembleApptentiveModules"
     tasks = ['apptentive-kit-android:assembleRelease']
 }
 
 // Do this second
-task sonatypePublishApptentiveKitModule(type: GradleBuild)  {
+tasks.register('sonatypePublishApptentiveKitModule', GradleBuild) {
     buildName = "sonatypePublishApptentiveModules"
     startParameter.projectProperties = project.gradle.startParameter.projectProperties
     tasks = ['apptentive-kit-android:publishMavenPublicationToMavenLocal']
@@ -45,7 +45,7 @@ task sonatypePublishApptentiveKitModule(type: GradleBuild)  {
 }
 
 // Do this third
-task sonatypePublishAndCloseApptentiveStagingRepository(type: GradleBuild) {
+tasks.register('sonatypePublishAndCloseApptentiveStagingRepository', GradleBuild) {
     buildName = "sonatypePublishApptentiveStagingRepository"
     startParameter.projectProperties = project.gradle.startParameter.projectProperties
     tasks = ['publishToSonatype', 'closeSonatypeStagingRepository']

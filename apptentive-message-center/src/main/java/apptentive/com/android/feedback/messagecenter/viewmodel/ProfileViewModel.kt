@@ -6,20 +6,20 @@ import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.LiveEvent
 import apptentive.com.android.feedback.dependencyprovider.MessageCenterModelFactory
 import apptentive.com.android.feedback.engagement.EngagementContext
-import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.feedback.message.MessageManager
-import apptentive.com.android.feedback.message.MessageManagerFactory
 import apptentive.com.android.feedback.model.MessageCenterModel
 import apptentive.com.android.feedback.model.Person
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getEngagementContext
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getMessageManager
 import apptentive.com.android.feedback.utils.getInteractionBackup
 import apptentive.com.android.util.InternalUseOnly
 
 @InternalUseOnly
 class ProfileViewModel : ViewModel() {
-    private val context: EngagementContext = DependencyProvider.of<EngagementContextFactory>().engagementContext()
-    private val messageManager: MessageManager = DependencyProvider.of<MessageManagerFactory>().messageManager()
+    private val context: EngagementContext = getEngagementContext()
+    private val messageManager: MessageManager = getMessageManager()
 
     private val model: MessageCenterModel = try {
         DependencyProvider.of<MessageCenterModelFactory>().messageCenterModel()
@@ -31,14 +31,14 @@ class ProfileViewModel : ViewModel() {
     val profileSubmit: String = model.profile?.edit?.saveButton ?: ""
     val nameHint: String = model.profile?.edit?.nameHint ?: ""
     val emailHint: String = model.profile?.edit?.emailHint ?: ""
-    var storedName: String = ""
-    var storedEmail: String = ""
+    private var storedName: String = ""
+    private var storedEmail: String = ""
 
     private val errorMessages = LiveEvent<Boolean>()
     val errorMessagesStream: LiveData<Boolean> = errorMessages
 
-    private val senderProfile = LiveEvent<Person>()
-    val profileStream: LiveData<Person> = senderProfile
+    private val senderProfile = LiveEvent<Person?>()
+    val profileStream: LiveEvent<Person?> = senderProfile
 
     private val showConfirmation = LiveEvent<Boolean>()
     val showConfirmationStream: LiveData<Boolean> = showConfirmation

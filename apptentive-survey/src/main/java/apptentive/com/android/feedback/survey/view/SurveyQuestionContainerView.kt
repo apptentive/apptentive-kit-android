@@ -34,7 +34,7 @@ internal class SurveyQuestionContainerView(
             titleTextView.text = value
             try {
                 if (containsLinks(value.toString())) {
-                    Linkify.addLinks(titleTextView, Linkify.ALL)
+                    Linkify.addLinks(titleTextView, Linkify.EMAIL_ADDRESSES or Linkify.WEB_URLS or Linkify.PHONE_NUMBERS)
                     titleTextView.movementMethod = LinkMovementMethod.getInstance()
                 }
             } catch (exception: Exception) {

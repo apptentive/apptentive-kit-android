@@ -26,7 +26,7 @@ android {
         warningsAsErrors true
         abortOnError true
     }
-    namespace 'apptentive.com.android.core'
+    namespace = 'apptentive.com.android.core'
 }
 
 dependencies {

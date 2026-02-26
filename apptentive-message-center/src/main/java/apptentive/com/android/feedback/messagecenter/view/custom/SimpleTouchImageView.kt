@@ -8,6 +8,7 @@ import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.AttributeSet
@@ -177,7 +178,7 @@ internal class SimpleTouchImageView @JvmOverloads constructor(context: Context, 
         }
     }
 
-    override fun onSaveInstanceState(): Parcelable? {
+    override fun onSaveInstanceState(): Parcelable {
         val bundle = Bundle()
         bundle.putParcelable("instanceState", super.onSaveInstanceState())
         bundle.putInt("orientation", orientation)
@@ -195,25 +196,38 @@ internal class SimpleTouchImageView @JvmOverloads constructor(context: Context, 
     }
 
     override fun onRestoreInstanceState(state: Parcelable) {
-        if (state is Bundle) {
-            currentZoom = state.getFloat("saveScale")
-            floatMatrix = state.getFloatArray("matrix") ?: FloatArray(0)
+        var newState = state
+        if (newState is Bundle) {
+            currentZoom = newState.getFloat("saveScale")
+            floatMatrix = newState.getFloatArray("matrix") ?: FloatArray(0)
             prevMatrix.setValues(floatMatrix)
-            prevMatchViewHeight = state.getFloat("matchViewHeight")
-            prevMatchViewWidth = state.getFloat("matchViewWidth")
-            prevViewHeight = state.getInt("viewHeight")
-            prevViewWidth = state.getInt("viewWidth")
-            imageRenderedAtLeastOnce = state.getBoolean("imageRendered")
-            viewSizeChangeFixedPixel = state.getSerializable("viewSizeChangeFixedPixel") as FixedPixel?
-            orientationChangeFixedPixel = state.getSerializable("orientationChangeFixedPixel") as FixedPixel?
-            val oldOrientation = state.getInt("orientation")
+            prevMatchViewHeight = newState.getFloat("matchViewHeight")
+            prevMatchViewWidth = newState.getFloat("matchViewWidth")
+            prevViewHeight = newState.getInt("viewHeight")
+            prevViewWidth = newState.getInt("viewWidth")
+            imageRenderedAtLeastOnce = newState.getBoolean("imageRendered")
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                viewSizeChangeFixedPixel = newState.getSerializable("viewSizeChangeFixedPixel", FixedPixel::class.java)
+                orientationChangeFixedPixel = newState.getSerializable("orientationChangeFixedPixel", FixedPixel::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                viewSizeChangeFixedPixel = newState.getSerializable("viewSizeChangeFixedPixel") as FixedPixel?
+                @Suppress("DEPRECATION")
+                orientationChangeFixedPixel = newState.getSerializable("orientationChangeFixedPixel") as FixedPixel?
+            }
+            val oldOrientation = newState.getInt("orientation")
             if (orientation != oldOrientation) {
                 orientationJustChanged = true
             }
-            super.onRestoreInstanceState(state.getParcelable("instanceState"))
-            return
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                @Suppress("DEPRECATION")
+                newState = newState.getParcelable("instanceState") ?: Bundle()
+            } else {
+                newState = newState.getParcelable("instanceState", Parcelable::class.java) ?: Bundle()
+            }
         }
-        super.onRestoreInstanceState(state)
+        super.onRestoreInstanceState(newState)
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -1069,7 +1083,7 @@ internal class SimpleTouchImageView @JvmOverloads constructor(context: Context, 
         private const val AUTOMATIC_MIN_ZOOM = -1.0f
     }
 
-    private enum class FixedPixel {
+    internal enum class FixedPixel {
         CENTER, TOP_LEFT, BOTTOM_RIGHT
     }
 
