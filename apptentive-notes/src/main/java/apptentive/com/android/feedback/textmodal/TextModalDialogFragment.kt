@@ -148,6 +148,12 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
                         }
                         // Set the dialog to be non-cancelable on touch outside
                         setCanceledOnTouchOutside(false)
+                        dialog.window?.setGravity(viewModel.getPromptsPosition())
+                        viewModel.verticalMargins?.let {
+                            val windowAttributes = window?.attributes
+                            windowAttributes?.y = it
+                            window?.attributes = windowAttributes
+                        }
                     }
                 }
             }

@@ -91,6 +91,12 @@ internal class EnjoymentDialogFragment : DialogFragment(), ApptentiveActivityInf
             dialog.apply {
                 setOnShowListener {
                     window?.decorView?.post {
+                        dialog.window?.setGravity(viewModel.getEnjoymentDialogPosition())
+                        viewModel.verticalMargins?.let {
+                            val windowAttributes = window?.attributes
+                            windowAttributes?.y = it
+                            window?.attributes = windowAttributes
+                        }
                         setCanceledOnTouchOutside(false)
                     }
                 }

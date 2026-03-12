@@ -7,6 +7,7 @@ import apptentive.com.android.feedback.textmodal.TextModalActionConfiguration
 import apptentive.com.android.feedback.textmodal.TextModalInteraction
 import apptentive.com.android.feedback.textmodal.TextModalInteractionTypeConverter
 import apptentive.com.android.serialization.json.JsonConverter
+import apptentive.com.android.ui.DialogPosition
 import com.google.common.truth.Truth
 import org.junit.Test
 import java.util.Collections.singletonList
@@ -21,6 +22,8 @@ class TextModalInteractionTypeConverterTest {
               "configuration": {
                 "title": "Title",
                 "body": "Body",
+                "position": "top",
+                "vertical_margins": 20,
                 "actions": [
                   {
                     "id": "action_id_1",
@@ -64,6 +67,8 @@ class TextModalInteractionTypeConverterTest {
             id = "id",
             title = "Title",
             body = "Body",
+            position = DialogPosition.TOP,
+            verticalMargins = 20,
             maxHeight = 40,
             actions = arrayListOf<TextModalActionConfiguration>(
                 mapOf(

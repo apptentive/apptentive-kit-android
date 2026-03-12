@@ -18,7 +18,9 @@ internal class TextModalInteractionProvider(val interaction: TextModalInteractio
                     richContent = interaction.richContent,
                     actions = interaction.actions.map { action ->
                         DefaultTextModalActionConverter().convert(action)
-                    }
+                    },
+                    position = interaction.position,
+                    verticalMargins = interaction.verticalMargins,
                 )
             }
         }
