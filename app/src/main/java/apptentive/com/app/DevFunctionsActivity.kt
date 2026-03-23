@@ -616,39 +616,39 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
                 val jwtOption = jwtDropdown.text.toString()
                 val userName = multiUserDropdown.text.toString()
                 var token: String? = null
-
+                val secret = "38127017f4cfb4f84c8dfecd48ab98c6"
                 when (jwtOption) {
                     JWT_GOOD -> {
                         val thirtyDays: Long =
                             currentTimeMillis + ONE_DAY * 30
-                        token = generateJWT(userName, "ClientTeam", currentTimeMillis, thirtyDays, "38127017f4cfb4f84c8dfecd48ab98c6", null, null)
+                        token = generateJWT(userName, "ClientTeam", currentTimeMillis, thirtyDays, secret, null, null)
                     }
                     JWT_EXPIRES_IN_15_SECONDS -> {
                         val fifteenSeconds: Long =
                             currentTimeMillis + ONE_MINUTE / 4
-                        token = generateJWT(userName, "ClientTeam", currentTimeMillis, fifteenSeconds, "38127017f4cfb4f84c8dfecd48ab98c6", null, null)
+                        token = generateJWT(userName, "ClientTeam", currentTimeMillis, fifteenSeconds, secret, null, null)
                     }
                     JWT_EXPIRED -> {
                         val expired: Long =
                             currentTimeMillis - ONE_MINUTE
-                        token = generateJWT(userName, "ClientTeam", currentTimeMillis, expired, "38127017f4cfb4f84c8dfecd48ab98c6", null, null)
+                        token = generateJWT(userName, "ClientTeam", currentTimeMillis, expired, secret, null, null)
                     }
                     JWT_MISSING_SUB_CLAIM -> {
                         val thirtyDays: Long =
                             currentTimeMillis + ONE_DAY * 30
-                        token = generateJWT(null, "ClientTeam", currentTimeMillis, thirtyDays, "38127017f4cfb4f84c8dfecd48ab98c6", null, null)
+                        token = generateJWT(null, "ClientTeam", currentTimeMillis, thirtyDays, secret, null, null)
                     }
                     JWT_MISSING_SIGNATURE -> {
                         val thirtyDays: Long =
                             currentTimeMillis + ONE_DAY * 30
-                        token = generateJWT(userName, "ClientTeam", currentTimeMillis, thirtyDays, "38127017f4cfb4f84c8dfecd48ab98c6", null, null)
+                        token = generateJWT(userName, "ClientTeam", currentTimeMillis, thirtyDays, secret, null, null)
                         // remove signature
                         token = token?.substring(0, token.lastIndexOf("."))
                     }
                     JWT_INVALID_SIGNATURE -> {
                         val thirtyDays: Long =
                             currentTimeMillis + ONE_DAY * 30
-                        token = generateJWT(userName, "ClientTeam", currentTimeMillis, thirtyDays, "38127017f4cfb4f84c8dfecd48ab98c6BAD", null, null)
+                        token = generateJWT(userName, "ClientTeam", currentTimeMillis, thirtyDays, "BAD_SECRET", null, null)
                     }
                 }
 
