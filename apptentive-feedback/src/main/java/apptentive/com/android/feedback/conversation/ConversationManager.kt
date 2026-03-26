@@ -49,6 +49,7 @@ import apptentive.com.android.feedback.utils.shouldRefreshManifest
 import apptentive.com.android.feedback.utils.toSecretKeyBytes
 import apptentive.com.android.network.UnexpectedResponseException
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
+import apptentive.com.android.platform.SharedPrefConstants.ETAG_INTERACTIONS
 import apptentive.com.android.platform.SharedPrefConstants.FAN_SIGNAL_TIME_STAMP
 import apptentive.com.android.platform.SharedPrefConstants.MANIFEST_TIME_STAMP
 import apptentive.com.android.platform.SharedPrefConstants.SDK_CORE_INFO
@@ -319,6 +320,13 @@ internal class ConversationManager(
             activeConversationSubject.value = conversationRepository.createConversation()
             activeConversation.value.logConversation()
             updateConversationCredentialProvider(null, null, null)
+            val sharedPref = DependencyProvider.of<AndroidSharedPrefDataStore>()
+            // Clear E-Tag
+            sharedPref.putString(
+                SDK_CORE_INFO,
+                ETAG_INTERACTIONS,
+                ""
+            )
             Log.v(CONVERSATION, "Logout session successful, logged out conversation")
         }
     }
