@@ -22,6 +22,11 @@ internal class NavigateTolinkActivity : BaseNavigateToLinkActivity() {
     private var uploadMessage: ValueCallback<Array<Uri>>? = null
     private lateinit var fileChooserLauncher: ActivityResultLauncher<Intent>
 
+    companion object {
+        private const val HTTP_PROTOCOL = "http://"
+        private const val HTTPS_PROTOCOL = "https://"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.apptentive_activity_navigate_to_link)
@@ -97,8 +102,14 @@ internal class NavigateTolinkActivity : BaseNavigateToLinkActivity() {
         val url = intent.getStringExtra("linkUrl")
         if (savedInstanceState != null) {
             webView.restoreState(savedInstanceState)
-        } else
-            url?.let { webView.loadUrl(it) }
+        } else url?.let {
+            val safeUrl = if (it.startsWith(HTTP_PROTOCOL)) {
+                it.replaceFirst(HTTP_PROTOCOL, HTTPS_PROTOCOL)
+            } else {
+                it
+            }
+            webView.loadUrl(safeUrl)
+        }
 
         applyWindowInsets(root)
     }
