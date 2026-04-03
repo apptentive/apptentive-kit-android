@@ -111,8 +111,8 @@ class StringUtilsTest {
         assert(config.getBaseUrl(internalBaseUrl) == "https://app_key.api.digital.eu.alchemer.com")
         config.region = ApptentiveRegion.AU
         assert(config.getBaseUrl(internalBaseUrl) == "https://app_key.api.digital.au.alchemer.com")
-        config.region = ApptentiveRegion.CN
-        assert(config.getBaseUrl(internalBaseUrl) == "https://app_key.api.digital.cn.alchemer.com")
+        config.region = ApptentiveRegion.CA
+        assert(config.getBaseUrl(internalBaseUrl) == "https://app_key.api.digital.ca.alchemer.com")
         config.region = ApptentiveRegion.UNKNOWN
         assert(config.getBaseUrl(internalBaseUrl) == Constants.SERVER_URL)
         config.region = ApptentiveRegion.Custom("https://custom.api.alchemer.com")
