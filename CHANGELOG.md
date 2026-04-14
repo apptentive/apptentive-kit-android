@@ -1,3 +1,7 @@
+# 2026-04-14 - v7.1.0
+### New Features
+* SDK support for positioning prompts at the top, bottom, or center of the screen
+
 # 2026-02-26 - v7.0.0
 ### Fixes
 * Attachment rotation in Message Center now works reliably.
