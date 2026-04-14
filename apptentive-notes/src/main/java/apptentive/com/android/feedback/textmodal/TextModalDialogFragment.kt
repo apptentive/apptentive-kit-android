@@ -7,6 +7,7 @@ import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
@@ -148,6 +149,16 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
                         }
                         // Set the dialog to be non-cancelable on touch outside
                         setCanceledOnTouchOutside(false)
+                        val position = viewModel.getPromptsPosition()
+                        dialog.window?.setGravity(position)
+                        if (position != Gravity.CENTER) {
+                            viewModel.verticalMargins?.let {
+                                val windowAttributes = window?.attributes
+                                Log.v(INTERACTIONS, "Applying vertical margin $it")
+                                windowAttributes?.y = it
+                                window?.attributes = windowAttributes
+                            }
+                        }
                     }
                 }
             }

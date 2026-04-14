@@ -2,10 +2,12 @@ package apptentive.com.android.feedback.textmodal
 
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
 import apptentive.com.android.feedback.engagement.interactions.InteractionTypeConverter
+import apptentive.com.android.ui.toDialogPosition
 import apptentive.com.android.util.getList
 import apptentive.com.android.util.getString
 import apptentive.com.android.util.optInt
 import apptentive.com.android.util.optMap
+import apptentive.com.android.util.optNullableInt
 import apptentive.com.android.util.optString
 
 internal class TextModalInteractionTypeConverter : InteractionTypeConverter<TextModalInteraction> {
@@ -18,7 +20,9 @@ internal class TextModalInteractionTypeConverter : InteractionTypeConverter<Text
         richContent = data.configuration.optMap("image")?.toRichContent(),
         actions = data.configuration.getList("actions").map { action ->
             action as TextModalActionConfiguration
-        }
+        },
+        position = (data.configuration.optString("position") ?: "center").toDialogPosition(),
+        verticalMargins = data.configuration.optNullableInt("vertical_margins"),
     )
 
     private fun Map<String, Any?>.toRichContent(): RichContent =

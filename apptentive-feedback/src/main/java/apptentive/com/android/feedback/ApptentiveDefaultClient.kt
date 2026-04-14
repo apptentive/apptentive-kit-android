@@ -472,7 +472,7 @@ class ApptentiveDefaultClient(
         apptentiveSignature = configuration.apptentiveSignature,
         apiVersion = Constants.API_VERSION,
         sdkVersion = Constants.SDK_VERSION,
-        baseURL = getBaseUrl(configuration),
+        baseURL = configuration.getBaseUrl(),
     )
 
     private fun createInteractionDataProvider(conversation: Conversation): InteractionDataProvider {

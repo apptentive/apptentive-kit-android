@@ -19,6 +19,10 @@ android {
                 minSdkVersion 26 // we need this workaround in order to fix "com.android.tools.r8.a: MethodHandle.invoke and MethodHandle.invokeExact are only supported starting with Android O (--min-api 26)"
             }
         }
+
+        def feedBackBaseUrl = System.getenv("INTERNAL_BASE_URL_OVERRIDE") ?: ""
+
+        buildConfigField "String", "INTERNAL_BASE_URL_OVERRIDE", "\"${feedBackBaseUrl}\""
     }
 
     buildTypes {

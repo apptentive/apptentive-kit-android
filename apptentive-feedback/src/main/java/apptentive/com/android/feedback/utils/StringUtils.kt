@@ -5,10 +5,13 @@ import androidx.core.util.PatternsCompat
 import apptentive.com.android.core.getTimeSeconds
 import apptentive.com.android.feedback.ApptentiveConfiguration
 import apptentive.com.android.feedback.ApptentiveRegion
+import apptentive.com.android.feedback.BuildConfig
 import apptentive.com.android.feedback.Constants
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogLevel
 import apptentive.com.android.util.LogTags.CONVERSATION
+import apptentive.com.android.util.LogTags.UTIL
 import org.json.JSONObject
 import kotlin.math.max
 
@@ -66,16 +69,31 @@ internal fun String.parseJsonField(field: String): String {
 }
 
 @InternalUseOnly
-fun getBaseUrl(configuration: ApptentiveConfiguration): String {
-    return when (configuration.region) {
-        ApptentiveRegion.UNKNOWN -> {
-            Constants.SERVER_URL
+fun ApptentiveConfiguration.getBaseUrl(internalBaseUrl: String = BuildConfig.INTERNAL_BASE_URL_OVERRIDE): String {
+    val defaultUrl = "https://$apptentiveKey.api.digital.${region.value}.alchemer.com"
+    return when (region) {
+        ApptentiveRegion.UNKNOWN -> Constants.SERVER_URL
+        is ApptentiveRegion.Custom -> region.value
+        is ApptentiveRegion.STAGING1,
+        is ApptentiveRegion.STAGING2,
+        is ApptentiveRegion.STAGING0 -> {
+            if (internalBaseUrl.isEmpty()) {
+                if (Log.canLog(LogLevel.Verbose)) {
+                    Log.v(
+                        UTIL,
+                        "System variable INTERNAL_BASE_URL_OVERRIDE is not configured for stage environments"
+                    )
+                }
+                defaultUrl
+            } else {
+                internalBaseUrl
+                    .replace("<APPTENTIVE_KEY>", apptentiveKey)
+                    .replace("<REGION>", region.value)
+            }
         }
-        is ApptentiveRegion.Custom -> {
-            configuration.region.value
-        }
+
         else -> {
-            "https://${configuration.apptentiveKey}.api.digital.${configuration.region.value}.alchemer.com"
+            defaultUrl
         }
     }
 }
@@ -105,7 +123,10 @@ fun validateEmail(email: String?): Boolean {
 }
 
 @InternalUseOnly
-fun shouldRefreshManifest(lastRecordedManifestFetchTime: String, lastUpdatedTimeStamp: Double): Boolean {
+fun shouldRefreshManifest(
+    lastRecordedManifestFetchTime: String,
+    lastUpdatedTimeStamp: Double
+): Boolean {
     return when {
         lastUpdatedTimeStamp == 0.0 -> false
         lastRecordedManifestFetchTime.isEmpty() -> true // as the SDK doesn't have the latest manifest fetched time, can't detect manifest changes. So fetch refresh the manifest

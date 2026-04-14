@@ -1,3 +1,7 @@
+# 2026-04-14 - v7.1.0
+### New Features
+* SDK support for positioning prompts at the top, bottom, or center of the screen
+
 # 2026-02-26 - v7.0.0
 ### Fixes
 * Attachment rotation in Message Center now works reliably.
@@ -22,7 +26,7 @@
 * Allows routing traffic to region‑specific endpoints, reducing latency and comply with regional data‑handling requirements. Now supporting EU along with US
 * Allows reduced event traffic through a configurable setting
 
-# 2025-12-15 - v6.9.10
+# 2025-12-15 - v6.10.0
 ### Fixes
 * Device custom data is now reliably preserved across version upgrades.
 * In survey, single select questions ensures mutual exclusivity

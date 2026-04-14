@@ -17,6 +17,7 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionRespon
 import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getEngagementContext
 import apptentive.com.android.feedback.utils.HtmlWrapper.linkifiedHTMLString
 import apptentive.com.android.feedback.utils.getInteractionBackup
+import apptentive.com.android.ui.toGravity
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.INTERACTIONS
 
@@ -42,7 +43,9 @@ internal class TextModalViewModel : ViewModel() {
             richContent = interaction.richContent,
             actions = interaction.actions.map { action ->
                 DefaultTextModalActionConverter().convert(action)
-            }
+            },
+            position = interaction.position,
+            verticalMargins = interaction.verticalMargins
         )
     }
 
@@ -80,7 +83,7 @@ internal class TextModalViewModel : ViewModel() {
     }
 
     var onDismiss: Callback? = null
-
+    val verticalMargins = interaction.verticalMargins
     private val noteHeaderEvent = LiveEvent<Bitmap>()
     val noteHeaderBitmapStream: LiveData<Bitmap> = noteHeaderEvent
     init {
@@ -93,6 +96,8 @@ internal class TextModalViewModel : ViewModel() {
             }
         }
     }
+
+    fun getPromptsPosition(): Int = interaction.position.toGravity()
 
     fun onCancel() {
         context?.executors?.state?.execute {

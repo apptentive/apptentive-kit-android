@@ -4,6 +4,7 @@ import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.feedback.model.InvocationData
+import apptentive.com.android.ui.DialogPosition
 
 internal class TextModalModel(
     id: InteractionId,
@@ -11,7 +12,9 @@ internal class TextModalModel(
     val body: String?,
     val maxHeight: Int = 100,
     val richContent: RichContent? = null,
-    val actions: List<Action>
+    val actions: List<Action>,
+    val position: DialogPosition = DialogPosition.CENTER,
+    val verticalMargins: Int? = null,
 ) : Interaction(id, InteractionType.TextModal) {
 
     override fun toString(): String {
@@ -79,6 +82,8 @@ internal class TextModalModel(
         if (maxHeight != other.maxHeight) return false
         if (richContent != other.richContent) return false
         if (actions != other.actions) return false
+        if (position != other.position) return false
+        if (verticalMargins != other.verticalMargins) return false
 
         return true
     }
@@ -89,6 +94,8 @@ internal class TextModalModel(
         result = 31 * result + maxHeight
         result = 31 * result + (richContent?.hashCode() ?: 0)
         result = 31 * result + actions.hashCode()
+        result = 31 * result + position.hashCode()
+        result = 31 * result + (verticalMargins ?: 0)
         return result
     }
 }

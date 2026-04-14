@@ -15,6 +15,7 @@ import apptentive.com.android.feedback.enjoyment.EnjoymentDialogViewModel.Compan
 import apptentive.com.android.feedback.enjoyment.EnjoymentDialogViewModel.Companion.CODE_POINT_NO
 import apptentive.com.android.feedback.enjoyment.EnjoymentDialogViewModel.Companion.CODE_POINT_YES
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
+import apptentive.com.android.ui.DialogPosition
 import org.junit.Test
 
 class EnjoymentDialogViewModelTest : TestCase() {
@@ -26,7 +27,9 @@ class EnjoymentDialogViewModelTest : TestCase() {
             title = "Title",
             yesText = "Yes",
             noText = "No",
-            dismissText = "Dismiss"
+            dismissText = "Dismiss",
+            position = DialogPosition.CENTER,
+            verticalMargins = null
         )
 
         DependencyProvider.register(EnjoymentDialogInteractionProvider(interaction))

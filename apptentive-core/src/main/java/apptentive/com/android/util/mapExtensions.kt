@@ -29,6 +29,14 @@ fun Map<String, *>.optInt(key: String, defaultValue: Int = 0): Int {
 }
 
 @InternalUseOnly
+fun Map<String, *>.optNullableInt(key: String): Int? {
+    val value = this[key]
+    if (value is Int) return value
+    if (value is Double) return value.toInt()
+    return null
+}
+
+@InternalUseOnly
 @Throws(MissingKeyException::class)
 fun Map<String, *>.getBoolean(key: String) = this[key] as? Boolean ?: throw MissingKeyException(key)
 

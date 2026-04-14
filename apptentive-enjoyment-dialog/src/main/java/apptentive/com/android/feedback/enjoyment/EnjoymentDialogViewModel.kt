@@ -12,6 +12,7 @@ import apptentive.com.android.feedback.utils.getInteractionBackup
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.platform.SharedPrefConstants.FAN_SIGNAL_TIME_STAMP
 import apptentive.com.android.platform.SharedPrefConstants.SDK_CORE_INFO
+import apptentive.com.android.ui.toGravity
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.INTERACTIONS
 
@@ -34,8 +35,11 @@ internal class EnjoymentDialogViewModel : ViewModel() {
     val title = interaction.title
     val yesText = interaction.yesText
     val noText = interaction.noText
+    val verticalMargins = interaction.verticalMargins
 
     val sharedPrefDataStore = DependencyProvider.of<AndroidSharedPrefDataStore>()
+
+    fun getEnjoymentDialogPosition(): Int = interaction.position.toGravity()
 
     fun onYesButton() {
         Log.i(INTERACTIONS, "Love Dialog positive button pressed")

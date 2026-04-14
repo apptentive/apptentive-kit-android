@@ -6,6 +6,7 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
+import android.view.Gravity
 import android.view.LayoutInflater
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.fragment.app.DialogFragment
@@ -91,6 +92,15 @@ internal class EnjoymentDialogFragment : DialogFragment(), ApptentiveActivityInf
             dialog.apply {
                 setOnShowListener {
                     window?.decorView?.post {
+                        val position = viewModel.getEnjoymentDialogPosition()
+                        dialog.window?.setGravity(position)
+                        if (position != Gravity.CENTER) {
+                            viewModel.verticalMargins?.let {
+                                val windowAttributes = window?.attributes
+                                windowAttributes?.y = it
+                                window?.attributes = windowAttributes
+                            }
+                        }
                         setCanceledOnTouchOutside(false)
                     }
                 }
