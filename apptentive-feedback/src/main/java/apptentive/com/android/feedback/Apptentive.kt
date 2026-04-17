@@ -226,7 +226,6 @@ object Apptentive {
 
                 // Set rating throttle
                 ThrottleUtils.ratingThrottleLength = configuration.ratingInteractionThrottleLength
-                ThrottleUtils.interactionCountLimit = configuration.perSessionInteractionLimit
                 Log.i(SYSTEM, "Registering Apptentive Android SDK ${Constants.SDK_VERSION}")
                 Log.v(
                     SYSTEM,

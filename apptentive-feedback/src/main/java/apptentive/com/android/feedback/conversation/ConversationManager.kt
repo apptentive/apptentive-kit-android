@@ -101,6 +101,8 @@ internal class ConversationManager(
             conversation.conversationToken,
             null
         )
+
+        ThrottleUtils.interactionCountLimit = conversation.sdkStatus.perSessionInteractionLimit
         activeConversationSubject = BehaviorSubject(conversation)
     }
 
@@ -679,10 +681,12 @@ internal class ConversationManager(
                             )
                             activeConversation.value.logConfiguration()
 
+                            ThrottleUtils.interactionCountLimit = it.data.perSessionInteractionLimit
+
                             if (checkStatusForUpdate()) {
                                 tryFetchEngagementManifest()
                             } else {
-                                Log.d(CONFIGURATION, "No update is dectected from status call")
+                                Log.d(CONFIGURATION, "No update is detected from status call")
                             }
 
                             sharedPref.putString(

@@ -27,7 +27,7 @@ class MockAndroidSharedPrefDataStore(private val containsKey: Boolean = true, pr
 
     override fun getString(file: String, keyEntry: String, defaultValue: String): String {
         return when (keyEntry) {
-            SDK_VERSION -> "6.10.0"
+            SDK_VERSION -> "7.2.0"
             CRYPTO_ENABLED -> isEncryptionEnabled.toString()
             else -> version
         }

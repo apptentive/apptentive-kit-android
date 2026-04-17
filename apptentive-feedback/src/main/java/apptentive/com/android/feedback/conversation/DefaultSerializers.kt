@@ -23,6 +23,7 @@ import apptentive.com.android.feedback.model.SDKStatus
 import apptentive.com.android.feedback.model.VersionHistory
 import apptentive.com.android.feedback.model.VersionHistoryItem
 import apptentive.com.android.feedback.utils.isVersionLessThan610
+import apptentive.com.android.feedback.utils.isVersionLessThan720
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.platform.SharedPrefConstants.SDK_CORE_INFO
 import apptentive.com.android.platform.SharedPrefConstants.SDK_VERSION
@@ -263,26 +264,33 @@ internal object DefaultSerializers {
                 encoder.encodeDouble(value.lastUpdate)
                 encoder.encodeBoolean(value.metricsEnabled)
                 encoder.encodeNullableDouble(value.hibernateUntil)
+                encoder.encodeInt(value.perSessionInteractionLimit)
             }
 
             override fun decode(decoder: Decoder): SDKStatus {
                 val cachedSDKVersion = DependencyProvider.of<AndroidSharedPrefDataStore>()
                     .getString(SDK_CORE_INFO, SDK_VERSION).ifEmpty { null }
                 // SDK_VERSION cached from 6.5.0, it is null prior to that
-                return if (isVersionLessThan610(cachedSDKVersion)) {
-                    SDKStatus(
-                        expiry = decoder.decodeDouble(),
-                        messageCenter = messageCenterConfigurationSerializer.decode(decoder)
-                    )
-                } else {
-                    SDKStatus(
-                        expiry = decoder.decodeDouble(),
-                        messageCenter = messageCenterConfigurationSerializer.decode(decoder),
-                        lastUpdate = decoder.decodeDouble(),
-                        metricsEnabled = decoder.decodeBoolean(),
-                        hibernateUntil = decoder.decodeNullableDouble()
-                    )
-                }
+
+                val isVersionLessThan610 = isVersionLessThan610(cachedSDKVersion)
+                val isVersionLessThan720 = isVersionLessThan720(cachedSDKVersion)
+
+                val expiry = decoder.decodeDouble()
+                val messageCenter = messageCenterConfigurationSerializer.decode(decoder)
+                val lastUpdate = if (!isVersionLessThan610) decoder.decodeDouble() else null
+                val metricsEnabled = if (!isVersionLessThan610) decoder.decodeBoolean() else null
+                val hibernateUntil = if (!isVersionLessThan610) decoder.decodeNullableDouble() else null
+                // Once the backend is ready for interaction throttling, validate the version
+                val perSessionInteractionLimit = if (!isVersionLessThan720) decoder.decodeInt() else null
+
+                return SDKStatus(
+                    expiry = expiry,
+                    messageCenter = messageCenter,
+                    lastUpdate = lastUpdate ?: 0.0,
+                    metricsEnabled = metricsEnabled ?: true,
+                    hibernateUntil = hibernateUntil,
+                    perSessionInteractionLimit = perSessionInteractionLimit ?: 1,
+                )
             }
         }
     }

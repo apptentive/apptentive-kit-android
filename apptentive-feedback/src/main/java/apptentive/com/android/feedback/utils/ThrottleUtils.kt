@@ -3,6 +3,7 @@ package apptentive.com.android.feedback.utils
 import apptentive.com.android.feedback.Constants
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
+import apptentive.com.android.feedback.model.DEFAULT_PER_SESSION_INTERACTION_LIMIT
 import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getSharedPrefDataStore
 import apptentive.com.android.platform.SharedPrefConstants
 import apptentive.com.android.util.Log
@@ -14,7 +15,7 @@ internal object ThrottleUtils {
     internal const val CONVERSATION_TYPE = "Conversation"
     internal const val ROSTER_TYPE = "Roster"
     internal var exemptedEvents = setOf("show_message_center", "message_center_fallback", "rating_dialog_event", "app_review_event", "EnjoymentDialog#no", "EnjoymentDialog#yes")
-    internal var interactionCountLimit = 1
+    internal var interactionCountLimit = DEFAULT_PER_SESSION_INTERACTION_LIMIT
     internal val engagedInteractions = mutableMapOf<String, Int>()
 
     fun shouldThrottleInteraction(eventName: String, interaction: Interaction): Boolean {
@@ -47,7 +48,9 @@ internal object ThrottleUtils {
                     engagedInteractions[interaction.id] = count + 1
                     false
                 } else {
-                    false // Not throttling for 6.10
+                    false
+                    // Once the backend is ready for interaction throttling the value should be "true"
+                    // true
                 }
             }
             else -> {
