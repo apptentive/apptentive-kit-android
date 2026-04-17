@@ -67,6 +67,8 @@ android {
             applicationIdSuffix ".dev"
             buildConfigField "String", "APPTENTIVE_KEY", "\"ANDROID-ANDROID-DEV-c9c0b324114f\""
             buildConfigField "String", "APPTENTIVE_SIGNATURE", "\"98f5539e9310dc290394c68b76664e98\""
+            buildConfigField "String", "JWT_SECRET", "\"38127017f4cfb4f84c8dfecd48ab98c6\""
+
         }
         qa {
             applicationIdSuffix ".qa"

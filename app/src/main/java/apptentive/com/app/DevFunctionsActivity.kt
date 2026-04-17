@@ -616,7 +616,7 @@ class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
                 val jwtOption = jwtDropdown.text.toString()
                 val userName = multiUserDropdown.text.toString()
                 var token: String? = null
-                val secret = "38127017f4cfb4f84c8dfecd48ab98c6"
+                val secret = BuildConfig.JWT_SECRET
                 when (jwtOption) {
                     JWT_GOOD -> {
                         val thirtyDays: Long =
