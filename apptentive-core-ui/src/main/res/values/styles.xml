@@ -547,7 +547,7 @@
 
     <style name="Apptentive.TextAppearance.Caption.Survey.RangeLabel">
         <item name="android:textColor">?apptentiveTextColorSurveyRangeLabel</item>
-        <item name="android:focusable">true</item>
+        <item name="android:focusable">false</item>
         <item name="android:alpha">?apptentiveSubheaderAlpha</item>
         <item name="android:layout_weight">1</item>
         <item name="android:paddingTop">@dimen/apptentive_survey_range_label_top_padding</item>
