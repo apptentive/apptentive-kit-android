@@ -8,7 +8,7 @@ interface AndroidSharedPrefDataStore {
     fun getSharedPrefForSDK(file: String): SharedPreferences
     fun deleteSharedPrefForSDK(file: String, mode: Int)
     fun getString(file: String, keyEntry: String, defaultValue: String = ""): String
-    fun getNullableString(file: String, keyEntry: String, defaultValue: String?): String?
+    fun getNullableString(file: String, keyEntry: String, defaultValue: String? = null): String?
     fun getBoolean(file: String, keyEntry: String, defaultValue: Boolean = false): Boolean
     fun getInt(file: String, keyEntry: String, defaultValue: Int = -1): Int
     fun putString(file: String, keyEntry: String, value: String?)

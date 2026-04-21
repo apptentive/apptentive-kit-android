@@ -9,19 +9,19 @@ import apptentive.com.android.util.LogTags.FEEDBACK
 
 @InternalUseOnly
 interface InteractionEngagement {
-    fun engage(context: EngagementContext, interaction: Interaction): EngagementResult
+    fun engage(context: EngagementContext, interaction: Interaction, whereEvent: String?): EngagementResult
 }
 
 internal data class DefaultInteractionEngagement(
     private val lookup: Map<Class<Interaction>, InteractionLauncher<Interaction>>
 ) : InteractionEngagement {
     @Suppress("UNCHECKED_CAST")
-    override fun engage(context: EngagementContext, interaction: Interaction): EngagementResult {
+    override fun engage(context: EngagementContext, interaction: Interaction, whereEvent: String?): EngagementResult {
         val interactionClass = interaction.javaClass
         val launcher = lookup[interactionClass]
         return try {
             if (launcher != null) {
-                launcher.launchInteraction(context, interaction)
+                launcher.launchInteraction(context, interaction, whereEvent)
                 EngagementResult.InteractionShown(interactionId = interaction.id)
             } else EngagementResult.Error("Interaction launcher not found: ${interactionClass.name}")
         } catch (exception: Exception) {

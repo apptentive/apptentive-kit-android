@@ -16,7 +16,8 @@ class EventPayload(
     val interactionId: String? = null,
     val data: Map<String, Any?>? = null,
     @SensitiveDataKey val customData: Map<String, Any?>? = null,
-    val extendedData: List<ExtendedData>? = null
+    val extendedData: List<ExtendedData>? = null,
+    val whereEvent: String? = null,
 ) : ConversationPayload(nonce) {
 
     //region Inheritance
@@ -43,6 +44,7 @@ class EventPayload(
         if (data != other.data) return false
         if (customData != other.customData) return false
         if (extendedData != other.extendedData) return false
+        if (whereEvent != other.whereEvent) return false
 
         return true
     }
@@ -54,6 +56,7 @@ class EventPayload(
         result = 31 * result + (data?.hashCode() ?: 0)
         result = 31 * result + (customData?.hashCode() ?: 0)
         result = 31 * result + (extendedData?.hashCode() ?: 0)
+        result = 31 * result + (whereEvent?.hashCode() ?: 0)
         return result
     }
 

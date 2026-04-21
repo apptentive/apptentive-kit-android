@@ -18,9 +18,11 @@ import apptentive.com.android.util.LogTags.INTERACTIONS
 internal class MessageCenterInteractionLauncher : AndroidViewInteractionLauncher<MessageCenterInteraction>() {
     override fun launchInteraction(
         engagementContext: EngagementContext,
-        interaction: MessageCenterInteraction
+        interaction: MessageCenterInteraction,
+        whereEvent: String?,
     ) {
-        super.launchInteraction(engagementContext, interaction)
+        // DO NOT RECORD WHERE EVENT
+        super.launchInteraction(engagementContext, interaction, null)
 
         Log.i(INTERACTIONS, "Message Center interaction launched with title: ${interaction.title}")
         Log.v(INTERACTIONS, "Message Center interaction data: $interaction")

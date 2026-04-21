@@ -5,6 +5,7 @@ import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.platform.AndroidViewInteractionLauncher
 import apptentive.com.android.feedback.utils.saveInteractionBackup
+import apptentive.com.android.feedback.utils.saveWhereEventBackup
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.INTERACTIONS
 
@@ -12,17 +13,20 @@ internal class EnjoymentDialogInteractionLauncher :
     AndroidViewInteractionLauncher<EnjoymentDialogInteraction>() {
     override fun launchInteraction(
         engagementContext: EngagementContext,
-        interaction: EnjoymentDialogInteraction
+        interaction: EnjoymentDialogInteraction,
+        whereEvent: String?,
     ) {
-        super.launchInteraction(engagementContext, interaction)
+        super.launchInteraction(engagementContext, interaction, whereEvent)
         Log.i(INTERACTIONS, "Love Dialog interaction launched with title: ${interaction.title}")
         Log.v(INTERACTIONS, "Love Dialog interaction data: $interaction")
 
         engagementContext.executors.main.execute {
             try {
                 saveInteractionBackup(interaction)
-                DependencyProvider.register(EnjoymentDialogInteractionProvider(interaction))
-
+                whereEvent?.let { event ->
+                    saveWhereEventBackup(event)
+                }
+                DependencyProvider.register(EnjoymentDialogInteractionProvider(interaction, whereEvent))
                 val fragmentManager = engagementContext.getFragmentManager()
                 val enjoymentDialog = EnjoymentDialogFragment()
                 enjoymentDialog.show(fragmentManager, EnjoymentDialogInteraction.TAG)

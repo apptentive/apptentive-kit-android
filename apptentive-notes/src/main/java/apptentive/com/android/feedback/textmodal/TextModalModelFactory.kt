@@ -6,7 +6,7 @@ internal interface TextModalModelFactory {
     fun getTextModalModel(): TextModalModel
 }
 
-internal class TextModalInteractionProvider(val interaction: TextModalInteraction) : Provider<TextModalModelFactory> {
+internal class TextModalInteractionProvider(val interaction: TextModalInteraction, val whereEvent: String?) : Provider<TextModalModelFactory> {
     override fun get(): TextModalModelFactory {
         return object : TextModalModelFactory {
             override fun getTextModalModel(): TextModalModel {
@@ -21,6 +21,7 @@ internal class TextModalInteractionProvider(val interaction: TextModalInteractio
                     },
                     position = interaction.position,
                     verticalMargins = interaction.verticalMargins,
+                    whereEvent = whereEvent,
                 )
             }
         }

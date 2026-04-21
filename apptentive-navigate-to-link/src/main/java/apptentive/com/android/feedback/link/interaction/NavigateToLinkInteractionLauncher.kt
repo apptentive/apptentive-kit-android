@@ -9,7 +9,8 @@ import apptentive.com.android.util.LogTags.INTERACTIONS
 internal class NavigateToLinkInteractionLauncher : InteractionLauncher<NavigateToLinkInteraction> {
     override fun launchInteraction(
         engagementContext: EngagementContext,
-        interaction: NavigateToLinkInteraction
+        interaction: NavigateToLinkInteraction,
+        whereEvent: String?,
     ) {
         engagementContext.executors.main.execute {
             Log.i(INTERACTIONS, "Navigation attempt to URL/Deep Link: ${interaction.url}")

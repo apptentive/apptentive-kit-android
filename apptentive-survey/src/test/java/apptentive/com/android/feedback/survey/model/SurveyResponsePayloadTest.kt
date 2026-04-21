@@ -38,7 +38,8 @@ class SurveyResponsePayloadTest : TestCase() {
                         )
                     )
                 )
-            )
+            ),
+            whereEvent = null,
         )
 
         val expectedJson = toProperJson(
@@ -81,7 +82,7 @@ class SurveyResponsePayloadTest : TestCase() {
             path = "/conversations/:conversation_id/surveys/$surveyId/responses",
             method = HttpMethod.POST,
             mediaType = MediaType.applicationJson,
-            data = expectedJson.toByteArray()
+            data = expectedJson.toByteArray(),
         )
         val actual = payload.toPayloadData(DependencyProvider.of<ConversationCredentialProvider>())
         assertThat(actual).isEqualTo(expected)

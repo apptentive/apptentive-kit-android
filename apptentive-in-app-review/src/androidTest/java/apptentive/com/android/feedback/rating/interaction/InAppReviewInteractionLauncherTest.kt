@@ -15,6 +15,7 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionId
 import apptentive.com.android.feedback.rating.reviewmanager.InAppReviewCallback
 import apptentive.com.android.feedback.rating.reviewmanager.InAppReviewManager
 import apptentive.com.android.feedback.rating.reviewmanager.InAppReviewManagerFactory
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.lang.AssertionError
@@ -23,7 +24,13 @@ import java.lang.AssertionError
 class InAppReviewInteractionLauncherTest : TestCase() {
 
     // Context of the app under test.
-    private var appContext = InstrumentationRegistry.getInstrumentation().targetContext
+    private lateinit var appContext: Context
+
+    @Before
+    override fun setUp() {
+        super.setUp()
+        appContext = InstrumentationRegistry.getInstrumentation().targetContext
+    }
 
     @Test
     fun testInAppReviewNotSupported() {
@@ -78,6 +85,28 @@ class InAppReviewInteractionLauncherTest : TestCase() {
             "engage com.apptentive#InAppRatingDialog#shown"
         )
     }
+
+//    @Test
+//    fun testWhereEventNull() {
+//        val launcher = InAppReviewInteractionLauncher(MockInAppReviewManagerFactory(MockInAppReviewManager.successful()))
+//        DependencyProvider.register(
+//            MockEngagementContextFactory
+//            {
+//                MockEngagementContext(
+//                    onEngage = { args ->
+//                        addResult(args)
+//                        EngagementResult.InteractionNotShown("No runnable interactions")
+//                    },
+//                )
+//            }
+//        )
+//        launcher.launchInteraction(DependencyProvider.of<EngagementContextFactory>().engagementContext(),
+//            InAppReviewInteraction("In-app"), "In-app Event")
+//
+//
+//        assertResults(EngageArgs(Event("com.apptentive", "InAppRatingDialog","launch"), "In-app"))
+//
+//    }
 
     private fun createEngagementContext(context: Context = appContext, onEngage: EngagementCallback?): EngagementContext {
         val mockEngagementContext = createMockEngagementContext(

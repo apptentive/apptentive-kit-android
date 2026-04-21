@@ -14,10 +14,11 @@ internal interface SurveyModelFactory {
 
 internal class SurveyModelFactoryProvider(
     val context: EngagementContext,
-    val interaction: SurveyInteraction
+    val interaction: SurveyInteraction,
+    val whereEvent: String?,
 ) : Provider<SurveyModelFactory> {
     override fun get(): SurveyModelFactory {
-        return DefaultSurveyModelFactory(context, interaction)
+        return DefaultSurveyModelFactory(context, interaction, whereEvent)
     }
 }
 
@@ -25,7 +26,8 @@ private const val PAGED_SURVEY = "paged"
 
 internal class DefaultSurveyModelFactory(
     private val engagementContext: EngagementContext,
-    private val interaction: SurveyInteraction
+    private val interaction: SurveyInteraction,
+    private val whereEvent: String?,
 ) : SurveyModelFactory {
     @Throws(MissingKeyException::class)
     override fun getSurveyModel(): SurveyModel {
@@ -53,7 +55,8 @@ internal class DefaultSurveyModelFactory(
             disclaimerText = interaction.disclaimerText,
             renderAs = if (interaction.renderAs == PAGED_SURVEY) RenderAs.PAGED else RenderAs.LIST,
             introButtonText = interaction.introButtonText,
-            successButtonText = interaction.successButtonText
+            successButtonText = interaction.successButtonText,
+            whereEvent = whereEvent
         )
     }
 }

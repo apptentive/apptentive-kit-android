@@ -16,6 +16,7 @@ data class PayloadData(
     val method: HttpMethod,
     val mediaType: MediaType?,
     var data: ByteArray,
+    var whereEvent: String? = null,
     @Transient val sidecarData: SidecarData = SidecarData()
 ) {
     fun resolvePath(conversationId: String) = path.replace(":conversation_id", conversationId)
@@ -23,7 +24,7 @@ data class PayloadData(
     override fun toString(): String {
         return "${javaClass.simpleName}(nonce=$nonce, type=$type, tag=$tag, token=$token, " +
             "conversationId = $conversationId, isEncrypted=$isEncrypted, mediaType=$mediaType, " +
-            "dataFilePath=${sidecarData.dataFilePath}, data=${data.size} bytes)"
+            "dataFilePath=${sidecarData.dataFilePath}, data=${data.size} bytes, whereEvent=$whereEvent )"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -43,6 +44,7 @@ data class PayloadData(
         if (mediaType != other.mediaType) return false
         if (sidecarData != other.sidecarData) return false
         if (!data.contentEquals(other.data)) return false
+        if (whereEvent != other.whereEvent) return false
 
         return true
     }
@@ -59,6 +61,7 @@ data class PayloadData(
         result = 31 * result + mediaType.hashCode()
         result = 31 * result + sidecarData.hashCode()
         result = 31 * result + data.contentHashCode()
+        result = 31 * result + whereEvent.hashCode()
         return result
     }
 }

@@ -9,7 +9,7 @@ import java.util.Queue
 class MockInteractionEngagement : InteractionEngagement {
     private val results: Queue<EngagementResult> = LinkedList()
 
-    override fun engage(context: EngagementContext, interaction: Interaction): EngagementResult {
+    override fun engage(context: EngagementContext, interaction: Interaction, whereEvent: String?): EngagementResult {
         return results.poll() ?: throw IllegalStateException("No more results")
     }
 

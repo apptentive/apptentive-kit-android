@@ -14,7 +14,8 @@ data class EngageArgs(
     val interactionId: String? = null,
     val data: Map<String, Any?>? = null,
     val customData: Map<String, Any?>? = null,
-    val extendedData: List<ExtendedData>? = null
+    val extendedData: List<ExtendedData>? = null,
+    val whereEvent: String? = null,
 )
 
 typealias EngagementCallback = (EngageArgs) -> EngagementResult
@@ -36,7 +37,8 @@ class MockEngagementContext(
             data: Map<String, Any?>?,
             customData: Map<String, Any?>?,
             extendedData: List<ExtendedData>?,
-            interactionResponses: Map<String, Set<InteractionResponse>>?
+            interactionResponses: Map<String, Set<InteractionResponse>>?,
+            whereEvent: String?
         ): EngagementResult {
             return onEngage?.invoke(
                 EngageArgs(
@@ -44,14 +46,16 @@ class MockEngagementContext(
                     interactionId,
                     data,
                     customData,
-                    extendedData
+                    extendedData,
+                    whereEvent
                 )
             ) ?: EngagementResult.InteractionNotShown("No runnable interactions")
         }
 
         override fun engage(
             context: EngagementContext,
-            invocations: List<Invocation>
+            invocations: List<Invocation>,
+            whereEvent: String?,
         ): EngagementResult {
             return onInvoke?.invoke(invocations) ?: EngagementResult.InteractionNotShown("No runnable interactions")
         }

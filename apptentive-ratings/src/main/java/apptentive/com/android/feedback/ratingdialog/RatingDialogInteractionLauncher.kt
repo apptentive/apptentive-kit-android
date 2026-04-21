@@ -10,9 +10,10 @@ import apptentive.com.android.util.LogTags.INTERACTIONS
 internal class RatingDialogInteractionLauncher : AndroidViewInteractionLauncher<RatingDialogInteraction>() {
     override fun launchInteraction(
         engagementContext: EngagementContext,
-        interaction: RatingDialogInteraction
+        interaction: RatingDialogInteraction,
+        whereEvent: String?,
     ) {
-        super.launchInteraction(engagementContext, interaction)
+        super.launchInteraction(engagementContext, interaction, whereEvent)
         Log.i(INTERACTIONS, "Rating Dialog interaction launched with title: ${interaction.title}")
         Log.v(INTERACTIONS, "Rating Dialog interaction data: $interaction")
 

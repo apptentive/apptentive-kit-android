@@ -18,7 +18,8 @@ internal typealias RecordEventCallback = (
     interactionId: String?,
     data: Map<String, Any?>?,
     customData: Map<String, Any?>?,
-    extendedData: List<ExtendedData>?
+    extendedData: List<ExtendedData>?,
+    whereEvent: String?,
 ) -> Unit
 
 internal typealias RecordInteractionCallback = (interaction: Interaction) -> Unit
@@ -45,7 +46,8 @@ internal data class DefaultEngagement(
         data: Map<String, Any?>?,
         customData: Map<String, Any?>?,
         extendedData: List<ExtendedData>?,
-        interactionResponses: Map<String, Set<InteractionResponse>>?
+        interactionResponses: Map<String, Set<InteractionResponse>>?,
+        whereEvent: String?,
     ): EngagementResult {
         Log.i(EVENT, "Engaged event: $event")
         Log.d(EVENT, "Engaged event interaction ID: $interactionId")
@@ -53,7 +55,7 @@ internal data class DefaultEngagement(
         eventNotificationSubject.value =
             EventNotification(event.name, event.vendor, event.interaction, interactionId)
 
-        recordEvent(event, interactionId, data, customData, extendedData)
+        recordEvent(event, interactionId, data, customData, extendedData, whereEvent)
 
         if (interactionResponses != null) recordInteractionResponses(interactionResponses)
 
@@ -72,14 +74,15 @@ internal data class DefaultEngagement(
             Log.d(EVENT, "Event '${event.name}' throttled")
             return EngagementResult.InteractionNotShown("Event '${event.name}', '${interaction.type.name}' throttled")
         } else {
-            return engage(context, interaction)
+            return engage(context, interaction, event.fullName)
         }
     }
 
     // This engage is only used for Note actions
     override fun engage(
         context: EngagementContext,
-        invocations: List<Invocation>
+        invocations: List<Invocation>,
+        whereEvent: String?,
     ): EngagementResult {
         val interactionData = interactionDataProvider.getInteractionData(invocations)
         if (interactionData == null) {
@@ -93,7 +96,7 @@ internal data class DefaultEngagement(
             return EngagementResult.Error("Cannot find module to handle '$interactionData'")
         }
 
-        return engage(context, interaction)
+        return engage(context, interaction, whereEvent)
     }
 
     override fun engageToRecordCurrentAnswer(
@@ -111,9 +114,10 @@ internal data class DefaultEngagement(
 
     private fun engage(
         context: EngagementContext,
-        interaction: Interaction
+        interaction: Interaction,
+        whereEvent: String?,
     ): EngagementResult {
-        val result = interactionEngagement.engage(context, interaction)
+        val result = interactionEngagement.engage(context, interaction, whereEvent)
         if (result is EngagementResult.InteractionShown) {
             recordInteraction(interaction)
         }

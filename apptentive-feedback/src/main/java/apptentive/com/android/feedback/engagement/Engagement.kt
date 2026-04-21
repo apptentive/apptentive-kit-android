@@ -20,10 +20,11 @@ interface Engagement {
         data: Map<String, Any?>? = null,
         customData: Map<String, Any?>? = null,
         extendedData: List<ExtendedData>? = null,
-        interactionResponses: Map<String, Set<InteractionResponse>>? = null
+        interactionResponses: Map<String, Set<InteractionResponse>>? = null,
+        whereEvent: String? = null
     ): EngagementResult
 
-    fun engage(context: EngagementContext, invocations: List<Invocation>): EngagementResult
+    fun engage(context: EngagementContext, invocations: List<Invocation>, whereEvent: String?): EngagementResult
 
     fun engageToRecordCurrentAnswer(interactionResponses: Map<String, Set<InteractionResponse>>, reset: Boolean)
 
@@ -41,14 +42,16 @@ internal class NullEngagement : Engagement {
         data: Map<String, Any?>?,
         customData: Map<String, Any?>?,
         extendedData: List<ExtendedData>?,
-        interactionResponses: Map<String, Set<InteractionResponse>>?
+        interactionResponses: Map<String, Set<InteractionResponse>>?,
+        whereEvent: String?,
     ): EngagementResult {
         return EngagementResult.Error("Unable to engage event $event: SDK is not fully initialized")
     }
 
     override fun engage(
         context: EngagementContext,
-        invocations: List<Invocation>
+        invocations: List<Invocation>,
+        whereEvent: String?,
     ): EngagementResult {
         return EngagementResult.Error("Unable to engage invocations: SDK is not fully initialized")
     }

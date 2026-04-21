@@ -59,7 +59,7 @@ class TextModalViewModelTest : TestCase() {
 
     @Before
     fun start() {
-        DependencyProvider.register(TextModalInteractionProvider(interaction))
+        DependencyProvider.register(TextModalInteractionProvider(interaction, ""))
     }
 
     //region Interaction
@@ -96,7 +96,8 @@ class TextModalViewModelTest : TestCase() {
                     "label" to ACTION_LABEL_INTERACTION,
                     "position" to 0,
                     "invoked_interaction_id" to targetInteractionId
-                )
+                ),
+                whereEvent = ""
             ),
             // dismiss UI
             RESULT_DISMISS_UI
@@ -136,7 +137,8 @@ class TextModalViewModelTest : TestCase() {
                     "label" to ACTION_LABEL_INTERACTION,
                     "position" to 0,
                     "invoked_interaction_id" to null
-                )
+                ),
+                whereEvent = "",
             ),
             // dismiss UI
             RESULT_DISMISS_UI
@@ -275,7 +277,8 @@ class TextModalViewModelTest : TestCase() {
                     "action_id" to ACTION_ID_DISMISS,
                     "label" to ACTION_LABEL_DISMISS,
                     "position" to 2
-                )
+                ),
+                whereEvent = ""
             ),
             // dismiss UI
             RESULT_DISMISS_UI
@@ -306,6 +309,56 @@ class TextModalViewModelTest : TestCase() {
                 interactionId = interactionId
             )
         )
+    }
+
+    @Test
+    fun testCancel_whereEventIsNullForCancelCodePoint() {
+        var capturedCodePoint: String? = null
+        var capturedWhereEvent: String? = "not_null"
+        DependencyProvider.register(
+            MockEngagementContextFactory {
+                createEngagementContext(onEngage = { args ->
+                    capturedCodePoint = args.event.name
+                    capturedWhereEvent = args.whereEvent
+                    EngagementResult.InteractionNotShown("")
+                })
+            }
+        )
+        val viewModel = createViewModel()
+        viewModel.onCancel()
+        assertThat(capturedCodePoint).isEqualTo("cancel")
+        assertThat(capturedWhereEvent).isNull()
+    }
+
+    @Test
+    fun testOtherCodePoints_whereEventIsPassedAsIs() {
+        val testWhereEvent = "my_where_event"
+        val codePoints = listOf("interaction", "event", "dismiss")
+        val captured = mutableListOf<Pair<String?, String?>>()
+        DependencyProvider.register(
+            MockEngagementContextFactory {
+                createEngagementContext(onEngage = { args ->
+                    captured.add(args.event.name to args.whereEvent)
+                    EngagementResult.InteractionNotShown("")
+                })
+            }
+        )
+        val viewModel = createViewModel()
+        val method = viewModel.javaClass.getDeclaredMethod(
+            "engageCodePoint",
+            String::class.java,
+            Map::class.java,
+            String::class.java,
+            String::class.java
+        )
+        method.isAccessible = true
+        for (codePoint in codePoints) {
+            method.invoke(viewModel, codePoint, null, null, testWhereEvent)
+        }
+        for ((cp, we) in captured) {
+            assertThat(codePoints).contains(cp)
+            assertThat(we).isEqualTo(testWhereEvent)
+        }
     }
 
     //endregion

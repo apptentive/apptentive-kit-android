@@ -10,7 +10,8 @@ import apptentive.com.android.util.LogTags.INTERACTIONS
 internal class AppStoreRatingInteractionLauncher : InteractionLauncher<AppStoreRatingInteraction> {
     override fun launchInteraction(
         engagementContext: EngagementContext,
-        interaction: AppStoreRatingInteraction
+        interaction: AppStoreRatingInteraction,
+        whereEvent: String?,
     ) {
         val customAppStoreURL = ApptentiveKitSDKState.getSharedPrefDataStore()
             .getNullableString(SharedPrefConstants.CUSTOM_STORE_URL, SharedPrefConstants.CUSTOM_STORE_URL_KEY, null)

@@ -703,7 +703,8 @@ class ApptentiveDefaultClient(
         interactionId: String?,
         data: Map<String, Any?>?,
         customData: Map<String, Any?>?,
-        extendedData: List<ExtendedData>?
+        extendedData: List<ExtendedData>?,
+        whereEvent: String? = null,
     ) {
         // store event locally
         conversationManager.recordEvent(event)
@@ -719,7 +720,8 @@ class ApptentiveDefaultClient(
                     interactionId = interactionId,
                     data = data,
                     customData = customData,
-                    extendedData = extendedData
+                    extendedData = extendedData,
+                    whereEvent = whereEvent
                 )
             )
         } else {

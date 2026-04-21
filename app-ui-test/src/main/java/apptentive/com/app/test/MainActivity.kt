@@ -85,14 +85,16 @@ class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
                     data: Map<String, Any?>?,
                     customData: Map<String, Any?>?,
                     extendedData: List<ExtendedData>?,
-                    interactionResponses: Map<String, Set<InteractionResponse>>?
+                    interactionResponses: Map<String, Set<InteractionResponse>>?,
+                    whereEvent: String?
                 ): EngagementResult {
                     return EngagementResult.InteractionNotShown("No runnable interactions")
                 }
 
                 override fun engage(
                     context: EngagementContext,
-                    invocations: List<Invocation>
+                    invocations: List<Invocation>,
+                    whereEvent: String?,
                 ): EngagementResult {
                     return EngagementResult.InteractionNotShown("No runnable interactions")
                 }

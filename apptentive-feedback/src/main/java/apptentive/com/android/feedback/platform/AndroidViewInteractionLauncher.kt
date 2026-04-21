@@ -13,11 +13,12 @@ import apptentive.com.android.util.InternalUseOnly
  */
 @InternalUseOnly
 abstract class AndroidViewInteractionLauncher<in T : Interaction> : InteractionLauncher<T> {
-    override fun launchInteraction(engagementContext: EngagementContext, interaction: T) {
+    override fun launchInteraction(engagementContext: EngagementContext, interaction: T, whereEvent: String?) {
         // every interaction which has a user interface must engage internal "launch" event before showing UI
         engagementContext.engage(
             Event.internal(InternalEvent.EVENT_LAUNCH.labelName, interaction.type),
-            interaction.id
+            interaction.id,
+            whereEvent = whereEvent,
         )
     }
 }

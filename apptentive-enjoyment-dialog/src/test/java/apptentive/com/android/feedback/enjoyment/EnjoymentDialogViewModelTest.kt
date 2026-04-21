@@ -32,7 +32,7 @@ class EnjoymentDialogViewModelTest : TestCase() {
             verticalMargins = null
         )
 
-        DependencyProvider.register(EnjoymentDialogInteractionProvider(interaction))
+        DependencyProvider.register(EnjoymentDialogInteractionProvider(interaction, "love_dialog_event"))
         DependencyProvider.register(
             MockEngagementContextFactory
             {
@@ -41,9 +41,6 @@ class EnjoymentDialogViewModelTest : TestCase() {
                         addResult(args)
                         EngagementResult.InteractionNotShown("No runnable interactions")
                     },
-                    onSendPayload = { payload ->
-                        throw AssertionError("We didn't expect any payloads here but this one slipped though: $payload")
-                    }
                 )
             }
         )
@@ -53,17 +50,17 @@ class EnjoymentDialogViewModelTest : TestCase() {
 
         viewModel.onYesButton()
         assertResults(
-            createCall(CODE_POINT_YES, interactionId = interactionId)
+            createCall(CODE_POINT_YES, interactionId = interactionId, whereEvent = "love_dialog_event")
         )
 
         viewModel.onNoButton()
         assertResults(
-            createCall(CODE_POINT_NO, interactionId = interactionId)
+            createCall(CODE_POINT_NO, interactionId = interactionId, whereEvent = "love_dialog_event")
         )
 
         viewModel.onDismiss()
         assertResults(
-            createCall(CODE_POINT_DISMISS, interactionId = interactionId)
+            createCall(CODE_POINT_DISMISS, interactionId = interactionId, whereEvent = "love_dialog_event")
         )
 
         viewModel.onCancel()
@@ -72,10 +69,11 @@ class EnjoymentDialogViewModelTest : TestCase() {
         )
     }
 
-    private fun createCall(codePoint: String, interactionId: String) =
+    private fun createCall(codePoint: String, interactionId: String, whereEvent: String? = null) =
         EngageArgs(
             event = Event.internal(codePoint, interaction = "EnjoymentDialog"),
-            interactionId = interactionId
+            interactionId = interactionId,
+            whereEvent = whereEvent
         )
 }
 

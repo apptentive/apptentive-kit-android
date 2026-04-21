@@ -15,7 +15,8 @@ private const val ANSWERED_QUESTION = "answered"
 internal class SurveyResponsePayload(
     nonce: String = generateUUID(),
     val id: String,
-    val answers: Map<String, AnswerStateData>
+    val answers: Map<String, AnswerStateData>,
+    val whereEvent: String?,
 ) : ConversationPayload(nonce) {
 
     data class AnswerStateData(
@@ -38,10 +39,12 @@ internal class SurveyResponsePayload(
     companion object {
         fun fromAnswers(
             id: InteractionId,
-            answers: Map<String, SurveyAnswerState>
+            answers: Map<String, SurveyAnswerState>,
+            whereEvent: String?,
         ) = SurveyResponsePayload(
             id = id,
-            answers = buildAnswerStateData(answers)
+            answers = buildAnswerStateData(answers),
+            whereEvent = whereEvent,
         )
 
         private fun buildAnswerStateData(answers: Map<String, SurveyAnswerState>) =

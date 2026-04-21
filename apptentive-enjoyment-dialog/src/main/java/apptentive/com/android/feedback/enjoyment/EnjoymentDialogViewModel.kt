@@ -9,6 +9,7 @@ import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getEngagementContext
 import apptentive.com.android.feedback.utils.getInteractionBackup
+import apptentive.com.android.feedback.utils.getWhereEventBackup
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.platform.SharedPrefConstants.FAN_SIGNAL_TIME_STAMP
 import apptentive.com.android.platform.SharedPrefConstants.SDK_CORE_INFO
@@ -26,11 +27,13 @@ internal class EnjoymentDialogViewModel : ViewModel() {
         null
     }
 
-    private val interaction: EnjoymentDialogInteraction = try {
+    private val model: EnjoymentDialogModel = try {
         DependencyProvider.of<EnjoymentDialogInteractionFactory>().getEnjoymentDialogInteraction()
     } catch (exception: Exception) {
-        getInteractionBackup()
+        EnjoymentDialogModel(getInteractionBackup(), getWhereEventBackup())
     }
+
+    val interaction = model.interaction
 
     val title = interaction.title
     val yesText = interaction.yesText
@@ -58,10 +61,10 @@ internal class EnjoymentDialogViewModel : ViewModel() {
 
     fun onCancel() {
         Log.i(INTERACTIONS, "Love Dialog cancelled")
-        engageCodePoint(CODE_POINT_CANCEL)
+        engageCodePoint(CODE_POINT_CANCEL, null)
     }
 
-    private fun engageCodePoint(name: String) {
+    private fun engageCodePoint(name: String, whereEvent: String? = model.whereEvent) {
         // capture the time stamp of LD response
         if (name == CODE_POINT_NO || name == CODE_POINT_YES) {
             sharedPrefDataStore.putString(SDK_CORE_INFO, FAN_SIGNAL_TIME_STAMP, getTimeSeconds().toString())
@@ -69,7 +72,8 @@ internal class EnjoymentDialogViewModel : ViewModel() {
         context?.executors?.state?.execute {
             context.engage(
                 event = Event.internal(name, interaction.type),
-                interactionId = interaction.id
+                interactionId = interaction.id,
+                whereEvent = whereEvent,
             )
         }
     }

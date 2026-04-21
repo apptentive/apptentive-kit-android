@@ -17,9 +17,11 @@ internal class InAppReviewInteractionLauncher(private val inAppReviewManagerFact
     AndroidViewInteractionLauncher<InAppReviewInteraction>() {
     override fun launchInteraction(
         engagementContext: EngagementContext,
-        interaction: InAppReviewInteraction
+        interaction: InAppReviewInteraction,
+        whereEvent: String?,
     ) {
-        super.launchInteraction(engagementContext, interaction)
+        // DO NOT RECORD WHERE EVENT
+        super.launchInteraction(engagementContext, interaction, null)
         engagementContext.engage(Event.internal(InternalEvent.EVENT_REQUEST.labelName, interaction.type), interaction.id)
         createReviewManagerWithARetry(engagementContext, interaction, 1)
     }

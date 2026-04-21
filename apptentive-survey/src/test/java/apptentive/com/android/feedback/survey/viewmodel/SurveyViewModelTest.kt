@@ -576,6 +576,72 @@ class SurveyViewModelTest : TestCase() {
         assertEquals(expectedValidQuestions, validAnsweredQuestions)
     }
 
+    @Test
+    fun submitEvent_passesWhereEvent_andOthersDoNot() {
+        val whereEvent = "my_where_event"
+        val interactionId = "interaction_id"
+        val called = mutableListOf<Triple<String, String, String?>>()
+        val model = SurveyModel(
+            interactionId = interactionId,
+            questionSet = emptyList(),
+            name = "Survey",
+            surveyIntroduction = "Intro",
+            submitText = "Submit",
+            requiredText = "Required",
+            validationError = "Validation error",
+            showSuccessMessage = true,
+            successMessage = "Success!",
+            closeConfirmTitle = "Close?",
+            closeConfirmMessage = "All changes lost",
+            closeConfirmCloseText = "close",
+            closeConfirmBackText = "back",
+            termsAndConditionsLinkText = SpannableString("T&C"),
+            disclaimerText = "Disclaimer",
+            introButtonText = "Intro",
+            successButtonText = "Thanks!",
+            renderAs = RenderAs.LIST,
+            whereEvent = whereEvent
+        )
+        val mockExecutors = mockExecutors
+        val viewModel = SurveyViewModel(
+            model = model,
+            executors = mockExecutors,
+            onSubmit = {
+                called.add(Triple("submit", interactionId, whereEvent))
+            },
+            recordCurrentAnswer = {},
+            resetCurrentAnswer = {},
+            onCancel = {
+                called.add(Triple("cancel", interactionId, null))
+            },
+            onCancelPartial = {
+                called.add(Triple("cancel_partial", interactionId, null))
+            },
+            onClose = {
+                called.add(Triple("close", interactionId, null))
+            },
+            onBackToSurvey = {
+                called.add(Triple("continue_partial", interactionId, null))
+            }
+        )
+        // Simulate submit
+        viewModel.submitSurvey()
+        // Simulate cancel
+        viewModel.exit(true)
+        // Simulate cancel partial
+        viewModel.exit(false)
+        // Simulate close
+        viewModel.exit(false, true)
+        // Simulate continue partial
+        viewModel.onBackToSurveyFromConfirmationDialog()
+        // Check submit passes whereEvent, others do not
+        assertThat(called[0]).isEqualTo(Triple("submit", interactionId, whereEvent))
+        assertThat(called[1]).isEqualTo(Triple("cancel", interactionId, null))
+        assertThat(called[2]).isEqualTo(Triple("cancel_partial", interactionId, null))
+        assertThat(called[3]).isEqualTo(Triple("close", interactionId, null))
+        assertThat(called[4]).isEqualTo(Triple("continue_partial", interactionId, null))
+    }
+
     private fun createViewModelForExitConfirmationTest(): SurveyViewModel {
         val surveyValidationErrorState = SurveySubmitMessageState(
             message = "Survey is not valid",
@@ -650,7 +716,8 @@ class SurveyViewModelTest : TestCase() {
             disclaimerText = "Disclaimer text",
             introButtonText = "INTRO",
             successButtonText = "THANKS!",
-            renderAs = RenderAs.LIST
+            renderAs = RenderAs.LIST,
+            whereEvent = "",
         )
         return SurveyViewModel(
             model = model,

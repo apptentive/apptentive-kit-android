@@ -127,5 +127,6 @@ internal fun createSurveyModel(
     disclaimerText = "Disclaimer text",
     introButtonText = "START",
     successButtonText = "THANK YOU",
-    renderAs = renderAs
+    renderAs = renderAs,
+    whereEvent = "",
 )

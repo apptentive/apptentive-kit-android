@@ -43,3 +43,19 @@ inline fun <reified T> getInteractionBackup(): T {
         throw exception
     }
 }
+
+fun getWhereEventBackup(): String? {
+    val whereEvent = ApptentiveKitSDKState.getSharedPrefDataStore().getNullableString(
+        SharedPrefConstants.APPTENTIVE,
+        SharedPrefConstants.WHERE_EVENT_BACKUP,
+    )
+    return whereEvent
+}
+
+fun saveWhereEventBackup(event: String) {
+    ApptentiveKitSDKState.getSharedPrefDataStore().putString(
+        SharedPrefConstants.APPTENTIVE,
+        SharedPrefConstants.WHERE_EVENT_BACKUP,
+        event
+    )
+}

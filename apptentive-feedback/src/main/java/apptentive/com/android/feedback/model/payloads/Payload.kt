@@ -31,7 +31,7 @@ abstract class Payload(
         } else {
             val jsonObject = this.toJsonObject()
             embeddedToken?.let { jsonObject.put("token", it) }
-            return jsonObject.toString()
+            jsonObject.toString()
         }
     }
 
@@ -61,6 +61,10 @@ abstract class Payload(
             dataBytes = byteArrayOf()
         }
 
+        val whereEvent = if (this is EventPayload) {
+            this.whereEvent
+        } else null
+
         return PayloadData(
             nonce = nonce,
             type = getPayloadType(),
@@ -72,7 +76,8 @@ abstract class Payload(
             method = getHttpMethod(),
             mediaType = getContentType(parts, Payload.BOUNDARY, isEncrypted),
             data = dataBytes,
-            sidecarData = attachmentData
+            whereEvent = whereEvent,
+            sidecarData = attachmentData,
         )
     }
 

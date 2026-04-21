@@ -17,6 +17,7 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionRespon
 import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getEngagementContext
 import apptentive.com.android.feedback.utils.HtmlWrapper.linkifiedHTMLString
 import apptentive.com.android.feedback.utils.getInteractionBackup
+import apptentive.com.android.feedback.utils.getWhereEventBackup
 import apptentive.com.android.ui.toGravity
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.INTERACTIONS
@@ -35,7 +36,6 @@ internal class TextModalViewModel : ViewModel() {
         DependencyProvider.of<TextModalModelFactory>().getTextModalModel()
     } catch (exception: Exception) {
         val interaction: TextModalInteraction = getInteractionBackup()
-
         TextModalModel(
             id = interaction.id,
             title = interaction.title,
@@ -45,7 +45,8 @@ internal class TextModalViewModel : ViewModel() {
                 DefaultTextModalActionConverter().convert(action)
             },
             position = interaction.position,
-            verticalMargins = interaction.verticalMargins
+            verticalMargins = interaction.verticalMargins,
+            whereEvent = getWhereEventBackup(),
         )
     }
 
@@ -108,7 +109,8 @@ internal class TextModalViewModel : ViewModel() {
     private fun engageCodePoint(
         codePoint: String,
         data: Map<String, Any?>? = null,
-        actionId: String? = null
+        actionId: String? = null,
+        whereEvent: String? = null,
     ) {
         context?.engage(
             event = Event.internal(codePoint, interaction = "TextModal"),
@@ -116,7 +118,8 @@ internal class TextModalViewModel : ViewModel() {
             data = data,
             interactionResponses = actionId?.let {
                 mapOf(interaction.id to setOf(InteractionResponse.IdResponse(it)))
-            }
+            },
+            whereEvent = whereEvent
         )
     }
 
@@ -127,7 +130,7 @@ internal class TextModalViewModel : ViewModel() {
                     Log.i(INTERACTIONS, "Note dismissed")
                     // engage event
                     val data = createEventData(action, index)
-                    engageCodePoint(CODE_POINT_DISMISS, data, action.id)
+                    engageCodePoint(CODE_POINT_DISMISS, data, action.id, interaction.whereEvent)
                 }
             }
         }
@@ -137,11 +140,11 @@ internal class TextModalViewModel : ViewModel() {
                     Log.i(INTERACTIONS, "Note action invoked")
 
                     // run invocation
-                    val result = context.engage(action.invocations)
+                    val result = context.engage(action.invocations, interaction.whereEvent)
 
                     // engage event
                     val data = createEventData(action, index, result)
-                    engageCodePoint(CODE_POINT_INTERACTION, data, action.id)
+                    engageCodePoint(CODE_POINT_INTERACTION, data, action.id, interaction.whereEvent)
                 }
             }
         }

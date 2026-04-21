@@ -17,6 +17,7 @@ import apptentive.com.android.feedback.survey.model.SurveyQuestion
 import apptentive.com.android.feedback.survey.model.SurveyResponsePayload
 import apptentive.com.android.feedback.survey.viewmodel.SurveyViewModel
 import apptentive.com.android.feedback.utils.getInteractionBackup
+import apptentive.com.android.feedback.utils.getWhereEventBackup
 import apptentive.com.android.util.MissingKeyException
 import kotlin.jvm.Throws
 
@@ -40,7 +41,8 @@ internal fun createSurveyViewModel(
         createSurveyViewModel(
             DefaultSurveyModelFactory(
                 context,
-                getInteractionBackup()
+                getInteractionBackup(),
+                getWhereEventBackup(),
             ).getSurveyModel(),
             context
         )
@@ -56,13 +58,14 @@ private fun createSurveyViewModel(
     onSubmit = { answers ->
 
         // send response
-        context.enqueuePayload(SurveyResponsePayload.fromAnswers(surveyModel.interactionId, answers))
+        context.enqueuePayload(SurveyResponsePayload.fromAnswers(surveyModel.interactionId, answers, surveyModel.whereEvent))
 
         // engage 'submit' event
         context.engage(
             event = Event.internal(EVENT_SUBMIT, interaction = InteractionType.Survey),
             interactionId = surveyModel.interactionId,
-            interactionResponses = mapAnswersToResponses(answers)
+            interactionResponses = mapAnswersToResponses(answers),
+            whereEvent = surveyModel.whereEvent
         )
     },
     recordCurrentAnswer = { answers ->

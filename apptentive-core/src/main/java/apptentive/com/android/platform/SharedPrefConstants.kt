@@ -6,6 +6,7 @@ import apptentive.com.android.util.InternalUseOnly
 object SharedPrefConstants {
     const val APPTENTIVE = "APPTENTIVE"
     const val INTERACTION_BACKUP = "interaction_backup"
+    const val WHERE_EVENT_BACKUP = "where_event_backup"
 
     const val REGISTRATION_INFO = "com.apptentive.sdk.registrationinfo"
     const val APPTENTIVE_KEY_HASH = "apptentive_key_hash"

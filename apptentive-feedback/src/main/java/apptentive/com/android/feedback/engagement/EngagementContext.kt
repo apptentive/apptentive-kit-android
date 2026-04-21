@@ -35,7 +35,8 @@ open class EngagementContext(
         data: Map<String, Any?>? = null,
         customData: Map<String, Any?>? = null,
         extendedData: List<ExtendedData>? = null,
-        interactionResponses: Map<String, Set<InteractionResponse>>? = null
+        interactionResponses: Map<String, Set<InteractionResponse>>? = null,
+        whereEvent: String? = null
     ) = engagement.engage(
         context = this,
         event = event,
@@ -43,12 +44,14 @@ open class EngagementContext(
         data = data,
         customData = customData,
         extendedData = extendedData,
-        interactionResponses = interactionResponses
+        interactionResponses = interactionResponses,
+        whereEvent = whereEvent,
     )
 
-    fun engage(invocations: List<InvocationData>) = engagement.engage(
+    fun engage(invocations: List<InvocationData>, whereEvent: String?) = engagement.engage(
         context = this,
-        invocations = invocations.map(InvocationConverter::convert)
+        invocations = invocations.map(InvocationConverter::convert),
+        whereEvent = whereEvent
     )
 
     fun engageToRecordCurrentAnswer(interactionResponses: Map<String, Set<InteractionResponse>>, reset: Boolean = false) {

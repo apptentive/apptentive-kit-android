@@ -9,6 +9,7 @@ import apptentive.com.android.feedback.platform.AndroidViewInteractionLauncher
 import apptentive.com.android.feedback.survey.SurveyActivity
 import apptentive.com.android.feedback.survey.SurveyModelFactoryProvider
 import apptentive.com.android.feedback.utils.saveInteractionBackup
+import apptentive.com.android.feedback.utils.saveWhereEventBackup
 import apptentive.com.android.ui.startViewModelActivity
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.INTERACTIONS
@@ -17,16 +18,20 @@ import apptentive.com.android.util.LogTags.INTERACTIONS
 internal class SurveyInteractionLauncher : AndroidViewInteractionLauncher<SurveyInteraction>() {
     override fun launchInteraction(
         engagementContext: EngagementContext,
-        interaction: SurveyInteraction
+        interaction: SurveyInteraction,
+        whereEvent: String?,
     ) {
-        super.launchInteraction(engagementContext, interaction)
+        super.launchInteraction(engagementContext, interaction, whereEvent)
 
         Log.i(INTERACTIONS, "Survey interaction launched with title: ${interaction.name}")
         Log.v(INTERACTIONS, "Survey interaction data: $interaction")
 
         saveInteractionBackup(interaction)
+        whereEvent?.let { event ->
+            saveWhereEventBackup(event)
+        }
 
-        DependencyProvider.register(SurveyModelFactoryProvider(engagementContext, interaction))
+        DependencyProvider.register(SurveyModelFactoryProvider(engagementContext, interaction, whereEvent))
 
         launcSurveyWithARetry(engagementContext, interaction, 1)
     }

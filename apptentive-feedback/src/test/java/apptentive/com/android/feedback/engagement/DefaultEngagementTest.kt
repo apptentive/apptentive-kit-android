@@ -58,7 +58,8 @@ class DefaultEngagementTest : TestCase() {
         interactionId: String?,
         data: Map<String, Any?>?,
         customData: Map<String, Any?>?,
-        extendedData: List<ExtendedData>?
+        extendedData: List<ExtendedData>?,
+        whereEvent: String?,
     ) {
         addResult("Event: ${event.fullName}")
     }

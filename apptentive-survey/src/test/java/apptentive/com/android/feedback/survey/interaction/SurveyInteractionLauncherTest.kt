@@ -10,8 +10,10 @@ import apptentive.com.android.feedback.conversation.ConversationCredentialProvid
 import apptentive.com.android.feedback.conversation.MockConversationCredential
 import apptentive.com.android.feedback.engagement.EngageArgs
 import apptentive.com.android.feedback.engagement.EngagementCallback
+import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.MockEngagementContext
+import apptentive.com.android.feedback.engagement.MockEngagementContextFactory
 import apptentive.com.android.feedback.engagement.PayloadSenderCallback
 import apptentive.com.android.feedback.survey.SurveyModelFactory
 import apptentive.com.android.feedback.survey.SurveyModelFactoryProvider
@@ -95,6 +97,48 @@ class SurveyInteractionLauncherTest : TestCase() {
         )
     }
 
+    @Test
+    fun `launchInteraction always passes whereEvent as-is`() {
+        val launcher = SurveyInteractionLauncher()
+        DependencyProvider.register<EngagementContextFactory>(
+            MockEngagementContextFactory
+            {
+                createEngagementContext()
+            }
+        )
+        try {
+            launcher.launchInteraction(
+                DependencyProvider.of<EngagementContextFactory>().engagementContext(),
+                createSurveyInteraction(), "survey_event"
+            )
+        } catch (e: Exception) {
+            // expected - testing only the super.launchInteraction
+        }
+
+        assertResults(EngageArgs(Event("com.apptentive", "Survey", "launch"), "survey", whereEvent = "survey_event"))
+    }
+
+    private fun createSurveyInteraction() = SurveyInteraction(
+        id = "survey",
+        name = "name",
+        description = "description",
+        isRequired = true,
+        requiredText = "requiredText",
+        validationError = "validationError",
+        showSuccessMessage = false,
+        successMessage = "successMessage",
+        closeConfirmTitle = "Close survey?",
+        closeConfirmMessage = "All the changes will be lost",
+        closeConfirmCloseText = "close",
+        closeConfirmBackText = "Back to survey",
+        termsAndConditions = SurveyInteraction.TermsAndConditions("Terms & Conditions", "https://www.google.com"),
+        disclaimerText = "Disclaimer text",
+        introButtonText = "START",
+        questionSet = listOf(),
+        renderAs = RenderAs.LIST.name,
+        successButtonText = "THANK YOU"
+    )
+
     private fun createEngagementContext(
         onEngage: EngagementCallback? = null,
         onSendPayload: PayloadSenderCallback? = null
@@ -127,7 +171,8 @@ class SurveyInteractionLauncherTest : TestCase() {
             disclaimerText = "Disclaimer text",
             introButtonText = "START",
             renderAs = RenderAs.LIST,
-            successButtonText = "THANK YOU"
+            successButtonText = "THANK YOU",
+            whereEvent = null
         )
     }
 }

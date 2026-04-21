@@ -15,6 +15,7 @@ internal class TextModalModel(
     val actions: List<Action>,
     val position: DialogPosition = DialogPosition.CENTER,
     val verticalMargins: Int? = null,
+    val whereEvent: String?,
 ) : Interaction(id, InteractionType.TextModal) {
 
     override fun toString(): String {
@@ -84,6 +85,7 @@ internal class TextModalModel(
         if (actions != other.actions) return false
         if (position != other.position) return false
         if (verticalMargins != other.verticalMargins) return false
+        if (whereEvent != other.whereEvent) return false
 
         return true
     }
@@ -96,6 +98,7 @@ internal class TextModalModel(
         result = 31 * result + actions.hashCode()
         result = 31 * result + position.hashCode()
         result = 31 * result + (verticalMargins ?: 0)
+        result = 31 * result + whereEvent.hashCode()
         return result
     }
 }

@@ -31,6 +31,7 @@ internal class SurveyModel(
     val closeConfirmMessage: String?,
     val closeConfirmCloseText: String?,
     val closeConfirmBackText: String?,
+    val whereEvent: String?
 ) {
 
     private val pages: MutableMap<String, SurveyPageData> = mutableMapOf()

@@ -196,14 +196,14 @@ internal class SurveyViewModel(
         }
     }
 
-    private fun recordCurrentAnswer() {
+    internal fun recordCurrentAnswer() {
         recordCurrentAnswer(
             model.currentQuestions
                 .associate { it.id to SurveyAnswerState.Answered(it.answer) }
         )
     }
 
-    private fun resetCurrentAnswer() {
+    internal fun resetCurrentAnswer() {
         resetCurrentAnswer(
             model.getAllQuestionsInTheSurvey().associate {
                 it.id to SurveyAnswerState.Answered(it.answer)
@@ -251,7 +251,7 @@ internal class SurveyViewModel(
         }
     }
 
-    private fun submitSurvey() {
+    internal fun submitSurvey() {
         if (!surveySubmitted) {
             shownQuestions.addAll(model.currentQuestions)
             val answeredQuestions = getValidAnsweredQuestions(shownQuestions)
