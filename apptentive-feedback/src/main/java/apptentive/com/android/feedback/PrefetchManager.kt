@@ -6,6 +6,7 @@ import apptentive.com.android.concurrent.ExecutorQueue
 import apptentive.com.android.feedback.platform.DefaultStateMachine
 import apptentive.com.android.feedback.utils.FileStorageUtil
 import apptentive.com.android.feedback.utils.FileUtil
+import apptentive.com.android.feedback.utils.ThrottleUtils
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.PREFETCH_RESOURCES
@@ -55,6 +56,11 @@ object PrefetchManager {
     }
 
     internal fun downloadFile(url: URL, hashCodedFileName: String) {
+        if (!ThrottleUtils.sdkEnabled) {
+            Log.w(PREFETCH_RESOURCES, "SDK is disabled. Payload won't be processed.")
+            return
+        }
+
         downloadExecutor.execute {
             try {
                 val prefetchFile = BitmapFactory.decodeStream(url.openStream())
@@ -81,6 +87,11 @@ object PrefetchManager {
     }
 
     fun getImage(url: String): Bitmap? {
+        if (!ThrottleUtils.sdkEnabled) {
+            Log.w(PREFETCH_RESOURCES, "SDK is disabled. Image won't be downloaded.")
+            return null
+        }
+
         val fileName = getHashCodedFileNameFromUrl(url)
         return if (prefetchedFileURIFromDisk.contains(fileName)) {
             Log.d(PREFETCH_RESOURCES, "Loading image from disk $url")

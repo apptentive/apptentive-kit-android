@@ -20,6 +20,7 @@ import apptentive.com.android.feedback.platform.ApptentiveKitSDKState
 import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getConversationCredentialProvider
 import apptentive.com.android.feedback.utils.FileStorageUtil
 import apptentive.com.android.feedback.utils.FileUtil
+import apptentive.com.android.feedback.utils.ThrottleUtils
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogTags.MESSAGE_CENTER
@@ -129,6 +130,10 @@ class MessageManager(
     }
 
     fun fetchMessages() {
+        if (!ThrottleUtils.sdkEnabled) {
+            Log.d(MESSAGE_CENTER, "Fetch messages skipped: SDK is disabled")
+            return
+        }
         val conversationCredential = getConversationCredentialProvider()
         val token = conversationCredential.conversationToken
         val id = conversationCredential.conversationId
@@ -298,6 +303,10 @@ class MessageManager(
     }
 
     fun downloadAttachment(activity: Activity, message: Message, attachment: Message.Attachment) {
+        if (!ThrottleUtils.sdkEnabled) {
+            Log.d(MESSAGE_CENTER, "Download attachment skipped: SDK is disabled")
+            return
+        }
         val loadingAttachment = message.attachments?.onEach { if (it.id == attachment.id) it.isLoading = true }
         messageRepository.addOrUpdateMessages(listOf(message.copy(attachments = loadingAttachment)))
         messagesSubject.value = messageRepository.getAllMessages()

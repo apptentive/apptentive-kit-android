@@ -16,6 +16,7 @@ import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.feedback.model.payloads.Payload
 import apptentive.com.android.feedback.payload.PayloadSender
 import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getConversationCredentialProvider
+import apptentive.com.android.feedback.utils.ThrottleUtils
 import apptentive.com.android.util.InternalUseOnly
 
 /**
@@ -63,6 +64,7 @@ open class EngagementContext(
     )
 
     fun enqueuePayload(payload: Payload) {
+        if (!ThrottleUtils.sdkEnabled) return
         val conversationCredential = getConversationCredentialProvider()
         payloadSender.enqueuePayload(payload, conversationCredential)
     }

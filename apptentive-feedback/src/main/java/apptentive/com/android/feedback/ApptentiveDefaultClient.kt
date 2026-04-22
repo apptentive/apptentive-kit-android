@@ -237,6 +237,13 @@ class ApptentiveDefaultClient(
             // register engagement context as soon as DefaultEngagement is created to make it available for MessageManager
             addEngagementContextFactory(EngagementContextProvider(engagement, payloadSender, executors))
             messageManager?.onConversationChanged(conversation)
+
+            val serialPayloadSender = payloadSender as? SerialPayloadSender
+            if (conversation.sdkStatus.sdkEnabled) {
+                serialPayloadSender?.resumeSending()
+            } else {
+                serialPayloadSender?.pauseSending()
+            }
         }
         // add an observer to track SDK & AppRelease changes
         conversationManager.sdkAppReleaseUpdate.observe { appReleaseSDKUpdated ->
@@ -519,7 +526,7 @@ class ApptentiveDefaultClient(
     }
 
     override fun canShowInteraction(event: Event): Boolean {
-        return if (this::interactionDataProvider.isInitialized) {
+        return if (this::interactionDataProvider.isInitialized && ThrottleUtils.sdkEnabled) {
             interactionDataProvider.getInteractionData(event) != null
         } else false
     }
@@ -842,6 +849,10 @@ class ApptentiveDefaultClient(
     internal fun getConversationId() = conversationManager.getConversation().conversationId
 
     private fun enqueuePayload(payload: Payload) {
+        if (!conversationManager.getConversation().sdkStatus.sdkEnabled) {
+            Log.w(CONVERSATION, "SDK is disabled. Payload won't be processed.")
+            return
+        }
         if (DependencyProvider.isRegistered<ConversationCredentialProvider>()) {
             payloadSender.enqueuePayload(payload, getConversationCredentialProvider())
         } else {

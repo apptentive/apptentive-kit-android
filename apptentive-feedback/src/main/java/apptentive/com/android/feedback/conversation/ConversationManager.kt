@@ -96,6 +96,11 @@ internal class ConversationManager(
         getSharedPrefDataStore()
             .putString(SDK_CORE_INFO, SDK_VERSION, Constants.SDK_VERSION)
 
+        if (!conversation.sdkStatus.sdkEnabled) {
+            DefaultStateMachine.onEvent(SDKEvent.Error)
+            Log.w(CONVERSATION, "SDK is disabled")
+        }
+
         updateConversationCredentialProvider(
             conversation.conversationId,
             conversation.conversationToken,
@@ -103,6 +108,7 @@ internal class ConversationManager(
         )
 
         ThrottleUtils.interactionCountLimit = conversation.sdkStatus.perSessionInteractionLimit
+        ThrottleUtils.sdkEnabled = conversation.sdkStatus.sdkEnabled
         activeConversationSubject = BehaviorSubject(conversation)
     }
 
@@ -525,6 +531,10 @@ internal class ConversationManager(
 
     @WorkerThread
     private fun saveConversation(conversation: Conversation) {
+        if (!getConversation().sdkStatus.sdkEnabled) {
+            Log.w(CONVERSATION, "SDK is disabled, not saving conversation")
+            return
+        }
         try {
             conversationRepository.saveConversation(conversation)
             Log.d(CONVERSATION, "Conversation saved successfully")
@@ -571,6 +581,10 @@ internal class ConversationManager(
         Log.d(CONVERSATION, "Manifest expiry ${manifest.expiry}")
 
         when {
+            !ThrottleUtils.sdkEnabled -> {
+                Log.w(CONVERSATION, "Fetch engagement manifest is skipped: SDK is disabled")
+            }
+
             isUsingLocalManifest -> {
                 Log.d(CONVERSATION, "Using locally downloaded manifest, skipping the fetch")
             }
@@ -608,7 +622,7 @@ internal class ConversationManager(
                 is Result.Success -> {
                     Log.d(CONVERSATION, "Engagement manifest successfully fetched")
                     Log.v(ENGAGEMENT_MANIFEST, it.data.toString())
-                    val isFreshStart =
+                    val isAppIdEmpty =
                         activeConversationSubject.value.engagementManifest.applicationId == ""
                     if (it.metadata?.notModified == true) {
                         Log.d(CONVERSATION, "No change in engagement manifest, only update expiry")
@@ -624,7 +638,7 @@ internal class ConversationManager(
                     }
                     callback()
                     Log.v(CONVERSATION, "Engagement manifest expiry is ${activeConversationSubject.value.engagementManifest.expiry}")
-                    if (isFreshStart) {
+                    if (isAppIdEmpty) {
                         tryFetchAppStatus()
                     }
                     DependencyProvider.of<AndroidSharedPrefDataStore>()
@@ -682,6 +696,10 @@ internal class ConversationManager(
                             activeConversation.value.logConfiguration()
 
                             ThrottleUtils.interactionCountLimit = it.data.perSessionInteractionLimit
+                            ThrottleUtils.sdkEnabled = it.data.sdkEnabled
+                            if (!it.data.sdkEnabled) {
+                                Log.w(CONFIGURATION, "SDK is disabled by the server (sdk_enabled=false). Network requests and interactions are blocked.")
+                            }
 
                             if (checkStatusForUpdate()) {
                                 tryFetchEngagementManifest()

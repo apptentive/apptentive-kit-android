@@ -4,6 +4,7 @@ import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.util.InternalUseOnly
 
 internal const val DEFAULT_PER_SESSION_INTERACTION_LIMIT = 1
+internal const val DEFAULT_SDK_ENABLED = true
 /**
  * Data container class for Apptentive configuration. Due to serialization limitation, we have unimplemented hibernateUntil flag
  *
@@ -16,6 +17,9 @@ internal const val DEFAULT_PER_SESSION_INTERACTION_LIMIT = 1
  * @param hibernateUntil - not used
  *
  * @param perSessionInteractionLimit - Sets the number of times an interaction can be shown before it is throttled.
+ *
+ * @param sdkEnabled - Kill switch. When `false`, all network requests (except the status endpoint) are
+ * blocked and no interactions will be shown. Defaults to `true`.
  *
  * If `true`, the SDK will collect metrics and send them to the Apptentive API.
  *
@@ -30,6 +34,7 @@ data class SDKStatus(
     val metricsEnabled: Boolean = true,
     val hibernateUntil: TimeInterval? = null,
     val perSessionInteractionLimit: Int = DEFAULT_PER_SESSION_INTERACTION_LIMIT,
+    val sdkEnabled: Boolean = DEFAULT_SDK_ENABLED,
 ) {
     /**
      * Data container class for Apptentive Message Center configuration.

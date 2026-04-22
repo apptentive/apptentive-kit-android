@@ -52,6 +52,11 @@ internal data class DefaultEngagement(
         Log.i(EVENT, "Engaged event: $event")
         Log.d(EVENT, "Engaged event interaction ID: $interactionId")
 
+        if (!ThrottleUtils.sdkEnabled) {
+            Log.d(EVENT, "SDK is disabled, skipping event recording and interaction display for '${event.name}'")
+            return EngagementResult.InteractionNotShown("SDK is disabled")
+        }
+
         eventNotificationSubject.value =
             EventNotification(event.name, event.vendor, event.interaction, interactionId)
 

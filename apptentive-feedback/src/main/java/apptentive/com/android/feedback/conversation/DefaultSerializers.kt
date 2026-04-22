@@ -264,7 +264,9 @@ internal object DefaultSerializers {
                 encoder.encodeDouble(value.lastUpdate)
                 encoder.encodeBoolean(value.metricsEnabled)
                 encoder.encodeNullableDouble(value.hibernateUntil)
+                // Once the backend is ready for interaction throttling, validate the version
                 encoder.encodeInt(value.perSessionInteractionLimit)
+                encoder.encodeBoolean(value.sdkEnabled)
             }
 
             override fun decode(decoder: Decoder): SDKStatus {
@@ -282,6 +284,7 @@ internal object DefaultSerializers {
                 val hibernateUntil = if (!isVersionLessThan610) decoder.decodeNullableDouble() else null
                 // Once the backend is ready for interaction throttling, validate the version
                 val perSessionInteractionLimit = if (!isVersionLessThan720) decoder.decodeInt() else null
+                val sdkEnabled = if (!isVersionLessThan720) decoder.decodeBoolean() else null
 
                 return SDKStatus(
                     expiry = expiry,
@@ -290,6 +293,7 @@ internal object DefaultSerializers {
                     metricsEnabled = metricsEnabled ?: true,
                     hibernateUntil = hibernateUntil,
                     perSessionInteractionLimit = perSessionInteractionLimit ?: 1,
+                    sdkEnabled = sdkEnabled ?: true,
                 )
             }
         }

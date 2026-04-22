@@ -8,7 +8,9 @@ import apptentive.com.android.feedback.engagement.interactions.MockInteractionDa
 import apptentive.com.android.feedback.engagement.interactions.mockEvent
 import apptentive.com.android.feedback.engagement.interactions.mockInteraction
 import apptentive.com.android.feedback.model.payloads.ExtendedData
+import apptentive.com.android.feedback.utils.ThrottleUtils
 import com.google.common.truth.Truth.assertThat
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
@@ -28,6 +30,21 @@ class DefaultEngagementTest : TestCase() {
             recordInteractionResponses = ::recordInteractionResponses,
             recordCurrentAnswer = ::recordCurrentAnswer
         )
+    }
+
+    @After
+    fun cleanup() {
+        ThrottleUtils.sdkEnabled = true
+    }
+
+    @Test
+    fun engageWhenSdkDisabled() {
+        ThrottleUtils.sdkEnabled = false
+
+        val result = engagement.engage(MockEngagementContext(), mockEvent)
+
+        assertThat(result).isInstanceOf(EngagementResult.InteractionNotShown::class.java)
+        assertResults()
     }
 
     @Test

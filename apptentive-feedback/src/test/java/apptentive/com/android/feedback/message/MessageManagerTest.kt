@@ -23,9 +23,11 @@ import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.model.payloads.MessagePayload
 import apptentive.com.android.feedback.payload.MockPayloadSender
 import apptentive.com.android.feedback.utils.MultipartParser
+import apptentive.com.android.feedback.utils.ThrottleUtils
 import apptentive.com.android.serialization.json.JsonConverter
 import apptentive.com.android.util.Result
 import apptentive.com.android.util.generateUUID
+import org.junit.After
 import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -57,6 +59,11 @@ class MessageManagerTest : TestCase() {
             MockMessageRepository(),
         )
         messageManager.onConversationChanged(testConversation)
+    }
+
+    @After
+    fun cleanup() {
+        ThrottleUtils.sdkEnabled = true
     }
 
     @Test
@@ -98,6 +105,13 @@ class MessageManagerTest : TestCase() {
         messageManager.sendMessage("Sending a message")
 
         Assert.assertTrue(messageManager.pollingScheduler.isPolling())
+    }
+
+    @Test
+    fun testNotSentMessagesWhenSdkDisabled() {
+        ThrottleUtils.sdkEnabled = false
+        messageManager.sendMessage("Sending a message")
+        Assert.assertNull(payloadSender.payload)
     }
 
     @Test
@@ -362,6 +376,28 @@ class MessageManagerTest : TestCase() {
         )
 
         assertTrue(decryptedPart2.content.isNotEmpty())
+    }
+
+    @Test
+    fun testFetchMessagesWhenSdkDisabled() {
+        var serviceWasCalled = false
+        val messageManager = MessageManager(
+            object : MessageCenterService {
+                override fun getMessages(conversationToken: String, conversationId: String, lastMessageID: String, callback: (Result<MessageList>) -> Unit) {
+                    serviceWasCalled = true
+                    callback(Result.Success(MessageList(testMessageList, null, null)))
+                }
+                override fun getAttachment(remoteUrl: String, callback: (Result<ByteArray>) -> Unit) {}
+            },
+            MockExecutor(),
+            MockMessageRepository()
+        )
+        messageManager.onConversationChanged(testConversation)
+
+        ThrottleUtils.sdkEnabled = false
+        messageManager.fetchMessages()
+
+        Assert.assertFalse(serviceWasCalled)
     }
 
     @Test

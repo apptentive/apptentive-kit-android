@@ -15,6 +15,7 @@ import apptentive.com.android.feedback.model.CustomData
 import apptentive.com.android.feedback.model.EngagementData
 import apptentive.com.android.feedback.model.EngagementRecord
 import apptentive.com.android.feedback.model.Person
+import apptentive.com.android.feedback.model.SDKStatus
 import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
 import apptentive.com.android.platform.AndroidSharedPrefDataStore
@@ -117,6 +118,14 @@ class SerializersTest {
     fun engagementDataSerializer() {
         checkSerializer(DefaultSerializers.engagementDataSerializer, EngagementData())
         checkSerializer(DefaultSerializers.engagementDataSerializer, mockEngagementData)
+    }
+
+    @Test
+    fun configurationSerializer() {
+        DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore())
+        checkSerializer(DefaultSerializers.configurationSerializer, SDKStatus())
+        checkSerializer(DefaultSerializers.configurationSerializer, SDKStatus(sdkEnabled = false))
+        checkSerializer(DefaultSerializers.configurationSerializer, SDKStatus(sdkEnabled = true, perSessionInteractionLimit = 5))
     }
 
     @Test
