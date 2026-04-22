@@ -1,3 +1,7 @@
+# 2026-04-22 - v7.1.1
+### Fixes
+* <TODO>
+
 # 2026-04-14 - v7.1.0
 ### New Features
 * SDK support for positioning prompts at the top, bottom, or center of the screen
