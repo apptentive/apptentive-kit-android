@@ -48,12 +48,13 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
                 Apptentive.registerApptentiveActivityInfoCallback(this)
             }
 
+            val themedCtx = ContextThemeWrapper(requireContext(), R.style.Theme_Apptentive).apply {
+                overrideTheme()
+            }
+
             isImageHeightSet = false
-            dialog = MaterialAlertDialogBuilder(requireContext()).apply {
-                val contextWrapper = ContextThemeWrapper(requireContext(), R.style.Theme_Apptentive).apply {
-                    overrideTheme()
-                }
-                val inflater = LayoutInflater.from(contextWrapper)
+            dialog = MaterialAlertDialogBuilder(themedCtx).apply {
+                val inflater = LayoutInflater.from(themedCtx)
                 val noteView = inflater.inflate(R.layout.apptentive_note, null)
                 setView(noteView)
                 noteLayout = noteView.findViewById(R.id.apptentive_note_layout)
@@ -169,6 +170,17 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
                     dismiss() // silently close itself
                 }
             }
+        }
+    }
+
+    override fun onStart() {
+        // Guard Dialog.show() (called inside super.onStart()) against crashes that
+        // escape onCreateDialog's try/catch — e.g. WindowDecorActionBar NPE.
+        try {
+            super.onStart()
+        } catch (e: Exception) {
+            Log.e(INTERACTIONS, "TextModalFragment failed to show", e)
+            dismissAllowingStateLoss()
         }
     }
 
