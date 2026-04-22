@@ -33,15 +33,13 @@ internal class EnjoymentDialogFragment : DialogFragment(), ApptentiveActivityInf
                 Apptentive.registerApptentiveActivityInfoCallback(this)
             }
 
-            val dialog = MaterialAlertDialogBuilder(requireContext()).apply {
-                val ctx = ContextThemeWrapper(
-                    requireContext(),
-                    R.style.Theme_Apptentive
-                ).apply {
-                    overrideTheme()
-                }
+            val themedCtx = ContextThemeWrapper(requireContext(), R.style.Theme_Apptentive).apply {
+                overrideTheme()
+            }
+
+            val dialog = MaterialAlertDialogBuilder(themedCtx).apply {
                 val enjoymentDialogView =
-                    LayoutInflater.from(ctx).inflate(R.layout.apptentive_enjoyment_dialog, null)
+                    LayoutInflater.from(themedCtx).inflate(R.layout.apptentive_enjoyment_dialog, null)
                 val messageView =
                     enjoymentDialogView.findViewById<MaterialTextView>(R.id.apptentive_enjoyment_dialog_title)
                 messageView.text = viewModel.title
@@ -106,7 +104,7 @@ internal class EnjoymentDialogFragment : DialogFragment(), ApptentiveActivityInf
                 }
             }
         } catch (e: Exception) {
-            Log.e(INTERACTIONS, "Error creating TextModalDialogFragment", e)
+            Log.e(INTERACTIONS, "Error creating EnjoymentDialogFragment", e)
             Dialog(requireContext()).apply {
                 setOnShowListener {
                     dismiss() // silently close itself
@@ -119,6 +117,17 @@ internal class EnjoymentDialogFragment : DialogFragment(), ApptentiveActivityInf
         super.onCreate(savedInstanceState)
         viewModel.dismissInteraction.observe(this) {
             dismiss()
+        }
+    }
+
+    override fun onStart() {
+        // Guard Dialog.show() (called inside super.onStart()) against crashes that
+        // escape onCreateDialog's try/catch — e.g. WindowDecorActionBar NPE.
+        try {
+            super.onStart()
+        } catch (e: Exception) {
+            Log.e(INTERACTIONS, "EnjoymentDialogFragment failed to show", e)
+            dismissAllowingStateLoss()
         }
     }
 
