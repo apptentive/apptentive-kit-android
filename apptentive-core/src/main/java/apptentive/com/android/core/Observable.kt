@@ -13,6 +13,9 @@ open class Observable<T>(private var _value: T) {
         }
 
     fun observe(observer: (T) -> Unit): Subscription {
+        // Sometimes a class observes multiple times and has a different reference.
+        // Most likely this is not lifecycle aware.
+        observers.removeAll { observer.javaClass == it.javaClass }
         observers.add(observer)
         notifyObserver(observer, value)
 
@@ -28,8 +31,7 @@ open class Observable<T>(private var _value: T) {
     }
 
     private fun notifyObservers(value: T) {
-        val temp = observers.toList()
-        for (observer in temp) {
+        for (observer in observers) {
             notifyObserver(observer, value)
         }
     }
