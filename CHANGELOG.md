@@ -1,3 +1,7 @@
+# 2026-04-22 - v7.1.1
+### Fixes
+* Updated dialog creation flow to apply Material theming during early initialization, preventing invalid window configuration and protecting against runtime crashes.
+
 # 2026-04-14 - v7.1.0
 ### New Features
 * SDK support for positioning prompts at the top, bottom, or center of the screen
