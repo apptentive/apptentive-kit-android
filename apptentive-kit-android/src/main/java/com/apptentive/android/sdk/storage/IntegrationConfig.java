@@ -1,0 +1,105 @@
+/*
+ * Copyright (c) 2017, Apptentive, Inc. All Rights Reserved.
+ * Please refer to the LICENSE file for the terms and conditions
+ * under which redistribution and use of this file is permitted.
+ */
+
+package com.apptentive.android.sdk.storage;
+
+import androidx.annotation.VisibleForTesting;
+
+
+import java.io.Serializable;
+
+/**
+ * Legacy integration config representation.
+ * See: <a href="https://github.com/apptentive/apptentive-android/blob/master/apptentive/src/main/java/com/apptentive/android/sdk/storage/IntegrationConfig.java">...</a>
+ * NOTE: THIS CLASS CAN'T BE RENAMED, MODIFIED, OR MOVED TO ANOTHER PACKAGE - OTHERWISE, JAVA SERIALIZABLE MECHANISM BREAKS!!!
+ */
+public class IntegrationConfig implements Serializable {
+	private static final long serialVersionUID = 1L;
+
+	private com.apptentive.android.sdk.storage.IntegrationConfigItem apptentive;
+	private com.apptentive.android.sdk.storage.IntegrationConfigItem amazonAwsSns;
+	private com.apptentive.android.sdk.storage.IntegrationConfigItem urbanAirship;
+	private com.apptentive.android.sdk.storage.IntegrationConfigItem parse;
+
+	public IntegrationConfig() {
+	}
+
+	@VisibleForTesting
+	public IntegrationConfig(com.apptentive.android.sdk.storage.IntegrationConfigItem apptentive,
+                             com.apptentive.android.sdk.storage.IntegrationConfigItem amazonAwsSns,
+                             com.apptentive.android.sdk.storage.IntegrationConfigItem urbanAirship,
+                             com.apptentive.android.sdk.storage.IntegrationConfigItem parse
+	) {
+		this.apptentive = apptentive;
+		this.amazonAwsSns = amazonAwsSns;
+		this.urbanAirship = urbanAirship;
+		this.parse = parse;
+	}
+
+
+	//region Getters & Setters
+	public com.apptentive.android.sdk.storage.IntegrationConfigItem getApptentive() {
+		return apptentive;
+	}
+
+	public void setApptentive(com.apptentive.android.sdk.storage.IntegrationConfigItem apptentive) {
+		this.apptentive = apptentive;
+	}
+
+	public com.apptentive.android.sdk.storage.IntegrationConfigItem getAmazonAwsSns() {
+		return amazonAwsSns;
+	}
+
+	public com.apptentive.android.sdk.storage.IntegrationConfigItem getUrbanAirship() {
+		return urbanAirship;
+	}
+
+	public com.apptentive.android.sdk.storage.IntegrationConfigItem getParse() {
+		return parse;
+	}
+
+	public void setParse(IntegrationConfigItem parse) {
+		this.parse = parse;
+	}
+	//endregion
+
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		IntegrationConfig that = (IntegrationConfig) o;
+
+		if (apptentive != null ? !apptentive.equals(that.apptentive) : that.apptentive != null)
+			return false;
+		if (amazonAwsSns != null ? !amazonAwsSns.equals(that.amazonAwsSns) : that.amazonAwsSns != null)
+			return false;
+		if (urbanAirship != null ? !urbanAirship.equals(that.urbanAirship) : that.urbanAirship != null)
+			return false;
+		return parse != null ? parse.equals(that.parse) : that.parse == null;
+
+	}
+
+	@Override
+	public int hashCode() {
+		int result = apptentive != null ? apptentive.hashCode() : 0;
+		result = 31 * result + (amazonAwsSns != null ? amazonAwsSns.hashCode() : 0);
+		result = 31 * result + (urbanAirship != null ? urbanAirship.hashCode() : 0);
+		result = 31 * result + (parse != null ? parse.hashCode() : 0);
+		return result;
+	}
+
+	public IntegrationConfig clone() {
+		IntegrationConfig clone = new IntegrationConfig();
+		clone.apptentive = apptentive != null ? apptentive.clone() : null;
+		clone.amazonAwsSns = amazonAwsSns != null ? amazonAwsSns.clone() : null;
+		clone.urbanAirship = urbanAirship != null ? urbanAirship.clone() : null;
+		clone.parse = parse != null ? parse.clone() : null;
+		return clone;
+	}
+
+}

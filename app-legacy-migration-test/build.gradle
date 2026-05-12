@@ -48,14 +48,7 @@ dependencies {
 
     legacyImplementation 'com.apptentive:apptentive-android:5.8.4'
 
-    currentImplementation project(':apptentive-core')
-    currentImplementation project(':apptentive-core-ui')
-    currentImplementation project(':apptentive-feedback')
-    currentImplementation project(':apptentive-enjoyment-dialog')
-    currentImplementation project(':apptentive-survey')
-    currentImplementation project(':apptentive-notes')
-    currentImplementation project(':apptentive-navigate-to-link')
-    currentImplementation project(':apptentive-message-center')
+    currentImplementation project(':apptentive-kit-android')
 
     testImplementation "androidx.test:core:$androidx_test_version"
 

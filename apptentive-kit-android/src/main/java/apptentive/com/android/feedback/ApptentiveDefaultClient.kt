@@ -1,0 +1,879 @@
+package apptentive.com.android.feedback
+
+import android.content.Context
+import androidx.annotation.WorkerThread
+import androidx.lifecycle.ProcessLifecycleOwner
+import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.core.Provider
+import apptentive.com.android.core.concurrent.Executors
+import apptentive.com.android.core.encryption.AESEncryption23
+import apptentive.com.android.core.encryption.Encryption
+import apptentive.com.android.core.encryption.EncryptionFactory
+import apptentive.com.android.core.encryption.EncryptionNoOp
+import apptentive.com.android.core.encryption.EncryptionStatus
+import apptentive.com.android.core.encryption.KeyResolverFactory
+import apptentive.com.android.core.encryption.NoEncryptionStatus
+import apptentive.com.android.core.encryption.NotEncrypted
+import apptentive.com.android.core.encryption.getEncryptionStatus
+import apptentive.com.android.core.network.HttpClient
+import apptentive.com.android.core.network.UnexpectedResponseException
+import apptentive.com.android.core.platform.SharedPrefConstants.APPTENTIVE
+import apptentive.com.android.core.platform.SharedPrefConstants.CRYPTO_ENABLED
+import apptentive.com.android.core.platform.SharedPrefConstants.PREF_KEY_PUSH_PROVIDER
+import apptentive.com.android.core.platform.SharedPrefConstants.PREF_KEY_PUSH_TOKEN
+import apptentive.com.android.core.platform.SharedPrefConstants.SDK_CORE_INFO
+import apptentive.com.android.core.util.InternalUseOnly
+import apptentive.com.android.core.util.Log
+import apptentive.com.android.core.util.LogTags.CONVERSATION
+import apptentive.com.android.core.util.LogTags.CRYPTOGRAPHY
+import apptentive.com.android.core.util.LogTags.EVENT
+import apptentive.com.android.core.util.LogTags.LIFE_CYCLE_OBSERVER
+import apptentive.com.android.core.util.LogTags.MESSAGE_CENTER
+import apptentive.com.android.core.util.LogTags.PAYLOADS
+import apptentive.com.android.core.util.LogTags.PUSH_NOTIFICATION
+import apptentive.com.android.core.util.Result
+import apptentive.com.android.core.util.generateUUID
+import apptentive.com.android.feedback.Apptentive.executeCallbackInMainExecutor
+import apptentive.com.android.feedback.Apptentive.messageCenterNotificationSubject
+import apptentive.com.android.feedback.backend.ConversationPayloadService
+import apptentive.com.android.feedback.backend.ConversationService
+import apptentive.com.android.feedback.backend.DefaultConversationService
+import apptentive.com.android.feedback.backend.MessageCenterService
+import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
+import apptentive.com.android.feedback.conversation.ConversationManager
+import apptentive.com.android.feedback.conversation.ConversationMetaData
+import apptentive.com.android.feedback.conversation.ConversationRepository
+import apptentive.com.android.feedback.conversation.ConversationSerializer
+import apptentive.com.android.feedback.conversation.ConversationState
+import apptentive.com.android.feedback.conversation.DefaultConversationRepository
+import apptentive.com.android.feedback.conversation.DefaultConversationSerializer
+import apptentive.com.android.feedback.engagement.DefaultEngagement
+import apptentive.com.android.feedback.engagement.DefaultInteractionEngagement
+import apptentive.com.android.feedback.engagement.Engagement
+import apptentive.com.android.feedback.engagement.EngagementContextProvider
+import apptentive.com.android.feedback.engagement.Event
+import apptentive.com.android.feedback.engagement.InteractionDataProvider
+import apptentive.com.android.feedback.engagement.InteractionEngagement
+import apptentive.com.android.feedback.engagement.InternalEvent
+import apptentive.com.android.feedback.engagement.NullEngagement
+import apptentive.com.android.feedback.engagement.criteria.CachedInvocationProvider
+import apptentive.com.android.feedback.engagement.criteria.CriteriaInteractionDataProvider
+import apptentive.com.android.feedback.engagement.criteria.DefaultTargetingState
+import apptentive.com.android.feedback.engagement.criteria.InvocationConverter
+import apptentive.com.android.feedback.engagement.interactions.DefaultInteractionDataConverter
+import apptentive.com.android.feedback.engagement.interactions.Interaction
+import apptentive.com.android.feedback.engagement.interactions.InteractionDataConverter
+import apptentive.com.android.feedback.engagement.interactions.InteractionLauncher
+import apptentive.com.android.feedback.engagement.interactions.InteractionModule
+import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
+import apptentive.com.android.feedback.engagement.interactions.InteractionType
+import apptentive.com.android.feedback.lifecycle.ApptentiveLifecycleObserver
+import apptentive.com.android.feedback.message.DefaultMessageRepository
+import apptentive.com.android.feedback.message.DefaultMessageSerializer
+import apptentive.com.android.feedback.message.EVENT_MESSAGE_CENTER
+import apptentive.com.android.feedback.message.MessageManager
+import apptentive.com.android.feedback.message.MessageManagerFactoryProvider
+import apptentive.com.android.feedback.message.MessageRepository
+import apptentive.com.android.feedback.model.Conversation
+import apptentive.com.android.feedback.model.CustomData
+import apptentive.com.android.feedback.model.IntegrationConfig
+import apptentive.com.android.feedback.model.IntegrationConfigItem
+import apptentive.com.android.feedback.model.MessageCenterNotification
+import apptentive.com.android.feedback.model.payloads.AppReleaseAndSDKPayload
+import apptentive.com.android.feedback.model.payloads.EventPayload
+import apptentive.com.android.feedback.model.payloads.ExtendedData
+import apptentive.com.android.feedback.model.payloads.LogoutPayload
+import apptentive.com.android.feedback.model.payloads.Payload
+import apptentive.com.android.feedback.notifications.NotificationUtils
+import apptentive.com.android.feedback.payload.AuthenticationFailureException
+import apptentive.com.android.feedback.payload.PayloadData
+import apptentive.com.android.feedback.payload.PayloadSender
+import apptentive.com.android.feedback.payload.PayloadType
+import apptentive.com.android.feedback.payload.PersistentPayloadQueue
+import apptentive.com.android.feedback.payload.SerialPayloadSender
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.addConversationRepository
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.addEngagementContextFactory
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.addMessageManager
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.addMessageRepository
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getConversationCredentialProvider
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getConversationRepository
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getEngagementContext
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getMessageRepository
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getSharedPrefDataStore
+import apptentive.com.android.feedback.platform.DefaultAppReleaseFactory
+import apptentive.com.android.feedback.platform.DefaultDeviceFactory
+import apptentive.com.android.feedback.platform.DefaultEngagementDataFactory
+import apptentive.com.android.feedback.platform.DefaultEngagementManifestFactory
+import apptentive.com.android.feedback.platform.DefaultPersonFactory
+import apptentive.com.android.feedback.platform.DefaultSDKFactory
+import apptentive.com.android.feedback.platform.DefaultStateMachine
+import apptentive.com.android.feedback.platform.SDKEvent
+import apptentive.com.android.feedback.utils.FileStorageUtil
+import apptentive.com.android.feedback.utils.FileStorageUtil.deleteMessageFile
+import apptentive.com.android.feedback.utils.FileUtil
+import apptentive.com.android.feedback.utils.JwtString
+import apptentive.com.android.feedback.utils.JwtUtils
+import apptentive.com.android.feedback.utils.RosterUtils.getActiveConversationMetaData
+import apptentive.com.android.feedback.utils.RuntimeUtils
+import apptentive.com.android.feedback.utils.ThrottleUtils
+import apptentive.com.android.feedback.utils.getBaseUrl
+import apptentive.com.android.feedback.utils.toEncryptionKey
+import com.apptentive.android.sdk.conversation.DefaultLegacyConversationManager
+import com.apptentive.android.sdk.conversation.LegacyConversationManager
+import com.apptentive.apptentive_kit_android.BuildConfig
+import java.io.ByteArrayInputStream
+import java.io.InputStream
+import java.lang.ref.WeakReference
+
+@InternalUseOnly
+class ApptentiveDefaultClient(
+    internal val configuration: ApptentiveConfiguration,
+    private val httpClient: HttpClient,
+    private val executors: Executors,
+) : ApptentiveClient {
+    internal lateinit var conversationManager: ConversationManager
+    internal lateinit var payloadSender: PayloadSender
+    private lateinit var interactionDataProvider: InteractionDataProvider
+    private lateinit var interactionModules: Map<String, InteractionModule<Interaction>>
+    private lateinit var conversationService: ConversationService
+    internal var messageManager: MessageManager? = null
+    private var engagement: Engagement = NullEngagement()
+    private var encryption: Encryption = setInitialEncryptionFromPastSession()
+    private var clearPayloadCache: Boolean = false
+    private var authenticationFailedListener: WeakReference<AuthenticationFailedListener>? = null
+
+    //region Initialization
+
+    internal fun initialize(context: Context) {
+        interactionModules = loadInteractionModules()
+        conversationService = createConversationService()
+        addConversationRepository(createConversationRepository(context))
+    }
+
+    @WorkerThread
+    internal fun start(context: Context, registerCallback: ((result: RegisterResult) -> Unit)?) {
+        DefaultStateMachine.onEvent(SDKEvent.ClientStarted)
+        conversationManager = ConversationManager(
+            conversationRepository = getConversationRepository(),
+            conversationService = conversationService,
+            legacyConversationManagerProvider = object : Provider<LegacyConversationManager> {
+                override fun get() = DefaultLegacyConversationManager(context)
+            },
+            isDebuggable = RuntimeUtils.getApplicationInfo(context).debuggable
+        )
+
+        finalizeEncryption()
+
+        payloadSender = SerialPayloadSender(
+            payloadQueue = PersistentPayloadQueue.create(context, encryption, clearPayloadCache),
+            callback = ::onPayloadSendFinish
+        )
+        clearPayloadCache = false
+
+        getConversationToken(registerCallback)
+
+        if (!(payloadSender as SerialPayloadSender).hasPayloadService) {
+            (payloadSender as SerialPayloadSender).setPayloadService(
+                service = ConversationPayloadService(
+                    requestSender = conversationService,
+                )
+            )
+        }
+
+        addObservers()
+
+        updateMessageCenterNotification()
+
+        engage(Event.internal(InternalEvent.APP_LAUNCH.labelName))
+    }
+
+    @WorkerThread
+    private fun getConversationToken(
+        registerCallback: ((result: RegisterResult) -> Unit)?
+    ) {
+        conversationManager.tryFetchConversationToken { result ->
+            when (result) {
+                is Result.Error -> {
+                    DefaultStateMachine.onEvent(SDKEvent.Error)
+                    when (val error = result.error) {
+                        is UnexpectedResponseException -> {
+                            val responseCode = error.statusCode
+                            val message = error.errorMessage
+                            registerCallback?.invoke(
+                                RegisterResult.Failure(
+                                    message ?: "Failed to fetch conversation token", responseCode
+                                )
+                            )
+                        }
+                        else -> registerCallback?.invoke(RegisterResult.Exception(result.error))
+                    }
+                }
+                is Result.Success -> {
+                    createMessageManager()
+                    registerCallback?.invoke(RegisterResult.Success)
+                    val conversationCredentialProvider = getConversationCredentialProvider()
+                    payloadSender.updateCredential(conversationCredentialProvider)
+                    PrefetchManager.apply {
+                        initPrefetchDirectory()
+                        downloadPrefetchableResources(conversationManager.getConversation().engagementManifest.prefetch)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun addObservers() {
+        conversationManager.activeConversation.observe { conversation ->
+            interactionDataProvider = createInteractionDataProvider(conversation)
+
+            engagement = DefaultEngagement(
+                interactionDataProvider = interactionDataProvider,
+                interactionConverter = interactionConverter,
+                interactionEngagement = createInteractionEngagement(),
+                recordEvent = ::recordEvent,
+                recordInteraction = ::recordInteraction,
+                recordInteractionResponses = ::recordInteractionResponses,
+                recordCurrentAnswer = ::recordCurrentAnswer
+            )
+            // register engagement context as soon as DefaultEngagement is created to make it available for MessageManager
+            addEngagementContextFactory(EngagementContextProvider(engagement, payloadSender, executors))
+            messageManager?.onConversationChanged(conversation)
+
+            val serialPayloadSender = payloadSender as? SerialPayloadSender
+            if (conversation.sdkStatus.sdkEnabled) {
+                serialPayloadSender?.resumeSending()
+            } else {
+                serialPayloadSender?.pauseSending()
+            }
+        }
+        // add an observer to track SDK & AppRelease changes
+        conversationManager.sdkAppReleaseUpdate.observe { appReleaseSDKUpdated ->
+            if (appReleaseSDKUpdated) {
+                val sdk = conversationManager.getConversation().sdk
+                val appRelease = conversationManager.getConversation().appRelease
+                val payload = AppReleaseAndSDKPayload.buildPayload(sdk = sdk, appRelease = appRelease)
+                enqueuePayload(payload)
+            }
+        }
+
+        conversationManager.deviceupdate.observe { deviceUpdated ->
+            if (deviceUpdated) {
+                val device = conversationManager.getConversation().device
+                val payload = device.toDevicePayload()
+                enqueuePayload(payload)
+            }
+        }
+
+        executors.main.execute {
+            Log.i(LIFE_CYCLE_OBSERVER, "Observing App lifecycle")
+            ProcessLifecycleOwner.get().lifecycle.addObserver(
+                ApptentiveLifecycleObserver(
+                    client = this,
+                    stateExecutor = executors.state,
+                    onForeground = {
+                        conversationManager.tryFetchAppStatus()
+                        conversationManager.tryFetchEngagementManifest(::updateMessageCenterNotification)
+                        messageManager?.onAppForeground()
+                    },
+                    onBackground = {
+                        messageManager?.onAppBackground()
+                    }
+                )
+            )
+        }
+    }
+
+    /* For local testing only */
+    override fun clearDependencies() {
+        DependencyProvider.clear()
+    }
+
+    override fun login(jwtToken: JwtString, callback: ((result: LoginResult) -> Unit)?) {
+        val activeConversationMetaData = getActiveConversationMetaData()
+        val subClaim = JwtUtils.extractSub(jwtToken)
+
+        if (subClaim == null) {
+            executeCallbackInMainExecutor(callback, LoginResult.Error("Invalid JWT token"))
+            return
+        }
+
+        when {
+            activeConversationMetaData == null -> {
+                Log.v(CONVERSATION, "No active conversation found")
+                handleNoActiveConversation(subClaim, jwtToken, callback)
+            }
+            activeConversationMetaData.state is ConversationState.Anonymous -> {
+                Log.v(CONVERSATION, "Active conversation is anonymous")
+                loginAnonymousConversation(jwtToken, subClaim, callback)
+            }
+            activeConversationMetaData.state is ConversationState.LoggedIn -> {
+                Log.v(CONVERSATION, "Already logged in. Logout before calling login")
+                executeCallbackInMainExecutor(callback, LoginResult.Error("Already logged in. Logout before calling login"))
+            }
+            else -> {
+                Log.v(CONVERSATION, "Cannot login while SDK is in ${activeConversationMetaData.state}")
+                executeCallbackInMainExecutor(callback, LoginResult.Error("Cannot login while SDK is in ${activeConversationMetaData.state}"))
+            }
+        }
+    }
+
+    private fun handleNoActiveConversation(subClaim: JwtString, jwtToken: String, callback: ((result: LoginResult) -> Unit)?) {
+        val matchingMetaData = findMatchingMetaData(subClaim)
+        val conversationId = (matchingMetaData?.state as? ConversationState.LoggedOut)?.id
+
+        if (conversationId != null) {
+            Log.v(CONVERSATION, "Found matching conversation ID in logged out list")
+            val legacyConversationPath = if (FileUtil.isConversationCacheStoredInLegacyFormat(matchingMetaData.path)) {
+                Log.v(CONVERSATION, "Conversation cache is in legacy format.")
+                matchingMetaData.path
+            } else null
+            conversationManager.loginSession(conversationId, jwtToken, subClaim, legacyConversationPath) { result ->
+                handleLoginResult(result, callback)
+            }
+        } else {
+            conversationManager.createConversationAndLogin(jwtToken, subClaim) { result ->
+                handleLoginResult(result, callback)
+            }
+        }
+    }
+
+    private fun findMatchingMetaData(subClaim: JwtString): ConversationMetaData? {
+        val matchingMetaData = DefaultStateMachine.conversationRoster.loggedOut.firstOrNull {
+            it.state is ConversationState.LoggedOut && (it.state as ConversationState.LoggedOut).subject == subClaim
+        }
+        return matchingMetaData
+    }
+
+    private fun loginAnonymousConversation(jwtToken: JwtString, subject: String, loginCallback: ((result: LoginResult) -> Unit)? = null) {
+        val conversationId = conversationManager.getConversation().conversationId
+        conversationId?.let { id ->
+            conversationManager.loginSession(id, jwtToken, subject) { result ->
+                handleLoginResult(result, loginCallback, true)
+            }
+        }
+    }
+
+    private fun handleLoginResult(result: LoginResult, callback: ((result: LoginResult) -> Unit)?, transitioningFromAnonymous: Boolean = false) {
+        when (result) {
+            is LoginResult.Success -> {
+                Log.v(CONVERSATION, "Successfully logged in")
+                // if transitioning from anonymous, we don't want to resend the app launch event and reset the session id
+                if (!transitioningFromAnonymous) {
+                    updateSessionIdForNewLoginSession()
+                    engage(Event.internal(InternalEvent.APP_LAUNCH.labelName))
+                    // message manager should be initialized if it is a new login session
+                    messageManager ?: createMessageManager()
+                    messageManager?.apply {
+                        login()
+                        addUnreadMessageListener(::updateMessageCenterNotification)
+                    }
+                } else {
+                    // delete previously stored message file as it would be cached with different encryption setting
+                    messageManager?.resetForAnonymousToLogin()
+                }
+                engage(Event.internal(InternalEvent.SDK_LOGIN.labelName))
+                val sharedPrefDataStore = getSharedPrefDataStore()
+                val pushProvider = sharedPrefDataStore.getInt(APPTENTIVE, PREF_KEY_PUSH_PROVIDER)
+                val pushProviderName = sharedPrefDataStore.getString(APPTENTIVE, PREF_KEY_PUSH_TOKEN)
+                setPushIntegration(pushProvider, pushProviderName)
+                executeCallbackInMainExecutor(callback, LoginResult.Success)
+                PrefetchManager.apply {
+                    initPrefetchDirectory()
+                    downloadPrefetchableResources(conversationManager.getConversation().engagementManifest.prefetch)
+                }
+                updateMessageCenterNotification()
+            }
+            is LoginResult.Error -> {
+                Log.v(CONVERSATION, "Failed to login")
+                executeCallbackInMainExecutor(callback, LoginResult.Error("Failed to login"))
+            }
+            is LoginResult.Failure -> {
+                Log.v(CONVERSATION, "Failed to login")
+                executeCallbackInMainExecutor(callback, LoginResult.Failure("Failed to login", result.responseCode))
+            }
+            is LoginResult.Exception -> {
+                Log.v(CONVERSATION, "Failed to login")
+                executeCallbackInMainExecutor(callback, LoginResult.Exception(result.error))
+            }
+        }
+    }
+
+    private fun createMessageManager() {
+        if (!DependencyProvider.isRegistered<MessageRepository>()) {
+            val messageRepository = DefaultMessageRepository(
+                messageSerializer = DefaultMessageSerializer(
+                    encryption,
+                    DefaultStateMachine.conversationRoster
+                )
+            )
+            addMessageRepository(messageRepository)
+            Log.d(CONVERSATION, "MessageRepository registered")
+        }
+        messageManager = MessageManager(
+            conversationService as MessageCenterService,
+            executors.state,
+            getMessageRepository(),
+        ).apply {
+            addMessageManager(MessageManagerFactoryProvider(this))
+            addUnreadMessageListener(::updateMessageCenterNotification)
+        }
+    }
+
+    override fun logout() {
+        conversationManager.logoutSession {
+            if (it is Result.Success) {
+                engage(Event.internal(InternalEvent.SDK_LOGOUT.labelName))
+                enqueuePayload(LogoutPayload())
+                conversationManager.setManifestExpired()
+                messageManager?.logout()
+                updateMessageCenterNotification()
+                ThrottleUtils.resetEngagedEvents()
+            }
+        }
+    }
+
+    override fun setAuthenticationFailedListener(listener: AuthenticationFailedListener) {
+        authenticationFailedListener = WeakReference(listener)
+    }
+
+    override fun updateToken(jwtToken: JwtString, callback: ((result: LoginResult) -> Unit)?) {
+        conversationManager.updateToken(jwtToken, callback)
+        if (DependencyProvider.isRegistered<ConversationCredentialProvider>()) {
+            payloadSender.updateCredential(getConversationCredentialProvider())
+        } else {
+            Log.w(PAYLOADS, "Attempting to update token without conversation credentials.")
+        }
+    }
+
+    override fun excludeEventsFromThrottling(event: List<String>) {
+        ThrottleUtils.exemptedEvents = (ThrottleUtils.exemptedEvents + event.toSet())
+    }
+
+    @WorkerThread
+    private fun createConversationRepository(context: Context): ConversationRepository {
+        return DefaultConversationRepository(
+            conversationSerializer = createConversationSerializer(),
+            appReleaseFactory = DefaultAppReleaseFactory(context),
+            personFactory = DefaultPersonFactory(),
+            deviceFactory = DefaultDeviceFactory(context),
+            sdkFactory = DefaultSDKFactory(
+                version = Constants.SDK_VERSION,
+                distribution = configuration.distributionName,
+                distributionVersion = configuration.distributionVersion
+            ),
+            manifestFactory = DefaultEngagementManifestFactory(),
+            engagementDataFactory = DefaultEngagementDataFactory()
+        )
+    }
+
+    private fun createConversationSerializer(): ConversationSerializer {
+        return DefaultConversationSerializer(
+            conversationRosterFile = FileStorageUtil.getRosterFile(configuration.apptentiveKey),
+        ).apply {
+            setEncryption(encryption)
+        }
+    }
+
+    private fun createConversationService(): ConversationService = DefaultConversationService(
+        httpClient = httpClient,
+        apptentiveKey = configuration.apptentiveKey,
+        apptentiveSignature = configuration.apptentiveSignature,
+        apiVersion = Constants.API_VERSION,
+        sdkVersion = Constants.SDK_VERSION,
+        baseURL = configuration.getBaseUrl(),
+    )
+
+    private fun createInteractionDataProvider(conversation: Conversation): InteractionDataProvider {
+        val interactions = conversation.engagementManifest.interactions.map { it.id to it }.toMap()
+        val usingCustomStoreUrlSkipInAppReviewID = if (conversation.appRelease.customAppStoreURL != null) {
+            interactions.entries.find {
+                it.value.type == InteractionType.GoogleInAppReview.name
+            }?.key
+        } else null
+
+        return CriteriaInteractionDataProvider(
+            interactions = interactions,
+            invocationProvider = CachedInvocationProvider(
+                conversation.engagementManifest.targets,
+                InvocationConverter
+            ),
+            state = DefaultTargetingState(
+                conversation.person,
+                conversation.device,
+                conversation.sdk,
+                conversation.appRelease,
+                conversation.randomSampling,
+                conversation.engagementData
+            ),
+            usingCustomStoreUrlSkipInAppReviewID = usingCustomStoreUrlSkipInAppReviewID
+        )
+    }
+
+    //endregion
+
+    //region Engagement
+
+    override fun engage(event: Event, customData: Map<String, Any?>?): EngagementResult {
+        val engagementContext = try {
+            getEngagementContext()
+        } catch (e: IllegalStateException) {
+            return EngagementResult.Error("Apptentive SDK is not initialized. Cannot engage event: ${event.name}")
+        }
+
+        return engagementContext.engage(
+            event = event,
+            customData = filterCustomData(customData)
+        )
+    }
+
+    override fun canShowInteraction(event: Event): Boolean {
+        return if (this::interactionDataProvider.isInitialized && ThrottleUtils.sdkEnabled) {
+            interactionDataProvider.getInteractionData(event) != null
+        } else false
+    }
+
+    //region Person
+    override fun updatePerson(
+        name: String?,
+        email: String?,
+        customData: Pair<String, Any?>?,
+        deleteKey: String?
+    ) {
+        val person = conversationManager.getConversation().person
+        val newPerson = when {
+            name != null -> person.copy(name = name)
+            email != null -> person.copy(email = email)
+            customData != null -> {
+                val newContent = person.customData.content.plus(customData)
+                person.copy(customData = CustomData(newContent))
+            }
+            deleteKey != null -> {
+                val newContent = person.customData.content.minus(deleteKey)
+                person.copy(customData = CustomData(newContent))
+            }
+            else -> person
+        }
+        if (person != newPerson) {
+            conversationManager.updatePerson(newPerson)
+            enqueuePayload(newPerson.toPersonPayload())
+            updateMessageCenterNotification()
+        }
+    }
+
+    override fun updateMParticleID(id: String) {
+        val person = conversationManager.getConversation().person
+        val newPerson = person.copy(mParticleId = id)
+        if (person != newPerson) {
+            conversationManager.updatePerson(newPerson)
+            enqueuePayload(newPerson.toPersonPayload())
+        }
+    }
+
+    override fun getPersonName(): String? {
+        return conversationManager.getConversation().person.name
+    }
+
+    override fun getPersonEmail(): String? {
+        return conversationManager.getConversation().person.email
+    }
+    //endregion
+
+    //region Message Center
+    override fun showMessageCenter(customData: Map<String, Any?>?): EngagementResult {
+        filterCustomData(customData)?.let { filteredCustomData ->
+            messageManager?.setCustomData(filteredCustomData)
+        }
+        return engage(Event.internal(EVENT_MESSAGE_CENTER))
+    }
+
+    override fun getUnreadMessageCount(): Int {
+        return messageManager?.getUnreadMessageCount() ?: 0
+    }
+
+    override fun canShowMessageCenter(): Boolean {
+        return if (this::interactionDataProvider.isInitialized) {
+            interactionDataProvider.getInteractionData(Event.internal(EVENT_MESSAGE_CENTER)) != null
+        } else false
+    }
+
+    internal fun updateMessageCenterNotification() {
+        val notification = MessageCenterNotification(
+            canShowMessageCenter = canShowMessageCenter(),
+            unreadMessageCount = getUnreadMessageCount(),
+            personName = getPersonName(),
+            personEmail = getPersonEmail()
+        )
+
+        // Only update if something has changed
+        if (notification != messageCenterNotificationSubject.value) {
+            messageCenterNotificationSubject.value = notification
+        }
+    }
+
+    override fun sendHiddenTextMessage(message: String) {
+        messageManager?.sendMessage(message, isHidden = true)
+    }
+
+    override fun sendHiddenAttachmentFileUri(uri: String) {
+        messageManager?.sendAttachment(uri, true)
+    }
+
+    override fun sendHiddenAttachmentFileBytes(bytes: ByteArray, mimeType: String) {
+        var inputStream: ByteArrayInputStream? = null
+        try {
+            inputStream = ByteArrayInputStream(bytes)
+            messageManager?.sendHiddenAttachmentFromInputStream(inputStream, mimeType)
+        } catch (e: Exception) {
+            Log.e(MESSAGE_CENTER, "Exception when sending attachment. Closing input stream.", e)
+        } finally {
+            FileUtil.ensureClosed(inputStream)
+        }
+    }
+
+    override fun sendHiddenAttachmentFileStream(inputStream: InputStream, mimeType: String) {
+        messageManager?.sendHiddenAttachmentFromInputStream(inputStream, mimeType)
+    }
+    //endregion
+
+    private fun filterCustomData(customData: Map<String, Any?>?): Map<String, Any?>? {
+        if (customData == null) return null // No custom data set
+
+        val filteredContent = customData.filter {
+            it.value is String || it.value is Number || it.value is Boolean
+        }
+
+        return filteredContent.ifEmpty {
+            Log.w(EVENT, "Not setting custom data. No supported types found.")
+            null
+        }
+    }
+
+    override fun setPushIntegration(pushProvider: Int, token: String) {
+        Log.d(PUSH_NOTIFICATION, "Setting push provider with token $token")
+        val device = conversationManager.getConversation().device
+        val integrationConfig: IntegrationConfig = device.integrationConfig
+        val item = IntegrationConfigItem(mapOf(NotificationUtils.KEY_TOKEN to token))
+        when (pushProvider) {
+            Apptentive.PUSH_PROVIDER_APPTENTIVE -> integrationConfig.apptentive = item
+            Apptentive.PUSH_PROVIDER_PARSE -> integrationConfig.parse = item
+            Apptentive.PUSH_PROVIDER_URBAN_AIRSHIP -> integrationConfig.urbanAirship = item
+            Apptentive.PUSH_PROVIDER_AMAZON_AWS_SNS -> integrationConfig.amazonAwsSns = item
+            else -> Log.e(CONVERSATION, "Invalid pushProvider: $pushProvider")
+        }
+        conversationManager.updateDevice(device)
+        enqueuePayload(device.toDevicePayload())
+    }
+
+    override fun updateDevice(customData: Pair<String, Any?>?, deleteKey: String?) {
+        val device = conversationManager.getConversation().device
+        val newDevice = when {
+            customData != null -> {
+                val newContent = device.customData.content.plus(customData)
+                device.copy(customData = CustomData(newContent))
+            }
+            deleteKey != null -> {
+                val newContent = device.customData.content.minus(deleteKey)
+                device.copy(customData = CustomData(newContent))
+            }
+            else -> device
+        }
+        if (device != newDevice) {
+            conversationManager.updateDevice(newDevice)
+            enqueuePayload(newDevice.toDevicePayload())
+        }
+    }
+
+    private val interactionLaunchersLookup: Map<Class<Interaction>, InteractionLauncher<Interaction>> by lazy {
+        interactionModules.map { (_, module) ->
+            Pair(module.interactionClass, module.provideInteractionLauncher())
+        }.toMap()
+    }
+
+    private val interactionConverter: InteractionDataConverter by lazy {
+        DefaultInteractionDataConverter(
+            lookup = interactionModules.mapValues { (_, module) ->
+                module.provideInteractionTypeConverter()
+            }
+        )
+    }
+
+    private fun createInteractionEngagement(): InteractionEngagement {
+        return DefaultInteractionEngagement(lookup = interactionLaunchersLookup)
+    }
+
+    private fun loadInteractionModules(): Map<String, InteractionModule<Interaction>> {
+        return InteractionModuleComponent.default().getModules()
+    }
+
+    @WorkerThread
+    private fun recordEvent(
+        event: Event,
+        interactionId: String?,
+        data: Map<String, Any?>?,
+        customData: Map<String, Any?>?,
+        extendedData: List<ExtendedData>?,
+        whereEvent: String? = null,
+    ) {
+        // store event locally
+        conversationManager.recordEvent(event)
+
+        val metricsConfiguration = conversationManager.getConversation().sdkStatus
+
+        if (metricsConfiguration.metricsEnabled || event.vendor == "com.apptentive" || BuildConfig.DEBUG) {
+            Log.d(EVENT, "Recording event: ${event.fullName}")
+            // send event to the backend
+            enqueuePayload(
+                EventPayload(
+                    label = event.fullName,
+                    interactionId = interactionId,
+                    data = data,
+                    customData = customData,
+                    extendedData = extendedData,
+                    whereEvent = whereEvent
+                )
+            )
+        } else {
+            Log.v(EVENT, "Metrics are disabled. Not sending event: ${event.fullName}")
+        }
+    }
+
+    override fun setLocalManifest(json: String) {
+        conversationManager.setTestManifestFromLocal(json)
+    }
+
+    @WorkerThread
+    private fun recordInteraction(interaction: Interaction) {
+        conversationManager.recordInteraction(interaction.id)
+    }
+
+    @WorkerThread
+    private fun recordInteractionResponses(interactionResponses: Map<String, Set<InteractionResponse>>) {
+        conversationManager.recordInteractionResponses(interactionResponses)
+    }
+
+    @WorkerThread
+    private fun recordCurrentAnswer(interactionResponses: Map<String, Set<InteractionResponse>>, reset: Boolean) {
+        conversationManager.recordCurrentResponse(interactionResponses, reset)
+    }
+
+    @WorkerThread
+    private fun onPayloadSendFinish(result: Result<PayloadData>) {
+        when (result) {
+            is Result.Success -> {
+                val resultData = result.data
+
+                if (resultData.type == PayloadType.Message) messageManager?.updateMessageStatus(true, resultData)
+
+                Log.d(PAYLOADS, "Payload of type \'${resultData.type}\' successfully sent")
+            }
+            is Result.Error -> {
+                val resultData = result.data as? PayloadData
+                if (resultData?.type == PayloadType.Message) {
+                    messageManager?.updateMessageStatus(false, resultData)
+                    engage(Event.internal(InternalEvent.EVENT_MESSAGE_HTTP_ERROR.labelName, InteractionType.MessageCenter))
+                }
+
+                val resultError = result.error as? AuthenticationFailureException
+
+                if (resultError != null && authFailureCounter < MAX_AUTH_FAILURE_COUNT) {
+                    authFailureCounter++
+                    val reason = AuthenticationFailedReason.parse(resultError.errorType, resultError.errorMessage)
+                    authenticationFailedListener?.get()?.onAuthenticationFailed(reason)
+                }
+
+                Log.e(PAYLOADS, "Payload failed to send: ${result.error.cause}")
+            }
+        }
+    }
+
+    //endregion
+
+    //region Encryption
+
+    private fun setInitialEncryptionFromPastSession(): Encryption {
+        val sharedPref = getSharedPrefDataStore()
+        val oldEncryptionSetting = getOldEncryptionSetting()
+        val encryption = EncryptionFactory.getEncryption(
+            shouldEncryptStorage = configuration.shouldEncryptStorage,
+            oldEncryptionSetting = oldEncryptionSetting
+        )
+        sharedPref.putBoolean(SDK_CORE_INFO, CRYPTO_ENABLED, encryption is AESEncryption23)
+        Log.d(CRYPTOGRAPHY, "Initial encryption setting is ${encryption.javaClass.simpleName}")
+        return encryption
+    }
+
+    private fun finalizeEncryption() {
+        val activeConversationState = DefaultStateMachine.conversationRoster.activeConversation?.state
+        if (activeConversationState is ConversationState.LoggedIn) {
+            val wrapperEncryptionBytes = activeConversationState.encryptionWrapperBytes
+            val encryptionKey = KeyResolverFactory.getKeyResolver().resolveMultiUserWrapperKey(activeConversationState.subject)
+            AESEncryption23(encryptionKey).decrypt(wrapperEncryptionBytes).let {
+                encryption = AESEncryption23(it.toEncryptionKey())
+            }
+        } else if ((configuration.shouldEncryptStorage && (encryption is EncryptionNoOp)) ||
+            (!configuration.shouldEncryptStorage && (encryption is AESEncryption23))
+        ) {
+            onFinalEncryptionSettingsChanged()
+        }
+        Log.d(CRYPTOGRAPHY, "Final encryption setting is ${encryption.javaClass.simpleName}")
+        conversationManager.onEncryptionSetupComplete()
+    }
+
+    private fun onFinalEncryptionSettingsChanged() {
+        val sharedPref = getSharedPrefDataStore()
+
+        sharedPref.putBoolean(SDK_CORE_INFO, CRYPTO_ENABLED, configuration.shouldEncryptStorage)
+        encryption = EncryptionFactory.getEncryption(
+            shouldEncryptStorage = configuration.shouldEncryptStorage,
+            oldEncryptionSetting = getOldEncryptionSetting()
+        )
+
+        conversationManager.updateEncryption(encryption)
+
+        deleteMessageFile() // delete message file to force re-encryption
+
+        clearPayloadCache = true
+    }
+
+    fun getOldEncryptionSetting(): EncryptionStatus {
+        val sharedPref = getSharedPrefDataStore()
+
+        return when {
+            FileUtil.containsFiles(FileStorageUtil.CONVERSATION_DIR) && !sharedPref.containsKey(SDK_CORE_INFO, CRYPTO_ENABLED) -> NotEncrypted // Migrating from 6.0.0
+            sharedPref.containsKey(SDK_CORE_INFO, CRYPTO_ENABLED) -> sharedPref.getBoolean(SDK_CORE_INFO, CRYPTO_ENABLED).getEncryptionStatus()
+            else -> NoEncryptionStatus
+        }
+    }
+
+    //endregion
+
+    internal fun getConversationId() = conversationManager.getConversation().conversationId
+
+    private fun enqueuePayload(payload: Payload) {
+        if (!conversationManager.getConversation().sdkStatus.sdkEnabled) {
+            Log.w(CONVERSATION, "SDK is disabled. Payload won't be processed.")
+            return
+        }
+        if (DependencyProvider.isRegistered<ConversationCredentialProvider>()) {
+            payloadSender.enqueuePayload(payload, getConversationCredentialProvider())
+        } else {
+            Log.w(PAYLOADS, "Attempting to enqueue payload without conversation credential.")
+        }
+    }
+
+    companion object {
+        // Gets created on the first call to Apptentive.register() and is used to identify the session
+        private var sessionId = generateUUID()
+
+        private var authFailureCounter: Int = 0
+
+        const val MAX_AUTH_FAILURE_COUNT = 3
+
+        fun getSessionId(): String = sessionId
+        fun updateSessionIdForNewLoginSession() {
+            Log.d(CONVERSATION, "Old session ID: $sessionId")
+            sessionId = generateUUID()
+            Log.d(CONVERSATION, "New session ID generated: $sessionId")
+        }
+    }
+}

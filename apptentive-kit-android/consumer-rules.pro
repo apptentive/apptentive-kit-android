@@ -1,1 +1,18 @@
 -keepattributes SourceFile,LineNumberTable
+# Preserve the line number information for debugging stack traces.
+-keep class com.apptentive.android.sdk.** { *; }
+-keep class apptentive.com.android.core.encryption.** {*; }
+-keep class apptentive.com.android.feedback.* { *; }
+-keep class apptentive.com.android.feedback.backend.** {*; }
+-keep class apptentive.com.android.feedback.conversation.** {*; }
+-keep class apptentive.com.android.feedback.engagement.** {*; }
+-keep class apptentive.com.android.feedback.lifecycle.** {*; }
+-keep class apptentive.com.android.feedback.message.** {*; }
+-keep class apptentive.com.android.feedback.model.** {*; }
+-keep class apptentive.com.android.module.** { *; }
+-keep class apptentive.com.android.feedback.notifications.** {*; }
+-keep class apptentive.com.android.feedback.payload.** {*; }
+-keep class apptentive.com.android.feedback.platform.** {*; }
+-keep class apptentive.com.android.feedback.utils.** {*; }
+-keep class apptentive.com.android.feedback.survey.model.* { *; }
+-keep class com.google.android.play.review.** { *; }

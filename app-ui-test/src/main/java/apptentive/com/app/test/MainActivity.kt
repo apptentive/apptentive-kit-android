@@ -5,8 +5,10 @@ import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import apptentive.com.android.concurrent.Executor
-import apptentive.com.android.concurrent.Executors
+import apptentive.com.android.core.concurrent.Executor
+import apptentive.com.android.core.concurrent.Executors
+import apptentive.com.android.core.serialization.json.JsonConverter
+import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
 import apptentive.com.android.feedback.EngagementResult
@@ -23,8 +25,8 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionRespon
 import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.feedback.model.payloads.Payload
 import apptentive.com.android.feedback.payload.PayloadSender
-import apptentive.com.android.serialization.json.JsonConverter
 
+@OptIn(InternalUseOnly::class)
 class MainActivity : AppCompatActivity(), ApptentiveActivityInfo {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

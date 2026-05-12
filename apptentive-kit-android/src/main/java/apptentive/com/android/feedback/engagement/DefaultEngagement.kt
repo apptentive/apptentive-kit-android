@@ -1,0 +1,132 @@
+package apptentive.com.android.feedback.engagement
+
+import androidx.annotation.WorkerThread
+import apptentive.com.android.core.util.Log
+import apptentive.com.android.core.util.LogTags.EVENT
+import apptentive.com.android.feedback.Apptentive.eventNotificationSubject
+import apptentive.com.android.feedback.EngagementResult
+import apptentive.com.android.feedback.engagement.criteria.Invocation
+import apptentive.com.android.feedback.engagement.interactions.Interaction
+import apptentive.com.android.feedback.engagement.interactions.InteractionDataConverter
+import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
+import apptentive.com.android.feedback.model.EventNotification
+import apptentive.com.android.feedback.model.payloads.ExtendedData
+import apptentive.com.android.feedback.utils.ThrottleUtils
+
+internal typealias RecordEventCallback = (
+    event: Event,
+    interactionId: String?,
+    data: Map<String, Any?>?,
+    customData: Map<String, Any?>?,
+    extendedData: List<ExtendedData>?,
+    whereEvent: String?,
+) -> Unit
+
+internal typealias RecordInteractionCallback = (interaction: Interaction) -> Unit
+
+internal typealias RecordInteractionResponsesCallback = (Map<String, Set<InteractionResponse>>) -> Unit
+
+internal typealias RecordCurrentAnswerCallback = (Map<String, Set<InteractionResponse>>, Boolean) -> Unit
+
+@Suppress("FoldInitializerAndIfToElvis")
+internal data class DefaultEngagement(
+    private val interactionDataProvider: InteractionDataProvider,
+    private val interactionConverter: InteractionDataConverter,
+    private val interactionEngagement: InteractionEngagement,
+    private val recordEvent: RecordEventCallback,
+    private val recordInteraction: RecordInteractionCallback,
+    private val recordInteractionResponses: RecordInteractionResponsesCallback,
+    private val recordCurrentAnswer: RecordCurrentAnswerCallback
+) : Engagement {
+    @WorkerThread
+    override fun engage(
+        context: EngagementContext,
+        event: Event,
+        interactionId: String?,
+        data: Map<String, Any?>?,
+        customData: Map<String, Any?>?,
+        extendedData: List<ExtendedData>?,
+        interactionResponses: Map<String, Set<InteractionResponse>>?,
+        whereEvent: String?,
+    ): EngagementResult {
+        Log.i(EVENT, "Engaged event: $event")
+        Log.d(EVENT, "Engaged event interaction ID: $interactionId")
+
+        if (!ThrottleUtils.sdkEnabled) {
+            Log.d(EVENT, "SDK is disabled, skipping event recording and interaction display for '${event.name}'")
+            return EngagementResult.InteractionNotShown("SDK is disabled")
+        }
+
+        eventNotificationSubject.value =
+            EventNotification(event.name, event.vendor, event.interaction, interactionId)
+
+        recordEvent(event, interactionId, data, customData, extendedData, whereEvent)
+
+        if (interactionResponses != null) recordInteractionResponses(interactionResponses)
+
+        val interactionData = interactionDataProvider.getInteractionData(event)
+        if (interactionData == null) {
+            return EngagementResult.InteractionNotShown("No invocations found or criteria evaluated false for event: '${event.name}'")
+        }
+
+        val interaction = interactionConverter.convert(interactionData)
+        if (interaction == null) {
+            // Cannot find module to handle interaction
+            return EngagementResult.Error("Cannot find '${interactionData.type}' module to handle event '${event.name}'")
+        }
+
+        if (ThrottleUtils.shouldThrottleInteraction(event.name, interaction)) {
+            Log.d(EVENT, "Event '${event.name}' throttled")
+            return EngagementResult.InteractionNotShown("Event '${event.name}', '${interaction.type.name}' throttled")
+        } else {
+            return engage(context, interaction, event.fullName)
+        }
+    }
+
+    // This engage is only used for Note actions
+    override fun engage(
+        context: EngagementContext,
+        invocations: List<Invocation>,
+        whereEvent: String?,
+    ): EngagementResult {
+        val interactionData = interactionDataProvider.getInteractionData(invocations)
+        if (interactionData == null) {
+            // Cannot find interaction to handle Note action invocation in manifest.
+            return EngagementResult.Error("Interaction to handle $invocations NOT found")
+        }
+
+        val interaction = interactionConverter.convert(interactionData)
+        if (interaction == null) {
+            // Cannot find module to handle interaction for Note action
+            return EngagementResult.Error("Cannot find module to handle '$interactionData'")
+        }
+
+        return engage(context, interaction, whereEvent)
+    }
+
+    override fun engageToRecordCurrentAnswer(
+        interactionResponses: Map<String, Set<InteractionResponse>>,
+        reset: Boolean
+    ) {
+        recordCurrentAnswer(interactionResponses, reset)
+    }
+
+    override fun getNextQuestionSet(
+        invocations: List<Invocation>
+    ): String? {
+        return interactionDataProvider.getQuestionId(invocations)
+    }
+
+    private fun engage(
+        context: EngagementContext,
+        interaction: Interaction,
+        whereEvent: String?,
+    ): EngagementResult {
+        val result = interactionEngagement.engage(context, interaction, whereEvent)
+        if (result is EngagementResult.InteractionShown) {
+            recordInteraction(interaction)
+        }
+
+        return result
+    }
+}

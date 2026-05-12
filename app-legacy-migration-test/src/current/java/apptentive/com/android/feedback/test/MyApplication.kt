@@ -1,9 +1,9 @@
 package apptentive.com.android.feedback.test
 
 import android.app.Application
+import apptentive.com.android.core.util.LogLevel
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveConfiguration
-import apptentive.com.android.util.LogLevel
 
 class MyApplication: Application() {
     override fun onCreate() {

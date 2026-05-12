@@ -14,6 +14,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
+import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
 import apptentive.com.android.feedback.LoginResult
@@ -24,6 +25,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import java.io.IOException
 
+@OptIn(InternalUseOnly::class)
 class DevFunctionsActivity : AppCompatActivity(), ApptentiveActivityInfo {
     lateinit var binding: ActivityDevFunctionsBinding
 

@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.feedback.Constants
 import apptentive.com.app.databinding.ActivityDebugInfoBinding
 import java.text.SimpleDateFormat
@@ -81,6 +82,7 @@ class InfoActivity : AppCompatActivity() {
         return typedValue.resourceId
     }
 
+    @OptIn(InternalUseOnly::class)
     private fun setSDKInfo(binding: ActivityDebugInfoBinding) {
         val deviceItems = listOf(
             InfoItem("Key", configuration.apptentiveKey),

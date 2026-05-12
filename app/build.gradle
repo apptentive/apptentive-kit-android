@@ -100,17 +100,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation project(':apptentive-core')
-    implementation project(':apptentive-core-ui')
-    implementation project(':apptentive-feedback')
-    implementation project(':apptentive-enjoyment-dialog')
-    implementation project(':apptentive-survey')
-    implementation project(':apptentive-notes')
-    implementation project(':apptentive-ratings')
-    implementation project(':apptentive-message-center')
-    implementation project(':apptentive-navigate-to-link')
-    implementation project(':apptentive-in-app-review')
-    implementation project(":apptentive-initiator")
+    implementation project(":apptentive-kit-android")
     implementation "androidx.appcompat:appcompat:$appcompat_library_version"
     implementation "androidx.core:core-ktx:$core_ktx_version"
     implementation "com.google.android.material:material:$material_design_version"
@@ -138,7 +128,7 @@ tasks.withType(KotlinCompile).configureEach {
 }
 
 def extractSdkVersion() {
-    def text = file('../apptentive-feedback/src/main/java/apptentive/com/android/feedback/Constants.kt').text
+    def text = file('../apptentive-kit-android/src/main/java/apptentive/com/android/feedback/Constants.kt').text
     def match = text =~ ~/SDK_VERSION\s*=\s*"(\d+\.\d+\.\d+)"/
     return match[0][1]
 }

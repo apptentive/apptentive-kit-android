@@ -1,0 +1,64 @@
+package apptentive.com.android.feedback.appstorerating
+
+import apptentive.com.android.core.serialization.json.JsonConverter
+import apptentive.com.android.feedback.engagement.interactions.InteractionData
+import org.junit.Assert.assertEquals
+import org.junit.Test
+
+class AppStoreRatingInteractionTypeConverterTest {
+    @Test
+    fun testConvert() {
+        val json = """
+            {
+                "id": "id",
+                "type": "AppStoreRating",
+                "configuration": {
+                   "store_id": "12345678",
+                    "method": "magic",
+                    "url": "app.store.url"
+                }
+            }
+        """
+
+        val expected = AppStoreRatingInteraction(
+            id = "id",
+            storeID = "12345678",
+            method = "magic",
+            url = "app.store.url",
+            customStoreURL = null
+        )
+
+        testConverter(json, expected)
+    }
+
+    @Test
+    fun testConvertMissingFields() {
+        val json = """
+            {
+                "id": "id",
+                "type": "AppStoreRating",
+                "configuration": {
+                }
+            }
+        """
+
+        val expected = AppStoreRatingInteraction(
+            id = "id",
+            storeID = null,
+            method = null,
+            url = null,
+            customStoreURL = null
+        )
+
+        testConverter(json, expected)
+    }
+
+    private fun testConverter(
+        json: String,
+        expected: AppStoreRatingInteraction
+    ) {
+        val data = JsonConverter.fromJson<InteractionData>(json.trimIndent())
+        val actual = AppStoreRatingInteractionTypeConverter().convert(data)
+        assertEquals(actual, expected)
+    }
+}

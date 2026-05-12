@@ -31,7 +31,7 @@ jobs:
         run: ./gradlew ktlintCheck
 
       - name: Run Unit Tests
-        run: ./gradlew testDebugUnitTest -x apptentive-kit-android:test
+        run: ./gradlew testDebugUnitTest
 
   assemble:
     runs-on: ubuntu-latest

@@ -6,12 +6,14 @@ import android.app.NotificationManager
 import android.media.RingtoneManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import apptentive.com.android.core.util.InternalUseOnly
+import apptentive.com.android.core.util.Log
+import apptentive.com.android.core.util.LogTags.PUSH_NOTIFICATION
 import apptentive.com.android.feedback.Apptentive
-import apptentive.com.android.util.Log
-import apptentive.com.android.util.LogTags.PUSH_NOTIFICATION
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
+@OptIn(InternalUseOnly::class)
 class AppFirebaseMessagingService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         super.onNewToken(token)
@@ -27,7 +29,7 @@ class AppFirebaseMessagingService : FirebaseMessagingService() {
         val data = remoteMessage.data
         Log.d(PUSH_NOTIFICATION, "Received push notification: $data")
         if (isAppInBackground() && Apptentive.isApptentivePushNotification(data)) {
-            Apptentive.buildPendingIntentFromPushNotification(this, { pendingIntent ->
+            Apptentive.buildPendingIntentFromPushNotification(this, callback = { pendingIntent ->
                 if (pendingIntent != null) {
                     val title = Apptentive.getTitleFromApptentivePush(data)
                     val body = Apptentive.getBodyFromApptentivePush(data)
@@ -49,7 +51,7 @@ class AppFirebaseMessagingService : FirebaseMessagingService() {
                 } else {
                     // Push notification was not for the active conversation. Do nothing.
                 }
-            }, data)
+            }, data = data)
         } else {
             // This push did not come from Apptentive. It should be handled by your app.
         }

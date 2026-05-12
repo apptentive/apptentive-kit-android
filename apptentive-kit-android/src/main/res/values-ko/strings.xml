@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="apptentive_close">닫기</string>
+    <string name="apptentive_cancel">취소</string>
+    <string name="apptentive_profile">프로필</string>
+    <string name="apptentive_send_message">메시지를 보냅니다.</string>
+    <string name="apptentive_message_validation_error">오류 - 메시지 필드는 비워둘 수 없습니다.</string>
+    <string name="apptentive_email_validation_error">오류 - 이메일이 누락되었거나 잘못된 형식입니다.</string>
+    <string name="apptentive_profile_confirmation_dialog_title">프로필을 닫을까요?</string>
+    <string name="apptentive_profile_confirmation_dialog_message">프로필 변경 사항이 저장되지 않습니다.</string>
+    <string name="apptentive_failed_to_send">전송 실패. 나중에 자동으로 재시도합니다.</string>
+    <string name="apptentive_preview_attachment">첨부파일 미리보기</string>
+    <string name="apptentive_remove_attachment">첨부파일 제거</string>
+    <string name="apptentive_back">뒤로</string>
+    <string name="apptentive_add_attachment">첨부파일 추가</string>
+    <string name="apptentive_attachment_thumbnail">첨부파일 섬네일</string>
+
+    <!-- Survey -->
+    <string name="confirmation_dialog_message">이 설문조사를 종료하면 진행 상황을 잃게 됩니다.</string>
+    <string name="confirmation_dialog_title">설문조사를 종료할까요?</string>
+    <string name="apptentive_required">필수</string>
+    <string name="min_range_label_default">최저</string>
+    <string name="max_range_label_default">최고</string>
+    <string name="apptentive_survey_header_image">설문조사 헤더 이미지</string>
+</resources>

@@ -5,12 +5,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.app.databinding.FileItemBinding
 
 class FileItemAdapter(private val fileNames: Array<String>) : RecyclerView.Adapter<FileItemAdapter.FileItemViewHolder>() {
     override fun getItemCount(): Int = fileNames.size
 
+    @OptIn(InternalUseOnly::class)
     override fun onBindViewHolder(holder: FileItemViewHolder, position: Int) {
         holder.binding.apply {
             fileItemButton.text = fileNames[position]
