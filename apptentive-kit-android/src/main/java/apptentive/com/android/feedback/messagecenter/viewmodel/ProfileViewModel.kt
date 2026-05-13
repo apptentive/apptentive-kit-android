@@ -4,26 +4,34 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.util.InternalUseOnly
-import apptentive.com.android.feedback.engagement.EngagementContext
+import apptentive.com.android.core.util.Log
+import apptentive.com.android.core.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.feedback.message.MessageManager
 import apptentive.com.android.feedback.messagecenter.dependencyprovider.MessageCenterModelFactory
 import apptentive.com.android.feedback.model.MessageCenterModel
 import apptentive.com.android.feedback.model.Person
-import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getEngagementContext
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getEngagementContextOrNull
 import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getMessageManager
 import apptentive.com.android.feedback.utils.getInteractionBackup
 import apptentive.com.android.ui.core.LiveEvent
 
 @InternalUseOnly
 class ProfileViewModel : ViewModel() {
-    private val context: EngagementContext = getEngagementContext()
-    private val messageManager: MessageManager = getMessageManager()
+
+    val dismissActivity: LiveEvent<Unit> = LiveEvent()
+    private val messageManager: MessageManager? = try {
+        getMessageManager()
+    } catch (e: Exception) {
+        Log.e(MESSAGE_CENTER, "Provider is not registered, could not create MessageManager", e)
+        dismissActivity.setValue(Unit)
+        null
+    }
 
     private val model: MessageCenterModel = try {
         DependencyProvider.of<MessageCenterModelFactory>().messageCenterModel()
-    } catch (exception: Exception) {
+    } catch (e: Exception) {
         getInteractionBackup()
     }
 
@@ -50,18 +58,18 @@ class ProfileViewModel : ViewModel() {
     }
 
     init {
-        messageManager.profile.observe(profileObserver)
+        messageManager?.profile?.observe(profileObserver)
     }
 
     override fun onCleared() {
         // Clears the observer
-        messageManager.profile.removeObserver(profileObserver)
+        messageManager?.profile?.removeObserver(profileObserver)
         super.onCleared()
     }
 
     fun submitProfile(name: String, email: String) {
         if (validateProfile(email, model)) {
-            messageManager.updateProfile(name, email)
+            messageManager?.updateProfile(name, email)
             showConfirmation.value = false
         } else {
             errorMessages.value = true
@@ -71,12 +79,14 @@ class ProfileViewModel : ViewModel() {
     fun isProfileRequired(): Boolean = model.profile?.require == true
 
     fun onMessageCenterEvent(event: String, data: Map<String, Any?>?) {
-        context.executors.state.execute {
-            context.engage(
-                event = Event.internal(event, interaction = InteractionType.MessageCenter),
-                interactionId = model.interactionId,
-                data = data
-            )
+        getEngagementContextOrNull()?.let { context ->
+            context.executors.state.execute {
+                context.engage(
+                    event = Event.internal(event, interaction = InteractionType.MessageCenter),
+                    interactionId = model.interactionId,
+                    data = data
+                )
+            }
         }
     }
 

@@ -13,6 +13,7 @@ import apptentive.com.android.core.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.core.platform.DefaultAndroidSharedPrefDataStore
 import apptentive.com.android.core.util.Log
 import apptentive.com.android.core.util.LogTags.FEEDBACK
+import apptentive.com.android.core.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveConfiguration
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
@@ -26,6 +27,10 @@ import apptentive.com.android.feedback.message.MessageRepository
 object ApptentiveKitSDKState {
     private lateinit var applicationContext: Context
     private lateinit var configuration: ApptentiveConfiguration
+    @Volatile
+    private var providersUnavailable: Boolean = false
+    @Volatile
+    private var cachedEngagementContext: EngagementContext? = null
 
     fun initialize(applicationContext: Context, configuration: ApptentiveConfiguration) {
         ApptentiveKitSDKState.applicationContext = applicationContext
@@ -134,6 +139,19 @@ object ApptentiveKitSDKState {
         } catch (e: Exception) {
             Apptentive.rebootSDKSubject.value = true
             throw MissingProviderException("Provider is not registered, SDK is rebooted: ${EngagementContext::class.java}")
+        }
+    }
+
+    fun getEngagementContextOrNull(): EngagementContext? {
+        if (providersUnavailable) return null
+        cachedEngagementContext?.let { return it }
+
+        return try {
+            getEngagementContext().also { cachedEngagementContext = it }
+        } catch (e: Exception) {
+            providersUnavailable = true
+            Log.e(MESSAGE_CENTER, "Provider is not registered, could not create engagement context", e)
+            null
         }
     }
 

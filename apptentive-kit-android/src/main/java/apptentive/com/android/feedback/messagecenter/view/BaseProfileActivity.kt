@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.messagecenter.view
 
 import android.app.Activity
+import android.os.Bundle
 import androidx.activity.viewModels
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
@@ -25,6 +26,13 @@ open class BaseProfileActivity : ApptentiveViewModelActivity(), ApptentiveActivi
      */
     val viewModel: ProfileViewModel by viewModels {
         ViewModelFactory { ProfileViewModel() }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.dismissActivity.observe(this) {
+            finish()
+        }
     }
 
     override fun onResume() {
