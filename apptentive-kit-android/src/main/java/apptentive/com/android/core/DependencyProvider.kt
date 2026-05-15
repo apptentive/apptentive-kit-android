@@ -1,10 +1,7 @@
 package apptentive.com.android.core
 
-import apptentive.com.android.core.util.InternalUseOnly
-
 /** Service Locator design pattern implementation. Provides dependency based on a class object. */
-@InternalUseOnly
-object DependencyProvider {
+internal object DependencyProvider {
     val lookup = mutableMapOf<Class<*>, Provider<*>>()
 
     inline fun <reified T> register(provider: Provider<T>) {
@@ -30,4 +27,4 @@ object DependencyProvider {
     }
 }
 
-class MissingProviderException(message: String, cause: Throwable? = null) : ApptentiveException(message, cause)
+internal class MissingProviderException(message: String, cause: Throwable? = null) : ApptentiveException(message, cause)

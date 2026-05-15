@@ -1,7 +1,6 @@
 package apptentive.com.android.feedback.model
 
 import apptentive.com.android.core.TimeInterval
-import apptentive.com.android.core.util.InternalUseOnly
 
 internal const val DEFAULT_PER_SESSION_INTERACTION_LIMIT = 1
 internal const val DEFAULT_SDK_ENABLED = true
@@ -26,8 +25,7 @@ internal const val DEFAULT_SDK_ENABLED = true
  * If `false`, the SDK will collect metrics to user internally. It won't send them to the Apptentive API.
  **/
 
-@InternalUseOnly
-data class SDKStatus(
+internal data class SDKStatus(
     val expiry: TimeInterval = 0.0,
     val messageCenter: MessageCenter = MessageCenter(),
     val lastUpdate: TimeInterval = 0.0,

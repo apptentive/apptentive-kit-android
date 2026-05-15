@@ -1,9 +1,6 @@
 package apptentive.com.android.core.encryption
 
-import apptentive.com.android.core.util.InternalUseOnly
-
-@InternalUseOnly
-class KeyResolverFactory {
+internal class KeyResolverFactory {
     companion object {
         fun getKeyResolver(): KeyResolver =
             try {

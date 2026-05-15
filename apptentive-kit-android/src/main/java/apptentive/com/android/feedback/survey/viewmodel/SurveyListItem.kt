@@ -9,7 +9,7 @@ import apptentive.com.android.ui.ViewHolderFactory
  * Base class for representing survey list item
  */
 
-abstract class SurveyListItem(id: String, type: Type) : ListViewItem(id, type.ordinal) {
+internal abstract class SurveyListItem(id: String, type: Type) : ListViewItem(id, type.ordinal) {
     enum class Type {
         Header,
         Introduction,

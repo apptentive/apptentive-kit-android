@@ -3,10 +3,8 @@ package apptentive.com.android.ui
 import android.util.SparseArray
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import apptentive.com.android.core.util.InternalUseOnly
 
-@InternalUseOnly
-class ApptentivePagerAdapter : RecyclerView.Adapter<ApptentiveViewHolder<ListViewItem>>() {
+internal class ApptentivePagerAdapter : RecyclerView.Adapter<ApptentiveViewHolder<ListViewItem>>() {
     private val pages = mutableListOf<ListViewItem>()
     private val viewHolderFactoryLookup = SparseArray<ViewHolderFactory>()
 

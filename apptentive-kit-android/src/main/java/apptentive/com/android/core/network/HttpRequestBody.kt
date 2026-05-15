@@ -1,13 +1,11 @@
 package apptentive.com.android.core.network
 
 import android.os.Build
-import apptentive.com.android.core.util.InternalUseOnly
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
 import java.util.Base64
 
 /** Represent an HTTP-request body */
-@InternalUseOnly
 interface HttpRequestBody {
     /** HTTP-request content type */
     val contentType: String
@@ -22,7 +20,6 @@ interface HttpRequestBody {
     }
 }
 
-@InternalUseOnly
 class BinaryRequestBody(
     private val data: ByteArray,
     override val contentType: String

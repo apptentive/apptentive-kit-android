@@ -6,10 +6,8 @@ import android.os.Bundle
 import androidx.annotation.CallSuper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_UNSPECIFIED
-import apptentive.com.android.core.util.InternalUseOnly
 
-@InternalUseOnly
-open class ApptentiveViewModelActivity : ApptentiveActivity() {
+internal open class ApptentiveViewModelActivity : ApptentiveActivity() {
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
         // set the local night mode to the same value as the parent context has
@@ -24,8 +22,7 @@ open class ApptentiveViewModelActivity : ApptentiveActivity() {
     }
 }
 
-@InternalUseOnly
-inline fun <reified T : ApptentiveViewModelActivity> Context.startViewModelActivity(
+internal inline fun <reified T : ApptentiveViewModelActivity> Context.startViewModelActivity(
     extras: Bundle? = null
 ) {
     val intent = Intent(this, T::class.java)

@@ -1,9 +1,6 @@
 package apptentive.com.android.core.serialization
 
-import apptentive.com.android.core.util.InternalUseOnly
-
-@InternalUseOnly
-interface Decoder {
+internal interface Decoder {
     fun decodeBoolean(): Boolean
     fun decodeByte(): Byte
     fun decodeShort(): Short

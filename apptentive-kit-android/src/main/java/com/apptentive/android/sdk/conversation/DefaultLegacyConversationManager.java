@@ -26,7 +26,6 @@ import com.apptentive.android.sdk.util.StringUtils;
 import com.apptentive.android.sdk.util.Util;
 import java.io.File;
 import java.util.List;
-import apptentive.com.android.core.util.InternalUseOnly;
 import apptentive.com.android.core.util.Log;
 import apptentive.com.android.core.util.LogLevel;
 import apptentive.com.android.core.util.LogTags;
@@ -37,7 +36,6 @@ import apptentive.com.android.feedback.utils.SensitiveDataUtils;
  * Represents a modified version of legacy [ConversationManager] class (read-only). Used in legacy data migration.
  * See: <a href="https://github.com/apptentive/apptentive-android/blob/master/apptentive/src/main/java/com/apptentive/android/sdk/conversation/ConversationManager.java">...</a>
  */
-@InternalUseOnly
 public class DefaultLegacyConversationManager implements LegacyConversationManager {
 	private static final String LEGACY_CONVERSATIONS_DIR = "apptentive/conversations";
 

@@ -1,6 +1,5 @@
 package apptentive.com.android.core.serialization.json
 
-import apptentive.com.android.core.util.InternalUseOnly
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -9,8 +8,7 @@ import org.json.JSONObject
 /**
  * Utility class for JSON serialization
  */
-@InternalUseOnly
-object JsonConverter {
+internal object JsonConverter {
     private val gson: Gson by lazy {
         GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)

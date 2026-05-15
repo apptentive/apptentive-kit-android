@@ -2,7 +2,7 @@ package apptentive.com.android.feedback.payload
 
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 
-class MockPayloadQueue : PayloadQueue {
+internal class MockPayloadQueue : PayloadQueue {
     private val payloads = mutableListOf<PayloadData>()
 
     override fun enqueuePayload(payload: PayloadData) {

@@ -1,9 +1,6 @@
 package apptentive.com.android.feedback.payload
 
-import apptentive.com.android.core.util.InternalUseOnly
-
-@InternalUseOnly
-data class MediaType(
+internal data class MediaType(
     val type: String,
     val subType: String,
     val parameters: Map<String, String>? = null

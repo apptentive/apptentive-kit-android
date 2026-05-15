@@ -15,7 +15,7 @@ import apptentive.com.android.feedback.platform.ApptentiveKitSDKState
  * If it fails to create, don't throw an exception since this is an edge case fix.
  */
 
-fun <T : Any> saveInteractionBackup(interactionModel: T) {
+internal fun <T : Any> saveInteractionBackup(interactionModel: T) {
     Log.d(LogTags.INTERACTIONS, "Saving interaction model backup")
 
     try {
@@ -31,7 +31,7 @@ fun <T : Any> saveInteractionBackup(interactionModel: T) {
     }
 }
 
-inline fun <reified T> getInteractionBackup(): T {
+internal inline fun <reified T> getInteractionBackup(): T {
     Log.w(LogTags.INTERACTIONS, "Error creating ViewModel. Attempting backup.")
 
     try {
@@ -44,7 +44,7 @@ inline fun <reified T> getInteractionBackup(): T {
     }
 }
 
-fun getWhereEventBackup(): String? {
+internal fun getWhereEventBackup(): String? {
     val whereEvent = ApptentiveKitSDKState.getSharedPrefDataStore().getNullableString(
         SharedPrefConstants.APPTENTIVE,
         SharedPrefConstants.WHERE_EVENT_BACKUP,
@@ -52,7 +52,7 @@ fun getWhereEventBackup(): String? {
     return whereEvent
 }
 
-fun saveWhereEventBackup(event: String) {
+internal fun saveWhereEventBackup(event: String) {
     ApptentiveKitSDKState.getSharedPrefDataStore().putString(
         SharedPrefConstants.APPTENTIVE,
         SharedPrefConstants.WHERE_EVENT_BACKUP,

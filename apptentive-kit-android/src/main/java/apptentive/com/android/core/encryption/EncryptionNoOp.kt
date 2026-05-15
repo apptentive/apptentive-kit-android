@@ -1,12 +1,10 @@
 package apptentive.com.android.core.encryption
 
-import apptentive.com.android.core.util.InternalUseOnly
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 
-@InternalUseOnly
-class EncryptionNoOp : Encryption {
+internal class EncryptionNoOp : Encryption {
     override fun decrypt(inputStream: InputStream): ByteArray {
         val byteArrayOutputStream = ByteArrayOutputStream()
         inputStream.use { input ->

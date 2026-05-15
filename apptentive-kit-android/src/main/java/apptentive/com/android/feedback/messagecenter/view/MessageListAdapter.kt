@@ -298,17 +298,17 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
     }
 }
 
-class MessageHeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
-class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
-class MessageFooterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
-data class GreetingData(val greetingTitle: String, val greetingBody: String, val avatarBitmap: Bitmap?)
-data class ProfileViewData(val emailHint: String, val nameHint: String, val showProfile: Boolean)
-data class MessageViewData(
+internal class MessageHeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+internal class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+internal class MessageFooterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+internal data class GreetingData(val greetingTitle: String, val greetingBody: String, val avatarBitmap: Bitmap?)
+internal data class ProfileViewData(val emailHint: String, val nameHint: String, val showProfile: Boolean)
+internal data class MessageViewData(
     val listItemType: ListItemType,
     val greetingData: GreetingData?,
     val profileData: ProfileViewData?,
     val message: Message?
 )
-enum class ListItemType {
+internal enum class ListItemType {
     HEADER, FOOTER, MESSAGE
 }

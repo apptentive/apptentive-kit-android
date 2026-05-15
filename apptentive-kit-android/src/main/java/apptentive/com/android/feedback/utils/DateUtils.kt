@@ -2,21 +2,18 @@ package apptentive.com.android.feedback.utils
 
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.toMilliseconds
-import apptentive.com.android.core.util.InternalUseOnly
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-@InternalUseOnly
-fun convertToDate(timeInterval: TimeInterval, pattern: String = "MM/dd/yyyy"): String {
+internal fun convertToDate(timeInterval: TimeInterval, pattern: String = "MM/dd/yyyy"): String {
     val dateFormat = SimpleDateFormat(pattern, Locale.US)
     // Server returns TimeIntervals in seconds.
     return dateFormat.format(Date(toMilliseconds(timeInterval)))
 }
 
-@InternalUseOnly
-fun convertToGroupDate(timeInterval: TimeInterval): String {
+internal fun convertToGroupDate(timeInterval: TimeInterval): String {
     // Server returns TimeIntervals in seconds.
     val createdAt = toMilliseconds(timeInterval)
 

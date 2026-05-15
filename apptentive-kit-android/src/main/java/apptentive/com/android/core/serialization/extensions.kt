@@ -1,30 +1,24 @@
 package apptentive.com.android.core.serialization
 
-import apptentive.com.android.core.util.InternalUseOnly
-
 //region Nullable String
 
-@InternalUseOnly
-fun Encoder.encodeNullableString(value: String?) {
+internal fun Encoder.encodeNullableString(value: String?) {
     encodeBoolean(value != null)
     if (value != null) {
         encodeString(value)
     }
 }
 
-@InternalUseOnly
-fun Decoder.decodeNullableString(): String? = if (decodeBoolean()) decodeString() else null
+internal fun Decoder.decodeNullableString(): String? = if (decodeBoolean()) decodeString() else null
 
-@InternalUseOnly
-fun Encoder.encodeNullableDouble(value: Double?) {
+internal fun Encoder.encodeNullableDouble(value: Double?) {
     encodeBoolean(value != null)
     if (value != null) {
         encodeDouble(value)
     }
 }
 
-@InternalUseOnly
-fun Decoder.decodeNullableDouble(): Double? = if (decodeBoolean()) decodeDouble() else null
+internal fun Decoder.decodeNullableDouble(): Double? = if (decodeBoolean()) decodeDouble() else null
 
 //endregion
 
@@ -118,37 +112,32 @@ internal object BasicTypeSerializer : TypeSerializer<Any?> {
     }
 }
 
-@InternalUseOnly
-object StringSerializer : TypeSerializer<String> {
+internal object StringSerializer : TypeSerializer<String> {
     override fun encode(encoder: Encoder, value: String) = encoder.encodeString(value)
 
     override fun decode(decoder: Decoder) = decoder.decodeString()
 }
 
-@InternalUseOnly
-object LongSerializer : TypeSerializer<Long> {
+internal object LongSerializer : TypeSerializer<Long> {
     override fun encode(encoder: Encoder, value: Long) = encoder.encodeLong(value)
 
     override fun decode(decoder: Decoder) = decoder.decodeLong()
 }
 
-@InternalUseOnly
-object DoubleSerializer : TypeSerializer<Double> {
+internal object DoubleSerializer : TypeSerializer<Double> {
     override fun encode(encoder: Encoder, value: Double) = encoder.encodeDouble(value)
 
     override fun decode(decoder: Decoder) = decoder.decodeDouble()
 }
 
-@InternalUseOnly
-fun <Value> Encoder.encodeSet(obj: Set<Value>, valueEncoder: TypeEncoder<Value>) {
+internal fun <Value> Encoder.encodeSet(obj: Set<Value>, valueEncoder: TypeEncoder<Value>) {
     encodeInt(obj.size)
     for (value in obj) {
         valueEncoder.encode(this, value)
     }
 }
 
-@InternalUseOnly
-fun <Value> Decoder.decodeSet(valueDecoder: TypeDecoder<Value>): MutableSet<Value> {
+internal fun <Value> Decoder.decodeSet(valueDecoder: TypeDecoder<Value>): MutableSet<Value> {
     val size = decodeInt()
     if (size == 0) {
         return mutableSetOf()
@@ -162,8 +151,7 @@ fun <Value> Decoder.decodeSet(valueDecoder: TypeDecoder<Value>): MutableSet<Valu
     return set
 }
 
-@InternalUseOnly
-fun Encoder.encodeMap(obj: Map<String, Any?>) {
+internal fun Encoder.encodeMap(obj: Map<String, Any?>) {
     encodeMap(
         obj = obj,
         keyEncoder = StringSerializer,
@@ -171,8 +159,7 @@ fun Encoder.encodeMap(obj: Map<String, Any?>) {
     )
 }
 
-@InternalUseOnly
-fun <Key : Any, Value> Encoder.encodeMap(
+internal fun <Key : Any, Value> Encoder.encodeMap(
     obj: Map<Key, Value>,
     keyEncoder: TypeEncoder<Key>,
     valueEncoder: TypeEncoder<Value>
@@ -184,16 +171,14 @@ fun <Key : Any, Value> Encoder.encodeMap(
     }
 }
 
-@InternalUseOnly
-fun Decoder.decodeMap(): Map<String, Any?> {
+internal fun Decoder.decodeMap(): Map<String, Any?> {
     return decodeMap(
         keyDecoder = StringSerializer,
         valueDecoder = BasicTypeSerializer
     )
 }
 
-@InternalUseOnly
-fun <Key : Any, Value> Decoder.decodeMap(
+internal fun <Key : Any, Value> Decoder.decodeMap(
     keyDecoder: TypeDecoder<Key>,
     valueDecoder: TypeDecoder<Value>
 ): MutableMap<Key, Value> {
@@ -213,16 +198,14 @@ fun <Key : Any, Value> Decoder.decodeMap(
 
 //endregion
 
-@InternalUseOnly
-inline fun <T> Encoder.encodeList(items: List<T>, callback: Encoder.(item: T) -> Unit) {
+internal inline fun <T> Encoder.encodeList(items: List<T>, callback: Encoder.(item: T) -> Unit) {
     encodeInt(items.size)
     for (item in items) {
         callback(item)
     }
 }
 
-@InternalUseOnly
-inline fun <T> Decoder.decodeList(callback: Decoder.() -> T): List<T> {
+internal inline fun <T> Decoder.decodeList(callback: Decoder.() -> T): List<T> {
     val size = decodeInt()
     return List(size) { callback() }
 }

@@ -35,7 +35,7 @@ class InitiatorInteractionLauncherTest : apptentive.com.android.TestCase() {
     }
 }
 
-class MockEngagementContextFactory(val getEngagementContext: () -> EngagementContext) :
+internal class MockEngagementContextFactory(val getEngagementContext: () -> EngagementContext) :
     Provider<EngagementContextFactory> {
     override fun get(): EngagementContextFactory {
         return object : EngagementContextFactory {

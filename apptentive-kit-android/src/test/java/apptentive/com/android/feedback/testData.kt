@@ -25,7 +25,7 @@ import apptentive.com.android.feedback.model.payloads.EventPayload
 
 const val SDK_VERSION = "6.0.0"
 
-val mockDevice = Device(
+internal val mockDevice = Device(
     osName = "Android",
     osVersion = "10",
     osBuild = "osBuild",
@@ -78,7 +78,7 @@ val mockDevice = Device(
     )
 )
 
-val mockSdk = SDK(
+internal val mockSdk = SDK(
     version = Constants.SDK_VERSION,
     platform = "Android",
     distribution = "Default",
@@ -88,7 +88,7 @@ val mockSdk = SDK(
     authorEmail = "support@apptentive.com"
 )
 
-val mockAppRelease = AppRelease(
+internal val mockAppRelease = AppRelease(
     type = "Android",
     identifier = "com.test.app",
     versionName = "1.0.0",
@@ -101,7 +101,7 @@ val mockAppRelease = AppRelease(
     appStore = "google"
 )
 
-val mockRandomSampling = RandomSampling(
+internal val mockRandomSampling = RandomSampling(
     percents = mutableMapOf(
         "id1" to 0.1,
         "id2" to 99.9,
@@ -109,7 +109,7 @@ val mockRandomSampling = RandomSampling(
     )
 )
 
-var mockPerson = Person(
+internal var mockPerson = Person(
     id = "1234567890",
     email = null,
     name = null,
@@ -117,7 +117,7 @@ var mockPerson = Person(
     customData = CustomData(content = mapOf("person_key" to "person_value"))
 )
 
-val mockEngagementData = EngagementData(
+internal val mockEngagementData = EngagementData(
     events = EngagementRecords(
         records = mutableMapOf(
             Event.local("event1") to EngagementRecord(
@@ -260,7 +260,7 @@ val mockEngagementData = EngagementData(
     )
 )
 
-val mockEngagementManifest = EngagementManifest(
+internal val mockEngagementManifest = EngagementManifest(
     interactions = listOf(
         InteractionData("id1", "type1"),
         InteractionData("id2", "type2", displayType = "display_type"),
@@ -284,7 +284,7 @@ val mockEngagementManifest = EngagementManifest(
     expiry = 1000.0
 )
 
-var mockEventPayload = EventPayload(
+internal var mockEventPayload = EventPayload(
     nonce = "nonce",
     label = "label",
     interactionId = "interactionId",
@@ -296,7 +296,7 @@ var mockEventPayload = EventPayload(
     )
 )
 
-fun createMockConversation(
+internal fun createMockConversation(
     localIdentifier: String = "localIdentifier",
     conversationToken: String? = null,
     conversationId: String? = null,

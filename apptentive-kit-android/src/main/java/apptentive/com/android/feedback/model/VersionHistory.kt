@@ -2,14 +2,12 @@ package apptentive.com.android.feedback.model
 
 import apptentive.com.android.core.DefaultTimeSource
 import apptentive.com.android.core.TimeSource
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.core.util.copyAndAdd
 import apptentive.com.android.feedback.engagement.criteria.DateTime
 import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
 
-@InternalUseOnly
-data class VersionHistory(
+internal data class VersionHistory(
     internal val items: List<VersionHistoryItem> = emptyList(),
     private val timeSource: TimeSource = DefaultTimeSource
 ) {

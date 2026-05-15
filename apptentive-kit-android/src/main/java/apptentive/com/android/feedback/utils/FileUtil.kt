@@ -11,7 +11,6 @@ import android.provider.OpenableColumns
 import android.webkit.MimeTypeMap
 import androidx.annotation.WorkerThread
 import apptentive.com.android.core.platform.SharedPrefConstants
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.core.util.Log
 import apptentive.com.android.core.util.LogTags.CONVERSATION
 import apptentive.com.android.core.util.LogTags.UTIL
@@ -31,8 +30,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 
-@InternalUseOnly
-object FileUtil {
+internal object FileUtil {
     private val fileSystem: FileSystem by lazy { getFileSystemProvider() }
     private const val ONE_MB = 1024 * 1024 // 1MB
     private const val MAX_FILE_SIZE = 15 * ONE_MB // 15MB

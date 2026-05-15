@@ -1,10 +1,8 @@
 package apptentive.com.android.core.platform
 
 import android.content.SharedPreferences
-import apptentive.com.android.core.util.InternalUseOnly
 
-@InternalUseOnly
-interface AndroidSharedPrefDataStore {
+internal interface AndroidSharedPrefDataStore {
     fun getSharedPrefForSDK(file: String): SharedPreferences
     fun deleteSharedPrefForSDK(file: String, mode: Int)
     fun getString(file: String, keyEntry: String, defaultValue: String = ""): String

@@ -2,16 +2,13 @@ package apptentive.com.android.feedback.engagement
 
 import apptentive.com.android.core.Provider
 import apptentive.com.android.core.concurrent.Executors
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.feedback.payload.PayloadSender
 
-@InternalUseOnly
-interface EngagementContextFactory {
+internal interface EngagementContextFactory {
     fun engagementContext(): EngagementContext
 }
 
-@InternalUseOnly
-class EngagementContextProvider(
+internal class EngagementContextProvider(
     private val engagement: Engagement,
     private val payloadSender: PayloadSender,
     private val executor: Executors

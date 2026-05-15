@@ -1,9 +1,6 @@
 package apptentive.com.android.core.platform
 
-import apptentive.com.android.core.util.InternalUseOnly
-
-@InternalUseOnly
-object SharedPrefConstants {
+internal object SharedPrefConstants {
     const val APPTENTIVE = "APPTENTIVE"
     const val INTERACTION_BACKUP = "interaction_backup"
     const val WHERE_EVENT_BACKUP = "where_event_backup"

@@ -1,11 +1,9 @@
 package apptentive.com.android.feedback.model
 
-import apptentive.com.android.core.util.InternalUseOnly
 import com.apptentive.apptentive_kit_android.BuildConfig
 import kotlin.random.Random
 
-@InternalUseOnly
-data class RandomSampling(
+internal data class RandomSampling(
     val percents: MutableMap<String, Double> = mutableMapOf(),
 ) {
     fun getOrPutRandomValue(id: String, debug: Boolean = BuildConfig.DEBUG): Double {

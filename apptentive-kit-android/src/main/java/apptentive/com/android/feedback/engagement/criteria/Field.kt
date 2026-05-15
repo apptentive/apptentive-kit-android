@@ -1,14 +1,12 @@
 package apptentive.com.android.feedback.engagement.criteria
 
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
 import apptentive.com.android.feedback.utils.appVersionCode
 import apptentive.com.android.feedback.utils.appVersionName
 
 @Suppress("ClassName")
-@InternalUseOnly
-sealed class Field(val type: Type, val description: String) {
+internal sealed class Field(val type: Type, val description: String) {
     enum class Type {
         String,
         Boolean,
@@ -59,7 +57,7 @@ sealed class Field(val type: Type, val description: String) {
         )
     }
 
-    object code_point {
+    internal object code_point {
         object invokes {
             data class total(val event: Event) : Field(
                 type = Type.Number,
@@ -85,7 +83,7 @@ sealed class Field(val type: Type, val description: String) {
         }
     }
 
-    object interactions {
+    internal object interactions {
         object invokes {
             data class total(val interactionId: String) : Field(
                 type = Type.Number,

@@ -3,16 +3,13 @@ package apptentive.com.android.ui
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import apptentive.com.android.core.util.InternalUseOnly
 
-@InternalUseOnly
-interface ViewHolderFactory {
+internal interface ViewHolderFactory {
     fun createItemView(parent: ViewGroup): View
     fun createViewHolder(itemView: View): ApptentiveViewHolder<*>
 }
 
-@InternalUseOnly
-class LayoutViewHolderFactory(
+internal class LayoutViewHolderFactory(
     private val layoutId: Int,
     private val viewHolderCreator: (View) -> ApptentiveViewHolder<*>,
 ) : ViewHolderFactory {

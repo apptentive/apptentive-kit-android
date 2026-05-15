@@ -1,12 +1,10 @@
 package apptentive.com.android.feedback.model
 
 import apptentive.com.android.core.serialization.json.JsonConverter.toJsonObject
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.feedback.model.payloads.DevicePayload
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 
-@InternalUseOnly
-data class Device(
+internal data class Device(
     val osName: String,
     val osVersion: String,
     val osBuild: String,
@@ -95,5 +93,34 @@ data class Device(
                 customData != other.customData ||
                 integrationConfig != other.integrationConfig
             )
+    }
+
+    override fun hashCode(): Int {
+        var result = osApiLevel
+        result = 31 * result + utcOffset
+        result = 31 * result + osName.hashCode()
+        result = 31 * result + osVersion.hashCode()
+        result = 31 * result + osBuild.hashCode()
+        result = 31 * result + manufacturer.hashCode()
+        result = 31 * result + model.hashCode()
+        result = 31 * result + board.hashCode()
+        result = 31 * result + product.hashCode()
+        result = 31 * result + brand.hashCode()
+        result = 31 * result + cpu.hashCode()
+        result = 31 * result + device.hashCode()
+        result = 31 * result + uuid.hashCode()
+        result = 31 * result + buildType.hashCode()
+        result = 31 * result + buildId.hashCode()
+        result = 31 * result + (carrier?.hashCode() ?: 0)
+        result = 31 * result + (currentCarrier?.hashCode() ?: 0)
+        result = 31 * result + (networkType?.hashCode() ?: 0)
+        result = 31 * result + (bootloaderVersion?.hashCode() ?: 0)
+        result = 31 * result + (radioVersion?.hashCode() ?: 0)
+        result = 31 * result + localeCountryCode.hashCode()
+        result = 31 * result + localeLanguageCode.hashCode()
+        result = 31 * result + localeRaw.hashCode()
+        result = 31 * result + customData.hashCode()
+        result = 31 * result + integrationConfig.hashCode()
+        return result
     }
 }

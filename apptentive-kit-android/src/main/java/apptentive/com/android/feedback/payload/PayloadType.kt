@@ -1,9 +1,6 @@
 package apptentive.com.android.feedback.payload
 
-import apptentive.com.android.core.util.InternalUseOnly
-
-@InternalUseOnly
-enum class PayloadType {
+internal enum class PayloadType {
     Person,
     Device,
     AppReleaseAndSDK,

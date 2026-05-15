@@ -22,7 +22,6 @@ import apptentive.com.android.core.platform.SharedPrefConstants.CRYPTO_ENABLED
 import apptentive.com.android.core.platform.SharedPrefConstants.PREF_KEY_PUSH_PROVIDER
 import apptentive.com.android.core.platform.SharedPrefConstants.PREF_KEY_PUSH_TOKEN
 import apptentive.com.android.core.platform.SharedPrefConstants.SDK_CORE_INFO
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.core.util.Log
 import apptentive.com.android.core.util.LogTags.CONVERSATION
 import apptentive.com.android.core.util.LogTags.CRYPTOGRAPHY
@@ -125,8 +124,7 @@ import java.io.ByteArrayInputStream
 import java.io.InputStream
 import java.lang.ref.WeakReference
 
-@InternalUseOnly
-class ApptentiveDefaultClient(
+internal class ApptentiveDefaultClient(
     internal val configuration: ApptentiveConfiguration,
     private val httpClient: HttpClient,
     private val executors: Executors,

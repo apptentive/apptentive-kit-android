@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 /**
  * Executes tasks synchronously on the same thread as dispatched.
  */
-class ImmediateExecutorQueue(
+internal class ImmediateExecutorQueue(
     name: String? = null,
     private val dispatchManually: Boolean = false
 ) : ExecutorQueue(name ?: "Test Queue") {
@@ -50,7 +50,7 @@ class ImmediateExecutorQueue(
 /**
  * Executes tasks asynchronously on the background thread but would block the caller until tasks are done.
  */
-class BlockingExecutorQueue(name: String) : ExecutorQueue(name) {
+internal class BlockingExecutorQueue(name: String) : ExecutorQueue(name) {
     private val threadGroup: ThreadGroup = ThreadGroup(name)
     private val executor: ExecutorService
 

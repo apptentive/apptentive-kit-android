@@ -1,6 +1,5 @@
 package apptentive.com.android.core.encryption
 
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.core.util.Log
 import apptentive.com.android.core.util.LogTags.CRYPTOGRAPHY
 import java.io.ByteArrayInputStream
@@ -13,8 +12,7 @@ import javax.crypto.CipherOutputStream
 import javax.crypto.spec.IvParameterSpec
 import kotlin.math.min
 
-@InternalUseOnly
-class AESEncryption23(private val keyInfo: EncryptionKey) : Encryption {
+internal class AESEncryption23(private val keyInfo: EncryptionKey) : Encryption {
     private val secureRandom = SecureRandom()
 
     private fun decryptCipherForIv(iv: ByteArray): Cipher {

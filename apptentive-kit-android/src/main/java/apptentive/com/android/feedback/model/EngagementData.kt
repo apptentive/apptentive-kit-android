@@ -1,6 +1,5 @@
 package apptentive.com.android.feedback.model
 
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
@@ -9,8 +8,7 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionRespon
 import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
 
-@InternalUseOnly
-data class EngagementData(
+internal data class EngagementData(
     val events: EngagementRecords<Event> = EngagementRecords(),
     val interactions: EngagementRecords<InteractionId> = EngagementRecords(),
     val interactionResponses: MutableMap<InteractionId, InteractionResponseData> = mutableMapOf(),

@@ -8,7 +8,6 @@ import androidx.appcompat.view.ContextThemeWrapper
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import apptentive.com.android.core.concurrent.Executors
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.engagement.criteria.InvocationConverter
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
@@ -24,8 +23,7 @@ import apptentive.com.android.feedback.utils.ThrottleUtils
  * Allows capturing platform specific context (e.g. [android.content.Context]) before making an
  * actual engagement call.
  */
-@InternalUseOnly
-open class EngagementContext(
+internal open class EngagementContext(
     private val engagement: Engagement,
     private val payloadSender: PayloadSender,
     val executors: Executors

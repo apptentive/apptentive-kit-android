@@ -77,7 +77,7 @@ class EnjoymentDialogViewModelTest : TestCase() {
         )
 }
 
-class MockEngagementContextFactory(val getEngagementContext: () -> EngagementContext) : Provider<EngagementContextFactory> {
+internal class MockEngagementContextFactory(val getEngagementContext: () -> EngagementContext) : Provider<EngagementContextFactory> {
     override fun get(): EngagementContextFactory {
         return object : EngagementContextFactory {
             override fun engagementContext(): EngagementContext {

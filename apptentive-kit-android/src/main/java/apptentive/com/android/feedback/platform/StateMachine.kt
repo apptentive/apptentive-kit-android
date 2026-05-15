@@ -1,5 +1,7 @@
 package apptentive.com.android.feedback.platform
 
+import apptentive.com.android.core.util.InternalUseOnly
+
 internal val defaultHandler = { _: SDKEvent -> }
 
 /**
@@ -16,7 +18,8 @@ internal class Transition(val event: String, val next: SDKState, val handler: (S
  *
  * @param state The enum type representing the states of the FSM.
  */
-internal open class StateRuleDSL(private var state: SDKState) {
+@InternalUseOnly
+open class StateRuleDSL(private var state: SDKState) {
     private var initHandler = defaultHandler
     private var transitions: List<Transition> = listOf()
 
@@ -53,7 +56,7 @@ internal open class StateRuleDSL(private var state: SDKState) {
      *
      * @return A [StateRule] instance representing the rules for the associated state.
      */
-    fun rule() = StateRule(state, initHandler, transitions)
+    internal fun rule() = StateRule(state, initHandler, transitions)
 }
 
 /**
@@ -73,7 +76,8 @@ internal data class StateRule(
  * An interface for defining rules and transitions within a finite state machine (FSM).
  *
  */
-internal interface StateMachineDSL {
+@InternalUseOnly
+interface StateMachineDSL {
     fun onState(state: SDKState, block: StateRuleDSL.() -> Unit)
 }
 
@@ -83,7 +87,8 @@ internal interface StateMachineDSL {
  * @property initialState The initial state of the state machine.
  * @property initializer An optional initializer lambda that allows defining rules using a DSL.
  */
-internal open class StateMachine(
+@InternalUseOnly
+open class StateMachine(
     private val initialState: SDKState,
     private val initializer: StateMachineDSL.() -> Unit = { }
 ) : StateMachineDSL {

@@ -1,6 +1,5 @@
 package apptentive.com.android.feedback.engagement
 
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
 
 /**
@@ -8,8 +7,7 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionType
  * @param interaction the name of the interaction that the event was invoked through. In the case of events lying outside of an interaction, use <code>app</code>.
  * @param name the actual name of the event.
  */
-@InternalUseOnly
-data class Event(val vendor: String, val interaction: String, val name: String) {
+internal data class Event(val vendor: String, val interaction: String, val name: String) {
     val fullName: String =
         "${escapeCharacters(vendor)}#${escapeCharacters(interaction)}#${escapeCharacters(name)}"
 

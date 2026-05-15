@@ -2,7 +2,6 @@ package apptentive.com.android.feedback.model
 
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.toSeconds
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.core.util.Log
 import apptentive.com.android.core.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.core.util.generateUUID
@@ -17,8 +16,7 @@ import java.io.File
  * @param hasMore - boolean value to determine if there are more messages to fetch from the server
  */
 
-@InternalUseOnly
-data class MessageList(
+internal data class MessageList(
     val messages: List<Message>?,
     val endsWith: String?,
     val hasMore: Boolean?,
@@ -43,8 +41,7 @@ data class MessageList(
  * @param customData - Optional extra data sent with message
  */
 
-@InternalUseOnly
-data class Message(
+internal data class Message(
     val id: String? = null,
     val nonce: String = generateUUID(),
     var type: String?,
@@ -143,7 +140,7 @@ data class Message(
  * @param profilePhoto - Url to the Sender's profile photo if available
  */
 
-data class Sender(
+internal data class Sender(
     val id: String?,
     val name: String?,
     val profilePhoto: String?,

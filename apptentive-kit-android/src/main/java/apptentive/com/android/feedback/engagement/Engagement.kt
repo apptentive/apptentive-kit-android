@@ -1,6 +1,5 @@
 package apptentive.com.android.feedback.engagement
 
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.core.util.Log
 import apptentive.com.android.core.util.LogTags.SURVEY
 import apptentive.com.android.feedback.EngagementResult
@@ -11,8 +10,7 @@ import apptentive.com.android.feedback.model.payloads.ExtendedData
 /**
  * Represents an object responsible for engaging events in a specific context.
  */
-@InternalUseOnly
-interface Engagement {
+internal interface Engagement {
     fun engage(
         context: EngagementContext,
         event: Event,

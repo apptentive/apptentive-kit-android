@@ -1,7 +1,6 @@
 package apptentive.com.android.feedback.model
 
 import apptentive.com.android.core.serialization.json.JsonConverter.toJsonObject
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.core.util.Log
 import apptentive.com.android.core.util.LogLevel
 import apptentive.com.android.core.util.LogTags.APP_RELEASE
@@ -14,8 +13,7 @@ import apptentive.com.android.core.util.LogTags.RANDOM_SAMPLING
 import apptentive.com.android.core.util.LogTags.SDK
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 
-@InternalUseOnly
-data class Conversation(
+internal data class Conversation(
     val localIdentifier: String,
     @SensitiveDataKey val conversationToken: String? = null,
     val conversationId: String? = null,

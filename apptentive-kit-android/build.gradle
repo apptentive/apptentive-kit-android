@@ -14,7 +14,14 @@ android {
         targetSdkVersion rootProject.targetSdkVersion
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testApplicationId "apptentive.com.app.test"
         consumerProguardFiles "consumer-rules.pro"
+
+        gradle.startParameter.taskNames.each {
+            if (it.contains("AndroidTest")) {
+                minSdkVersion 26 // workaround: MethodHandle.invoke/invokeExact require --min-api 26 with R8
+            }
+        }
 
         def feedBackBaseUrl = System.getenv("INTERNAL_BASE_URL_OVERRIDE") ?: ""
 

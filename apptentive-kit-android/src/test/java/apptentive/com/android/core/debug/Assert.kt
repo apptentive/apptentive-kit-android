@@ -1,4 +1,4 @@
-package apptentive.com.android.debug
+package apptentive.com.android.core.debug
 
 import androidx.annotation.VisibleForTesting
 import java.lang.AssertionError

@@ -1,8 +1,5 @@
 package apptentive.com.android.feedback.engagement.criteria
 
-import apptentive.com.android.core.util.InternalUseOnly
-
-@InternalUseOnly
-interface TargetingState {
+internal interface TargetingState {
     fun getValue(field: Field): Any?
 }

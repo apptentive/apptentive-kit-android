@@ -1,14 +1,12 @@
 package apptentive.com.android.feedback.engagement
 
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.core.util.Log
 import apptentive.com.android.core.util.LogTags.FEEDBACK
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionLauncher
 
-@InternalUseOnly
-interface InteractionEngagement {
+internal interface InteractionEngagement {
     fun engage(context: EngagementContext, interaction: Interaction, whereEvent: String?): EngagementResult
 }
 

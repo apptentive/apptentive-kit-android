@@ -1,6 +1,5 @@
 package apptentive.com.android.core
 
-import apptentive.com.android.core.util.InternalUseOnly
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -11,8 +10,7 @@ import kotlin.reflect.KProperty
  * @param uninitializedValue the value representing an uninitialized state
  * @param initializer a lambda function that provides the initial value when accessed for first time
  */
-@InternalUseOnly
-class ResettableDelegate<T>(private val uninitializedValue: T, val initializer: () -> T) : ReadWriteProperty<Any, T> {
+internal class ResettableDelegate<T>(private val uninitializedValue: T, val initializer: () -> T) : ReadWriteProperty<Any, T> {
 
     private var _value: T = uninitializedValue
 

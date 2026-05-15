@@ -4,15 +4,13 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.core.util.Log
 import apptentive.com.android.core.util.LogTags.PUSH_NOTIFICATION
 import apptentive.com.android.feedback.ApptentiveDefaultClient
 import org.json.JSONException
 import org.json.JSONObject
 
-@InternalUseOnly
-object NotificationUtils {
+internal object NotificationUtils {
     private const val APPTENTIVE_PUSH_EXTRA_KEY = "apptentive"
     internal const val KEY_TOKEN = "token"
     internal const val PUSH_EXTRA_KEY_PARSE = "com.parse.Data"
@@ -39,8 +37,7 @@ object NotificationUtils {
         return PendingIntent.getActivity(context, 0, messageCenterIntent, flags)
     }
 
-    @InternalUseOnly
-    fun getApptentivePushNotificationData(intent: Intent?): String? {
+    internal fun getApptentivePushNotificationData(intent: Intent?): String? {
         if (intent != null) {
             Log.v(PUSH_NOTIFICATION, "Got an Intent")
             return getApptentivePushNotificationData(intent.extras)
@@ -55,8 +52,7 @@ object NotificationUtils {
      * @param pushBundle a [Bundle], or `null`.
      * @return a [String], or `null`.
      */
-    @InternalUseOnly
-    fun getApptentivePushNotificationData(pushBundle: Bundle?): String? {
+    internal fun getApptentivePushNotificationData(pushBundle: Bundle?): String? {
         if (pushBundle != null) {
             when {
                 pushBundle.containsKey(PUSH_EXTRA_KEY_PARSE) -> { // Parse
@@ -97,15 +93,14 @@ object NotificationUtils {
         return null
     }
 
-    @InternalUseOnly
-    fun getApptentivePushNotificationData(pushData: Map<String, String>?): String? {
+    internal fun getApptentivePushNotificationData(pushData: Map<String, String>?): String? {
         return pushData?.get(APPTENTIVE_PUSH_EXTRA_KEY)
     }
 
     private const val PUSH_CONVERSATION_ID = "conversation_id"
     private const val PUSH_ACTION = "action"
 
-    fun generatePendingIntentFromApptentivePushData(
+    internal fun generatePendingIntentFromApptentivePushData(
         context: Context,
         client: ApptentiveDefaultClient,
         apptentivePushData: String?,

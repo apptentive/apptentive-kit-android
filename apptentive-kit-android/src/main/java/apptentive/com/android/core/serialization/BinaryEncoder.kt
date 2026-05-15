@@ -1,10 +1,8 @@
 package apptentive.com.android.core.serialization
 
-import apptentive.com.android.core.util.InternalUseOnly
 import java.io.DataOutput
 
-@InternalUseOnly
-class BinaryEncoder(private val output: DataOutput) : Encoder {
+internal class BinaryEncoder(private val output: DataOutput) : Encoder {
     override fun encodeBoolean(value: Boolean) = output.writeByte(if (value) 1 else 0)
     override fun encodeByte(value: Byte) = output.writeByte(value.toInt())
     override fun encodeShort(value: Short) = output.writeShort(value.toInt())

@@ -1,16 +1,13 @@
 package apptentive.com.android.core.util
 
-@InternalUseOnly
-fun isAllNull(vararg args: Any?): Boolean {
+internal fun isAllNull(vararg args: Any?): Boolean {
     return args.all { it == null }
 }
 
-@InternalUseOnly
-fun isAnyNull(vararg args: Any?): Boolean {
+internal fun isAnyNull(vararg args: Any?): Boolean {
     return args.any { it == null }
 }
 
-@InternalUseOnly
-fun isNoneNull(vararg args: Any?): Boolean {
+internal fun isNoneNull(vararg args: Any?): Boolean {
     return args.all { it != null }
 }

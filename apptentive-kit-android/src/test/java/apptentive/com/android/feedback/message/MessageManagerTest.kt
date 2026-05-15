@@ -408,7 +408,7 @@ class MessageManagerTest : TestCase() {
     }
 }
 
-val testConversation: Conversation = Conversation(
+internal val testConversation: Conversation = Conversation(
     "",
     device = Device("", "", "", 1, "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 1),
     person = Person("123", "test@test.com", "Tester", ""),
@@ -416,7 +416,7 @@ val testConversation: Conversation = Conversation(
     appRelease = AppRelease("", "", 1L, "", "", "")
 )
 
-val testMessageList: List<Message> = listOf(
+internal val testMessageList: List<Message> = listOf(
     Message(
         id = "Test",
         nonce = "UUID",

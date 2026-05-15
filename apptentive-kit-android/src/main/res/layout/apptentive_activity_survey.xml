@@ -8,7 +8,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".SurveyActivity">
+    tools:context="apptentive.com.android.feedback.survey.SurveyActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"

@@ -1,12 +1,10 @@
 package apptentive.com.android.feedback.model
 
 import apptentive.com.android.core.serialization.json.JsonConverter.toJsonObject
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.feedback.model.payloads.PersonPayload
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 
-@InternalUseOnly
-data class Person(
+internal data class Person(
     val id: String? = null,
     val email: String? = null,
     val name: String? = null,

@@ -1,7 +1,5 @@
 package apptentive.com.android.feedback.survey.model
 
-import apptentive.com.android.core.util.InternalUseOnly
-
 /**
  * Model class to represent survey questions.
  * @param id a string that uniquely identifies the question when submitting a response to the API
@@ -11,8 +9,7 @@ import apptentive.com.android.core.util.InternalUseOnly
  * @param instructionsText the text to display as an optional instruction (for example, "Select one")
  * @param validationError a textual error message that is read by a screen reader when a question fails to validate
  */
-@InternalUseOnly
-abstract class SurveyQuestion<Answer : SurveyQuestionAnswer>(
+internal abstract class SurveyQuestion<Answer : SurveyQuestionAnswer>(
     val id: String,
     val title: String,
     val isRequired: Boolean,

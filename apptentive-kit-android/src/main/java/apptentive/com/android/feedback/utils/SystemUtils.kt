@@ -2,10 +2,8 @@ package apptentive.com.android.feedback.utils
 
 import android.content.Context
 import android.content.pm.PackageManager
-import apptentive.com.android.core.util.InternalUseOnly
 
-@InternalUseOnly
-object SystemUtils {
+internal object SystemUtils {
     fun hasPermission(context: Context, permission: String): Boolean {
         val perm =
             context.checkSelfPermission(permission)

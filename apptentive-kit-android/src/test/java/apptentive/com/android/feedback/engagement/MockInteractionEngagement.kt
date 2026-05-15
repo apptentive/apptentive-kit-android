@@ -6,7 +6,7 @@ import java.lang.IllegalStateException
 import java.util.LinkedList
 import java.util.Queue
 
-class MockInteractionEngagement : InteractionEngagement {
+internal class MockInteractionEngagement : InteractionEngagement {
     private val results: Queue<EngagementResult> = LinkedList()
 
     override fun engage(context: EngagementContext, interaction: Interaction, whereEvent: String?): EngagementResult {

@@ -144,8 +144,7 @@ object Apptentive {
         }
     }
 
-    @InternalUseOnly
-    fun getApptentiveActivityCallback(): ApptentiveActivityInfo? = activityInfoCallback?.get()
+    internal fun getApptentiveActivityCallback(): ApptentiveActivityInfo? = activityInfoCallback?.get()
 
     @Suppress("MemberVisibilityCanBePrivate")
     val registered
@@ -300,7 +299,7 @@ object Apptentive {
     }
 
     /**
-     * Returns whether or not the register() method is already called.
+     * Returns regardless of whether the register() method is already called.
      *
      * @return true if the SDK's register method is already called, false otherwise.
      */
@@ -314,7 +313,7 @@ object Apptentive {
 
     /*
      * Starts logout process asynchronously.
-     * The current logged in user will be logged out.
+     * The current logged-in user will be logged out.
      * The SDK will stop sending events & showing interactions until a new user is logged in.
      */
     @JvmStatic
@@ -359,7 +358,7 @@ object Apptentive {
     }
 
     /*
-     * Refreshes the auth token for the logged in user
+     * Refreshes the auth token for the logged-in user
      *
      * @param jwtToken A JWT signed by your server using the secret from your app's Apptentive settings.
      * @param callback A LoginCallback, which will be called asynchronously when the login succeeds
@@ -383,12 +382,6 @@ object Apptentive {
                 }
             }
         }
-    }
-
-    // Not a public API, internal use only
-    @InternalUseOnly
-    fun getCurrentState(): SDKState {
-        return DefaultStateMachine.state
     }
 
     private fun checkSavedKeyAndSignature(
@@ -532,7 +525,7 @@ object Apptentive {
     }
 
     /**
-     * Returns whether or not an engage event will display an Interaction.
+     * Returns regardless of wheter an engage event will display an Interaction.
      *
      * See the [Can Show Interaction](https://learn.apptentive.com/knowledge-base/android-integration-guide/#can-show-interaction)
      * section of the Apptentive Learn documentation for more info.
@@ -635,7 +628,7 @@ object Apptentive {
 
     /**
      * Our SDK must connect to our server at least once to download initial configuration for Message
-     * Center. Call this method to see whether or not Message Center can be displayed. This task is
+     * Center. Call this method to see regardless of whether the Message Center can be displayed. This task is
      * performed asynchronously.
      *
      * @param callback Called after we check to see if Message Center can be displayed, but before it
@@ -1094,7 +1087,7 @@ object Apptentive {
     //region Push Notifications
     /**
      * Use this ID when you call `notify` for Apptentive Push Notifications if you want
-     * notifications to be cleared when when Message Center is shown.
+     * notifications to be cleared when Message Center is shown.
      */
     const val APPTENTIVE_NOTIFICATION_ID = 1056 // Sum of "Apptentive" to ASCII values
 
@@ -1262,7 +1255,7 @@ object Apptentive {
      * push. Called with a [PendingIntent] to launch an Apptentive Interaction if the push data
      * came from Apptentive, and an Interaction can be shown, or `null`.
      * @param data A [Map]<[String], [String]>; containing the Apptentive
-     * Push data. Pass in what you receive in the the Service or BroadcastReceiver
+     * Push data. Pass in what you receive in the Service or BroadcastReceiver
      * that is used by your chosen push provider.
      */
     @JvmStatic
@@ -1334,7 +1327,7 @@ object Apptentive {
      * [android.app.Notification] object.
      *
      * @param bundle A [Bundle] containing the Apptentive Push data. Pass in what you receive in
-     * the the Service or BroadcastReceiver that is used by your chosen push provider.
+     * the Service or BroadcastReceiver that is used by your chosen push provider.
      * @return a [String] value, or `null`.
      */
     @JvmStatic
@@ -1373,7 +1366,7 @@ object Apptentive {
      * construct a [android.app.Notification] object.
      *
      * @param bundle A [Bundle] containing the Apptentive Push data. Pass in what you receive in
-     * the the Service or BroadcastReceiver that is used by your chosen push provider.
+     * the Service or BroadcastReceiver that is used by your chosen push provider.
      * @return a [String] value, or `null`.
      */
     @JvmStatic
@@ -1421,7 +1414,7 @@ object Apptentive {
      * [android.app.Notification] object.
      *
      * @param data A [Map]<[String], [String]> containing the Apptentive Push
-     * data. Pass in what you receive in the the Service or BroadcastReceiver that is
+     * data. Pass in what you receive in the Service or BroadcastReceiver that is
      * used by your chosen push provider.
      * @return a [String] value, or `null`.
      */
@@ -1440,7 +1433,7 @@ object Apptentive {
      * construct a [android.app.Notification] object.
      *
      * @param data A [Map]<[String], [String]> containing the Apptentive Push
-     * data. Pass in what you receive in the the Service or BroadcastReceiver that is
+     * data. Pass in what you receive in the Service or BroadcastReceiver that is
      * used by your chosen push provider.
      * @return a [String] value, or `null`.
      */
@@ -1457,7 +1450,6 @@ object Apptentive {
     //endregion
 
     // internal
-
     @InternalUseOnly
     fun setLocalManifest(json: String?): Boolean {
         return try {
@@ -1474,6 +1466,11 @@ object Apptentive {
             Log.e(CONVERSATION, "Exception while setting local manifest as string", exception)
             false
         }
+    }
+
+    @InternalUseOnly
+    fun getCurrentState(): SDKState {
+        return DefaultStateMachine.state
     }
 
     @InternalUseOnly

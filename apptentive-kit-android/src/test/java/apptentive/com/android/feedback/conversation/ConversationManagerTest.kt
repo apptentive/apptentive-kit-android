@@ -46,7 +46,7 @@ import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 
-class ConversationManagerTest : TestCase() {
+internal class ConversationManagerTest : TestCase() {
 
     @Before
     override fun setUp() {
@@ -253,7 +253,7 @@ internal fun createConversationManager(
     )
 }
 
-class MockConversationRepository(val throwException: Boolean = false) :
+internal class MockConversationRepository(val throwException: Boolean = false) :
     ConversationRepository {
     private var conversation: Conversation? = null
 

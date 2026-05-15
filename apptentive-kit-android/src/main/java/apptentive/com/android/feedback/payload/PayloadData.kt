@@ -1,11 +1,9 @@
 package apptentive.com.android.feedback.payload
 
 import apptentive.com.android.core.network.HttpMethod
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.core.util.generateUUID
 
-@InternalUseOnly
-data class PayloadData(
+internal data class PayloadData(
     val nonce: String = generateUUID(),
     val tag: String,
     var token: String? = null,

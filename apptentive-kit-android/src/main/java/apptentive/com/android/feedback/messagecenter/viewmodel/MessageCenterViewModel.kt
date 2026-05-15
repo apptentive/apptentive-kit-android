@@ -9,7 +9,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.concurrent.Executors
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.core.util.Log
 import apptentive.com.android.core.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.core.util.generateUUID
@@ -42,13 +41,12 @@ import apptentive.com.android.ui.core.LiveEvent
  *
  *  Apptentive uses two executors
  *
- *    * state - For long running/ Async operations
+ *    * state - For long-running/ Async operations
  *    * main  - UI related tasks
  *
  */
 
-@InternalUseOnly
-class MessageCenterViewModel(
+internal class MessageCenterViewModel(
     @get:VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val messageCenterModel: MessageCenterModel,
     private val executors: Executors,
@@ -359,10 +357,10 @@ class MessageCenterViewModel(
     }
 }
 
-fun validateProfile(email: String?, model: MessageCenterModel): Boolean {
+internal fun validateProfile(email: String?, model: MessageCenterModel): Boolean {
     return when {
         model.profile?.require == true && validateEmail(email) -> true
-        model.profile?.request == true && model.profile?.require == false && email?.isEmpty() == true -> true
+        model.profile?.request == true && model.profile.require == false && email?.isEmpty() == true -> true
         model.profile?.request == true && validateEmail(email) -> true
         else -> false
     }

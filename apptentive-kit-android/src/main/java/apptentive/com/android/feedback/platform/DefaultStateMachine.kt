@@ -12,7 +12,8 @@ import apptentive.com.android.feedback.utils.RosterUtils.initializeRoster
 import apptentive.com.android.feedback.utils.RosterUtils.updateRosterForLogin
 import apptentive.com.android.feedback.utils.RosterUtils.updateRosterForLogout
 
-internal object DefaultStateMachine : StateMachine(SDKState.UNINITIALIZED) {
+@InternalUseOnly
+object DefaultStateMachine : StateMachine(SDKState.UNINITIALIZED) {
     lateinit var conversationRoster: ConversationRoster
     lateinit var encryption: Encryption
 
@@ -140,7 +141,8 @@ enum class SDKState {
     ERROR
 }
 
-internal sealed class SDKEvent {
+@InternalUseOnly
+sealed class SDKEvent {
     // register process started
     object RegisterSDK : SDKEvent()
     // starting apptentive client
@@ -169,7 +171,7 @@ internal sealed class SDKEvent {
     object SDKLaunchedAsLoggedIn : SDKEvent()
 
     // logged in completed
-    data class LoggedIn(
+    internal data class LoggedIn(
         val subject: String,
         val encryption: EncryptionKey,
         val wrapperEncryption: ByteArray,

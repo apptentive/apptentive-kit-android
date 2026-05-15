@@ -1,62 +1,51 @@
 package apptentive.com.android.core.util
 
-@InternalUseOnly
-class MissingKeyException(key: String) : RuntimeException("Missing key: $key")
+internal class MissingKeyException(key: String) : RuntimeException("Missing key: $key")
 
 @Throws(MissingKeyException::class)
-@InternalUseOnly
-fun Map<String, *>.getString(key: String): String = optString(key) ?: throw MissingKeyException(key)
+internal fun Map<String, *>.getString(key: String): String = optString(key) ?: throw MissingKeyException(key)
 
-@InternalUseOnly
-fun Map<String, *>.optString(key: String, defaultValue: String? = null) =
+internal fun Map<String, *>.optString(key: String, defaultValue: String? = null) =
     this[key]?.toString() ?: defaultValue
 
-@InternalUseOnly
 @Throws(MissingKeyException::class)
-fun Map<String, *>.getInt(key: String): Int {
+internal fun Map<String, *>.getInt(key: String): Int {
     val value = this[key]
     if (value is Int) return value
     if (value is Double) return value.toInt()
     throw MissingKeyException(key)
 }
 
-@InternalUseOnly
-fun Map<String, *>.optInt(key: String, defaultValue: Int = 0): Int {
+internal fun Map<String, *>.optInt(key: String, defaultValue: Int = 0): Int {
     val value = this[key]
     if (value is Int) return value
     if (value is Double) return value.toInt()
     return defaultValue
 }
 
-@InternalUseOnly
-fun Map<String, *>.optNullableInt(key: String): Int? {
+internal fun Map<String, *>.optNullableInt(key: String): Int? {
     val value = this[key]
     if (value is Int) return value
     if (value is Double) return value.toInt()
     return null
 }
 
-@InternalUseOnly
 @Throws(MissingKeyException::class)
-fun Map<String, *>.getBoolean(key: String) = this[key] as? Boolean ?: throw MissingKeyException(key)
+internal fun Map<String, *>.getBoolean(key: String) = this[key] as? Boolean ?: throw MissingKeyException(key)
 
-@InternalUseOnly
-fun Map<String, *>.optBoolean(key: String, defaultValue: Boolean = false) =
+internal fun Map<String, *>.optBoolean(key: String, defaultValue: Boolean = false) =
     this[key] as? Boolean ?: defaultValue
 
-@InternalUseOnly
 @Throws(MissingKeyException::class)
-fun Map<String, *>.getMap(key: String): Map<String, *> =
+internal fun Map<String, *>.getMap(key: String): Map<String, *> =
     optMap(key) ?: throw MissingKeyException(key)
 
-@InternalUseOnly
 @Suppress("UNCHECKED_CAST")
-fun Map<String, *>.optMap(key: String, defaultValue: Map<String, *>? = null) =
+internal fun Map<String, *>.optMap(key: String, defaultValue: Map<String, *>? = null) =
     this[key] as? Map<String, *> ?: defaultValue
 
-@InternalUseOnly
 @Throws(MissingKeyException::class)
-fun Map<String, *>.getList(key: String): List<*> =
+internal fun Map<String, *>.getList(key: String): List<*> =
     optList(key) ?: throw MissingKeyException(key)
 
 @Suppress("UNCHECKED_CAST")

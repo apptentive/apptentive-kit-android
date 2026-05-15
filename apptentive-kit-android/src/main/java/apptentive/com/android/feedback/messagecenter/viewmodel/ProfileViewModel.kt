@@ -3,7 +3,6 @@ package apptentive.com.android.feedback.messagecenter.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import apptentive.com.android.core.DependencyProvider
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.core.util.Log
 import apptentive.com.android.core.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.feedback.engagement.Event
@@ -17,8 +16,7 @@ import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getMessage
 import apptentive.com.android.feedback.utils.getInteractionBackup
 import apptentive.com.android.ui.core.LiveEvent
 
-@InternalUseOnly
-class ProfileViewModel : ViewModel() {
+internal class ProfileViewModel : ViewModel() {
 
     val dismissActivity: LiveEvent<Unit> = LiveEvent()
     private val messageManager: MessageManager? = try {

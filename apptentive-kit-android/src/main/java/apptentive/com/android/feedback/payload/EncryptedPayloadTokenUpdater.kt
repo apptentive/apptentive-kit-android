@@ -2,7 +2,6 @@ package apptentive.com.android.feedback.payload
 
 import apptentive.com.android.core.encryption.AESEncryption23
 import apptentive.com.android.core.encryption.EncryptionKey
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.core.util.Log
 import apptentive.com.android.core.util.LogTags
 import apptentive.com.android.feedback.model.payloads.EncryptedPayloadPart
@@ -11,8 +10,7 @@ import apptentive.com.android.feedback.model.payloads.PayloadPart
 import apptentive.com.android.feedback.utils.MultipartParser
 import java.io.ByteArrayInputStream
 
-@InternalUseOnly
-class EncryptedPayloadTokenUpdater {
+internal class EncryptedPayloadTokenUpdater {
     companion object {
         fun updateEmbeddedToken(
             token: String,

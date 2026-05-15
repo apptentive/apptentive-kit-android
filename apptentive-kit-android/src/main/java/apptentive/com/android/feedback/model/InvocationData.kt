@@ -1,7 +1,5 @@
 package apptentive.com.android.feedback.model
 
-import apptentive.com.android.core.util.InternalUseOnly
-
 /**
  * Data container with the criteria to be evaluated.
  *
@@ -9,8 +7,7 @@ import apptentive.com.android.core.util.InternalUseOnly
  * @param criteria map of key and values. The keys are expected to predefined Fields in the DefaultTargetingState
  */
 
-@InternalUseOnly
-data class InvocationData(
+internal data class InvocationData(
     val interactionId: String,
     val criteria: Map<String, Any> = emptyMap(),
 )

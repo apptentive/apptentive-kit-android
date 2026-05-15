@@ -3,15 +3,13 @@ package apptentive.com.android.feedback.message
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.encryption.Encryption
 import apptentive.com.android.core.serialization.json.JsonConverter
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.core.util.Log
 import apptentive.com.android.core.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.core.util.generateUUID
 import apptentive.com.android.feedback.conversation.ConversationRoster
 import apptentive.com.android.feedback.model.Message
 
-@InternalUseOnly
-interface MessageRepository {
+internal interface MessageRepository {
     fun addOrUpdateMessages(messages: List<Message>)
     fun getAllMessages(): List<Message>
     fun getLastReceivedMessageIDFromEntries(): String

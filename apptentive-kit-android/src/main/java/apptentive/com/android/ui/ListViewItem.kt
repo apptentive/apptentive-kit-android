@@ -1,9 +1,6 @@
 package apptentive.com.android.ui
 
-import apptentive.com.android.core.util.InternalUseOnly
-
-@InternalUseOnly
-abstract class ListViewItem(val id: String, val itemType: Int) {
+internal abstract class ListViewItem(val id: String, val itemType: Int) {
     open fun areContentsTheSame(other: ListViewItem): Boolean {
         return this == other
     }

@@ -1,12 +1,10 @@
 package apptentive.com.android.feedback.model
 
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.feedback.engagement.criteria.DateTime
 import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
 
-@InternalUseOnly
-data class EngagementRecord(
+internal data class EngagementRecord(
     private var totalInvokes: Long = 0,
     private val versionCodeLookup: MutableMap<VersionCode, Long> = mutableMapOf(),
     private val versionNameLookup: MutableMap<VersionName, Long> = mutableMapOf(),

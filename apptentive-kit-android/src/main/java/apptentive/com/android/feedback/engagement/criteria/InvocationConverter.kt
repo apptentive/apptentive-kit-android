@@ -1,12 +1,10 @@
 package apptentive.com.android.feedback.engagement.criteria
 
-import androidx.annotation.VisibleForTesting
 import apptentive.com.android.core.Converter
 import apptentive.com.android.feedback.engagement.criteria.ConditionalOperator.Companion.EQ
 import apptentive.com.android.feedback.model.InvocationData
 
-@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
-object InvocationConverter : Converter<InvocationData, Invocation> {
+internal object InvocationConverter : Converter<InvocationData, Invocation> {
     override fun convert(source: InvocationData) = Invocation(
         interactionId = source.interactionId,
         criteria = convertInteractionCriteria(source.criteria)

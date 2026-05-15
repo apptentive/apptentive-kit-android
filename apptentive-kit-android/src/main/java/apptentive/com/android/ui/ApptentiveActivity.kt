@@ -6,10 +6,8 @@ import androidx.annotation.CallSuper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import apptentive.com.android.core.util.InternalUseOnly
 
-@InternalUseOnly
-abstract class ApptentiveActivity : AppCompatActivity() {
+internal abstract class ApptentiveActivity : AppCompatActivity() {
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
         overrideTheme()

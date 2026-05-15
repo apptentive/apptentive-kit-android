@@ -1,7 +1,6 @@
 package apptentive.com.android.feedback.model.payloads
 
 import apptentive.com.android.core.network.HttpMethod
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.core.util.Log
 import apptentive.com.android.core.util.LogTags.PAYLOADS
 import apptentive.com.android.feedback.Constants
@@ -19,8 +18,7 @@ import java.io.File
  * @param automated - Flag to determine whether the message was sent by an automatic process
  */
 
-@InternalUseOnly
-data class MessagePayload(
+internal data class MessagePayload(
     @Transient val messageNonce: String,
     @Transient var attachments: List<Message.Attachment>,
     val body: String?,

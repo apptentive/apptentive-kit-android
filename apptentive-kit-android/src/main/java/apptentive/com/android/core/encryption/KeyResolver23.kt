@@ -7,14 +7,12 @@ import apptentive.com.android.core.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.core.platform.SharedPrefConstants.CRYPTO_KEY_ALIAS
 import apptentive.com.android.core.platform.SharedPrefConstants.CRYPTO_KEY_WRAPPER_ALIAS
 import apptentive.com.android.core.platform.SharedPrefConstants.SDK_CORE_INFO
-import apptentive.com.android.core.util.InternalUseOnly
 import java.security.KeyStore
 import java.util.UUID
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 
-@InternalUseOnly
-class KeyResolver23 : KeyResolver {
+internal class KeyResolver23 : KeyResolver {
     private val keyStore = KeyStore.getInstance(KEYSTORE_PROVIDER).apply {
         load(null)
     }

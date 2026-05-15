@@ -1,14 +1,12 @@
 package apptentive.com.android.feedback
 
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.core.util.Log
 import apptentive.com.android.core.util.LogTags.CORE
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionModule
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
 
-@InternalUseOnly
-class InteractionModuleComponent(
+internal class InteractionModuleComponent(
     private val packageName: String,
     private val interactionNames: List<String>,
     private val classPrefix: String = "",

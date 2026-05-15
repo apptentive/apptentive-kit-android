@@ -3,14 +3,12 @@ package apptentive.com.android.feedback.platform
 import android.content.Context
 import androidx.annotation.WorkerThread
 import apptentive.com.android.core.Provider
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.core.util.Log
 import apptentive.com.android.core.util.LogTags.CORE
 import apptentive.com.android.feedback.utils.FileStorageUtil
 import java.io.File
 
-@InternalUseOnly
-interface FileSystem {
+internal interface FileSystem {
     @WorkerThread
     fun getInternalDir(path: String, createIfNecessary: Boolean = false): File
 

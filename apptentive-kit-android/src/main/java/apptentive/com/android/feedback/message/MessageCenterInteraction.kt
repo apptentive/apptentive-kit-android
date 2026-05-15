@@ -1,12 +1,10 @@
 package apptentive.com.android.feedback.message
 
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
 
-@InternalUseOnly
-data class MessageCenterInteraction(
+internal data class MessageCenterInteraction(
     val messageCenterId: InteractionId,
     val title: String?,
     val branding: String?,

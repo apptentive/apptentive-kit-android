@@ -9,7 +9,7 @@ import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.feedback.model.payloads.Payload
 import apptentive.com.android.feedback.payload.MockPayloadSender
 
-data class EngageArgs(
+internal data class EngageArgs(
     val event: Event,
     val interactionId: String? = null,
     val data: Map<String, Any?>? = null,
@@ -18,13 +18,13 @@ data class EngageArgs(
     val whereEvent: String? = null,
 )
 
-typealias EngagementCallback = (EngageArgs) -> EngagementResult
+internal typealias EngagementCallback = (EngageArgs) -> EngagementResult
 
-typealias InvocationCallback = (List<Invocation>) -> EngagementResult
+internal typealias InvocationCallback = (List<Invocation>) -> EngagementResult
 
-typealias PayloadSenderCallback = (Payload) -> Unit
+internal typealias PayloadSenderCallback = (Payload) -> Unit
 
-class MockEngagementContext(
+internal class MockEngagementContext(
     onEngage: EngagementCallback? = null,
     onInvoke: InvocationCallback? = null,
     onSendPayload: PayloadSenderCallback? = null

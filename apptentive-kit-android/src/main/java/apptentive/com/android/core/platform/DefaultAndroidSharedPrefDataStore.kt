@@ -2,10 +2,8 @@ package apptentive.com.android.core.platform
 
 import android.content.Context
 import android.content.SharedPreferences
-import apptentive.com.android.core.util.InternalUseOnly
 
-@InternalUseOnly
-class DefaultAndroidSharedPrefDataStore(val context: Context) : AndroidSharedPrefDataStore {
+internal class DefaultAndroidSharedPrefDataStore(val context: Context) : AndroidSharedPrefDataStore {
     override fun getSharedPrefForSDK(file: String): SharedPreferences =
         context.getSharedPreferences(file, Context.MODE_PRIVATE)
 

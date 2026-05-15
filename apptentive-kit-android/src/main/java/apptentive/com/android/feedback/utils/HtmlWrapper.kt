@@ -4,12 +4,10 @@ import android.text.Html
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.util.Linkify
-import apptentive.com.android.core.util.InternalUseOnly
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-@InternalUseOnly
-object HtmlWrapper {
+internal object HtmlWrapper {
     fun toHTMLString(source: String): Spanned =
         Html.fromHtml(source, Html.FROM_HTML_MODE_COMPACT)
 

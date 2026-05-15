@@ -1,11 +1,9 @@
 package apptentive.com.android.core.encryption
 
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.core.util.Log
 import apptentive.com.android.core.util.LogTags.CRYPTOGRAPHY
 
-@InternalUseOnly
-class EncryptionFactory {
+internal class EncryptionFactory {
     companion object {
         @Throws(EncryptionException::class)
         fun getEncryptionKey() = try {

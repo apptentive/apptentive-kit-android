@@ -10,7 +10,6 @@ import android.os.Build
 import android.util.Size
 import android.webkit.URLUtil
 import androidx.exifinterface.media.ExifInterface
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.core.util.Log
 import apptentive.com.android.core.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.core.util.LogTags.UTIL
@@ -20,8 +19,7 @@ import java.io.InputStream
 import java.net.URL
 import kotlin.math.min
 
-@InternalUseOnly
-object ImageUtil {
+internal object ImageUtil {
     private const val MAX_SENT_IMAGE_EDGE = 2048
     private const val THUMBNAIL_SIZE = 256
 

@@ -1,7 +1,6 @@
 package apptentive.com.android.core.network
 
 import apptentive.com.android.core.TimeInterval
-import apptentive.com.android.core.util.InternalUseOnly
 
 /**
  * A container to hold a generic response from [HttpNetwork]
@@ -11,8 +10,7 @@ import apptentive.com.android.core.util.InternalUseOnly
  * @param headers HTTP-response headers
  * @param duration duration of the request
  */
-@InternalUseOnly
-data class HttpNetworkResponse(
+internal data class HttpNetworkResponse(
     val statusCode: Int,
     val statusMessage: String,
     val data: ByteArray,

@@ -75,7 +75,7 @@ private val attachments = listOf(
     )
 )
 
-val testMessageList: List<Message> = listOf(
+internal val testMessageList: List<Message> = listOf(
     Message(
         id = "Test",
         nonce = "UUID",
@@ -496,7 +496,7 @@ class MessageCenterViewModelTest : TestCase() {
     }
 }
 
-class MockMessageCenterService : MessageCenterService {
+internal class MockMessageCenterService : MessageCenterService {
     override fun getMessages(
         conversationToken: String,
         conversationId: String,
@@ -517,7 +517,7 @@ class MockExecutor : Executor {
     }
 }
 
-class MockMessageRepository : MessageRepository {
+internal class MockMessageRepository : MessageRepository {
     override fun getLastReceivedMessageIDFromEntries(): String = ""
 
     override fun addOrUpdateMessages(messages: List<Message>) {}

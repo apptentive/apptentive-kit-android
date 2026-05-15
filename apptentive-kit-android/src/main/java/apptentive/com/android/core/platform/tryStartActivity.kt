@@ -3,12 +3,10 @@ package apptentive.com.android.core.platform
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.core.util.Log
 import apptentive.com.android.core.util.LogTags.CORE
 
-@InternalUseOnly
-fun Context.tryStartActivity(intent: Intent): Boolean {
+internal fun Context.tryStartActivity(intent: Intent): Boolean {
     try {
         if (intent.resolveActivity(packageManager) != null) {
             startActivity(intent)

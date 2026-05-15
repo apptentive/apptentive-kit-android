@@ -6,7 +6,6 @@ import androidx.annotation.VisibleForTesting
 import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.Observable
 import apptentive.com.android.core.concurrent.Executor
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.core.util.Log
 import apptentive.com.android.core.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.core.util.Result
@@ -40,8 +39,7 @@ import kotlin.collections.isNotEmpty
  * Provides [UnreadMessageCallback] to notify new unread messages to the app
 **/
 
-@InternalUseOnly
-class MessageManager(
+internal class MessageManager(
     private val messageCenterService: MessageCenterService,
     private val serialExecutor: Executor,
     private val messageRepository: MessageRepository,
@@ -366,7 +364,6 @@ class MessageManager(
         unreadMessageCountUpdate = callback
     }
 
-    @InternalUseOnly
     fun updateMessageStatus(isSuccess: Boolean, payloadData: PayloadData) {
         messageRepository.getAllMessages().find {
             it.nonce == payloadData.nonce

@@ -4,10 +4,8 @@ import android.util.SparseArray
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import apptentive.com.android.core.util.InternalUseOnly
 
-@InternalUseOnly
-class ListViewAdapter : ListAdapter<ListViewItem, ApptentiveViewHolder<ListViewItem>>(DIFF) {
+internal class ListViewAdapter : ListAdapter<ListViewItem, ApptentiveViewHolder<ListViewItem>>(DIFF) {
     private val viewHolderFactoryLookup = SparseArray<ViewHolderFactory>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ApptentiveViewHolder<ListViewItem> {

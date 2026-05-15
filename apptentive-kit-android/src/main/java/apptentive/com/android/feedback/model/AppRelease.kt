@@ -1,6 +1,5 @@
 package apptentive.com.android.feedback.model
 
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
 
@@ -17,8 +16,8 @@ import apptentive.com.android.feedback.utils.VersionName
  * @param appStore - host application app store
  * @param customAppStoreURL - host application custom app store url
  */
-@InternalUseOnly
-data class AppRelease(
+
+internal data class AppRelease(
     val type: String,
     val identifier: String,
     val versionCode: VersionCode,

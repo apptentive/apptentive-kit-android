@@ -1,8 +1,8 @@
 package apptentive.com.android.feedback.model
 
 import apptentive.com.android.TestCase
-import apptentive.com.android.debug.Assert.assertFalse
-import apptentive.com.android.debug.Assert.assertTrue
+import apptentive.com.android.core.debug.Assert.assertFalse
+import apptentive.com.android.core.debug.Assert.assertTrue
 import apptentive.com.android.feedback.mockDevice
 import apptentive.com.android.feedback.mockEventPayload
 import apptentive.com.android.feedback.mockPerson

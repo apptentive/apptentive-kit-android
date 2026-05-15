@@ -1,17 +1,14 @@
 package apptentive.com.android.core.network
 
-import apptentive.com.android.core.util.InternalUseOnly
 import java.lang.StringBuilder
 
-@InternalUseOnly
-data class HttpHeader(val name: String, val value: String) {
+internal data class HttpHeader(val name: String, val value: String) {
     override fun toString(): String {
         return "$name: \"$value\""
     }
 }
 
-@InternalUseOnly
-open class HttpHeaders(headers: Map<String, HttpHeader> = emptyMap()) : Iterable<HttpHeader> {
+internal open class HttpHeaders(headers: Map<String, HttpHeader> = emptyMap()) : Iterable<HttpHeader> {
     protected val headers = mutableMapOf<String, HttpHeader>().apply { putAll(headers) }
 
     val size: Int get() = headers.size
@@ -56,8 +53,7 @@ open class HttpHeaders(headers: Map<String, HttpHeader> = emptyMap()) : Iterable
     }
 }
 
-@InternalUseOnly
-class MutableHttpHeaders : HttpHeaders() {
+internal class MutableHttpHeaders : HttpHeaders() {
     operator fun set(name: String, value: Int) {
         set(name, value.toString())
     }

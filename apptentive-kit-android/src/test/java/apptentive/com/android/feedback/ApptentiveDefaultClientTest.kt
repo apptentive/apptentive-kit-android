@@ -44,7 +44,7 @@ import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 
-class MockEngagementContextFactory(val getEngagementContext: () -> EngagementContext) :
+internal class MockEngagementContextFactory(val getEngagementContext: () -> EngagementContext) :
     Provider<EngagementContextFactory> {
     override fun get(): EngagementContextFactory {
         return object : EngagementContextFactory {

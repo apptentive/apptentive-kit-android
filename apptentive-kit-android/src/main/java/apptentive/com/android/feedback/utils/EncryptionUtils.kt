@@ -5,7 +5,6 @@ import apptentive.com.android.core.encryption.AESEncryption23
 import apptentive.com.android.core.encryption.EncryptionKey
 import apptentive.com.android.core.encryption.KeyResolver23
 import apptentive.com.android.core.encryption.KeyResolverFactory
-import apptentive.com.android.core.util.InternalUseOnly
 import java.math.BigInteger
 import java.security.MessageDigest
 import javax.crypto.SecretKey
@@ -14,8 +13,7 @@ import javax.crypto.spec.SecretKeySpec
 typealias SecretKeyBytes = ByteArray
 
 // This is a one way encryption. Cannot be decrypted.
-@InternalUseOnly
-fun String.sha256(): String {
+internal fun String.sha256(): String {
     val md = MessageDigest.getInstance("SHA-256")
     return BigInteger(1, md.digest(toByteArray())).toString(16).padStart(32, '0')
 }

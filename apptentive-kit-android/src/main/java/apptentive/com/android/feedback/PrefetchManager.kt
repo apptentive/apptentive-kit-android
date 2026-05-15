@@ -3,7 +3,6 @@ package apptentive.com.android.feedback
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import apptentive.com.android.core.concurrent.ExecutorQueue
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.core.util.Log
 import apptentive.com.android.core.util.LogTags.PREFETCH_RESOURCES
 import apptentive.com.android.feedback.platform.DefaultStateMachine
@@ -14,8 +13,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.net.URL
 
-@InternalUseOnly
-object PrefetchManager {
+internal object PrefetchManager {
     private lateinit var prefetchPath: String
     internal val prefetchedFileURIFromDisk: MutableList<String> = mutableListOf()
     private val downloadExecutor = ExecutorQueue.createConcurrentQueue("Prefetch")

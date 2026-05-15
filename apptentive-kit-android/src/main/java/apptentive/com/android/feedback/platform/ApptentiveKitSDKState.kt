@@ -24,7 +24,7 @@ import apptentive.com.android.feedback.message.MessageManager
 import apptentive.com.android.feedback.message.MessageManagerFactory
 import apptentive.com.android.feedback.message.MessageRepository
 
-object ApptentiveKitSDKState {
+internal object ApptentiveKitSDKState {
     private lateinit var applicationContext: Context
     private lateinit var configuration: ApptentiveConfiguration
     @Volatile

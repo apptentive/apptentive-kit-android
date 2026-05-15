@@ -6,7 +6,7 @@
     style="?apptentiveMessageCenterProfileLayoutStyle"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.ProfileActivity">
+    tools:context="apptentive.com.android.feedback.messagecenter.view.ProfileActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/apptentive_profile_appbar"

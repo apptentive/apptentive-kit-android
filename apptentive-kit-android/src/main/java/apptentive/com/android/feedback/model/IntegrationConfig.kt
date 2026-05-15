@@ -1,12 +1,10 @@
 package apptentive.com.android.feedback.model
 
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.core.util.Log
 import apptentive.com.android.core.util.LogTags.PUSH_NOTIFICATION
 import org.json.JSONException
 
-@InternalUseOnly
-data class IntegrationConfig(
+internal data class IntegrationConfig(
     var apptentive: IntegrationConfigItem? = null,
     var amazonAwsSns: IntegrationConfigItem? = null,
     var urbanAirship: IntegrationConfigItem? = null,

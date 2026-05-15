@@ -3,7 +3,6 @@ package apptentive.com.android.feedback.utils
 import android.util.Patterns
 import androidx.core.util.PatternsCompat
 import apptentive.com.android.core.getTimeSeconds
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.core.util.Log
 import apptentive.com.android.core.util.LogLevel
 import apptentive.com.android.core.util.LogTags.CONVERSATION
@@ -68,8 +67,7 @@ internal fun String.parseJsonField(field: String): String {
     }
 }
 
-@InternalUseOnly
-fun ApptentiveConfiguration.getBaseUrl(internalBaseUrl: String = BuildConfig.INTERNAL_BASE_URL_OVERRIDE): String {
+internal fun ApptentiveConfiguration.getBaseUrl(internalBaseUrl: String = BuildConfig.INTERNAL_BASE_URL_OVERRIDE): String {
     val defaultUrl = "https://$apptentiveKey.api.digital.${region.value}.alchemer.com"
     return when (region) {
         ApptentiveRegion.UNKNOWN -> Constants.SERVER_URL
@@ -98,8 +96,7 @@ fun ApptentiveConfiguration.getBaseUrl(internalBaseUrl: String = BuildConfig.INT
     }
 }
 
-@InternalUseOnly
-fun containsLinks(text: String): Boolean {
+internal fun containsLinks(text: String): Boolean {
     val urlPattern = Patterns.WEB_URL
     val urlMatcher = urlPattern.matcher(text)
     if (urlMatcher.find()) return true
@@ -122,8 +119,7 @@ fun validateEmail(email: String?): Boolean {
     return false
 }
 
-@InternalUseOnly
-fun shouldRefreshManifest(
+internal fun shouldRefreshManifest(
     lastRecordedManifestFetchTime: String,
     lastUpdatedTimeStamp: Double
 ): Boolean {
@@ -136,8 +132,7 @@ fun shouldRefreshManifest(
     }
 }
 
-@InternalUseOnly
-fun getTimeAsDouble(stringTime: String): Double {
+internal fun getTimeAsDouble(stringTime: String): Double {
     return try {
         stringTime.toDouble()
     } catch (exception: NumberFormatException) {
@@ -146,8 +141,7 @@ fun getTimeAsDouble(stringTime: String): Double {
     }
 }
 
-@InternalUseOnly
-fun hasItBeenAnHour(stringTime: String): Boolean {
+internal fun hasItBeenAnHour(stringTime: String): Boolean {
     return try {
         // First time checking, hence returns true
         if (stringTime.isEmpty()) {
@@ -163,11 +157,9 @@ fun hasItBeenAnHour(stringTime: String): Boolean {
     }
 }
 
-@InternalUseOnly
-fun isVersionLessThan610(version: String?) = isVersionLessThan(version, 6, 10, 0)
+internal fun isVersionLessThan610(version: String?) = isVersionLessThan(version, 6, 10, 0)
 
-@InternalUseOnly
-fun isVersionLessThan720(version: String?) = isVersionLessThan(version, 7, 2, 0)
+internal fun isVersionLessThan720(version: String?) = isVersionLessThan(version, 7, 2, 0)
 
 private fun isVersionLessThan(currentVersion: String?, vararg target: Int): Boolean {
     if (currentVersion.isNullOrBlank()) return true

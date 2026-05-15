@@ -18,7 +18,7 @@ import apptentive.com.android.ui.ViewModelFactory
  * ApptentiveActivityInfo added for easier integration of future features
  */
 
-open class BaseProfileActivity : ApptentiveViewModelActivity(), ApptentiveActivityInfo {
+internal open class BaseProfileActivity : ApptentiveViewModelActivity(), ApptentiveActivityInfo {
     /**
      * @property viewModel [ProfileViewModel] class that is responsible for preparing
      * and managing messages for [ProfileActivity]

@@ -3,7 +3,6 @@ package apptentive.com.android.core.network
 import apptentive.com.android.core.UNDEFINED
 import apptentive.com.android.core.concurrent.Executor
 import apptentive.com.android.core.concurrent.ExecutorQueue
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.core.util.Log
 import apptentive.com.android.core.util.LogTags
 import apptentive.com.android.core.util.Result
@@ -11,8 +10,7 @@ import apptentive.com.android.core.util.Result
 /**
  * Represents an abstract async HTTP-request dispatcher.
  */
-@InternalUseOnly
-interface HttpClient {
+internal interface HttpClient {
     /**
      * Sends HTTP-request asynchronously.
      *
@@ -33,8 +31,7 @@ interface HttpClient {
  * @param [retryPolicy] default retry policy for HTTP-request with no custom policy.
  * @param [listener] optional [HttpClientListener] for tracking status of the requests.
  */
-@InternalUseOnly
-class DefaultHttpClient(
+internal class DefaultHttpClient(
     private val network: HttpNetwork,
     private val networkQueue: ExecutorQueue,
     private val callbackExecutor: Executor,
@@ -225,8 +222,7 @@ class DefaultHttpClient(
 /**
  * A callback interface for request lifecycle events.
  */
-@InternalUseOnly
-interface HttpClientListener {
+internal interface HttpClientListener {
     /**
      * Invoked after request was enqueued.
      */

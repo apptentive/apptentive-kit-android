@@ -3,7 +3,6 @@ package apptentive.com.android.feedback.model.payloads
 import apptentive.com.android.core.network.HttpMethod
 import apptentive.com.android.core.serialization.json.JsonConverter
 import apptentive.com.android.core.serialization.json.JsonConverter.toJsonObject
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.core.util.Log
 import apptentive.com.android.core.util.LogTags
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
@@ -13,8 +12,7 @@ import apptentive.com.android.feedback.payload.PayloadType
 import apptentive.com.android.feedback.payload.SidecarData
 import java.io.ByteArrayOutputStream
 
-@InternalUseOnly
-abstract class Payload(
+internal abstract class Payload(
     val nonce: String,
 ) {
     // These are getter functions so that they don't show up in the toJson result.

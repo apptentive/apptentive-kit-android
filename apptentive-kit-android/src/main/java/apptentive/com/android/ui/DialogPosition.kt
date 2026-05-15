@@ -1,14 +1,12 @@
 package apptentive.com.android.ui
 
 import android.view.Gravity
-import apptentive.com.android.core.util.InternalUseOnly
 
-@InternalUseOnly
-enum class DialogPosition {
+internal enum class DialogPosition {
     TOP, CENTER, BOTTOM
 }
 
-fun String.toDialogPosition(): DialogPosition {
+internal fun String.toDialogPosition(): DialogPosition {
     return when (this) {
         "top" -> DialogPosition.TOP
         "center" -> DialogPosition.CENTER
@@ -17,7 +15,7 @@ fun String.toDialogPosition(): DialogPosition {
     }
 }
 
-fun DialogPosition.toGravity() = when (this) {
+internal fun DialogPosition.toGravity() = when (this) {
     DialogPosition.TOP -> Gravity.TOP
     DialogPosition.CENTER -> Gravity.CENTER
     DialogPosition.BOTTOM -> Gravity.BOTTOM

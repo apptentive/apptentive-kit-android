@@ -20,7 +20,7 @@ import apptentive.com.android.ui.ViewModelFactory
  * [ApptentiveActivityInfo] added for easier integration of future features
  */
 
-open class BaseMessageCenterActivity : ApptentiveViewModelActivity(), ApptentiveActivityInfo {
+internal open class BaseMessageCenterActivity : ApptentiveViewModelActivity(), ApptentiveActivityInfo {
     /**
      * @property viewModel [MessageCenterViewModel] class that is responsible for preparing
      * and managing messages for [MessageCenterActivity]

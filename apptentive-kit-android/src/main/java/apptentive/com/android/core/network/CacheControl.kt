@@ -1,9 +1,6 @@
 package apptentive.com.android.core.network
 
-import apptentive.com.android.core.util.InternalUseOnly
-
-@InternalUseOnly
-data class CacheControl(
+internal data class CacheControl(
     val maxAgeSeconds: Int = -1
 ) {
     companion object {
