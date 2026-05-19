@@ -8,6 +8,8 @@ import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.MockEngagementContext
 import apptentive.com.android.feedback.engagement.MockEngagementContextFactory
+import apptentive.com.android.feedback.interactions.enjoyment.EnjoymentDialogInteraction
+import apptentive.com.android.feedback.interactions.enjoyment.EnjoymentDialogInteractionLauncher
 import org.junit.Test
 
 class EnjoymentDialogInteractionLauncherTest : TestCase() {

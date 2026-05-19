@@ -2,13 +2,13 @@ package apptentive.com.android.feedback
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import apptentive.com.android.core.LogTags.PREFETCH_RESOURCES
 import apptentive.com.android.core.concurrent.ExecutorQueue
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags.PREFETCH_RESOURCES
 import apptentive.com.android.feedback.platform.DefaultStateMachine
 import apptentive.com.android.feedback.utils.FileStorageUtil
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.ThrottleUtils
+import apptentive.com.android.util.Log
 import java.io.FileOutputStream
 import java.io.IOException
 import java.net.URL

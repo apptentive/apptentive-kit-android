@@ -2,10 +2,10 @@ package apptentive.com.android.feedback.platform
 
 import android.content.Context
 import androidx.annotation.WorkerThread
+import apptentive.com.android.core.LogTags.CORE
 import apptentive.com.android.core.Provider
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags.CORE
 import apptentive.com.android.feedback.utils.FileStorageUtil
+import apptentive.com.android.util.Log
 import java.io.File
 
 internal interface FileSystem {

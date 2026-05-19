@@ -1,10 +1,10 @@
 package apptentive.com.android.feedback.utils
 
 import androidx.annotation.VisibleForTesting
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTag
 import apptentive.com.android.feedback.Constants
 import apptentive.com.android.feedback.model.SensitiveDataKey
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTag
 import org.json.JSONObject
 
 internal object SensitiveDataUtils {

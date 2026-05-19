@@ -3,7 +3,7 @@ package apptentive.com.app.test
 import android.app.Application
 import apptentive.com.android.core.AndroidLoggerProvider
 import apptentive.com.android.core.DependencyProvider
-import apptentive.com.android.core.util.InternalUseOnly
+import apptentive.com.android.core.InternalUseOnly
 
 class MyApplication : Application() {
     @OptIn(InternalUseOnly::class)

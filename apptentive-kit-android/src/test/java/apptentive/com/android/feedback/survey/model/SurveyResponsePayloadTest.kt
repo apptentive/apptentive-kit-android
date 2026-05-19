@@ -6,6 +6,11 @@ import apptentive.com.android.core.network.HttpMethod
 import apptentive.com.android.feedback.MockTimeRule
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.conversation.MockConversationCredential
+import apptentive.com.android.feedback.interactions.survey.model.MultiChoiceQuestion
+import apptentive.com.android.feedback.interactions.survey.model.RangeQuestion
+import apptentive.com.android.feedback.interactions.survey.model.SingleLineQuestion
+import apptentive.com.android.feedback.interactions.survey.model.SurveyAnswerState
+import apptentive.com.android.feedback.interactions.survey.model.SurveyResponsePayload
 import apptentive.com.android.feedback.payload.MediaType
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadType

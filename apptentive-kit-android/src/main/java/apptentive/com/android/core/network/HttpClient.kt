@@ -1,11 +1,10 @@
 package apptentive.com.android.core.network
 
-import apptentive.com.android.core.UNDEFINED
+import apptentive.com.android.core.LogTags
 import apptentive.com.android.core.concurrent.Executor
 import apptentive.com.android.core.concurrent.ExecutorQueue
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags
-import apptentive.com.android.core.util.Result
+import apptentive.com.android.core.network.Constants.NUMRETRIES_UNDEFINED
+import apptentive.com.android.util.Log
 
 /**
  * Represents an abstract async HTTP-request dispatcher.
@@ -158,7 +157,7 @@ internal class DefaultHttpClient(
      * @return true if [request] should be retried again
      */
     private fun <T> shouldRetry(request: HttpRequest<T>, statusCode: Int? = null): Boolean {
-        return retryPolicy.shouldRetry(statusCode ?: UNDEFINED, request.numRetries)
+        return retryPolicy.shouldRetry(statusCode ?: NUMRETRIES_UNDEFINED, request.numRetries)
     }
 
     /**

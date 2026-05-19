@@ -1,5 +1,7 @@
 package apptentive.com.android.core
 
+import apptentive.com.android.util.toSeconds
+
 /**
  * Represents an abstract time source object
  */

@@ -77,7 +77,7 @@ dependencies {
 tasks.withType(KotlinCompile).configureEach {
     kotlinOptions {
         freeCompilerArgs += [
-                '-opt-in=apptentive.com.android.core.util.InternalUseOnly',
+                '-opt-in=apptentive.com.android.core.InternalUseOnly',
         ]
     }
 }

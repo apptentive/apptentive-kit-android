@@ -2,11 +2,11 @@ package apptentive.com.android.feedback.notes.interaction
 
 import apptentive.com.android.core.serialization.json.JsonConverter
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
-import apptentive.com.android.feedback.textmodal.LayoutOptions
-import apptentive.com.android.feedback.textmodal.RichContent
-import apptentive.com.android.feedback.textmodal.TextModalActionConfiguration
-import apptentive.com.android.feedback.textmodal.TextModalInteraction
-import apptentive.com.android.feedback.textmodal.TextModalInteractionTypeConverter
+import apptentive.com.android.feedback.interactions.textmodal.LayoutOptions
+import apptentive.com.android.feedback.interactions.textmodal.RichContent
+import apptentive.com.android.feedback.interactions.textmodal.TextModalActionConfiguration
+import apptentive.com.android.feedback.interactions.textmodal.TextModalInteraction
+import apptentive.com.android.feedback.interactions.textmodal.TextModalInteractionTypeConverter
 import apptentive.com.android.ui.DialogPosition
 import com.google.common.truth.Truth
 import org.junit.Test

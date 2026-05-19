@@ -15,15 +15,17 @@ import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.MockEngagementContext
 import apptentive.com.android.feedback.engagement.MockEngagementContextFactory
 import apptentive.com.android.feedback.engagement.PayloadSenderCallback
-import apptentive.com.android.feedback.survey.SurveyModelFactory
-import apptentive.com.android.feedback.survey.SurveyModelFactoryProvider
-import apptentive.com.android.feedback.survey.model.RenderAs
-import apptentive.com.android.feedback.survey.model.SurveyModel
-import apptentive.com.android.feedback.survey.model.SurveyQuestionSet
+import apptentive.com.android.feedback.interactions.survey.SurveyModelFactory
+import apptentive.com.android.feedback.interactions.survey.SurveyModelFactoryProvider
+import apptentive.com.android.feedback.interactions.survey.interaction.SurveyInteraction
+import apptentive.com.android.feedback.interactions.survey.interaction.SurveyInteractionLauncher
+import apptentive.com.android.feedback.interactions.survey.model.RenderAs
+import apptentive.com.android.feedback.interactions.survey.model.SurveyModel
+import apptentive.com.android.feedback.interactions.survey.model.SurveyQuestionSet
+import apptentive.com.android.feedback.interactions.survey.utils.createSurveyViewModel
 import apptentive.com.android.feedback.survey.model.createMultiChoiceQuestionForV12
 import apptentive.com.android.feedback.survey.model.createRangeQuestionForV12
 import apptentive.com.android.feedback.survey.model.createSingleLineQuestionForV12
-import apptentive.com.android.feedback.survey.utils.createSurveyViewModel
 import apptentive.com.android.feedback.utils.HtmlWrapper
 import apptentive.com.android.feedback.utils.HtmlWrapper.linkifiedHTMLString
 import apptentive.com.android.toProperJson
@@ -131,7 +133,10 @@ class SurveyInteractionLauncherTest : TestCase() {
         closeConfirmMessage = "All the changes will be lost",
         closeConfirmCloseText = "close",
         closeConfirmBackText = "Back to survey",
-        termsAndConditions = SurveyInteraction.TermsAndConditions("Terms & Conditions", "https://www.google.com"),
+        termsAndConditions = SurveyInteraction.TermsAndConditions(
+            "Terms & Conditions",
+            "https://www.google.com"
+        ),
         disclaimerText = "Disclaimer text",
         introButtonText = "START",
         questionSet = listOf(),

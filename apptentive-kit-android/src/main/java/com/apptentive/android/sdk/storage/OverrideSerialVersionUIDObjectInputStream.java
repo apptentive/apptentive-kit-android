@@ -1,13 +1,13 @@
 package com.apptentive.android.sdk.storage;
 
-import static apptentive.com.android.core.util.LogTags.UTIL;
+import static apptentive.com.android.core.LogTags.UTIL;
 import androidx.annotation.OptIn;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectStreamClass;
-import apptentive.com.android.core.util.InternalUseOnly;
-import apptentive.com.android.core.util.Log;
+import apptentive.com.android.core.InternalUseOnly;
+import apptentive.com.android.util.Log;
 
 
 /**

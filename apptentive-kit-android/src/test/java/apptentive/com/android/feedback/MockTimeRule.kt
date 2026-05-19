@@ -1,8 +1,8 @@
 package apptentive.com.android.feedback
 
 import apptentive.com.android.core.TimeInterval
-import apptentive.com.android.core.getTimeSeconds
-import apptentive.com.android.core.getUtcOffset
+import apptentive.com.android.util.getTimeSeconds
+import apptentive.com.android.util.getUtcOffset
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
@@ -24,6 +24,6 @@ class MockTimeRule(
     }
 
     companion object {
-        private const val UTIL_CLASS = "apptentive.com.android.core.TypeAliasesKt"
+        private const val UTIL_CLASS = "apptentive.com.android.util.TimeUtilsKt"
     }
 }

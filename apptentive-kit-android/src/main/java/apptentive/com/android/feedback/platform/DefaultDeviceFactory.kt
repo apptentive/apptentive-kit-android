@@ -2,7 +2,7 @@ package apptentive.com.android.feedback.platform
 
 import android.content.Context
 import android.os.Build
-import apptentive.com.android.core.util.Factory
+import apptentive.com.android.core.Factory
 import apptentive.com.android.feedback.model.Device
 import java.util.UUID
 

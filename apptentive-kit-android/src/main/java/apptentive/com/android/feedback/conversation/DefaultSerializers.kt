@@ -1,6 +1,7 @@
 package apptentive.com.android.feedback.conversation
 
 import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.core.LogTags.MIGRATION
 import apptentive.com.android.core.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.core.platform.SharedPrefConstants.SDK_CORE_INFO
 import apptentive.com.android.core.platform.SharedPrefConstants.SDK_VERSION
@@ -22,8 +23,6 @@ import apptentive.com.android.core.serialization.encodeMap
 import apptentive.com.android.core.serialization.encodeNullableDouble
 import apptentive.com.android.core.serialization.encodeNullableString
 import apptentive.com.android.core.serialization.encodeSet
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags.MIGRATION
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
@@ -47,6 +46,7 @@ import apptentive.com.android.feedback.model.VersionHistory
 import apptentive.com.android.feedback.model.VersionHistoryItem
 import apptentive.com.android.feedback.utils.isVersionLessThan610
 import apptentive.com.android.feedback.utils.isVersionLessThan720
+import apptentive.com.android.util.Log
 
 internal object DefaultSerializers {
     val versionCodeSerializer = LongSerializer

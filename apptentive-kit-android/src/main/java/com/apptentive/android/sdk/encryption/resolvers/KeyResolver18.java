@@ -1,7 +1,7 @@
 package com.apptentive.android.sdk.encryption.resolvers;
 
 
-import static apptentive.com.android.core.util.LogTags.SECURITY;
+import static apptentive.com.android.core.LogTags.SECURITY;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -42,8 +42,8 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.security.auth.x500.X500Principal;
 
-import apptentive.com.android.core.util.InternalUseOnly;
-import apptentive.com.android.core.util.Log;
+import apptentive.com.android.core.InternalUseOnly;
+import apptentive.com.android.util.Log;
 
 @OptIn(markerClass = InternalUseOnly.class)
 @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2) class KeyResolver18 implements KeyResolver {

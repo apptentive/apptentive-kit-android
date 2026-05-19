@@ -6,7 +6,11 @@ import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.MockEngagementContext
 import apptentive.com.android.feedback.engagement.MockEngagementContextFactory
-import apptentive.com.android.feedback.survey.utils.SpannedUtils
+import apptentive.com.android.feedback.interactions.survey.model.RenderAs
+import apptentive.com.android.feedback.interactions.survey.model.SingleLineQuestion
+import apptentive.com.android.feedback.interactions.survey.model.SurveyModel
+import apptentive.com.android.feedback.interactions.survey.model.SurveyQuestionSet
+import apptentive.com.android.feedback.interactions.survey.utils.SpannedUtils
 import apptentive.com.android.feedback.utils.HtmlWrapper
 import apptentive.com.android.feedback.utils.HtmlWrapper.linkifiedHTMLString
 import io.mockk.every

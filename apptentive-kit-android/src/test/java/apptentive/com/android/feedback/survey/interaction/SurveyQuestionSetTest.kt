@@ -1,7 +1,7 @@
 package apptentive.com.android.feedback.survey.interaction
 
+import apptentive.com.android.feedback.interactions.survey.model.SurveyQuestionSet
 import apptentive.com.android.feedback.model.InvocationData
-import apptentive.com.android.feedback.survey.model.SurveyQuestionSet
 import junit.framework.TestCase
 import org.junit.Before
 import org.junit.Test

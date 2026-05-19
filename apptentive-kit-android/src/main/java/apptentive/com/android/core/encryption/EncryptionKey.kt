@@ -1,7 +1,7 @@
 package apptentive.com.android.core.encryption
 
 import android.security.keystore.KeyProperties
-import apptentive.com.android.core.util.hexToBytes
+import apptentive.com.android.util.hexToBytes
 import javax.crypto.SecretKey
 import javax.crypto.spec.SecretKeySpec
 

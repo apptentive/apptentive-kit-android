@@ -2,13 +2,13 @@ package apptentive.com.android.feedback.payload
 
 import android.content.Context
 import android.os.Build
+import apptentive.com.android.core.LogTags.PAYLOADS
 import apptentive.com.android.core.encryption.Encryption
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogLevel
-import apptentive.com.android.core.util.LogTags.PAYLOADS
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.createStringTable
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogLevel
 import java.util.Base64
 
 internal class PersistentPayloadQueue(

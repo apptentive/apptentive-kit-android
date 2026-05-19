@@ -1,15 +1,15 @@
 package apptentive.com.android.feedback.model.payloads
 
+import apptentive.com.android.core.LogTags
 import apptentive.com.android.core.network.HttpMethod
 import apptentive.com.android.core.serialization.json.JsonConverter
 import apptentive.com.android.core.serialization.json.JsonConverter.toJsonObject
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.payload.MediaType
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadType
 import apptentive.com.android.feedback.payload.SidecarData
+import apptentive.com.android.util.Log
 import java.io.ByteArrayOutputStream
 
 internal abstract class Payload(

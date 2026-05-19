@@ -1,6 +1,6 @@
 package apptentive.com.android.feedback.platform
 
-import apptentive.com.android.core.util.Factory
+import apptentive.com.android.core.Factory
 import apptentive.com.android.feedback.model.SDK
 
 internal class DefaultSDKFactory(

@@ -7,12 +7,24 @@ import android.content.Intent
 import android.os.Bundle
 import apptentive.com.android.core.ApptentiveException
 import apptentive.com.android.core.BehaviorSubject
+import apptentive.com.android.core.InternalUseOnly
+import apptentive.com.android.core.LogTags
+import apptentive.com.android.core.LogTags.CONVERSATION
+import apptentive.com.android.core.LogTags.DEVICE
+import apptentive.com.android.core.LogTags.FEEDBACK
+import apptentive.com.android.core.LogTags.INTERACTIONS
+import apptentive.com.android.core.LogTags.MESSAGE_CENTER
+import apptentive.com.android.core.LogTags.NETWORK
+import apptentive.com.android.core.LogTags.PERSON
+import apptentive.com.android.core.LogTags.PROFILE_DATA_UPDATE
+import apptentive.com.android.core.LogTags.PUSH_NOTIFICATION
+import apptentive.com.android.core.LogTags.SYSTEM
 import apptentive.com.android.core.Observable
+import apptentive.com.android.core.SdkAPI
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.concurrent.Executor
 import apptentive.com.android.core.concurrent.ExecutorQueue
 import apptentive.com.android.core.concurrent.Executors
-import apptentive.com.android.core.format
 import apptentive.com.android.core.network.DefaultHttpClient
 import apptentive.com.android.core.network.DefaultHttpNetwork
 import apptentive.com.android.core.network.DefaultHttpRequestRetryPolicy
@@ -21,19 +33,6 @@ import apptentive.com.android.core.network.HttpLoggingInterceptor
 import apptentive.com.android.core.network.HttpNetworkResponse
 import apptentive.com.android.core.network.HttpRequest
 import apptentive.com.android.core.platform.SharedPrefConstants
-import apptentive.com.android.core.util.InternalUseOnly
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags
-import apptentive.com.android.core.util.LogTags.CONVERSATION
-import apptentive.com.android.core.util.LogTags.DEVICE
-import apptentive.com.android.core.util.LogTags.FEEDBACK
-import apptentive.com.android.core.util.LogTags.INTERACTIONS
-import apptentive.com.android.core.util.LogTags.MESSAGE_CENTER
-import apptentive.com.android.core.util.LogTags.NETWORK
-import apptentive.com.android.core.util.LogTags.PERSON
-import apptentive.com.android.core.util.LogTags.PROFILE_DATA_UPDATE
-import apptentive.com.android.core.util.LogTags.PUSH_NOTIFICATION
-import apptentive.com.android.core.util.LogTags.SYSTEM
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
 import apptentive.com.android.feedback.model.EventNotification
@@ -48,6 +47,8 @@ import apptentive.com.android.feedback.platform.isSDKLoading
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.feedback.utils.ThrottleUtils
 import apptentive.com.android.feedback.utils.sha256
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.format
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.InputStream
@@ -69,6 +70,7 @@ import java.lang.ref.WeakReference
  * [Exception]           At some point in the evaluation or interaction showing process a [Throwable]
  *                       was thrown. Returns with [String] error message and prints error stacktrace.
  */
+@SdkAPI
 sealed class EngagementResult {
     data class InteractionShown(val interactionId: InteractionId) : EngagementResult() {
         init { Log.d(INTERACTIONS, "Interaction Engaged => interactionID: $interactionId") }
@@ -84,6 +86,7 @@ sealed class EngagementResult {
     }
 }
 
+@SdkAPI
 object Apptentive {
     private var client: ApptentiveClient = ApptentiveClient.NULL
     private var activityInfoCallback: WeakReference<ApptentiveActivityInfo>? = null
@@ -270,7 +273,7 @@ object Apptentive {
      * Integration Reference Guide.
      *
      * @param jwtToken A JWT signed by your server using the secret from your app's Apptentive settings.
-     * @param callback A LoginCallback, which will be called asynchronously when the login succeeds
+     * @param callback A login callback, which will be called asynchronously when the login succeeds
      *                 or fails.
      */
     @JvmStatic
@@ -1137,12 +1140,16 @@ object Apptentive {
         }
         try {
             stateExecutor.execute {
-                context
-                    .getSharedPreferences(SharedPrefConstants.APPTENTIVE, Context.MODE_PRIVATE)
-                    .edit()
-                    .putInt(SharedPrefConstants.PREF_KEY_PUSH_PROVIDER, pushProvider)
-                    .putString(SharedPrefConstants.PREF_KEY_PUSH_TOKEN, token)
-                    .apply()
+                getSharedPrefDataStore().putInt(
+                    SharedPrefConstants.APPTENTIVE,
+                    SharedPrefConstants.PREF_KEY_PUSH_PROVIDER,
+                    pushProvider
+                )
+                getSharedPrefDataStore().putString(
+                    SharedPrefConstants.APPTENTIVE,
+                    SharedPrefConstants.PREF_KEY_PUSH_TOKEN,
+                    token
+                )
 
                 client.setPushIntegration(pushProvider, token)
             }

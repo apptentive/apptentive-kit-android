@@ -2,12 +2,12 @@ package apptentive.com.android.feedback.lifecycle
 
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import apptentive.com.android.core.LogTags.LIFE_CYCLE_OBSERVER
 import apptentive.com.android.core.concurrent.Executor
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags.LIFE_CYCLE_OBSERVER
 import apptentive.com.android.feedback.ApptentiveClient
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.InternalEvent
+import apptentive.com.android.util.Log
 
 internal class ApptentiveLifecycleObserver(
     val client: ApptentiveClient,

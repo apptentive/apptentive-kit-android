@@ -2,11 +2,11 @@ package apptentive.com.android.feedback.survey.viewmodel
 
 import apptentive.com.android.TestCase
 import apptentive.com.android.feedback.engagement.interactions.InteractionResponse
-import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion
-import apptentive.com.android.feedback.survey.model.RangeQuestion
-import apptentive.com.android.feedback.survey.model.SingleLineQuestion
-import apptentive.com.android.feedback.survey.model.SurveyAnswerState
-import apptentive.com.android.feedback.survey.utils.mapAnswersToResponses
+import apptentive.com.android.feedback.interactions.survey.model.MultiChoiceQuestion
+import apptentive.com.android.feedback.interactions.survey.model.RangeQuestion
+import apptentive.com.android.feedback.interactions.survey.model.SingleLineQuestion
+import apptentive.com.android.feedback.interactions.survey.model.SurveyAnswerState
+import apptentive.com.android.feedback.interactions.survey.utils.mapAnswersToResponses
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

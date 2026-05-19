@@ -21,11 +21,11 @@
 
 package com.apptentive.android.sdk.util;
 
-import static apptentive.com.android.core.util.LogTags.UTIL;
+import static apptentive.com.android.core.LogTags.UTIL;
 import androidx.annotation.OptIn;
 import java.util.Map;
-import apptentive.com.android.core.util.InternalUseOnly;
-import apptentive.com.android.core.util.Log;
+import apptentive.com.android.core.InternalUseOnly;
+import apptentive.com.android.util.Log;
 
 
 /**

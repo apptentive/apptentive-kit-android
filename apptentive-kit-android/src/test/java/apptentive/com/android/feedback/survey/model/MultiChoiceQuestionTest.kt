@@ -1,8 +1,10 @@
 package apptentive.com.android.feedback.survey.model
 
-import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion.Answer
-import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion.AnswerChoiceConfiguration
-import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion.ChoiceType
+import apptentive.com.android.feedback.interactions.survey.model.MultiChoiceQuestion
+import apptentive.com.android.feedback.interactions.survey.model.MultiChoiceQuestion.Answer
+import apptentive.com.android.feedback.interactions.survey.model.MultiChoiceQuestion.AnswerChoiceConfiguration
+import apptentive.com.android.feedback.interactions.survey.model.MultiChoiceQuestion.ChoiceType
+import apptentive.com.android.feedback.interactions.survey.model.update
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
@@ -104,7 +106,11 @@ class MultiChoiceQuestionTest {
             minSelections = 2,
             maxSelections = 4,
             answerChoiceConfigs = listOf(
-                AnswerChoiceConfiguration(ChoiceType.select_option, "choice_1", "Choice 1"),
+                AnswerChoiceConfiguration(
+                    ChoiceType.select_option,
+                    "choice_1",
+                    "Choice 1"
+                ),
                 AnswerChoiceConfiguration(ChoiceType.select_option, "choice_2", "Choice 2"),
                 AnswerChoiceConfiguration(ChoiceType.select_option, "choice_3", "Choice 3"),
                 AnswerChoiceConfiguration(ChoiceType.select_option, "choice_4", "Choice 4"),

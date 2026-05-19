@@ -2,6 +2,8 @@ package apptentive.com.android.feedback.appstorerating
 
 import apptentive.com.android.core.serialization.json.JsonConverter
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
+import apptentive.com.android.feedback.interactions.appstorerating.AppStoreRatingInteraction
+import apptentive.com.android.feedback.interactions.appstorerating.AppStoreRatingInteractionTypeConverter
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

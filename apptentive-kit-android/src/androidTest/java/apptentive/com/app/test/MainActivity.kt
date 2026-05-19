@@ -5,10 +5,10 @@ import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import apptentive.com.android.core.InternalUseOnly
 import apptentive.com.android.core.concurrent.Executor
 import apptentive.com.android.core.concurrent.Executors
 import apptentive.com.android.core.serialization.json.JsonConverter
-import apptentive.com.android.core.util.InternalUseOnly
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
 import apptentive.com.android.feedback.EngagementResult

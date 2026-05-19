@@ -11,10 +11,13 @@ import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.MockEngagementContext
 import apptentive.com.android.feedback.engagement.util.MockAndroidSharedPrefDataStore
-import apptentive.com.android.feedback.enjoyment.EnjoymentDialogViewModel.Companion.CODE_POINT_CANCEL
-import apptentive.com.android.feedback.enjoyment.EnjoymentDialogViewModel.Companion.CODE_POINT_DISMISS
-import apptentive.com.android.feedback.enjoyment.EnjoymentDialogViewModel.Companion.CODE_POINT_NO
-import apptentive.com.android.feedback.enjoyment.EnjoymentDialogViewModel.Companion.CODE_POINT_YES
+import apptentive.com.android.feedback.interactions.enjoyment.EnjoymentDialogInteraction
+import apptentive.com.android.feedback.interactions.enjoyment.EnjoymentDialogInteractionProvider
+import apptentive.com.android.feedback.interactions.enjoyment.EnjoymentDialogViewModel
+import apptentive.com.android.feedback.interactions.enjoyment.EnjoymentDialogViewModel.Companion.CODE_POINT_CANCEL
+import apptentive.com.android.feedback.interactions.enjoyment.EnjoymentDialogViewModel.Companion.CODE_POINT_DISMISS
+import apptentive.com.android.feedback.interactions.enjoyment.EnjoymentDialogViewModel.Companion.CODE_POINT_NO
+import apptentive.com.android.feedback.interactions.enjoyment.EnjoymentDialogViewModel.Companion.CODE_POINT_YES
 import apptentive.com.android.ui.DialogPosition
 import org.junit.Test
 
@@ -32,7 +35,12 @@ class EnjoymentDialogViewModelTest : TestCase() {
             verticalMargins = null
         )
 
-        DependencyProvider.register(EnjoymentDialogInteractionProvider(interaction, "love_dialog_event"))
+        DependencyProvider.register(
+            EnjoymentDialogInteractionProvider(
+                interaction,
+                "love_dialog_event"
+            )
+        )
         DependencyProvider.register(
             MockEngagementContextFactory
             {

@@ -4,9 +4,9 @@ import androidx.annotation.Keep
 import apptentive.com.android.feedback.engagement.interactions.InteractionLauncher
 import apptentive.com.android.feedback.engagement.interactions.InteractionModule
 import apptentive.com.android.feedback.engagement.interactions.InteractionTypeConverter
-import apptentive.com.android.feedback.enjoyment.EnjoymentDialogInteraction
-import apptentive.com.android.feedback.enjoyment.EnjoymentDialogInteractionLauncher
-import apptentive.com.android.feedback.enjoyment.EnjoymentDialogInteractionTypeConverter
+import apptentive.com.android.feedback.interactions.enjoyment.EnjoymentDialogInteraction
+import apptentive.com.android.feedback.interactions.enjoyment.EnjoymentDialogInteractionLauncher
+import apptentive.com.android.feedback.interactions.enjoyment.EnjoymentDialogInteractionTypeConverter
 
 @Keep
 internal class EnjoymentDialogModule : InteractionModule<EnjoymentDialogInteraction> {

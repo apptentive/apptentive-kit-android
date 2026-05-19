@@ -1,7 +1,7 @@
 package apptentive.com.android.core.network
 
 import apptentive.com.android.core.TimeInterval
-import apptentive.com.android.core.UNDEFINED
+import apptentive.com.android.core.network.Constants.NUMRETRIES_UNDEFINED
 import kotlin.math.min
 import kotlin.math.pow
 import kotlin.random.Random
@@ -19,7 +19,7 @@ internal class DefaultHttpRequestRetryPolicy(
             return false // don't retry if request was unauthorized or rejected
         }
 
-        if (maxNumRetries == UNDEFINED) {
+        if (maxNumRetries == NUMRETRIES_UNDEFINED) {
             return true // retry indefinitely
         }
 

@@ -6,9 +6,8 @@ import apptentive.com.android.core.Logger
 import apptentive.com.android.core.Provider
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.encryption.Encryption
-import apptentive.com.android.core.getTimeSeconds
+import apptentive.com.android.core.network.Result
 import apptentive.com.android.core.platform.AndroidSharedPrefDataStore
-import apptentive.com.android.core.util.Result
 import apptentive.com.android.feedback.MockAndroidLoggerProvider
 import apptentive.com.android.feedback.backend.ConversationFetchResponse
 import apptentive.com.android.feedback.backend.ConversationService
@@ -34,6 +33,7 @@ import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.platform.DefaultStateMachine
 import apptentive.com.android.feedback.platform.FileSystem
 import apptentive.com.android.feedback.platform.SDKEvent
+import apptentive.com.android.util.getTimeSeconds
 import com.apptentive.android.sdk.conversation.ConversationData
 import com.apptentive.android.sdk.conversation.LegacyConversationManager
 import com.apptentive.android.sdk.conversation.LegacyConversationMetadata

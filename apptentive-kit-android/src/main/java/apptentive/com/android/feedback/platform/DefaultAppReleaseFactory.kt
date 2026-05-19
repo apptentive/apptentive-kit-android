@@ -1,8 +1,8 @@
 package apptentive.com.android.feedback.platform
 
 import android.content.Context
+import apptentive.com.android.core.Factory
 import apptentive.com.android.core.platform.SharedPrefConstants
-import apptentive.com.android.core.util.Factory
 import apptentive.com.android.feedback.model.AppRelease
 import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getSharedPrefDataStore
 import apptentive.com.android.feedback.utils.RuntimeUtils

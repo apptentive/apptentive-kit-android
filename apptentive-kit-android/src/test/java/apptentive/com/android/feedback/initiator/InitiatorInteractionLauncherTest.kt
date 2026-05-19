@@ -9,6 +9,8 @@ import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.MockEngagementContext
+import apptentive.com.android.feedback.interactions.initiator.InitiatorInteraction
+import apptentive.com.android.feedback.interactions.initiator.InitiatorInteractionLauncher
 
 class InitiatorInteractionLauncherTest : apptentive.com.android.TestCase() {
     private val launcher = InitiatorInteractionLauncher()

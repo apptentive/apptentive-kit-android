@@ -11,7 +11,7 @@ import static com.apptentive.android.sdk.conversation.ConversationState.LOGGED_I
 import static com.apptentive.android.sdk.util.Constants.CONVERSATION_METADATA_FILE;
 import static com.apptentive.android.sdk.util.Constants.CONVERSATION_METADATA_FILE_LEGACY_V1;
 import static com.apptentive.android.sdk.util.Constants.PAYLOAD_ENCRYPTION_KEY_TRANSFORMATION;
-import static apptentive.com.android.core.util.LogTags.MIGRATION;
+import static apptentive.com.android.core.LogTags.MIGRATION;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
@@ -26,9 +26,9 @@ import com.apptentive.android.sdk.util.StringUtils;
 import com.apptentive.android.sdk.util.Util;
 import java.io.File;
 import java.util.List;
-import apptentive.com.android.core.util.Log;
-import apptentive.com.android.core.util.LogLevel;
-import apptentive.com.android.core.util.LogTags;
+import apptentive.com.android.util.Log;
+import apptentive.com.android.util.LogLevel;
+import apptentive.com.android.core.LogTags;
 import apptentive.com.android.feedback.utils.SensitiveDataUtils;
 
 

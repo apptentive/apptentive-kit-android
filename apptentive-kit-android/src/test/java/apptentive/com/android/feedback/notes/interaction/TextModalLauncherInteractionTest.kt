@@ -8,8 +8,8 @@ import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.MockEngagementContext
 import apptentive.com.android.feedback.engagement.MockEngagementContextFactory
-import apptentive.com.android.feedback.textmodal.TextModalInteraction
-import apptentive.com.android.feedback.textmodal.TextModalInteractionLauncher
+import apptentive.com.android.feedback.interactions.textmodal.TextModalInteraction
+import apptentive.com.android.feedback.interactions.textmodal.TextModalInteractionLauncher
 import apptentive.com.android.ui.DialogPosition
 import org.junit.Test
 

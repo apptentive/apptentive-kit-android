@@ -6,10 +6,10 @@ import android.app.NotificationManager
 import android.media.RingtoneManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
-import apptentive.com.android.core.util.InternalUseOnly
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags.PUSH_NOTIFICATION
+import apptentive.com.android.core.InternalUseOnly
+import apptentive.com.android.core.LogTags.PUSH_NOTIFICATION
 import apptentive.com.android.feedback.Apptentive
+import apptentive.com.android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 

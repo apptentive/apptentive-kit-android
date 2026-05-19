@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.survey.interaction
 
+import apptentive.com.android.feedback.interactions.survey.interaction.SurveyInteraction
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test

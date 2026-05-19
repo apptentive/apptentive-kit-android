@@ -1,7 +1,10 @@
 package apptentive.com.android.feedback.backend
 
+import apptentive.com.android.core.DefaultTimeSource.getTimeSeconds
 import apptentive.com.android.core.DependencyProvider
-import apptentive.com.android.core.getTimeSeconds
+import apptentive.com.android.core.LogTags
+import apptentive.com.android.core.LogTags.CONFIGURATION
+import apptentive.com.android.core.LogTags.CONVERSATION
 import apptentive.com.android.core.network.CacheControl
 import apptentive.com.android.core.network.HttpByteArrayResponseReader
 import apptentive.com.android.core.network.HttpClient
@@ -13,14 +16,10 @@ import apptentive.com.android.core.network.HttpNetworkResponse
 import apptentive.com.android.core.network.HttpRequest
 import apptentive.com.android.core.network.HttpResponseReader
 import apptentive.com.android.core.network.MutableHttpHeaders
+import apptentive.com.android.core.network.ResponseMetadata
+import apptentive.com.android.core.network.Result
 import apptentive.com.android.core.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.core.platform.SharedPrefConstants.ETAG_INTERACTIONS
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags
-import apptentive.com.android.core.util.LogTags.CONFIGURATION
-import apptentive.com.android.core.util.LogTags.CONVERSATION
-import apptentive.com.android.core.util.ResponseMetadata
-import apptentive.com.android.core.util.Result
 import apptentive.com.android.feedback.model.AppRelease
 import apptentive.com.android.feedback.model.Device
 import apptentive.com.android.feedback.model.EngagementManifest
@@ -30,6 +29,7 @@ import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.model.SDKStatus
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadSendException
+import apptentive.com.android.util.Log
 import com.apptentive.apptentive_kit_android.BuildConfig
 
 internal class DefaultConversationService(

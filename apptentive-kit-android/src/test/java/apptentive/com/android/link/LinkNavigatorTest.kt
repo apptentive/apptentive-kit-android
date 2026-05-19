@@ -1,14 +1,14 @@
 package apptentive.com.android.link
 
 import apptentive.com.android.TestCase
-import apptentive.com.android.core.util.InternalUseOnly
+import apptentive.com.android.core.InternalUseOnly
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.EngageArgs
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.MockEngagementContext
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
-import apptentive.com.android.feedback.link.LinkNavigator
-import apptentive.com.android.feedback.link.interaction.NavigateToLinkInteraction
+import apptentive.com.android.feedback.interactions.link.LinkNavigator
+import apptentive.com.android.feedback.interactions.link.interaction.NavigateToLinkInteraction
 import org.junit.Test
 
 @OptIn(InternalUseOnly::class)

@@ -2,11 +2,11 @@ package apptentive.com.android.feedback.utils
 
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.Logger
-import apptentive.com.android.core.getTimeSeconds
 import apptentive.com.android.feedback.ApptentiveConfiguration
 import apptentive.com.android.feedback.ApptentiveRegion
 import apptentive.com.android.feedback.Constants
 import apptentive.com.android.feedback.MockAndroidLoggerProvider
+import apptentive.com.android.util.getTimeSeconds
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before

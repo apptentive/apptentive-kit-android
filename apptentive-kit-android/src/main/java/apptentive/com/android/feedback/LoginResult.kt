@@ -1,5 +1,7 @@
 package apptentive.com.android.feedback
 
+import apptentive.com.android.core.SdkAPI
+
 /**
  * Result class which represents callback result for `login` method
  *
@@ -13,6 +15,7 @@ package apptentive.com.android.feedback
  * or not initialized yet and therefore cannot login
  *
  */
+@SdkAPI
 sealed class LoginResult {
     object Success : LoginResult()
     data class Failure(val message: String, val responseCode: Int) : LoginResult()

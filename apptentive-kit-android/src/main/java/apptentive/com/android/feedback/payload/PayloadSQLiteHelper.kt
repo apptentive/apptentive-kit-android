@@ -6,18 +6,18 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.annotation.VisibleForTesting
+import apptentive.com.android.core.LogTags
+import apptentive.com.android.core.LogTags.PAYLOADS
 import apptentive.com.android.core.encryption.Encryption
 import apptentive.com.android.core.encryption.EncryptionNoOp
 import apptentive.com.android.core.network.HttpMethod
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags
-import apptentive.com.android.core.util.LogTags.PAYLOADS
-import apptentive.com.android.core.util.isNotNullOrEmpty
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.payload.EncryptedPayloadTokenUpdater.Companion.updateEmbeddedToken
 import apptentive.com.android.feedback.platform.DefaultStateMachine
 import apptentive.com.android.feedback.platform.SDKState
 import apptentive.com.android.feedback.utils.FileUtil
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.isNotNullOrEmpty
 import java.io.FileNotFoundException
 import java.io.IOException
 
@@ -184,7 +184,7 @@ internal class PayloadSQLiteHelper(val context: Context, val encryption: Encrypt
 
             return true
         } else {
-            Log.w(LogTags.PAYLOADS, "Attempting to update payloads with invalid credentials.")
+            Log.w(PAYLOADS, "Attempting to update payloads with invalid credentials.")
             return false
         }
     }

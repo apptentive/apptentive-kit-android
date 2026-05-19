@@ -3,10 +3,10 @@ package apptentive.com.android.core.concurrent
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
+import apptentive.com.android.core.LogTags.CORE
 import apptentive.com.android.core.TimeInterval
-import apptentive.com.android.core.toMilliseconds
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags.CORE
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.toMilliseconds
 
 internal class SerialExecutorQueue : ExecutorQueue {
     private val handler: Handler
@@ -29,7 +29,7 @@ internal class SerialExecutorQueue : ExecutorQueue {
 
     override fun execute(delay: TimeInterval, task: () -> Unit) {
         if (delay > 0) {
-            val delayMillis = toMilliseconds(delay).toLong()
+            val delayMillis = toMilliseconds(delay)
             handler.postDelayed({ dispatchSync(task) }, delayMillis)
         } else {
             handler.post {

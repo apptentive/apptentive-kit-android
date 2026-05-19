@@ -1,9 +1,7 @@
 package com.apptentive.android.sdk.conversation
 
+import apptentive.com.android.core.LogTags.MIGRATION
 import apptentive.com.android.core.encryption.getKeyFromHexString
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags.MIGRATION
-import apptentive.com.android.core.util.generateUUID
 import apptentive.com.android.feedback.conversation.ConversationMetaData
 import apptentive.com.android.feedback.conversation.ConversationRoster
 import apptentive.com.android.feedback.conversation.ConversationState
@@ -26,6 +24,8 @@ import apptentive.com.android.feedback.model.VersionHistory
 import apptentive.com.android.feedback.model.VersionHistoryItem
 import apptentive.com.android.feedback.utils.parseInt
 import apptentive.com.android.feedback.utils.toSecretKeyBytes
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.generateUUID
 import com.apptentive.android.sdk.storage.EventData
 import com.apptentive.android.sdk.storage.EventRecord
 import com.apptentive.android.sdk.storage.Sdk

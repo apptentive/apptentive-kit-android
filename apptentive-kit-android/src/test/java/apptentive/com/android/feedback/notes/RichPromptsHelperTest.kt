@@ -5,13 +5,13 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import apptentive.com.android.TestCase
-import apptentive.com.android.feedback.textmodal.LayoutOptions
-import apptentive.com.android.feedback.textmodal.getAdjustedDeviceDensity
-import apptentive.com.android.feedback.textmodal.getAdjustedModalHeight
-import apptentive.com.android.feedback.textmodal.getAlternateTextGravity
-import apptentive.com.android.feedback.textmodal.getImageScaleTypeFromConfig
-import apptentive.com.android.feedback.textmodal.getLayoutParamsForTheImagePositioning
-import apptentive.com.android.feedback.textmodal.getPaddingForTheImagePositioning
+import apptentive.com.android.feedback.interactions.textmodal.LayoutOptions
+import apptentive.com.android.feedback.interactions.textmodal.getAdjustedDeviceDensity
+import apptentive.com.android.feedback.interactions.textmodal.getAdjustedModalHeight
+import apptentive.com.android.feedback.interactions.textmodal.getAlternateTextGravity
+import apptentive.com.android.feedback.interactions.textmodal.getImageScaleTypeFromConfig
+import apptentive.com.android.feedback.interactions.textmodal.getLayoutParamsForTheImagePositioning
+import apptentive.com.android.feedback.interactions.textmodal.getPaddingForTheImagePositioning
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 

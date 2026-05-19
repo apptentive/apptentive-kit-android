@@ -1,9 +1,9 @@
 package apptentive.com.android.feedback.utils
 
 import android.util.Base64
+import apptentive.com.android.core.LogTags.CONVERSATION
 import apptentive.com.android.core.serialization.json.JsonConverter
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags.CONVERSATION
+import apptentive.com.android.util.Log
 import java.lang.Exception
 
 internal typealias JwtString = String

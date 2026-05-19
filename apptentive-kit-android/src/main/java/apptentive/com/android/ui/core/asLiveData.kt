@@ -1,9 +1,9 @@
 package apptentive.com.android.ui.core
 
 import androidx.lifecycle.LiveData
+import apptentive.com.android.core.InternalUseOnly
 import apptentive.com.android.core.Observable
 import apptentive.com.android.core.Subscription
-import apptentive.com.android.core.util.InternalUseOnly
 
 @InternalUseOnly
 fun <T> Observable<T>.asLiveData(): LiveData<T> = ObservableLiveData(this)

@@ -1,13 +1,13 @@
 package apptentive.com.android.feedback
 
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags.EVENT
-import apptentive.com.android.core.util.LogTags.FEEDBACK
-import apptentive.com.android.core.util.LogTags.MESSAGE_CENTER
-import apptentive.com.android.core.util.LogTags.MESSAGE_CENTER_HIDDEN
-import apptentive.com.android.core.util.LogTags.PROFILE_DATA_GET
-import apptentive.com.android.core.util.LogTags.PROFILE_DATA_UPDATE
+import apptentive.com.android.core.LogTags.EVENT
+import apptentive.com.android.core.LogTags.FEEDBACK
+import apptentive.com.android.core.LogTags.MESSAGE_CENTER
+import apptentive.com.android.core.LogTags.MESSAGE_CENTER_HIDDEN
+import apptentive.com.android.core.LogTags.PROFILE_DATA_GET
+import apptentive.com.android.core.LogTags.PROFILE_DATA_UPDATE
 import apptentive.com.android.feedback.engagement.Event
+import apptentive.com.android.util.Log
 import java.io.InputStream
 
 internal interface ApptentiveClient {

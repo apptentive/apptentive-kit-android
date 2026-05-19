@@ -1,5 +1,6 @@
 package apptentive.com.android.feedback.model
 
+import apptentive.com.android.core.SdkAPI
 import apptentive.com.android.feedback.Apptentive
 
 /**
@@ -10,6 +11,7 @@ import apptentive.com.android.feedback.Apptentive
  * @param personName the current set name of the customer. The customer can change it in Message Center.
  * @param personEmail the current set email of the customer. The customer can change it in Message Center if it is set to optional.
  */
+@SdkAPI
 data class MessageCenterNotification(
     val canShowMessageCenter: Boolean = Apptentive.canShowMessageCenter(),
     val unreadMessageCount: Int = Apptentive.getUnreadMessageCount(),

@@ -12,11 +12,11 @@ import apptentive.com.android.feedback.EngagementCallback
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.EngagementContext
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
-import apptentive.com.android.feedback.inapprating.interaction.InAppReviewInteraction
-import apptentive.com.android.feedback.inapprating.interaction.InAppReviewInteractionLauncher
-import apptentive.com.android.feedback.inapprating.reviewmanager.InAppReviewCallback
-import apptentive.com.android.feedback.inapprating.reviewmanager.InAppReviewManager
-import apptentive.com.android.feedback.inapprating.reviewmanager.InAppReviewManagerFactory
+import apptentive.com.android.feedback.interactions.inapprating.interaction.InAppReviewInteraction
+import apptentive.com.android.feedback.interactions.inapprating.interaction.InAppReviewInteractionLauncher
+import apptentive.com.android.feedback.interactions.inapprating.reviewmanager.InAppReviewCallback
+import apptentive.com.android.feedback.interactions.inapprating.reviewmanager.InAppReviewManager
+import apptentive.com.android.feedback.interactions.inapprating.reviewmanager.InAppReviewManagerFactory
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith

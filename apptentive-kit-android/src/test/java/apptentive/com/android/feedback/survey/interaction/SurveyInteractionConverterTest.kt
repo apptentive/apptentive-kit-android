@@ -3,6 +3,8 @@ package apptentive.com.android.feedback.survey.interaction
 import apptentive.com.android.TestCase
 import apptentive.com.android.core.serialization.json.JsonConverter
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
+import apptentive.com.android.feedback.interactions.survey.interaction.SurveyInteraction
+import apptentive.com.android.feedback.interactions.survey.interaction.SurveyInteractionTypeConverter
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test

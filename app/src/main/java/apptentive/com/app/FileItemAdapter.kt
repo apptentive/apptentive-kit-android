@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import apptentive.com.android.core.util.InternalUseOnly
+import apptentive.com.android.core.InternalUseOnly
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.app.databinding.FileItemBinding
 

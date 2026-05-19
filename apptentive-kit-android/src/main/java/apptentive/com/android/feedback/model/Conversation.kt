@@ -1,17 +1,17 @@
 package apptentive.com.android.feedback.model
 
+import apptentive.com.android.core.LogTags.APP_RELEASE
+import apptentive.com.android.core.LogTags.CONFIGURATION
+import apptentive.com.android.core.LogTags.CONVERSATION
+import apptentive.com.android.core.LogTags.DEVICE
+import apptentive.com.android.core.LogTags.ENGAGEMENT_DATA
+import apptentive.com.android.core.LogTags.PERSON
+import apptentive.com.android.core.LogTags.RANDOM_SAMPLING
+import apptentive.com.android.core.LogTags.SDK
 import apptentive.com.android.core.serialization.json.JsonConverter.toJsonObject
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogLevel
-import apptentive.com.android.core.util.LogTags.APP_RELEASE
-import apptentive.com.android.core.util.LogTags.CONFIGURATION
-import apptentive.com.android.core.util.LogTags.CONVERSATION
-import apptentive.com.android.core.util.LogTags.DEVICE
-import apptentive.com.android.core.util.LogTags.ENGAGEMENT_DATA
-import apptentive.com.android.core.util.LogTags.PERSON
-import apptentive.com.android.core.util.LogTags.RANDOM_SAMPLING
-import apptentive.com.android.core.util.LogTags.SDK
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogLevel
 
 internal data class Conversation(
     val localIdentifier: String,

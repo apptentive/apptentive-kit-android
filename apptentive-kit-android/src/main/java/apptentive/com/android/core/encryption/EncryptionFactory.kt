@@ -1,7 +1,7 @@
 package apptentive.com.android.core.encryption
 
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags.CRYPTOGRAPHY
+import apptentive.com.android.core.LogTags.CRYPTOGRAPHY
+import apptentive.com.android.util.Log
 
 internal class EncryptionFactory {
     companion object {

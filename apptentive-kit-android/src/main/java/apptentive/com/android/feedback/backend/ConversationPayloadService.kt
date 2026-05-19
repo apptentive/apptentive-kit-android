@@ -1,15 +1,15 @@
 package apptentive.com.android.feedback.backend
 
 import androidx.annotation.Keep
+import apptentive.com.android.core.LogTags.PAYLOADS
+import apptentive.com.android.core.network.Result
 import apptentive.com.android.core.network.SendErrorException
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags.PAYLOADS
-import apptentive.com.android.core.util.Result
 import apptentive.com.android.feedback.payload.AuthenticationFailureException
 import apptentive.com.android.feedback.payload.PayloadData
 import apptentive.com.android.feedback.payload.PayloadSendException
 import apptentive.com.android.feedback.payload.PayloadService
 import apptentive.com.android.feedback.utils.parseJsonField
+import apptentive.com.android.util.Log
 
 @Keep
 internal class PayloadResponse

@@ -10,9 +10,9 @@ import android.os.Build
 import android.util.Size
 import android.webkit.URLUtil
 import androidx.exifinterface.media.ExifInterface
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags.MESSAGE_CENTER
-import apptentive.com.android.core.util.LogTags.UTIL
+import apptentive.com.android.core.LogTags.MESSAGE_CENTER
+import apptentive.com.android.core.LogTags.UTIL
+import apptentive.com.android.util.Log
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.InputStream

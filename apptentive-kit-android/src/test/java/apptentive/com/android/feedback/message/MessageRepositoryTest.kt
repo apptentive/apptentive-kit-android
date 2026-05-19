@@ -4,10 +4,10 @@ import android.text.format.DateUtils.DAY_IN_MILLIS
 import apptentive.com.android.TestCase
 import apptentive.com.android.core.encryption.Encryption
 import apptentive.com.android.core.serialization.json.JsonConverter
-import apptentive.com.android.core.toSeconds
 import apptentive.com.android.feedback.conversation.ConversationRoster
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.Sender
+import apptentive.com.android.util.toSeconds
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Ignore

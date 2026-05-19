@@ -1,13 +1,13 @@
 package apptentive.com.android.feedback.payload
 
+import apptentive.com.android.core.LogTags
 import apptentive.com.android.core.encryption.AESEncryption23
 import apptentive.com.android.core.encryption.EncryptionKey
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags
 import apptentive.com.android.feedback.model.payloads.EncryptedPayloadPart
 import apptentive.com.android.feedback.model.payloads.Payload
 import apptentive.com.android.feedback.model.payloads.PayloadPart
 import apptentive.com.android.feedback.utils.MultipartParser
+import apptentive.com.android.util.Log
 import java.io.ByteArrayInputStream
 
 internal class EncryptedPayloadTokenUpdater {

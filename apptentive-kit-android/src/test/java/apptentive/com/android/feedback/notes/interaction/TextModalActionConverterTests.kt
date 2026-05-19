@@ -1,10 +1,10 @@
 package apptentive.com.android.feedback.notes.interaction
 
 import apptentive.com.android.feedback.engagement.Event
+import apptentive.com.android.feedback.interactions.textmodal.DefaultTextModalActionConverter
+import apptentive.com.android.feedback.interactions.textmodal.TextModalActionConfiguration
+import apptentive.com.android.feedback.interactions.textmodal.TextModalModel
 import apptentive.com.android.feedback.model.InvocationData
-import apptentive.com.android.feedback.textmodal.DefaultTextModalActionConverter
-import apptentive.com.android.feedback.textmodal.TextModalActionConfiguration
-import apptentive.com.android.feedback.textmodal.TextModalModel
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.util.Collections

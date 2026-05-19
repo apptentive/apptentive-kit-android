@@ -8,8 +8,8 @@ import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.MockEngagementContext
 import apptentive.com.android.feedback.engagement.MockEngagementContextFactory
+import apptentive.com.android.feedback.interactions.messagecenter.interaction.MessageCenterInteractionLauncher
 import apptentive.com.android.feedback.message.MessageCenterInteraction
-import apptentive.com.android.feedback.messagecenter.interaction.MessageCenterInteractionLauncher
 import org.junit.Test
 
 class MessageCenterInteractionLauncherTest : TestCase() {

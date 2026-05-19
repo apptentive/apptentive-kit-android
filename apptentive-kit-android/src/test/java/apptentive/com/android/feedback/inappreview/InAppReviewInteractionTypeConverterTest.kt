@@ -3,8 +3,8 @@ package apptentive.com.android.feedback.inappreview
 import apptentive.com.android.TestCase
 import apptentive.com.android.core.serialization.json.JsonConverter
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
-import apptentive.com.android.feedback.inapprating.interaction.InAppReviewInteraction
-import apptentive.com.android.feedback.inapprating.interaction.InAppReviewInteractionTypeConverter
+import apptentive.com.android.feedback.interactions.inapprating.interaction.InAppReviewInteraction
+import apptentive.com.android.feedback.interactions.inapprating.interaction.InAppReviewInteractionTypeConverter
 import org.junit.Assert
 import org.junit.Test
 

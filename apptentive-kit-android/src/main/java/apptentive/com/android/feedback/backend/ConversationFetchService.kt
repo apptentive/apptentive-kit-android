@@ -1,8 +1,7 @@
 package apptentive.com.android.feedback.backend
 
 import androidx.annotation.Keep
-import apptentive.com.android.core.util.Result
-import apptentive.com.android.core.util.generateUUID
+import apptentive.com.android.core.network.Result
 import apptentive.com.android.feedback.model.AppRelease
 import apptentive.com.android.feedback.model.Device
 import apptentive.com.android.feedback.model.IntegrationConfig
@@ -10,6 +9,7 @@ import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
+import apptentive.com.android.util.generateUUID
 
 internal interface ConversationFetchService {
     fun fetchConversationToken(

@@ -1,6 +1,6 @@
 package com.apptentive.android.sdk.encryption;
 
-import static apptentive.com.android.core.util.LogTags.SECURITY;
+import static apptentive.com.android.core.LogTags.SECURITY;
 import static apptentive.com.android.feedback.utils.SensitiveDataUtils.hideIfSanitized;
 
 import android.content.Context;
@@ -18,8 +18,8 @@ import com.apptentive.android.sdk.util.StringUtils;
 
 import java.util.UUID;
 
-import apptentive.com.android.core.util.InternalUseOnly;
-import apptentive.com.android.core.util.Log;
+import apptentive.com.android.core.InternalUseOnly;
+import apptentive.com.android.util.Log;
 import apptentive.com.android.feedback.utils.SensitiveDataUtils;
 
 /**

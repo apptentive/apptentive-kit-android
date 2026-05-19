@@ -4,19 +4,26 @@ import android.text.SpannableString
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import apptentive.com.android.TestCase
 import apptentive.com.android.concurrent.mockExecutors
-import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion
-import apptentive.com.android.feedback.survey.model.RangeQuestion
-import apptentive.com.android.feedback.survey.model.RenderAs
-import apptentive.com.android.feedback.survey.model.SingleLineQuestion
-import apptentive.com.android.feedback.survey.model.SurveyAnswerState
-import apptentive.com.android.feedback.survey.model.SurveyModel
-import apptentive.com.android.feedback.survey.model.SurveyQuestionSet
+import apptentive.com.android.feedback.interactions.survey.model.MultiChoiceQuestion
+import apptentive.com.android.feedback.interactions.survey.model.RangeQuestion
+import apptentive.com.android.feedback.interactions.survey.model.RenderAs
+import apptentive.com.android.feedback.interactions.survey.model.SingleLineQuestion
+import apptentive.com.android.feedback.interactions.survey.model.SurveyAnswerState
+import apptentive.com.android.feedback.interactions.survey.model.SurveyAnswerState.Answered
+import apptentive.com.android.feedback.interactions.survey.model.SurveyModel
+import apptentive.com.android.feedback.interactions.survey.model.SurveyQuestionSet
+import apptentive.com.android.feedback.interactions.survey.utils.SpannedUtils
+import apptentive.com.android.feedback.interactions.survey.utils.getValidAnsweredQuestions
+import apptentive.com.android.feedback.interactions.survey.viewmodel.SingleLineQuestionListItem
+import apptentive.com.android.feedback.interactions.survey.viewmodel.SurveyCancelConfirmationDisplay
+import apptentive.com.android.feedback.interactions.survey.viewmodel.SurveyFooterListItem
+import apptentive.com.android.feedback.interactions.survey.viewmodel.SurveyHeaderListItem
+import apptentive.com.android.feedback.interactions.survey.viewmodel.SurveySubmitMessageState
+import apptentive.com.android.feedback.interactions.survey.viewmodel.SurveyViewModel
 import apptentive.com.android.feedback.survey.model.createMultiChoiceQuestionForV12
 import apptentive.com.android.feedback.survey.model.createRangeQuestionForV12
 import apptentive.com.android.feedback.survey.model.createSingleLineQuestionForV12
 import apptentive.com.android.feedback.survey.model.createSurveyModel
-import apptentive.com.android.feedback.survey.utils.SpannedUtils
-import apptentive.com.android.feedback.survey.utils.getValidAnsweredQuestions
 import apptentive.com.android.feedback.utils.HtmlWrapper
 import apptentive.com.android.feedback.utils.HtmlWrapper.linkifiedHTMLString
 import com.google.common.truth.Truth.assertThat
@@ -132,7 +139,7 @@ class SurveyViewModelTest : TestCase() {
         assertResults(
             "submit",
             mapOf(
-                questionId1 to SurveyAnswerState.Answered(SingleLineQuestion.Answer("Answer")),
+                questionId1 to Answered(SingleLineQuestion.Answer("Answer")),
                 questionId2 to SurveyAnswerState.Empty
             ),
             SurveyHeaderListItem(instructions = surveyDescription),

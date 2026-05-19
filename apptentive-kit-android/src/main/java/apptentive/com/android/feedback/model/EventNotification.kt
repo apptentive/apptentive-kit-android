@@ -1,5 +1,7 @@
 package apptentive.com.android.feedback.model
 
+import apptentive.com.android.core.SdkAPI
+
 /**
  * Data class for sharing the event stream of the Apptentive SDK
  *
@@ -8,6 +10,7 @@ package apptentive.com.android.feedback.model
  * @param interaction the name of the interaction that the event was engaged from. "app" if not engaged from an interaction.
  * @param interactionId the id of the interaction that the event was engaged from. `null` if not engaged from an interaction.
  */
+@SdkAPI
 data class EventNotification(
     val name: String,
     val vendor: String,

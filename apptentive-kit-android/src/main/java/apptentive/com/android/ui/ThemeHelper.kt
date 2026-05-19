@@ -4,10 +4,10 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.appcompat.view.ContextThemeWrapper
+import apptentive.com.android.core.LogTags
 import apptentive.com.android.core.platform.SharedPrefConstants
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags
 import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getSharedPrefDataStore
+import apptentive.com.android.util.Log
 import com.apptentive.apptentive_kit_android.R
 
 /**

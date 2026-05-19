@@ -1,5 +1,9 @@
 package apptentive.com.android.feedback.survey.model
 
+import apptentive.com.android.feedback.interactions.survey.model.MultiChoiceQuestion
+import apptentive.com.android.feedback.interactions.survey.model.RangeQuestion
+import apptentive.com.android.feedback.interactions.survey.model.SingleLineQuestion
+import apptentive.com.android.feedback.interactions.survey.model.SurveyQuestionSet
 import apptentive.com.android.feedback.model.InvocationData
 
 internal fun createSingleLineQuestion(

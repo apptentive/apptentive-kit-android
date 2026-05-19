@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="apptentive.com.android.feedback.messagecenter.view.MessageCenterActivity">
+    tools:context="apptentive.com.android.feedback.interactions.messagecenter.view.MessageCenterActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/apptentive_attachment_preview_toolbar"
@@ -28,7 +28,7 @@
             tools:text="Message Center" />
     </com.google.android.material.appbar.MaterialToolbar>
 
-    <apptentive.com.android.feedback.messagecenter.view.custom.SimpleTouchImageView
+    <apptentive.com.android.feedback.interactions.messagecenter.view.custom.SimpleTouchImageView
         android:id="@+id/apptentive_attachment_preview_image"
         android:layout_width="0dp"
         android:layout_height="0dp"

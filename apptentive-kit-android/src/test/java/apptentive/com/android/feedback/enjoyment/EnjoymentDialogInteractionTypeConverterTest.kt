@@ -2,6 +2,8 @@ package apptentive.com.android.feedback.enjoyment
 
 import apptentive.com.android.core.serialization.json.JsonConverter
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
+import apptentive.com.android.feedback.interactions.enjoyment.EnjoymentDialogInteraction
+import apptentive.com.android.feedback.interactions.enjoyment.EnjoymentDialogInteractionTypeConverter
 import apptentive.com.android.ui.DialogPosition
 import com.google.common.truth.Truth
 import org.junit.Test

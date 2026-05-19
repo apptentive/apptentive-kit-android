@@ -1,10 +1,10 @@
 package apptentive.com.android.feedback.payload
 
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags.PAYLOADS
-import apptentive.com.android.core.util.Result
+import apptentive.com.android.core.LogTags.PAYLOADS
+import apptentive.com.android.core.network.Result
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.model.payloads.Payload
+import apptentive.com.android.util.Log
 
 internal class SerialPayloadSender(
     private val payloadQueue: PayloadQueue,

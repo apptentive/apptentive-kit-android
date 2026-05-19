@@ -1,13 +1,11 @@
 package apptentive.com.android.feedback.utils
 
 import android.os.Build
+import apptentive.com.android.core.LogTags
 import apptentive.com.android.core.encryption.AESEncryption23
 import apptentive.com.android.core.encryption.Encryption
 import apptentive.com.android.core.encryption.EncryptionKey
 import apptentive.com.android.core.encryption.EncryptionNoOp
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags
-import apptentive.com.android.core.util.generateUUID
 import apptentive.com.android.feedback.conversation.ConversationMetaData
 import apptentive.com.android.feedback.conversation.ConversationRoster
 import apptentive.com.android.feedback.conversation.ConversationSerializationException
@@ -17,6 +15,8 @@ import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getMessage
 import apptentive.com.android.feedback.platform.DefaultStateMachine
 import apptentive.com.android.feedback.utils.AndroidSDKVersion.getSDKVersion
 import apptentive.com.android.feedback.utils.ThrottleUtils.ROSTER_TYPE
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.generateUUID
 
 internal object RosterUtils {
     @Throws(ConversationSerializationException::class)

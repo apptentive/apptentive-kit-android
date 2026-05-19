@@ -2,7 +2,7 @@ package apptentive.com.android.feedback.payload
 
 import apptentive.com.android.TestCase
 import apptentive.com.android.core.DependencyProvider
-import apptentive.com.android.core.util.Result
+import apptentive.com.android.core.network.Result
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.conversation.MockConversationCredential
 import apptentive.com.android.feedback.model.payloads.EventPayload

@@ -2,14 +2,14 @@ package apptentive.com.android.feedback.utils
 
 import android.util.Patterns
 import androidx.core.util.PatternsCompat
-import apptentive.com.android.core.getTimeSeconds
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogLevel
-import apptentive.com.android.core.util.LogTags.CONVERSATION
-import apptentive.com.android.core.util.LogTags.UTIL
+import apptentive.com.android.core.LogTags.CONVERSATION
+import apptentive.com.android.core.LogTags.UTIL
 import apptentive.com.android.feedback.ApptentiveConfiguration
 import apptentive.com.android.feedback.ApptentiveRegion
 import apptentive.com.android.feedback.Constants
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogLevel
+import apptentive.com.android.util.getTimeSeconds
 import com.apptentive.apptentive_kit_android.BuildConfig
 import org.json.JSONObject
 import kotlin.math.max

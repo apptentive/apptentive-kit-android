@@ -4,9 +4,9 @@ import androidx.annotation.Keep
 import apptentive.com.android.feedback.engagement.interactions.InteractionLauncher
 import apptentive.com.android.feedback.engagement.interactions.InteractionModule
 import apptentive.com.android.feedback.engagement.interactions.InteractionTypeConverter
-import apptentive.com.android.feedback.survey.interaction.SurveyInteraction
-import apptentive.com.android.feedback.survey.interaction.SurveyInteractionLauncher
-import apptentive.com.android.feedback.survey.interaction.SurveyInteractionTypeConverter
+import apptentive.com.android.feedback.interactions.survey.interaction.SurveyInteraction
+import apptentive.com.android.feedback.interactions.survey.interaction.SurveyInteractionLauncher
+import apptentive.com.android.feedback.interactions.survey.interaction.SurveyInteractionTypeConverter
 
 @Keep
 internal class SurveyModule : InteractionModule<SurveyInteraction> {

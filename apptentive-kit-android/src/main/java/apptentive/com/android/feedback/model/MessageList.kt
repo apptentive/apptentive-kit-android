@@ -1,11 +1,11 @@
 package apptentive.com.android.feedback.model
 
+import apptentive.com.android.core.LogTags.MESSAGE_CENTER
 import apptentive.com.android.core.TimeInterval
-import apptentive.com.android.core.toSeconds
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags.MESSAGE_CENTER
-import apptentive.com.android.core.util.generateUUID
 import apptentive.com.android.feedback.model.payloads.MessagePayload
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.generateUUID
+import apptentive.com.android.util.toSeconds
 import java.io.File
 
 /**

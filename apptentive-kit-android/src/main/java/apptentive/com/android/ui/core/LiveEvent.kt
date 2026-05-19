@@ -20,7 +20,7 @@ import androidx.collection.ArraySet
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
-import apptentive.com.android.core.util.InternalUseOnly
+import apptentive.com.android.core.InternalUseOnly
 
 /**
  * A class to handle single live events in Android MVVM architectural pattern to

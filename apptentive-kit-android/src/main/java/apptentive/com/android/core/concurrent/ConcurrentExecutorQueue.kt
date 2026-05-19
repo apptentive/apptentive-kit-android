@@ -1,9 +1,9 @@
 package apptentive.com.android.core.concurrent
 
+import apptentive.com.android.core.LogTags.CORE
 import apptentive.com.android.core.TimeInterval
-import apptentive.com.android.core.toMilliseconds
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags.CORE
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.toMilliseconds
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledThreadPoolExecutor
 import java.util.concurrent.TimeUnit
@@ -33,7 +33,7 @@ internal class ConcurrentExecutorQueue(name: String, maxConcurrentTasks: Int? = 
 
     override fun execute(delay: TimeInterval, task: () -> Unit) {
         if (delay > 0) {
-            val delayMillis = toMilliseconds(delay).toLong()
+            val delayMillis = toMilliseconds(delay)
             executor.schedule({ dispatchSync(task) }, delayMillis, TimeUnit.MILLISECONDS)
         } else {
             executor.execute {

@@ -1,11 +1,12 @@
 package apptentive.com.android.feedback.survey.interaction
 
 import apptentive.com.android.TestCase
-import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion
-import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion.AnswerChoiceConfiguration
-import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion.ChoiceType
-import apptentive.com.android.feedback.survey.model.RangeQuestion
-import apptentive.com.android.feedback.survey.model.SingleLineQuestion
+import apptentive.com.android.feedback.interactions.survey.interaction.DefaultSurveyQuestionConverter
+import apptentive.com.android.feedback.interactions.survey.model.MultiChoiceQuestion
+import apptentive.com.android.feedback.interactions.survey.model.MultiChoiceQuestion.AnswerChoiceConfiguration
+import apptentive.com.android.feedback.interactions.survey.model.MultiChoiceQuestion.ChoiceType
+import apptentive.com.android.feedback.interactions.survey.model.RangeQuestion
+import apptentive.com.android.feedback.interactions.survey.model.SingleLineQuestion
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 

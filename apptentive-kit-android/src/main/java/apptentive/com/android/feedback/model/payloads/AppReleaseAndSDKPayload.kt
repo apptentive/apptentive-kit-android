@@ -1,11 +1,11 @@
 package apptentive.com.android.feedback.model.payloads
 
 import apptentive.com.android.core.network.HttpMethod
-import apptentive.com.android.core.util.generateUUID
 import apptentive.com.android.feedback.Constants
 import apptentive.com.android.feedback.model.AppRelease
 import apptentive.com.android.feedback.model.SDK
 import apptentive.com.android.feedback.payload.PayloadType
+import apptentive.com.android.util.generateUUID
 
 internal class AppReleaseAndSDKPayload(
     nonce: String = generateUUID(),

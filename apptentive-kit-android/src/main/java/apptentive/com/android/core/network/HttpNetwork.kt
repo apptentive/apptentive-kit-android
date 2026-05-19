@@ -3,9 +3,9 @@ package apptentive.com.android.core.network
 import android.content.Context
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.network.Constants.DEFAULT_REQUEST_TIMEOUT
-import apptentive.com.android.core.toMilliseconds
-import apptentive.com.android.core.toSeconds
-import apptentive.com.android.core.util.NetworkUtils
+import apptentive.com.android.util.NetworkUtils
+import apptentive.com.android.util.toMilliseconds
+import apptentive.com.android.util.toSeconds
 import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection

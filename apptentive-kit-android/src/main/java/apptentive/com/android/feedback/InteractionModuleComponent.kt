@@ -1,10 +1,10 @@
 package apptentive.com.android.feedback
 
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags.CORE
+import apptentive.com.android.core.LogTags.CORE
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionModule
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
+import apptentive.com.android.util.Log
 
 internal class InteractionModuleComponent(
     private val packageName: String,

@@ -1,11 +1,11 @@
 package apptentive.com.android.feedback.engagement.criteria
 
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags.INTERACTIONS
+import apptentive.com.android.core.LogTags.INTERACTIONS
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.InteractionDataProvider
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
 import apptentive.com.android.feedback.engagement.interactions.InteractionId
+import apptentive.com.android.util.Log
 
 internal class CriteriaInteractionDataProvider(
     private val interactions: Map<InteractionId, InteractionData>,

@@ -3,6 +3,11 @@ package apptentive.com.android.feedback.conversation
 import androidx.annotation.WorkerThread
 import apptentive.com.android.core.BehaviorSubject
 import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.core.LogTags.CONFIGURATION
+import apptentive.com.android.core.LogTags.CONVERSATION
+import apptentive.com.android.core.LogTags.ENGAGEMENT_MANIFEST
+import apptentive.com.android.core.LogTags.EVENT
+import apptentive.com.android.core.LogTags.INTERACTIONS
 import apptentive.com.android.core.Observable
 import apptentive.com.android.core.Provider
 import apptentive.com.android.core.TimeInterval
@@ -10,8 +15,7 @@ import apptentive.com.android.core.encryption.Encryption
 import apptentive.com.android.core.encryption.EncryptionKey
 import apptentive.com.android.core.encryption.KeyResolver23
 import apptentive.com.android.core.encryption.getKeyFromHexString
-import apptentive.com.android.core.getTimeSeconds
-import apptentive.com.android.core.isInThePast
+import apptentive.com.android.core.network.Result
 import apptentive.com.android.core.network.UnexpectedResponseException
 import apptentive.com.android.core.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.core.platform.SharedPrefConstants.ETAG_INTERACTIONS
@@ -20,14 +24,6 @@ import apptentive.com.android.core.platform.SharedPrefConstants.MANIFEST_TIME_ST
 import apptentive.com.android.core.platform.SharedPrefConstants.SDK_CORE_INFO
 import apptentive.com.android.core.platform.SharedPrefConstants.SDK_VERSION
 import apptentive.com.android.core.serialization.json.JsonConverter
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags.CONFIGURATION
-import apptentive.com.android.core.util.LogTags.CONVERSATION
-import apptentive.com.android.core.util.LogTags.ENGAGEMENT_MANIFEST
-import apptentive.com.android.core.util.LogTags.EVENT
-import apptentive.com.android.core.util.LogTags.INTERACTIONS
-import apptentive.com.android.core.util.Result
-import apptentive.com.android.core.util.isAllNull
 import apptentive.com.android.feedback.Constants
 import apptentive.com.android.feedback.LoginResult
 import apptentive.com.android.feedback.PrefetchManager
@@ -63,6 +59,10 @@ import apptentive.com.android.feedback.utils.getEncryptionKey
 import apptentive.com.android.feedback.utils.hasItBeenAnHour
 import apptentive.com.android.feedback.utils.shouldRefreshManifest
 import apptentive.com.android.feedback.utils.toSecretKeyBytes
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.getTimeSeconds
+import apptentive.com.android.util.isAllNull
+import apptentive.com.android.util.isInThePast
 import com.apptentive.android.sdk.conversation.LegacyConversationManager
 import com.apptentive.android.sdk.conversation.LegacyConversationMetadataItem
 import com.apptentive.android.sdk.conversation.toConversation

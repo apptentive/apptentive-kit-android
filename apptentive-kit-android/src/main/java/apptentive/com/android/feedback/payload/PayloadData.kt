@@ -1,7 +1,7 @@
 package apptentive.com.android.feedback.payload
 
 import apptentive.com.android.core.network.HttpMethod
-import apptentive.com.android.core.util.generateUUID
+import apptentive.com.android.util.generateUUID
 
 internal data class PayloadData(
     val nonce: String = generateUUID(),

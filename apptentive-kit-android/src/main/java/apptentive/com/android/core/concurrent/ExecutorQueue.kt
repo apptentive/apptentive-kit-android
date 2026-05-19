@@ -1,7 +1,6 @@
 package apptentive.com.android.core.concurrent
 
 import apptentive.com.android.core.DependencyProvider
-import apptentive.com.android.core.ExecutorFactory
 import apptentive.com.android.core.TimeInterval
 
 internal abstract class ExecutorQueue(private val name: String) : Executor {

@@ -1,6 +1,8 @@
 package apptentive.com.android.feedback.message
 
 import androidx.core.util.AtomicFile
+import apptentive.com.android.core.LogTags
+import apptentive.com.android.core.LogTags.MESSAGE_CENTER
 import apptentive.com.android.core.encryption.Encryption
 import apptentive.com.android.core.serialization.BinaryDecoder
 import apptentive.com.android.core.serialization.BinaryEncoder
@@ -11,13 +13,11 @@ import apptentive.com.android.core.serialization.decodeList
 import apptentive.com.android.core.serialization.decodeNullableString
 import apptentive.com.android.core.serialization.encodeList
 import apptentive.com.android.core.serialization.encodeNullableString
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags
-import apptentive.com.android.core.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.feedback.conversation.ConversationRoster
 import apptentive.com.android.feedback.utils.FileStorageUtil
 import apptentive.com.android.feedback.utils.FileStorageUtil.getMessagesFile
 import apptentive.com.android.feedback.utils.FileUtil
+import apptentive.com.android.util.Log
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.DataInputStream

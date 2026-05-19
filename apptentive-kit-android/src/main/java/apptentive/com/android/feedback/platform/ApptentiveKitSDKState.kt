@@ -1,19 +1,18 @@
 package apptentive.com.android.feedback.platform
 
 import android.content.Context
-import apptentive.com.android.core.AndroidApplicationInfo
-import apptentive.com.android.core.AndroidExecutorFactoryProvider
 import apptentive.com.android.core.AndroidLoggerProvider
-import apptentive.com.android.core.ApplicationInfo
 import apptentive.com.android.core.DependencyProvider
-import apptentive.com.android.core.ExecutorFactory
+import apptentive.com.android.core.LogTags.FEEDBACK
+import apptentive.com.android.core.LogTags.MESSAGE_CENTER
 import apptentive.com.android.core.MissingProviderException
 import apptentive.com.android.core.Provider
+import apptentive.com.android.core.concurrent.AndroidExecutorFactoryProvider
+import apptentive.com.android.core.concurrent.ExecutorFactory
+import apptentive.com.android.core.platform.AndroidApplicationInfo
 import apptentive.com.android.core.platform.AndroidSharedPrefDataStore
+import apptentive.com.android.core.platform.ApplicationInfo
 import apptentive.com.android.core.platform.DefaultAndroidSharedPrefDataStore
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags.FEEDBACK
-import apptentive.com.android.core.util.LogTags.MESSAGE_CENTER
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveConfiguration
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
@@ -23,6 +22,7 @@ import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.message.MessageManager
 import apptentive.com.android.feedback.message.MessageManagerFactory
 import apptentive.com.android.feedback.message.MessageRepository
+import apptentive.com.android.util.Log
 
 internal object ApptentiveKitSDKState {
     private lateinit var applicationContext: Context

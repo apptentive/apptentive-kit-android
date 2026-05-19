@@ -2,12 +2,12 @@ package apptentive.com.android.feedback.notifications
 
 import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags.MESSAGE_CENTER
-import apptentive.com.android.core.util.LogTags.PUSH_NOTIFICATION
+import apptentive.com.android.core.LogTags.MESSAGE_CENTER
+import apptentive.com.android.core.LogTags.PUSH_NOTIFICATION
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
 import apptentive.com.android.feedback.EngagementResult
+import apptentive.com.android.util.Log
 
 class ApptentiveNotificationActivity : AppCompatActivity(), ApptentiveActivityInfo {
 

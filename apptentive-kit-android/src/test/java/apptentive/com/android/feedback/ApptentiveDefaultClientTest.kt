@@ -11,8 +11,8 @@ import apptentive.com.android.core.encryption.NotEncrypted
 import apptentive.com.android.core.network.HttpClient
 import apptentive.com.android.core.network.HttpRequest
 import apptentive.com.android.core.network.HttpResponse
+import apptentive.com.android.core.network.Result
 import apptentive.com.android.core.platform.AndroidSharedPrefDataStore
-import apptentive.com.android.core.util.Result
 import apptentive.com.android.feedback.backend.ConversationFetchResponse
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.conversation.ConversationRepository

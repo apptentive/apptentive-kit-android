@@ -1,6 +1,6 @@
 package apptentive.com.android.link
 
-import apptentive.com.android.feedback.link.interaction.NavigateToLinkInteraction.Target
+import apptentive.com.android.feedback.interactions.link.interaction.NavigateToLinkInteraction.Target
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 

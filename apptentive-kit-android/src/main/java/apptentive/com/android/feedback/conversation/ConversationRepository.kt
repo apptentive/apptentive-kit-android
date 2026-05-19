@@ -1,8 +1,7 @@
 package apptentive.com.android.feedback.conversation
 
+import apptentive.com.android.core.Factory
 import apptentive.com.android.core.encryption.Encryption
-import apptentive.com.android.core.util.Factory
-import apptentive.com.android.core.util.generateUUID
 import apptentive.com.android.feedback.model.AppRelease
 import apptentive.com.android.feedback.model.Conversation
 import apptentive.com.android.feedback.model.Device
@@ -10,6 +9,7 @@ import apptentive.com.android.feedback.model.EngagementData
 import apptentive.com.android.feedback.model.EngagementManifest
 import apptentive.com.android.feedback.model.Person
 import apptentive.com.android.feedback.model.SDK
+import apptentive.com.android.util.generateUUID
 
 internal interface ConversationRepository {
     fun createConversation(conversationId: String? = null, conversationToken: String? = null): Conversation

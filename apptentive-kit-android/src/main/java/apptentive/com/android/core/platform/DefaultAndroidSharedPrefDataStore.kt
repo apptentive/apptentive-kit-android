@@ -2,6 +2,7 @@ package apptentive.com.android.core.platform
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
 
 internal class DefaultAndroidSharedPrefDataStore(val context: Context) : AndroidSharedPrefDataStore {
     override fun getSharedPrefForSDK(file: String): SharedPreferences =
@@ -10,9 +11,9 @@ internal class DefaultAndroidSharedPrefDataStore(val context: Context) : Android
     override fun deleteSharedPrefForSDK(file: String, mode: Int) {
         if (context.getSharedPreferences(file, mode) != null) {
             context.getSharedPreferences(file, Context.MODE_PRIVATE)
-                .edit()
-                .clear()
-                .apply()
+                .edit {
+                    clear()
+                }
         }
     }
 
@@ -36,29 +37,29 @@ internal class DefaultAndroidSharedPrefDataStore(val context: Context) : Android
 
     override fun putBoolean(file: String, keyEntry: String, value: Boolean) {
         context.getSharedPreferences(file, Context.MODE_PRIVATE)
-            .edit()
-            .putBoolean(keyEntry, value)
-            .apply()
+            .edit {
+                putBoolean(keyEntry, value)
+            }
     }
 
     override fun putString(file: String, keyEntry: String, value: String?) {
         context.getSharedPreferences(file, Context.MODE_PRIVATE)
-            .edit()
-            .putString(keyEntry, value)
-            .apply()
+            .edit {
+                putString(keyEntry, value)
+            }
     }
 
     override fun putLong(file: String, keyEntry: String, value: Long) {
         context.getSharedPreferences(file, Context.MODE_PRIVATE)
-            .edit()
-            .putLong(keyEntry, value)
-            .apply()
+            .edit {
+                putLong(keyEntry, value)
+            }
     }
 
     override fun putInt(file: String, keyEntry: String, value: Int) {
         context.getSharedPreferences(file, Context.MODE_PRIVATE)
-            .edit()
-            .putInt(keyEntry, value)
-            .apply()
+            .edit {
+                putInt(keyEntry, value)
+            }
     }
 }

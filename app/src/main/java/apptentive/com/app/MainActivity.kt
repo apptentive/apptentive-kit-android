@@ -11,14 +11,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import apptentive.com.android.core.util.InternalUseOnly
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags
+import apptentive.com.android.core.InternalUseOnly
+import apptentive.com.android.core.LogTags
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.model.EventNotification
 import apptentive.com.android.feedback.model.MessageCenterNotification
+import apptentive.com.android.util.Log
 import apptentive.com.app.databinding.ActivityMainBinding
 
 @OptIn(InternalUseOnly::class)

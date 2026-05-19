@@ -1,7 +1,7 @@
 package apptentive.com.android.feedback.model
 
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags.PUSH_NOTIFICATION
+import apptentive.com.android.core.LogTags.PUSH_NOTIFICATION
+import apptentive.com.android.util.Log
 import org.json.JSONException
 
 internal data class IntegrationConfig(

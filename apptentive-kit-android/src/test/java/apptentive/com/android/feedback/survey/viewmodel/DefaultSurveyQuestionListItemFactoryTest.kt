@@ -1,11 +1,15 @@
 package apptentive.com.android.feedback.survey.viewmodel
 
 import android.text.SpannableString
-import apptentive.com.android.feedback.survey.model.MultiChoiceQuestion
+import apptentive.com.android.feedback.interactions.survey.model.MultiChoiceQuestion
+import apptentive.com.android.feedback.interactions.survey.utils.SpannedUtils
+import apptentive.com.android.feedback.interactions.survey.viewmodel.DefaultSurveyQuestionListItemFactory
+import apptentive.com.android.feedback.interactions.survey.viewmodel.MultiChoiceQuestionListItem
+import apptentive.com.android.feedback.interactions.survey.viewmodel.RangeQuestionListItem
+import apptentive.com.android.feedback.interactions.survey.viewmodel.SingleLineQuestionListItem
 import apptentive.com.android.feedback.survey.model.createMultiChoiceQuestion
 import apptentive.com.android.feedback.survey.model.createRangeQuestion
 import apptentive.com.android.feedback.survey.model.createSingleLineQuestion
-import apptentive.com.android.feedback.survey.utils.SpannedUtils
 import apptentive.com.android.feedback.utils.HtmlWrapper
 import apptentive.com.android.feedback.utils.HtmlWrapper.linkifiedHTMLString
 import com.google.common.truth.Truth.assertThat

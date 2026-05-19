@@ -1,7 +1,7 @@
 package apptentive.com.android.feedback.engagement.criteria
 
 import apptentive.com.android.core.TimeInterval
-import apptentive.com.android.core.getTimeSeconds
+import apptentive.com.android.util.getTimeSeconds
 
 internal data class DateTime(val seconds: TimeInterval) : Comparable<DateTime> {
     override fun compareTo(other: DateTime) = seconds.compareTo(other.seconds)

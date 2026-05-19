@@ -6,6 +6,8 @@ import apptentive.com.android.feedback.engagement.EngageArgs
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.MockEngagementContext
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
+import apptentive.com.android.feedback.interactions.appstorerating.AppStoreRatingInteraction
+import apptentive.com.android.feedback.interactions.appstorerating.StoreNavigator
 import org.junit.Test
 
 class StoreNavigatorTest : TestCase() {

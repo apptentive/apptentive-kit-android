@@ -1,8 +1,8 @@
 package apptentive.com.android.feedback
 
 import apptentive.com.android.TestCase
-import apptentive.com.android.core.toSeconds
 import apptentive.com.android.feedback.utils.convertToGroupDate
+import apptentive.com.android.util.toSeconds
 import org.junit.Assert.assertTrue
 import org.junit.Ignore
 import org.junit.Test

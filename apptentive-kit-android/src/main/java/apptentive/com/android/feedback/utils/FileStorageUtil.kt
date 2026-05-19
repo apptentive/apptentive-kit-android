@@ -1,12 +1,12 @@
 package apptentive.com.android.feedback.utils
 
 import androidx.annotation.WorkerThread
+import apptentive.com.android.core.LogTags
 import apptentive.com.android.core.platform.SharedPrefConstants
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags
 import apptentive.com.android.feedback.conversation.ConversationRoster
 import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getSharedPrefDataStore
 import apptentive.com.android.feedback.platform.DefaultStateMachine
+import apptentive.com.android.util.Log
 import java.io.File
 
 internal object FileStorageUtil {

@@ -1,12 +1,12 @@
 package apptentive.com.android.feedback.model.payloads
 
+import apptentive.com.android.core.LogTags.PAYLOADS
 import apptentive.com.android.core.network.HttpMethod
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags.PAYLOADS
 import apptentive.com.android.feedback.Constants
 import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.payload.MediaType
 import apptentive.com.android.feedback.payload.PayloadType
+import apptentive.com.android.util.Log
 import java.io.File
 
 /**

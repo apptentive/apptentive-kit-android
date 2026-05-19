@@ -1,7 +1,5 @@
 package apptentive.com.android.core
 
-import apptentive.com.android.core.util.InternalUseOnly
-
 @InternalUseOnly
 open class Observable<T>(private var _value: T) {
     private val observers = mutableSetOf<(T) -> Unit>()

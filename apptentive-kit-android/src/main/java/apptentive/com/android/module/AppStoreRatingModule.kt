@@ -1,12 +1,12 @@
 package apptentive.com.android.module
 
 import androidx.annotation.Keep
-import apptentive.com.android.feedback.appstorerating.AppStoreRatingInteraction
-import apptentive.com.android.feedback.appstorerating.AppStoreRatingInteractionLauncher
-import apptentive.com.android.feedback.appstorerating.AppStoreRatingInteractionTypeConverter
 import apptentive.com.android.feedback.engagement.interactions.InteractionLauncher
 import apptentive.com.android.feedback.engagement.interactions.InteractionModule
 import apptentive.com.android.feedback.engagement.interactions.InteractionTypeConverter
+import apptentive.com.android.feedback.interactions.appstorerating.AppStoreRatingInteraction
+import apptentive.com.android.feedback.interactions.appstorerating.AppStoreRatingInteractionLauncher
+import apptentive.com.android.feedback.interactions.appstorerating.AppStoreRatingInteractionTypeConverter
 
 @Keep
 internal class AppStoreRatingModule : InteractionModule<AppStoreRatingInteraction> {

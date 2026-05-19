@@ -1,8 +1,10 @@
 package apptentive.com.android.feedback
 
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags.CONVERSATION
+import apptentive.com.android.core.LogTags.CONVERSATION
+import apptentive.com.android.core.SdkAPI
+import apptentive.com.android.util.Log
 
+@SdkAPI
 interface AuthenticationFailedListener {
     fun onAuthenticationFailed(reason: AuthenticationFailedReason)
 }
@@ -10,6 +12,7 @@ interface AuthenticationFailedListener {
 /**
  * A list of error codes you will encounter when a JWT failure for logged in conversations occurs.
  */
+@SdkAPI
 enum class AuthenticationFailedReason(val message: String? = null) {
     /**
      * This should not happen.

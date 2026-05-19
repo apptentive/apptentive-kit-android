@@ -4,9 +4,9 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags.PUSH_NOTIFICATION
+import apptentive.com.android.core.LogTags.PUSH_NOTIFICATION
 import apptentive.com.android.feedback.ApptentiveDefaultClient
+import apptentive.com.android.util.Log
 import org.json.JSONException
 import org.json.JSONObject
 

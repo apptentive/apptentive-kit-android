@@ -1,11 +1,11 @@
 package apptentive.com.android
 
 import apptentive.com.android.concurrent.ImmediateExecutorQueue
-import apptentive.com.android.core.ApplicationInfo
 import apptentive.com.android.core.DependencyProvider
-import apptentive.com.android.core.ExecutorFactory
 import apptentive.com.android.core.Logger
-import apptentive.com.android.core.util.LogLevel
+import apptentive.com.android.core.concurrent.ExecutorFactory
+import apptentive.com.android.core.platform.ApplicationInfo
+import apptentive.com.android.util.LogLevel
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 

@@ -1,7 +1,9 @@
 package apptentive.com.android.feedback
 
-import apptentive.com.android.core.util.InternalUseOnly
+import apptentive.com.android.core.InternalUseOnly
+import apptentive.com.android.core.SdkAPI
 
+@SdkAPI
 sealed class ApptentiveRegion(val value: String) {
     object US : ApptentiveRegion("us")
     object EU : ApptentiveRegion("eu")

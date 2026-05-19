@@ -2,10 +2,10 @@ package apptentive.com.android.feedback.model
 
 import apptentive.com.android.core.DefaultTimeSource
 import apptentive.com.android.core.TimeSource
-import apptentive.com.android.core.util.copyAndAdd
 import apptentive.com.android.feedback.engagement.criteria.DateTime
 import apptentive.com.android.feedback.utils.VersionCode
 import apptentive.com.android.feedback.utils.VersionName
+import apptentive.com.android.util.copyAndAdd
 
 internal data class VersionHistory(
     internal val items: List<VersionHistoryItem> = emptyList(),

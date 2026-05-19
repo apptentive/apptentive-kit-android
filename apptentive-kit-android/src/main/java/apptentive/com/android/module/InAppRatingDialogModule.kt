@@ -4,10 +4,10 @@ import androidx.annotation.Keep
 import apptentive.com.android.feedback.engagement.interactions.InteractionLauncher
 import apptentive.com.android.feedback.engagement.interactions.InteractionModule
 import apptentive.com.android.feedback.engagement.interactions.InteractionTypeConverter
-import apptentive.com.android.feedback.inapprating.interaction.InAppReviewInteraction
-import apptentive.com.android.feedback.inapprating.interaction.InAppReviewInteractionLauncher
-import apptentive.com.android.feedback.inapprating.interaction.InAppReviewInteractionTypeConverter
-import apptentive.com.android.feedback.inapprating.reviewmanager.DefaultInAppReviewManagerFactory
+import apptentive.com.android.feedback.interactions.inapprating.interaction.InAppReviewInteraction
+import apptentive.com.android.feedback.interactions.inapprating.interaction.InAppReviewInteractionLauncher
+import apptentive.com.android.feedback.interactions.inapprating.interaction.InAppReviewInteractionTypeConverter
+import apptentive.com.android.feedback.interactions.inapprating.reviewmanager.DefaultInAppReviewManagerFactory
 
 @Keep
 internal class InAppRatingDialogModule : InteractionModule<InAppReviewInteraction> {

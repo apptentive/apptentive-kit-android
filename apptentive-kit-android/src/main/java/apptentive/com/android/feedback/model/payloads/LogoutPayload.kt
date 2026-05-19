@@ -2,10 +2,10 @@ package apptentive.com.android.feedback.model.payloads
 
 import apptentive.com.android.core.network.HttpMethod
 import apptentive.com.android.core.serialization.json.JsonConverter.toJsonObject
-import apptentive.com.android.core.util.generateUUID
 import apptentive.com.android.feedback.Constants.buildHttpPath
 import apptentive.com.android.feedback.payload.PayloadType
 import apptentive.com.android.feedback.utils.SensitiveDataUtils
+import apptentive.com.android.util.generateUUID
 
 internal class LogoutPayload(nonce: String = generateUUID()) : ConversationPayload(nonce) {
 

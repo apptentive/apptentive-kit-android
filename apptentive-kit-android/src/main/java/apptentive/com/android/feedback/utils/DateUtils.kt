@@ -1,7 +1,7 @@
 package apptentive.com.android.feedback.utils
 
 import apptentive.com.android.core.TimeInterval
-import apptentive.com.android.core.toMilliseconds
+import apptentive.com.android.util.toMilliseconds
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date

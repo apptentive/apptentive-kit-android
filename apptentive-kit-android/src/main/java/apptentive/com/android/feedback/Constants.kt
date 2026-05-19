@@ -1,6 +1,6 @@
 package apptentive.com.android.feedback
 
-import apptentive.com.android.core.util.InternalUseOnly
+import apptentive.com.android.core.InternalUseOnly
 
 @InternalUseOnly
 object Constants {

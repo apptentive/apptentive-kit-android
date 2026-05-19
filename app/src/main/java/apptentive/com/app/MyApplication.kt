@@ -3,8 +3,7 @@ package apptentive.com.app
 import android.app.Application
 import android.content.Context
 import android.util.Log
-import apptentive.com.android.core.util.InternalUseOnly
-import apptentive.com.android.core.util.LogLevel
+import apptentive.com.android.core.InternalUseOnly
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveConfiguration
 import apptentive.com.android.feedback.ApptentiveRegion
@@ -12,6 +11,7 @@ import apptentive.com.android.feedback.AuthenticationFailedListener
 import apptentive.com.android.feedback.AuthenticationFailedReason
 import apptentive.com.android.feedback.LoginResult
 import apptentive.com.android.feedback.RegisterResult
+import apptentive.com.android.util.LogLevel
 import io.jsonwebtoken.JwtBuilder
 import io.jsonwebtoken.Jwts
 import java.io.UnsupportedEncodingException

@@ -2,6 +2,8 @@ package apptentive.com.android.feedback.ratingdialog
 
 import apptentive.com.android.core.serialization.json.JsonConverter
 import apptentive.com.android.feedback.engagement.interactions.InteractionData
+import apptentive.com.android.feedback.interactions.ratingdialog.RatingDialogInteraction
+import apptentive.com.android.feedback.interactions.ratingdialog.RatingDialogInteractionTypeConverter
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

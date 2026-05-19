@@ -1,8 +1,7 @@
 package apptentive.com.android.feedback.engagement
 
 import androidx.annotation.WorkerThread
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags.EVENT
+import apptentive.com.android.core.LogTags.EVENT
 import apptentive.com.android.feedback.Apptentive.eventNotificationSubject
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.criteria.Invocation
@@ -12,6 +11,7 @@ import apptentive.com.android.feedback.engagement.interactions.InteractionRespon
 import apptentive.com.android.feedback.model.EventNotification
 import apptentive.com.android.feedback.model.payloads.ExtendedData
 import apptentive.com.android.feedback.utils.ThrottleUtils
+import apptentive.com.android.util.Log
 
 internal typealias RecordEventCallback = (
     event: Event,

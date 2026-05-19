@@ -1,15 +1,15 @@
 package apptentive.com.android.feedback.utils
 
+import apptentive.com.android.core.LogTags.CONVERSATION
+import apptentive.com.android.core.LogTags.INTERACTIONS
 import apptentive.com.android.core.platform.SharedPrefConstants
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags.CONVERSATION
-import apptentive.com.android.core.util.LogTags.INTERACTIONS
 import apptentive.com.android.feedback.Constants
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.feedback.model.DEFAULT_PER_SESSION_INTERACTION_LIMIT
 import apptentive.com.android.feedback.model.DEFAULT_SDK_ENABLED
 import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getSharedPrefDataStore
+import apptentive.com.android.util.Log
 
 internal object ThrottleUtils {
     internal var ratingThrottleLength: Long? = null

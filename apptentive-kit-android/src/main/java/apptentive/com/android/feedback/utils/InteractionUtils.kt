@@ -1,10 +1,10 @@
 package apptentive.com.android.feedback.utils
 
+import apptentive.com.android.core.LogTags
 import apptentive.com.android.core.platform.SharedPrefConstants
 import apptentive.com.android.core.serialization.json.JsonConverter
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags
 import apptentive.com.android.feedback.platform.ApptentiveKitSDKState
+import apptentive.com.android.util.Log
 
 /**
  * Some devices will restart the app while its in the background. The interaction's

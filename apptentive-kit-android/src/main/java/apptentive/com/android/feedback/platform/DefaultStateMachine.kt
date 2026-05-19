@@ -1,16 +1,16 @@
 package apptentive.com.android.feedback.platform
 
+import apptentive.com.android.core.InternalUseOnly
+import apptentive.com.android.core.LogTags.STATE_MACHINE
 import apptentive.com.android.core.encryption.Encryption
 import apptentive.com.android.core.encryption.EncryptionKey
-import apptentive.com.android.core.util.InternalUseOnly
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags.STATE_MACHINE
 import apptentive.com.android.feedback.conversation.ConversationRoster
 import apptentive.com.android.feedback.conversation.ConversationState
 import apptentive.com.android.feedback.utils.RosterUtils
 import apptentive.com.android.feedback.utils.RosterUtils.initializeRoster
 import apptentive.com.android.feedback.utils.RosterUtils.updateRosterForLogin
 import apptentive.com.android.feedback.utils.RosterUtils.updateRosterForLogout
+import apptentive.com.android.util.Log
 
 @InternalUseOnly
 object DefaultStateMachine : StateMachine(SDKState.UNINITIALIZED) {

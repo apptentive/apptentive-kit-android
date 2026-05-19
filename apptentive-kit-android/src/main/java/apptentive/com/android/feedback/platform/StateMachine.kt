@@ -1,6 +1,6 @@
 package apptentive.com.android.feedback.platform
 
-import apptentive.com.android.core.util.InternalUseOnly
+import apptentive.com.android.core.InternalUseOnly
 
 internal val defaultHandler = { _: SDKEvent -> }
 

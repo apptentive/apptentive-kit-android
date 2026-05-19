@@ -1,10 +1,10 @@
 package apptentive.com.android.feedback.message
 
+import apptentive.com.android.core.LogTags.MESSAGE_CENTER
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.concurrent.Executor
 import apptentive.com.android.core.concurrent.SerialExecutorQueue
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags.MESSAGE_CENTER
+import apptentive.com.android.util.Log
 
 internal typealias PollingTask = () -> Unit
 

@@ -4,12 +4,10 @@ import android.app.Activity
 import android.webkit.MimeTypeMap
 import androidx.annotation.VisibleForTesting
 import apptentive.com.android.core.BehaviorSubject
+import apptentive.com.android.core.LogTags.MESSAGE_CENTER
 import apptentive.com.android.core.Observable
 import apptentive.com.android.core.concurrent.Executor
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags.MESSAGE_CENTER
-import apptentive.com.android.core.util.Result
-import apptentive.com.android.core.util.generateUUID
+import apptentive.com.android.core.network.Result
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.UnreadMessageCallback
 import apptentive.com.android.feedback.backend.MessageCenterService
@@ -25,6 +23,8 @@ import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getConvers
 import apptentive.com.android.feedback.utils.FileStorageUtil
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.ThrottleUtils
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.generateUUID
 import java.io.InputStream
 import kotlin.collections.isNotEmpty
 

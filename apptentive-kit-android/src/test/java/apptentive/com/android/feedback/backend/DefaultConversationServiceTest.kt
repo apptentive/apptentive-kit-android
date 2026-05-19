@@ -11,9 +11,9 @@ import apptentive.com.android.core.network.HttpNetwork
 import apptentive.com.android.core.network.HttpNetworkResponse
 import apptentive.com.android.core.network.HttpRequest
 import apptentive.com.android.core.network.HttpRequestBody
+import apptentive.com.android.core.network.Result
 import apptentive.com.android.core.serialization.json.JsonConverter
 import apptentive.com.android.core.serialization.json.JsonException
-import apptentive.com.android.core.util.Result
 import apptentive.com.android.feedback.mockAppRelease
 import apptentive.com.android.feedback.mockDevice
 import apptentive.com.android.feedback.mockPerson

@@ -1,14 +1,12 @@
 package apptentive.com.android.feedback.conversation
 
 import androidx.core.util.AtomicFile
+import apptentive.com.android.core.LogTags.CONVERSATION
 import apptentive.com.android.core.TimeInterval
 import apptentive.com.android.core.encryption.Encryption
 import apptentive.com.android.core.serialization.BinaryDecoder
 import apptentive.com.android.core.serialization.BinaryEncoder
 import apptentive.com.android.core.serialization.json.JsonConverter
-import apptentive.com.android.core.util.Log
-import apptentive.com.android.core.util.LogTags.CONVERSATION
-import apptentive.com.android.core.util.generateUUID
 import apptentive.com.android.feedback.conversation.DefaultSerializers.conversationRosterSerializer
 import apptentive.com.android.feedback.conversation.DefaultSerializers.conversationSerializer
 import apptentive.com.android.feedback.model.Conversation
@@ -19,6 +17,8 @@ import apptentive.com.android.feedback.utils.FileStorageUtil.hasStoragePriorToMu
 import apptentive.com.android.feedback.utils.FileStorageUtil.hasStoragePriorToSkipLogic
 import apptentive.com.android.feedback.utils.FileUtil
 import apptentive.com.android.feedback.utils.SensitiveDataUtils.hideIfSanitized
+import apptentive.com.android.util.Log
+import apptentive.com.android.util.generateUUID
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.DataInputStream

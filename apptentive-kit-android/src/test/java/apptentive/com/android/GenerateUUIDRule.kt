@@ -1,6 +1,6 @@
 package apptentive.com.android
 
-import apptentive.com.android.core.util.generateUUID
+import apptentive.com.android.util.generateUUID
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
@@ -18,6 +18,6 @@ class GenerateUUIDRule : TestWatcher() {
     }
 
     companion object {
-        private const val UTIL_CLASS = "apptentive.com.android.core.util.UUIDUtils"
+        private const val UTIL_CLASS = "apptentive.com.android.util.UUIDUtils"
     }
 }

@@ -78,7 +78,7 @@
             android:layout_height="wrap_content"
             tools:text="Next" />
 
-        <apptentive.com.android.feedback.survey.view.SurveySegmentedProgressBar
+        <apptentive.com.android.feedback.interactions.survey.view.SurveySegmentedProgressBar
             android:id="@+id/apptentive_progress_bar_segmented"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

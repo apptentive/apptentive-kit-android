@@ -1,7 +1,8 @@
 package apptentive.com.android.feedback
 
-import apptentive.com.android.core.util.InternalUseOnly
-import apptentive.com.android.core.util.LogLevel
+import apptentive.com.android.core.InternalUseOnly
+import apptentive.com.android.core.SdkAPI
+import apptentive.com.android.util.LogLevel
 import java.util.concurrent.TimeUnit
 
 /**
@@ -12,6 +13,7 @@ import java.util.concurrent.TimeUnit
  * @param apptentiveSignature The Apptentive Signature that should be used when connecting to
  * the Apptentive API.
  */
+@SdkAPI
 data class ApptentiveConfiguration(
     val apptentiveKey: String,
     val apptentiveSignature: String

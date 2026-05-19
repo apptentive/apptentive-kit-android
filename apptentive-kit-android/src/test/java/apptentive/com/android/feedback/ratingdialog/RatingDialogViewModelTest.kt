@@ -11,6 +11,9 @@ import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.InvocationCallback
 import apptentive.com.android.feedback.engagement.MockEngagementContext
+import apptentive.com.android.feedback.interactions.ratingdialog.RatingDialogInteraction
+import apptentive.com.android.feedback.interactions.ratingdialog.RatingDialogInteractionProvider
+import apptentive.com.android.feedback.interactions.ratingdialog.RatingDialogViewModel
 import org.junit.Test
 
 class RatingDialogViewModelTest : TestCase() {

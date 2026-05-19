@@ -1,8 +1,7 @@
 package apptentive.com.android.core
 
 import android.os.Looper
-import apptentive.com.android.core.util.InternalUseOnly
-import apptentive.com.android.core.util.LogLevel
+import apptentive.com.android.util.LogLevel
 import java.io.PrintWriter
 import java.io.StringWriter
 

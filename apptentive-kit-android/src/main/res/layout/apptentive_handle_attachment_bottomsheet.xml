@@ -23,7 +23,7 @@
         tools:ignore="ContentDescription"
         tools:src="@drawable/apptentive_ic_preview"/>
 
-    <apptentive.com.android.feedback.messagecenter.view.custom.TextViewButton
+    <apptentive.com.android.feedback.interactions.messagecenter.view.custom.TextViewButton
         android:id="@+id/apptentive_preview_attachment_button"
         style="?apptentiveMessageCenterPreviewAttachmentText"
         android:layout_width="match_parent"
@@ -45,7 +45,7 @@
         tools:ignore="ContentDescription"
         tools:src="@drawable/apptentive_ic_remove"/>
 
-    <apptentive.com.android.feedback.messagecenter.view.custom.TextViewButton
+    <apptentive.com.android.feedback.interactions.messagecenter.view.custom.TextViewButton
         android:id="@+id/apptentive_remove_attachment_button"
         style="?apptentiveMessageCenterRemoveAttachmentText"
         android:layout_width="match_parent"

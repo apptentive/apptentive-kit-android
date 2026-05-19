@@ -14,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import apptentive.com.android.core.util.InternalUseOnly
+import apptentive.com.android.core.InternalUseOnly
 import apptentive.com.android.feedback.Constants
 import apptentive.com.app.databinding.ActivityDebugInfoBinding
 import java.text.SimpleDateFormat

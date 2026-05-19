@@ -5,9 +5,8 @@ import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.concurrent.Executor
 import apptentive.com.android.core.encryption.AESEncryption23
 import apptentive.com.android.core.encryption.Encryption
+import apptentive.com.android.core.network.Result
 import apptentive.com.android.core.serialization.json.JsonConverter
-import apptentive.com.android.core.util.Result
-import apptentive.com.android.core.util.generateUUID
 import apptentive.com.android.feedback.backend.MessageCenterService
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.conversation.ConversationRoster
@@ -27,6 +26,7 @@ import apptentive.com.android.feedback.model.payloads.MessagePayload
 import apptentive.com.android.feedback.payload.MockPayloadSender
 import apptentive.com.android.feedback.utils.MultipartParser
 import apptentive.com.android.feedback.utils.ThrottleUtils
+import apptentive.com.android.util.generateUUID
 import org.junit.After
 import org.junit.Assert
 import org.junit.Assert.assertEquals

@@ -7,7 +7,7 @@
 package com.apptentive.android.sdk.conversation;
 
 
-import static apptentive.com.android.core.util.LogTags.MIGRATION;
+import static apptentive.com.android.core.LogTags.MIGRATION;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,8 +26,8 @@ import com.apptentive.android.sdk.util.StringUtils;
 
 import java.io.File;
 
-import apptentive.com.android.core.util.InternalUseOnly;
-import apptentive.com.android.core.util.Log;
+import apptentive.com.android.core.InternalUseOnly;
+import apptentive.com.android.util.Log;
 
 
 /**
