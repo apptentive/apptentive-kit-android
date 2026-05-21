@@ -2,7 +2,8 @@ package apptentive.com.android.feedback.interactions.survey
 
 import android.app.Activity
 import android.os.Bundle
-import androidx.activity.viewModels
+import androidx.lifecycle.ViewModelProvider
+import apptentive.com.android.core.LogTags.SURVEY
 import apptentive.com.android.core.MissingProviderException
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
@@ -10,6 +11,7 @@ import apptentive.com.android.feedback.interactions.survey.utils.createSurveyVie
 import apptentive.com.android.feedback.interactions.survey.viewmodel.SurveyViewModel
 import apptentive.com.android.ui.ApptentiveViewModelActivity
 import apptentive.com.android.ui.ViewModelFactory
+import apptentive.com.android.util.Log
 
 /**
  * Base Activity for Surveys
@@ -23,23 +25,26 @@ internal open class BaseSurveyActivity : ApptentiveViewModelActivity(), Apptenti
 
     /**
      * @property viewModel [SurveyViewModel] class that is responsible for preparing
-     * and managing survey data for BaseSurveyActivity
-     *
+     * and managing survey data for BaseSurveyActivity.
      */
-    val viewModel: SurveyViewModel by viewModels {
-        ViewModelFactory {
-            try {
-                createSurveyViewModel()
-            } catch (exception: MissingProviderException) {
-                throw MissingProviderException("One or more dependency providers are not registered $exception")
-            } catch (exception: Exception) {
-                throw IllegalStateException("Issue creating SurveyViewModel $exception")
-            }
-        }
-    }
+    lateinit var viewModel: SurveyViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel = try {
+            ViewModelProvider.create(
+                this, ViewModelFactory { createSurveyViewModel() }
+            )[SurveyViewModel::class.java]
+        } catch (exception: Exception) {
+            val logMessage = if (exception is MissingProviderException) {
+                "Dependency providers are not registered"
+            } else {
+                "Error creating SurveyViewModel"
+            }
+            Log.e(SURVEY, logMessage, exception)
+            finish()
+            return
+        }
         // Calling this in onCreate in case we lose the Activity reference from the last Activity,
         // and before we can register in onResume.
         Apptentive.registerApptentiveActivityInfoCallback(this)
@@ -53,4 +58,6 @@ internal open class BaseSurveyActivity : ApptentiveViewModelActivity(), Apptenti
     override fun getApptentiveActivityInfo(): Activity {
         return this
     }
+
+    fun isViewModelInitialized() = ::viewModel.isInitialized
 }

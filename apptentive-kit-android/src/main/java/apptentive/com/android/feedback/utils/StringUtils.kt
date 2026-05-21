@@ -96,7 +96,9 @@ internal fun ApptentiveConfiguration.getBaseUrl(internalBaseUrl: String = BuildC
     }
 }
 
-internal fun containsLinks(text: String): Boolean {
+internal fun containsLinks(text: String?): Boolean {
+    if (text.isNullOrEmpty()) return false
+
     val urlPattern = Patterns.WEB_URL
     val urlMatcher = urlPattern.matcher(text)
     if (urlMatcher.find()) return true

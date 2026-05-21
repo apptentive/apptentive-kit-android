@@ -2,18 +2,21 @@ package apptentive.com.android.feedback.ratingdialog
 
 import apptentive.com.android.TestCase
 import apptentive.com.android.core.DependencyProvider
-import apptentive.com.android.core.Provider
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.EngageArgs
 import apptentive.com.android.feedback.engagement.EngagementCallback
-import apptentive.com.android.feedback.engagement.EngagementContext
-import apptentive.com.android.feedback.engagement.EngagementContextFactory
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.InvocationCallback
 import apptentive.com.android.feedback.engagement.MockEngagementContext
 import apptentive.com.android.feedback.interactions.ratingdialog.RatingDialogInteraction
 import apptentive.com.android.feedback.interactions.ratingdialog.RatingDialogInteractionProvider
 import apptentive.com.android.feedback.interactions.ratingdialog.RatingDialogViewModel
+import apptentive.com.android.feedback.platform.ApptentiveKitSDKState
+import io.mockk.every
+import io.mockk.mockkObject
+import io.mockk.unmockkObject
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 
 class RatingDialogViewModelTest : TestCase() {
@@ -28,24 +31,28 @@ class RatingDialogViewModelTest : TestCase() {
         declineText = "Decline"
     )
 
+    @Before
+    override fun setUp() {
+        super.setUp()
+        mockkObject(ApptentiveKitSDKState)
+    }
+
+    @After
+    fun tearDown() {
+        unmockkObject(ApptentiveKitSDKState)
+    }
+
     //region Interactions
 
     @Test
     fun testInvokeInteractions() {
         val targetInteractionId = "target_id"
 
-        DependencyProvider.register(object : Provider<EngagementContextFactory> {
-            override fun get(): EngagementContextFactory {
-                return object : EngagementContextFactory {
-                    override fun engagementContext(): EngagementContext {
-                        return createEngagementContext(
-                            null,
-                            { EngagementResult.InteractionShown(targetInteractionId) }
-                        )
-                    }
-                }
-            }
-        })
+        every { ApptentiveKitSDKState.getEngagementContextOrNull(any()) } returns createEngagementContext(
+            null,
+            { EngagementResult.InteractionShown(targetInteractionId) }
+        )
+
         DependencyProvider.register(RatingDialogInteractionProvider(interaction))
         val viewModel = createViewModel()
 
@@ -74,7 +81,6 @@ class RatingDialogViewModelTest : TestCase() {
         )
 
         assertResults(
-            // engage "interaction" event
             *engageResults.toTypedArray()
         )
     }

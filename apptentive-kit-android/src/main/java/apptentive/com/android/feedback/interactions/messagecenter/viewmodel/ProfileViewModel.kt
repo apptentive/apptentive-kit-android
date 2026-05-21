@@ -77,7 +77,7 @@ internal class ProfileViewModel : ViewModel() {
     fun isProfileRequired(): Boolean = model.profile?.require == true
 
     fun onMessageCenterEvent(event: String, data: Map<String, Any?>?) {
-        getEngagementContextOrNull()?.let { context ->
+        getEngagementContextOrNull(MESSAGE_CENTER)?.let { context ->
             context.executors.state.execute {
                 context.engage(
                     event = Event.internal(event, interaction = InteractionType.MessageCenter),

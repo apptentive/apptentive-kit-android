@@ -21,6 +21,13 @@ internal class RatingDialogFragment : DialogFragment(), ApptentiveActivityInfo {
 
     private val viewModel by viewModels<RatingDialogViewModel>()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.dismissInteraction.observe(this) {
+            dismiss()
+        }
+    }
+
     @SuppressLint("UseGetLayoutInflater", "InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         if (!Apptentive.isApptentiveActivityInfoCallbackRegistered()) {
@@ -67,13 +74,6 @@ internal class RatingDialogFragment : DialogFragment(), ApptentiveActivityInfo {
         }.create()
         return dialog.apply {
             setCanceledOnTouchOutside(false)
-        }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel.dismissInteraction.observe(this) {
-            dismiss()
         }
     }
 

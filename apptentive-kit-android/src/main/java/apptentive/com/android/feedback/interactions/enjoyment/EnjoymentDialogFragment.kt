@@ -25,6 +25,13 @@ import com.google.android.material.textview.MaterialTextView
 internal class EnjoymentDialogFragment : DialogFragment(), ApptentiveActivityInfo {
     private val viewModel by viewModels<EnjoymentDialogViewModel>()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.dismissInteraction.observe(this) {
+            dismiss()
+        }
+    }
+
     @SuppressLint("UseGetLayoutInflater", "InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return try {
@@ -40,7 +47,8 @@ internal class EnjoymentDialogFragment : DialogFragment(), ApptentiveActivityInf
 
             val dialog = MaterialAlertDialogBuilder(themedCtx).apply {
                 val enjoymentDialogView =
-                    LayoutInflater.from(themedCtx).inflate(R.layout.apptentive_enjoyment_dialog, null)
+                    LayoutInflater.from(themedCtx)
+                        .inflate(R.layout.apptentive_enjoyment_dialog, null)
                 val messageView =
                     enjoymentDialogView.findViewById<MaterialTextView>(R.id.apptentive_enjoyment_dialog_title)
                 messageView.text = viewModel.title
@@ -91,13 +99,14 @@ internal class EnjoymentDialogFragment : DialogFragment(), ApptentiveActivityInf
             dialog.apply {
                 setOnShowListener {
                     window?.decorView?.post {
-                        val position = viewModel.getEnjoymentDialogPosition()
-                        dialog.window?.setGravity(position)
-                        if (position != Gravity.CENTER) {
-                            viewModel.verticalMargins?.let {
-                                val windowAttributes = window?.attributes
-                                windowAttributes?.y = it
-                                window?.attributes = windowAttributes
+                        viewModel.getEnjoymentDialogPosition()?.let { position ->
+                            dialog.window?.setGravity(position)
+                            if (position != Gravity.CENTER) {
+                                viewModel.verticalMargins?.let {
+                                    val windowAttributes = window?.attributes
+                                    windowAttributes?.y = it
+                                    window?.attributes = windowAttributes
+                                }
                             }
                         }
                         setCanceledOnTouchOutside(false)
@@ -111,13 +120,6 @@ internal class EnjoymentDialogFragment : DialogFragment(), ApptentiveActivityInf
                     dismiss() // silently close itself
                 }
             }
-        }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel.dismissInteraction.observe(this) {
-            dismiss()
         }
     }
 

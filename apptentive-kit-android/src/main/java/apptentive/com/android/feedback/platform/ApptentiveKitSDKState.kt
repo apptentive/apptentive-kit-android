@@ -4,7 +4,7 @@ import android.content.Context
 import apptentive.com.android.core.AndroidLoggerProvider
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.LogTags.FEEDBACK
-import apptentive.com.android.core.LogTags.MESSAGE_CENTER
+import apptentive.com.android.core.LogTags.INTERACTIONS
 import apptentive.com.android.core.MissingProviderException
 import apptentive.com.android.core.Provider
 import apptentive.com.android.core.concurrent.AndroidExecutorFactoryProvider
@@ -23,6 +23,7 @@ import apptentive.com.android.feedback.message.MessageManager
 import apptentive.com.android.feedback.message.MessageManagerFactory
 import apptentive.com.android.feedback.message.MessageRepository
 import apptentive.com.android.util.Log
+import apptentive.com.android.util.LogTag
 
 internal object ApptentiveKitSDKState {
     private lateinit var applicationContext: Context
@@ -142,7 +143,7 @@ internal object ApptentiveKitSDKState {
         }
     }
 
-    fun getEngagementContextOrNull(): EngagementContext? {
+    fun getEngagementContextOrNull(tag: LogTag = INTERACTIONS): EngagementContext? {
         if (providersUnavailable) return null
         cachedEngagementContext?.let { return it }
 
@@ -150,7 +151,7 @@ internal object ApptentiveKitSDKState {
             getEngagementContext().also { cachedEngagementContext = it }
         } catch (e: Exception) {
             providersUnavailable = true
-            Log.e(MESSAGE_CENTER, "Provider is not registered, could not create engagement context", e)
+            Log.e(tag, "Provider is not registered, could not create engagement context", e)
             null
         }
     }

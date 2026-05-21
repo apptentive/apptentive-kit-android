@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import androidx.viewpager2.widget.ViewPager2
-import apptentive.com.android.core.LogTags.SURVEY
 import apptentive.com.android.feedback.interactions.survey.view.SurveyQuestionViewHolderFactory
 import apptentive.com.android.feedback.interactions.survey.view.SurveySegmentedProgressBar
 import apptentive.com.android.feedback.interactions.survey.viewmodel.MultiChoiceQuestionListItem
@@ -33,7 +32,6 @@ import apptentive.com.android.ui.ApptentivePagerAdapter
 import apptentive.com.android.ui.LayoutViewHolderFactory
 import apptentive.com.android.ui.ListViewAdapter
 import apptentive.com.android.ui.hideSoftKeyboard
-import apptentive.com.android.util.Log
 import com.apptentive.apptentive_kit_android.R
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.button.MaterialButton
@@ -47,64 +45,61 @@ internal class SurveyActivity : BaseSurveyActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (!isViewModelInitialized()) return
         setContentView(R.layout.apptentive_activity_survey)
-        try {
-            title = viewModel.title // So TalkBack announces the survey title
 
-            supportActionBar?.hide()
+        title = viewModel.title // So TalkBack announces the survey title
 
-            val topAppBar = findViewById<MaterialToolbar>(R.id.apptentive_top_app_bar)
-            root = findViewById<View>(R.id.apptentive_survey_root)
-            topAppBar.setNavigationOnClickListener {
-                it.hideSoftKeyboard()
-                viewModel.exit(showConfirmation = true)
-            }
+        supportActionBar?.hide()
 
-            val topAppBarTitle = findViewById<MaterialTextView>(R.id.apptentive_survey_title)
-            topAppBarTitle.text = viewModel.title
+        val topAppBar = findViewById<MaterialToolbar>(R.id.apptentive_top_app_bar)
+        root = findViewById<View>(R.id.apptentive_survey_root)
+        topAppBar.setNavigationOnClickListener {
+            it.hideSoftKeyboard()
+            viewModel.exit(showConfirmation = true)
+        }
 
-            if (viewModel.isPaged) setupPagedSurvey() else setupListSurvey()
+        val topAppBarTitle = findViewById<MaterialTextView>(R.id.apptentive_survey_title)
+        topAppBarTitle.text = viewModel.title
 
-            val bottomAppBar = findViewById<LinearLayout>(R.id.apptentive_bottom_app_bar)
-            bottomAppBar.importantForAccessibility =
-                if (viewModel.termsAndConditions.isNullOrEmpty()) View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
-                else View.IMPORTANT_FOR_ACCESSIBILITY_YES
+        if (viewModel.isPaged) setupPagedSurvey() else setupListSurvey()
 
-            val termsAndConditionsText = findViewById<MaterialTextView>(R.id.apptentive_terms_and_conditions)
-            termsAndConditionsText.movementMethod = LinkMovementMethod.getInstance()
-            termsAndConditionsText.text = viewModel.termsAndConditions
+        val bottomAppBar = findViewById<LinearLayout>(R.id.apptentive_bottom_app_bar)
+        bottomAppBar.importantForAccessibility =
+            if (viewModel.termsAndConditions.isNullOrEmpty()) View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
+            else View.IMPORTANT_FOR_ACCESSIBILITY_YES
 
-            viewModel.exitStream.observe(this) {
-                finish()
-            }
+        val termsAndConditionsText = findViewById<MaterialTextView>(R.id.apptentive_terms_and_conditions)
+        termsAndConditionsText.movementMethod = LinkMovementMethod.getInstance()
+        termsAndConditionsText.text = viewModel.termsAndConditions
 
-            viewModel.showConfirmation.observe(this) {
-                if (it) {
-                    with(viewModel.surveyCancelConfirmationDisplay) {
-                        confirmationDialog = ApptentiveGenericDialog().getGenericDialog(
-                            context = this@SurveyActivity,
-                            title = title ?: getString(R.string.confirmation_dialog_title),
-                            message = message ?: getString(R.string.confirmation_dialog_message),
-                            positiveButton = ApptentiveGenericDialog.DialogButton(positiveButtonMessage ?: getString(R.string.apptentive_cancel)) {
-                                viewModel.onBackToSurveyFromConfirmationDialog()
-                            },
-                            negativeButton = ApptentiveGenericDialog.DialogButton(negativeButtonMessage ?: getString(R.string.apptentive_close)) {
-                                viewModel.exit(showConfirmation = false)
-                            }
-                        )
-
-                        confirmationDialog?.show()
-                    }
-                }
-            }
-            onBackPressedDispatcher.addCallback(this) {
-                viewModel.exit(showConfirmation = true)
-            }
-            applyWindowInsets(root)
-        } catch (exception: Exception) {
-            Log.e(SURVEY, "Error launching survey activity $exception")
+        viewModel.exitStream.observe(this) {
             finish()
         }
+
+        viewModel.showConfirmation.observe(this) {
+            if (it) {
+                with(viewModel.surveyCancelConfirmationDisplay) {
+                    confirmationDialog = ApptentiveGenericDialog().getGenericDialog(
+                        context = this@SurveyActivity,
+                        title = title ?: getString(R.string.confirmation_dialog_title),
+                        message = message ?: getString(R.string.confirmation_dialog_message),
+                        positiveButton = ApptentiveGenericDialog.DialogButton(positiveButtonMessage ?: getString(R.string.apptentive_cancel)) {
+                            viewModel.onBackToSurveyFromConfirmationDialog()
+                        },
+                        negativeButton = ApptentiveGenericDialog.DialogButton(negativeButtonMessage ?: getString(R.string.apptentive_close)) {
+                            viewModel.exit(showConfirmation = false)
+                        }
+                    )
+
+                    confirmationDialog?.show()
+                }
+            }
+        }
+        onBackPressedDispatcher.addCallback(this) {
+            viewModel.exit(showConfirmation = true)
+        }
+        applyWindowInsets(root)
     }
 
     private fun setupListSurvey() {
