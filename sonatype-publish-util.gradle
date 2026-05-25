@@ -1,36 +1,3 @@
-tasks.register('sonatypeAssembleApptentiveModules', GradleBuild) {
-    buildName = "sonatypeAssembleApptentiveModules"
-    tasks = ['apptentive-core:assembleRelease',
-             'apptentive-core-ui:assembleRelease',
-             'apptentive-feedback:assembleRelease',
-             'apptentive-enjoyment-dialog:assembleRelease',
-             'apptentive-in-app-review:assembleRelease',
-             'apptentive-initiator:assembleRelease',
-             'apptentive-navigate-to-link:assembleRelease',
-             'apptentive-notes:assembleRelease',
-             'apptentive-message-center:assembleRelease',
-             'apptentive-ratings:assembleRelease',
-             'apptentive-survey:assembleRelease']
-}
-
-// Do this first
-tasks.register('sonatypePublishApptentiveModules', GradleBuild) {
-    buildName = "sonatypePublishApptentiveModules"
-    startParameter.projectProperties = project.gradle.startParameter.projectProperties
-    tasks = ['apptentive-core:publishMavenPublicationToMavenLocal',
-             'apptentive-core-ui:publishMavenPublicationToMavenLocal',
-             'apptentive-feedback:publishMavenPublicationToMavenLocal',
-             'apptentive-enjoyment-dialog:publishMavenPublicationToMavenLocal',
-             'apptentive-in-app-review:publishMavenPublicationToMavenLocal',
-             'apptentive-initiator:publishMavenPublicationToMavenLocal',
-             'apptentive-navigate-to-link:publishMavenPublicationToMavenLocal',
-             'apptentive-notes:publishMavenPublicationToMavenLocal',
-             'apptentive-message-center:publishMavenPublicationToMavenLocal',
-             'apptentive-ratings:publishMavenPublicationToMavenLocal',
-             'apptentive-survey:publishMavenPublicationToMavenLocal']
-    dependsOn sonatypeAssembleApptentiveModules
-}
-
 tasks.register('sonatypeAssembleApptentiveKitModule', GradleBuild) {
     buildName = "sonatypeAssembleApptentiveModules"
     tasks = ['apptentive-kit-android:assembleRelease']
