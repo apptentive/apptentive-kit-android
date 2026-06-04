@@ -14,5 +14,5 @@
 -keep class apptentive.com.android.feedback.payload.** {*; }
 -keep class apptentive.com.android.feedback.platform.** {*; }
 -keep class apptentive.com.android.feedback.utils.** {*; }
--keep class apptentive.com.android.feedback.survey.model.* { *; }
+-keep class apptentive.com.android.feedback.interactions.survey.model.* { *; }
 -keep class com.google.android.play.review.** { *; }
