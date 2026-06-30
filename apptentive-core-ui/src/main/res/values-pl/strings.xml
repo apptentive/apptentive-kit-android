@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="apptentive_close">Sluit</string>
+    <string name="apptentive_cancel">Anuluj</string>
+    <string name="apptentive_profile">Profiel</string>
+    <string name="apptentive_send_message">Wysyła tę wiadomość.</string>
+    <string name="apptentive_message_validation_error">Błąd - Pole wiadomości nie może być puste.</string>
+    <string name="apptentive_email_validation_error">Błąd - Brakuje wiadomości e-mail lub ma ona nieprawidłowy format.</string>
+    <string name="apptentive_profile_confirmation_dialog_title">Zamknięty profil?</string>
+    <string name="apptentive_profile_confirmation_dialog_message">Zmiany w Twoim profilu nie zostaną zapisane.</string>
+    <string name="apptentive_failed_to_send">Nie udało się wysłać. Później automatycznie ponowimy próbę.</string>
+    <string name="apptentive_preview_attachment">Podgląd załącznika</string>
+    <string name="apptentive_remove_attachment">Usuń załącznik</string>
+    <string name="apptentive_back">Powrót</string>
+    <string name="apptentive_add_attachment">Dodaj załącznik</string>
+    <string name="apptentive_attachment_thumbnail">Miniaturka załącznika</string>
+</resources>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="?apptentiveMessageCenterAttachmentThumbnailWidth"
+    android:layout_height="?apptentiveMessageCenterAttachmentThumbnailHeight"
+    android:layout_marginEnd="?apptentiveMessageCenterAttachmentThumbnailSpacing">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/apptentive_attachment_item"
+        style="?apptentiveMessageCenterAttachmentItemLayoutStyle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/apptentive_attachment_thumbnail"
+            style="?apptentiveMessageCenterAttachmentThumbnailStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/apptentive_attachment_thumbnail_download_image"
+            style="?apptentiveMessageCenterAttachmentThumbnailTypeIconStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/apptentive_attachment_mime_text"
+            app:layout_constraintEnd_toEndOf="@id/apptentive_attachment_thumbnail"
+            app:layout_constraintStart_toStartOf="@id/apptentive_attachment_thumbnail"
+            tools:visibility="visible" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/apptentive_attachment_mime_text"
+            style="?apptentiveMessageCenterAttachmentThumbnailTypeTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/apptentive_attachment_thumbnail"
+            app:layout_constraintEnd_toEndOf="@id/apptentive_attachment_thumbnail"
+            app:layout_constraintStart_toStartOf="@id/apptentive_attachment_thumbnail"
+            tools:text="JPEG" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/apptentive_attachment_thumbnail_download_loading"
+        style="?apptentiveMessageCenterAttachmentProgressIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</FrameLayout>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="apptentive_close">閉じる</string>
+    <string name="apptentive_cancel">キャンセル</string>
+    <string name="apptentive_profile">プロフィール</string>
+    <string name="apptentive_send_message">メッセージを送信。</string>
+    <string name="apptentive_message_validation_error">エラー - メッセージフィールドは空にできません。</string>
+    <string name="apptentive_email_validation_error">エラー - メールアドレスが入力されていないか、形式が無効です。</string>
+    <string name="apptentive_profile_confirmation_dialog_title">プロフィールを閉じますか？</string>
+    <string name="apptentive_profile_confirmation_dialog_message">プロフィールへの変更は保存されません。</string>
+    <string name="apptentive_failed_to_send">送信できませんでした。後程自動的に再試行されます。</string>
+    <string name="apptentive_preview_attachment">添付ファイルをプレビュー</string>
+    <string name="apptentive_remove_attachment">添付ファイルを削除</string>
+    <string name="apptentive_back">戻る</string>
+    <string name="apptentive_add_attachment">添付ファイルを追加</string>
+    <string name="apptentive_attachment_thumbnail">添付ファイルのサムネイル</string>
+</resources>

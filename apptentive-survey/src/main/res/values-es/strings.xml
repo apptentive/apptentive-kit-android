@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="confirmation_dialog_message">Perderás el progreso si cierras esta encuesta.</string>
+    <string name="confirmation_dialog_title">¿Cerrar encuesta?</string>
+    <string name="apptentive_required">Necesario</string>
+    <string name="min_range_label_default">Mínimo</string>
+    <string name="max_range_label_default">Máximo</string>
+    <string name="apptentive_survey_header_image">Imagen del encabezado de la encuesta</string>
+</resources>

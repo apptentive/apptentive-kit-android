@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="confirmation_dialog_message">Jeśli zamkniesz ankietę, stracisz zapisane informacje.</string>
+    <string name="confirmation_dialog_title">Zamknąć ankietę?</string>
+    <string name="apptentive_required">Wymagane</string>
+    <string name="min_range_label_default">Najniższy</string>
+    <string name="max_range_label_default">Najwyższy</string>
+    <string name="apptentive_survey_header_image">Obrazek z nagłówka badania</string>
+</resources>

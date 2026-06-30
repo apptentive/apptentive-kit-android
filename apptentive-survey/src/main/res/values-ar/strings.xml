@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="confirmation_dialog_message">ستفقد التقدم الذي أحرزته إن أغلقت الاستبيان.</string>
+    <string name="confirmation_dialog_title">أتُريد إغلاق الاستبيان؟</string>
+    <string name="apptentive_required">مطلوب</string>
+    <string name="min_range_label_default">الأدنى</string>
+    <string name="max_range_label_default">الأعلى</string>
+    <string name="apptentive_survey_header_image">صورة عنوان الاستبيان</string>
+</resources>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="?apptentiveMessageCenterBubbleView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/apptentive_message_group_time_stamp"
+        style="?apptentiveMessageCenterGroupTimeStamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="01/02/2022" />
+
+    <!-- Outbound message from the dashboard (Received from backend) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/apptentive_message_outbound"
+        style="?apptentiveMessageCenterOutboundBubble"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/apptentive_message_group_time_stamp">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/apptentive_message_outbound_sender_text"
+            style="?apptentiveMessageCenterSenderNameText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="John Doe" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/apptentive_message_outbound_text"
+            style="?apptentiveMessageCenterOutboundBubbleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/apptentive_message_outbound_sender_text"
+            tools:text="This is an incoming message." />
+
+        <LinearLayout
+            android:id="@+id/apptentive_message_outbound_attachments_layout"
+            style="?apptentiveMessageCenterBubbleAttachmentsLayoutStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/apptentive_message_outbound_time_stamp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/apptentive_message_outbound_text"
+            tools:ignore="Orientation" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/apptentive_message_outbound_time_stamp"
+            style="?apptentiveMessageCenterOutboundBubbleStatusText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/apptentive_message_outbound_attachments_layout"
+            tools:text="01/02/2022" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Inbound message to the dashboard  (Sent by us to backend) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/apptentive_message_inbound"
+        style="?apptentiveMessageCenterInboundBubble"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/apptentive_message_group_time_stamp">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/apptentive_message_inbound_text"
+            style="?apptentiveMessageCenterInboundBubbleText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="This is an outgoing message." />
+
+        <LinearLayout
+            android:id="@+id/apptentive_message_inbound_attachments_layout"
+            style="?apptentiveMessageCenterBubbleAttachmentsLayoutStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/apptentive_message_inbound_time_stamp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/apptentive_message_inbound_text"
+            tools:ignore="Orientation" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/apptentive_message_inbound_time_stamp"
+            style="?apptentiveMessageCenterInboundBubbleStatusText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/apptentive_message_inbound_attachments_layout"
+            tools:text="Sent 01/02/2022" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/apptentive_message_inbound_send_error"
+        style="?apptentiveMessageCenterInboundBubbleErrorText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@id/apptentive_message_inbound"
+        app:layout_constraintTop_toBottomOf="@id/apptentive_message_inbound" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

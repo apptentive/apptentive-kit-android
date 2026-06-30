@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="confirmation_dialog_message">Θα χάσετε την πρόοδό σας, εάν κλείσετε αυτήν την έρευνα.</string>
+    <string name="confirmation_dialog_title">Κλείσιμο έρευνας;</string>
+    <string name="apptentive_required">Απαιτείται</string>
+    <string name="min_range_label_default">Χαμηλότερο</string>
+    <string name="max_range_label_default">Υψηλότερο</string>
+    <string name="apptentive_survey_header_image">Εικόνα κεφαλίδας έρευνας</string>
+</resources>

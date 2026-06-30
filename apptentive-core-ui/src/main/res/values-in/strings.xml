@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="apptentive_close">Tutup</string>
+    <string name="apptentive_cancel">Batal</string>
+    <string name="apptentive_profile">Profail</string>
+    <string name="apptentive_send_message">Menghantar mesej.</string>
+    <string name="apptentive_message_validation_error">Kesalahan - Kolom pesan tidak boleh kosong.</string>
+    <string name="apptentive_email_validation_error">Kesalahan - Email tidak boleh kosong atau format tidak valid.</string>
+    <string name="apptentive_profile_confirmation_dialog_title">Pilih Profil?</string>
+    <string name="apptentive_profile_confirmation_dialog_message">Perubahan ke profil Anda tidak akan disimpan.</string>
+    <string name="apptentive_failed_to_send">Gagal mengirim. Kami akan secara otomatis mencoba lagi nanti.</string>
+    <string name="apptentive_preview_attachment">Pratinjau lampiran</string>
+    <string name="apptentive_remove_attachment">Hapus lampiran</string>
+    <string name="apptentive_back">Kembali</string>
+    <string name="apptentive_add_attachment">Tambahkan lampiran</string>
+    <string name="apptentive_attachment_thumbnail">Tambahkan gambar mini</string>
+</resources>

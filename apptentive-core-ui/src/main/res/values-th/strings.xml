@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="apptentive_close">ปิด</string>
+    <string name="apptentive_cancel">ยกเลิก</string>
+    <string name="apptentive_profile">โปรไฟล์</string>
+    <string name="apptentive_send_message">ส่งข้อความ</string>
+    <string name="apptentive_message_validation_error">ข้อผิดพลาด - ช่องข้อความจะต้องไม่ปล่อยว่างไว้</string>
+    <string name="apptentive_email_validation_error">ข้อผิดพลาด - ไม่มีอีเมลหรือรูปแบบไม่ถูกต้อง</string>
+    <string name="apptentive_profile_confirmation_dialog_title">ปิดโปรไฟล์?</string>
+    <string name="apptentive_profile_confirmation_dialog_message">จะไม่มีการบันทึกการเปลี่ยนแปลงโปรไฟล์ของคุณ</string>
+    <string name="apptentive_failed_to_send">ไม่สามารถส่งได้ เราจะลองใหม่ภายหลังโดยอัตโนมัติ</string>
+    <string name="apptentive_preview_attachment">ดูตัวอย่างเอกสารแนบ</string>
+    <string name="apptentive_remove_attachment">ลบเอกสารแนบ</string>
+    <string name="apptentive_back">ย้อนกลับ</string>
+    <string name="apptentive_add_attachment">เพิ่มเอกสารแนบ</string>
+    <string name="apptentive_attachment_thumbnail">ภาพขนาดย่อเอกสารแนบ</string>
+</resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="confirmation_dialog_message">คุณจะสูญเสียความก้าวหน้าของคุณหากปิดแบบสำรวจนี้</string>
+    <string name="confirmation_dialog_title">ปิดแบบสำรวจ?</string>
+    <string name="apptentive_required">จำเป็น</string>
+    <string name="min_range_label_default">ต่ำสุด</string>
+    <string name="max_range_label_default">สูงสุด</string>
+    <string name="apptentive_survey_header_image">ภาพส่วนหัวของแบบสำรวจ</string>
+</resources>

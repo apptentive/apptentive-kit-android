@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="confirmation_dialog_message">如果您关闭此调查，您将失去您的进度。</string>
+    <string name="confirmation_dialog_title">关闭调查吗？</string>
+    <string name="apptentive_required">必填项</string>
+    <string name="min_range_label_default">最低</string>
+    <string name="max_range_label_default">最高</string>
+    <string name="apptentive_survey_header_image">调查标头图像</string>
+</resources>

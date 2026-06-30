@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="confirmation_dialog_message">이 설문조사를 종료하면 진행 상황을 잃게 됩니다.</string>
+    <string name="confirmation_dialog_title">설문조사를 종료할까요?</string>
+    <string name="apptentive_required">필수</string>
+    <string name="min_range_label_default">최저</string>
+    <string name="max_range_label_default">최고</string>
+    <string name="apptentive_survey_header_image">설문조사 헤더 이미지</string>
+</resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="confirmation_dialog_message">Wenn Sie diese Umfrage schließen, verlieren Sie Ihren Verlauf.</string>
+    <string name="confirmation_dialog_title">Umfrage schließen?</string>
+    <string name="apptentive_required">Erforderlich</string>
+    <string name="min_range_label_default">Niedrigste</string>
+    <string name="max_range_label_default">Höchste</string>
+    <string name="apptentive_survey_header_image">Headerbild der Umfrage</string>
+</resources>

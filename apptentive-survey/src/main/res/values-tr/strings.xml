@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="confirmation_dialog_message">Bu anketi kapatırsan ilerlemeni kaybedeceksin.</string>
+    <string name="confirmation_dialog_title">Anket kapatılsın mı?</string>
+    <string name="apptentive_required">Gerekli</string>
+    <string name="min_range_label_default">En düşük</string>
+    <string name="max_range_label_default">En yüksek</string>
+    <string name="apptentive_survey_header_image">Anket başlığı görseli</string>
+</resources>

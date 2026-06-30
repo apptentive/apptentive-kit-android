@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="confirmation_dialog_message">Du kommer att förlora dina svar om du stänger den här undersökningen.</string>
+    <string name="confirmation_dialog_title">Stäng undersökning?</string>
+    <string name="apptentive_required">Obligatoriskt</string>
+    <string name="min_range_label_default">Lägsta</string>
+    <string name="max_range_label_default">Högsta</string>
+    <string name="apptentive_survey_header_image">Undersökningsrubrikbild</string>
+</resources>

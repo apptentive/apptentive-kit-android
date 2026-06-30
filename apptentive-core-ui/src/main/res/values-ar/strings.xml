@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="apptentive_close">إغلاق</string>
+    <string name="apptentive_cancel">إلغاء</string>
+    <string name="apptentive_profile">الملف التعريفي</string>
+    <string name="apptentive_send_message">إرسال رسالة.</string>
+    <string name="apptentive_message_validation_error">خطأ - لا يمكن ترك حقل الرسالة فارغًا.</string>
+    <string name="apptentive_email_validation_error">خطأ - البريد الإلكتروني إما مفقود أو بصيغة غير صالحة.</string>
+    <string name="apptentive_profile_confirmation_dialog_title">أتُريد إغلاق الملف الشخصي؟</string>
+    <string name="apptentive_profile_confirmation_dialog_message">لن يتم حفظ التغييرات على ملفك الشخصي.</string>
+    <string name="apptentive_failed_to_send">فشلت عملية الإرسال. سنعيد المحاولة تلقائيًا لاحقًا.</string>
+    <string name="apptentive_preview_attachment">مرفق المعاينة</string>
+    <string name="apptentive_remove_attachment">إزالة المرفق</string>
+    <string name="apptentive_back">إلى الخلف</string>
+    <string name="apptentive_add_attachment">إضافة مرفق</string>
+    <string name="apptentive_attachment_thumbnail">صورة مصغرة للمرفقات</string>
+</resources>
