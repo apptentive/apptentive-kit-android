@@ -1,0 +1,13 @@
+package apptentive.com.android.core.serialization
+
+internal interface Encoder {
+    fun encodeBoolean(value: Boolean)
+    fun encodeByte(value: Byte)
+    fun encodeShort(value: Short)
+    fun encodeInt(value: Int)
+    fun encodeLong(value: Long)
+    fun encodeFloat(value: Float)
+    fun encodeDouble(value: Double)
+    fun encodeChar(value: Char)
+    fun encodeString(value: String)
+}

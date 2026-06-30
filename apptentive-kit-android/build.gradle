@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
@@ -12,7 +14,18 @@ android {
         targetSdkVersion rootProject.targetSdkVersion
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testApplicationId "apptentive.com.app.test"
         consumerProguardFiles "consumer-rules.pro"
+
+        gradle.startParameter.taskNames.each {
+            if (it.contains("AndroidTest")) {
+                minSdkVersion 26 // workaround: MethodHandle.invoke/invokeExact require --min-api 26 with R8
+            }
+        }
+
+        def feedBackBaseUrl = System.getenv("INTERNAL_BASE_URL_OVERRIDE") ?: ""
+
+        buildConfigField "String", "INTERNAL_BASE_URL_OVERRIDE", "\"${feedBackBaseUrl}\""
     }
 
     buildTypes {
@@ -24,17 +37,49 @@ android {
 }
 
 dependencies {
-    implementation "com.apptentive:apptentive-core:$repoVersion"
-    implementation "com.apptentive:apptentive-core-ui:$repoVersion"
-    implementation "com.apptentive:apptentive-feedback:$repoVersion"
-    implementation "com.apptentive:apptentive-enjoyment-dialog:$repoVersion"
-    implementation "com.apptentive:apptentive-survey:$repoVersion"
-    implementation "com.apptentive:apptentive-notes:$repoVersion"
-    implementation "com.apptentive:apptentive-navigate-to-link:$repoVersion"
-    implementation "com.apptentive:apptentive-ratings:$repoVersion"
-    implementation "com.apptentive:apptentive-in-app-review:$repoVersion"
-    implementation "com.apptentive:apptentive-initiator:$repoVersion"
-    implementation "com.apptentive:apptentive-message-center:$repoVersion"
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation "androidx.activity:activity-ktx:$activity_ktx_version"
+    implementation "androidx.appcompat:appcompat:$appcompat_library_version"
+    implementation "androidx.annotation:annotation:$annotations_version"
+//    implementation 'androidx.camera:camera-camera2-pipe:1.6.0'
+    implementation "androidx.core:core-ktx:$core_ktx_version"
+    implementation "androidx.constraintlayout:constraintlayout:$constraint_layout_version"
+    implementation "androidx.fragment:fragment-ktx:$fragment_ktx_version"
+    implementation "androidx.exifinterface:exifinterface:$exifinterface"
+
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$livedata_ktx_version"
+    implementation "androidx.lifecycle:lifecycle-process:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
+
+    implementation "com.google.android.material:material:$material_design_version"
+    implementation "com.google.code.gson:gson:$gson_version"
+    implementation "com.google.android.play:review:$play_review_version"
+    implementation "com.google.android.play:review-ktx:$play_review_version"
+    implementation "com.google.android.gms:play-services-base:$play_services_base_version"
+
+    testImplementation "androidx.test:core:$androidx_test_version"
+    testImplementation "com.google.truth:truth:$truth_version"
+    testImplementation "io.mockk:mockk:$mockk_version"
+    testImplementation "org.json:json:$json_version"
+    testImplementation "androidx.arch.core:core-testing:$androidx_arch_core_version"
+    testImplementation "androidx.test.ext:junit:$androidx_junit_ext_version"
+
+    androidTestImplementation "androidx.test.ext:junit:$androidx_junit_ext_version"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"
+    androidTestImplementation "io.mockk:mockk-android:$mockk_version"
+    androidTestImplementation "io.mockk:mockk-agent:$mockk_version"
+    androidTestImplementation "androidx.test:runner:$androidx_test_version"
+    androidTestImplementation "androidx.test:core:$androidx_test_version"
+}
+
+tasks.withType(KotlinCompile).configureEach {
+    kotlinOptions {
+        freeCompilerArgs += [
+                '-opt-in=apptentive.com.android.core.InternalUseOnly',
+        ]
+    }
 }
 
 project.ext {

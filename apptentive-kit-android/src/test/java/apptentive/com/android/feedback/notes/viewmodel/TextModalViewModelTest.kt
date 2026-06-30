@@ -1,0 +1,430 @@
+package apptentive.com.android.feedback.notes.viewmodel
+
+import android.text.SpannableString
+import apptentive.com.android.TestCase
+import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.core.Provider
+import apptentive.com.android.feedback.EngagementResult
+import apptentive.com.android.feedback.engagement.EngageArgs
+import apptentive.com.android.feedback.engagement.EngagementCallback
+import apptentive.com.android.feedback.engagement.EngagementContext
+import apptentive.com.android.feedback.engagement.EngagementContextFactory
+import apptentive.com.android.feedback.engagement.Event
+import apptentive.com.android.feedback.engagement.InvocationCallback
+import apptentive.com.android.feedback.engagement.MockEngagementContext
+import apptentive.com.android.feedback.engagement.criteria.InvocationConverter
+import apptentive.com.android.feedback.interactions.textmodal.TextModalActionConfiguration
+import apptentive.com.android.feedback.interactions.textmodal.TextModalInteraction
+import apptentive.com.android.feedback.interactions.textmodal.TextModalInteractionProvider
+import apptentive.com.android.feedback.interactions.textmodal.TextModalViewModel
+import apptentive.com.android.feedback.model.InvocationData
+import apptentive.com.android.feedback.utils.HtmlWrapper
+import com.google.common.truth.Truth.assertThat
+import io.mockk.every
+import io.mockk.mockkObject
+import org.junit.Before
+import org.junit.Test
+import kotlin.jvm.javaClass
+
+class TextModalViewModelTest : TestCase() {
+    private val interactionId = "123456789"
+
+    private val invocations = listOf<InvocationData>()
+
+    private val actionList = listOf<TextModalActionConfiguration>(
+        mapOf(
+            "id" to ACTION_ID_INTERACTION,
+            "label" to ACTION_LABEL_INTERACTION,
+            "action" to "interaction",
+            "invokes" to invocations
+        ),
+        mapOf(
+            "id" to ACTION_ID_EVENT,
+            "label" to ACTION_LABEL_EVENT,
+            "action" to "interaction",
+            "event" to "com.apptentive#TextModal#$TARGET_EVENT"
+        ),
+        mapOf(
+            "id" to ACTION_ID_DISMISS,
+            "label" to ACTION_LABEL_DISMISS,
+            "action" to "dismiss"
+        )
+    )
+
+    private val interaction = TextModalInteraction(
+        id = interactionId,
+        title = "Title",
+        body = "Body",
+        actions = actionList
+    )
+
+    @Before
+    fun start() {
+        DependencyProvider.register(TextModalInteractionProvider(interaction, ""))
+    }
+
+    //region Interaction
+
+    @Test
+    fun testInvokeInteraction() {
+        val targetInteractionId = "target_id"
+        DependencyProvider.register(
+            MockEngagementContextFactory {
+                createEngagementContext(
+                    null
+                ) { EngagementResult.InteractionShown(targetInteractionId) }
+            }
+        )
+
+        val viewModel = createViewModel()
+
+        // check action title
+        val action = viewModel.actions[0] as TextModalViewModel.ActionModel.OtherActionModel
+        assertThat(action.title).isEqualTo(ACTION_LABEL_INTERACTION)
+
+        // invoke action
+        action.invoke()
+
+        assertResults(
+            // attempt to invoke an interaction
+            invocations.map(InvocationConverter::convert),
+            // engage "interaction" event
+            EngageArgs(
+                event = Event.internal("interaction", "TextModal"),
+                interactionId = interactionId,
+                data = mapOf(
+                    "action_id" to ACTION_ID_INTERACTION,
+                    "label" to ACTION_LABEL_INTERACTION,
+                    "position" to 0,
+                    "invoked_interaction_id" to targetInteractionId
+                ),
+                whereEvent = ""
+            ),
+            // dismiss UI
+            RESULT_DISMISS_UI
+        )
+    }
+
+    @Test
+    fun testInvokeMissingInteraction() {
+        DependencyProvider.register(
+            MockEngagementContextFactory {
+                createEngagementContext(
+                    null
+                ) {
+                    EngagementResult.InteractionNotShown("No runnable interactions")
+                }
+            }
+        )
+        val viewModel = createViewModel()
+
+        // check action title
+        val action = viewModel.actions[0] as TextModalViewModel.ActionModel.OtherActionModel
+        assertThat(action.title).isEqualTo(ACTION_LABEL_INTERACTION)
+
+        // invoke action
+        action.invoke()
+
+        // check results
+        assertResults(
+            // attempt to invoke an interaction
+            invocations.map(InvocationConverter::convert),
+            // engage "interaction" event
+            EngageArgs(
+                event = Event.internal("interaction", "TextModal"),
+                interactionId = interactionId,
+                data = mapOf(
+                    "action_id" to ACTION_ID_INTERACTION,
+                    "label" to ACTION_LABEL_INTERACTION,
+                    "position" to 0,
+                    "invoked_interaction_id" to null
+                ),
+                whereEvent = "",
+            ),
+            // dismiss UI
+            RESULT_DISMISS_UI
+        )
+    }
+
+    //endregion
+
+    //region Event
+
+    @Test
+    fun testEventAction() {
+        // NOTE: this is not supported on the backend yet!!!
+        val targetInteractionId = "target_id"
+
+        DependencyProvider.register(
+            MockEngagementContextFactory {
+                createEngagementContext(
+                    {
+                        // trick it to think an interaction has been invoked
+                        if (it.event.name == TARGET_EVENT) EngagementResult.InteractionShown(targetInteractionId)
+                        else EngagementResult.InteractionNotShown("No runnable interactions")
+                    },
+                    null
+                )
+            }
+        )
+
+        val viewModel = createViewModel()
+
+        // check action title
+        val action = viewModel.actions[1] as TextModalViewModel.ActionModel.OtherActionModel
+        assertThat(action.title).isEqualTo(ACTION_LABEL_EVENT)
+
+        // invoke action
+        action.invoke()
+
+        // check results
+        assertResults(
+            // engage event
+            EngageArgs(
+                event = Event.internal(TARGET_EVENT, interaction = "TextModal"),
+                interactionId = interactionId
+            ),
+            // engage "interaction" event
+            EngageArgs(
+                event = Event.internal("event", "TextModal"),
+                interactionId = interactionId,
+                data = mapOf(
+                    "action_id" to ACTION_ID_EVENT,
+                    "label" to ACTION_LABEL_EVENT,
+                    "position" to 1,
+                    "invoked_interaction_id" to targetInteractionId
+                )
+            ),
+            // dismiss UI
+            RESULT_DISMISS_UI
+        )
+    }
+
+    @Test
+    fun testMissingEventAction() {
+        // NOTE: this is not supported on the backend yet!!!
+
+        DependencyProvider.register(
+            MockEngagementContextFactory {
+                createEngagementContext(
+                    {
+                        // no interactions to invoke
+                        EngagementResult.InteractionNotShown("No runnable interactions")
+                    },
+                    null
+                )
+            }
+        )
+
+        val viewModel = createViewModel()
+
+        // check action title
+        val action = viewModel.actions[1] as TextModalViewModel.ActionModel.OtherActionModel
+        assertThat(action.title).isEqualTo(ACTION_LABEL_EVENT)
+
+        // invoke action
+        action.invoke()
+
+        // check results
+        assertResults(
+            // engage event
+            EngageArgs(
+                event = Event.internal(TARGET_EVENT, interaction = "TextModal"),
+                interactionId = interactionId
+            ),
+            // engage "interaction" event
+            EngageArgs(
+                event = Event.internal("event", "TextModal"),
+                interactionId = interactionId,
+                data = mapOf(
+                    "action_id" to ACTION_ID_EVENT,
+                    "label" to ACTION_LABEL_EVENT,
+                    "position" to 1,
+                    "invoked_interaction_id" to null
+                )
+            ),
+            // dismiss UI
+            RESULT_DISMISS_UI
+        )
+    }
+
+    //endregion
+
+    //region Dismiss
+
+    @Test
+    fun testDismissAction() {
+        DependencyProvider.register(
+            MockEngagementContextFactory {
+                createEngagementContext(null, null)
+            }
+        )
+        val viewModel = createViewModel()
+
+        // check action title
+        val action = viewModel.actions[2] as TextModalViewModel.ActionModel.DismissActionModel
+        assertThat(action.title).isEqualTo(ACTION_LABEL_DISMISS)
+
+        // invoke action
+        action.invoke()
+
+        // check results
+        assertResults(
+            // engage "dismiss" event
+            EngageArgs(
+                event = Event.internal("dismiss", "TextModal"),
+                interactionId = interactionId,
+                data = mapOf(
+                    "action_id" to ACTION_ID_DISMISS,
+                    "label" to ACTION_LABEL_DISMISS,
+                    "position" to 2
+                ),
+                whereEvent = ""
+            ),
+            // dismiss UI
+            RESULT_DISMISS_UI
+        )
+    }
+
+    //endregion
+
+    //region Cancel
+
+    @Test
+    fun testCancel() {
+        DependencyProvider.register(
+            MockEngagementContextFactory {
+                createEngagementContext(null, null)
+            }
+        )
+        val viewModel = createViewModel()
+
+        // invoke action
+        viewModel.onCancel()
+
+        // check results
+        assertResults(
+            // engage "dismiss" event
+            EngageArgs(
+                event = Event.internal("cancel", "TextModal"),
+                interactionId = interactionId
+            )
+        )
+    }
+
+    @Test
+    fun testCancel_whereEventIsNullForCancelCodePoint() {
+        var capturedCodePoint: String? = null
+        var capturedWhereEvent: String? = "not_null"
+        DependencyProvider.register(
+            MockEngagementContextFactory {
+                createEngagementContext(onEngage = { args ->
+                    capturedCodePoint = args.event.name
+                    capturedWhereEvent = args.whereEvent
+                    EngagementResult.InteractionNotShown("")
+                })
+            }
+        )
+        val viewModel = createViewModel()
+        viewModel.onCancel()
+        assertThat(capturedCodePoint).isEqualTo("cancel")
+        assertThat(capturedWhereEvent).isNull()
+    }
+
+    @Test
+    fun testOtherCodePoints_whereEventIsPassedAsIs() {
+        val testWhereEvent = "my_where_event"
+        val codePoints = listOf("interaction", "event", "dismiss")
+        val captured = mutableListOf<Pair<String?, String?>>()
+        DependencyProvider.register(
+            MockEngagementContextFactory {
+                createEngagementContext(onEngage = { args ->
+                    captured.add(args.event.name to args.whereEvent)
+                    EngagementResult.InteractionNotShown("")
+                })
+            }
+        )
+        val viewModel = createViewModel()
+        val method = viewModel.javaClass.getDeclaredMethod(
+            "engageCodePoint",
+            String::class.java,
+            Map::class.java,
+            String::class.java,
+            String::class.java
+        )
+        method.isAccessible = true
+        for (codePoint in codePoints) {
+            method.invoke(viewModel, codePoint, null, null, testWhereEvent)
+        }
+        for ((cp, we) in captured) {
+            assertThat(codePoints).contains(cp)
+            assertThat(we).isEqualTo(testWhereEvent)
+        }
+    }
+
+    //endregion
+
+    //region Helpers
+
+    private fun createViewModel(): TextModalViewModel {
+        mockkObject(HtmlWrapper)
+        every { HtmlWrapper.toHTMLString(any()) } returns SpannableString("TEST")
+        every { HtmlWrapper.linkifiedHTMLString(any()) } returns SpannableString("TEST")
+        val viewModel = TextModalViewModel()
+        viewModel.onDismiss = { addResult(RESULT_DISMISS_UI) }
+        return viewModel
+    }
+
+    private fun createEngagementContext(
+        onEngage: EngagementCallback? = null,
+        onInvoke: InvocationCallback? = null
+    ) = MockEngagementContext(
+        // record engagement args for every engage call
+        onEngage = { args ->
+            addResult(args)
+            onEngage?.invoke(args)
+                ?: EngagementResult.InteractionNotShown("No runnable interactions")
+        },
+        // record invocations for every engage call
+        onInvoke = { invocations ->
+            addResult(invocations)
+            onInvoke?.invoke(invocations)
+                ?: EngagementResult.InteractionNotShown("No runnable interactions")
+        },
+        // we don't expect payloads here
+        onSendPayload = { payload ->
+            throw AssertionError("We didn't expect any payloads here but this one slipped though: $payload")
+        }
+    )
+
+    //endregion
+
+    //region Companion
+
+    companion object {
+        private const val ACTION_ID_INTERACTION = "action_invoke"
+        private const val ACTION_LABEL_INTERACTION = "Invoke Action"
+
+        private const val ACTION_ID_EVENT = "action_event"
+        private const val ACTION_LABEL_EVENT = "Event Action"
+
+        private const val ACTION_ID_DISMISS = "action_dismiss"
+        private const val ACTION_LABEL_DISMISS = "Dismiss Action"
+
+        private const val TARGET_EVENT = "my_event"
+
+        private const val RESULT_DISMISS_UI = "Dismiss UI"
+    }
+
+    //endregion
+}
+
+internal class MockEngagementContextFactory(val getEngagementContext: () -> EngagementContext) : Provider<EngagementContextFactory> {
+    override fun get(): EngagementContextFactory {
+        return object : EngagementContextFactory {
+            override fun engagementContext(): EngagementContext {
+                return getEngagementContext()
+            }
+        }
+    }
+}

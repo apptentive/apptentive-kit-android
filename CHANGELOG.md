@@ -1,3 +1,9 @@
+# 2026-06-30 - v7.2.0
+### New Features
+* SDK now sends where_event data identifying the triggering event with all interaction launch events.
+### Improvements
+* Merged all releasable modules into a single Android SDK package
+
 # 2026-04-22 - v7.1.1
 ### Fixes
 * Updated dialog creation flow to apply Material theming during early initialization, preventing invalid window configuration and protecting against runtime crashes.

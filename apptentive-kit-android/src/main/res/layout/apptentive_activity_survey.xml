@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="?apptentiveSurveyEdgeToEdgeStyle"
+    android:id="@+id/apptentive_survey_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="apptentive.com.android.feedback.survey.SurveyActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:touchscreenBlocksFocus="false">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/apptentive_top_app_bar"
+                style="?apptentiveSurveyToolbarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:touchscreenBlocksFocus="false"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/apptentive_survey_title"
+                    style="?apptentiveSurveyTitleStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:targetApi="p"
+                    tools:text="Survey Title" />
+
+                <ImageView
+                    android:id="@+id/apptentive_survey_image_header"
+                    style="?apptentiveSurveyHeaderImageStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/apptentive_survey_header_image" />
+
+            </com.google.android.material.appbar.MaterialToolbar>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/apptentive_list_survey_recycler_view"
+        style="?apptentiveSurveyLayoutStyle"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        tools:background="@null" />
+
+    <LinearLayout
+        android:id="@+id/apptentive_paged_survey_layout"
+        style="?apptentiveSurveyLayoutPagedStyle"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        tools:visibility="visible">
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/apptentive_survey_view_pager"
+            style="?apptentiveSurveyViewPagerStyle"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/apptentive_next_button"
+            style="?apptentiveSurveyNextButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Next" />
+
+        <apptentive.com.android.feedback.interactions.survey.view.SurveySegmentedProgressBar
+            android:id="@+id/apptentive_progress_bar_segmented"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/apptentive_progress_bar_linear"
+            style="?apptentiveProgressBarLinearStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="?apptentiveSurveyBottomAppBarStyle"
+        android:id="@+id/apptentive_bottom_app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/apptentive_terms_and_conditions"
+            style="?apptentiveSurveyTermsAndConditionsStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:text="Terms and Conditions"
+            tools:textColor="?colorOnPrimary" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Default text -->
+    <string name="apptentive_cancel">Cancel</string>
+    <string name="apptentive_message_validation_error">Error - Message field cannot be empty.</string>
+    <string name="apptentive_email_validation_error">Error - Email is either missing or an invalid format.</string>
+    <string name="apptentive_profile_confirmation_dialog_title">Close Profile?</string>
+    <string name="apptentive_profile_confirmation_dialog_message">The changes to your profile will not be saved.</string>
+    <string name="apptentive_failed_to_send">Failed to send. We will automatically retry later.</string>
+    <string name="apptentive_preview_attachment">Preview attachment</string>
+    <string name="apptentive_remove_attachment">Remove attachment</string>
+
+    <!-- Accessibility -->
+    <string name="apptentive_close">Close</string>
+    <string name="apptentive_profile">Profile</string>
+    <string name="apptentive_send_message">Sends the message</string>
+    <string name="apptentive_back">Back</string>
+    <string name="apptentive_add_attachment">Add attachment</string>
+    <string name="apptentive_attachment_thumbnail">Attachment thumbnail</string>
+
+    <!-- Default text -->
+    <string name="range_min_label" translatable="false">%1$s = %2$s</string>
+    <string name="range_max_label" translatable="false">%1$s = %2$s</string>
+
+    <!-- Fallbacks -->
+    <string name="confirmation_dialog_message">You will lose your progress if you close this survey.</string>
+    <string name="confirmation_dialog_title">Close survey?</string>
+    <string name="apptentive_required">Required</string>
+    <string name="apptentive_submit">Submit</string>
+    <string name="min_range_label_default">Lowest</string>
+    <string name="max_range_label_default">Highest</string>
+
+    <!-- Accessibility -->
+    <string name="slider_description_short" translatable="false">%1$s.</string>
+    <string name="slider_description" translatable="false">%1$s &amp; %2$s.</string>
+    <string name="apptentive_survey_header_image">Survey header image</string>
+</resources>

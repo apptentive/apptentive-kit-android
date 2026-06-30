@@ -1,0 +1,14 @@
+{
+  "configuration": {
+    "actions": [
+      {
+        "id": "action_id",
+        "action": "dismiss",
+        "label": "Dismiss"
+      }
+    ],
+    "title": "Title"
+  },
+  "id": "interaction_id",
+  "type": "TextModal"
+}

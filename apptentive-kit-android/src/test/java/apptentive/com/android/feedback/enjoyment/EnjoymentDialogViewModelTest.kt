@@ -1,0 +1,96 @@
+package apptentive.com.android.feedback.enjoyment
+
+import apptentive.com.android.TestCase
+import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.core.Provider
+import apptentive.com.android.core.platform.AndroidSharedPrefDataStore
+import apptentive.com.android.feedback.EngagementResult
+import apptentive.com.android.feedback.engagement.EngageArgs
+import apptentive.com.android.feedback.engagement.EngagementContext
+import apptentive.com.android.feedback.engagement.EngagementContextFactory
+import apptentive.com.android.feedback.engagement.Event
+import apptentive.com.android.feedback.engagement.MockEngagementContext
+import apptentive.com.android.feedback.engagement.util.MockAndroidSharedPrefDataStore
+import apptentive.com.android.feedback.interactions.enjoyment.EnjoymentDialogInteraction
+import apptentive.com.android.feedback.interactions.enjoyment.EnjoymentDialogInteractionProvider
+import apptentive.com.android.feedback.interactions.enjoyment.EnjoymentDialogViewModel
+import apptentive.com.android.feedback.interactions.enjoyment.EnjoymentDialogViewModel.Companion.CODE_POINT_CANCEL
+import apptentive.com.android.feedback.interactions.enjoyment.EnjoymentDialogViewModel.Companion.CODE_POINT_DISMISS
+import apptentive.com.android.feedback.interactions.enjoyment.EnjoymentDialogViewModel.Companion.CODE_POINT_NO
+import apptentive.com.android.feedback.interactions.enjoyment.EnjoymentDialogViewModel.Companion.CODE_POINT_YES
+import apptentive.com.android.ui.DialogPosition
+import org.junit.Test
+
+class EnjoymentDialogViewModelTest : TestCase() {
+    @Test
+    fun testEvents() {
+        val interactionId = "123456789"
+        val interaction = EnjoymentDialogInteraction(
+            id = interactionId,
+            title = "Title",
+            yesText = "Yes",
+            noText = "No",
+            dismissText = "Dismiss",
+            position = DialogPosition.CENTER,
+            verticalMargins = null
+        )
+
+        DependencyProvider.register(
+            EnjoymentDialogInteractionProvider(
+                interaction,
+                "love_dialog_event"
+            )
+        )
+        DependencyProvider.register(
+            MockEngagementContextFactory
+            {
+                MockEngagementContext(
+                    onEngage = { args ->
+                        addResult(args)
+                        EngagementResult.InteractionNotShown("No runnable interactions")
+                    },
+                )
+            }
+        )
+        DependencyProvider.register<AndroidSharedPrefDataStore>(MockAndroidSharedPrefDataStore())
+
+        val viewModel = EnjoymentDialogViewModel()
+
+        viewModel.onYesButton()
+        assertResults(
+            createCall(CODE_POINT_YES, interactionId = interactionId, whereEvent = "love_dialog_event")
+        )
+
+        viewModel.onNoButton()
+        assertResults(
+            createCall(CODE_POINT_NO, interactionId = interactionId, whereEvent = "love_dialog_event")
+        )
+
+        viewModel.onDismiss()
+        assertResults(
+            createCall(CODE_POINT_DISMISS, interactionId = interactionId, whereEvent = "love_dialog_event")
+        )
+
+        viewModel.onCancel()
+        assertResults(
+            createCall(CODE_POINT_CANCEL, interactionId = interactionId)
+        )
+    }
+
+    private fun createCall(codePoint: String, interactionId: String, whereEvent: String? = null) =
+        EngageArgs(
+            event = Event.internal(codePoint, interaction = "EnjoymentDialog"),
+            interactionId = interactionId,
+            whereEvent = whereEvent
+        )
+}
+
+internal class MockEngagementContextFactory(val getEngagementContext: () -> EngagementContext) : Provider<EngagementContextFactory> {
+    override fun get(): EngagementContextFactory {
+        return object : EngagementContextFactory {
+            override fun engagementContext(): EngagementContext {
+                return getEngagementContext()
+            }
+        }
+    }
+}
