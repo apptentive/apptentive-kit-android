@@ -25,9 +25,7 @@ dependencyResolutionManagement {
     }
 }
 
-include ':app',
-        ':app-legacy-migration-test',
-        ':apptentive-example',
+include ':apptentive-example',
         ':apptentive-kit-android',
 
 rootProject.name = 'apptentive-sdk-ktx'
