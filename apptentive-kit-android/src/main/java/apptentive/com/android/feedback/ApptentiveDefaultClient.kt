@@ -25,8 +25,11 @@ import apptentive.com.android.core.encryption.getEncryptionStatus
 import apptentive.com.android.core.network.HttpClient
 import apptentive.com.android.core.network.Result
 import apptentive.com.android.core.network.UnexpectedResponseException
+import apptentive.com.android.core.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.core.platform.SharedPrefConstants.APPTENTIVE
 import apptentive.com.android.core.platform.SharedPrefConstants.CRYPTO_ENABLED
+import apptentive.com.android.core.platform.SharedPrefConstants.PENDING_DEVICE_CUSTOMDATA_UPDATE
+import apptentive.com.android.core.platform.SharedPrefConstants.PENDING_PERSON_CUSTOMDATA_UPDATE
 import apptentive.com.android.core.platform.SharedPrefConstants.PREF_KEY_PUSH_PROVIDER
 import apptentive.com.android.core.platform.SharedPrefConstants.PREF_KEY_PUSH_TOKEN
 import apptentive.com.android.core.platform.SharedPrefConstants.SDK_CORE_INFO
@@ -262,6 +265,10 @@ internal class ApptentiveDefaultClient(
             }
         }
 
+        // Recover any existing-key custom data update that was deferred in a previous session but
+        // never flushed because the process was killed before it went to the background.
+        flushPendingCustomDataUpdate()
+
         executors.main.execute {
             Log.i(LIFE_CYCLE_OBSERVER, "Observing App lifecycle")
             ProcessLifecycleOwner.get().lifecycle.addObserver(
@@ -275,6 +282,7 @@ internal class ApptentiveDefaultClient(
                     },
                     onBackground = {
                         messageManager?.onAppBackground()
+                        flushPendingCustomDataUpdate()
                     }
                 )
             )
@@ -553,7 +561,9 @@ internal class ApptentiveDefaultClient(
         }
         if (person != newPerson) {
             conversationManager.updatePerson(newPerson)
-            enqueuePayload(newPerson.toPersonPayload())
+            // flush a single person payload when the app backgrounds, or on the next launch if
+            // the process is killed before that happens.
+            setPendingCustomDataUpdate(true, PENDING_PERSON_CUSTOMDATA_UPDATE)
             updateMessageCenterNotification()
         }
     }
@@ -664,6 +674,7 @@ internal class ApptentiveDefaultClient(
 
     override fun updateDevice(customData: Pair<String, Any?>?, deleteKey: String?) {
         val device = conversationManager.getConversation().device
+
         val newDevice = when {
             customData != null -> {
                 val newContent = device.customData.content.plus(customData)
@@ -677,7 +688,35 @@ internal class ApptentiveDefaultClient(
         }
         if (device != newDevice) {
             conversationManager.updateDevice(newDevice)
-            enqueuePayload(newDevice.toDevicePayload())
+            // flush a single device payload when the app backgrounds, or on the next launch if
+            // the process is killed before that happens.
+            setPendingCustomDataUpdate(true, PENDING_DEVICE_CUSTOMDATA_UPDATE)
+        }
+    }
+
+    private fun setPendingCustomDataUpdate(pending: Boolean, keyEntry: String) {
+        DependencyProvider.of<AndroidSharedPrefDataStore>()
+            .putBoolean(SDK_CORE_INFO, keyEntry, pending)
+    }
+
+    // Flushes a single device/person payload if any existing-key custom data update was deferred —
+    // either this session (called from onStop) or a previous one that was killed before it could
+    // flush (called at startup). The custom data is persisted on every update, so the enqueued
+    // snapshot always reflects the latest values.
+    internal fun flushPendingCustomDataUpdate() {
+        val sharedPrefDataStore = DependencyProvider.of<AndroidSharedPrefDataStore>()
+        if (sharedPrefDataStore.getBoolean(SDK_CORE_INFO, PENDING_DEVICE_CUSTOMDATA_UPDATE, false)) {
+            val device = conversationManager.getConversation().device
+            // Enqueue (durably persisted to the SQLite payload queue) before clearing the flag so a
+            // process death mid-flush at worst re-sends the same snapshot next launch, never loses it.
+            enqueuePayload(device.toDevicePayload())
+            setPendingCustomDataUpdate(false, PENDING_DEVICE_CUSTOMDATA_UPDATE)
+        }
+
+        if (sharedPrefDataStore.getBoolean(SDK_CORE_INFO, PENDING_PERSON_CUSTOMDATA_UPDATE, false)) {
+            val person = conversationManager.getConversation().person
+            enqueuePayload(person.toPersonPayload())
+            setPendingCustomDataUpdate(false, PENDING_PERSON_CUSTOMDATA_UPDATE)
         }
     }
 
