@@ -318,22 +318,32 @@ class ApptentiveDefaultClientTest : TestCase() {
         sharedPrefDataStore.getBoolean(SDK_CORE_INFO, PENDING_PERSON_CUSTOMDATA_UPDATE, false)
 
     @Test
-    fun testUpdateDeviceWithNewKeyEnqueuesPayloadImmediately() {
+    fun testUpdateDeviceCustomDataDefersPayload() {
         val client = startedClient()
 
-        // "key" already exists in mockDevice, so "new_key" is a brand new key.
+        // Device custom data updates are always batched, never sent immediately.
         client.updateDevice("new_key" to "new_value")
 
-        assertEquals(1, sentPayloads.count { it is DevicePayload })
-        assertFalse(isDevicePending())
+        assertTrue(sentPayloads.isEmpty())
+        assertTrue(isDevicePending())
     }
 
     @Test
     fun testUpdateDeviceWithExistingKeyDefersPayload() {
         val client = startedClient()
 
-        // "key" already exists in mockDevice with value "value" — updating it should be deferred.
+        // "key" already exists in mockDevice with value "value" — updating it is also deferred.
         client.updateDevice("key" to "updated_value")
+
+        assertTrue(sentPayloads.isEmpty())
+        assertTrue(isDevicePending())
+    }
+
+    @Test
+    fun testUpdateDeviceDeleteKeyDefersPayload() {
+        val client = startedClient()
+
+        client.updateDevice(deleteKey = "key")
 
         assertTrue(sentPayloads.isEmpty())
         assertTrue(isDevicePending())
@@ -347,31 +357,6 @@ class ApptentiveDefaultClientTest : TestCase() {
         client.updateDevice("key" to "value")
 
         assertTrue(sentPayloads.isEmpty())
-        assertFalse(isDevicePending())
-    }
-
-    @Test
-    fun testUpdateDeviceDeleteKeyEnqueuesPayloadImmediately() {
-        val client = startedClient()
-
-        client.updateDevice(deleteKey = "key")
-
-        assertEquals(1, sentPayloads.count { it is DevicePayload })
-        assertFalse(isDevicePending())
-    }
-
-    @Test
-    fun testUpdateDeviceNewKeyClearsPendingFlag() {
-        val client = startedClient()
-
-        // Defer an existing-key change first.
-        client.updateDevice("key" to "updated_value")
-        assertTrue(isDevicePending())
-
-        // A new key sends a full snapshot (which carries the deferred change), so the flag clears.
-        client.updateDevice("new_key" to "new_value")
-
-        assertEquals(1, sentPayloads.count { it is DevicePayload })
         assertFalse(isDevicePending())
     }
 
@@ -399,14 +384,68 @@ class ApptentiveDefaultClientTest : TestCase() {
     }
 
     @Test
-    fun testUpdatePersonWithNewCustomDataKeyEnqueuesPayloadImmediately() {
+    fun testFlushWithoutConversationCredentialRetainsFlag() {
         val client = startedClient()
 
-        // "person_key" already exists in mockPerson, so "new_person_key" is new.
-        client.updatePerson(customData = "new_person_key" to "new_value")
+        client.updateDevice("key" to "updated_value")
+        assertTrue(isDevicePending())
 
+        // Simulate a cold start where the conversation credential isn't available yet: the flush
+        // must not send (it would be dropped) and must keep the flag so it retries on next launch.
+        DependencyProvider.clear()
+
+        client.flushPendingCustomDataUpdate()
+
+        assertTrue(sentPayloads.isEmpty())
+        assertTrue(isDevicePending())
+    }
+
+    @Test
+    fun testUpdateMParticleIdClearsPendingPersonCustomData() {
+        val client = startedClient()
+
+        // Defer a person custom data change, then set the mParticle id.
+        client.updatePerson(customData = "person_key" to "updated_value")
+        assertTrue(isPersonPending())
+
+        client.updateMParticleID("new_mparticle_id")
+
+        // The person payload carries the custom data snapshot, so the flag is cleared.
         assertEquals(1, sentPayloads.count { it is PersonPayload })
         assertFalse(isPersonPending())
+    }
+
+    @Test
+    fun testSetPushIntegrationClearsPendingDeviceCustomData() {
+        // setPushIntegration mutates the (shared) mockDevice.integrationConfig in place, so restore
+        // it afterwards to avoid polluting other tests that assert on the pristine mockDevice.
+        val originalApptentiveIntegration = mockDevice.integrationConfig.apptentive
+        try {
+            val client = startedClient()
+
+            // Defer a device custom data change, then set a push integration.
+            client.updateDevice("key" to "updated_value")
+            assertTrue(isDevicePending())
+
+            client.setPushIntegration(Apptentive.PUSH_PROVIDER_APPTENTIVE, "push_token")
+
+            // The device payload carries the custom data snapshot, so the flag is cleared.
+            assertEquals(1, sentPayloads.count { it is DevicePayload })
+            assertFalse(isDevicePending())
+        } finally {
+            mockDevice.integrationConfig.apptentive = originalApptentiveIntegration
+        }
+    }
+
+    @Test
+    fun testUpdatePersonCustomDataDefersPayload() {
+        val client = startedClient()
+
+        // Person custom data updates are always batched, never sent immediately.
+        client.updatePerson(customData = "new_person_key" to "new_value")
+
+        assertTrue(sentPayloads.isEmpty())
+        assertTrue(isPersonPending())
     }
 
     @Test
@@ -415,6 +454,16 @@ class ApptentiveDefaultClientTest : TestCase() {
 
         // "person_key" already exists in mockPerson with value "person_value".
         client.updatePerson(customData = "person_key" to "updated_value")
+
+        assertTrue(sentPayloads.isEmpty())
+        assertTrue(isPersonPending())
+    }
+
+    @Test
+    fun testUpdatePersonDeleteKeyDefersPayload() {
+        val client = startedClient()
+
+        client.updatePerson(deleteKey = "person_key")
 
         assertTrue(sentPayloads.isEmpty())
         assertTrue(isPersonPending())
@@ -448,6 +497,81 @@ class ApptentiveDefaultClientTest : TestCase() {
         assertEquals(1, sentPayloads.count { it is PersonPayload })
         assertFalse(isDevicePending())
         assertFalse(isPersonPending())
+    }
+
+    @Test
+    fun testUpdatePersonNameEnqueuesPayloadImmediately() {
+        val client = startedClient()
+
+        client.updatePerson(name = "Test Name")
+
+        val payload = sentPayloads.filterIsInstance<PersonPayload>().single()
+        assertEquals("Test Name", payload.name)
+        // Name is not custom data, so it is enqueued immediately and never sets the deferral flag.
+        assertFalse(isPersonPending())
+    }
+
+    @Test
+    fun testUpdatePersonEmailEnqueuesPayloadImmediately() {
+        val client = startedClient()
+
+        client.updatePerson(email = "test@email.com")
+
+        val payload = sentPayloads.filterIsInstance<PersonPayload>().single()
+        assertEquals("test@email.com", payload.email)
+        // Email is not custom data, so it is enqueued immediately and never sets the deferral flag.
+        assertFalse(isPersonPending())
+    }
+
+    @Test
+    fun testUpdatePersonNameEnqueuedImmediatelyAndFlushesPendingPersonCustomData() {
+        val client = startedClient()
+
+        // Defer a person custom data change first — nothing sent, flag set.
+        client.updatePerson(customData = "person_key" to "updated_value")
+        assertTrue(sentPayloads.isEmpty())
+        assertTrue(isPersonPending())
+
+        // A name update is enqueued immediately, and its payload carries the deferred custom data...
+        client.updatePerson(name = "New Name")
+
+        val payload = sentPayloads.filterIsInstance<PersonPayload>().single()
+        assertEquals("New Name", payload.name)
+        assertEquals("updated_value", payload.customData?.get("person_key"))
+        // ...so the pending person flag is cleared to avoid a redundant send on the next flush.
+        assertFalse(isPersonPending())
+    }
+
+    @Test
+    fun testUpdatePersonEmailEnqueuedImmediatelyAndFlushesPendingPersonCustomData() {
+        val client = startedClient()
+
+        client.updatePerson(customData = "person_key" to "updated_value")
+        assertTrue(sentPayloads.isEmpty())
+        assertTrue(isPersonPending())
+
+        client.updatePerson(email = "test@email.com")
+
+        val payload = sentPayloads.filterIsInstance<PersonPayload>().single()
+        assertEquals("test@email.com", payload.email)
+        assertEquals("updated_value", payload.customData?.get("person_key"))
+        assertFalse(isPersonPending())
+    }
+
+    @Test
+    fun testUpdatePersonNameDoesNotClearPendingDeviceCustomData() {
+        val client = startedClient()
+
+        // Defer a device custom data change — a person payload does not carry device custom data,
+        // so a person name/email update must not clear the device deferral (else it would be lost).
+        client.updateDevice("key" to "updated_value")
+        assertTrue(isDevicePending())
+
+        client.updatePerson(name = "New Name")
+
+        assertEquals(1, sentPayloads.count { it is PersonPayload })
+        assertEquals(0, sentPayloads.count { it is DevicePayload })
+        assertTrue(isDevicePending())
     }
 
     //endregion

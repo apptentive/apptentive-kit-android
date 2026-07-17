@@ -546,6 +546,7 @@ internal class ApptentiveDefaultClient(
         deleteKey: String?
     ) {
         val person = conversationManager.getConversation().person
+        val isCustomDataChange = customData != null || deleteKey != null
         val newPerson = when {
             name != null -> person.copy(name = name)
             email != null -> person.copy(email = email)
@@ -561,9 +562,18 @@ internal class ApptentiveDefaultClient(
         }
         if (person != newPerson) {
             conversationManager.updatePerson(newPerson)
-            // flush a single person payload when the app backgrounds, or on the next launch if
-            // the process is killed before that happens.
-            setPendingCustomDataUpdate(true, PENDING_PERSON_CUSTOMDATA_UPDATE)
+            if (isCustomDataChange) {
+                // Flush a single person payload when the app backgrounds, or on the next launch if
+                // the process is killed before that happens.
+                setPendingCustomDataUpdate(true, PENDING_PERSON_CUSTOMDATA_UPDATE)
+            } else {
+                enqueuePayload(newPerson.toPersonPayload())
+                // The person payload carries the full custom data snapshot, so any deferred person
+                // custom data update rides along with it — clear its flag to avoid a redundant send.
+                // (This must be the person flag, not the device flag: a person payload does not carry
+                // device custom data, so clearing the device flag here would drop a deferred device update.)
+                setPendingCustomDataUpdate(false, PENDING_PERSON_CUSTOMDATA_UPDATE)
+            }
             updateMessageCenterNotification()
         }
     }
@@ -574,6 +584,9 @@ internal class ApptentiveDefaultClient(
         if (person != newPerson) {
             conversationManager.updatePerson(newPerson)
             enqueuePayload(newPerson.toPersonPayload())
+            // This full person payload carries the custom data snapshot, so any deferred person
+            // custom data update rides along with it — clear its flag to avoid a redundant send.
+            setPendingCustomDataUpdate(false, PENDING_PERSON_CUSTOMDATA_UPDATE)
         }
     }
 
@@ -670,6 +683,9 @@ internal class ApptentiveDefaultClient(
         }
         conversationManager.updateDevice(device)
         enqueuePayload(device.toDevicePayload())
+        // This full device payload carries the custom data snapshot, so any deferred device custom
+        // data update rides along with it — clear its flag to avoid a redundant send.
+        setPendingCustomDataUpdate(false, PENDING_DEVICE_CUSTOMDATA_UPDATE)
     }
 
     override fun updateDevice(customData: Pair<String, Any?>?, deleteKey: String?) {
@@ -695,6 +711,9 @@ internal class ApptentiveDefaultClient(
     }
 
     private fun setPendingCustomDataUpdate(pending: Boolean, keyEntry: String) {
+        // Commit synchronously when setting the flag so a deferred update survives an immediate
+        // process death (e.g. a fast swipe-close) and is recovered on the next launch. Clearing can
+        // stay async — a lost clear only risks a harmless duplicate send, never data loss.
         DependencyProvider.of<AndroidSharedPrefDataStore>()
             .putBoolean(SDK_CORE_INFO, keyEntry, pending)
     }
@@ -704,6 +723,14 @@ internal class ApptentiveDefaultClient(
     // flush (called at startup). The custom data is persisted on every update, so the enqueued
     // snapshot always reflects the latest values.
     internal fun flushPendingCustomDataUpdate() {
+        // Without conversation credentials the payload would be silently dropped, so keep the flag
+        // and retry on the next flush/launch instead of clearing and losing the deferred update.
+        // The SDK kill switch is intentionally not checked here.
+        if (!DependencyProvider.isRegistered<ConversationCredentialProvider>()) {
+            Log.d(PAYLOADS, "No conversation credential yet; keeping pending custom data update.")
+            return
+        }
+
         val sharedPrefDataStore = DependencyProvider.of<AndroidSharedPrefDataStore>()
         if (sharedPrefDataStore.getBoolean(SDK_CORE_INFO, PENDING_DEVICE_CUSTOMDATA_UPDATE, false)) {
             val device = conversationManager.getConversation().device
