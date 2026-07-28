@@ -17,23 +17,38 @@ internal abstract class ApptentiveActivity : AppCompatActivity() {
 
     fun applyWindowInsets(root: View) {
         ViewCompat.setOnApplyWindowInsetsListener(root) { v, insets ->
-            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
-            val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
-
-            val leftInset = systemBarsInsets.left
-            val rightInset = systemBarsInsets.right
-            val topInset = systemBarsInsets.top
-            val bottomInset = if (imeVisible) imeInsets.bottom else systemBarsInsets.bottom
+            val padding = resolveWindowInsetPadding(insets)
 
             v.setPadding(
-                leftInset,
-                topInset,
-                rightInset,
-                bottomInset
+                padding.left,
+                padding.top,
+                padding.right,
+                padding.bottom
             )
 
             WindowInsetsCompat.CONSUMED
         }
     }
+
+    internal companion object {
+        // Combined with systemBars so the padding also covers a display cutout (notch/punch-hole)
+        // wherever its safe inset is larger than the system bar inset on that side - e.g. a side
+        // cutout in landscape, or any cutout when the status bar is hidden.
+        internal fun resolveWindowInsetPadding(insets: WindowInsetsCompat): InsetPadding {
+            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            val systemBarsAndCutoutInsets = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
+
+            return InsetPadding(
+                left = systemBarsAndCutoutInsets.left,
+                top = systemBarsAndCutoutInsets.top,
+                right = systemBarsAndCutoutInsets.right,
+                bottom = if (imeVisible) imeInsets.bottom else systemBarsAndCutoutInsets.bottom
+            )
+        }
+    }
 }
+
+internal data class InsetPadding(val left: Int, val top: Int, val right: Int, val bottom: Int)
