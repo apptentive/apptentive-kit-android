@@ -24,17 +24,25 @@ internal abstract class ApptentiveActivity : AppCompatActivity() {
      * e.g. a WebView) keeps the original plain behavior of being inset via root's own padding on
      * left/right/bottom, unchanged.
      *
-     * Since [root] keeps its own left/right padding here (unlike the other [applyWindowInsets]
-     * overload, where root gets none), that padding narrows [topBarContainer] - and every
-     * `match_parent` descendant of it, including a deeply-nested [topBar] - regardless of any
-     * padding added to [topBar] itself, which only shrinks [topBar]'s *content*, not its outer
-     * bounds. A negative margin on [topBarContainer] cancels root's padding at the one place it
-     * first applies, letting the whole chain reach the true edge; [topBar]'s own padding then
-     * keeps its content (title/icon) clear of the cutout within that now full-width bar.
+     * Deliberately named differently from [applyWindowInsets] (rather than overloaded) even though
+     * both can take three [View] arguments: a same-named 3-arg overload here would be ambiguous
+     * with [applyWindowInsets]'s `(root, topBar, bottomBar)` overload called with zero
+     * `sideInsetViews` - Kotlin's overload resolution would silently prefer this method's non-vararg
+     * exact match over the vararg one, so a caller intending [applyWindowInsets]'s `bottomBar`
+     * padding behavior would instead get this method's `topBarContainer` negative-margin behavior,
+     * with no compiler error.
+     *
+     * Since [root] keeps its own left/right padding here (unlike [applyWindowInsets], where root
+     * gets none), that padding narrows [topBarContainer] - and every `match_parent` descendant of
+     * it, including a deeply-nested [topBar] - regardless of any padding added to [topBar] itself,
+     * which only shrinks [topBar]'s *content*, not its outer bounds. A negative margin on
+     * [topBarContainer] cancels root's padding at the one place it first applies, letting the
+     * whole chain reach the true edge; [topBar]'s own padding then keeps its content (title/icon)
+     * clear of the cutout within that now full-width bar.
      *
      * @param root the screen's root view; keeps absorbing left/right/bottom padding as before this
      * inset handling was added, so content below the toolbar (e.g. a WebView) is unaffected by
-     * this overload.
+     * this method.
      * @param topBar the toolbar (or other top bar) whose content should stay clear of the
      * inset/cutout; receives top/left/right padding only.
      * @param topBarContainer root's direct child on [topBar]'s ancestor chain - pass [topBar]
@@ -43,7 +51,7 @@ internal abstract class ApptentiveActivity : AppCompatActivity() {
      * everything nested inside it) escapes root's own left/right padding and reaches the true
      * edge. Defaults to [topBar] when omitted.
      */
-    fun applyWindowInsets(root: View, topBar: View, topBarContainer: View = topBar) {
+    fun applyWindowInsetsKeepingRootPadding(root: View, topBar: View, topBarContainer: View = topBar) {
         val rootBase = root.capturePadding()
         val topBarBase = topBar.capturePadding()
 
@@ -72,7 +80,9 @@ internal abstract class ApptentiveActivity : AppCompatActivity() {
     /**
      * Applies system bar/cutout insets for screens whose top/bottom bars already carry a
      * brand-color background that's meant to extend into the system bar/cutout area (e.g.
-     * Survey's toolbar and terms-and-conditions bar, or Message Center's toolbar and body).
+     * Survey's toolbar and terms-and-conditions bar, or Message Center's toolbar and body). See
+     * [applyWindowInsetsKeepingRootPadding] for why that's a separate method rather than a same-named
+     * overload of this one.
      *
      * [root] itself gets no padding at all - each region pads itself so its own background, not
      * root's, shows through behind the system bars/cutout on every edge it touches. [topBar] and
