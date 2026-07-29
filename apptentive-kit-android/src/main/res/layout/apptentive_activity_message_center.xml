@@ -38,9 +38,11 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/apptentive_message_center_body"
         style="?attr/apptentiveMessageCenterBodyStyle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:clipToPadding="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -62,7 +64,7 @@
         <View
             android:id="@+id/apptentive_separator"
             style="?apptentiveMessageCenterViewSeparatorStyle"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="@dimen/apptentive_separator_height"
             app:layout_constraintBottom_toTopOf="@id/apptentive_composer_text"
             app:layout_constraintEnd_toEndOf="parent"

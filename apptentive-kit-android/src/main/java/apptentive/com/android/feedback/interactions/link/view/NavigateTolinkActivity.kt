@@ -19,6 +19,8 @@ import com.google.android.material.appbar.MaterialToolbar
 internal class NavigateTolinkActivity : BaseNavigateToLinkActivity() {
     private lateinit var webView: WebView
     private lateinit var root: View
+
+    private lateinit var topAppBarContainer: View
     private var uploadMessage: ValueCallback<Array<Uri>>? = null
     private lateinit var fileChooserLauncher: ActivityResultLauncher<Intent>
 
@@ -31,7 +33,8 @@ internal class NavigateTolinkActivity : BaseNavigateToLinkActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.apptentive_activity_navigate_to_link)
 
-        root = findViewById<View>(R.id.navigate_to_link_root)
+        root = findViewById(R.id.navigate_to_link_root)
+        topAppBarContainer = findViewById(R.id.apptentive_navigate_to_link_appbar)
 
         // Register the ActivityResultLauncher
         fileChooserLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -111,7 +114,7 @@ internal class NavigateTolinkActivity : BaseNavigateToLinkActivity() {
             webView.loadUrl(safeUrl)
         }
 
-        applyWindowInsets(root)
+        applyWindowInsets(root, topAppBar, topAppBarContainer)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

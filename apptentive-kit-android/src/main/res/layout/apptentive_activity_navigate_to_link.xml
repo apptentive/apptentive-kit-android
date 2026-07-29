@@ -3,11 +3,13 @@
     android:id="@+id/navigate_to_link_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipToPadding="false"
     style="?apptentiveNavigateToLinkInappStyle"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/apptentive_navigate_to_link_appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
