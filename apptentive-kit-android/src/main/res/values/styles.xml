@@ -79,7 +79,7 @@
 
         <!-- Survey Styles Start -->
         <!-- Layout -->
-        <item name="apptentiveSurveyBackgroundColor">@color/apptentive_color_background</item>
+        <item name="apptentiveSurveyBackgroundColor">@color/apptentive_color_primary</item>
         <item name="apptentiveSurveyLayoutStyle">@style/Apptentive.Survey.Layout</item>
         <item name="apptentiveSurveyLayoutPagedStyle">@style/Apptentive.Survey.Paged.Layout</item>
         <item name="apptentiveSurveyIntroductionLayoutStyle">@style/Apptentive.Survey.Layout.PageItem</item>
@@ -164,7 +164,7 @@
         <!-- General foreground/background/fill color -->
         <item name="apptentiveColorIconClose">?colorOnPrimary</item>
         <item name="apptentiveCustomFocusForegroundColor">@color/apptentive_color_focus_overlay</item>
-        <item name="apptentiveMessageCenterBackgroundColor">@color/apptentive_color_background</item>
+        <item name="apptentiveMessageCenterBackgroundColor">@color/apptentive_color_primary</item>
 
         <!-- Dialog -->
         <item name="apptentiveTextColorDialogTitleWithMessage">?colorOnSurface</item>
@@ -480,7 +480,7 @@
     </style>
 
     <style name="Apptentive.Widget.NavigateToLink.InappLayout">
-        <item name="android:background">@color/apptentive_color_background</item>
+        <item name="android:background">@color/apptentive_color_primary</item>
     </style>
 
     <!-- Survey Text Styles Start -->
