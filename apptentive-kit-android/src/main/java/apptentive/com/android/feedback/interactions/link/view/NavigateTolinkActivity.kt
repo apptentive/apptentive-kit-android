@@ -114,7 +114,7 @@ internal class NavigateTolinkActivity : BaseNavigateToLinkActivity() {
             webView.loadUrl(safeUrl)
         }
 
-        applyWindowInsetsKeepingRootPadding(root, topAppBar, topAppBarContainer)
+        applyWindowInsetsForWebView(root, topAppBar, topAppBarContainer)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

@@ -480,7 +480,7 @@
     </style>
 
     <style name="Apptentive.Widget.NavigateToLink.InappLayout">
-        <item name="android:background">@color/apptentive_color_primary</item>
+        <item name="android:background">@color/apptentive_color_background</item>
     </style>
 
     <!-- Survey Text Styles Start -->
