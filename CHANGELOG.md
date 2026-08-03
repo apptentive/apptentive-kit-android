@@ -1,4 +1,4 @@
-# 2026-07-03 - v7.3.0
+# 2026-08-03 - v7.3.0
 #### New Features
 - API updates for Person and Device custom data are now consolidated and sent on app exit
 
