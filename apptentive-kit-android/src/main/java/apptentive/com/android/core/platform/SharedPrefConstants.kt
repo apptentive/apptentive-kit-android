@@ -30,6 +30,8 @@ internal object SharedPrefConstants {
     const val MESSAGE_CENTER_PROFILE_EMAIL = "profile.email"
 
     const val SDK_CORE_INFO = "com.apptentive.sdk.coreinfo"
+    const val PENDING_DEVICE_CUSTOMDATA_UPDATE = "pending_device_customdata_update"
+    const val PENDING_PERSON_CUSTOMDATA_UPDATE = "pending_person_customdata_update"
     const val SDK_VERSION = "sdk_version"
     const val CRYPTO_ENABLED = "should_encrypt"
     const val CRYPTO_KEY_ALIAS = "crypto.key.alias"

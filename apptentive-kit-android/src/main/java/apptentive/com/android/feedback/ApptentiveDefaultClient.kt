@@ -25,8 +25,11 @@ import apptentive.com.android.core.encryption.getEncryptionStatus
 import apptentive.com.android.core.network.HttpClient
 import apptentive.com.android.core.network.Result
 import apptentive.com.android.core.network.UnexpectedResponseException
+import apptentive.com.android.core.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.core.platform.SharedPrefConstants.APPTENTIVE
 import apptentive.com.android.core.platform.SharedPrefConstants.CRYPTO_ENABLED
+import apptentive.com.android.core.platform.SharedPrefConstants.PENDING_DEVICE_CUSTOMDATA_UPDATE
+import apptentive.com.android.core.platform.SharedPrefConstants.PENDING_PERSON_CUSTOMDATA_UPDATE
 import apptentive.com.android.core.platform.SharedPrefConstants.PREF_KEY_PUSH_PROVIDER
 import apptentive.com.android.core.platform.SharedPrefConstants.PREF_KEY_PUSH_TOKEN
 import apptentive.com.android.core.platform.SharedPrefConstants.SDK_CORE_INFO
@@ -262,6 +265,10 @@ internal class ApptentiveDefaultClient(
             }
         }
 
+        // Recover any existing-key custom data update that was deferred in a previous session but
+        // never flushed because the process was killed before it went to the background.
+        flushPendingCustomDataUpdate()
+
         executors.main.execute {
             Log.i(LIFE_CYCLE_OBSERVER, "Observing App lifecycle")
             ProcessLifecycleOwner.get().lifecycle.addObserver(
@@ -275,6 +282,7 @@ internal class ApptentiveDefaultClient(
                     },
                     onBackground = {
                         messageManager?.onAppBackground()
+                        flushPendingCustomDataUpdate()
                     }
                 )
             )
@@ -538,6 +546,7 @@ internal class ApptentiveDefaultClient(
         deleteKey: String?
     ) {
         val person = conversationManager.getConversation().person
+        val isCustomDataChange = customData != null || deleteKey != null
         val newPerson = when {
             name != null -> person.copy(name = name)
             email != null -> person.copy(email = email)
@@ -553,7 +562,18 @@ internal class ApptentiveDefaultClient(
         }
         if (person != newPerson) {
             conversationManager.updatePerson(newPerson)
-            enqueuePayload(newPerson.toPersonPayload())
+            if (isCustomDataChange) {
+                // Flush a single person payload when the app backgrounds, or on the next launch if
+                // the process is killed before that happens.
+                setPendingCustomDataUpdate(true, PENDING_PERSON_CUSTOMDATA_UPDATE)
+            } else {
+                enqueuePayload(newPerson.toPersonPayload())
+                // The person payload carries the full custom data snapshot, so any deferred person
+                // custom data update rides along with it — clear its flag to avoid a redundant send.
+                // (This must be the person flag, not the device flag: a person payload does not carry
+                // device custom data, so clearing the device flag here would drop a deferred device update.)
+                setPendingCustomDataUpdate(false, PENDING_PERSON_CUSTOMDATA_UPDATE)
+            }
             updateMessageCenterNotification()
         }
     }
@@ -564,6 +584,9 @@ internal class ApptentiveDefaultClient(
         if (person != newPerson) {
             conversationManager.updatePerson(newPerson)
             enqueuePayload(newPerson.toPersonPayload())
+            // This full person payload carries the custom data snapshot, so any deferred person
+            // custom data update rides along with it — clear its flag to avoid a redundant send.
+            setPendingCustomDataUpdate(false, PENDING_PERSON_CUSTOMDATA_UPDATE)
         }
     }
 
@@ -660,10 +683,14 @@ internal class ApptentiveDefaultClient(
         }
         conversationManager.updateDevice(device)
         enqueuePayload(device.toDevicePayload())
+        // This full device payload carries the custom data snapshot, so any deferred device custom
+        // data update rides along with it — clear its flag to avoid a redundant send.
+        setPendingCustomDataUpdate(false, PENDING_DEVICE_CUSTOMDATA_UPDATE)
     }
 
     override fun updateDevice(customData: Pair<String, Any?>?, deleteKey: String?) {
         val device = conversationManager.getConversation().device
+
         val newDevice = when {
             customData != null -> {
                 val newContent = device.customData.content.plus(customData)
@@ -677,7 +704,46 @@ internal class ApptentiveDefaultClient(
         }
         if (device != newDevice) {
             conversationManager.updateDevice(newDevice)
-            enqueuePayload(newDevice.toDevicePayload())
+            // flush a single device payload when the app backgrounds, or on the next launch if
+            // the process is killed before that happens.
+            setPendingCustomDataUpdate(true, PENDING_DEVICE_CUSTOMDATA_UPDATE)
+        }
+    }
+
+    private fun setPendingCustomDataUpdate(pending: Boolean, keyEntry: String) {
+        // Commit synchronously when setting the flag so a deferred update survives an immediate
+        // process death (e.g. a fast swipe-close) and is recovered on the next launch. Clearing can
+        // stay async — a lost clear only risks a harmless duplicate send, never data loss.
+        DependencyProvider.of<AndroidSharedPrefDataStore>()
+            .putBoolean(SDK_CORE_INFO, keyEntry, pending)
+    }
+
+    // Flushes a single device/person payload if any existing-key custom data update was deferred —
+    // either this session (called from onStop) or a previous one that was killed before it could
+    // flush (called at startup). The custom data is persisted on every update, so the enqueued
+    // snapshot always reflects the latest values.
+    internal fun flushPendingCustomDataUpdate() {
+        // Without conversation credentials the payload would be silently dropped, so keep the flag
+        // and retry on the next flush/launch instead of clearing and losing the deferred update.
+        // The SDK kill switch is intentionally not checked here.
+        if (!DependencyProvider.isRegistered<ConversationCredentialProvider>()) {
+            Log.d(PAYLOADS, "No conversation credential yet; keeping pending custom data update.")
+            return
+        }
+
+        val sharedPrefDataStore = DependencyProvider.of<AndroidSharedPrefDataStore>()
+        if (sharedPrefDataStore.getBoolean(SDK_CORE_INFO, PENDING_DEVICE_CUSTOMDATA_UPDATE, false)) {
+            val device = conversationManager.getConversation().device
+            // Enqueue (durably persisted to the SQLite payload queue) before clearing the flag so a
+            // process death mid-flush at worst re-sends the same snapshot next launch, never loses it.
+            enqueuePayload(device.toDevicePayload())
+            setPendingCustomDataUpdate(false, PENDING_DEVICE_CUSTOMDATA_UPDATE)
+        }
+
+        if (sharedPrefDataStore.getBoolean(SDK_CORE_INFO, PENDING_PERSON_CUSTOMDATA_UPDATE, false)) {
+            val person = conversationManager.getConversation().person
+            enqueuePayload(person.toPersonPayload())
+            setPendingCustomDataUpdate(false, PENDING_PERSON_CUSTOMDATA_UPDATE)
         }
     }
 
