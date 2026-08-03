@@ -1,3 +1,7 @@
+# 2026-07-03 - v7.3.0
+#### New Features
+- API updates for Person and Device custom data are now consolidated and sent on app exit
+
 # 2026-06-30 - v7.2.0
 ### New Features
 * SDK now sends where_event data identifying the triggering event with all interaction launch events.
