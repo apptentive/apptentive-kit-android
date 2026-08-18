@@ -6,9 +6,9 @@ buildscript {
 
         // Minimum compileSDK version requirements
         // https://support.google.com/googleplay/android-developer/answer/11926878?hl=en
-        compileSdkVersion = 35
+        compileSdkVersion = 36
         minSdkVersion = 24
-        targetSdkVersion = 35
+        targetSdkVersion = 36
 
 
         // ----- App dependencies ----- //
@@ -68,7 +68,7 @@ buildscript {
 
     project.ext {
 
-        sonatypeVersion = '7.3.0'
+        sonatypeVersion = '7.3.1-test'
         jfrogVersion = '6.10.0'
 
         // Change this depending on where you are publishing to
@@ -78,7 +78,7 @@ buildscript {
     dependencies {
         // Android Gradle
         // https://developer.android.com/studio/releases/gradle-plugin
-        classpath 'com.android.tools.build:gradle:8.1.1'
+        classpath 'com.android.tools.build:gradle:8.9.0-rc01'
 
         // Kotlin Gradle
         // https://kotlinlang.org/docs/gradle.html
