@@ -1,4 +1,11 @@
-# 2026-08-03 - v7.3.0
+# 2026-08-26 - v7.3.1
+### Improvements
+* Bumped Android target SDK to 36 and upgraded Gradle/Android Gradle Plugin to support Android 17.
+### Fixes
+* Accessibility: Survey min/max labels are no longer recognised as actionable elements when using an external keyboard.
+* Fixed a 422 error when responding to required questions in Surveys.
+
+# 2026-07-03 - v7.3.0
 #### New Features
 - API updates for Person and Device custom data are now consolidated and sent on app exit
 
