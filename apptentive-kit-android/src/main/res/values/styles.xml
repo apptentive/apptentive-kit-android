@@ -481,6 +481,7 @@
 
     <style name="Apptentive.Widget.NavigateToLink.InappLayout">
         <item name="android:background">@color/apptentive_color_background</item>
+        <item name="android:clipToPadding">false</item>
     </style>
 
     <!-- Survey Text Styles Start -->
@@ -838,6 +839,7 @@
 
     <style name="Apptentive.Widget.MessageCenter.Layout.Body">
         <item name="android:background">?android:colorBackground</item>
+        <item name="android:clipToPadding">false</item>
     </style>
 
     <style name="Apptentive.Widget.MessageCenter.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
