@@ -1,16 +1,19 @@
-package apptentive.com.android.payload
+package apptentive.com.android.feedback.payload
 
 import android.content.Context
 import android.content.res.AssetManager
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.platform.app.InstrumentationRegistry
 import apptentive.com.android.TestCase
-import apptentive.com.android.core.core.DependencyProvider
-import apptentive.com.android.core.core.Logger
-import apptentive.com.android.debug.Assert.assertEqual
-import apptentive.com.android.encryption.AESEncryption23
-import apptentive.com.android.encryption.EncryptionFactory
-import apptentive.com.android.encryption.NotEncrypted
+import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.core.Logger
+import apptentive.com.android.core.debug.Assert.assertEqual
+import apptentive.com.android.core.encryption.AESEncryption23
+import apptentive.com.android.core.encryption.EncryptionFactory
+import apptentive.com.android.core.encryption.NotEncrypted
+import apptentive.com.android.core.network.HttpMethod
+import apptentive.com.android.core.platform.AndroidSharedPrefDataStore
+import apptentive.com.android.core.serialization.json.JsonConverter
 import apptentive.com.android.feedback.MockAndroidLoggerProvider
 import apptentive.com.android.feedback.conversation.MockConversationCredential
 import apptentive.com.android.feedback.conversation.MockEncryptedConversationCredential
@@ -21,9 +24,6 @@ import apptentive.com.android.feedback.model.Message
 import apptentive.com.android.feedback.model.payloads.EventPayload
 import apptentive.com.android.feedback.model.payloads.MessagePayload
 import apptentive.com.android.feedback.utils.MultipartParser
-import apptentive.com.android.network.HttpMethod
-import apptentive.com.android.platform.AndroidSharedPrefDataStore
-import apptentive.com.android.serialization.json.JsonConverter
 import org.junit.After
 import org.junit.Assert
 import org.junit.Assert.assertNull
@@ -172,8 +172,6 @@ class PayloadSQLiteHelperTest : TestCase() {
         assertEqual("embedded", payloadsUpdatedWithEncryptedToken[2].token)
         assertEqual("embedded", payloadsUpdatedWithEncryptedToken[3].token)
 
-        val decrypted = AESEncryption23(MockEncryptedConversationCredential().payloadEncryptionKey!!).decryptPayloadData(payloadsUpdatedWithEncryptedToken[2].data)
-
         verifySinglePartWithToken(payloadsUpdatedWithEncryptedToken[2].data, "mockedUpdatedConversationToken")
         verifyMultipartWithToken(payloadsUpdatedWithEncryptedToken[3].data, "mockedUpdatedConversationToken")
     }
@@ -205,7 +203,11 @@ class PayloadSQLiteHelperTest : TestCase() {
         )
 
         val decryptedContent = AESEncryption23(MockEncryptedConversationCredential().payloadEncryptionKey!!).decryptPayloadData(firstPart.content)
-        val decryptedPart = MultipartParser.parsePart(ByteArrayInputStream(decryptedContent), 0L..decryptedContent.size + 2) // TODO: Why do we have to add 2 here?
+        // parsePart() derives the content length assuming the part is embedded in a full multipart body,
+        // where the content is terminated by a trailing CRLF before the next "--boundary" delimiter. This
+        // decrypted blob is a standalone part without that trailing framing, so we extend the range by the
+        // 2 bytes of the missing CRLF to satisfy parsePart()'s length calculation.
+        val decryptedPart = MultipartParser.parsePart(ByteArrayInputStream(decryptedContent), 0L..decryptedContent.size + 2)
 
         Assert.assertEquals(
             "Content-Disposition: form-data;name=\"message\"\r\n" +
@@ -229,7 +231,9 @@ class PayloadSQLiteHelperTest : TestCase() {
         )
 
         val decryptedContent2 = AESEncryption23(MockEncryptedConversationCredential().payloadEncryptionKey!!).decryptPayloadData(secondPart.content)
-        val decryptedPart2 = MultipartParser.parsePart(ByteArrayInputStream(decryptedContent2), 0L..decryptedContent2.size + 2) // TODO: Why do we have to add 2 here?
+        // See the note above: the range is padded by 2 bytes to account for the trailing CRLF that
+        // parsePart() expects between a part's content and the following multipart boundary.
+        val decryptedPart2 = MultipartParser.parsePart(ByteArrayInputStream(decryptedContent2), 0L..decryptedContent2.size + 2)
 
         Assert.assertEquals(
             "Content-Disposition: form-data;name=\"file[]\";filename=\"dog.jpg\"\r\n" +

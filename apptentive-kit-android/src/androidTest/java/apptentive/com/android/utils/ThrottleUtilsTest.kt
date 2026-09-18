@@ -4,13 +4,14 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.test.core.app.ApplicationProvider
 import apptentive.com.android.TestCase
-import apptentive.com.android.core.core.DependencyProvider
+import apptentive.com.android.core.DependencyProvider
+import apptentive.com.android.core.platform.AndroidSharedPrefDataStore
 import apptentive.com.android.feedback.engagement.interactions.Interaction
 import apptentive.com.android.feedback.engagement.interactions.InteractionType
 import apptentive.com.android.feedback.engagement.util.MockAndroidSharedPrefDataStore
+import apptentive.com.android.feedback.utils.ThrottleUtils
 import apptentive.com.android.feedback.utils.ThrottleUtils.CONVERSATION_TYPE
 import apptentive.com.android.feedback.utils.ThrottleUtils.ROSTER_TYPE
-import apptentive.com.android.platform.AndroidSharedPrefDataStore
 import org.junit.After
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
