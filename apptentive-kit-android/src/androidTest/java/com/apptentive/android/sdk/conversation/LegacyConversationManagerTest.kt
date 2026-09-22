@@ -3,6 +3,7 @@ package com.apptentive.android.sdk.conversation
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import apptentive.com.android.DependencyProviderRule
+import apptentive.com.android.TestCase
 import apptentive.com.android.feedback.Constants
 import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.criteria.DateTime
@@ -22,8 +23,9 @@ import apptentive.com.android.feedback.utils.SensitiveDataUtils
 import apptentive.com.android.util.Log
 import apptentive.com.android.util.LogLevel
 import com.apptentive.android.sdk.encryption.EncryptionFactory
-import junit.framework.TestCase
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -1302,7 +1304,9 @@ class LegacyConversationManagerTest : TestCase() {
                 ),
                 engagementManifest = EngagementManifest()
             )
-        } else TODO("Implement me")
+        } else {
+            throw IllegalArgumentException("No expected conversation is defined for migration path: $path")
+        }
     }
 
     private fun pushFiles(sdkVersion: String) {

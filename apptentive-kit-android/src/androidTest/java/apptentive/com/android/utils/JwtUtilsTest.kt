@@ -1,6 +1,7 @@
 package apptentive.com.android.utils
 
-import apptentive.com.android.serialization.json.JsonConverter
+import apptentive.com.android.core.serialization.json.JsonConverter
+import apptentive.com.android.feedback.utils.JwtUtils
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
