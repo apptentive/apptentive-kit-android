@@ -4,6 +4,7 @@ import apptentive.com.android.core.LogTags.PAYLOADS
 import apptentive.com.android.core.network.Result
 import apptentive.com.android.feedback.conversation.ConversationCredentialProvider
 import apptentive.com.android.feedback.model.payloads.Payload
+import apptentive.com.android.feedback.utils.ThrottleUtils
 import apptentive.com.android.util.Log
 
 internal class SerialPayloadSender(
@@ -15,6 +16,13 @@ internal class SerialPayloadSender(
     private var payloadService: PayloadService? = null
 
     override fun enqueuePayload(payload: Payload, credentialProvider: ConversationCredentialProvider) {
+        // Kill switch: when the SDK is disabled by the server (sdk_enabled=false) no payloads are
+        // persisted or sent. Data is intentionally dropped (not queued) so nothing is flushed to the
+        // network on a later cold launch when the SDK is still disabled.
+        if (!ThrottleUtils.sdkEnabled) {
+            Log.w(PAYLOADS, "SDK is disabled, dropping payload: $payload")
+            return
+        }
         Log.v(PAYLOADS, "Adding Payload to queue: $payload")
         val payloadData = getPayloadData(payload, credentialProvider)
         if (payloadData != null) {
@@ -83,6 +91,13 @@ internal class SerialPayloadSender(
         val service = payloadService
         if (service == null) {
             Log.w(PAYLOADS, "Unable to send payload: ${PayloadService::class.java.simpleName} is null")
+            return
+        }
+
+        // Kill switch: never send while the SDK is disabled. This also blocks any payload that was
+        // persisted in an earlier session from being flushed on cold launch before the sender is paused.
+        if (!ThrottleUtils.sdkEnabled) {
+            Log.w(PAYLOADS, "Unable to send payload: SDK is disabled")
             return
         }
 
