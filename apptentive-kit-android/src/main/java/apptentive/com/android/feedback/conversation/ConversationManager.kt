@@ -531,10 +531,6 @@ internal class ConversationManager(
 
     @WorkerThread
     private fun saveConversation(conversation: Conversation) {
-        if (!getConversation().sdkStatus.sdkEnabled) {
-            Log.w(CONVERSATION, "SDK is disabled, not saving conversation")
-            return
-        }
         try {
             conversationRepository.saveConversation(conversation)
             Log.d(CONVERSATION, "Conversation saved successfully")
