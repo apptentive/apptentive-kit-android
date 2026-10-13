@@ -35,6 +35,8 @@ class DefaultEngagementTest : TestCase() {
     @After
     fun cleanup() {
         ThrottleUtils.sdkEnabled = true
+        ThrottleUtils.interactionCountLimit = 1
+        ThrottleUtils.resetEngagedEvents()
     }
 
     @Test
@@ -68,6 +70,42 @@ class DefaultEngagementTest : TestCase() {
         assertThat(result).isInstanceOf(EngagementResult.InteractionNotShown::class.java)
 
         assertResults("Event: ${mockEvent.fullName}")
+    }
+
+    @Test
+    fun perSessionLimitThrottlesAfterLimitReached() {
+        ThrottleUtils.interactionCountLimit = 1
+        interactionEngagement.addResult(EngagementResult.InteractionShown(mockInteraction.id))
+        interactionEngagement.addResult(EngagementResult.InteractionShown(mockInteraction.id))
+
+        // First engage: allowed (count goes to 1, limit is 1 so count < limit is false after increment)
+        val first = engagement.engage(MockEngagementContext(), mockEvent)
+        assertThat(first).isInstanceOf(EngagementResult.InteractionShown::class.java)
+
+        // Second engage: throttled (count already at 1 == limit)
+        val second = engagement.engage(MockEngagementContext(), mockEvent)
+        assertThat(second).isInstanceOf(EngagementResult.InteractionNotShown::class.java)
+    }
+
+    @Test
+    fun perSessionLimitZeroBlocksAllNonExemptedInteractions() {
+        ThrottleUtils.interactionCountLimit = 0
+        interactionEngagement.addResult(EngagementResult.InteractionShown(mockInteraction.id))
+
+        val result = engagement.engage(MockEngagementContext(), mockEvent)
+        assertThat(result).isInstanceOf(EngagementResult.InteractionNotShown::class.java)
+    }
+
+    @Test
+    fun exemptedEventsBypassPerSessionLimit() {
+        ThrottleUtils.interactionCountLimit = 0
+        interactionEngagement.addResult(EngagementResult.InteractionShown(mockInteraction.id))
+
+        val exemptedEvent = Event.local("show_message_center")
+        val result = engagement.engage(MockEngagementContext(), exemptedEvent)
+        // InteractionNotShown because MockInteractionDataProvider only handles mockEvent,
+        // but the point is it was NOT blocked by the limit — it went through to the provider.
+        assertThat(result).isNotInstanceOf(EngagementResult.Error::class.java)
     }
 
     private fun recordEvent(

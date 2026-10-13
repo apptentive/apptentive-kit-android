@@ -25,6 +25,8 @@ internal object ThrottleUtils {
 
         return when {
             interactionType == InteractionType.Initiator -> false
+            // Exempted events (e.g. Message Center) are never throttled, even when limit = 0.
+            eventName in exemptedEvents -> false
             interactionCountLimit <= 0 -> true
             interaction.type == InteractionType.RatingDialog || interaction.type == InteractionType.GoogleInAppReview -> {
                 val currentTime = System.currentTimeMillis()
@@ -43,16 +45,17 @@ internal object ThrottleUtils {
                     }
                 } ?: false
             }
-            eventName in exemptedEvents -> false
             interaction.id in engagedInteractions -> {
                 val count = engagedInteractions[interaction.id] ?: 0
                 if (count < interactionCountLimit) {
                     engagedInteractions[interaction.id] = count + 1
                     false
                 } else {
-                    false
-                    // Once the backend is ready for interaction throttling the value should be "true"
-                    // true
+                    Log.w(
+                        INTERACTIONS,
+                        "Interaction '${interaction.id}' throttled: per-session limit of $interactionCountLimit reached (shown $count time(s) this session)"
+                    )
+                    true
                 }
             }
             else -> {
