@@ -99,7 +99,10 @@ internal class SurveyActivity : BaseSurveyActivity() {
         onBackPressedDispatcher.addCallback(this) {
             viewModel.exit(showConfirmation = true)
         }
-        applyWindowInsets(root)
+
+        val listRecyclerView = findViewById<RecyclerView>(R.id.apptentive_list_survey_recycler_view)
+        val pagedLayout = findViewById<LinearLayout>(R.id.apptentive_paged_survey_layout)
+        applyWindowInsets(root, topAppBar, bottomAppBar, listRecyclerView, pagedLayout)
     }
 
     private fun setupListSurvey() {

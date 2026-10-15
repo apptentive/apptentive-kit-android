@@ -28,14 +28,21 @@
             tools:text="Message Center" />
     </com.google.android.material.appbar.MaterialToolbar>
 
-    <apptentive.com.android.feedback.interactions.messagecenter.view.custom.SimpleTouchImageView
-        android:id="@+id/apptentive_attachment_preview_image"
+    <FrameLayout
+        android:id="@+id/apptentive_attachment_preview_image_container"
+        style="?apptentiveImagePreviewLayoutStyle"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        style="?apptentiveImagePreviewLayoutStyle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/apptentive_attachment_preview_toolbar" />
+        app:layout_constraintTop_toBottomOf="@id/apptentive_attachment_preview_toolbar">
+
+        <apptentive.com.android.feedback.interactions.messagecenter.view.custom.SimpleTouchImageView
+            android:id="@+id/apptentive_attachment_preview_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
