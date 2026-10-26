@@ -8,7 +8,6 @@ import android.text.util.Linkify
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityManager
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -157,8 +156,6 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
                         inboundStatus.text = String.format("%s \u2022 %s", status, convertToDate(message.createdAt))
                         if (isAccessibilityEnabled(context)) {
                             inboundStatus.contentDescription = status.toString()
-                            inboundStatus.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUSED)
-                            inboundStatus.announceForAccessibility(status.toString())
                         }
                         inboundError.isVisible = message.messageStatus == Message.Status.Failed
                     } else { // Message from the DASHBOARD to SDK (gray bubble)
@@ -257,7 +254,7 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
 
     private fun isAccessibilityEnabled(context: Context): Boolean {
         val accessibilityManager = context.getSystemService(Context.ACCESSIBILITY_SERVICE) as? AccessibilityManager
-        return accessibilityManager?.isEnabled ?: false && accessibilityManager?.isTouchExplorationEnabled ?: false
+        return (accessibilityManager?.isEnabled == true) && (accessibilityManager.isTouchExplorationEnabled)
     }
 
     private fun LinearLayout.addAttachments(message: Message?) {
