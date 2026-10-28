@@ -18,6 +18,7 @@ import apptentive.com.android.feedback.platform.ApptentiveKitSDKState.getEngagem
 import apptentive.com.android.feedback.utils.HtmlWrapper.linkifiedHTMLString
 import apptentive.com.android.feedback.utils.getInteractionBackup
 import apptentive.com.android.feedback.utils.getWhereEventBackup
+import apptentive.com.android.ui.DialogPosition
 import apptentive.com.android.ui.core.LiveEvent
 import apptentive.com.android.ui.toGravity
 import apptentive.com.android.util.Log
@@ -32,32 +33,55 @@ internal class TextModalViewModel : ViewModel() {
         null
     }
 
-    private val interaction: TextModalModel = try {
+    private val interaction: TextModalModel? = try {
         DependencyProvider.of<TextModalModelFactory>().getTextModalModel()
     } catch (exception: Exception) {
-        val interaction: TextModalInteraction = getInteractionBackup()
-        TextModalModel(
-            id = interaction.id,
-            title = interaction.title,
-            body = interaction.body,
-            richContent = interaction.richContent,
-            actions = interaction.actions.map { action ->
-                DefaultTextModalActionConverter().convert(action)
-            },
-            position = interaction.position,
-            verticalMargins = interaction.verticalMargins,
-            whereEvent = getWhereEventBackup(),
-        )
+        getInteractionModelBackup(exception)
     }
 
-    val maxHeight = interaction.maxHeight
-    private val scaleType = interaction.richContent?.layout
-    private val scale = interaction.richContent?.scale
+    /**
+     * Rebuilds the [TextModalModel] from the persisted backup after the SDK process was killed
+     * while the note was in the background. The backup is deserialized with Gson, which can produce
+     * an interaction with `null` fields (e.g. `actions`) despite their non-null Kotlin types when the
+     * stored JSON is missing or malformed. Any failure here is swallowed and the interaction is
+     * dismissed, mirroring [RatingDialogViewModel]/[EnjoymentDialogViewModel], so a corrupt backup can
+     * never crash the host app on resume.
+     */
+    private fun getInteractionModelBackup(exception: Exception): TextModalModel? {
+        Log.e(
+            INTERACTIONS,
+            "TextModalModelFactory is not registered, trying to build TextModalModel from backup...",
+            exception
+        )
+        return try {
+            val backup: TextModalInteraction = getInteractionBackup()
+            TextModalModel(
+                id = backup.id,
+                title = backup.title,
+                body = backup.body,
+                richContent = backup.richContent,
+                actions = backup.actions.map { action ->
+                    DefaultTextModalActionConverter().convert(action)
+                },
+                position = backup.position,
+                verticalMargins = backup.verticalMargins,
+                whereEvent = getWhereEventBackup(),
+            )
+        } catch (e: Exception) {
+            Log.e(INTERACTIONS, "Building TextModalModel from backup failed", e)
+            dismissInteraction.postValue(Unit)
+            null
+        }
+    }
+
+    val maxHeight = interaction?.maxHeight ?: DEFAULT_MAX_HEIGHT
+    private val scaleType = interaction?.richContent?.layout
+    private val scale = interaction?.richContent?.scale
     private var isWiderImage: Boolean = false
-    val title = linkifiedHTMLString(interaction.title)
-    val message = linkifiedHTMLString(interaction.body)
-    val alternateText = interaction.richContent?.alternateText
-    val actions = interaction.actions.mapIndexed { index, action ->
+    val title = linkifiedHTMLString(interaction?.title)
+    val message = linkifiedHTMLString(interaction?.body)
+    val alternateText = interaction?.richContent?.alternateText
+    val actions = interaction?.actions?.mapIndexed { index, action ->
         if (action is TextModalModel.Action.Dismiss) {
             ActionModel.DismissActionModel(
                 title = action.label,
@@ -81,15 +105,15 @@ internal class TextModalViewModel : ViewModel() {
                 }
             )
         }
-    }
+    } ?: emptyList()
 
     var onDismiss: Callback? = null
-    val verticalMargins = interaction.verticalMargins
+    val verticalMargins = interaction?.verticalMargins
     private val noteHeaderEvent = LiveEvent<Bitmap>()
     val noteHeaderBitmapStream: LiveData<Bitmap> = noteHeaderEvent
     init {
         context?.executors?.state?.execute {
-            interaction.richContent?.url?.let { url ->
+            interaction?.richContent?.url?.let { url ->
                 PrefetchManager.getImage(url)?.let {
                     isWiderImage = it.width > MAX_IMAGE_WIDTH
                     noteHeaderEvent.postValue(it)
@@ -98,7 +122,7 @@ internal class TextModalViewModel : ViewModel() {
         }
     }
 
-    fun getPromptsPosition(): Int = interaction.position.toGravity()
+    fun getPromptsPosition(): Int = (interaction?.position ?: DialogPosition.CENTER).toGravity()
 
     fun onCancel() {
         context?.executors?.state?.execute {
@@ -114,10 +138,10 @@ internal class TextModalViewModel : ViewModel() {
     ) {
         context?.engage(
             event = Event.internal(codePoint, interaction = "TextModal"),
-            interactionId = interaction.id,
+            interactionId = interaction?.id,
             data = data,
-            interactionResponses = actionId?.let {
-                mapOf(interaction.id to setOf(InteractionResponse.IdResponse(it)))
+            interactionResponses = actionId?.let { responseId ->
+                interaction?.id?.let { id -> mapOf(id to setOf(InteractionResponse.IdResponse(responseId))) }
             },
             whereEvent = whereEvent
         )
@@ -130,7 +154,7 @@ internal class TextModalViewModel : ViewModel() {
                     Log.i(INTERACTIONS, "Note dismissed")
                     // engage event
                     val data = createEventData(action, index)
-                    engageCodePoint(CODE_POINT_DISMISS, data, action.id, interaction.whereEvent)
+                    engageCodePoint(CODE_POINT_DISMISS, data, action.id, interaction?.whereEvent)
                 }
             }
         }
@@ -140,11 +164,11 @@ internal class TextModalViewModel : ViewModel() {
                     Log.i(INTERACTIONS, "Note action invoked")
 
                     // run invocation
-                    val result = context.engage(action.invocations, interaction.whereEvent)
+                    val result = context.engage(action.invocations, interaction?.whereEvent)
 
                     // engage event
                     val data = createEventData(action, index, result)
-                    engageCodePoint(CODE_POINT_INTERACTION, data, action.id, interaction.whereEvent)
+                    engageCodePoint(CODE_POINT_INTERACTION, data, action.id, interaction?.whereEvent)
                 }
             }
         }
@@ -156,7 +180,7 @@ internal class TextModalViewModel : ViewModel() {
                     // engage target event
                     val result = context.engage(
                         event = action.event,
-                        interactionId = interaction.id
+                        interactionId = interaction?.id
                     )
 
                     // engage event
@@ -212,6 +236,10 @@ internal class TextModalViewModel : ViewModel() {
         const val CODE_POINT_DISMISS = "dismiss"
         const val CODE_POINT_CANCEL = "cancel"
         const val MAX_IMAGE_WIDTH = 1000
+
+        // Matches the default in TextModalModel/TextModalInteraction; used when the interaction
+        // could not be restored from backup.
+        private const val DEFAULT_MAX_HEIGHT = 100
 
         private const val DATA_ACTION_ID = "action_id"
         private const val DATA_ACTION_LABEL = "label"
