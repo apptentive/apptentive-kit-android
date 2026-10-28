@@ -141,7 +141,9 @@ internal class EnjoymentDialogFragment : DialogFragment(), ApptentiveActivityInf
     }
 
     override fun onDismiss(dialog: DialogInterface) {
-        viewModel.onDismiss()
+        if (activity?.isChangingConfigurations != true) {
+            viewModel.onDismiss()
+        }
         super.onDismiss(dialog)
     }
 
