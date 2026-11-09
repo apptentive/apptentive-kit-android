@@ -155,7 +155,7 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
                             else getMessageStatus(message.messageStatus)
                         inboundStatus.text = String.format("%s \u2022 %s", status, convertToDate(message.createdAt))
                         if (isAccessibilityEnabled(context)) {
-                            inboundStatus.contentDescription = status.toString()
+                            inboundStatus.contentDescription = "$status, ${convertToDate(message.createdAt)}"
                         }
                         inboundError.isVisible = message.messageStatus == Message.Status.Failed
                     } else { // Message from the DASHBOARD to SDK (gray bubble)

@@ -75,7 +75,7 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
                             contentLayout.findViewById<MaterialTextView>(R.id.apptentive_note_title_or_message_only)
                         titleView.text =
                             if (viewModel.title != null) viewModel.title else viewModel.message
-                        if (containsLinks(titleView.text.toString())) {
+                        if (containsLinks(titleView.text)) {
                             titleView.movementMethod = LinkMovementMethod.getInstance()
                         }
                         if (viewModel.title == null && viewModel.message == null) titleView.visibility = View.GONE
@@ -92,7 +92,7 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
                         if (containsLinks(titleView.text.toString()))
                             titleView.movementMethod = LinkMovementMethod.getInstance()
                         messageView.text = viewModel.message
-                        if (containsLinks(viewModel.message.toString()))
+                        if (containsLinks(viewModel.message))
                             messageView.movementMethod = LinkMovementMethod.getInstance()
                         scrollView.addView(contentLayout)
                     }

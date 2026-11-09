@@ -1,5 +1,7 @@
 package apptentive.com.android.feedback.utils
 
+import android.text.Spanned
+import android.text.style.URLSpan
 import android.util.Patterns
 import androidx.core.util.PatternsCompat
 import apptentive.com.android.core.LogTags.CONVERSATION
@@ -96,8 +98,10 @@ internal fun ApptentiveConfiguration.getBaseUrl(internalBaseUrl: String = BuildC
     }
 }
 
-internal fun containsLinks(text: String?): Boolean {
+internal fun containsLinks(text: CharSequence?): Boolean {
     if (text.isNullOrEmpty()) return false
+
+    if (text is Spanned && text.getSpans(0, text.length, URLSpan::class.java).isNotEmpty()) return true
 
     val urlPattern = Patterns.WEB_URL
     val urlMatcher = urlPattern.matcher(text)
