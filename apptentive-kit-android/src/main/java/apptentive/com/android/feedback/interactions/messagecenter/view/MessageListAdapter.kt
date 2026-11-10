@@ -1,6 +1,5 @@
 package apptentive.com.android.feedback.interactions.messagecenter.view
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.text.method.LinkMovementMethod
@@ -8,7 +7,6 @@ import android.text.util.Linkify
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.accessibility.AccessibilityManager
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -154,9 +152,7 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
                             if (message.messageStatus == Message.Status.Saved) messageViewModel.messageCenterModel.composer?.sendOk ?: Message.Status.Sent
                             else getMessageStatus(message.messageStatus)
                         inboundStatus.text = String.format("%s \u2022 %s", status, convertToDate(message.createdAt))
-                        if (isAccessibilityEnabled(context)) {
-                            inboundStatus.contentDescription = "$status, ${convertToDate(message.createdAt)}"
-                        }
+                        inboundStatus.contentDescription = "$status, ${convertToDate(message.createdAt)}"
                         inboundError.isVisible = message.messageStatus == Message.Status.Failed
                     } else { // Message from the DASHBOARD to SDK (gray bubble)
                         inboundLayout.isVisible = false
@@ -250,11 +246,6 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
                 else -> status.name
             }
         } else status.name
-    }
-
-    private fun isAccessibilityEnabled(context: Context): Boolean {
-        val accessibilityManager = context.getSystemService(Context.ACCESSIBILITY_SERVICE) as? AccessibilityManager
-        return (accessibilityManager?.isEnabled == true) && (accessibilityManager.isTouchExplorationEnabled)
     }
 
     private fun LinearLayout.addAttachments(message: Message?) {
