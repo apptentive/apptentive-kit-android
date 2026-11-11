@@ -152,8 +152,19 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
                             if (message.messageStatus == Message.Status.Saved) messageViewModel.messageCenterModel.composer?.sendOk ?: Message.Status.Sent
                             else getMessageStatus(message.messageStatus)
                         inboundStatus.text = String.format("%s \u2022 %s", status, convertToDate(message.createdAt))
-                        inboundStatus.contentDescription = "$status, ${convertToDate(message.createdAt)}"
                         inboundError.isVisible = message.messageStatus == Message.Status.Failed
+
+                        // TalkBack reads the ConstraintLayout as a whole, concatenating children's
+                        // text (not contentDescription). Set a clean description on the container
+                        // and hide children so the bullet and empty views are never announced.
+                        val body = message.body?.takeIf { it.isNotEmpty() }
+                        inboundLayout.contentDescription =
+                            if (body != null) "$body. $status, ${convertToDate(message.createdAt)}"
+                            else "$status, ${convertToDate(message.createdAt)}"
+                        inboundText.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+                        inboundStatus.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+                        inboundAttachments.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
+                        inboundError.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
                     } else { // Message from the DASHBOARD to SDK (gray bubble)
                         inboundLayout.isVisible = false
                         inboundError.isVisible = false
