@@ -1,9 +1,12 @@
 package apptentive.com.android.feedback.notes.viewmodel
 
 import android.text.SpannableString
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import apptentive.com.android.TestCase
 import apptentive.com.android.core.DependencyProvider
 import apptentive.com.android.core.Provider
+import apptentive.com.android.core.platform.AndroidSharedPrefDataStore
+import apptentive.com.android.core.platform.SharedPrefConstants
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.engagement.EngageArgs
 import apptentive.com.android.feedback.engagement.EngagementCallback
@@ -13,9 +16,11 @@ import apptentive.com.android.feedback.engagement.Event
 import apptentive.com.android.feedback.engagement.InvocationCallback
 import apptentive.com.android.feedback.engagement.MockEngagementContext
 import apptentive.com.android.feedback.engagement.criteria.InvocationConverter
+import apptentive.com.android.feedback.engagement.util.MockAndroidSharedPrefDataStore
 import apptentive.com.android.feedback.interactions.textmodal.TextModalActionConfiguration
 import apptentive.com.android.feedback.interactions.textmodal.TextModalInteraction
 import apptentive.com.android.feedback.interactions.textmodal.TextModalInteractionProvider
+import apptentive.com.android.feedback.interactions.textmodal.TextModalModelFactory
 import apptentive.com.android.feedback.interactions.textmodal.TextModalViewModel
 import apptentive.com.android.feedback.model.InvocationData
 import apptentive.com.android.feedback.utils.HtmlWrapper
@@ -23,10 +28,14 @@ import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockkObject
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import kotlin.jvm.javaClass
 
 class TextModalViewModelTest : TestCase() {
+    @get:Rule
+    val instantExecutorRule = InstantTaskExecutorRule()
+
     private val interactionId = "123456789"
 
     private val invocations = listOf<InvocationData>()
@@ -365,6 +374,41 @@ class TextModalViewModelTest : TestCase() {
     //endregion
 
     //region Helpers
+
+    @Test
+    fun testCorruptBackupWithNullActionsDismissesInsteadOfCrashing() {
+        // Regression test for PBI-10061. When the SDK process is killed while a note is in the
+        // background, the ViewModel rebuilds the interaction from a persisted backup on resume. A
+        // backup JSON missing "actions" deserializes (via Gson) to a TextModalInteraction whose
+        // non-null `actions` field is actually null. Previously TextModalViewModel.<init> called
+        // interaction.actions.map { } on it and threw a NullPointerException, crashing the host app.
+
+        // Force the backup path: the model factory is unavailable, as it would be after process death.
+        DependencyProvider.register(
+            object : Provider<TextModalModelFactory> {
+                override fun get(): TextModalModelFactory =
+                    throw RuntimeException("Simulated process death: factory not registered")
+            }
+        )
+        // Persisted backup with no "actions" -> deserializes to actions == null.
+        val sharedPrefDataStore = MockAndroidSharedPrefDataStore().apply {
+            putString(
+                SharedPrefConstants.APPTENTIVE,
+                SharedPrefConstants.INTERACTION_BACKUP,
+                """{"id":"$interactionId","title":"Title","body":"Body"}"""
+            )
+        }
+        DependencyProvider.register<AndroidSharedPrefDataStore>(sharedPrefDataStore)
+        DependencyProvider.register(
+            MockEngagementContextFactory { createEngagementContext() }
+        )
+
+        // Previously threw NullPointerException from TextModalViewModel.<init>; must not now.
+        val viewModel = createViewModel()
+
+        // The corrupt backup is handled gracefully: no actions are built and the dialog dismisses.
+        assertThat(viewModel.actions).isEmpty()
+    }
 
     private fun createViewModel(): TextModalViewModel {
         mockkObject(HtmlWrapper)

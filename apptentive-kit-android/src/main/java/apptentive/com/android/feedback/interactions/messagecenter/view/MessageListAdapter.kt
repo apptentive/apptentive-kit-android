@@ -1,6 +1,5 @@
 package apptentive.com.android.feedback.interactions.messagecenter.view
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.text.method.LinkMovementMethod
@@ -8,8 +7,6 @@ import android.text.util.Linkify
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.accessibility.AccessibilityEvent
-import android.view.accessibility.AccessibilityManager
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -155,12 +152,19 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
                             if (message.messageStatus == Message.Status.Saved) messageViewModel.messageCenterModel.composer?.sendOk ?: Message.Status.Sent
                             else getMessageStatus(message.messageStatus)
                         inboundStatus.text = String.format("%s \u2022 %s", status, convertToDate(message.createdAt))
-                        if (isAccessibilityEnabled(context)) {
-                            inboundStatus.contentDescription = status.toString()
-                            inboundStatus.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUSED)
-                            inboundStatus.announceForAccessibility(status.toString())
-                        }
                         inboundError.isVisible = message.messageStatus == Message.Status.Failed
+
+                        // TalkBack reads the ConstraintLayout as a whole, concatenating children's
+                        // text (not contentDescription). Set a clean description on the container
+                        // and hide children so the bullet and empty views are never announced.
+                        val body = message.body?.takeIf { it.isNotEmpty() }
+                        inboundLayout.contentDescription =
+                            if (body != null) "$body. $status, ${convertToDate(message.createdAt)}"
+                            else "$status, ${convertToDate(message.createdAt)}"
+                        inboundText.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+                        inboundStatus.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+                        inboundAttachments.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
+                        inboundError.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
                     } else { // Message from the DASHBOARD to SDK (gray bubble)
                         inboundLayout.isVisible = false
                         inboundError.isVisible = false
@@ -253,11 +257,6 @@ internal class MessageListAdapter(private val messageViewModel: MessageCenterVie
                 else -> status.name
             }
         } else status.name
-    }
-
-    private fun isAccessibilityEnabled(context: Context): Boolean {
-        val accessibilityManager = context.getSystemService(Context.ACCESSIBILITY_SERVICE) as? AccessibilityManager
-        return accessibilityManager?.isEnabled ?: false && accessibilityManager?.isTouchExplorationEnabled ?: false
     }
 
     private fun LinearLayout.addAttachments(message: Message?) {

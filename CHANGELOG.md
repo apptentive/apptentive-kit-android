@@ -1,3 +1,17 @@
+# 2026-11-17 - v7.4.0
+### New Features
+* Implemented SDK kill switch support, allowing the SDK to be remotely disabled for churned customers. Disabled state is now correctly persisted across process restarts.
+
+### Improvements
+* Interaction throttling (per-session interaction limit) is now fully enabled and enforced.
+
+### Fixes
+* Fixed a crash on Android when an Apptentive Activity is resumed.
+* Fixed Survey edge-to-edge layout issues on Android 15/16.
+* Fixed EnjoymentDialog#dismiss being incorrectly sent on device rotation while the Love Dialog remains open.
+* Fixed links in Prompt (Note) title and content not being tappable.
+* Fixed links in Card Survey introduction and question text not being tappable.
+
 # 2026-08-26 - v7.3.1
 ### Improvements
 * Bumped Android target SDK to 36 and upgraded Gradle/Android Gradle Plugin to support Android 17.

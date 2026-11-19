@@ -38,7 +38,8 @@ internal class ImagePreviewActivity : ApptentiveActivity(), ApptentiveActivityIn
 
         val imageView: SimpleTouchImageView = findViewById(R.id.apptentive_attachment_preview_image)
         imageView.setImageURI(File(filepath).toUri())
-        applyWindowInsets(root)
+        val imageContainer = findViewById<View>(R.id.apptentive_attachment_preview_image_container)
+        applyWindowInsets(root, topAppBar, imageContainer)
     }
 
     override fun onResume() {

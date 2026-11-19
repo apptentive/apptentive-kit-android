@@ -5,12 +5,14 @@ import java.io.File
 
 object MigrationTestUtils {
     fun clearDeviceStorage(context: Context) {
-        deleteFile(context.dataDir) // TODO: if this is not possible - delete specific directories
+        // Recursively remove every file under the app's data dir so each migration test starts from a
+        // clean slate before the legacy fixtures for a given SDK version are seeded.
+        deleteFile(context.dataDir)
     }
 
     private fun deleteFile(file: File) {
         if (file.isDirectory) {
-            file.listFiles().forEach { deleteFile(it) }
+            file.listFiles()?.forEach { deleteFile(it) }
         } else {
             file.delete()
         }

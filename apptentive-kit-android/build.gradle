@@ -33,6 +33,23 @@ android {
             minifyEnabled false
         }
     }
+
+    // Test helpers/mocks shared between local unit tests (src/test) and instrumented
+    // tests (src/androidTest). Kept in a dedicated source set so both compilations can
+    // see the same fakes without duplicating them.
+    sourceSets {
+        test.java.srcDirs += 'src/sharedTest/java'
+        androidTest.java.srcDirs += 'src/sharedTest/java'
+    }
+
+    packaging {
+        resources {
+            // mockk-android pulls in JUnit 5 (jupiter) transitively; several of those jars ship
+            // duplicate license files that collide when packaging the androidTest APK.
+            excludes += ['META-INF/LICENSE.md', 'META-INF/LICENSE-notice.md']
+        }
+    }
+
     namespace 'com.apptentive.apptentive_kit_android'
 }
 

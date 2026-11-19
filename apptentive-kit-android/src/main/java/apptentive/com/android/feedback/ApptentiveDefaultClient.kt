@@ -295,6 +295,15 @@ internal class ApptentiveDefaultClient(
     }
 
     override fun login(jwtToken: JwtString, callback: ((result: LoginResult) -> Unit)?) {
+        // Kill switch: login/multi-session creates conversations and sessions directly (POST
+        // /conversations, POST /conversations/{id}/session, PUT /device) bypassing the payload queue,
+        // so it needs its own guard. Blocked entirely while the SDK is disabled by the server.
+        if (!ThrottleUtils.sdkEnabled) {
+            Log.w(CONVERSATION, "SDK is disabled, login is not allowed")
+            executeCallbackInMainExecutor(callback, LoginResult.Error("SDK is disabled"))
+            return
+        }
+
         val activeConversationMetaData = getActiveConversationMetaData()
         val subClaim = JwtUtils.extractSub(jwtToken)
 

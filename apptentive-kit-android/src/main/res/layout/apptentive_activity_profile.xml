@@ -36,6 +36,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/apptentive_profile_body"
         style="?apptentiveMessageCenterProfileViewStyle"
         android:layout_width="match_parent"
         android:layout_height="0dp"

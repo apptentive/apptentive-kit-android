@@ -46,6 +46,7 @@ import kotlin.math.roundToInt
 
 internal class MessageCenterActivity : BaseMessageCenterActivity() {
     private lateinit var rootLayout: ConstraintLayout
+    private lateinit var body: ConstraintLayout
     private lateinit var messageText: EditText
     private lateinit var attachmentsLayout: LinearLayout
     private lateinit var attachmentButton: ImageView
@@ -91,6 +92,7 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
         setContentView(R.layout.apptentive_activity_message_center)
 
         rootLayout = findViewById(R.id.apptentive_root)
+        body = findViewById(R.id.apptentive_message_center_body)
         topAppBar = findViewById(R.id.apptentive_toolbar)
         topAppBarTitle = findViewById(R.id.apptentive_message_center_title)
         messageText = findViewById(R.id.apptentive_composer_text)
@@ -99,6 +101,7 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
         sendButton = findViewById(R.id.apptentive_send_message_button)
         messageList = findViewById(R.id.apptentive_message_list)
         composerErrorView = findViewById(R.id.apptentive_composer_error)
+        val separator = findViewById<View>(R.id.apptentive_separator)
         title = viewModel.title
         topAppBar.title = ""
         topAppBarTitle.text = viewModel.title
@@ -116,7 +119,7 @@ internal class MessageCenterActivity : BaseMessageCenterActivity() {
         addObservers()
         setListeners()
         getPushNotificationPermission()
-        applyWindowInsets(rootLayout)
+        applyWindowInsets(rootLayout, topAppBar, body, fullBleedViews = listOf(separator))
     }
 
     private fun addObservers() {

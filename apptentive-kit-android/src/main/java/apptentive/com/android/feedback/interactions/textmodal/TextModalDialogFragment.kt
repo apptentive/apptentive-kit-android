@@ -73,10 +73,11 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
                         ) as LinearLayout
                         val titleView =
                             contentLayout.findViewById<MaterialTextView>(R.id.apptentive_note_title_or_message_only)
-                        titleView.text =
-                            if (viewModel.title != null) viewModel.title else viewModel.message
-                        if (containsLinks(titleView.text.toString())) {
+                        val titleContent = if (viewModel.title != null) viewModel.title else viewModel.message
+                        titleView.text = titleContent
+                        if (containsLinks(titleContent)) {
                             titleView.movementMethod = LinkMovementMethod.getInstance()
+                            titleView.isClickable = true
                         }
                         if (viewModel.title == null && viewModel.message == null) titleView.visibility = View.GONE
                         scrollView.addView(contentLayout)
@@ -89,11 +90,15 @@ internal class TextModalDialogFragment : DialogFragment(), ApptentiveActivityInf
                             contentLayout.findViewById<MaterialTextView>(R.id.apptentive_note_title_with_message)
                         val messageView = contentLayout.findViewById<MaterialTextView>(R.id.apptentive_note_message)
                         titleView.text = viewModel.title
-                        if (containsLinks(titleView.text.toString()))
+                        if (containsLinks(viewModel.title)) {
                             titleView.movementMethod = LinkMovementMethod.getInstance()
+                            titleView.isClickable = true
+                        }
                         messageView.text = viewModel.message
-                        if (containsLinks(viewModel.message.toString()))
+                        if (containsLinks(viewModel.message)) {
                             messageView.movementMethod = LinkMovementMethod.getInstance()
+                            messageView.isClickable = true
+                        }
                         scrollView.addView(contentLayout)
                     }
                 }
